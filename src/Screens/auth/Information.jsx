@@ -4,7 +4,7 @@ import styles from "../StyleScreens/InformationStyle";
 
 const Information = ({ navigation }) => {
     const HandleLogin = () => {
-        navigation.navigate("Home");
+        navigation.navigate("MainApp");
     };
 
     return (

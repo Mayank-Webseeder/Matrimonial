@@ -50,10 +50,10 @@ const Home = ({ navigation }) => {
         data={Category}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.CategoryContainer}>
+          <TouchableOpacity style={styles.CategoryContainer}>
             <Image source={item.image} style={styles.images} />
             <Text style={styles.text}>{item.text}</Text>
-          </View>
+          </TouchableOpacity>
         )}
         horizontal={true}
         showsHorizontalScrollIndicator={false}
@@ -68,10 +68,10 @@ const Home = ({ navigation }) => {
         data={communityData}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.CategoryContainer}>
+          <TouchableOpacity style={styles.CategoryContainer}>
             <Image source={item.image} style={styles.images} />
             <Text style={styles.text}>{item.text}</Text>
-          </View>
+          </TouchableOpacity>
         )}
         horizontal={true}
         showsHorizontalScrollIndicator={false}

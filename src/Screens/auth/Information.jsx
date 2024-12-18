@@ -16,7 +16,7 @@ const Information = ({ navigation }) => {
                 <View style={styles.contentContainer}>
                   <View style={styles.inputContainer}>
                   <Text style={styles.title}>Name</Text>
-                  <TextInput style={styles.input}/>
+                  <TextInput style={styles.inputContain}/>
                   </View>
                   <View style={styles.inputContainer}>
                   <Text style={styles.title}>Email</Text>

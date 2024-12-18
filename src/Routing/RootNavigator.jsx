@@ -17,8 +17,14 @@ import Profile from '../Screens/Tabs/Profile';
 import Users from '../Screens/Tabs/Users';
 import Location from '../Screens/Tabs/Location';
 import SearchBook from '../Screens/Tabs/SearchBook';
-import {SF,SH} from '../utils/Dimensions';
+import IntrestedProfile from '../Screens/DrawerScreen/IntrestedProfile';
+import SavedProfile from '../Screens/DrawerScreen/SavedProfile';
+import PanditJyotish from '../Screens/DrawerScreen/PanditJyotish';
+import EventNews from '../Screens/DrawerScreen/EventNews';
+import CustomDrawer from '../Screens/DrawerScreen/CustomDrawer';
+import {SF,SH,SW} from '../utils/Dimensions';
 import Colors from '../utils/Colors';
+import Dharmshala from '../Screens/DrawerScreen/Dharmshala';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -85,10 +91,22 @@ function MyTabs() {
 
 function MyDrawer() {
   return (
-    <Drawer.Navigator screenOptions={{ headerShown: false }}>
-      <Drawer.Screen name="Tabs" component={MyTabs} />
-      <Drawer.Screen name="Profile" component={Profile} />
-      <Drawer.Screen name="Users" component={Users} />
+    <Drawer.Navigator
+      drawerContent={(props) => <CustomDrawer {...props} />}
+      screenOptions={{
+        headerShown: false,
+        drawerStyle: {
+          backgroundColor: '#8B1C44',
+          width:SW(240)
+        },
+      }}
+    >
+      <Drawer.Screen name="Home" component={MyTabs} />
+      <Drawer.Screen name="Interested Profile" component={IntrestedProfile} />
+      <Drawer.Screen name="Saved Profile" component={SavedProfile} />
+      <Drawer.Screen name="Pandit Jyotish" component={PanditJyotish} />
+      <Drawer.Screen name="EventNews" component={EventNews} />
+      <Drawer.Screen name="Dharmshala" component={Dharmshala} />
     </Drawer.Navigator>
   );
 }

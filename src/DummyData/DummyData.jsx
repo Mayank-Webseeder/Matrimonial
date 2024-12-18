@@ -18,3 +18,9 @@ export const Category=[
     {id:"2",image:require('../Images/event.png') ,text:"Event & News"},
     {id:"3",image:require('../Images/community.png'),text:"Committee"},
  ]
+
+ export const slider=[
+   {id:"1",image:require('../Images/slider.png')},
+   {id:"2",image:require('../Images/slider.png')},
+   {id:"3",image:require('../Images/slider.png')},
+]

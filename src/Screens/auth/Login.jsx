@@ -27,6 +27,12 @@ const Login = ({ navigation }) => {
                     <TextInput
                         style={styles.inputText}
                     />
+                     <Text style={styles.password}>
+                    Password
+                    </Text>
+                    <TextInput
+                        style={styles.inputText}
+                    />
                     <TouchableOpacity style={styles.button} onPress={HandleLogin}>
                         <Text style={styles.buttonText}>Continue</Text>
                     </TouchableOpacity>

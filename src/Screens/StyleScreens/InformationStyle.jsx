@@ -50,7 +50,12 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins-Bold",
         fontSize: SF(20),
     },
-
+    inputContain:{
+        borderColor:Colors.gray,
+        borderWidth:1,
+        width:"60%",
+        borderRadius:10
+    },
 });
 
 export default styles;

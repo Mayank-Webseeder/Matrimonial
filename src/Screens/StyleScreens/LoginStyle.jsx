@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
         padding: SW(7),
         marginHorizontal: SW(35),
         borderRadius: 50,
-        marginTop: SH(45)
+        marginTop: SH(35)
 
     },
     buttonText: {
@@ -51,13 +51,24 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 15,
         marginHorizontal: SW(25),
-        paddingVertical: SH(27),
-        color: Colors.dark
+        paddingVertical: SH(20),
+        color: Colors.dark,
+        marginBottom:SH(15)
     },
     phoneText: {
         position: "absolute",
         left: SW(45),
-        top: SH(520),
+        top: SH(490),
+        backgroundColor: Colors.light,
+        zIndex: 10,
+        paddingHorizontal: SW(5),
+        paddingVertical: SH(2),
+        color: Colors.theme_color
+    },
+    password: {
+        position: "absolute",
+        left: SW(45),
+        top: SH(566),
         backgroundColor: Colors.light,
         zIndex: 10,
         paddingHorizontal: SW(5),

@@ -9,7 +9,7 @@ import Colors from '../../utils/Colors';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import { Rating } from 'react-native-ratings';
-const PanditJyotish = ({ navigation }) => {
+const Kathavachak = ({ navigation }) => {
    const [activeButton, setActiveButton] = useState(null);
   const renderItem = ({ item }) => {
     return (
@@ -62,7 +62,7 @@ const PanditJyotish = ({ navigation }) => {
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.navigate('Tabs')} style={{ flexDirection: "row" }}>
           <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
-          <Text style={{ color: Colors.theme_color }}>Pandit</Text>
+          <Text style={{ color: Colors.theme_color }}>Kathavachak</Text>
         </TouchableOpacity>
         <AntDesign name={'bells'} size={20} color={Colors.theme_color} />
       </View>
@@ -125,4 +125,4 @@ const PanditJyotish = ({ navigation }) => {
   )
 }
 
-export default PanditJyotish
+export default Kathavachak

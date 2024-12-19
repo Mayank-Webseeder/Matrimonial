@@ -1,29 +1,29 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity,ScrollView } from 'react-native';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { SH, SW, SF } from '../../utils/Dimensions';
-
+import Entypo from 'react-native-vector-icons/Entypo';
 const CustomDrawer = (props) => {
   const { navigation } = props;
 
   const menuItems = [
     { title: 'Partners Preference', screen: 'PartnersPreference' },
-    { title: 'Interested Profile', screen: 'InterestedProfile' },
-    { title: 'Saved Profile', screen: 'SavedProfile' },
-    { title: 'Pandit/Jyotish', screen: 'PanditJyotish' },
+    { title: 'Interested Profile', screen: 'Interested Profile' },
+    { title: 'Saved Profile', screen: 'Saved Profile' },
+    { title: 'Pandit/Jyotish', screen: 'Pandit Jyotish' },
     { title: 'Event/News', screen: 'EventNews' },
     { title: 'Dharmshala', screen: 'Dharmshala' },
-    { title: 'Committees', screen: 'Committees' },
+    { title: 'Committees', screen: 'Community' },
     { title: 'Be an Activist' },
     { title: 'Activist', screen: 'Activist' },
-    { title: 'Advertise with Us', screen: 'AdvertiseWithUs' },
-    { title: 'Success Stories', screen: 'SuccessStories' },
+    { title: 'Advertise with Us'},
+    { title: 'Success Stories'},
     { title: 'Account & Settings', screen: 'AccountSettings' },
-    { title: 'Share App', screen: 'ShareApp' },
-    { title: 'Feedback/Suggestion', screen: 'FeedbackSuggestion' },
-    { title: 'About Us', screen: 'AboutUs' },
+    { title: 'Share App'},
+    { title: 'Feedback/Suggestion', screen: 'FeedBack' },
+    { title: 'About Us'},
   ];
 
   const handleNavigation = (screen) => {
@@ -40,6 +40,7 @@ const CustomDrawer = (props) => {
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
     >
+    <Entypo name={'cross'} size={30} color={Colors.light} onPress={()=>navigation.navigate('Tabs')}/>
       <View style={styles.header}>
         <Image
           source={require('../../Images/Profile1.png')}
@@ -54,7 +55,7 @@ const CustomDrawer = (props) => {
         </TouchableOpacity>
       </View>
 
-      <View>
+      <ScrollView showsVerticalScrollIndicator={false}>
         {menuItems.map((item, index) => (
           <TouchableOpacity
             key={index}
@@ -64,7 +65,7 @@ const CustomDrawer = (props) => {
             <Text style={styles.buttonText}>{item.title}</Text>
           </TouchableOpacity>
         ))}
-      </View>
+      </ScrollView>
     </DrawerContentScrollView>
   );
 };
@@ -77,21 +78,21 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical:SH(5),
+    paddingVertical:SH(10),
     paddingHorizontal: 15,
     borderBottomWidth: 0,
     position: 'relative',
   },
   profileImage: {
-    width:SW(50),
-    height:SH(50),
+    width:SW(45),
+    height:SH(45),
     borderRadius: 30,
   },
   userInfo: {
-    marginLeft: SW(15),
+    marginLeft: SW(9),
   },
   name: {
-    fontSize:SF(15),
+    fontSize:SF(13),
     color: '#fff',
     fontWeight: 'bold',
     fontFamily:"Poppins-Regular"
@@ -102,13 +103,13 @@ const styles = StyleSheet.create({
   },
   editIcon: {
     position: 'absolute',
-    right: SW(10),
+    right: SW(1),
     top:SH(20),
   },
   drawerButton: {
     marginHorizontal:SW(10),
     marginVertical:SH(5),
-    paddingVertical:SH(10),
+    paddingVertical:SH(15),
     paddingHorizontal:SW(10),
     borderRadius: 8,
     backgroundColor: 'transparent',

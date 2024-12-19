@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet} from 'react-native';
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -9,7 +9,6 @@ import Login from '../Screens/auth/Login';
 import Verification from '../Screens/auth/Verification';
 import Information from '../Screens/auth/Information';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Home from '../Screens/Tabs/Home';
@@ -22,9 +21,18 @@ import SavedProfile from '../Screens/DrawerScreen/SavedProfile';
 import PanditJyotish from '../Screens/DrawerScreen/PanditJyotish';
 import EventNews from '../Screens/DrawerScreen/EventNews';
 import CustomDrawer from '../Screens/DrawerScreen/CustomDrawer';
-import {SF,SH,SW} from '../utils/Dimensions';
+import BioData from '../Screens/DrawerScreen/BioData';
+import {SH,SW} from '../utils/Dimensions';
 import Colors from '../utils/Colors';
 import Dharmshala from '../Screens/DrawerScreen/Dharmshala';
+import Community from '../Screens/DrawerScreen/Community';
+import Activist from '../Screens/DrawerScreen/Activist';
+import AccountSettings from '../Screens/DrawerScreen/AccountSettings';
+import PartnersPreference from '../Screens/DrawerScreen/PartnersPreference';
+import FeedBack from '../Screens/DrawerScreen/FeedBack';
+import Joytish from '../Screens/DrawerScreen/Joytish';
+import Kathavachak from '../Screens/DrawerScreen/Kathavachak';
+import Explore from '../Screens/DrawerScreen/Explore';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -97,16 +105,25 @@ function MyDrawer() {
         headerShown: false,
         drawerStyle: {
           backgroundColor: '#8B1C44',
-          width:SW(240)
+          width:SW(210)
         },
       }}
     >
-      <Drawer.Screen name="Home" component={MyTabs} />
+      <Drawer.Screen name="Tabs" component={MyTabs} />
       <Drawer.Screen name="Interested Profile" component={IntrestedProfile} />
       <Drawer.Screen name="Saved Profile" component={SavedProfile} />
       <Drawer.Screen name="Pandit Jyotish" component={PanditJyotish} />
       <Drawer.Screen name="EventNews" component={EventNews} />
       <Drawer.Screen name="Dharmshala" component={Dharmshala} />
+      <Drawer.Screen name="BioData" component={BioData} />
+      <Drawer.Screen name="Community" component={Community} />
+      <Drawer.Screen name="Activist" component={Activist} />
+      <Drawer.Screen name="AccountSettings" component={AccountSettings} />
+      <Drawer.Screen name="PartnersPreference" component={PartnersPreference} />
+      <Drawer.Screen name="FeedBack" component={FeedBack} />
+      <Drawer.Screen name="Joytish" component={Joytish} />
+      <Drawer.Screen name="Kathavachak" component={Kathavachak} />
+      <Drawer.Screen name="Explore" component={Explore} />
     </Drawer.Navigator>
   );
 }

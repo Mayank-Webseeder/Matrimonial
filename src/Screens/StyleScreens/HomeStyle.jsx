@@ -48,12 +48,35 @@ const styles = StyleSheet.create({
         paddingVertical:SH(4),
         fontFamily:"Poppins-Bold"
     },
-    sliderImage:{
-        width:"95%",
-        height:SH(200),
-        marginBottom: SH(20),
-        margin:SW(10)
-    }
+    sliderContainer: {
+    marginBottom:SH(30)
+  },
+  sliderImage: {
+    width:"100%",
+    height:SH(220),
+    resizeMode: 'contain',
+  },
+  bottomImage:{
+    width:"100%",
+    height:SH(220),
+    resizeMode: 'contain',
+    marginBottom:SH(20)
+  },
+  dot: {
+    width:SW(25),
+    height:SH(5),
+    borderRadius: 4,
+    backgroundColor: '#ccc',
+    marginHorizontal:SH(2),
+     marginTop:SW(100)
+  },
+  activeDot: {
+    width: SW(25),
+    height: SH(5),
+    borderRadius: 4,
+    backgroundColor:Colors.theme_color,
+    marginTop:SW(100)
+  },
    
 });
 

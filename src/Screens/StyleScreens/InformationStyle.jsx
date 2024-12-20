@@ -77,13 +77,13 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalContent: {
         backgroundColor: 'white',
         padding: 20,
         borderRadius: 10,
-        width: '80%', // Adjust based on your design
+        width: '80%',
     },
 });
 

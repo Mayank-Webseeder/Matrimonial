@@ -1,4 +1,4 @@
-import { Text, View, FlatList, TouchableOpacity, TextInput, ScrollView } from 'react-native'
+import { Text, View, FlatList, TouchableOpacity, TextInput } from 'react-native'
 import React,{useState} from 'react'
 import { PanditData, slider } from '../../DummyData/DummyData'
 import { Image } from 'react-native';
@@ -9,7 +9,7 @@ import Colors from '../../utils/Colors';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import { Rating } from 'react-native-ratings';
-const PanditJyotish = ({ navigation }) => {
+const Pandit = ({ navigation }) => {
    const [activeButton, setActiveButton] = useState(null);
   const renderItem = ({ item }) => {
     return (
@@ -64,7 +64,7 @@ const PanditJyotish = ({ navigation }) => {
           <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
           <Text style={{ color: Colors.theme_color }}>Pandit</Text>
         </TouchableOpacity>
-        <AntDesign name={'bells'} size={20} color={Colors.theme_color} />
+        <AntDesign name={'bells'} size={20} color={Colors.theme_color} onPress={()=>{navigation.navigate('Notification')}}/>
       </View>
       <View style={styles.searchbar}>
         <AntDesign name={'search1'} size={20} color={'gray'} />
@@ -125,4 +125,4 @@ const PanditJyotish = ({ navigation }) => {
   )
 }
 
-export default PanditJyotish
+export default Pandit

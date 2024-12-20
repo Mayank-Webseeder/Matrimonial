@@ -16,9 +16,10 @@ const styles = StyleSheet.create({
          
     },
     image:{
-        width:SW(100),
-        height:SH(90),
-        resizeMode:"contain"
+        width:SW(60),
+        height:SH(60),
+        resizeMode:"contain",
+        borderRadius:50
     },
     searchbar:{
         display:"flex",
@@ -38,28 +39,24 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
-    width: '98%',
-    padding:SW(10)
+    width: '95%',
+    marginHorizontal:SW(10),
+    padding:SW(10),
+    flexDirection:"row",
+    justifyContent:"space-between"
     },
     cardData:{
       flexDirection:"row"
     },
     text:{
          fontFamily:"Poppins-Bold",
-         fontSize:SF(13)
+         fontSize:SF(16)
     },
-    sliderContainer:{
-     marginHorizontal:SW(5),
-     marginBottom:SH(150)
+    smalltext:{
+         fontFamily:"Poppins-Regular",
+         fontSize:SF(12)
     },
-    sliderImage:{
-     width:SW(320),
-     height:SH(200),
-    },
-    panditListData:{
-       marginVertical:SH(10),
-       marginBottom:SH(200)
-    },
+   
   ButtonContainer: {
     flex: 1,
     display:"flex",
@@ -75,60 +72,20 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     marginVertical:SH(20),
     borderRadius: 8,
-    marginHorizontal:SW(6)
+    marginHorizontal:SW(6),
+    backgroundColor:Colors.theme_color
   },
-  activeButton: {
-    backgroundColor:Colors.theme_color,
-  },
-  inactiveButton: {
-    backgroundColor: 'white',
-  },
-  activeText: {
-    color: 'white',
-  },
-  inactiveText: {
-    color: 'black',
-  },
-  icon: {
-    marginHorizontal: 10,
-  },
-
-  sharecontainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    backgroundColor: '#fff',
-  },
-  iconContainer: {
-    alignItems: 'center',
-    flexDirection:"row"
-  },
-  CityArea:{
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  rating:{
-    flexDirection: 'row',
-  },
-  iconText: {
-    fontSize: SF(8),
-    color:Colors.dark,
-    marginTop:SH(5),
-    marginLeft:SW(4)
-  },
+  
   Button: {
     backgroundColor:Colors.theme_color,
     paddingHorizontal:SH(20),
     paddingVertical:SH(5),
-    borderRadius: 8,
-    flexDirection:"row",
-    alignItems:"center"
+    borderRadius:50,
   },
   buttonText: {
     color:Colors.light,
    fontFamily:"Poppins-Regular",
-    fontSize:SF(10),
-    marginLeft:SW(2)
+    fontSize:SF(12),
   },
   mainContainer:{
     marginTop:SH(70),

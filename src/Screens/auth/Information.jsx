@@ -1,5 +1,5 @@
 import { Text, View, ImageBackground, TouchableOpacity, TextInput } from "react-native";
-import React, { useState } from "react";
+import React, { useState ,useEffect } from "react";
 import styles from "../StyleScreens/InformationStyle";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -8,6 +8,11 @@ const Information = ({ navigation }) => {
     const [selectedDate, setSelectedDate] = useState(null);  // Initially, no date selected
     const [showDatePicker, setShowDatePicker] = useState(false); // State to toggle the DatePicker
 
+    useEffect(() => {
+        console.log("selectedDate:", selectedDate);
+        console.log("showDatePicker:", showDatePicker);
+    }, [selectedDate, showDatePicker]);  // Monitor these states
+    
     const HandleLogin = () => {
         navigation.navigate("MainApp");
     };
@@ -55,12 +60,12 @@ const Information = ({ navigation }) => {
                             <Text style={styles.dateText}>
                                 {selectedDate ? formatDate(selectedDate) : ' '}
                             </Text>
-                            <AntDesign
-                                name={'down'}
-                                size={15}
-                                onPress={() => setShowDatePicker(true)}
-                                style={styles.arrow}
-                            />
+                            <TouchableOpacity onPress={() => {
+    console.log("Icon clicked");
+    setShowDatePicker(true)
+}}>
+    <AntDesign name={'down'} size={20} style={styles.arrow} />
+</TouchableOpacity>
                         </View>
 
                     </View>

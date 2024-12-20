@@ -64,7 +64,7 @@ const Kathavachak = ({ navigation }) => {
           <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
           <Text style={{ color: Colors.theme_color }}>Kathavachak</Text>
         </TouchableOpacity>
-        <AntDesign name={'bells'} size={20} color={Colors.theme_color} />
+        <AntDesign name={'bells'} size={20} color={Colors.theme_color} onPress={()=>{navigation.navigate('Notification')}}/>
       </View>
       <View style={styles.searchbar}>
         <AntDesign name={'search1'} size={20} color={'gray'} />

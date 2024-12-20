@@ -1,15 +1,15 @@
 import { Text, View, FlatList, TouchableOpacity, TextInput } from 'react-native'
 import React, { useState } from 'react'
-import { slider, CommitteeDataList } from '../../DummyData/DummyData'
+import { slider, CommitteeFilterDataList } from '../../DummyData/DummyData'
 import { Image } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import styles from '../StyleScreens/CommunityStyle';
+import styles from '../StyleScreens/CommunityFilterStyle';
 import Colors from '../../utils/Colors';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 
-const Community = ({ navigation }) => {
+const CommunityFilter = ({ navigation }) => {
   const [activeButton, setActiveButton] = useState(null);
   const handleFilter=()=>{
     setActiveButton(1)
@@ -22,11 +22,7 @@ const Community = ({ navigation }) => {
           <Image source={item.image} style={styles.image} />
           <View style={{ marginLeft: 10, flex: 1 }}>
             <Text style={styles.text}>{item.name}</Text>
-            <View style={styles.CityArea}>
-              <Text style={styles.text}>{item.city}</Text>
-              <Text style={styles.text}>{item.subcaste}</Text>
-              <Text style={styles.text}>{item.area}</Text>
-            </View>
+            <Text style={styles.text}>{item.profile}</Text>
             <View style={styles.sharecontainer}>
               <View style={styles.iconContainer}>
                 <FontAwesome name="bookmark-o" size={15} color={Colors.dark} />
@@ -37,6 +33,10 @@ const Community = ({ navigation }) => {
                 <Feather name="send" size={15} color={Colors.dark} />
                 <Text style={styles.iconText}>Shares</Text>
               </View>
+              <TouchableOpacity style={styles.Button}>
+            <AntDesign name="phone" size={10} color={Colors.light} />
+            <Text style={styles.buttonText}>Request for call</Text>
+          </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -99,8 +99,13 @@ const Community = ({ navigation }) => {
         horizontal={true}
         showsHorizontalScrollIndicator={false}
       />
+      <View style={styles.filterText}>
+        <Text style={styles.filterHeading}>Indore</Text>
+        <Text style={styles.filterHeading}>Vijay Nagar</Text>
+        <Text style={styles.filterHeading}>Sub-caste</Text>
+      </View>
       <FlatList
-        data={CommitteeDataList}
+        data={CommitteeFilterDataList}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         scrollEnabled={true}
@@ -112,4 +117,4 @@ const Community = ({ navigation }) => {
   )
 }
 
-export default Community
+export default CommunityFilter

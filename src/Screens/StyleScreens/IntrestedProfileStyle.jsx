@@ -85,7 +85,7 @@ searchBar: {
     alignItems: 'center',
     borderRadius: 50,
     paddingHorizontal: SH(10),
-    height:SH(10),
+    height:SH(35),
     backgroundColor:Colors.gray,
     marginHorizontal: SW(10),
     marginVertical:SH(5),

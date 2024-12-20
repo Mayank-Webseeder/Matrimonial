@@ -21,13 +21,11 @@ const styles = StyleSheet.create({
         resizeMode:"contain"
     },
     searchbar:{
-        display:"flex",
-        flexDirection:"row",
-        alignItems:"center",
         backgroundColor:Colors.gray,
         marginHorizontal:SW(10),
         borderRadius:50,
         paddingHorizontal:SW(10),
+        width:SW(250)
     },
     card:{
     backgroundColor: '#fff',
@@ -56,39 +54,10 @@ const styles = StyleSheet.create({
      width:SW(320),
      height:SH(200),
     },
-    panditListData:{
+    DharamSalaList:{
        marginVertical:SH(10),
        marginBottom:SH(200)
     },
-  ButtonContainer: {
-    flex: 1,
-    display:"flex",
-    flexDirection:"row",
-    justifyContent:"space-between"
-  },
-  button: {
-    width:SW(100),
-    height:SH(40),
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'black',
-    marginVertical:SH(20),
-    borderRadius: 8,
-    marginHorizontal:SW(6)
-  },
-  activeButton: {
-    backgroundColor:Colors.theme_color,
-  },
-  inactiveButton: {
-    backgroundColor: 'white',
-  },
-  activeText: {
-    color: 'white',
-  },
-  inactiveText: {
-    color: 'black',
-  },
   icon: {
     marginHorizontal: 10,
   },
@@ -96,22 +65,20 @@ const styles = StyleSheet.create({
   sharecontainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    justifyContent:'flex-start',
     backgroundColor: '#fff',
   },
   iconContainer: {
     alignItems: 'center',
     flexDirection:"row"
   },
-  CityArea:{
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  smalltext:{
+    fontFamily:"Poppins-Regular",
+    fontSize:SF(12)
   },
-  rating:{
-    flexDirection: 'row',
-  },
+ 
   iconText: {
-    fontSize: SF(8),
+    fontSize: SF(10),
     color:Colors.dark,
     marginTop:SH(5),
     marginLeft:SW(4)
@@ -122,7 +89,8 @@ const styles = StyleSheet.create({
     paddingVertical:SH(5),
     borderRadius: 8,
     flexDirection:"row",
-    alignItems:"center"
+    alignItems:"center",
+    marginLeft:SW(5)
   },
   buttonText: {
     color:Colors.light,
@@ -131,10 +99,19 @@ const styles = StyleSheet.create({
     marginLeft:SW(2)
   },
   mainContainer:{
-    marginTop:SH(70),
-    flex:1
-  }
-   
+    marginTop:SH(10)
+  },
+  filterContainer:{
+    backgroundColor:Colors.gray,
+    padding:SW(10),
+    borderRadius:50,
+    flexDirection:"row",
+  },
+  searchContainer:{
+    flexDirection:"row",
+    justifyContent:"space-between"
+  },
+ 
 });
 
 export default styles;

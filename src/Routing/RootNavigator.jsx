@@ -18,7 +18,6 @@ import Location from '../Screens/Tabs/Location';
 import SearchBook from '../Screens/Tabs/SearchBook';
 import IntrestedProfile from '../Screens/DrawerScreen/IntrestedProfile';
 import SavedProfile from '../Screens/DrawerScreen/SavedProfile';
-import PanditJyotish from '../Screens/DrawerScreen/PanditJyotish';
 import EventNews from '../Screens/DrawerScreen/EventNews';
 import CustomDrawer from '../Screens/DrawerScreen/CustomDrawer';
 import BioData from '../Screens/DrawerScreen/BioData';
@@ -33,6 +32,11 @@ import FeedBack from '../Screens/DrawerScreen/FeedBack';
 import Joytish from '../Screens/DrawerScreen/Joytish';
 import Kathavachak from '../Screens/DrawerScreen/Kathavachak';
 import Explore from '../Screens/DrawerScreen/Explore';
+import Pandit from '../Screens/DrawerScreen/Pandit';
+import Notification from '../Screens/DrawerScreen/Notification';
+import Filter from '../Screens/DrawerScreen/Filter';
+import DharamsalaDetail from '../Screens/DrawerScreen/DharamsalaDetail';
+import CommunityFilter from '../Screens/DrawerScreen/CommunityFilter';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -112,7 +116,7 @@ function MyDrawer() {
       <Drawer.Screen name="Tabs" component={MyTabs} />
       <Drawer.Screen name="Interested Profile" component={IntrestedProfile} />
       <Drawer.Screen name="Saved Profile" component={SavedProfile} />
-      <Drawer.Screen name="Pandit Jyotish" component={PanditJyotish} />
+      <Drawer.Screen name="Pandit" component={Pandit} />
       <Drawer.Screen name="EventNews" component={EventNews} />
       <Drawer.Screen name="Dharmshala" component={Dharmshala} />
       <Drawer.Screen name="BioData" component={BioData} />
@@ -124,6 +128,10 @@ function MyDrawer() {
       <Drawer.Screen name="Joytish" component={Joytish} />
       <Drawer.Screen name="Kathavachak" component={Kathavachak} />
       <Drawer.Screen name="Explore" component={Explore} />
+      <Drawer.Screen name="Notification" component={Notification} />
+      <Drawer.Screen name="Filter" component={Filter} />
+      <Drawer.Screen name="DharamsalaDetail" component={DharamsalaDetail} />
+      <Drawer.Screen name="CommunityFilter" component={CommunityFilter} />
     </Drawer.Navigator>
   );
 }

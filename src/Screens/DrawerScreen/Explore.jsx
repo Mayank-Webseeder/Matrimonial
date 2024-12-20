@@ -44,7 +44,7 @@ const Explore = ({ navigation }) => {
         </TouchableOpacity>
         <View style={styles.righticons}>
           <AntDesign name={'search1'} size={20} color={Colors.theme_color} style={{ marginHorizontal: 10 }} />
-          <AntDesign name={'bells'} size={20} color={Colors.theme_color} />
+          a
         </View>
       </View>
       <View style={styles.sliderContainer}>

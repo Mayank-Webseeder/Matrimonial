@@ -12,7 +12,7 @@ const CustomDrawer = (props) => {
     { title: 'Partners Preference', screen: 'PartnersPreference' },
     { title: 'Interested Profile', screen: 'Interested Profile' },
     { title: 'Saved Profile', screen: 'Saved Profile' },
-    { title: 'Pandit/Jyotish', screen: 'Pandit Jyotish' },
+    { title: 'Pandit/Jyotish', screen: 'Pandit' },
     { title: 'Event/News', screen: 'EventNews' },
     { title: 'Dharmshala', screen: 'Dharmshala' },
     { title: 'Committees', screen: 'Community' },

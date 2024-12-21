@@ -338,3 +338,68 @@ export const CommitteeFilterDataList = [
       image: require('../Images/Committee.png')
    }
 ]
+export const PanditDetailData = [
+   {
+     id: "1",
+     name: "Raghuveer Sharma",
+     rating: "4.2",
+     city: "Indore",
+     surname: "Ghatiya",
+     image: require('../Images/PanditLogo.png'),
+     description: `Acharya Kiran is a well-known Astrologer. Having experience in the field of Vedic Astrology. Born and brought up in a Brahmin family, she has also benefited from the immense knowledge related to her grandfather. She has had a natural liking for Astrology since the age of 15.`,
+     abilities: `Acharya Kiran is a qualified Astrologer who gives accurate future readings through a medium of Vedic Astrology. She is a Professional Certified Consultant who also uses her intuition to guide all her clients, encouraging them to move in a positive direction and face the challenges that may lie ahead of them.
+     The remedies suggested by her have a scientific background and are very easy to follow, which does not disturb the regular schedule. While predicting, she also highlights the period to be taken care of health and for money investments which helps to plan future steps.
+     She has a repeat clientele of 99.9%. Join the many thousands of people who have used her services to gain a better understanding of their lives, direction, and where they are going.`,
+     experience: "11 Years",
+     expertise: [
+       "She is an expert in Love & Relationships, Marriage, Career, Money, and Everyday Life.",
+       "Consult India's best astrologer Acharya Kiran for Free. It is true; just register & Get First Call Consultancy Free.",
+       "Are you open to receiving the best advice? Get in touch with her immediately to discuss your problems and get instant solutions."
+     ],
+     servicesList: [
+       "Janam Kundli",
+       "Kundali Matching",
+       "Vastu Consultants",
+       "Palm Reading",
+       "Love Problem",
+       "Nadi Dosh",
+       "Eye Reading",
+       "Business Astrology",
+       "Medical Astrology",
+       "Psychological Astrology",
+       "Wealth Astrology"
+     ],
+     reviews: [
+       {
+         reviewerName: "Aman Patel",
+         reviewerCountry: "🇺🇸US",
+         reviewerStatus: "Verified User",
+         reviewDate: "Nov 09, 2022",
+         reviewText: "Friendly, Great Solution 💯 He is like my godfather, he supported me and is trying to solve my problems. Now, he is also giving exact solutions. Thank you for giving me strength and confidence. I’m grateful.",
+         helpful: {
+           yes: 2,
+           no: 0
+         }
+       },
+       {
+         reviewerName: "Priya Sharma",
+         reviewerCountry: "🇮🇳India",
+         reviewerStatus: "Verified User",
+         reviewDate: "Jan 15, 2023",
+         reviewText: "Excellent guidance! I was facing challenges in my career, and Acharya Kiran’s advice was truly insightful. Her predictions were spot on, and the remedies worked well for me. I’m highly satisfied.",
+         helpful: {
+           yes: 3,
+           no: 1
+         },
+       }
+     ],
+     images:[
+      require('../Images/EventImage2.png'),
+      require('../Images/EventImage2.png'),
+      require('../Images/EventImage2.png'),
+      require('../Images/EventImage2.png'),
+      require('../Images/EventImage2.png'),
+  ]
+   }
+ ];
+ 

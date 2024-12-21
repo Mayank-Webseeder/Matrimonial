@@ -11,9 +11,13 @@ import Feather from 'react-native-vector-icons/Feather';
 import { Rating } from 'react-native-ratings';
 const Kathavachak = ({ navigation }) => {
    const [activeButton, setActiveButton] = useState(null);
+   const handleRegister=()=>{
+    setActiveButton(2)
+    navigation.navigate('KathavachakRegister')
+   }
   const renderItem = ({ item }) => {
     return (
-      <View style={styles.card}>
+      <TouchableOpacity style={styles.card} onPress={()=>navigation.navigate('KathavachakDetailsPage')}>
         <View style={styles.cardData}>
           <Image source={item.image} style={styles.image} />
           <View style={{ marginLeft: 10 }}>
@@ -54,7 +58,7 @@ const Kathavachak = ({ navigation }) => {
             <Text style={styles.buttonText}>Request for call</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </TouchableOpacity>
     )
   }
   return (
@@ -88,7 +92,7 @@ const Kathavachak = ({ navigation }) => {
           styles.button,
           activeButton === 2 ? styles.activeButton : styles.inactiveButton,
         ]}
-        onPress={() => setActiveButton(2)}
+        onPress={handleRegister}
       >
         <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>
        Register

@@ -56,24 +56,25 @@ const styles = StyleSheet.create({
         marginBottom:SH(15)
     },
     phoneText: {
-        position: "absolute",
-        left: SW(45),
-        top: SH(490),
         backgroundColor: Colors.light,
         zIndex: 10,
         paddingHorizontal: SW(5),
         paddingVertical: SH(2),
-        color: Colors.theme_color
+        color: Colors.theme_color,
+        marginLeft:SW(35),
+        marginBottom:-SH(10),
+        width:SW(113)
+
     },
     password: {
-        position: "absolute",
-        left: SW(45),
-        top: SH(566),
         backgroundColor: Colors.light,
         zIndex: 10,
         paddingHorizontal: SW(5),
         paddingVertical: SH(2),
-        color: Colors.theme_color
+        color: Colors.theme_color,
+        marginLeft:SW(35),
+        marginBottom:-SH(10),
+        width:SW(80)
     }
 
 });

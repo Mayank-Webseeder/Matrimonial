@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   sharecontainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
     backgroundColor: '#fff',
   },
   iconContainer: {
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   iconText: {
-    fontSize: SF(8),
+    fontSize: SF(6),
     color:Colors.dark,
     marginTop:SH(5),
     marginLeft:SW(4)
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     paddingVertical:SH(5),
     borderRadius: 8,
     flexDirection:"row",
-    alignItems:"center"
+    alignItems:"center",
   },
   buttonText: {
     color:Colors.light,

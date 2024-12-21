@@ -37,6 +37,12 @@ import Notification from '../Screens/DrawerScreen/Notification';
 import Filter from '../Screens/DrawerScreen/Filter';
 import DharamsalaDetail from '../Screens/DrawerScreen/DharamsalaDetail';
 import CommunityFilter from '../Screens/DrawerScreen/CommunityFilter';
+import PanditRegister from '../Screens/DrawerScreen/PanditRegister';
+import PanditDetailPage from '../Screens/DrawerScreen/PanditDetailPage';
+import KathavachakDetailsPage from '../Screens/DrawerScreen/KathavachakDetailsPage';
+import JyotishDetailsPage from '../Screens/DrawerScreen/JyotishDetailsPage';
+import JyotishRegister from '../Screens/DrawerScreen/JyotishRegister';
+import KathavachakRegister from '../Screens/DrawerScreen/KathavachakRegister';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -132,6 +138,13 @@ function MyDrawer() {
       <Drawer.Screen name="Filter" component={Filter} />
       <Drawer.Screen name="DharamsalaDetail" component={DharamsalaDetail} />
       <Drawer.Screen name="CommunityFilter" component={CommunityFilter} />
+      <Drawer.Screen name="PanditRegister" component={PanditRegister} />
+      <Drawer.Screen name="PanditDetailPage" component={PanditDetailPage} />
+      <Drawer.Screen name="KathavachakDetailsPage" component={KathavachakDetailsPage} />
+      <Drawer.Screen name="JyotishDetailsPage" component={JyotishDetailsPage} />
+      <Drawer.Screen name="JyotishRegister" component={JyotishRegister} />
+      <Drawer.Screen name="KathavachakRegister" component={KathavachakRegister} />
+      
     </Drawer.Navigator>
   );
 }

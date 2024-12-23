@@ -5,6 +5,7 @@ import styles from './StyleScreens/SplashStyle'
 const Splash = ({ navigation }) => {
     const HandleLogin = () => {
         navigation.navigate('Login')
+        navigation.navigate('Register')
     }
     return (
         <View style={styles.container}>
@@ -15,7 +16,9 @@ const Splash = ({ navigation }) => {
                 </TouchableOpacity>
                 <View style={styles.signUpTextContainer}>
                     <Text style={styles.signuptext}>Don’t have an account?</Text>
+                    <TouchableOpacity onPress={()=>navigation.navigate('Register')}>
                     <Text style={styles.boldSignupText}>Sign Up</Text>
+                    </TouchableOpacity>
                 </View>
             </ImageBackground>
         </View>

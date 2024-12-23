@@ -2,9 +2,9 @@ import { Text, View, ImageBackground, TouchableOpacity, TextInput, ScrollView } 
 import React from "react";
 import styles from "../StyleScreens/LoginStyle";
 
-const Login = ({ navigation }) => {
-    const HandleLogin = () => {
-        navigation.navigate("LoginSuccess");
+const Register = ({ navigation }) => {
+    const HandleRegister = () => {
+        navigation.navigate("Verification");
     };
 
     return (
@@ -17,7 +17,7 @@ const Login = ({ navigation }) => {
                     contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
                     showsVerticalScrollIndicator={false}
                 >
-                    <Text style={styles.text}>Login</Text>
+                    <Text style={styles.text}>Signup</Text>
                     <Text style={styles.passwordText}>
                         Enter phone number to send one time Password
                     </Text>
@@ -27,13 +27,7 @@ const Login = ({ navigation }) => {
                     <TextInput
                         style={styles.inputText}
                     />
-                     <Text style={styles.password}>
-                    Password
-                    </Text>
-                    <TextInput
-                        style={styles.inputText}
-                    />
-                    <TouchableOpacity style={styles.button} onPress={HandleLogin}>
+                    <TouchableOpacity style={styles.button} onPress={HandleRegister}>
                         <Text style={styles.buttonText}>Continue</Text>
                     </TouchableOpacity>
                 </ScrollView>
@@ -42,4 +36,4 @@ const Login = ({ navigation }) => {
     );
 };
 
-export default Login;
+export default Register;

@@ -4,7 +4,7 @@ import styles from "../StyleScreens/VerificationStyle";
 
 const Verfication = ({ navigation }) => {
     const HandleLogin = () => {
-        navigation.navigate("LoginSuccess");
+        navigation.navigate("Login");
     };
 
     return (

@@ -36,7 +36,7 @@ const IntrestedProfile = ({ navigation }) => {
     );
   };
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.navigate('Tabs')} style={{flexDirection:"row"}}>
           <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
@@ -59,7 +59,8 @@ const IntrestedProfile = ({ navigation }) => {
         onSlideChange={(index) => setCurrentIndex(index)}
       />
       </View>
-     <View>
+    <ScrollView>
+       <View>
      <View style={styles.ButtonContainer}>
       <TouchableOpacity
         style={[
@@ -143,6 +144,7 @@ const IntrestedProfile = ({ navigation }) => {
     </View>
     <Image source={require('../../Images/profile3.png')} style={styles.ProfileImage}/>
     </ScrollView>
+    </View>
   );
 };
 

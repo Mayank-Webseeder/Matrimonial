@@ -36,7 +36,7 @@ const Explore = ({ navigation }) => {
     );
   };
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.navigate('Tabs')} style={{ flexDirection: "row" }}>
           <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
@@ -59,7 +59,8 @@ const Explore = ({ navigation }) => {
           onSlideChange={(index) => setCurrentIndex(index)}
         />
       </View>
-      <View>
+     <ScrollView>
+     <View>
         <View style={[styles.ButtonContainer, { marginHorizontal: 80 }]}>
           <TouchableOpacity
             style={[
@@ -144,7 +145,8 @@ const Explore = ({ navigation }) => {
         </View>
       </View>
       <Image source={require('../../Images/profile3.png')} style={styles.ProfileImage} />
-    </ScrollView>
+     </ScrollView>
+    </View>
   );
 };
 

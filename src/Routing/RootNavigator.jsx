@@ -43,6 +43,7 @@ import KathavachakDetailsPage from '../Screens/DrawerScreen/KathavachakDetailsPa
 import JyotishDetailsPage from '../Screens/DrawerScreen/JyotishDetailsPage';
 import JyotishRegister from '../Screens/DrawerScreen/JyotishRegister';
 import KathavachakRegister from '../Screens/DrawerScreen/KathavachakRegister';
+import Register from '../Screens/auth/Register';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -157,7 +158,8 @@ const RootNavigator = () => {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="Splash" component={Splash} />
+      <Stack.Screen name="Splash" component={Splash} /> 
+      <Stack.Screen name="Register" component={Register} />
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Verification" component={Verification} />
       <Stack.Screen name="LoginSuccess" component={LoginSuccess} />

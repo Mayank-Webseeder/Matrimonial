@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     paddingVertical: SH(7),
   },
   heading: {
-    fontSize: SF(18),
+    fontSize: SF(15),
     fontFamily: 'Poppins-Bold',
   },
   viewAllText: {

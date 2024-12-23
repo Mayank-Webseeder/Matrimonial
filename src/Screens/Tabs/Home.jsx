@@ -36,7 +36,7 @@ const Home = ({ navigation }) => {
     <View style={styles.container}>
      <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
-          <AntDesign name={'menufold'} size={20} color={Colors.theme_color} />
+          <Image source={require('../../Images/menu.png')}/>
         </TouchableOpacity>
         <View style={styles.righticons}>
           <AntDesign name={'search1'} size={20} color={Colors.theme_color} style={{marginHorizontal:10}} />

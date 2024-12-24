@@ -4,11 +4,12 @@ import { SH,SW,SF } from "../../utils/Dimensions";
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      padding: 16,
+      padding:SW(16),
       backgroundColor:Colors.light
     },
     header:{
-          padding:SW(10),    
+          padding:SW(10), 
+          paddingLeft:0   
     },
     profileSection: {
       alignItems: 'center',
@@ -136,6 +137,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: '#fff',
+    marginVertical:SH(10)
   },
   iconContainer: {
     alignItems: 'center',
@@ -155,5 +157,8 @@ const styles = StyleSheet.create({
     fontSize:SF(10),
     marginLeft:SW(2)
   },
+  iconText:{
+    marginHorizontal:SW(5)
+  }
   });
   export default styles;

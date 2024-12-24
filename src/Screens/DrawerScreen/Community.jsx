@@ -29,12 +29,12 @@ const Community = ({ navigation }) => {
             </View>
             <View style={styles.sharecontainer}>
               <View style={styles.iconContainer}>
-                <FontAwesome name="bookmark-o" size={15} color={Colors.dark} />
+                <FontAwesome name="bookmark-o" size={20} color={Colors.dark} />
                 <Text style={styles.iconText}>Save</Text>
               </View>
 
               <View style={styles.iconContainer}>
-                <Feather name="send" size={15} color={Colors.dark} />
+                <Feather name="send" size={20} color={Colors.dark} />
                 <Text style={styles.iconText}>Shares</Text>
               </View>
             </View>

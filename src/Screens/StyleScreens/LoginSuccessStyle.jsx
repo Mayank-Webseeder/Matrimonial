@@ -38,18 +38,18 @@ const styles = StyleSheet.create({
     button: {
         backgroundColor: Colors.theme_color,
         padding: SW(7),
-        marginHorizontal: SW(55),
+        marginHorizontal: SW(35),
         borderRadius: 50,
-        marginTop: SH(30),
-    },
+        marginTop: SH(35),
+        width:SW(300)
 
+    },
     buttonText: {
         textAlign: "center",
         color: Colors.light,
         fontFamily: "Poppins-Bold",
-        fontSize: SF(20),
+        fontSize: SF(20)
     },
-
     success_image: {
         width: SW(100),
         height: SH(105),

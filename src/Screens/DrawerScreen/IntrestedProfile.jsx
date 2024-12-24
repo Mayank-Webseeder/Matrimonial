@@ -133,7 +133,7 @@ const IntrestedProfile = ({ navigation }) => {
       </TouchableOpacity>
 
       <View style={styles.iconContainer}>
-        <AntDesign name="phone" size={24} color={Colors.dark}/>
+      <MaterialIcons name="call" size={24} color={Colors.dark} />
         <Text style={styles.iconText}>Call</Text>
       </View>
 

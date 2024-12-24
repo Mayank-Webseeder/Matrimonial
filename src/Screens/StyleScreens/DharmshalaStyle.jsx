@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent:'flex-start',
     backgroundColor: '#fff',
+    margin:SW(5)
   },
   iconContainer: {
     alignItems: 'center',
@@ -78,7 +79,7 @@ const styles = StyleSheet.create({
   },
  
   iconText: {
-    fontSize: SF(10),
+    fontSize: SF(11),
     color:Colors.dark,
     marginTop:SH(5),
     marginLeft:SW(4)
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color:Colors.light,
    fontFamily:"Poppins-Regular",
-    fontSize:SF(10),
+    fontSize:SF(11),
     marginLeft:SW(2)
   },
   mainContainer:{

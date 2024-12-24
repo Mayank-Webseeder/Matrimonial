@@ -90,6 +90,9 @@ const styles = StyleSheet.create({
   mainContainer:{
     marginTop:SH(70),
     flex:1
+  },
+  searchIcon:{
+    marginHorizontal:SW(10)
   }
    
 });

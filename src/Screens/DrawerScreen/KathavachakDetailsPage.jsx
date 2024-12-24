@@ -80,7 +80,7 @@ const KathavachakDetailsPage = ({ navigation }) => {
             <Text style={styles.iconText}>Report</Text>
           </View>
           <TouchableOpacity style={styles.Button}>
-            <AntDesign name="phone" size={10} color={Colors.light} />
+            <MaterialIcons name="call" size={20} color={Colors.light} />
             <Text style={styles.buttonText}>Request for call</Text>
           </TouchableOpacity>
         </View>

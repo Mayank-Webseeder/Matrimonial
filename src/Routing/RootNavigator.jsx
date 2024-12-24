@@ -44,6 +44,7 @@ import JyotishDetailsPage from '../Screens/DrawerScreen/JyotishDetailsPage';
 import JyotishRegister from '../Screens/DrawerScreen/JyotishRegister';
 import KathavachakRegister from '../Screens/DrawerScreen/KathavachakRegister';
 import Register from '../Screens/auth/Register';
+import PhotoGallery from '../Screens/DrawerScreen/PhotoGallery';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -145,7 +146,8 @@ function MyDrawer() {
       <Drawer.Screen name="JyotishDetailsPage" component={JyotishDetailsPage} />
       <Drawer.Screen name="JyotishRegister" component={JyotishRegister} />
       <Drawer.Screen name="KathavachakRegister" component={KathavachakRegister} />
-      
+      <Drawer.Screen name="PhotoGallery" component={PhotoGallery} />
+      <Drawer.Screen name="Profile" component={Profile} />
     </Drawer.Navigator>
   );
 }

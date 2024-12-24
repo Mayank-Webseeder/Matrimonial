@@ -37,7 +37,7 @@ const Activist = ({ navigation }) => {
           <Text style={{ color: Colors.theme_color }}>Activist</Text>
         </TouchableOpacity>
        <View style={{ flexDirection: "row" }}>
-       <AntDesign name="search1" size={20} color={Colors.theme_color} />
+       <AntDesign name="search1" size={20} color={Colors.theme_color} style={styles.searchIcon} />
        <AntDesign name={'bells'} size={20} color={Colors.theme_color} onPress={()=>{navigation.navigate('Notification')}}/>
        </View>
       </View>

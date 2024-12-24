@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   icon: {
-    marginHorizontal: 10,
+    marginHorizontal:SW(10),
   },
 
   sharecontainer: {
@@ -98,6 +98,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: '#fff',
+    marginHorizontal:SW(10),
+    paddingVertical:SH(10)
   },
   iconContainer: {
     alignItems: 'center',
@@ -111,14 +113,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   iconText: {
-    fontSize: SF(6),
+    fontSize: SF(11),
     color:Colors.dark,
     marginTop:SH(5),
     marginLeft:SW(4)
   },
   Button: {
     backgroundColor:Colors.theme_color,
-    paddingHorizontal:SH(20),
+    paddingHorizontal:SH(15),
     paddingVertical:SH(5),
     borderRadius: 8,
     flexDirection:"row",
@@ -127,7 +129,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color:Colors.light,
    fontFamily:"Poppins-Regular",
-    fontSize:SF(10),
+    fontSize:SF(12),
     marginLeft:SW(2)
   },
   mainContainer:{

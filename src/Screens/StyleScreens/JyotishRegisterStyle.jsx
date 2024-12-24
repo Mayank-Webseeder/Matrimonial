@@ -20,10 +20,9 @@ const styles = StyleSheet.create({
        shadowRadius: 4,
      },
      label: {
-       fontSize:SF(12),
+       fontSize:SF(15),
        marginBottom: 5,
-       fontWeight: 'bold',
-       color: '#333',
+      fontFamily:"poppins-Regular"
      },
      input: {
        height:SH(40),
@@ -53,7 +52,11 @@ const styles = StyleSheet.create({
      },
      arrow:{
        marginLeft:SW(290)
-     }
+     },
+     iconText:{
+      fontSize:SF(13),
+      marginHorizontal:SW(5)
+    }
    });
 
 export default styles;

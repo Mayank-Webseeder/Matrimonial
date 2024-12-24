@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
      header:{
         padding:SW(10),  
         backgroundColor:Colors.light,  
-        paddingTop:SH(30)
+        paddingTop:SH(30),
   },
      form: {
        backgroundColor:Colors.light,
@@ -20,10 +20,9 @@ const styles = StyleSheet.create({
        shadowRadius: 4,
      },
      label: {
-       fontSize:SF(12),
+       fontSize:SF(15),
        marginBottom: 5,
-       fontWeight: 'bold',
-       color: '#333',
+      fontFamily:"poppins-Regular"
      },
      input: {
        height:SH(40),

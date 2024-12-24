@@ -42,11 +42,13 @@ const styles = StyleSheet.create({
     },
     images:{
         width:SW(80),
-        height:SH(80)
+        height:SH(80),
+        resizeMode:"contain"
     },
     text:{
         paddingVertical:SH(4),
-        fontFamily:"Poppins-Bold"
+        fontFamily:"Poppins-Bold",
+        paddingBottom:0
     },
     sliderContainer: {
     marginBottom:SH(30)

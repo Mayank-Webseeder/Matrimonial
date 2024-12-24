@@ -5,7 +5,6 @@ import styles from './StyleScreens/SplashStyle'
 const Splash = ({ navigation }) => {
     const HandleLogin = () => {
         navigation.navigate('Login')
-        navigation.navigate('Register')
     }
     return (
         <View style={styles.container}>

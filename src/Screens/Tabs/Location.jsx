@@ -26,21 +26,21 @@ const Location = () => {
     { label: 'Drink', value: false },
     { label: 'Cooking', value: false },
   ];
-  
+
   return (
     <View style={styles.container}>
-      <View style={styles.topContainer}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.navigate('Tabs')} style={{ flexDirection: "row" }}>
-            <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
-            <Text style={{ color: Colors.theme_color }}>Raj Sharma</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.navigate('Tabs')} style={{ flexDirection: "row" }}>
+          <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
+          <Text style={{ color: Colors.theme_color }}>Raj Sharma</Text>
+        </TouchableOpacity>
+      </View>
+      <ScrollView>
         <View style={styles.sliderCotainer}>
-          <Swiper 
-            style={styles.wrapper} 
-            showsButtons={true} 
-            autoplay={true} 
+          <Swiper
+            style={styles.wrapper}
+            showsButtons={true}
+            autoplay={true}
             autoplayTimeout={2.5}
             loop={true}
             dot={<View style={styles.dot} />}
@@ -80,7 +80,7 @@ const Location = () => {
             </TouchableOpacity>
 
             <View style={styles.iconContainer}>
-              <AntDesign name="phone" size={24} color={Colors.dark} />
+              <MaterialIcons name="call" size={24} color={Colors.dark} />
               <Text style={styles.iconText}>Call</Text>
             </View>
 
@@ -90,8 +90,6 @@ const Location = () => {
             </View>
           </View>
         </View>
-      </View>
-      <ScrollView>
         <View style={styles.flexContainer1}>
           <View>
             <Text style={styles.HeadingText}>Raj Sharma</Text>
@@ -163,24 +161,24 @@ const Location = () => {
         </View>
         <Text style={styles.ButtonText}>Request for contact</Text>
         <View style={styles.flexContainer1}>
-            <View>
-              <Text style={styles.HeadingText}>Other Details:</Text>
-              <Text style={styles.text}>Cooking: Yes</Text>
-              <Text style={styles.text}>Diet: Yes</Text>
-              <Text style={styles.text}>Smoke: No</Text>
-              <Text style={styles.text}>Drink: No</Text>
-            </View>
+          <View>
+            <Text style={styles.HeadingText}>Other Details:</Text>
+            <Text style={styles.text}>Cooking: Yes</Text>
+            <Text style={styles.text}>Diet: Yes</Text>
+            <Text style={styles.text}>Smoke: No</Text>
+            <Text style={styles.text}>Drink: No</Text>
           </View>
-          <View style={styles.flexContainer3}>
-            <Text style={styles.HeadingText}>Expectation with partner</Text>
-            <Text style={styles.text}>Acharya Kiran is a well-known Astrologer. Having experience in the field of Vedic Astrology. Born and brought up in a Brahmin family, she has also benefited from the immense knowledge related to her grandfather. She has had a natural liking for Astrology since the age of 15.</Text>
-          </View>
-          <View style={styles.flexContainer3}>
+        </View>
+        <View style={styles.flexContainer3}>
+          <Text style={styles.HeadingText}>Expectation with partner</Text>
+          <Text style={styles.text}>Acharya Kiran is a well-known Astrologer. Having experience in the field of Vedic Astrology. Born and brought up in a Brahmin family, she has also benefited from the immense knowledge related to her grandfather. She has had a natural liking for Astrology since the age of 15.</Text>
+        </View>
+        <View style={styles.flexContainer3}>
           <Text style={styles.HeadingText}>Matches</Text>
           <View style={styles.flex}>
-        <Image source={require('../../Images/profile3.png')} style={styles.smallImage} />
-        <Text style={styles.text}>11/15</Text>
-        <Image source={require('../../Images/profile3.png')} style={styles.smallImage} />
+            <Image source={require('../../Images/profile3.png')} style={styles.smallImage} />
+            <Text style={styles.text}>11/15</Text>
+            <Image source={require('../../Images/profile3.png')} style={styles.smallImage} />
           </View>
           {profileDetails.map((item, index) => (
             <View key={index} style={styles.flexContainer5}>
@@ -192,9 +190,8 @@ const Location = () => {
               )}
             </View>
           ))}
-          </View>
-          <Image source={require('../../Images/slider.png')} style={styles.bottomImage} />
-        
+        </View>
+        <Image source={require('../../Images/slider.png')} style={styles.bottomImage} />
       </ScrollView>
     </View>
   );

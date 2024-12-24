@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     },
 
     iconText: {
-        fontSize: SF(8),
+        fontSize: SF(11),
         color: Colors.dark,
         marginTop: SH(5),
         marginLeft: SW(4)

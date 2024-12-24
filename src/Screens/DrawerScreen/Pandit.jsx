@@ -41,7 +41,7 @@ const Pandit = ({ navigation }) => {
         </View>
         <View style={styles.sharecontainer}>
           <View style={styles.iconContainer}>
-            <FontAwesome name="bookmark-o" size={15} color={Colors.dark} />
+            <FontAwesome name="bookmark-o" size={20} color={Colors.dark} />
             <Text style={styles.iconText}>Save</Text>
           </View>
 
@@ -50,11 +50,11 @@ const Pandit = ({ navigation }) => {
             <Text style={styles.iconText}>Shares</Text>
           </View>
           <View style={styles.iconContainer}>
-            <AntDesign name="minuscircleo" size={15} color={Colors.dark} />
+            <AntDesign name="minuscircleo" size={20} color={Colors.dark} />
             <Text style={styles.iconText}>Report</Text>
           </View>
           <TouchableOpacity style={styles.Button}>
-            <AntDesign name="phone" size={10} color={Colors.light} />
+            <MaterialIcons name="call" size={15} color={Colors.light} />
             <Text style={styles.buttonText}>Request for call</Text>
           </TouchableOpacity>
         </View>

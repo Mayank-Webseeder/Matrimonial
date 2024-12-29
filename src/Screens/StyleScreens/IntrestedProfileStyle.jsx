@@ -77,23 +77,27 @@ const styles = StyleSheet.create({
   },
   activeText: {
     color: 'white',
+    fontFamily:"Poppins-Regular",
+    fontSize:SF(15)
   },
   inactiveText: {
     color: 'black',
+    fontFamily:"Poppins-Regular",
+    fontSize:SF(15)
   },
 searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 50,
     paddingHorizontal: SH(10),
-    height:SH(35),
+    height:SH(40),
     backgroundColor:Colors.gray,
     marginHorizontal: SW(10),
     marginVertical:SH(5),
     marginBottom:SH(30)
   },
   icon: {
-    marginHorizontal: 10,
+    marginHorizontal:SW(10),
   },
   input: {
     flex: 1,
@@ -135,8 +139,8 @@ searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    padding: 10,
-    backgroundColor: '#fff',
+    padding:SW(10),
+    backgroundColor:Colors.light,
   },
   iconContainer: {
     alignItems: 'center',
@@ -145,6 +149,7 @@ searchBar: {
     fontSize: SF(12),
     color:Colors.dark,
     marginTop:SH(5),
+    fontFamily:"Poppins-Regular",
   },
   interestedButton: {
     backgroundColor:Colors.theme_color,

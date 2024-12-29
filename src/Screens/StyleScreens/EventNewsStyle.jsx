@@ -5,15 +5,18 @@ import Colors from "../../utils/Colors";
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.light,
-        marginBottom: SH(10)
+        padding: SW(15),
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: SW(15),
-
+        paddingBottom: SH(10)
+    },
+    headingText: {
+        color: Colors.theme_color,
+        fontFamily: "Poppins-Regular",
+        fontSize: SF(15)
     },
     button: {
         backgroundColor: Colors.theme_color,
@@ -23,8 +26,8 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: Colors.light,
-        fontSize: SF(13)
-
+        fontSize: SF(13),
+        fontFamily: "Poppins-Regular",
     },
     card: {
         backgroundColor: Colors.light,
@@ -32,8 +35,8 @@ const styles = StyleSheet.create({
         shadowColor: '#000',
         shadowOpacity: 0.1,
         marginBottom: SH(10),
-        margin: SW(10),
-        padding: SW(10),
+        margin: SW(5),
+        padding: SW(5),
         borderRadius: 10
 
     },
@@ -52,7 +55,7 @@ const styles = StyleSheet.create({
         padding: SW(3)
     },
     image4: {
-        margin: SW(2)
+        margin: SW(2), height: SH(80), width: SW(98)
     },
     image1: {
         margin: SW(2), height: SH(80), width: SW(98)
@@ -63,7 +66,8 @@ const styles = StyleSheet.create({
         width: SW(98)
     },
     image3: {
-        height: SH(180)
+        height: SH(180),
+        width: SW(100)
     },
     imageContainer2: {
         flexDirection: "row",
@@ -75,19 +79,25 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins-Regular"
     },
     name: {
-        fontSize: SF(12),
+        fontSize: SF(13),
         fontFamily: "Poppins-Bold",
         marginLeft: SW(5)
     },
     date_time: {
         fontSize: SF(12),
         fontFamily: "Poppins-Regular",
-        marginLeft: SW(5)
+        marginLeft: SW(10)
     },
     hour: {
         color: 'gray',
-        fontSize: SF(10),
+        fontSize: SF(12),
         fontFamily: "Poppins-Regular",
+    },
+    container: {
+        margin: SW(10)
+    },
+    bottomContainer:{
+        marginBottom:SH(100)
     }
 
 

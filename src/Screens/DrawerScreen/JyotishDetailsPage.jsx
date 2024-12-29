@@ -66,24 +66,23 @@ const JyotishDetailsPage = ({ navigation }) => {
                     ))}
                 </View>
                 <View style={styles.sharecontainer}>
-          <View style={styles.iconContainer}>
-            <FontAwesome name="bookmark-o" size={15} color={Colors.dark} />
-            <Text style={styles.iconText}>Save</Text>
-          </View>
+                    <View style={styles.iconContainer}>
+                        <FontAwesome name="bookmark-o" size={20} color={Colors.dark} />
+                        <Text style={styles.iconText}>Save</Text>
+                    </View>
 
-          <View style={styles.iconContainer}>
-            <Feather name="send" size={15} color={Colors.dark} />
-            <Text style={styles.iconText}>Shares</Text>
-          </View>
-          <View style={styles.iconContainer}>
-            <AntDesign name="minuscircleo" size={15} color={Colors.dark} />
-            <Text style={styles.iconText}>Report</Text>
-          </View>
-          <TouchableOpacity style={styles.Button}>
-            <MaterialIcons name="call" size={20} color={Colors.light} />
-            <Text style={styles.buttonText}>Request for call</Text>
-          </TouchableOpacity>
-        </View>
+                    <View style={styles.iconContainer}>
+                        <Feather name="send" size={20} color={Colors.dark} />
+                        <Text style={styles.iconText}>Shares</Text>
+                    </View>
+                    <View style={styles.iconContainer}>
+                        <AntDesign name="minuscircleo" size={20} color={Colors.dark} />
+                        <Text style={styles.iconText}>Report</Text>
+                    </View>
+                    <TouchableOpacity style={styles.Button}>
+                        <MaterialIcons name="call" size={20} color={Colors.light} />
+                    </TouchableOpacity>
+                </View>
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Services List</Text>
                     <View style={styles.servicesGrid}>
@@ -153,12 +152,12 @@ const JyotishDetailsPage = ({ navigation }) => {
                     showsHorizontalScrollIndicator={false}
                 />
                 <View style={styles.socialIcons}>
-                <SimpleLineIcons name={'social-facebook'} size={30} color={Colors.dark} />
-                <SimpleLineIcons name={'social-dribbble'} size={30} color={Colors.dark} />
-                <SimpleLineIcons name={'social-youtube'} size={30} color={Colors.dark} />
-                <SimpleLineIcons name={'social-instagram'} size={30} color={Colors.dark} />
+                    <SimpleLineIcons name={'social-facebook'} size={30} color={Colors.dark} />
+                    <SimpleLineIcons name={'social-dribbble'} size={30} color={Colors.dark} />
+                    <SimpleLineIcons name={'social-youtube'} size={30} color={Colors.dark} />
+                    <SimpleLineIcons name={'social-instagram'} size={30} color={Colors.dark} />
                 </View>
-                 <Image source={require('../../Images/slider.png')}/>
+                <Image source={require('../../Images/slider.png')} />
             </ScrollView>
         </View>
     );

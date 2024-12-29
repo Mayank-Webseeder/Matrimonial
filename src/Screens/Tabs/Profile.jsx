@@ -9,7 +9,7 @@ import { TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { Dropdown } from 'react-native-element-dropdown';
 const Profile = ({ navigation }) => {
-  const [selectedButton, setSelectedButton] = useState('');
+  const [selectedButton, setSelectedButton] = useState('Profile');
   const [maritalStatus, setMaritalStatus] = useState('');
   const [ManglikStatus, setManglikStatus] = useState('');
   const [gotra, setGotra] = useState('');
@@ -23,6 +23,11 @@ const Profile = ({ navigation }) => {
   const [partnerDietHabit, setpartnerDietHabit] = useState('');
   const [smokingStatus, setsmokingStatus] = useState('');
   const [drinkingHabit, setdrinkingHabit] = useState('');
+
+  const handlePress = (buttonName) => {
+    setSelectedButton(buttonName); // Update active button
+    navigation.navigate(buttonName); // Navigate to the respective screen
+  };
 
   const maritalStatusData = [
     { label: 'Unmarried', value: 'Unmarried' },
@@ -128,20 +133,45 @@ const Profile = ({ navigation }) => {
           </View>
 
           <View style={styles.IconFlex}>
-            <TouchableOpacity style={styles.IconsButton} onPress={() => navigation.navigate('Profile')}>
-              <AntDesign name={'user'} color={Colors.theme_color} size={25} style={styles.icon} />
+            <TouchableOpacity
+              style={styles.IconsButton}
+              onPress={() => handlePress('Profile')}
+            >
+              <AntDesign
+                name={'user'}
+                color={selectedButton === 'Profile' ? 'white' : Colors.theme_color} // Change icon color based on active state
+                size={25}
+                style={selectedButton === 'Profile' ? styles.Selectedicon : styles.icon}
+              />
               <Text style={styles.logotext}>Detailed Profile</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.IconsButton} onPress={() => navigation.navigate('PartnersPreference')}>
-              <FontAwesome5 name={'user-friends'} color={Colors.theme_color} size={25} style={styles.icon} />
+
+            <TouchableOpacity
+              style={styles.IconsButton}
+              onPress={() => handlePress('PartnersPreference')}
+            >
+              <FontAwesome5
+                name={'user-friends'}
+                color={selectedButton === 'PartnersPreference' ? 'white' : Colors.theme_color}
+                size={25}
+                style={selectedButton === 'PartnersPreference' ? styles.Selectedicon : styles.icon}
+              />
               <Text style={styles.logotext}>Partner Preference</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.IconsButton} onPress={() => navigation.navigate('PhotoGallery')}>
-              <MaterialIcons name={'insert-photo'} color={Colors.theme_color} size={25} style={styles.icon} />
+
+            <TouchableOpacity
+              style={styles.IconsButton}
+              onPress={() => handlePress('PhotoGallery')}
+            >
+              <MaterialIcons
+                name={'insert-photo'}
+                color={selectedButton === 'PhotoGallery' ? 'white' : Colors.theme_color}
+                size={25}
+                style={selectedButton === 'PhotoGallery' ? styles.Selectedicon : styles.icon}
+              />
               <Text style={styles.logotext}>Photo Gallery</Text>
             </TouchableOpacity>
           </View>
-
           <View>
             <View style={styles.detail}>
               <Text style={styles.detailText}>Personal Details</Text>

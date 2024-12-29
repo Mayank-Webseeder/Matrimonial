@@ -13,45 +13,45 @@ const styles = StyleSheet.create({
         resizeMode: "cover",
     },
     date: {
-        borderColor:Colors.gray,
+        borderColor: Colors.gray,
         borderWidth: 1,
         width: "100%",
         borderRadius: 10,
         flexDirection: "row",
         alignItems: "center",
-        paddingHorizontal: 10, 
-        paddingVertical: 10, 
+        paddingHorizontal: SW(10),
+        paddingVertical: SH(10),
     },
     dateText: {
         flex: 1,
-        fontSize:SF(16),
-        color:Colors.dark,
+        fontSize: SF(16),
+        color: Colors.dark,
     },
     arrow: {
-        marginLeft:SW(10),
+        marginLeft: SW(10),
     },
     contentContainer: {
         flex: 1,
         justifyContent: "center",
-        alignItems: "left", 
-        marginHorizontal:SW(20) ,
-        marginTop:SH(300)
-       
-    },
-    title:{
-   fontFamily:"Poppins-Bold",
-   fontSize:SF(16)
-    },
-    input:{
-        borderColor:Colors.gray,
-        borderWidth:1,
-        width:"100%",
-        borderRadius:10,
-        color:Colors.dark
+        alignItems: "left",
+        marginHorizontal: SW(20),
+        marginTop: SH(300)
 
     },
-    inputContainer:{
-        marginVertical:SH(5)
+    title: {
+        fontFamily: "Poppins-Medium",
+        fontSize: SF(16)
+    },
+    input: {
+        borderColor: Colors.gray,
+        borderWidth: 1,
+        width: "100%",
+        borderRadius: 10,
+        color: Colors.dark
+
+    },
+    inputContainer: {
+        marginVertical: SH(5)
 
     },
     button: {
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
         padding: SW(5),
         borderRadius: 50,
         marginTop: SH(30),
-        width:"100%"
+        width: "100%"
     },
 
     buttonText: {
@@ -68,22 +68,17 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins-Bold",
         fontSize: SF(20),
     },
-    inputContain:{
-        borderColor:Colors.gray,
-        borderWidth:1,
-        width:"60%",
-        borderRadius:10
+    inputContain: {
+        borderColor: Colors.gray,
+        borderWidth: 1,
+        width: "60%",
+        borderRadius: 10,
+        color:Colors.dark
     }, modalContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
-    modalContent: {
-        backgroundColor: 'white',
-        padding: 20,
-        borderRadius: 10,
-        width: '80%',
     },
 });
 

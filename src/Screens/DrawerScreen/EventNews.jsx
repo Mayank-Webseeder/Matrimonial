@@ -25,7 +25,7 @@ const EventNews = ({ navigation }) => {
         <View>
           <Text style={styles.captionText}>{item.text}</Text>
         </View>
-        <View>
+        <View style={styles.container}>
           <View style={styles.imageContainer1}>
             <View>
               <View style={styles.imageContainer2}>
@@ -50,10 +50,11 @@ const EventNews = ({ navigation }) => {
   }
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+     <View style={styles.bottomContainer}>
+     <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.navigate('Tabs')} style={{ flexDirection: "row" }}>
           <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
-          <Text style={{ color: Colors.theme_color }}>News & Events</Text>
+          <Text style={styles.headingText}>News & Events</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.button}>
@@ -67,6 +68,7 @@ const EventNews = ({ navigation }) => {
         scrollEnabled={true}
         showsVerticalScrollIndicator={false}
       />
+     </View>
     </View>
   );
 }

@@ -85,6 +85,11 @@ const styles = StyleSheet.create({
         padding: SW(7),
         borderRadius: 50
     },
+    Selectedicon: {
+        backgroundColor: Colors.theme_color,
+        padding: SW(7),
+        borderRadius: 50,
+      },
     text: {
         fontFamily: "Poppins-Regular",
         fontSize: SF(15)
@@ -136,9 +141,6 @@ const styles = StyleSheet.create({
         alignItems:"center",
         padding:SW(7)
     },
-    selectedButton:{
-        backgroundColor:Colors.theme_color
-    }
 
 })
 export default styles

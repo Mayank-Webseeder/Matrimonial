@@ -1,5 +1,5 @@
 import { Text, View, Image, ImageBackground, ScrollView } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/PhotoGallleryStyle';
@@ -9,7 +9,12 @@ import { TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 const PhotoGallery = ({ navigation }) => {
+    const [selectedButton, setSelectedButton] = useState('PhotoGallery');
 
+    const handlePress = (buttonName) => {
+        setSelectedButton(buttonName);
+        navigation.navigate(buttonName);
+    };
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -49,21 +54,47 @@ const PhotoGallery = ({ navigation }) => {
                             <MaterialIcons name={'report-gmailerrorred'} color={Colors.theme_color} size={25} />
                         </View>
                     </View>
-
                     <View style={styles.IconFlex}>
-                        <TouchableOpacity style={styles.IconsButton} onPress={() => navigation.navigate('Profile')}>
-                            <AntDesign name={'user'} color={Colors.theme_color} size={25} style={styles.icon} />
+                        <TouchableOpacity
+                            style={styles.IconsButton}
+                            onPress={() => handlePress('Profile')}
+                        >
+                            <AntDesign
+                                name={'user'}
+                                color={selectedButton === 'Profile' ? 'white' : Colors.theme_color} // Change icon color based on active state
+                                size={25}
+                                style={selectedButton === 'Profile' ? styles.Selectedicon : styles.icon}
+                            />
                             <Text style={styles.logotext}>Detailed Profile</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.IconsButton} onPress={() => navigation.navigate('PartnersPreference')}>
-                            <FontAwesome5 name={'user-friends'} color={Colors.theme_color} size={25} style={styles.icon} />
+
+                        <TouchableOpacity
+                            style={styles.IconsButton}
+                            onPress={() => handlePress('PartnersPreference')}
+                        >
+                            <FontAwesome5
+                                name={'user-friends'}
+                                color={selectedButton === 'PartnersPreference' ? 'white' : Colors.theme_color} // Icon color change
+                                size={25}
+                                style={selectedButton === 'PartnersPreference' ? styles.Selectedicon : styles.icon}
+                            />
                             <Text style={styles.logotext}>Partner Preference</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.IconsButton} onPress={() => navigation.navigate('PhotoGallery')}>
-                            <MaterialIcons name={'insert-photo'} color={Colors.theme_color} size={25} style={styles.icon} />
+
+                        <TouchableOpacity
+                            style={styles.IconsButton}
+                            onPress={() => handlePress('PhotoGallery')}
+                        >
+                            <MaterialIcons
+                                name={'insert-photo'}
+                                color={selectedButton === 'PhotoGallery' ? 'white' : Colors.theme_color} // Icon color change
+                                size={25}
+                                style={selectedButton === 'PhotoGallery' ? styles.Selectedicon : styles.icon}
+                            />
                             <Text style={styles.logotext}>Photo Gallery</Text>
                         </TouchableOpacity>
                     </View>
+
                     <View>
                         <View style={styles.flex}>
                             <Text style={styles.detailText}>PHOTO GALLERY</Text>

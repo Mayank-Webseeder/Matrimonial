@@ -12,10 +12,10 @@ const FeedBack = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Image source={require('../../Images/menu.png')} onPress={() => navigation.navigate('Tabs')} />
+      <TouchableOpacity style={styles.header} onPress={() => navigation.navigate('Tabs')}>
+        <Image source={require('../../Images/menu.png')} style={styles.menuIcon}/>
         <Text style={styles.headerText}>Feedback</Text>
-      </View>
+      </TouchableOpacity>
 
       <Text style={styles.Text}>Feedback</Text>
       <Text style={styles.description}>Share your experience in scaling</Text>

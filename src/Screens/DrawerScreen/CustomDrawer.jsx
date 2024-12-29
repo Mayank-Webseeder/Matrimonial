@@ -20,7 +20,7 @@ const CustomDrawer = (props) => {
     { title: 'Activist', screen: 'Activist' },
     { title: 'Advertise with Us'},
     { title: 'Success Stories'},
-    { title: 'Account & Settings', screen: 'AccountSettings' },
+    { title: 'Account & Settings' },
     { title: 'Share App'},
     { title: 'Feedback/Suggestion', screen: 'FeedBack' },
     { title: 'About Us'},
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical:SH(10),
-    paddingHorizontal: 15,
+    paddingHorizontal: SW(15),
     borderBottomWidth: 0,
     position: 'relative',
   },
@@ -99,7 +99,8 @@ const styles = StyleSheet.create({
   },
   idText: {
     fontSize:SF(10),
-    color: '#ddd',
+    color:Colors.light,
+    fontFamily:"Poppins-Regular"
   },
   editIcon: {
     position: 'absolute',
@@ -119,8 +120,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize:SF(12),
-    color: '#fff',
-    fontWeight: '500',
+    color:Colors.light,
     fontFamily:"Poppins-Regular"
   },
 });

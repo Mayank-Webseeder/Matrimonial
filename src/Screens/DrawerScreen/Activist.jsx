@@ -1,6 +1,6 @@
 import { Text, View, FlatList, TouchableOpacity, TextInput } from 'react-native'
 import React from 'react'
-import {ActivistData } from '../../DummyData/DummyData'
+import { ActivistData } from '../../DummyData/DummyData'
 import { Image } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -16,16 +16,16 @@ const Activist = ({ navigation }) => {
           <View style={{ marginLeft: 10 }}>
             <Text style={styles.text}>{item.name}</Text>
             <Text style={styles.smalltext}>{item.subcaste}</Text>
-          
+
             <Text style={styles.smalltext}>{item.city}</Text>
           </View>
         </View>
         <View>
-        <TouchableOpacity style={styles.Button}>
-            <Text style={styles.buttonText}>connect</Text>
+          <TouchableOpacity style={styles.Button}>
+            <Text style={styles.buttonText}>Connect</Text>
           </TouchableOpacity>
         </View>
-       
+
       </View>
     )
   }
@@ -34,34 +34,34 @@ const Activist = ({ navigation }) => {
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.navigate('Tabs')} style={{ flexDirection: "row" }}>
           <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
-          <Text style={{ color: Colors.theme_color }}>Activist</Text>
+          <Text style={styles.headerText}>Activist</Text>
         </TouchableOpacity>
-       <View style={{ flexDirection: "row" }}>
-       <AntDesign name="search1" size={20} color={Colors.theme_color} style={styles.searchIcon} />
-       <AntDesign name={'bells'} size={20} color={Colors.theme_color} onPress={()=>{navigation.navigate('Notification')}}/>
-       </View>
+        <View style={{ flexDirection: "row" }}>
+          <AntDesign name="search1" size={25} color={Colors.theme_color} style={styles.searchIcon} />
+          <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />
+        </View>
       </View>
       <View style={styles.searchbar}>
         <AntDesign name={'search1'} size={20} color={'gray'} />
         <TextInput placeholder='Search in Your city' placeholderTextColor={'gray'} />
       </View>
       <View style={styles.ButtonContainer}>
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Filter</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}> Be an Activist</Text>
-      </TouchableOpacity>
-    </View>
-    <View style={styles.mainContainer}/>
-    <FlatList
-  data={ActivistData}
-  renderItem={renderItem}
-  keyExtractor={(item) => item.id.toString()}
-  scrollEnabled={true}
-  showsVerticalScrollIndicator={false}
-  contentContainerStyle={styles.panditListData}
-/>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>Filter</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}> Be an Activist</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.mainContainer} />
+      <FlatList
+        data={ActivistData}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id.toString()}
+        scrollEnabled={true}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.panditListData}
+      />
 
     </View>
   )

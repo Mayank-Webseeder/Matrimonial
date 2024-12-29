@@ -44,7 +44,7 @@ const PanditRegister = () => {
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.navigate('Tabs')} style={{ flexDirection: "row" }}>
                     <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
-                    <Text style={{ color: Colors.theme_color }}>Pandit</Text>
+                    <Text style={{ color: Colors.theme_color }}>Jyotish</Text>
                 </TouchableOpacity>
             </View>
             <ScrollView>

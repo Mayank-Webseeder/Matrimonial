@@ -14,6 +14,10 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginBottom: SH(20)
     },
+    menuIcon: {
+        width: SW(40),
+        height: SH(40)
+    },
     headerContainer: {
         flexDirection: "row",
         alignItems: "center",
@@ -78,6 +82,11 @@ const styles = StyleSheet.create({
         padding: SW(7),
         borderRadius: 50
     },
+    Selectedicon: {
+        backgroundColor: Colors.theme_color,
+        padding: SW(7),
+        borderRadius: 50,
+      },
     text: {
         fontFamily: "Poppins-Regular",
         fontSize: SF(15)
@@ -90,8 +99,8 @@ const styles = StyleSheet.create({
         height: SH(40),
         borderColor: 'gray',
         borderWidth: 1,
-        marginBottom:SH(10),
-        paddingLeft:SW(10),
+        marginBottom: SH(10),
+        paddingLeft: SW(10),
         borderRadius: 5,
         backgroundColor: 'white',
         color: Colors.dark
@@ -118,14 +127,14 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins-Medium",
         paddingVertical: SH(7)
     },
-    flex:{
-        flexDirection:"row",
-        justifyContent:"space-between",
-        alignItems:"center",
-        padding:SW(7)
+    flex: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: SW(7)
     },
-    selectedButton:{
-        backgroundColor:Colors.theme_color
+    selectedButton: {
+        backgroundColor: Colors.theme_color
     }
 
 })

@@ -24,7 +24,12 @@ const styles = StyleSheet.create({
     },
     header: {
         paddingBottom: SH(12),
-        marginLeft:SW(5)
+        marginLeft: SW(5)
+    },
+    headerText: {
+        color: Colors.theme_color,
+        fontSize: SF(15),
+        fontFamily: "Poppins-regular"
     },
     name: {
         fontFamily: "Poppins-Medium",

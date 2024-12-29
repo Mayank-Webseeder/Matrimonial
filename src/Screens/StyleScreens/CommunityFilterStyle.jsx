@@ -3,7 +3,7 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
-    container: {
+   container: {
         flex: 1,
         backgroundColor: Colors.light,
         padding: SW(10)
@@ -13,11 +13,16 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: SW(10),
-
+        paddingLeft:SW(1)
+    },
+    headerText: {
+        color: Colors.theme_color,
+        fontSize: SF(15),
+        fontFamily: "Poppins-Regular"
     },
     image: {
         width: SW(100),
-        height: SH(90),
+        height: SH(100),
         resizeMode: "contain"
     },
     searchbar: {
@@ -39,13 +44,20 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         elevation: 3,
         width: '98%',
-        padding: SW(10)
+        padding: SW(2)
     },
     cardData: {
         flexDirection: 'row',
         alignItems: 'flex-start',
         padding: SW(10),
     },
+
+    CityArea: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: SH(5),
+    },
+
     sharecontainer: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -59,17 +71,38 @@ const styles = StyleSheet.create({
         marginRight: SW(10),
     },
     text: {
+        fontFamily: "Poppins-Regular",
+        fontSize: SF(12)
+    },
+    Nametext:{
         fontFamily: "Poppins-Bold",
-        fontSize: SF(13)
+        fontSize: SF(15)
     },
     sliderContainer: {
-        marginHorizontal: SW(5),
-        marginBottom: SH(150)
-    },
-    sliderImage: {
-        width: SW(320),
-        height: SH(200),
-    },
+        marginBottom: SH(30),
+        height: SH(230),
+      },
+      sliderImage: {
+        width: "100%",
+        height: SH(250),
+        resizeMode: 'cover',
+      },
+      dot: {
+        width: SW(25),
+        height: SH(5),
+        borderRadius: 4,
+        backgroundColor: '#ccc',
+        marginHorizontal: SH(2),
+        marginTop: SW(100)
+      },
+      activeDot: {
+        width: SW(25),
+        height: SH(5),
+        borderRadius: 4,
+        backgroundColor: Colors.theme_color,
+        marginTop: SW(100)
+      },
+    
     panditListData: {
         marginVertical: SH(10),
         marginBottom: SH(200)
@@ -95,51 +128,58 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.theme_color,
     },
     inactiveButton: {
-        backgroundColor:Colors.light,
+        backgroundColor: 'white',
     },
-    activeText: {
-        color:Colors.light,
+   activeText: {
+        color: 'white',
+        fontFamily: "Poppins-Regular",
+        fontSize: SF(15),
     },
     inactiveText: {
-        color:Colors.dark,
+        color: 'black',
+        fontFamily: "Poppins-Regular",
+        fontSize: SF(15),
     },
     icon: {
-        marginHorizontal: 10,
+        marginHorizontal:SW(10),
     },
 
     iconText: {
-        fontSize: SF(8),
+        fontSize: SF(13),
         color: Colors.dark,
         marginTop: SH(5),
         marginLeft: SW(4)
     },
     Button: {
         backgroundColor: Colors.theme_color,
-        paddingHorizontal: SH(15),
+        paddingHorizontal: SH(6),
         paddingVertical: SH(5),
         borderRadius: 8,
-        flexDirection: "row",
-        alignItems: "center"
+        alignItems: "center",
+        width:SW(80)
     },
     buttonText: {
         color: Colors.light,
         fontFamily: "Poppins-Regular",
-        fontSize: SF(10),
+        fontSize: SF(10.5),
         marginLeft: SW(2)
     },
     mainContainer: {
         marginTop: SH(70),
         flex: 1
     },
-    filterText:{
-        flexDirection:"row",
-        justifyContent:"space-between",
-        margin:SW(15)
-        
+    leftContainer:{
+        marginLeft:SH(10), flex: 1 ,marginTop:SH(7)
     },
-    filterHeading:{
-        fontFamily:"Poppins-Bold",
-        fontSize:SF(15)
+    filterText: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        margin: SW(15)
+
+    },
+    filterHeading: {
+        fontFamily: "Poppins-Bold",
+        fontSize: SF(15)
     }
 
 });

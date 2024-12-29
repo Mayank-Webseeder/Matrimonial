@@ -21,7 +21,7 @@ const PartnersPreference = ({ navigation }) => {
   const [PartnersLivein, setPartnersLivein] = useState('');
   const [District, setDistrict] = useState('');
   const [BodyStructure, setBodyStructure] = useState('');
-
+  const [selectedButton, setSelectedButton] = useState('PartnersPreference');
   const maritalStatusData = [
     { label: 'Unmarried', value: 'Unmarried' },
     { label: 'Widow', value: 'Widow' },
@@ -57,7 +57,7 @@ const PartnersPreference = ({ navigation }) => {
     { label: 'Pale', value: 'Pale' },
     { label: 'Fair', value: 'Fair' },
     { label: 'Medium', value: 'Medium' },
-    { label: 'Olive', value: 'Olive' }, 
+    { label: 'Olive', value: 'Olive' },
     { label: 'Naturally brown ', value: 'Naturally brown ' },
     { label: 'Dark Brown/Black', value: 'Dark Brown/Black' },
     { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
@@ -84,12 +84,18 @@ const PartnersPreference = ({ navigation }) => {
     { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
   ]
 
+  const handlePress = (buttonName) => {
+    setSelectedButton(buttonName); // Update active button
+    navigation.navigate(buttonName); // Navigate to the respective screen
+  };
+
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerContainer}>
           <TouchableOpacity onPress={() => navigation.navigate('Tabs')}>
-            <Image source={require('../../Images/menu.png')} />
+            <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
           </TouchableOpacity>
           <View style={styles.headerContainer}>
             <Text style={styles.headerText}>Matrimony Profile</Text>
@@ -125,20 +131,45 @@ const PartnersPreference = ({ navigation }) => {
           </View>
 
           <View style={styles.IconFlex}>
-            <TouchableOpacity style={styles.IconsButton} onPress={() => navigation.navigate('Profile')}>
-              <AntDesign name={'user'} color={Colors.theme_color} size={25} style={styles.icon} />
+            <TouchableOpacity
+              style={styles.IconsButton}
+              onPress={() => handlePress('Profile')}
+            >
+              <AntDesign
+                name={'user'}
+                color={selectedButton === 'Profile' ? 'white' : Colors.theme_color} // Change icon color based on active state
+                size={25}
+                style={selectedButton === 'Profile' ? styles.Selectedicon : styles.icon}
+              />
               <Text style={styles.logotext}>Detailed Profile</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.IconsButton} onPress={() => navigation.navigate('PartnersPreference')}>
-              <FontAwesome5 name={'user-friends'} color={Colors.theme_color} size={25} style={styles.icon} />
+
+            <TouchableOpacity
+              style={styles.IconsButton}
+              onPress={() => handlePress('PartnersPreference')}
+            >
+              <FontAwesome5
+                name={'user-friends'}
+                color={selectedButton === 'PartnersPreference' ? 'white' : Colors.theme_color} // Icon color change
+                size={25}
+                style={selectedButton === 'PartnersPreference' ? styles.Selectedicon : styles.icon}
+              />
               <Text style={styles.logotext}>Partner Preference</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.IconsButton} onPress={() => navigation.navigate('PhotoGallery')}>
-              <MaterialIcons name={'insert-photo'} color={Colors.theme_color} size={25} style={styles.icon} />
+
+            <TouchableOpacity
+              style={styles.IconsButton}
+              onPress={() => handlePress('PhotoGallery')}
+            >
+              <MaterialIcons
+                name={'insert-photo'}
+                color={selectedButton === 'PhotoGallery' ? 'white' : Colors.theme_color} // Icon color change
+                size={25}
+                style={selectedButton === 'PhotoGallery' ? styles.Selectedicon : styles.icon}
+              />
               <Text style={styles.logotext}>Photo Gallery</Text>
             </TouchableOpacity>
           </View>
-
           <View>
             <Text style={styles.detailText}>Preferences</Text>
             <View>

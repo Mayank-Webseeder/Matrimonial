@@ -13,11 +13,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: SW(10),
+        paddingLeft: SW(1)
 
+    },
+    headerText: {
+        color: Colors.theme_color,
+        fontSize: SF(15),
+        fontFamily: "Poppins-Regular"
     },
     image: {
         width: SW(100),
-        height: SH(90),
+        height: SH(100),
         resizeMode: "contain"
     },
     searchbar: {
@@ -39,7 +45,7 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         elevation: 3,
         width: '98%',
-        padding: SW(10)
+        padding: SW(2)
     },
     cardData: {
         flexDirection: 'row',
@@ -66,17 +72,38 @@ const styles = StyleSheet.create({
         marginRight: SW(10),
     },
     text: {
+        fontFamily: "Poppins-Regular",
+        fontSize: SF(12)
+    },
+    Nametext: {
         fontFamily: "Poppins-Bold",
-        fontSize: SF(13)
+        fontSize: SF(15)
     },
     sliderContainer: {
-        marginHorizontal: SW(5),
-        marginBottom: SH(150)
+        marginBottom: SH(30),
+        height: SH(230),
     },
     sliderImage: {
-        width: SW(320),
-        height: SH(200),
+        width: "100%",
+        height: SH(250),
+        resizeMode: 'cover',
     },
+    dot: {
+        width: SW(25),
+        height: SH(5),
+        borderRadius: 4,
+        backgroundColor: '#ccc',
+        marginHorizontal: SH(2),
+        marginTop: SW(100)
+    },
+    activeDot: {
+        width: SW(25),
+        height: SH(5),
+        borderRadius: 4,
+        backgroundColor: Colors.theme_color,
+        marginTop: SW(100)
+    },
+
     panditListData: {
         marginVertical: SH(10),
         marginBottom: SH(200)
@@ -85,7 +112,7 @@ const styles = StyleSheet.create({
         flex: 1,
         display: "flex",
         flexDirection: "row",
-        justifyContent:"center"
+        justifyContent: "center"
     },
     button: {
         width: SW(100),
@@ -96,7 +123,8 @@ const styles = StyleSheet.create({
         borderColor: 'black',
         marginVertical: SH(20),
         borderRadius: 8,
-        marginHorizontal: SW(6)
+        marginHorizontal: SW(6),
+
     },
     activeButton: {
         backgroundColor: Colors.theme_color,
@@ -106,16 +134,20 @@ const styles = StyleSheet.create({
     },
     activeText: {
         color: 'white',
+        fontFamily: "Poppins-Regular",
+        fontSize: SF(15),
     },
     inactiveText: {
         color: 'black',
+        fontFamily: "Poppins-Regular",
+        fontSize: SF(15),
     },
     icon: {
-        marginHorizontal: 10,
+        marginHorizontal: SW(10),
     },
 
     iconText: {
-        fontSize: SF(11),
+        fontSize: SF(13),
         color: Colors.dark,
         marginTop: SH(5),
         marginLeft: SW(4)
@@ -134,9 +166,9 @@ const styles = StyleSheet.create({
         fontSize: SF(10),
         marginLeft: SW(2)
     },
-    mainContainer: {
-        marginTop: SH(70),
-        flex: 1
+
+    leftContainer: {
+        marginLeft: SH(10), flex: 1, marginTop: SH(7)
     }
 
 });

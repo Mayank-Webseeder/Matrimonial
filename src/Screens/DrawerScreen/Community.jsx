@@ -1,6 +1,6 @@
-import { Text, View, FlatList, TouchableOpacity, TextInput } from 'react-native'
-import React, { useState } from 'react'
-import { slider, CommitteeDataList } from '../../DummyData/DummyData'
+import { Text, View, FlatList, TouchableOpacity, TextInput, ScrollView } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { slider, CommitteeDataList } from '../../DummyData/DummyData';
 import { Image } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -8,20 +8,46 @@ import styles from '../StyleScreens/CommunityStyle';
 import Colors from '../../utils/Colors';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
+import AppIntroSlider from 'react-native-app-intro-slider';
 
 const Community = ({ navigation }) => {
   const [activeButton, setActiveButton] = useState(null);
-  const handleFilter=()=>{
-    setActiveButton(1)
+  const handleFilter = () => {
+    setActiveButton(1);
     navigation.navigate('CommunityFilter');
-  }
+  };
+  const sliderRef = useRef(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (currentIndex < slider.length - 1) {
+        setCurrentIndex((prevIndex) => prevIndex + 1);
+        sliderRef.current?.goToSlide(currentIndex + 1);
+      } else {
+        setCurrentIndex(0);
+        sliderRef.current?.goToSlide(0);
+      }
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [currentIndex]);
+
+  const SliderRenderItem = ({ item }) => {
+    return (
+      <View>
+        <Image source={item.image} style={styles.sliderImage} />
+      </View>
+    );
+  };
+
   const renderItem = ({ item }) => {
     return (
       <View style={styles.card}>
         <View style={styles.cardData}>
           <Image source={item.image} style={styles.image} />
-          <View style={{ marginLeft: 10, flex: 1 }}>
-            <Text style={styles.text}>{item.name}</Text>
+          <View style={styles.leftContainer}>
+            <Text style={styles.Nametext}>{item.name}</Text>
             <View style={styles.CityArea}>
               <Text style={styles.text}>{item.city}</Text>
               <Text style={styles.text}>{item.subcaste}</Text>
@@ -44,15 +70,8 @@ const Community = ({ navigation }) => {
     );
   };
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('Tabs')} style={{ flexDirection: "row" }}>
-          <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
-          <Text style={{ color: Colors.theme_color }}>Community</Text>
-        </TouchableOpacity>
-        <AntDesign name={'bells'} size={20} color={Colors.theme_color} onPress={()=>{navigation.navigate('Notification')}}/>
-      </View>
+  const renderHeader = () => (
+    <View>
       <View style={styles.searchbar}>
         <AntDesign name={'search1'} size={20} color={'gray'} />
         <TextInput placeholder='Search in Your city' placeholderTextColor={'gray'} />
@@ -82,34 +101,41 @@ const Community = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.mainContainer} />
-      <FlatList
-        data={slider}
-        renderItem={({ item }) => {
-          return (
-            <View style={styles.sliderContainer}>
-              <Image
-                source={item.image}
-                style={styles.sliderImage}
-              />
-            </View>
-          );
-        }}
-        keyExtractor={(item) => item.id.toString()}
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}
-      />
+      <View style={styles.sliderContainer}>
+        <AppIntroSlider
+          ref={sliderRef}
+          data={slider}
+          renderItem={SliderRenderItem}
+          showNextButton={false}
+          showDoneButton={false}
+          dotStyle={styles.dot}
+          activeDotStyle={styles.activeDot}
+          onSlideChange={(index) => setCurrentIndex(index)}
+        />
+      </View>
+    </View>
+  );
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.navigate('Tabs')} style={{ flexDirection: "row" }}>
+          <MaterialIcons name={'arrow-back-ios-new'} size={25} color={Colors.theme_color} />
+          <Text style={styles.headerText}>Community</Text>
+        </TouchableOpacity>
+        <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification'); }} />
+      </View>
       <FlatList
         data={CommitteeDataList}
         renderItem={renderItem}
+        ListHeaderComponent={renderHeader}
         keyExtractor={(item) => item.id.toString()}
         scrollEnabled={true}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.panditListData}
       />
-
     </View>
-  )
-}
+  );
+};
 
-export default Community
+export default Community;

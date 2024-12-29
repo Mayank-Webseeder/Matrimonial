@@ -5,7 +5,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
 import { Dropdown } from 'react-native-element-dropdown';
 
-const PanditRegister = ({navigation}) => {
+const PanditRegister = ({ navigation }) => {
     const [name, setName] = useState('');
     const [mobile, setMobile] = useState('');
     const [email, setEmail] = useState('');
@@ -44,7 +44,7 @@ const PanditRegister = ({navigation}) => {
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.navigate('Tabs')} style={{ flexDirection: "row" }}>
                     <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
-                    <Text style={{ color: Colors.theme_color }}>Pandit</Text>
+                    <Text style={styles.headerText}>Pandit</Text>
                 </TouchableOpacity>
             </View>
             <ScrollView>

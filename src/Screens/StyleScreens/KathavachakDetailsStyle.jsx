@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
     },
     profileSection: {
       alignItems: 'center',
-      marginBottom: 20,
+      marginBottom:SH(20),
       flexDirection:"row",
       margin:SW(10)
     },
@@ -144,12 +144,12 @@ const styles = StyleSheet.create({
     flexDirection:"row"
   },
   Button: {
-    backgroundColor:Colors.theme_color,
-    paddingHorizontal:SH(20),
-    paddingVertical:SH(5),
+    backgroundColor: Colors.theme_color,
+    paddingHorizontal: SH(20),
+    paddingVertical: SH(5),
     borderRadius: 8,
-    flexDirection:"row",
-    alignItems:"center",
+    alignItems: "center",
+    width:SW(100)
   },
   buttonText: {
     color:Colors.light,

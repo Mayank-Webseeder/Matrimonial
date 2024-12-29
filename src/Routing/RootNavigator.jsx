@@ -1,4 +1,3 @@
-import { StyleSheet} from 'react-native';
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -13,20 +12,17 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Home from '../Screens/Tabs/Home';
 import Profile from '../Screens/Tabs/Profile';
-import Users from '../Screens/Tabs/Users';
 import Location from '../Screens/Tabs/Location';
-import SearchBook from '../Screens/Tabs/SearchBook';
 import IntrestedProfile from '../Screens/DrawerScreen/IntrestedProfile';
 import SavedProfile from '../Screens/DrawerScreen/SavedProfile';
 import EventNews from '../Screens/DrawerScreen/EventNews';
 import CustomDrawer from '../Screens/DrawerScreen/CustomDrawer';
 import BioData from '../Screens/DrawerScreen/BioData';
-import {SH,SW} from '../utils/Dimensions';
+import {SH,SW,SF} from '../utils/Dimensions';
 import Colors from '../utils/Colors';
 import Dharmshala from '../Screens/DrawerScreen/Dharmshala';
 import Community from '../Screens/DrawerScreen/Community';
 import Activist from '../Screens/DrawerScreen/Activist';
-import AccountSettings from '../Screens/DrawerScreen/AccountSettings';
 import PartnersPreference from '../Screens/DrawerScreen/PartnersPreference';
 import FeedBack from '../Screens/DrawerScreen/FeedBack';
 import Joytish from '../Screens/DrawerScreen/Joytish';
@@ -52,33 +48,34 @@ const Drawer = createDrawerNavigator();
 function MyTabs() {
   return (
     <Tab.Navigator
+    initialRouteName='Home'
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarShowLabel: false,
         tabBarIcon: ({ focused }) => {
           let iconName;
           let IconComponent = MaterialCommunityIcons;
-          let iconSize = 30;
+          let iconSize =SF(35);
 
           if (route.name === 'Profile') {
             iconName = 'user-o';
             IconComponent = FontAwesome;
-            iconSize = 35; 
+            iconSize =SF(35); 
           } else if (route.name === 'Home') {
             iconName = 'home-outline';
-            iconSize = 30;
-          } else if (route.name === 'SearchBook') {
+            iconSize =SF(35);
+          } else if (route.name === 'Pandit') {
             iconName = 'book-search';
             IconComponent = MaterialCommunityIcons;
-            iconSize = 30;
-          } else if (route.name === 'Location') {
+            iconSize = SF(30);
+          } else if (route.name === 'Explore') {
             iconName = 'compass';
             IconComponent = Ionicons;
-            iconSize = 30;
-          } else if (route.name === 'Users') {
+            iconSize = SF(30);
+          } else if (route.name === 'Community') {
             iconName = 'users';
             IconComponent = FontAwesome;
-            iconSize = 25;
+            iconSize = SF(25);
           }
 
           return (
@@ -92,17 +89,17 @@ function MyTabs() {
 
         tabBarStyle: {
           backgroundColor: Colors.theme_color,
-          height: SH(60), 
+          height: SH(65), 
           borderTopLeftRadius:15,
           borderTopRightRadius:15,
           paddingTop:SH(10)
         },
       })}
     >
-      <Tab.Screen name="Location" component={Location} />
-      <Tab.Screen name="SearchBook" component={SearchBook} />
+      <Tab.Screen name="Explore" component={Explore} />
+      <Tab.Screen name="Pandit" component={Pandit} />
       <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Users" component={Users} />
+      <Tab.Screen name="Community" component={Community} />
       <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
   );
@@ -130,7 +127,6 @@ function MyDrawer() {
       <Drawer.Screen name="BioData" component={BioData} />
       <Drawer.Screen name="Community" component={Community} />
       <Drawer.Screen name="Activist" component={Activist} />
-      <Drawer.Screen name="AccountSettings" component={AccountSettings} />
       <Drawer.Screen name="PartnersPreference" component={PartnersPreference} />
       <Drawer.Screen name="FeedBack" component={FeedBack} />
       <Drawer.Screen name="Joytish" component={Joytish} />
@@ -148,6 +144,7 @@ function MyDrawer() {
       <Drawer.Screen name="KathavachakRegister" component={KathavachakRegister} />
       <Drawer.Screen name="PhotoGallery" component={PhotoGallery} />
       <Drawer.Screen name="Profile" component={Profile} />
+      <Drawer.Screen name="Location" component={Location} />
     </Drawer.Navigator>
   );
 }
@@ -167,10 +164,10 @@ const RootNavigator = () => {
       <Stack.Screen name="LoginSuccess" component={LoginSuccess} />
       <Stack.Screen name="Information" component={Information} />
       <Stack.Screen name="MainApp" component={MyDrawer} />
+      <Stack.Screen name="BioData" component={BioData} />
     </Stack.Navigator>
   );
 };
 
 export default RootNavigator;
 
-const styles = StyleSheet.create({});

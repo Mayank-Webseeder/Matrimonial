@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View ,TouchableOpacity,FlatList} from 'react-native'
+import { Text, View ,TouchableOpacity,FlatList} from 'react-native'
 import React from 'react'
 import styles from '../StyleScreens/NotificationsStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -20,8 +20,8 @@ const Notification = ({navigation}) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.navigate('Tabs')} style={{ flexDirection: "row" }}>
-          <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
-          <Text style={{ color: Colors.theme_color }}>Notifications</Text>
+          <MaterialIcons name={'arrow-back-ios-new'} size={23} color={Colors.theme_color} />
+          <Text style={styles.headerText}>Notifications</Text>
         </TouchableOpacity>
       </View>
       <View>

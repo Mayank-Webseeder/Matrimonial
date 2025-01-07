@@ -1,4 +1,13 @@
-import { Text, View, FlatList, TouchableOpacity, TextInput, Modal } from 'react-native';
+import {
+  Text,
+  View,
+  FlatList,
+  TouchableOpacity,
+  TextInput,
+  Modal,
+  ScrollView,
+  SafeAreaView,StatusBar
+} from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 import { slider, DharamsalaData } from '../../DummyData/DummyData';
 import { Image } from 'react-native';
@@ -15,7 +24,8 @@ const Dharmshala = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [subcaste, setSubcaste] = useState('');
   const [locality, setLocality] = useState('');
-
+  const [activeButton, setActiveButton] = useState(null);
+  
   const subcasteData = [
     { label: 'OBC', value: 'OBC' },
     { label: 'General', value: 'General' },
@@ -23,9 +33,7 @@ const Dharmshala = ({ navigation }) => {
     { label: 'SC', value: 'SC' },
   ];
 
-  const LocalityData = [
-    { label: 'Badnagar', value: 'Badnagar' },
-  ];
+  const LocalityData = [{ label: 'Badnagar', value: 'Badnagar' }];
 
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -54,12 +62,17 @@ const Dharmshala = ({ navigation }) => {
 
   const renderItem = ({ item }) => {
     return (
-      <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('DharamsalaDetail')}>
+      <TouchableOpacity
+        style={styles.card}
+        onPress={() => navigation.navigate('DharamsalaDetail')}
+      >
         <View style={styles.cardData}>
           <Image source={item.image} style={styles.image} />
           <View style={styles.leftContainer}>
             <Text style={styles.text}>{item.name}</Text>
-            <Text style={styles.smalltext}>{item.subcaste}</Text>
+            <Text style={[styles.smalltext, { fontFamily: 'Poppins-Medium' }]}>
+              {item.subcaste}
+            </Text>
             <Text style={styles.smalltext}>{item.city}</Text>
           </View>
         </View>
@@ -83,60 +96,109 @@ const Dharmshala = ({ navigation }) => {
 
   const handleOpenFilter = () => {
     setModalVisible(true);
+    setActiveButton(1);
+    console.log("Modal opened:", modalVisible); // Debugging
   };
+  
 
   const handleCloseFilter = () => {
     setModalVisible(false);
   };
 
-  const renderHeader = () => {
-    return (
-      <View>
-        <View style={styles.searchContainer}>
-          <View style={styles.searchbar}>
-            <TextInput placeholder="Search in Your city" placeholderTextColor={"gray"} />
-          </View>
-          <TouchableOpacity style={styles.filterContainer} onPress={handleOpenFilter}>
-            <FontAwesome name={"filter"} size={20} color={"gray"} />
-            <Text>Filter</Text>
-          </TouchableOpacity>
-        </View>
+  const handleUploadButton=()=>{
+   setActiveButton(2)
+   navigation.navigate('DharamsalaSubmissionPage')
+  }
 
-        <View style={styles.sliderContainer}>
-          <AppIntroSlider
-            ref={sliderRef}
-            data={slider}
-            renderItem={SliderRenderItem}
-            showNextButton={false}
-            showDoneButton={false}
-            dotStyle={styles.dot}
-            activeDotStyle={styles.activeDot}
-            onSlideChange={(index) => setCurrentIndex(index)}
+  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar 
+                barStyle="dark-content" 
+                backgroundColor="transparent" 
+                translucent 
+            />
+      {/* Fixed Header */}
+      <View style={styles.header}>
+        <View style={{ flexDirection: 'row' }}>
+          <TouchableOpacity onPress={() => navigation.navigate('Tabs')}>
+            <MaterialIcons
+              name="arrow-back-ios-new"
+              size={25}
+              color={Colors.theme_color}
+            />
+          </TouchableOpacity>
+          <Text style={styles.headerText}>Dharmshala</Text>
+        </View>
+        <View style={styles.righticons}>
+          <AntDesign
+            name={'bells'}
+            size={25}
+            color={Colors.theme_color}
+            onPress={() => {
+              navigation.navigate('Notification');
+            }}
           />
         </View>
       </View>
-    );
-  };
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('Tabs')} style={{ flexDirection: 'row' }}>
-          <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
-          <Text style={styles.headerText}>Community</Text>
+      {/* Scrollable Content */}
+      <ScrollView>
+      <View>
+          {/* Search and Filter Section */}
+          <View style={styles.searchContainer}>
+            <View style={styles.searchbar}>
+              <AntDesign name={'search1'} size={20} color={'gray'} />
+              <TextInput
+                placeholder="Search in Your city"
+                placeholderTextColor={'gray'}
+              />
+            </View>
+          </View>
+
+          {/* Image Slider */}
+          <View style={styles.sliderContainer}>
+            <AppIntroSlider
+              ref={sliderRef}
+              data={slider}
+              renderItem={SliderRenderItem}
+              showNextButton={false}
+              showDoneButton={false}
+              dotStyle={styles.dot}
+              activeDotStyle={styles.activeDot}
+              onSlideChange={(index) => setCurrentIndex(index)}
+            />
+          </View>
+        </View>
+     
+        <View style={styles.ButtonContainer}>
+        <TouchableOpacity
+          style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton]}
+          onPress={handleOpenFilter}
+        >
+          <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Filter</Text>
         </TouchableOpacity>
-        <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification'); }} />
-      </View>
-      <FlatList
-        data={DharamsalaData}
-        renderItem={renderItem}
-        ListHeaderComponent={renderHeader}
-        keyExtractor={(item) => item.id.toString()}
-        scrollEnabled={true}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.DharamSalaList}
-      />
 
+        <TouchableOpacity
+          style={[styles.button, activeButton === 2 ? styles.activeButton : styles.inactiveButton]}
+          onPress={handleUploadButton}
+        >
+          <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>Upload</Text>
+        </TouchableOpacity>
+      </View>
+      
+
+        {/* Dharamsala List */}
+        <FlatList
+          data={DharamsalaData}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
+          scrollEnabled={false} // Disable FlatList scrolling
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.DharamSalaList}
+        />
+      </ScrollView>
+
+      {/* Filter Modal */}
       <Modal
         visible={modalVisible}
         transparent={true}
@@ -146,8 +208,15 @@ const Dharmshala = ({ navigation }) => {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.header}>
-              <TouchableOpacity onPress={() => navigation.navigate('Tabs')} style={{ flexDirection: "row" }}>
-                <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
+              <TouchableOpacity
+                onPress={() => navigation.navigate('Tabs')}
+                style={{ flexDirection: 'row' }}
+              >
+                <MaterialIcons
+                  name={'arrow-back-ios-new'}
+                  size={20}
+                  color={Colors.theme_color}
+                />
                 <Text style={{ color: Colors.theme_color }}>Filter</Text>
               </TouchableOpacity>
             </View>
@@ -158,11 +227,16 @@ const Dharmshala = ({ navigation }) => {
                 labelField="label"
                 valueField="value"
                 value={subcaste}
-                onChange={item => setSubcaste(item.value)}
+                onChange={(item) => setSubcaste(item.value)}
                 placeholder="Caste"
                 style={styles.dropdown}
               />
-              <MaterialIcons name={'search'} size={20} color={'gray'} style={styles.icon} />
+              <MaterialIcons
+                name={'search'}
+                size={20}
+                color={'gray'}
+                style={styles.icon}
+              />
             </View>
             <Text style={styles.headingText}>Locality</Text>
 
@@ -173,18 +247,26 @@ const Dharmshala = ({ navigation }) => {
                 labelField="label"
                 valueField="value"
                 value={locality}
-                onChange={item => setLocality(item.value)}
+                onChange={(item) => setLocality(item.value)}
                 placeholder="Locality"
               />
-              <MaterialIcons name={'search'} size={20} color={'gray'} style={styles.icon} />
+              <MaterialIcons
+                name={'search'}
+                size={20}
+                color={'gray'}
+                style={styles.icon}
+              />
             </View>
-            <TouchableOpacity style={styles.applyButton} onPress={handleCloseFilter}>
+            <TouchableOpacity
+              style={styles.applyButton}
+              onPress={handleCloseFilter}
+            >
               <Text style={styles.applyButtonText}>See results</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 };
 

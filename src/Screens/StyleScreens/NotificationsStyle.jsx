@@ -4,12 +4,22 @@ import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
     container: {
-        padding: SW(15),
         flex: 1,
         backgroundColor: Colors.light,
-        paddingTop: SH(25),
-        paddingBottom: SH(60)
-    },
+        paddingTop:SW(20)
+      },
+      header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: SW(10),
+        paddingLeft:0
+      },
+      headerText: {
+        color: Colors.theme_color,
+        fontSize: SF(15),
+        fontFamily: "Poppins-Regular"
+      },
     card: {
         backgroundColor: Colors.light,
         borderRadius: 10,
@@ -21,15 +31,6 @@ const styles = StyleSheet.create({
         elevation: 3,
         width: '98%',
         padding: SW(10)
-    },
-    header: {
-        paddingBottom: SH(12),
-        marginLeft: SW(5)
-    },
-    headerText: {
-        color: Colors.theme_color,
-        fontSize: SF(15),
-        fontFamily: "Poppins-regular"
     },
     name: {
         fontFamily: "Poppins-Medium",

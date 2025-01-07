@@ -6,35 +6,35 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.light,
-    marginBottom: SH(10)
+    paddingTop:SW(20)
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: SW(15),
-
+    padding: SW(10),
+    paddingLeft:0
+  },
+  righticons: {
+    flexDirection: 'row',
   },
   headerText: {
     color: Colors.theme_color,
     fontSize: SF(15),
     fontFamily: "Poppins-Regular"
   },
-  righticons: {
-    flexDirection: 'row',
-  },
   images: {
     width: SW(80),
     height: SH(80)
   },
   sliderContainer: {
-    marginBottom: SH(30),
-    height: SH(230),
+    marginBottom: SH(10),
+    height: SH(200),
   },
   sliderImage: {
     width: "100%",
-    height: SH(220),
-    resizeMode: 'contain',
+    height: SH(170),
+    resizeMode: 'cover',
   },
   dot: {
     width: SW(25),
@@ -42,26 +42,26 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: '#ccc',
     marginHorizontal: SH(2),
-    marginTop: SW(100)
+    marginTop:SH(50)
   },
   activeDot: {
     width: SW(25),
     height: SH(5),
     borderRadius: 4,
     backgroundColor: Colors.theme_color,
-    marginTop: SW(100)
+    marginTop:SH(50)
   },
   ProfileImage: {
-    width: "90%",
+    width: "100%",
     height: SH(300),
-    marginHorizontal: SW(15),
+    // marginHorizontal: SW(15),
     borderRadius: 10
   },
   ButtonContainer: {
     flex: 1,
     display: "flex",
     flexDirection: "row",
-    marginHorizontal: SW(25)
+    justifyContent:"space-between"
   },
   button: {
     width: SW(150),
@@ -70,9 +70,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: 'black',
-    marginVertical: SH(20),
+    // marginVertical: SH(20),
     borderRadius: 8,
     marginHorizontal: SW(6)
+  },
+  Text:{
+    color:Colors.dark,
+    fontFamily: "Poppins-Regular",
+    fontSize: SF(15)
   },
   activeButton: {
     backgroundColor: Colors.theme_color,
@@ -90,62 +95,25 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Regular",
     fontSize: SF(15)
   },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 50,
-    paddingHorizontal: SH(10),
-    height: SH(40),
-    backgroundColor: Colors.gray,
-    marginHorizontal: SW(10),
-    marginVertical: SH(5),
-    marginBottom: SH(30)
-  },
-  icon: {
-    marginHorizontal: SW(10),
-  },
-  input: {
-    flex: 1,
-    fontSize: SF(16),
-    color: Colors.theme_color,
-    textAlign: 'center',
-  },
-  placeholder: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    textAlign: 'center',
-    fontSize: SF(16),
-    fontFamily: "Poppins-Bold",
-    color: Colors.theme_color,
-  },
+
   profileData: {
     disply: "flex",
     flexDirection: "row",
     justifyContent: "space-between", alignItems: "center",
-    margin: SW(25)
+    margin: SW(10)
   },
   text: {
     fontFamily: "Poppins-Regular",
     fontSize: SF(15)
   },
-  descriptionContainer: {
-    marginHorizontal: SW(20)
-  },
-  description: {
-    fontFamily: "Poppins-Bold",
-    fontSize: SF(17)
-  },
-  descriptionText: {
-    fontFamily: "Poppins-Regular",
-    fontSize: SF(12)
-  },
+ 
   sharecontainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
     padding: SW(10),
     backgroundColor: Colors.light,
+    marginHorizontal:SW(20)
   },
   iconContainer: {
     alignItems: 'center',
@@ -156,17 +124,6 @@ const styles = StyleSheet.create({
     marginTop: SH(5),
     fontFamily: "Poppins-Regular",
   },
-  interestedButton: {
-    backgroundColor: Colors.theme_color,
-    paddingHorizontal: SH(20),
-    paddingVertical: SH(10),
-    borderRadius: 8,
-  },
-  buttonText: {
-    color: Colors.light,
-    fontFamily: "Poppins-Bold",
-    fontSize: SF(14),
-  },
   card: {
     backgroundColor: '#fff',
     borderRadius: 10,
@@ -175,7 +132,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
-    padding: SW(10),
+    padding: SW(5),
     margin: SW(10)
   }
 

@@ -1,4 +1,4 @@
-import { Text, View, ImageBackground, TouchableOpacity, TextInput, ScrollView } from "react-native";
+import { Text, View, ImageBackground, TouchableOpacity, TextInput, ScrollView, SafeAreaView } from "react-native";
 import React from "react";
 import styles from "../StyleScreens/LoginStyle";
 
@@ -8,7 +8,7 @@ const Login = ({ navigation }) => {
     };
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <ImageBackground
                 source={require("../../Images/LoginBackground.png")}
                 style={styles.image}
@@ -34,11 +34,11 @@ const Login = ({ navigation }) => {
                         style={styles.inputText}
                     />
                     <TouchableOpacity style={styles.button} onPress={HandleLogin}>
-                        <Text style={styles.buttonText}>Continue</Text>
+                        <Text style={styles.buttonText}>Login</Text>
                     </TouchableOpacity>
                 </ScrollView>
             </ImageBackground>
-        </View>
+        </SafeAreaView>
     );
 };
 

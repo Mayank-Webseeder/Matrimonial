@@ -6,14 +6,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.light,
-    marginBottom: SH(10),
+    paddingTop:SH(20)
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: SW(15),
-
+    padding: SW(10),
+    paddingLeft:0
+  },
+  Filterheader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: SW(5),
   },
   headerText: {
     color: Colors.theme_color,
@@ -28,9 +34,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: Colors.gray,
-    marginHorizontal: SW(10),
     borderRadius: 50,
-    paddingHorizontal: SW(10),
+  
   },
   images: {
     width: SW(80),
@@ -38,7 +43,8 @@ const styles = StyleSheet.create({
   },
   sliderContainer: {
     marginBottom: SH(30),
-    height: SH(230),
+    height: SH(180),
+    marginTop:SH(10)
   },
   sliderImage: {
     width: "100%",
@@ -70,11 +76,11 @@ const styles = StyleSheet.create({
     flex: 1,
     display: "flex",
     flexDirection: "row",
-    marginHorizontal: SW(25),
+    marginHorizontal: SW(50),
   },
   button: {
-    width: SW(150),
-    height: SH(40),
+    width: SW(130),
+    height: SH(30),
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
@@ -114,8 +120,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: '#fff',
-    marginHorizontal: SW(10),
-    paddingVertical: SH(10)
+    marginHorizontal: SW(15),
+    paddingVertical: SH(10),
+    paddingTop:0
   },
   iconContainer: {
     alignItems: 'center',
@@ -137,10 +144,10 @@ const styles = StyleSheet.create({
   Button: {
     backgroundColor: Colors.theme_color,
     paddingHorizontal: SH(15),
-    paddingVertical: SH(5),
+    paddingVertical: SH(1),
     borderRadius: 8,
     alignItems: "center",
-    width: SW(100)
+    width: SW(80)
   },
   buttonText: {
     color: Colors.light,
@@ -155,7 +162,8 @@ const styles = StyleSheet.create({
   image: {
     width: SW(100),
     height: SH(90),
-    resizeMode: "contain"
+    resizeMode: "contain",
+    margin:SW(10)
   },
   searchbar: {
     display: "flex",
@@ -174,8 +182,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
-    padding: SW(10),
-    margin: SW(10)
+    margin: SW(10),
+    marginBottom:SH(3)
   },
   cardData: {
     flexDirection: "row"
@@ -186,11 +194,81 @@ const styles = StyleSheet.create({
   },
   panditListData: {
     marginVertical: SH(10),
-    marginBottom: SH(200)
+    marginBottom: SH(20),
+    marginTop:0
   },
   leftContainer: {
     margin: SW(10)
-  }
+  },
+  filterContainer: {
+    backgroundColor: Colors.gray,
+    padding: SW(10),
+    borderRadius: 50,
+    flexDirection: "row",
+  },
+  searchContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between"
+  },
+  input: {
+    height: SH(40),
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: SH(10),
+    paddingLeft: SW(10),
+    borderRadius: 5,
+    backgroundColor: 'white',
+    color: Colors.dark
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    width: SW(470)
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: SW(10),
+    width: '80%',
+    borderRadius: 10,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  applyButton: {
+    backgroundColor: Colors.theme_color,
+    padding: SW(10),
+    borderRadius: 5,
+    margin: SW(20),
+    borderRadius: 50
+  },
+  applyButtonText: {
+    fontFamily: "Poppins-Bold",
+    color: Colors.light,
+    textAlign: "center"
+  },
+  inputContainer: {
+    height: SH(40),
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: SH(10),
+    paddingLeft: SW(10),
+    borderRadius: 5,
+    backgroundColor: 'white',
+    color: Colors.dark,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between"
+  },
+  dropdown: {
+    flex: 1,
+    marginRight: SW(10),
+  },
+  headingText: {
+    fontFamily: "Poppins-Bold",
+    fontSize: SF(15),
+    margin: SH(10)
+  },
 
 });
 

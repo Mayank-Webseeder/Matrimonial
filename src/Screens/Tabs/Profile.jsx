@@ -1,4 +1,4 @@
-import { Text, View, Image, ImageBackground, TextInput, ScrollView } from 'react-native'
+import { Text, View, Image, ImageBackground, TextInput, ScrollView, SafeAreaView, StatusBar } from 'react-native'
 import React, { useState } from 'react'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Colors from '../../utils/Colors';
@@ -8,6 +8,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import { TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { Dropdown } from 'react-native-element-dropdown';
+import { DrawerActions } from '@react-navigation/native';
 const Profile = ({ navigation }) => {
   const [selectedButton, setSelectedButton] = useState('Profile');
   const [maritalStatus, setMaritalStatus] = useState('');
@@ -23,10 +24,36 @@ const Profile = ({ navigation }) => {
   const [partnerDietHabit, setpartnerDietHabit] = useState('');
   const [smokingStatus, setsmokingStatus] = useState('');
   const [drinkingHabit, setdrinkingHabit] = useState('');
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [peoplePosition, setPeoplePosition] = useState(null);
 
+  const [feet, setFeet] = useState(null);
+  const [inches, setInches] = useState(null);
+  const [showHeightDropdowns, setShowHeightDropdowns] = useState(false); // State to manage visibility of dropdowns
+
+  const feetData = [
+    { label: '3', value: '3' },
+    { label: '4', value: '4' },
+    { label: '5', value: '5' },
+    { label: '6', value: '6' },
+    { label: '7', value: '7' },
+  ];
+
+  const inchesData = Array.from({ length: 11 }, (_, index) => ({
+    label: (index + 1).toString(),
+    value: (index + 1).toString(),
+  }));
+
+  const toggleHeightDropdown = () => {
+    setShowHeightDropdowns(!showHeightDropdowns);
+  };
+
+  const toggleDropdown = () => {
+    setDropdownVisible(!dropdownVisible);
+  };
   const handlePress = (buttonName) => {
-    setSelectedButton(buttonName); // Update active button
-    navigation.navigate(buttonName); // Navigate to the respective screen
+    setSelectedButton(buttonName);
+    navigation.navigate(buttonName);
   };
 
   const maritalStatusData = [
@@ -91,17 +118,45 @@ const Profile = ({ navigation }) => {
     { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
   ]
 
+  const PeoplePosition = [
+    { label: 'Admin', value: 'Admin' },
+    { label: 'Activist', value: 'Activist' },
+    { label: 'Pandit', value: 'Pandit' },
+    { label: 'Kathavachak', value: 'Kathavachak' },
+    { label: 'Jyotish', value: 'Jyotish' },
+    { label: 'Member', value: 'Member' },
+  ]
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="transparent"
+        translucent
+      />
       <View style={styles.header}>
         <View style={styles.headerContainer}>
-          <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-            <Image source={require('../../Images/menu.png')} />
+          <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
+            <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
           </TouchableOpacity>
-          <View style={styles.headerContainer}>
-            <Text style={styles.headerText}>Matrimony Profile</Text>
+          <Text style={styles.headerText}>Matrimony Profile</Text>
+          <TouchableOpacity onPress={toggleDropdown}>
             <AntDesign name={'caretdown'} color={Colors.theme_color} size={15} />
-          </View>
+          </TouchableOpacity>
+          {dropdownVisible && (
+            <Dropdown
+              style={styles.topinput}
+              data={PeoplePosition}
+              labelField="label"
+              valueField="value"
+              value={peoplePosition}
+              onChange={(item) => {
+                setPeoplePosition(item.value);
+                setDropdownVisible(false);
+              }}
+              placeholder="Select"
+            />
+          )}
         </View>
         <Text style={styles.RepostText}>Repost</Text>
       </View>
@@ -124,12 +179,7 @@ const Profile = ({ navigation }) => {
               <Text style={styles.text}>Unmarried</Text>
               <Text style={styles.text}>Lives in London</Text>
             </View>
-            <View style={styles.userData}>
-              <AntDesign name={'hearto'} color={Colors.theme_color} size={25} />
-              <AntDesign name={'menu-unfold'} color={Colors.theme_color} size={25} />
-              <Feather name={'minus-circle'} color={Colors.theme_color} size={25} />
-              <MaterialIcons name={'report-gmailerrorred'} color={Colors.theme_color} size={25} />
-            </View>
+
           </View>
 
           <View style={styles.IconFlex}>
@@ -139,7 +189,7 @@ const Profile = ({ navigation }) => {
             >
               <AntDesign
                 name={'user'}
-                color={selectedButton === 'Profile' ? 'white' : Colors.theme_color} // Change icon color based on active state
+                color={selectedButton === 'Profile' ? 'white' : Colors.theme_color}
                 size={25}
                 style={selectedButton === 'Profile' ? styles.Selectedicon : styles.icon}
               />
@@ -172,7 +222,7 @@ const Profile = ({ navigation }) => {
               <Text style={styles.logotext}>Photo Gallery</Text>
             </TouchableOpacity>
           </View>
-          <View>
+          <View style={styles.contentContainer}>
             <View style={styles.detail}>
               <Text style={styles.detailText}>Personal Details</Text>
               <Text style={styles.detailText}>Edit</Text>
@@ -205,10 +255,46 @@ const Profile = ({ navigation }) => {
               </View>
               <View>
                 <Text style={styles.inputHeading}>Height</Text>
-                <TextInput style={styles.input} />
+
+                <TouchableOpacity onPress={toggleHeightDropdown} style={styles.inputWrapper}>
+
+                  <Text style={styles.heightinput}>{feet ? `${feet} feet ${inches} inches` : 'Select Height'}</Text>
+                </TouchableOpacity>
+
+                {showHeightDropdowns && (
+                  <View>
+
+                    <View style={styles.inputWrapper}>
+                      <Text style={styles.inputLabel}>Feet</Text>
+                      <Dropdown
+                        style={styles.input}
+                        data={feetData}
+                        labelField="label"
+                        valueField="value"
+                        value={feet}
+                        onChange={(item) => setFeet(item.value)}
+                        placeholder="Select Feet"
+                      />
+                    </View>
+
+
+                    <View style={styles.inputWrapper}>
+                      <Text style={styles.inputLabel}>Inches</Text>
+                      <Dropdown
+                        style={styles.input}
+                        data={inchesData}
+                        labelField="label"
+                        valueField="value"
+                        value={inches}
+                        onChange={(item) => setInches(item.value)}
+                        placeholder="Select Inches"
+                      />
+                    </View>
+                  </View>
+                )}
               </View>
               <View>
-                <Text style={styles.inputHeading}>Weight</Text>
+                <Text style={styles.inputHeading}>Weight (in kg)</Text>
                 <TextInput style={styles.input} />
               </View>
               <View>
@@ -294,16 +380,13 @@ const Profile = ({ navigation }) => {
               </View>
               <View>
                 <Text style={styles.inputHeading}>About Me</Text>
-                <TextInput style={styles.input} multiline={true} numberOfLines={6} />
+                <TextInput style={styles.aboutInput} multiline={true} numberOfLines={6} />
               </View>
               <View>
                 <Text style={styles.inputHeading}>Mobile no.</Text>
                 <TextInput style={styles.input} multiline={true} numberOfLines={6} />
               </View>
-              <View>
-                <Text style={styles.inputHeading}>About My Nature & Personality</Text>
-                <TextInput style={styles.input} multiline={true} numberOfLines={6} />
-              </View>
+
               <View>
                 <Text style={styles.inputHeading}>Profile created by</Text>
                 <Dropdown
@@ -456,7 +539,7 @@ const Profile = ({ navigation }) => {
           </View>
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

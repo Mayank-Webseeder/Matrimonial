@@ -4,13 +4,24 @@ import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
   container: {
-    padding: SW(15),
     flex: 1,
     backgroundColor: Colors.light,
-    paddingTop: SH(25),
+    paddingTop:SW(20)
   },
   header: {
-    marginLeft: SW(5)
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: SW(10),
+    paddingLeft:0
+  },
+  righticons: {
+    flexDirection: 'row',
+  },
+  headerText: {
+    color: Colors.theme_color,
+    fontSize: SF(15),
+    fontFamily: "Poppins-Regular"
   },
   topContainer: {
     marginBottom: SH(20)
@@ -41,14 +52,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     padding: SW(10),
-    borderColor: Colors.theme_color,
+    borderColor: Colors.gray,
     borderWidth: 1,
-    marginTop: SH(10)
+    marginTop: SH(10),
+    borderRadius:10
   },
   flexContainer: {
     padding: SW(10),
-    borderColor: Colors.theme_color,
+    borderColor: Colors.gray,
     borderWidth: 1,
+    borderRadius:10
   },
   flex: {
     flexDirection: "row",
@@ -105,10 +118,10 @@ const styles = StyleSheet.create({
   ButtonText: {
     color: Colors.light,
     fontFamily: "Poppins-Bold",
-    fontSize: SF(14),
+    fontSize: SF(12),
     textAlign: "center",
     backgroundColor: Colors.theme_color,
-    paddingVertical: SH(10),
+    paddingVertical: SH(4),
     margin: SH(10),
     borderRadius: 10,
     marginHorizontal: SW(90)
@@ -120,8 +133,9 @@ const styles = StyleSheet.create({
     borderRadius: 50
   },
   flexContainer3: {
-    borderColor: Colors.theme_color,
+    borderColor: Colors.gray,
     borderWidth: 1,
+    borderRadius:10,
     marginVertical: SH(15),
     padding: SW(10)
   },

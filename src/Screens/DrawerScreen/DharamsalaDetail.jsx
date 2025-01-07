@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { View, TouchableOpacity, Image, Text, FlatList } from 'react-native';
+import { View, TouchableOpacity, Image, Text, ScrollView,SafeAreaView,StatusBar } from 'react-native';
 import styles from '../StyleScreens/DharamsalaDetailStyle';
 import Colors from '../../utils/Colors';
 import { DharamsalaSlider } from '../../DummyData/DummyData';
@@ -35,15 +35,37 @@ const DharamsalaDetail = ({ navigation }) => {
       </View>
     );
   };
+  const [showFullText, setShowFullText] = useState(false);
+
+  const handleToggleText = () => {
+    setShowFullText(!showFullText);
+  };
+
+  const fullDescription = `This hotel has a terrace and a small rooftop pool, open all year round. Located opposite the Valencia Botanical Garden and the Nuevo Centro shopping centre, the property also has a gym and sauna. In addition, NH Valencia Center is a 5-minute walk from Túria Metro Station, offering easy access to the center of Valencia. Guests enjoy a 20% discount on a public car park that can be accessed directly from the hotel.`;
+  
+  const truncatedDescription = `This hotel has a terrace and a small rooftop pool, open all year round. Located opposite the Valencia Botanical Garden and the Nuevo Centro shopping centre, the property also has a gym and sauna.`;
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <StatusBar 
+                barStyle="dark-content" 
+                backgroundColor="transparent" 
+                translucent 
+            />
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('Dharmshala')}>
-          <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
-        </TouchableOpacity>
-        <Text style={styles.text}>Hotel NH Valencia Center</Text>
+        <View style={{ flexDirection: 'row' }}>
+          <TouchableOpacity onPress={() => navigation.navigate('Dharmshala')}>
+            <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
+          </TouchableOpacity>
+          <Text style={styles.headerText}>Hotel NH Valencia Center</Text>
+        </View>
+        <View style={styles.righticons}>
+          {/* <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} /> */}
+          <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />
+        </View>
       </View>
-      <View style={styles.sliderContainer}>
+     <ScrollView showsVerticalScrollIndicator={false}>
+     <View style={styles.sliderContainer}>
         <AppIntroSlider
           ref={sliderRef}
           data={DharamsalaSlider}
@@ -57,17 +79,23 @@ const DharamsalaDetail = ({ navigation }) => {
       </View>
 
       <View style={styles.textContainer}>
-        <Text style={styles.TextView}><Text style={styles.descriptionText}>Hotel NH Valencia Center</Text></Text>
-        <View style={styles.TextView}><Text style={styles.descriptionText}>Sub-Caste Name</Text></View>
         <View style={styles.TextView}>
+          <Text style={styles.Text}>Hotel NH Valencia Center</Text>
+          <Text style={styles.Text}>Sub-Caste Name</Text>
           <Text style={styles.smalltext}>Address</Text>
           <Text style={styles.smalltext}>Mira road,Bombay, India</Text>
         </View>
-        <View style={styles.TextView}>
-          <Text style={styles.descriptionText}>Description</Text>
-          <Text style={styles.smalltext}>This hotel has a terrace and a small rooftop pool, open all year round. Located opposite the Valencia Botanical Garden and the Nuevo Centro shopping centre, the property also has a gym and sauna.</Text>
-          <Text style={styles.smalltext}>In addition, NH Valencia Center is a 5-minute walk from Túria Metro Station, offering easy access to the center of Valencia. Guests enjoy a 20% discount on a public car park that can be accessed directly from the hotel.</Text>
-        </View>
+         <View style={styles.TextView}>
+      <Text style={styles.Text}>Description</Text>
+      <Text style={styles.smallText}>
+        {showFullText ? fullDescription : truncatedDescription}
+      </Text>
+      <TouchableOpacity onPress={handleToggleText}>
+        <Text style={styles.viewMore}>
+          {showFullText ? 'View Less' : 'View More'}
+        </Text>
+      </TouchableOpacity>
+    </View>
       </View>
       <View style={styles.sharecontainer}>
         <View style={styles.iconContainer}>
@@ -81,9 +109,12 @@ const DharamsalaDetail = ({ navigation }) => {
         </View>
         <TouchableOpacity style={styles.Button}>
           <MaterialIcons name="call" size={20} color={Colors.light} />
+          <Text style={styles.RequestText}>Request for call</Text>
         </TouchableOpacity>
       </View>
-    </View>
+      <Image source={require('../../Images/slider.png')} style={styles.addWindowImage}/>
+     </ScrollView>
+    </SafeAreaView>
   );
 };
 

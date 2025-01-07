@@ -6,31 +6,37 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.light,
-    padding: SW(10)
+    paddingTop:SW(20)
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: SW(10),
-
+    paddingLeft:0
   },
   headerText: {
-        color: Colors.theme_color,
-        fontSize: SF(15),
-        fontFamily: "Poppins-Regular"
-    },
+    color: Colors.theme_color,
+    fontSize: SF(15),
+    fontFamily: "Poppins-Regular"
+  },
+  righticons: {
+    flexDirection: 'row',
+  },
   image: {
     width: SW(100),
     height: SH(90),
     resizeMode: "contain"
   },
   searchbar: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: Colors.gray,
-    marginHorizontal: SW(5),
+    marginHorizontal: SW(10),
     borderRadius: 50,
     paddingHorizontal: SW(10),
-    width: SW(250),
+    width:SW(300)
   },
   card: {
     backgroundColor:Colors.light,
@@ -53,13 +59,13 @@ const styles = StyleSheet.create({
   },
   sliderContainer: {
     marginBottom: SH(30),
-    height: SH(230),
+    height: SH(180),
     marginTop:SH(10)
   },
   sliderImage: {
     width: "100%",
-    height: SH(220),
-    resizeMode: 'contain',
+    height: SH(180),
+    resizeMode: 'cover',
   },
   dot: {
     width: SW(25),
@@ -84,13 +90,14 @@ const styles = StyleSheet.create({
   sharecontainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-start',
-    backgroundColor:Colors.light,
-    margin: SW(5)
+    justifyContent: 'space-between',
+    backgroundColor: '#fff',
+    marginHorizontal: SW(10),
+    paddingVertical: SH(10)
   },
   iconContainer: {
     alignItems: 'center',
-    flexDirection: "row"
+    flexDirection: "row",
   },
   smalltext: {
     fontFamily: "Poppins-Regular",
@@ -105,12 +112,11 @@ const styles = StyleSheet.create({
   },
   Button: {
     backgroundColor: Colors.theme_color,
-    paddingHorizontal: SH(20),
+    paddingHorizontal: SH(15),
     paddingVertical: SH(5),
     borderRadius: 8,
     alignItems: "center",
-    marginLeft: SW(5),
-    width:SW(100)
+    width: SW(100)
   },
   buttonText: {
     color: Colors.light,
@@ -123,7 +129,7 @@ const styles = StyleSheet.create({
   },
   filterContainer: {
     backgroundColor: Colors.gray,
-    padding: SW(10),
+    padding: SW(5),
     borderRadius: 50,
     flexDirection: "row",
   },
@@ -192,7 +198,46 @@ const styles = StyleSheet.create({
   },
   leftContainer:{
     margin:SW(10)
-  }
+  },
+  RequestText:{
+    color:Colors.light,
+    fontSize:SF(10),
+    fontFamily:"Poppins-Regular"
+  },
+  ButtonContainer: {
+    flex: 1,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center"
+  },
+  button: {
+    width: SW(100),
+    height: SH(30),
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'black',
+    // marginVertical: SH(20),
+    borderRadius: 8,
+    marginHorizontal: SW(6),
+
+  },
+  activeButton: {
+    backgroundColor: Colors.theme_color,
+  },
+  inactiveButton: {
+    backgroundColor: 'white',
+  },
+  activeText: {
+    color: 'white',
+    fontFamily: "Poppins-Regular",
+    fontSize: SF(15),
+  },
+  inactiveText: {
+    color: 'black',
+    fontFamily: "Poppins-Regular",
+    fontSize: SF(15),
+  },
 
 });
 

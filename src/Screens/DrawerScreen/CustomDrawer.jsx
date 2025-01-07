@@ -1,12 +1,14 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity,ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import Entypo from 'react-native-vector-icons/Entypo';
+
 const CustomDrawer = (props) => {
   const { navigation } = props;
+  const [isAccountSettingsOpen, setAccountSettingsOpen] = useState(false);
 
   const menuItems = [
     { title: 'Partners Preference', screen: 'PartnersPreference' },
@@ -16,14 +18,20 @@ const CustomDrawer = (props) => {
     { title: 'Event/News', screen: 'EventNews' },
     { title: 'Dharmshala', screen: 'Dharmshala' },
     { title: 'Committees', screen: 'Community' },
-    { title: 'Be an Activist' },
     { title: 'Activist', screen: 'Activist' },
-    { title: 'Advertise with Us'},
-    { title: 'Success Stories'},
+    { title: 'Advertise with Us' },
+    { title: 'Success Stories', screen: 'SuccessStories' },
     { title: 'Account & Settings' },
-    { title: 'Share App'},
+    { title: 'Share App' },
     { title: 'Feedback/Suggestion', screen: 'FeedBack' },
-    { title: 'About Us'},
+    { title: 'About Us' },
+  ];
+
+  const accountSettingsOptions = [
+    { title: 'Notification Settings', screen: 'NotificationSettings' },
+    { title: 'Privacy Settings', screen: 'PrivacySettings' },
+    { title: 'Inactive or Delete Profile', screen: 'InActiveDelete' },
+    { title: 'Change Password', screen: 'ChangePassword' },
   ];
 
   const handleNavigation = (screen) => {
@@ -40,7 +48,12 @@ const CustomDrawer = (props) => {
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
     >
-    <Entypo name={'cross'} size={30} color={Colors.light} onPress={()=>navigation.navigate('Tabs')}/>
+      <Entypo
+        name="cross"
+        size={30}
+        color={Colors.theme_color}
+        onPress={() => navigation.navigate('Tabs')}
+      />
       <View style={styles.header}>
         <Image
           source={require('../../Images/Profile1.png')}
@@ -50,21 +63,53 @@ const CustomDrawer = (props) => {
           <Text style={styles.name}>Andrew Smith</Text>
           <Text style={styles.idText}>ID no: 98654785123</Text>
         </View>
-        <TouchableOpacity style={styles.editIcon}>
-          <AntDesign name="edit" size={20} color="#fff" />
+        <TouchableOpacity
+          style={styles.editIcon}
+          onPress={() => navigation.navigate('Profile')}
+        >
+          <AntDesign name="edit" size={20} color={Colors.theme_color} />
         </TouchableOpacity>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {menuItems.map((item, index) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.drawerButton}
-            onPress={() => handleNavigation(item.screen)}
-          >
-            <Text style={styles.buttonText}>{item.title}</Text>
-          </TouchableOpacity>
-        ))}
+        {menuItems.map((item, index) => {
+          if (item.title === 'Account & Settings') {
+            return (
+              <View key={index}>
+                <TouchableOpacity
+                  style={styles.drawerButton}
+                  onPress={() => setAccountSettingsOpen(!isAccountSettingsOpen)}
+                >
+                  <Text style={styles.buttonText}>{item.title}</Text>
+                  <AntDesign
+                    name={isAccountSettingsOpen ? 'up' : 'down'}
+                    size={20}
+                    color={Colors.theme_color}
+                  />
+                </TouchableOpacity>
+                {isAccountSettingsOpen &&
+                  accountSettingsOptions.map((option, subIndex) => (
+                    <TouchableOpacity
+                      key={subIndex}
+                      style={[styles.drawerButton, styles.subOption]}
+                      onPress={() => handleNavigation(option.screen)}
+                    >
+                      <Text style={styles.subOptionText}>{option.title}</Text>
+                    </TouchableOpacity>
+                  ))}
+              </View>
+            );
+          }
+          return (
+            <TouchableOpacity
+              key={index}
+              style={styles.drawerButton}
+              onPress={() => handleNavigation(item.screen)}
+            >
+              <Text style={styles.buttonText}>{item.title}</Text>
+            </TouchableOpacity>
+          );
+        })}
       </ScrollView>
     </DrawerContentScrollView>
   );
@@ -73,55 +118,67 @@ const CustomDrawer = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.theme_color || '#8B1C44', 
+    backgroundColor: Colors.light_theme,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical:SH(10),
-    paddingHorizontal: SW(15),
+    paddingVertical: SH(10),
     borderBottomWidth: 0,
     position: 'relative',
   },
   profileImage: {
-    width:SW(45),
-    height:SH(45),
+    width: SW(45),
+    height: SH(45),
     borderRadius: 30,
   },
   userInfo: {
     marginLeft: SW(9),
   },
   name: {
-    fontSize:SF(13),
-    color: '#fff',
+    fontSize: SF(13),
+    color: Colors.theme_color,
     fontWeight: 'bold',
-    fontFamily:"Poppins-Regular"
+    fontFamily: 'Poppins-Regular',
   },
   idText: {
-    fontSize:SF(10),
-    color:Colors.light,
-    fontFamily:"Poppins-Regular"
+    fontSize: SF(10),
+    color: Colors.theme_color,
+    fontFamily: 'Poppins-Regular',
   },
   editIcon: {
     position: 'absolute',
     right: SW(1),
-    top:SH(20),
+    top: SH(20),
   },
   drawerButton: {
-    marginHorizontal:SW(10),
-    marginVertical:SH(5),
-    paddingVertical:SH(15),
-    paddingHorizontal:SW(10),
-    borderRadius: 8,
-    backgroundColor: 'transparent',
-    borderColor:'#FF003F',
+    // marginHorizontal: SW(5),
+    marginVertical: SH(1),
+    paddingVertical: SH(10),
+    paddingHorizontal: SW(10),
+    borderRadius: 5,
+    backgroundColor: '#c4a5b0',
+    borderColor: Colors.theme_color,
     borderWidth: 1,
-    width:SW(150)
+    width:"100%",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   buttonText: {
-    fontSize:SF(12),
-    color:Colors.light,
-    fontFamily:"Poppins-Regular"
+    fontSize: SF(12),
+    color: Colors.theme_color,
+    fontFamily: 'Poppins-Medium',
+  },
+  subOption: {
+    marginLeft: SW(20),
+    borderWidth: 0,
+    backgroundColor: Colors.light_theme,
+  },
+  subOptionText: {
+    fontSize: SF(12),
+    color: Colors.theme_color,
+    fontFamily: 'Poppins-Regular',
   },
 });
 

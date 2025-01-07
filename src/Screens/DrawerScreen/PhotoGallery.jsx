@@ -1,4 +1,4 @@
-import { Text, View, Image, ImageBackground, ScrollView } from 'react-native'
+import { Text, View, Image, ImageBackground, ScrollView,SafeAreaView,StatusBar } from 'react-native'
 import React, { useState } from 'react'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Colors from '../../utils/Colors';
@@ -16,15 +16,20 @@ const PhotoGallery = ({ navigation }) => {
         navigation.navigate(buttonName);
     };
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
+            <StatusBar 
+                barStyle="dark-content" 
+                backgroundColor="transparent" 
+                translucent 
+            />
             <View style={styles.header}>
                 <View style={styles.headerContainer}>
                     <TouchableOpacity onPress={() => navigation.navigate('Tabs')}>
-                        <Image source={require('../../Images/menu.png')} />
+                        <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
                     </TouchableOpacity>
                     <View style={styles.headerContainer}>
                         <Text style={styles.headerText}>Matrimony Profile</Text>
-                        <AntDesign name={'caretdown'} color={Colors.theme_color} size={15} />
+                        {/* <AntDesign name={'caretdown'} color={Colors.theme_color} size={15} /> */}
                     </View>
                 </View>
             </View>
@@ -111,7 +116,7 @@ const PhotoGallery = ({ navigation }) => {
                     </View>
                 </View>
             </ScrollView>
-        </View>
+        </SafeAreaView>
     );
 };
 

@@ -6,18 +6,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.light,
-    padding: SW(10)
+    paddingTop:SW(20)
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: SW(10),
-    paddingLeft: SW(5)
+    paddingLeft:SW(5)
+  },
+  righticons: {
+    flexDirection: 'row',
   },
   headerText: {
     color: Colors.theme_color,
-    fontSize: SF(15)
+    fontSize: SF(15),
+    fontFamily: "Poppins-Regular"
   },
   image: {
     width: SW(70),
@@ -97,7 +101,57 @@ const styles = StyleSheet.create({
   },
   searchIcon: {
     marginHorizontal: SW(10)
-  }
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    width: SW(470)
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: SW(10),
+    width: '80%',
+    borderRadius: 10,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  applyButton: {
+    backgroundColor: Colors.theme_color,
+    padding: SW(10),
+    borderRadius: 5,
+    margin: SW(20),
+    borderRadius: 50
+  },
+  applyButtonText: {
+    fontFamily: "Poppins-Bold",
+    color: Colors.light,
+    textAlign: "center"
+  },
+  inputContainer: {
+    height: SH(40),
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: SH(10),
+    paddingLeft: SW(10),
+    borderRadius: 5,
+    backgroundColor: 'white',
+    color: Colors.dark,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between"
+  },
+  dropdown: {
+    flex: 1,
+    marginRight: SW(10),
+  },
+  headingText: {
+    fontFamily: "Poppins-Bold",
+    fontSize: SF(15),
+    margin: SH(10)
+  },
+
 
 });
 

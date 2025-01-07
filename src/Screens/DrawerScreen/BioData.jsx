@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, Image ,FlatList, ScrollView} from 'react-native';
+import { View, Text, TouchableOpacity, Image ,FlatList, ScrollView,SafeAreaView,StatusBar} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
@@ -57,7 +57,12 @@ const BioData = ({ navigation }) => {
 
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <StatusBar 
+                barStyle="dark-content" 
+                backgroundColor="transparent" 
+                translucent 
+            />
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.navigate('Tabs')} style={{ flexDirection: "row" }}>
           <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
@@ -185,7 +190,7 @@ const BioData = ({ navigation }) => {
       </View>
     </View>
      </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

@@ -4,12 +4,18 @@ import Colors from "../../utils/Colors";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Colors.light,
   },
   header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     padding: SW(15),
+    paddingLeft:SW(5),
     backgroundColor: Colors.light,
-    paddingTop: SH(30),
+    paddingTop:SH(30)
   },
+ 
   headerText: {
     color: Colors.theme_color,
     fontSize: SF(15),
@@ -52,7 +58,36 @@ const styles = StyleSheet.create({
   },
   arrow: {
     marginLeft: SW(290)
-  }
+  },
+  PickPhotoButton:{
+    backgroundColor: '#800020',
+    padding: SW(2),
+    borderRadius: 5,
+    alignItems: 'center',
+    width:SW(100)
+
+  },
+  PickPhotoText:{
+    color:Colors.light,
+    fontSize: SF(13),
+    fontWeight:'Poppins-Bold',
+  },
+  photopickContainer:{
+    flexDirection:"row",justifyContent:"space-between",
+    marginBottom:SH(5)
+  },
+  photosContainer: {
+    marginTop:SH(10),
+    paddingVertical:SH(10),
+},
+
+photo: {
+    width:SW(100),
+    height:SH(100),
+    marginRight:SW(5),
+    borderRadius: 10,
+},
+
 });
 
 export default styles;

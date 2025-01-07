@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ScrollView,StatusBar,SafeAreaView } from 'react-native';
 import Swiper from 'react-native-swiper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -8,7 +8,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/LocationStyle';
 
-const Location = () => {
+const Location = ({ navigation }) => {
   const profileDetails = [
     { label: 'Sub-caste', value: true },
     { label: 'Manglik', value: true },
@@ -28,12 +28,23 @@ const Location = () => {
   ];
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <StatusBar 
+                barStyle="dark-content" 
+                backgroundColor="transparent" 
+                translucent 
+            />
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('Tabs')} style={{ flexDirection: "row" }}>
-          <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
-          <Text style={{ color: Colors.theme_color }}>Raj Sharma</Text>
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row' }}>
+          <TouchableOpacity onPress={() => navigation.navigate('Explore')}>
+            <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
+          </TouchableOpacity>
+          <Text style={styles.headerText}>Raj Sharma</Text>
+        </View>
+        <View style={styles.righticons}>
+          {/* <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} /> */}
+          <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />
+        </View>
       </View>
       <ScrollView>
         <View style={styles.sliderCotainer}>
@@ -84,10 +95,10 @@ const Location = () => {
               <Text style={styles.iconText}>Call</Text>
             </View>
 
-            <View style={styles.iconContainer}>
+            <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ReportPage')} >
               <MaterialIcons name="error-outline" size={24} color={Colors.dark} />
               <Text style={styles.iconText}>Report</Text>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
         <View style={styles.flexContainer1}>
@@ -101,6 +112,7 @@ const Location = () => {
             <Text style={styles.text}>Profile created by :- Father</Text>
           </View>
           <View>
+            <Text />
             <Text style={styles.text}>Indore</Text>
             <Text style={styles.text}>Occupation</Text>
             <Text style={styles.text}>Income</Text>
@@ -140,8 +152,8 @@ const Location = () => {
           <View>
             <Text style={styles.HeadingText}>Family Section</Text>
             <Text style={styles.text}>Father’s Name: Aman Sharma</Text>
+            <Text style={styles.text}>Father’s Occupation:</Text>
             <Text style={styles.text}>Mother’s Name: Shanti Sharma</Text>
-            <Text style={styles.text}>Mother’s Occupation:</Text>
             <Text style={styles.text}>Family Income (Annually):</Text>
             <Text style={styles.text}>Family Type:</Text>
             <Text style={styles.text}>Brother’s: 1, Unmarried</Text>
@@ -193,7 +205,7 @@ const Location = () => {
         </View>
         <Image source={require('../../Images/slider.png')} style={styles.bottomImage} />
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

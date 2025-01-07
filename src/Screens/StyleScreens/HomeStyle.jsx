@@ -6,32 +6,32 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.light,
-  },
-  menuIcon:{
-    width:SW(40),
-    height:SH(40)
+    paddingTop: SW(20),
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: SW(15),
-
+    padding: SW(10),
+    paddingLeft: 0,
+  },
+  menuIcon: {
+    width: SW(30),
+    height: SH(30)
   },
   righticons: {
     flexDirection: 'row',
   },
   imageWrapper: {
-    marginHorizontal: SW(5),
+    marginHorizontal: SW(2),
     marginVertical: SH(15),
   },
   CategoryContainer: {
     margin: SW(10),
-    backgroundColor: Colors.light,
+    backgroundColor: Colors.light_theme,
     marginHorizontal: SW(7),
     borderRadius: 10,
-    paddingVertical: SH(10),
-    paddingHorizontal: SW(10),
+    padding: SW(4),
     alignItems: 'center',
     elevation: 5,
     shadowColor: '#000',
@@ -45,23 +45,29 @@ const styles = StyleSheet.create({
     height: SH(100)
   },
   images: {
-    width: SW(80),
-    height: SH(80),
+    width: SW(100),
+    height: SH(70),
     resizeMode: "contain"
+  },
+  ProfileImages: {
+    width: SW(118),
+    height: SH(115),
+    resizeMode: "cover",
+    borderRadius: 10,
   },
   text: {
     paddingVertical: SH(4),
     fontFamily: "Poppins-Bold",
     paddingBottom: 0,
-    fontSize: SF(14)
+    fontSize: SF(12)
   },
   sliderContainer: {
     marginBottom: SH(30)
   },
   sliderImage: {
     width: "100%",
-    height: SH(220),
-    resizeMode: 'contain',
+    height: SH(180),
+    resizeMode: 'cover',
   },
   bottomImage: {
     width: "100%",

@@ -4,28 +4,44 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 
 const styles = StyleSheet.create({
     container: {
-        padding: SW(15),
         flex: 1,
-        backgroundColor: Colors.light
+        backgroundColor: Colors.light,
+        paddingTop: SW(20)
     },
     header: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: SH(20)
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: SW(10),
+        paddingLeft: 0
     },
-    menuIcon: {
-        width: SW(40),
-        height: SH(40)
+
+    headerText: {
+        color: Colors.theme_color,
+        fontSize: SF(15),
+        fontFamily: "Poppins-Regular",
+        margin:SW(5)
+    },
+    righticons: {
+        flexDirection: 'row',
     },
     headerContainer: {
         flexDirection: "row",
         alignItems: "center",
     },
-    headerText: {
-        fontSize: SF(15),
-        color: Colors.theme_color,
-        marginRight: SW(10)
+
+    menuIcon: {
+        width: SW(30),
+        height: SH(30)
+    },
+    RepostText: {
+        backgroundColor: Colors.theme_color,
+        color: Colors.light,
+        padding: SW(5),
+        borderRadius: 10,
+        paddingHorizontal: SW(15),
+        fontFamily: "Poppins-Regular",
+        fontSize:SF(13)
     },
     image: {
         width: "100%",
@@ -71,6 +87,9 @@ const styles = StyleSheet.create({
         marginHorizontal: SW(15)
 
     },
+    contentContainer:{
+     margin:SW(10)
+    },
     logotext: {
         color: Colors.theme_color,
         fontSize: SF(12),
@@ -103,7 +122,18 @@ const styles = StyleSheet.create({
         paddingLeft: SW(10),
         borderRadius: 5,
         backgroundColor: 'white',
-        color: Colors.dark
+        color: Colors.dark,
+    },
+    heightinput:{
+        height: SH(40),
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: SH(10),
+        paddingLeft: SW(10),
+        borderRadius: 5,
+        backgroundColor: 'white',
+        color: Colors.dark,
+        paddingTop:SH(5)
     },
     headText: {
         fontFamily: "Poppins-Bold",

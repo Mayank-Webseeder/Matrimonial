@@ -1,14 +1,14 @@
-import { Text, View, ImageBackground, TouchableOpacity, Image } from "react-native";
+import { Text, View, ImageBackground, TouchableOpacity, Image, SafeAreaView } from "react-native";
 import React from "react";
 import styles from "../StyleScreens/LoginSuccessStyle";
 
 const LoginSuccess = ({ navigation }) => {
     const HandleLogin = () => {
-        navigation.navigate("Information");
+        navigation.navigate("MainApp");
     };
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <ImageBackground
                 source={require("../../Images/LoginSuccessBackground.png")}
                 style={styles.image}
@@ -28,7 +28,7 @@ const LoginSuccess = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
             </ImageBackground>
-        </View>
+        </SafeAreaView>
     );
 };
 

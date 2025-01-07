@@ -6,23 +6,28 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.light,
-    marginBottom: SH(10)
+    // padding: SW(5),
+    paddingTop:SH(20)
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: SW(15),
-
+    padding: SW(10),
+    paddingLeft:SW(5)
   },
   righticons: {
     flexDirection: 'row',
+  },
+  headerText: {
+    color: Colors.theme_color,
+    fontSize: SF(15),
+    fontFamily: "Poppins-Regular"
   },
   tabContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     padding: SW(10),
-    marginBottom: SH(10)
   },
   tabButton: {
     padding: 10,
@@ -97,7 +102,9 @@ const styles = StyleSheet.create({
    color:Colors.dark,
     marginTop:SH(5),
   },
-
+  ButtonContainer:{
+    marginBottom:SH(10)
+  }
 
 });
 

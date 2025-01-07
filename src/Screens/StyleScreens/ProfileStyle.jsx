@@ -4,31 +4,44 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 
 const styles = StyleSheet.create({
     container: {
-        padding: SW(15),
         flex: 1,
-        backgroundColor: Colors.light
+        backgroundColor: Colors.light,
+        paddingTop: SW(20)
     },
     header: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: SH(20)
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: SW(10),
+        paddingLeft: 0
+    },
+
+    headerText: {
+        color: Colors.theme_color,
+        fontSize: SF(15),
+        fontFamily: "Poppins-Regular",
+        margin: SW(5)
+    },
+    righticons: {
+        flexDirection: 'row',
     },
     headerContainer: {
         flexDirection: "row",
         alignItems: "center",
     },
-    headerText: {
-        fontSize: SF(15),
-        color: Colors.theme_color,
-        marginRight: SW(10)
+
+    menuIcon: {
+        width: SW(30),
+        height: SH(30)
     },
     RepostText: {
         backgroundColor: Colors.theme_color,
         color: Colors.light,
-        padding: SW(10),
+        padding: SW(5),
         borderRadius: 10,
-        paddingHorizontal: SW(15)
+        paddingHorizontal: SW(15),
+        fontFamily: "Poppins-Regular",
+        fontSize: SF(13)
     },
     image: {
         width: "100%",
@@ -89,7 +102,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.theme_color,
         padding: SW(7),
         borderRadius: 50,
-      },
+    },
     text: {
         fontFamily: "Poppins-Regular",
         fontSize: SF(15)
@@ -107,11 +120,26 @@ const styles = StyleSheet.create({
         height: SH(40),
         borderColor: 'gray',
         borderWidth: 1,
-        marginBottom:SH(10),
-        paddingLeft:SW(10),
+        marginBottom: SH(10),
+        paddingLeft: SW(10),
         borderRadius: 5,
         backgroundColor: 'white',
         color: Colors.dark
+    },
+    topinput: {
+        height: SH(30),
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: SH(10),
+        left: SW(60),
+        borderRadius: 5,
+        backgroundColor: 'white',
+        color: Colors.dark,
+        width: SW(130),
+        top: SH(40),
+        position: "absolute",
+        zIndex: 999,
+        padding: SW(5)
     },
     headText: {
         fontFamily: "Poppins-Bold",
@@ -135,11 +163,36 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins-Medium",
         paddingVertical: SH(7)
     },
-    flex:{
-        flexDirection:"row",
-        justifyContent:"space-between",
-        alignItems:"center",
-        padding:SW(7)
+    flex: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: SW(7)
+    },
+    aboutInput: {
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: SH(10),
+        paddingLeft: SW(10),
+        paddingTop: 0,
+        paddingBottom: SW(60),
+        borderRadius: 5,
+        backgroundColor: 'white',
+        color: Colors.dark,
+    },
+    heightinput: {
+        height: SH(40),
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: SH(10),
+        paddingLeft: SW(10),
+        borderRadius: 5,
+        backgroundColor: 'white',
+        color: Colors.dark,
+        paddingTop: SH(5)
+    },
+    contentContainer: {
+        margin: SW(10)
     },
 
 })

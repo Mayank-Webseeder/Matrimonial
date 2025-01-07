@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, TouchableOpacity, FlatList, Image, Alert, Text } from 'react-native';
+import { View, TouchableOpacity, FlatList, Image, SafeAreaView, Text,StatusBar } from 'react-native';
 import { DrawerActions } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from '../StyleScreens/HomeStyle';
@@ -33,14 +33,19 @@ const Home = ({ navigation }) => {
     );
   };
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <StatusBar 
+                barStyle="dark-content" 
+                backgroundColor="transparent" 
+                translucent 
+            />
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
           <Image source={require('../../Images/menu.png')} style={styles.menuIcon}/>
         </TouchableOpacity>
         <View style={styles.righticons}>
-          <AntDesign name={'search1'} size={30} color={Colors.theme_color} style={{ marginHorizontal: 10 }} />
-          <AntDesign name={'bells'} size={30} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />
+          <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} />
+          <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />
         </View>
       </View>
       <ScrollView>
@@ -77,7 +82,7 @@ const Home = ({ navigation }) => {
                 }
               }}
               >
-                <Image source={item.image} style={styles.images} />
+                <Image source={item.image} style={styles.ProfileImages} />
               </TouchableOpacity>
               </View>
             )}
@@ -138,7 +143,7 @@ const Home = ({ navigation }) => {
         </View>
         <Image source={require('../../Images/slider.png')} style={styles.bottomImage} />
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, ImageBackground, TextInput, ScrollView } from 'react-native'
+import { StyleSheet, Text, View, Image, ImageBackground, TextInput, ScrollView, SafeAreaView, StatusBar } from 'react-native'
 import React, { useState } from 'react'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Colors from '../../utils/Colors';
@@ -8,6 +8,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import { TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { Dropdown } from 'react-native-element-dropdown';
+import { DrawerActions } from '@react-navigation/native';
 const PartnersPreference = ({ navigation }) => {
   const [maritalStatus, setMaritalStatus] = useState('');
   const [ManglikStatus, setManglikStatus] = useState('');
@@ -22,6 +23,29 @@ const PartnersPreference = ({ navigation }) => {
   const [District, setDistrict] = useState('');
   const [BodyStructure, setBodyStructure] = useState('');
   const [selectedButton, setSelectedButton] = useState('PartnersPreference');
+  const [state, setState] = useState('');
+  const [village, setVillage] = useState('');
+  const [feet, setFeet] = useState(null);
+  const [inches, setInches] = useState(null);
+  const [showHeightDropdowns, setShowHeightDropdowns] = useState(false);
+
+  const feetData = [
+    { label: '3', value: '3' },
+    { label: '4', value: '4' },
+    { label: '5', value: '5' },
+    { label: '6', value: '6' },
+    { label: '7', value: '7' },
+  ];
+
+  const inchesData = Array.from({ length: 11 }, (_, index) => ({
+    label: (index + 1).toString(),
+    value: (index + 1).toString(),
+  }));
+
+  const toggleHeightDropdown = () => {
+    setShowHeightDropdowns(!showHeightDropdowns);
+  };
+
   const maritalStatusData = [
     { label: 'Unmarried', value: 'Unmarried' },
     { label: 'Widow', value: 'Widow' },
@@ -38,10 +62,21 @@ const PartnersPreference = ({ navigation }) => {
   const QualificationData = [
     { label: 'Nigeria', value: 'Nigeria' }
   ]
-  const DistrictData = [
+  const stateData = [
     { label: 'Barwani', value: 'Barwani' },
     { label: 'Khargone', value: 'Khargone' },
-  ]
+    { label: 'Indore', value: 'Indore' },
+    { label: 'Bhopal', value: 'Bhopal' },
+  ];
+
+  const Villages = [
+    { label: 'Ajnaria', value: 'Ajnaria' },
+    { label: 'Badhawani', value: 'Badhawani' },
+    { label: 'Bhamkheda', value: 'Bhamkheda' },
+    { label: 'Jalgaon', value: 'Jalgaon' },
+  ];
+
+
   const PartnersLiveinData = [
     { label: 'India', value: 'India' },
     { label: 'Abroad', value: 'Abroad' },
@@ -85,21 +120,25 @@ const PartnersPreference = ({ navigation }) => {
   ]
 
   const handlePress = (buttonName) => {
-    setSelectedButton(buttonName); // Update active button
-    navigation.navigate(buttonName); // Navigate to the respective screen
+    setSelectedButton(buttonName);
+    navigation.navigate(buttonName);
   };
 
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="transparent"
+        translucent
+      />
       <View style={styles.header}>
         <View style={styles.headerContainer}>
-          <TouchableOpacity onPress={() => navigation.navigate('Tabs')}>
+          <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
             <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
           </TouchableOpacity>
           <View style={styles.headerContainer}>
             <Text style={styles.headerText}>Matrimony Profile</Text>
-            <AntDesign name={'caretdown'} color={Colors.theme_color} size={15} />
           </View>
         </View>
       </View>
@@ -122,12 +161,7 @@ const PartnersPreference = ({ navigation }) => {
               <Text style={styles.text}>Unmarried</Text>
               <Text style={styles.text}>Lives in London</Text>
             </View>
-            <View style={styles.userData}>
-              <AntDesign name={'hearto'} color={Colors.theme_color} size={25} />
-              <AntDesign name={'menu-unfold'} color={Colors.theme_color} size={25} />
-              <Feather name={'minus-circle'} color={Colors.theme_color} size={25} />
-              <MaterialIcons name={'report-gmailerrorred'} color={Colors.theme_color} size={25} />
-            </View>
+
           </View>
 
           <View style={styles.IconFlex}>
@@ -170,7 +204,7 @@ const PartnersPreference = ({ navigation }) => {
               <Text style={styles.logotext}>Photo Gallery</Text>
             </TouchableOpacity>
           </View>
-          <View>
+          <View style={styles.contentContainer}>
             <Text style={styles.detailText}>Preferences</Text>
             <View>
               <View>
@@ -178,11 +212,47 @@ const PartnersPreference = ({ navigation }) => {
                 <TextInput style={styles.input} />
               </View>
               <View>
-                <Text style={styles.inputHeading}>Height Expected</Text>
-                <TextInput style={styles.input} />
+                <Text style={styles.inputHeading}>Height</Text>
+
+                <TouchableOpacity onPress={toggleHeightDropdown} style={styles.inputWrapper}>
+
+                  <Text style={styles.heightinput}>{feet ? `${feet} feet ${inches} inches` : 'Select Height'}</Text>
+                </TouchableOpacity>
+
+                {showHeightDropdowns && (
+                  <View>
+
+                    <View style={styles.inputWrapper}>
+                      <Text style={styles.inputLabel}>Feet</Text>
+                      <Dropdown
+                        style={styles.input}
+                        data={feetData}
+                        labelField="label"
+                        valueField="value"
+                        value={feet}
+                        onChange={(item) => setFeet(item.value)}
+                        placeholder="Select Feet"
+                      />
+                    </View>
+
+
+                    <View style={styles.inputWrapper}>
+                      <Text style={styles.inputLabel}>Inches</Text>
+                      <Dropdown
+                        style={styles.input}
+                        data={inchesData}
+                        labelField="label"
+                        valueField="value"
+                        value={inches}
+                        onChange={(item) => setInches(item.value)}
+                        placeholder="Select Inches"
+                      />
+                    </View>
+                  </View>
+                )}
               </View>
               <View>
-                <Text style={styles.inputHeading}>Weight</Text>
+                <Text style={styles.inputHeading}>Weight (in kg)</Text>
                 <TextInput style={styles.input} />
               </View>
               <View>
@@ -263,14 +333,30 @@ const PartnersPreference = ({ navigation }) => {
               </View>
               <View>
                 <Text style={styles.inputHeading}>District</Text>
+                <TextInput style={styles.input} />
+              </View>
+              <View>
+                <Text style={styles.inputHeading}>State</Text>
                 <Dropdown
                   style={styles.input}
-                  data={DistrictData}
+                  data={stateData}
                   labelField="label"
                   valueField="value"
-                  value={District}
-                  onChange={item => setDistrict(item.value)}
-                  placeholder="Select district"
+                  value={state}
+                  onChange={item => setState(item.value)}
+                  placeholder="Select state"
+                />
+              </View>
+              <View>
+                <Text style={styles.inputHeading}>Village</Text>
+                <Dropdown
+                  style={styles.input}
+                  data={Villages}
+                  labelField="label"
+                  valueField="value"
+                  value={village}
+                  onChange={item => setVillage(item.value)}
+                  placeholder="Select village"
                 />
               </View>
               <View>
@@ -344,7 +430,7 @@ const PartnersPreference = ({ navigation }) => {
           </View>
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

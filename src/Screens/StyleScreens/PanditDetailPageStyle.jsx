@@ -4,13 +4,24 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: SW(16),
-    backgroundColor: Colors.light
+    backgroundColor: Colors.light,
+    paddingTop:SW(20)
   },
   header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     padding: SW(10),
-    paddingLeft: 0
+    backgroundColor: Colors.light,
+    paddingLeft:0
   },
+ 
+  headerText: {
+    color: Colors.theme_color,
+    fontSize: SF(15),
+    fontFamily: "Poppins-Regular"
+  },
+
   profileSection: {
     alignItems: 'center',
     marginBottom:SH(20),
@@ -18,8 +29,8 @@ const styles = StyleSheet.create({
     margin: SW(10)
   },
   profileImage: {
-    width: SW(100),
-    height: SH(100),
+    width: SW(120),
+    height: SH(120),
     resizeMode: "contain",
     marginRight: SW(10)
   },
@@ -66,7 +77,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light,
     borderRadius: 50,
     elevation: 5,
-    padding: SW(5),
+    padding: SW(3),
     margin: SW(5),
     width: '30%',
     alignItems: 'center',
@@ -74,8 +85,8 @@ const styles = StyleSheet.create({
   },
 
   serviceText: {
-    fontSize: SF(10),
-    fontFamily: 'Poppins-Regular',
+    fontSize: SF(11),
+    fontFamily: 'Poppins-Medium',
     textAlign: 'center',
     color: Colors.dark,
   },
@@ -163,6 +174,63 @@ const styles = StyleSheet.create({
   iconText: {
     marginHorizontal: SW(5),
     fontFamily: "Poppins-Regular",
-  }
+  },
+  contentContainer:{
+    margin:SW(10)
+  },
+  websiteIcon:{
+    width:SW(30),
+    height:SH(30)
+  },
+  Bottomimage:{
+    width:"100%",
+    height:SH(180),
+    resizeMode:"cover"
+  },
+  ReviewPost:{
+   flexDirection:"row",
+   justifyContent:"space-between",
+   alignItems:"center"
+  },
+  postReviewButton:{
+    padding:SW(4),
+    backgroundColor:Colors.theme_color,
+    borderRadius:5
+  },
+  postReviewText:{
+    fontSize:SF(13),
+    color:Colors.light,
+    fontFamily:"poppins-Regular"
+
+  },
+  viewMoreButton:{
+    padding:SW(4),
+    backgroundColor:Colors.theme_color,
+    borderRadius:5,
+    marginHorizontal:SW(100)
+  },
+  viewMoreText:{
+    fontSize:SF(13),
+    color:Colors.light,
+    fontFamily:"poppins-Regular",
+    textAlign:"center"
+  },
+  imageContainer: {
+    flexDirection: 'column',
+    marginTop:SH(10),
+  },
+  imageRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom:SH(2),
+  },
+  image: {
+    width:'50%',
+    height:SH(100),
+    marginBottom:SH(1),
+    marginRight:SW(2),
+    borderRadius:3
+  },
+  
 });
 export default styles;

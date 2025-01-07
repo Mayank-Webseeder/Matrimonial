@@ -3,26 +3,31 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
+ 
   container: {
     flex: 1,
-    padding: SW(20),
     backgroundColor: Colors.light,
+    paddingTop:SW(20)
   },
   header: {
-    flexDirection: "row"
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: SW(10),
+    paddingLeft:0
   },
+  headerText: {
+    color: Colors.theme_color,
+    fontSize: SF(15),
+    fontFamily: "Poppins-Regular"
+  },
+
   Text: {
     fontSize: SF(24),
     fontFamily: "Poppins-Bold",
     color: Colors.theme_color,
   },
-  headerText: {
-    fontSize: SF(17),
-    fontFamily: "Poppins-Regular",
-    color: Colors.theme_color,
-    marginLeft: SW(10),
-    marginBottom: SH(50)
-  },
+ 
   description: {
     fontSize: SF(13),
     color: Colors.theme_color,
@@ -56,8 +61,11 @@ const styles = StyleSheet.create({
     marginHorizontal: SW(3),
   },
   menuIcon:{
-    width:SW(40),
+    width:SW(30),
     height:SH(30)
+  },
+  feedBackContainer:{
+    padding:SW(10)
   }
 
 });

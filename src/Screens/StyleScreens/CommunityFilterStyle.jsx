@@ -3,17 +3,19 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
-   container: {
+    container: {
         flex: 1,
         backgroundColor: Colors.light,
-        padding: SW(10)
+        paddingTop: SW(30)
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: SW(10),
-        paddingLeft:SW(1)
+        paddingLeft: SW(1),
+        paddingTop:0
+
     },
     headerText: {
         color: Colors.theme_color,
@@ -68,7 +70,7 @@ const styles = StyleSheet.create({
     iconContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginRight: SW(10),
+        marginRight: SW(8),
     },
     text: {
         fontFamily: "Poppins-Regular",
@@ -80,7 +82,8 @@ const styles = StyleSheet.create({
     },
     sliderContainer: {
         marginBottom: SH(30),
-        height: SH(230),
+        height: SH(180),
+        marginTop:SH(10)
       },
       sliderImage: {
         width: "100%",
@@ -107,48 +110,15 @@ const styles = StyleSheet.create({
         marginVertical: SH(10),
         marginBottom: SH(200)
     },
-    ButtonContainer: {
-        flex: 1,
-        display: "flex",
-        flexDirection: "row",
-        justifyContent:"center"
-    },
-    button: {
-        width: SW(100),
-        height: SH(40),
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: 'black',
-        marginVertical: SH(20),
-        borderRadius: 8,
-        marginHorizontal: SW(6)
-    },
-    activeButton: {
-        backgroundColor: Colors.theme_color,
-    },
-    inactiveButton: {
-        backgroundColor: 'white',
-    },
-   activeText: {
-        color: 'white',
-        fontFamily: "Poppins-Regular",
-        fontSize: SF(15),
-    },
-    inactiveText: {
-        color: 'black',
-        fontFamily: "Poppins-Regular",
-        fontSize: SF(15),
-    },
     icon: {
         marginHorizontal:SW(10),
     },
 
     iconText: {
-        fontSize: SF(13),
+        fontSize: SF(12),
         color: Colors.dark,
         marginTop: SH(5),
-        marginLeft: SW(4)
+        marginLeft: SW(3)
     },
     Button: {
         backgroundColor: Colors.theme_color,
@@ -156,7 +126,9 @@ const styles = StyleSheet.create({
         paddingVertical: SH(5),
         borderRadius: 8,
         alignItems: "center",
-        width:SW(80)
+        width:SW(103),
+        display:"flex",
+        flexDirection:"row"
     },
     buttonText: {
         color: Colors.light,
@@ -180,6 +152,11 @@ const styles = StyleSheet.create({
     filterHeading: {
         fontFamily: "Poppins-Bold",
         fontSize: SF(15)
+    },
+    RequestText:{
+      color:Colors.light,
+      fontSize:SF(10),
+      fontFamily: "Poppins-Regular",
     }
 
 });

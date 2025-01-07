@@ -4,24 +4,35 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 
 const styles = StyleSheet.create({
     container: {
-        padding: SW(15),
         flex: 1,
-        backgroundColor: Colors.light
+        backgroundColor: Colors.light,
+        paddingTop: SW(20)
     },
     header: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: SH(20)
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: SW(10),
+        paddingLeft: 0
+    },
+
+    headerText: {
+        color: Colors.theme_color,
+        fontSize: SF(15),
+        fontFamily: "Poppins-Regular",
+        margin:SW(5)
+    },
+    righticons: {
+        flexDirection: 'row',
     },
     headerContainer: {
         flexDirection: "row",
         alignItems: "center",
     },
-    headerText: {
-        fontSize: SF(15),
-        color: Colors.theme_color,
-        marginRight: SW(10)
+
+    menuIcon: {
+        width: SW(30),
+        height: SH(30)
     },
     image: {
         width: "100%",

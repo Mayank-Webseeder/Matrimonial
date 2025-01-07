@@ -1,4 +1,4 @@
-import { Text, View, FlatList, TouchableOpacity, TextInput, ScrollView } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, ScrollView,StatusBar,SafeAreaView } from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 import { slider, CommitteeFilterDataList } from '../../DummyData/DummyData';
 import { Image } from 'react-native';
@@ -11,11 +11,6 @@ import Feather from 'react-native-vector-icons/Feather';
 import AppIntroSlider from 'react-native-app-intro-slider';
 
 const CommunityFilter = ({ navigation }) => {
-  const [activeButton, setActiveButton] = useState(null);
-  const handleFilter = () => {
-    setActiveButton(1);
-    navigation.navigate('CommunityFilter');
-  };
 
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -52,16 +47,17 @@ const CommunityFilter = ({ navigation }) => {
             <Text style={styles.text}>{item.profile}</Text>
             <View style={styles.sharecontainer}>
               <View style={styles.iconContainer}>
-                <FontAwesome name="bookmark-o" size={20} color={Colors.dark} />
+                <FontAwesome name="bookmark-o" size={19} color={Colors.dark} />
                 <Text style={styles.iconText}>Save</Text>
               </View>
 
               <View style={styles.iconContainer}>
-                <Feather name="send" size={20} color={Colors.dark} />
+                <Feather name="send" size={19} color={Colors.dark} />
                 <Text style={styles.iconText}>Shares</Text>
               </View>
               <TouchableOpacity style={styles.Button}>
-                <MaterialIcons name="call" size={25} color={Colors.light} />
+                <MaterialIcons name="call" size={20} color={Colors.light} />
+                <Text style={styles.RequestText}>Request for call</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -70,77 +66,82 @@ const CommunityFilter = ({ navigation }) => {
     );
   };
 
-  const renderHeader = () => {
-    return (
-      <View>
-        {/* Header Content */}
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.navigate('Tabs')} style={{ flexDirection: 'row' }}>
-            <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
-            <Text style={styles.headerText}>Community</Text>
+  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar 
+                barStyle="dark-content" 
+                backgroundColor="transparent" 
+                translucent 
+            />
+     <View style={styles.header}>
+        <View style={{ flexDirection: 'row' }}>
+          <TouchableOpacity onPress={() => navigation.navigate('Community')}>
+            <MaterialIcons
+              name="arrow-back-ios-new"
+              size={25}
+              color={Colors.theme_color}
+            />
           </TouchableOpacity>
-          <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification'); }} />
+          <Text style={styles.headerText}>Committee</Text>
         </View>
-
-        <View style={styles.searchbar}>
-          <AntDesign name={'search1'} size={20} color={'gray'} />
-          <TextInput placeholder='Search in Your city' placeholderTextColor={'gray'} />
-        </View>
-
-        <View style={styles.ButtonContainer}>
-          <TouchableOpacity
-            style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton]}
-            onPress={handleFilter}
-          >
-            <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>
-              Filter
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.button, activeButton === 2 ? styles.activeButton : styles.inactiveButton]}
-            onPress={() => setActiveButton(2)}
-          >
-            <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>
-              Register
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.sliderContainer}>
-          <AppIntroSlider
-            ref={sliderRef}
-            data={slider}
-            renderItem={SliderRenderItem}
-            showNextButton={false}
-            showDoneButton={false}
-            dotStyle={styles.dot}
-            activeDotStyle={styles.activeDot}
-            onSlideChange={(index) => setCurrentIndex(index)}
+        <View style={styles.righticons}>
+          <AntDesign
+            name={'bells'}
+            size={25}
+            color={Colors.theme_color}
+            onPress={() => {
+              navigation.navigate('Notification');
+            }}
           />
         </View>
-
-        <View style={styles.filterText}>
-          <Text style={styles.filterHeading}>Indore</Text>
-          <Text style={styles.filterHeading}>Vijay Nagar</Text>
-          <Text style={styles.filterHeading}>Sub-caste</Text>
-        </View>
       </View>
-    );
-  };
+ 
+ <ScrollView>
 
-  return (
-    <View style={styles.container}>
-      <FlatList
-        data={CommitteeFilterDataList}
-        renderItem={renderItem}
-        ListHeaderComponent={renderHeader} 
-        keyExtractor={(item) => item.id.toString()}
-        scrollEnabled={true}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.panditListData}
-      />
-    </View>
+ <View>
+          {/* Search and Filter Section */}
+          <View style={styles.searchContainer}>
+            <View style={styles.searchbar}>
+              <AntDesign name={'search1'} size={20} color={'gray'} />
+              <TextInput
+                placeholder="Search in Your city"
+                placeholderTextColor={'gray'}
+              />
+            </View>
+          </View>
+
+          {/* Image Slider */}
+          <View style={styles.sliderContainer}>
+            <AppIntroSlider
+              ref={sliderRef}
+              data={slider}
+              renderItem={SliderRenderItem}
+              showNextButton={false}
+              showDoneButton={false}
+              dotStyle={styles.dot}
+              activeDotStyle={styles.activeDot}
+              onSlideChange={(index) => setCurrentIndex(index)}
+            />
+          </View>
+          <View style={styles.filterText}>
+            <Text style={styles.filterHeading}>Indore</Text>
+            <Text style={styles.filterHeading}>Vijay Nagar</Text>
+            <Text style={styles.filterHeading}>Sub-caste</Text>
+          </View>
+
+          <FlatList
+          data={CommitteeFilterDataList}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
+          scrollEnabled={false} // Disable FlatList scrolling
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.panditListData}
+        />
+        </View>
+
+ </ScrollView>
+
+    </SafeAreaView>
   );
 };
 

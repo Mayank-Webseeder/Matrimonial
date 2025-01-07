@@ -1,86 +1,110 @@
-import { Image, Text, View, TouchableOpacity, FlatList, ScrollView } from 'react-native';
-import React, { useState } from 'react';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import styles from '../StyleScreens/SavedProfileStyle';
-import Colors from '../../utils/Colors';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import HeadingWithViewAll from '../../Components/HeadingWithViewAll';
-import { SavedProfileData } from '../../DummyData/DummyData';
+import { StyleSheet, View, Text, TouchableOpacity, FlatList, ScrollView, Image, SafeAreaView,StatusBar } from "react-native";
+import React, { useState } from "react";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import styles from "../StyleScreens/SavedProfileStyle";
+import Colors from "../../utils/Colors";
+import { SavedProfileData } from "../../DummyData/DummyData";
+import HeadingWithViewAll from "../../Components/HeadingWithViewAll";
 
 const SavedProfile = ({ navigation }) => {
-  const [activeButton, setActiveButton] = useState(null);
-  const handlePress = (buttonId, screenName) => {
-    setActiveButton(buttonId);
-    navigation.navigate(screenName);
-  };
+  const [activeCategory, setActiveCategory] = useState("Biodata");
+
+  // Filtered data based on the selected category
+  const filteredData = SavedProfileData.filter((item) => item.category === activeCategory);
+
   const renderItem = ({ item }) => (
     <TouchableOpacity style={styles.card}>
-      <Image style={styles.image} source={item.image} />
-
       <View style={styles.detailsContainer}>
-        <View style={styles.row}>
-          <Text style={styles.name}>{item.name}</Text>
-          <Text style={styles.city}>{item.city}</Text>
-        </View>
+        {activeCategory === "Biodata" && (
+          <View>
+            <Image style={styles.image} source={item.image} />
+             <View style={styles.row}>
+              <Text style={styles.name}>{item.name}</Text>
+              <Text style={styles.text}>{item.city}</Text>
+            </View>
+            <View style={styles.row2}>
+              <Text style={styles.text}>Age: {item.age} /</Text>
+              <Text style={styles.text}>Height: {item.height}</Text>
+            </View>
+            <Text style={styles.text}>{item.subcaste}</Text>
+          </View>
+        )}
 
-        <View style={styles.row2}>
-          <Text style={styles.text}>Age: {item.age} /</Text>
-          <Text style={styles.text}>Height: {item.height}</Text>
-        </View>
+        {activeCategory === "Pandit" && (
+          <View>
+            <Image style={styles.image} source={item.image} />
+             <Text style={styles.name}>{item.name}</Text>
+            <Text style={styles.text}>{item.subcaste}</Text>
+            <View style={styles.row}>
+            <Text style={styles.text}>{item.city}</Text>
+            <Text style={styles.text}>{item.area}</Text>
+          </View>
+          </View>
+        )}
 
-        <Text style={styles.subcaste}>{item.subcaste}</Text>
+        {activeCategory === "Dharmshala" && (
+          <View>
+              <Image style={styles.image} source={item.image} />
+            <Text style={styles.text}>{item.subcaste}</Text>
+            <Text style={styles.city}>{item.city}</Text>
+          </View>
+        )}
+
+        {activeCategory === "Community" && (
+          <View>
+              <Image style={styles.image} source={item.image} />         
+            <Text style={styles.name}>{item.name}</Text>
+            <Text style={styles.text}>{item.city}</Text>
+            <Text style={styles.text}>{item.area}</Text>
+          </View>
+        )}
       </View>
     </TouchableOpacity>
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#fff' }}>
-
+    <SafeAreaView style={styles.container}>
+       <StatusBar 
+                      barStyle="dark-content" 
+                      backgroundColor="transparent" 
+                      translucent 
+                  />
+      {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('Tabs')} style={{ flexDirection: 'row' }}>
-          <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
+        <View style={{ flexDirection: "row" }}>
+          <TouchableOpacity onPress={() => navigation.navigate('Tabs')}>
+            <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
+          </TouchableOpacity>
           <Text style={{ color: Colors.theme_color }}>Saved</Text>
-        </TouchableOpacity>
+        </View>
         <View style={styles.righticons}>
-          <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{marginHorizontal:10}} />
-          <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => navigation.navigate('Notification')}  />
+          <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} />
+          <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => navigation.navigate('Notification')} />
         </View>
       </View>
 
-      <HeadingWithViewAll heading="MATRIMONY Saved Profile" showViewAll={false} />
-      <ScrollView horizontal={true}
-        showsHorizontalScrollIndicator={false} style={styles.ButtonContainer}>
+      {/* Category Tabs */}
+      <View>
+      <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.ButtonContainer}>
         <View style={styles.tabContainer}>
-          <TouchableOpacity
-            style={[styles.tabButton, activeButton === 1 && styles.activeTab]}
-            onPress={() => handlePress(1, 'BioData')}
-          >
-            <Text style={[styles.tabText, activeButton === 1 && styles.activeTabText]}>Biodata</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.tabButton, activeButton === 2 && styles.activeTab]}
-            onPress={() => handlePress(2, 'Pandit Jyotish')}
-          >
-            <Text style={[styles.tabText, activeButton === 2 && styles.activeTabText]}>Pandit</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.tabButton, activeButton === 3 && styles.activeTab]}
-            onPress={() => handlePress(3, 'Dharmshala')}
-          >
-            <Text style={[styles.tabText, activeButton === 3 && styles.activeTabText]}>Dharmshala</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.tabButton, activeButton === 4 && styles.activeTab]}
-            onPress={() => handlePress(4, 'Community')}
-          >
-            <Text style={[styles.tabText, activeButton === 4 && styles.activeTabText]}>Community</Text>
-          </TouchableOpacity>
+          {["Biodata", "Pandit", "Dharmshala", "Community"].map((category, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[styles.tabButton, activeCategory === category && styles.activeTab]}
+              onPress={() => setActiveCategory(category)}
+            >
+              <Text style={[styles.tabText, activeCategory === category && styles.activeTabText]}>{category}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
       </ScrollView>
+      <HeadingWithViewAll heading={"MATRIMONY Saved Profile"} />
+
+      </View>
+      {/* Heading with View All */}
       <FlatList
-        data={SavedProfileData}
+        data={filteredData}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         numColumns={2}
@@ -88,7 +112,7 @@ const SavedProfile = ({ navigation }) => {
         contentContainerStyle={styles.ProfileContainer}
         showsVerticalScrollIndicator={false}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

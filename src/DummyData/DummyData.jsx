@@ -33,56 +33,125 @@ export const DharamsalaSlider = [
 
 export const SavedProfileData = [
    {
-      id: "1",
-      name: "Raj Sharma",
-      city: "Indore",
-      age: "25",
-      subcaste: "Sub-caste name",
-      height: "5.95",
-      image: require('../Images/profile3.png')
+     id: 1,
+     name: 'Raj Shah',
+     city: 'London',
+     age: 23,
+     height: '5.8',
+     subcaste: 'subcaste name',
+     image: require('../Images/profile3.png'),
+     category: 'Biodata',
    },
    {
-      id: "2",
-      name: "Raj Sharma",
-      city: "Indore",
-      age: "25",
-      subcaste: "Sub-caste name",
-      height: "5.95",
-      image: require('../Images/profile3.png')
-   }, {
-      id: "3",
-      name: "Raj Sharma",
-      city: "Indore",
-      age: "25",
-      subcaste: "Sub-caste name",
-      height: "5.95",
-      image: require('../Images/profile3.png')
-   }, {
-      id: "4",
-      name: "Raj Sharma",
-      city: "Indore",
-      age: "25",
-      subcaste: "Sub-caste name",
-      height: "5.95",
-      image: require('../Images/profile3.png')
-   }, {
-      id: "5",
-      name: "Raj Sharma",
-      city: "Indore",
-      age: "25",
-      subcaste: "Sub-caste name",
-      height: "5.95",
-      image: require('../Images/profile3.png')
-   }, {
-      id: "6",
-      name: "Raj Sharma",
-      city: "Indore",
-      age: "25",
-      subcaste: "Sub-caste name",
-      height: "5.95",
-      image: require('../Images/profile3.png')
-   }
-]
+      id: 2,
+      name: 'Raj Shah',
+      city: 'London',
+      age: 23,
+      height: '5.8',
+      subcaste: 'subcaste name',
+      image: require('../Images/profile3.png'),
+      category: 'Biodata',
+    },
+    {
+      id: 3,
+      name: 'Raj Shah',
+      city: 'London',
+      age: 23,
+      height: '5.8',
+      subcaste: 'subcaste name',
+      image: require('../Images/profile3.png'),
+      category: 'Biodata',
+    },
+    {
+      id: 4,
+      name: 'Raj Shah',
+      city: 'London',
+      age: 23,
+      height: '5.8',
+      subcaste: 'subcaste name',
+      image: require('../Images/profile3.png'),
+      category: 'Biodata',
+    },
+   {
+     id: 5,
+     name: 'Priya Singh',
+     city: 'Delhi',
+     subcaste: 'subcaste name',
+     image: require('../Images/PanditLogo.png'),
+     area:'area',
+     category: 'Pandit',
+   },
+   {
+      id: 6,
+      name: 'Priya Singh',
+      city: 'Delhi',
+      subcaste: 'subcaste name',
+      image: require('../Images/PanditLogo.png'),
+      area:'area',
+      category: 'Pandit',
+    },
+    {
+      id: 7,
+      name: 'Priya Singh',
+      city: 'Delhi',
+      subcaste: 'subcaste name',
+      image: require('../Images/PanditLogo.png'),
+      area:'area',
+      category: 'Pandit',
+    },
+   {
+     id: 8,
+     name: 'Hotel NH Valencia Center',
+     city: 'Mumbai',
+     subcaste: 'subcaste name',
+     image: require('../Images/Dhramsala.png'),
+     category: 'Dharmshala',
+   },
+   {
+      id: 9,
+      name:'Hotel NH Valencia Center',
+      city: 'Mumbai',
+      subcaste: 'subcaste name',
+      image: require('../Images/Dhramsala.png'),
+      category: 'Dharmshala',
+    },
+    {
+      id: 10,
+      name:'Hotel NH Valencia Center',
+      city: 'Mumbai',
+      subcaste: 'subcaste name',
+      image: require('../Images/Dhramsala.png'),
+      category: 'Dharmshala',
+    },
+    {
+      id: 11,
+      name:'Hotel NH Valencia Center',
+      city: 'Mumbai',
+      subcaste: 'subcaste name',
+      image: require('../Images/Dhramsala.png'),
+      category: 'Dharmshala',
+    },
+   {
+     id: 12,
+     name: 'Vineshkumarji group',
+     city: 'Bangalore',
+     subcaste: 'subcaste name',
+     area: 'Area',
+     image: require('../Images/Committee.png'),
+     category: 'Community',
+   },
+   {
+      id: 13,
+      name: 'Vineshkumarji group',
+      city: 'Bangalore',
+      subcaste: 'subcaste name',
+      area: 'Area',
+      image: require('../Images/Committee.png'),
+      category: 'Community',
+    },
+ ];
+ 
+ 
 
 export const ActivistData = [
    {
@@ -250,10 +319,10 @@ export const EventData = [
       hour: "1",
       date_time: "Dec 10 at 11:31 AM",
       text: "Hi Everyone, My name is Aman, my last shot on  Facebook. Follow me on https:fackbook.com/amanpsihombing_",
-      image1: require('../Images/EventImage.png'),
-      image2: require('../Images/EventImage2.png'),
-      image3: require('../Images/EventImage3.png'),
-      image4: require('../Images/EventImage4.png')
+      image1: require('../Images/EventImage2.png'),
+      image2: require('../Images/EventImage.png'),
+      image3: require('../Images/EventImage4.png'),
+      image4: require('../Images/EventImage3.png')
    },
    {
       id: "2",
@@ -264,7 +333,6 @@ export const EventData = [
       image1: require('../Images/EventImage.png'),
       image2: require('../Images/EventImage2.png'),
       image3: require('../Images/EventImage3.png'),
-      image4: require('../Images/EventImage4.png')
    },
    {
       id: "3",
@@ -274,9 +342,36 @@ export const EventData = [
       text: "Hi Everyone, My name is Aman, my last shot on  Facebook. Follow me on https:fackbook.com/amanpsihombing_",
       image1: require('../Images/EventImage.png'),
      image2: require('../Images/EventImage2.png'),
+     
+   },
+   {
+      id: "4",
+      name: "Aman yadav",
+      hour: "4",
+      date_time: "Dec 10 at 11:31 AM",
+      text: "Hi Everyone, My name is Aman, my last shot on  Facebook. Follow me on https:fackbook.com/amanpsihombing_",
+      image1: require('../Images/EventImage.png'),
+    
+   },
+   {
+      id: "5",
+      name: "Aman yadav",
+      hour: "4",
+      date_time: "Dec 10 at 11:31 AM",
+      text: "Hi Everyone, My name is Aman, my last shot on  Facebook. Follow me on https:fackbook.com/amanpsihombing_",
+   },
+   {
+      id: "6",
+      name: "Aman yadav",
+      hour: "4",
+      date_time: "Dec 10 at 11:31 AM",
+      text: "Hi Everyone, My name is Aman, my last shot on  Facebook. Follow me on https:fackbook.com/amanpsihombing_",
+      image1: require('../Images/EventImage.png'),
+      image2: require('../Images/EventImage2.png'),
       image3: require('../Images/EventImage3.png'),
       image4: require('../Images/EventImage4.png')
-   }
+   },
+   
 ]
 
 export const CommitteeDataList = [
@@ -391,15 +486,60 @@ export const PanditDetailData = [
            yes: 3,
            no: 1
          },
+       },
+       {
+         reviewerName: "Priya Sharma",
+         reviewerCountry: "🇮🇳India",
+         reviewerStatus: "Verified User",
+         reviewDate: "Jan 15, 2023",
+         reviewText: "Excellent guidance! I was facing challenges in my career, and Acharya Kiran’s advice was truly insightful. Her predictions were spot on, and the remedies worked well for me. I’m highly satisfied.",
+         helpful: {
+           yes: 3,
+           no: 1
+         },
+       },
+       {
+         reviewerName: "Priya Sharma",
+         reviewerCountry: "🇮🇳India",
+         reviewerStatus: "Verified User",
+         reviewDate: "Jan 15, 2023",
+         reviewText: "Excellent guidance! I was facing challenges in my career, and Acharya Kiran’s advice was truly insightful. Her predictions were spot on, and the remedies worked well for me. I’m highly satisfied.",
+         helpful: {
+           yes: 3,
+           no: 1
+         },
        }
      ],
      images:[
       require('../Images/EventImage2.png'),
-      require('../Images/EventImage2.png'),
-      require('../Images/EventImage2.png'),
-      require('../Images/EventImage2.png'),
-      require('../Images/EventImage2.png'),
+       require('../Images/EventImage.png'),
+       require('../Images/EventImage4.png'),
+       require('../Images/EventImage3.png')
   ]
    }
  ];
+
+ export const SuccessStoriesData = [
+   {
+      id: "1",
+      name: "Arjun And Priya Story",
+      description: "After years of searching, Priya and Arjun found each other on a matrimony platform. Initially hesitant, they connected over shared values and interests during virtual chats. Their bond grew stronger with every conversation, eventually leading to a heartfelt meeting arranged by their families. Today, they celebrate their love as a happily married couple, crediting the platform for bringing their destinies together.",
+      image:require('../Images/couple.png')
+   },
+   {
+      id: "2",
+      name: "Anjali And Ansual Story",
+      description: "After years of searching, Priya and Arjun found each other on a matrimony platform. Initially hesitant, they connected over shared values and interests during virtual chats. Their bond grew stronger with every conversation, eventually leading to a heartfelt meeting arranged by their families. Today, they celebrate their love as a happily married couple, crediting the platform for bringing their destinies together.",
+      image:require('../Images/couple.png')
+   },
+   {
+      id: "3",
+      name: "Aparna And Yogesh Story",
+      description: "After years of searching, Priya and Arjun found each other on a matrimony platform. Initially hesitant, they connected over shared values and interests during virtual chats. Their bond grew stronger with every conversation, eventually leading to a heartfelt meeting arranged by their families. Today, they celebrate their love as a happily married couple, crediting the platform for bringing their destinies together.",
+      image:require('../Images/couple.png')
+   },
+   
+]
+
+
  

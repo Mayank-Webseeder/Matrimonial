@@ -21,11 +21,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginHorizontal: SH(10),
-    marginVertical: SH(10),
     paddingHorizontal: SH(15),
     backgroundColor: Colors.gray,
-    paddingVertical: SH(7),
+    paddingVertical: SH(2),
   },
   headingStyle: {
     fontSize: SF(15),

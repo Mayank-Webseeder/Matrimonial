@@ -1,9 +1,8 @@
-import { Text, View, Image, ImageBackground, ScrollView } from 'react-native';
+import { Text, View, Image, ImageBackground, SafeAreaView, StatusBar } from 'react-native';
 import React, { useState } from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/MyProfileStyle';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { DrawerActions } from '@react-navigation/native';
@@ -18,8 +17,12 @@ const MyProfile = ({ navigation }) => {
 
 
     return (
-        <View style={styles.container}>
-
+        <SafeAreaView style={styles.container}>
+            <StatusBar
+                barStyle="dark-content"
+                backgroundColor="transparent"
+                translucent
+            />
             <View style={styles.header}>
                 <View style={styles.headerContainer}>
                     <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
@@ -29,7 +32,7 @@ const MyProfile = ({ navigation }) => {
                 </View>
             </View>
 
-            <ScrollView contentContainerStyle={{ flexGrow: 1}}>
+            <View contentContainerStyle={{ flexGrow: 1 }}>
                 <View>
                     <ImageBackground source={require('../../Images/profile3.png')} style={styles.image}>
                         <View style={styles.smallHeader}>
@@ -58,7 +61,7 @@ const MyProfile = ({ navigation }) => {
                         <View style={styles.IconFlex}>
                             <TouchableOpacity
                                 style={styles.IconsButton}
-                                // onPress={() => handlePress('CreateBioData')}
+                            // onPress={() => handlePress('CreateBioData')}
                             >
                                 <FontAwesome
                                     name="id-card"
@@ -114,8 +117,8 @@ const MyProfile = ({ navigation }) => {
                     </View>
 
                 </View>
-            </ScrollView>
-        </View>
+            </View>
+        </SafeAreaView>
     );
 };
 

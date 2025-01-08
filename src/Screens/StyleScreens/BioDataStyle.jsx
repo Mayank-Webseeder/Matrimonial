@@ -6,13 +6,15 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.light,
-        paddingTop: SH(20)
+        paddingTop: SH(25),
+        paddingHorizontal:SW(6)
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: SW(15),
+        paddingHorizontal: SW(15),
+        paddingVertical:SH(15)
 
     },
     righticons: {
@@ -36,7 +38,7 @@ const styles = StyleSheet.create({
         height: SH(5),
         borderRadius: 4,
         backgroundColor: '#ccc',
-        marginHorizontal: SH(2),
+        marginHorizontal: SW(2),
         marginTop: SW(100)
     },
     activeDot: {
@@ -44,22 +46,24 @@ const styles = StyleSheet.create({
         height: SH(5),
         borderRadius: 4,
         backgroundColor: Colors.theme_color,
-        marginTop: SW(100)
+        marginTop: SH(100)
     },
     EditPerference: {
         flexDirection: "row", justifyContent: "space-between",
-        margin: SW(15), alignItems: "center"
+        marginHorizontal: SW(15), alignItems: "center",
+        marginVertical:SH(15)
     },
     editText: {
         borderColor: Colors.dark,
         borderWidth: 1,
-        padding: SW(5),
+        paddingHorizontal: SW(5),
+        paddingVertical:SH(5),
         borderRadius: 5
     },
     viewAll: {
-        marginHorizontal: SH(10),
+        marginHorizontal: SW(10),
         marginVertical: SH(10),
-        paddingHorizontal: SH(15),
+        paddingHorizontal: SW(15),
         backgroundColor: Colors.gray,
         paddingVertical: SH(7),
 
@@ -79,15 +83,18 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 5,
         elevation: 3,
-        margin: SW(10),
-        padding: SW(10),
+        marginHorizontal: SW(10),
+        marginVertical:SH(10),
+        paddingHorizontal: SW(10),
+        paddingVertical:SH(10)
     },
     image: {
         width: '100%',
         height: SH(150),
     },
     detailsContainer: {
-        padding: SW(10),
+        paddingHorizontal: SW(10),
+        marginVertical:SH(10)
     },
     row: {
         flexDirection: 'row',
@@ -121,14 +128,15 @@ const styles = StyleSheet.create({
         color: '#555',
         marginTop: 5,
     },
-    Sliderimage:{
+    Sliderimage: {
         width: '100%',
         height: SH(250),
     },
-    icon:{
-        backgroundColor:Colors.gray,
-        padding:SW(10),
-        borderRadius:10
+    icon: {
+        backgroundColor: Colors.gray,
+        paddingHorizontal: SW(10),
+        paddingVertical:SH(10),
+        borderRadius: 10
     }
 
 });

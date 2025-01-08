@@ -6,20 +6,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.light,
-    paddingTop:SH(20)
+    paddingTop: SH(25),
+    paddingHorizontal:SW(6)
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: SW(10),
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(10),
     paddingLeft:0
   },
   Filterheader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: SW(5),
+    paddingHorizontal: SW(5),
+    paddingVertical:SH(5)
   },
   headerText: {
     color: Colors.theme_color,
@@ -48,8 +51,8 @@ const styles = StyleSheet.create({
   },
   sliderImage: {
     width: "100%",
-    height: SH(220),
-    resizeMode: 'contain',
+    height: SH(180),
+    resizeMode: 'cover',
   },
   dot: {
     width: SW(25),
@@ -57,14 +60,14 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: '#ccc',
     marginHorizontal: SH(2),
-    marginTop: SW(100)
+    marginTop: SH(110)
   },
   activeDot: {
     width: SW(25),
     height: SH(5),
     borderRadius: 4,
     backgroundColor: Colors.theme_color,
-    marginTop: SW(100)
+    marginTop: SH(110)
   },
   ProfileImage: {
     width: "90%",
@@ -105,7 +108,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 50,
-    paddingHorizontal: SH(10),
+    paddingHorizontal: SW(10),
     height: SH(35),
     backgroundColor: Colors.gray,
     marginHorizontal: SW(10),
@@ -113,7 +116,7 @@ const styles = StyleSheet.create({
     marginBottom: SH(30)
   },
   icon: {
-    marginHorizontal: 10,
+    marginHorizontal:SW(10),
   },
   sharecontainer: {
     flexDirection: 'row',
@@ -163,7 +166,8 @@ const styles = StyleSheet.create({
     width: SW(100),
     height: SH(90),
     resizeMode: "contain",
-    margin:SW(10)
+    marginHorizontal:SW(10),
+    marginVertical:SH(10)
   },
   searchbar: {
     display: "flex",
@@ -182,7 +186,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
-    margin: SW(10),
+    marginHorizontal: SW(10),
+    marginVertical:SH(10),
     marginBottom:SH(3)
   },
   cardData: {
@@ -198,13 +203,8 @@ const styles = StyleSheet.create({
     marginTop:0
   },
   leftContainer: {
-    margin: SW(10)
-  },
-  filterContainer: {
-    backgroundColor: Colors.gray,
-    padding: SW(10),
-    borderRadius: 50,
-    flexDirection: "row",
+    marginHorizontal: SW(10),
+    marginVertical:SH(15)
   },
   searchContainer: {
     flexDirection: "row",
@@ -227,7 +227,8 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: 'white',
-    padding: SW(10),
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(10),
     width: '80%',
     borderRadius: 10,
   },
@@ -237,9 +238,11 @@ const styles = StyleSheet.create({
   },
   applyButton: {
     backgroundColor: Colors.theme_color,
-    padding: SW(10),
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(3),
     borderRadius: 5,
-    margin: SW(20),
+    marginHorizontal: SW(20),
+    marginVertical:SH(20),
     borderRadius: 50
   },
   applyButtonText: {
@@ -267,7 +270,8 @@ const styles = StyleSheet.create({
   headingText: {
     fontFamily: "Poppins-Bold",
     fontSize: SF(15),
-    margin: SH(10)
+    marginVertical: SH(10),
+    marginHorizontal:SW(10)
   },
 
 });

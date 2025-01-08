@@ -6,7 +6,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.light,
-    paddingTop:SW(20)
+    paddingTop: SH(25),
+    paddingHorizontal:SW(6)
   },
   header: {
     flexDirection: 'row',
@@ -41,23 +42,24 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: '#ccc',
     marginHorizontal: SH(2),
-    marginTop: SW(100)
+    marginTop: SH(105)
   },
   activeDot: {
     width: SW(25),
     height: SH(5),
     borderRadius: 4,
     backgroundColor: Colors.theme_color,
-    marginTop: SW(100)
+    marginTop: SH(105)
   },
 
   textContainer: {
-    padding: SW(10),
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(10),
     paddingBottom: 0
   },
   TextView: {
     backgroundColor: Colors.gray,
-    padding: SW(10),
+    paddingHorizontal: SW(10),
     paddingVertical: SH(15),
     borderRadius: 20,
     marginBottom: SH(10)
@@ -93,7 +95,7 @@ const styles = StyleSheet.create({
   },
   Button: {
     backgroundColor: Colors.theme_color,
-    paddingHorizontal: SH(20),
+    paddingHorizontal: SW(20),
     paddingVertical: SH(5),
     borderRadius: 8,
     alignItems: "center",
@@ -115,7 +117,8 @@ const styles = StyleSheet.create({
   addWindowImage:{
     width:"100%",
     height:SH(180),
-    margin:SW(5),
+    marginHorizontal:SW(5),
+    marginVertical:SH(5),
     marginTop:SH(10)
   },
   descriptionText: {
@@ -138,7 +141,7 @@ const styles = StyleSheet.create({
   viewMore: {
     fontSize:SF(13),
     color:Colors.theme_color,
-    marginTop: 5,
+    marginTop:SH(5),
     fontFamily: 'Poppins-Bold',
   },
 

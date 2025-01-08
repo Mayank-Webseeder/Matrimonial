@@ -5,14 +5,16 @@ import Colors from "../../utils/Colors";
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor:Colors.light,
-        paddingTop: SW(20)
+    backgroundColor: Colors.light,
+    paddingTop: SH(25),
+    paddingHorizontal:SW(6)
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: SW(10),
+        paddingHorizontal: SW(10),
+        paddingVertical:SH(10),
         paddingLeft: 0
     },
     headerText: {
@@ -37,21 +39,25 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins-Regular"
     },
     textContainer:{
-        margin:SW(10)
+        marginHorizontal:SW(8),
+        marginVertical:SH(5)
     },
     input:{
         padding:SH(10),
         borderRadius:10,
         borderWidth:1,
         borderColor:"gray",
-        margin:SH(10)
+        marginVertical:SH(10),
+        marginHorizontal:SW(10)
     },
     Textinput:{
-        padding:SH(10),
+        paddingVertical:SH(10),
+        paddingHorizontal:SW(10),
         borderRadius:10,
         borderWidth:1,
         borderColor:"gray",
-        margin:SH(10),
+        marginVertical:SH(10),
+        marginHorizontal:SW(10),
         paddingBottom:SH(130)
     },
     Text:{
@@ -62,7 +68,8 @@ const styles = StyleSheet.create({
     addPhoto:{
         flexDirection:"row",
         justifyContent:"space-between",
-        margin:SW(20)
+        marginHorizontal:SW(20),
+        marginVertical:SH(10)
     }
 })
 

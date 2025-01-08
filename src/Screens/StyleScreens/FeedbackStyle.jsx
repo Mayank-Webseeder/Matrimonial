@@ -7,13 +7,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.light,
-    paddingTop:SW(20)
+    paddingTop: SH(25),
+    paddingHorizontal:SW(6)
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: SW(10),
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(10),
     paddingLeft:0
   },
   headerText: {
@@ -43,14 +45,15 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     backgroundColor: Colors.theme_color,
-    padding: SW(15),
+    paddingHorizontal: SW(15),
+    paddingVertical:SH(7),
     borderRadius: 5,
     alignItems: 'center',
   },
   submitText: {
     color: 'white',
     fontSize: SF(15),
-    fontWeight: 'bold',
+   fontFamily:"Poppins-Bold"
   },
   ratingContainer: {
     flexDirection: 'row',
@@ -65,7 +68,8 @@ const styles = StyleSheet.create({
     height:SH(30)
   },
   feedBackContainer:{
-    padding:SW(10)
+    paddingHorizontal:SW(10),
+    paddingVertical:SH(10)
   }
 
 });

@@ -6,13 +6,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.light,
-    paddingTop: SW(20)
+    paddingTop: SH(25),
+    paddingHorizontal:SW(6)
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: SW(10),
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(10),
     paddingLeft: 0
   },
   headerText: {
@@ -47,18 +49,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 10,
     overflow: 'hidden',
-    margin: SW(6),
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
-    width: '98%',
-    padding: SW(2)
+    marginBottom:SH(3),
+    marginHorizontal:SW(10),
+    marginVertical:SH(10)
   },
   cardData: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    padding: SW(10),
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(10)
   },
 
   CityArea: {
@@ -107,15 +110,15 @@ const styles = StyleSheet.create({
     height: SH(5),
     borderRadius: 4,
     backgroundColor: '#ccc',
-    marginHorizontal: SH(2),
-    marginTop: SW(100)
+    marginHorizontal: SW(2),
+    marginTop: SH(105)
   },
   activeDot: {
     width: SW(25),
     height: SH(5),
     borderRadius: 4,
     backgroundColor: Colors.theme_color,
-    marginTop: SW(100)
+    marginTop: SH(105)
   },
 
   panditListData: {
@@ -168,7 +171,7 @@ const styles = StyleSheet.create({
   },
   Button: {
     backgroundColor: Colors.theme_color,
-    paddingHorizontal: SH(20),
+    paddingHorizontal: SW(20),
     paddingVertical: SH(5),
     borderRadius: 8,
     flexDirection: "row",
@@ -182,13 +185,7 @@ const styles = StyleSheet.create({
   },
 
   leftContainer: {
-    marginLeft: SH(10), flex: 1, marginTop: SH(7)
-  },
-  filterContainer: {
-    backgroundColor: Colors.gray,
-    padding: SW(10),
-    borderRadius: 50,
-    flexDirection: "row",
+    marginLeft: SW(10), flex: 1, marginTop: SH(7)
   },
   searchContainer: {
     flexDirection: "row",
@@ -211,7 +208,8 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: 'white',
-    padding: SW(10),
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(10),
     width: '80%',
     borderRadius: 10,
   },
@@ -221,9 +219,11 @@ const styles = StyleSheet.create({
   },
   applyButton: {
     backgroundColor: Colors.theme_color,
-    padding: SW(10),
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(5),
     borderRadius: 5,
-    margin: SW(20),
+    marginHorizontal: SW(20),
+    marginVertical:SH(20),
     borderRadius: 50
   },
   applyButtonText: {
@@ -251,7 +251,8 @@ const styles = StyleSheet.create({
   headingText: {
     fontFamily: "Poppins-Bold",
     fontSize: SF(15),
-    margin: SH(10)
+    marginHorizontal: SW(10),
+    marginVertical:SH(10)
   },
 
 

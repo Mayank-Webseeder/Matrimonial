@@ -5,9 +5,10 @@ import { SW,SH,SF } from "../../utils/Dimensions";
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: Colors.light,
-        padding: SW(5)
+      flex: 1,
+      backgroundColor: Colors.light,
+      paddingTop: SH(25),
+      paddingHorizontal:SW(6)
     },
     header: {
         flexDirection: 'row',
@@ -60,11 +61,12 @@ const styles = StyleSheet.create({
     },
     submitButton: {
       backgroundColor: Colors.theme_color,
-      padding: SW(3),
+      paddingHorizontal: SW(3),
+      paddingVertical:SH(3),
       borderRadius: 10,
       alignItems: 'center',
-      marginTop: SH(20),
-      margin:SW(20)
+      marginHorizontal:SW(20),
+      marginVertical:SH(50)
     },
     submitButtonText: {
       color:Colors.light,
@@ -72,7 +74,10 @@ const styles = StyleSheet.create({
       fontFamily:"Poppins-Bold"
     },
     contentContainer:{
-      margin:SW(5)
+      marginHorizontal:SW(5),
+      marginVertical:SH(5),
+      paddingVertical:SH(5),
+      paddingHorizontal:SW(5)
     }
   });
 

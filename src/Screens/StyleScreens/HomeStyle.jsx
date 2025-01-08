@@ -6,13 +6,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.light,
-    paddingTop: SW(20),
+    paddingTop: SH(25),
+    paddingHorizontal:SW(6)
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: SW(10),
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(10),
     paddingLeft: 0,
   },
   menuIcon: {
@@ -27,11 +29,13 @@ const styles = StyleSheet.create({
     marginVertical: SH(15),
   },
   CategoryContainer: {
-    margin: SW(10),
+    marginHorizontal: SW(10),
+    marginVertical:SH(10),
     backgroundColor: Colors.light_theme,
     marginHorizontal: SW(7),
     borderRadius: 10,
-    padding: SW(4),
+    paddingHorizontal: SW(4),
+    paddingVertical:SH(4),
     alignItems: 'center',
     elevation: 5,
     shadowColor: '#000',
@@ -70,10 +74,11 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   bottomImage: {
-    width: "100%",
-    height: SH(220),
-    resizeMode: 'contain',
-    marginBottom: SH(20)
+    width: "95%",
+    height: SH(180),
+    resizeMode: 'cover',
+    marginVertical: SH(10),
+    marginHorizontal:SW(10)
   },
   dot: {
     width: SW(25),

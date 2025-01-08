@@ -6,14 +6,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.light,
-    // padding: SW(5),
-    paddingTop:SH(20)
+    paddingTop: SH(25),
+    paddingHorizontal:SW(6)
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: SW(10),
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(10),
     paddingLeft:SW(5)
   },
   righticons: {
@@ -27,7 +28,8 @@ const styles = StyleSheet.create({
   tabContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    padding: SW(10),
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(10)
   },
   tabButton: {
     padding: 10,
@@ -56,19 +58,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 10,
     overflow: 'hidden',
-    margin: SW(6),
+    marginHorizontal: SW(3),
+    paddingVertical:SH(6),
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
-    width: '47%',
+    width: '48%',
+    marginTop:SH(15)
   },
   image: {
     width: '100%',
     height: SH(150),
   },
   detailsContainer: {
-    padding: SW(10),
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(10)
   },
   row: {
     flexDirection: 'row',

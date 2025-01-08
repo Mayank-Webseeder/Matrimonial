@@ -18,7 +18,8 @@ const styles = StyleSheet.create({
         marginHorizontal: SW(5),
         borderRadius: 20,
         marginTop: SH(175),
-        padding: SW(10),
+        paddingHorizontal: SW(10),
+        paddingVertical:SH(5),
         marginBottom: SH(10),
         shadowColor: Colors.theme_color,
         elevation: 5, 
@@ -30,7 +31,7 @@ const styles = StyleSheet.create({
         fontSize: SF(24),
         fontFamily: "Poppins-Bold",
         color: Colors.theme_color,
-        margin: SH(10),
+        marginVertical: SH(2),
         marginLeft:0
     },
     date: {
@@ -73,7 +74,8 @@ const styles = StyleSheet.create({
     },
     button: {
         backgroundColor: Colors.theme_color,
-        padding: SW(5),
+        paddingHorizontal: SW(5),
+        paddingVertical:SH(5),
         borderRadius: 50,
         marginTop: SH(30),
         width: "100%",
@@ -113,8 +115,9 @@ const styles = StyleSheet.create({
         paddingVertical: SH(7),
     },
     backArrow:{
-        margin:SW(14),
-        marginLeft:SW(15)
+        marginHorizontal:SW(14),
+        marginVertical:SH(30),
+        marginHorizontal:SW(15)
     }
 });
 

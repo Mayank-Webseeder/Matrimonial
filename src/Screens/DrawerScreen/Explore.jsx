@@ -9,6 +9,7 @@ import Colors from '../../utils/Colors';
 import { slider } from '../../DummyData/DummyData';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import { SW } from '../../utils/Dimensions';
+import { DrawerActions } from '@react-navigation/native';
 
 const Explore = ({ navigation }) => {
   const sliderRef = useRef(null);
@@ -81,7 +82,7 @@ const Explore = ({ navigation }) => {
             />
       <View style={styles.header}>
         <View style={{ flexDirection: 'row' }}>
-          <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
           <Text style={styles.headerText}>Matrimony</Text>

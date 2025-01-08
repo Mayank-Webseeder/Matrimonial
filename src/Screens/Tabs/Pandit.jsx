@@ -41,30 +41,30 @@ const Pandit = ({ navigation }) => {
     setModalVisible(false);
   };
 
-  const handleBackPress = () => {
-    const state = navigation.getState();
-    const activeRoute = state.routes[state.index];
+  // const handleBackPress = () => {
+  //   const state = navigation.getState();
+  //   const activeRoute = state.routes[state.index];
 
-    if (activeRoute.name === 'Pandit') {
+  //   if (activeRoute.name === 'Pandit') {
 
-      if (state.history && state.history.some((h) => h.type === 'drawer')) {
-        navigation.toggleDrawer();
-      } else if (state.history && state.history.some((h) => h.type === 'tab')) {
-        navigation.navigate('HomeTab'); // Navigate to the home tab
-      } else {
-        navigation.goBack();
-      }
-      return true;
-    }
-    return false;
-  };
+  //     if (state.history && state.history.some((h) => h.type === 'drawer')) {
+  //       navigation.toggleDrawer();
+  //     } else if (state.history && state.history.some((h) => h.type === 'tab')) {
+  //       navigation.navigate('HomeTab'); // Navigate to the home tab
+  //     } else {
+  //       navigation.goBack();
+  //     }
+  //     return true;
+  //   }
+  //   return false;
+  // };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      BackHandler.addEventListener('hardwareBackPress', handleBackPress);
-      return () => BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
-    }, [navigation])
-  );
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+  //     return () => BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
+  //   }, [navigation])
+  // );
 
   useEffect(() => {
     const interval = setInterval(() => {

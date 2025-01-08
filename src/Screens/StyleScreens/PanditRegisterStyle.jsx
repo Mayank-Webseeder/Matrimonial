@@ -5,12 +5,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.light,
+    paddingTop: SH(30),
+    paddingHorizontal:SW(6)
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: SW(15),
+    paddingHorizontal: SW(15),
+    paddingVertical:0,
     paddingLeft:SW(5),
     backgroundColor: Colors.light,
     paddingTop:SH(30)
@@ -23,7 +26,8 @@ const styles = StyleSheet.create({
   },
   form: {
     backgroundColor: Colors.light,
-    padding: SW(20),
+    paddingHorizontal: SW(20),
+    paddingVertical:SH(10),
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -45,7 +49,8 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#800020',
-    padding: SW(10),
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(5),
     borderRadius: 5,
     alignItems: 'center',
     marginTop: SH(20),
@@ -53,7 +58,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color:Colors.light,
-    fontSize: SF(18),
+    fontSize: SF(15),
     fontWeight:'Poppins-Bold',
   },
   arrow: {
@@ -61,10 +66,10 @@ const styles = StyleSheet.create({
   },
   PickPhotoButton:{
     backgroundColor: '#800020',
-    padding: SW(2),
+    paddingHorizontal: SW(15),
+    paddingVertical:SH(2),
     borderRadius: 5,
     alignItems: 'center',
-    width:SW(100)
 
   },
   PickPhotoText:{

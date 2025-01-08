@@ -8,6 +8,7 @@ import HeadingWithViewAll from '../../Components/HeadingWithViewAll';
 import { profileImages, Category, communityData, slider } from '../../DummyData/DummyData';
 import { ScrollView } from 'react-native-gesture-handler';
 import AppIntroSlider from 'react-native-app-intro-slider';
+
 const Home = ({ navigation }) => {
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);

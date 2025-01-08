@@ -56,7 +56,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
             />
             <View style={styles.header}>
                 <View style={{ flexDirection: 'row' }}>
-                    <TouchableOpacity onPress={() => navigation.navigate('Community')}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons
                             name="arrow-back-ios-new"
                             size={25}
@@ -128,13 +128,15 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.light,
-        paddingTop: SW(20),
+        paddingTop: SH(25),
+        paddingHorizontal:SW(6)
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: SW(10),
+        paddingHorizontal: SW(10),
+        paddingVertical:SH(10),
         paddingLeft: 0,
     },
     headerText: {
@@ -182,10 +184,11 @@ const styles = StyleSheet.create({
     },
     submitButton: {
         backgroundColor: Colors.theme_color,
-        padding: SW(10),
+        paddingHorizontal: SW(10),
+        paddingVertical: SH(7),
         borderRadius: 5,
         alignItems: 'center',
-        margin: SH(50),
+        marginVertical: SH(50),
         marginHorizontal: SW(50),
     },
     submitButtonText: {

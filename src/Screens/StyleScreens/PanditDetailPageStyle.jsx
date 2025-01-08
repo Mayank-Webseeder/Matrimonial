@@ -5,13 +5,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.light,
-    paddingTop:SW(20)
+    paddingTop: SH(25),
+    paddingHorizontal:SW(6)
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: SW(10),
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(10),
     backgroundColor: Colors.light,
     paddingLeft:0
   },
@@ -26,7 +28,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom:SH(20),
     flexDirection: "row",
-    margin: SW(10)
+    marginHorizontal: SW(10),
+    marginVertical:SH(5)
   },
   profileImage: {
     width: SW(120),
@@ -77,8 +80,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light,
     borderRadius: 50,
     elevation: 5,
-    padding: SW(3),
-    margin: SW(5),
+    paddingHorizontal: SW(5),
+    paddingVertical:SH(3),
+    marginHorizontal: SW(5),
+    marginVertical:SH(5),
     width: '30%',
     alignItems: 'center',
     justifyContent: 'center',
@@ -102,13 +107,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 10,
     overflow: 'hidden',
-    margin: SW(6),
+    marginHorizontal: SW(6),
+    marginVertical:0,
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
     width: '98%',
-    padding: SW(10)
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(2)
   },
   reviewName: {
     fontSize: SF(16),
@@ -137,13 +144,14 @@ const styles = StyleSheet.create({
   images: {
     width: SW(100),
     height: SH(100),
-    margin: SW(5),
+    marginHorizontal: SW(5),
+    marginVertical:SH(5),
     resizeMode: "contain"
   },
   socialIcons: {
     flexDirection: "row",
     justifyContent: "space-between",
-    margin: SW(10),
+    marginHorizontal: SW(10),
     marginVertical: SH(15)
   },
   sharecontainer: {
@@ -159,11 +167,11 @@ const styles = StyleSheet.create({
   },
   Button: {
     backgroundColor: Colors.theme_color,
-    paddingHorizontal: SH(20),
-    paddingVertical: SH(5),
+    paddingHorizontal: SW(20),
+    paddingVertical: SH(3),
     borderRadius: 8,
     alignItems: "center",
-    width:SW(100)
+    width:SW(90)
   },
   buttonText: {
     color: Colors.light,
@@ -176,7 +184,8 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Regular",
   },
   contentContainer:{
-    margin:SW(10)
+    marginHorizontal:SW(10),
+    marginVertical:SH(10)
   },
   websiteIcon:{
     width:SW(30),
@@ -185,7 +194,8 @@ const styles = StyleSheet.create({
   Bottomimage:{
     width:"100%",
     height:SH(180),
-    resizeMode:"cover"
+    resizeMode:"cover",
+    marginBottom:SH(10)
   },
   ReviewPost:{
    flexDirection:"row",
@@ -193,9 +203,10 @@ const styles = StyleSheet.create({
    alignItems:"center"
   },
   postReviewButton:{
-    padding:SW(4),
+    paddingHorizontal:SW(10),
     backgroundColor:Colors.theme_color,
-    borderRadius:5
+    borderRadius:5,
+    paddingVertical:SH(4)
   },
   postReviewText:{
     fontSize:SF(13),
@@ -204,10 +215,11 @@ const styles = StyleSheet.create({
 
   },
   viewMoreButton:{
-    padding:SW(4),
+    paddingHorizontal:SW(4),
     backgroundColor:Colors.theme_color,
     borderRadius:5,
-    marginHorizontal:SW(100)
+    marginHorizontal:SW(100),
+    paddingVertical:SW(3),
   },
   viewMoreText:{
     fontSize:SF(13),

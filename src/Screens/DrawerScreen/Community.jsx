@@ -106,7 +106,7 @@ const Community = ({ navigation }) => {
       {/* Fixed Header */}
       <View style={styles.header}>
         <View style={{ flexDirection: 'row' }}>
-          <TouchableOpacity onPress={() => navigation.navigate('Tabs')}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons
               name="arrow-back-ios-new"
               size={25}
@@ -194,7 +194,7 @@ const Community = ({ navigation }) => {
           <View style={styles.modalContent}>
             <View style={styles.header}>
               <TouchableOpacity
-                onPress={() => navigation.navigate('Tabs')}
+                onPress={() => navigation.goBack()}
                 style={{ flexDirection: 'row' }}
               >
                 <MaterialIcons

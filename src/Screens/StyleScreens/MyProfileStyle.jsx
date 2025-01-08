@@ -4,15 +4,18 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 
 const styles = StyleSheet.create({
     container: {
-        padding: SW(15),
         flex: 1,
-        backgroundColor: Colors.light
+        backgroundColor: Colors.light,
+        paddingTop: SH(25),
+        paddingHorizontal: SW(6)
     },
     header: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: SH(20)
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: SW(10),
+        paddingVertical: SH(10),
+        paddingLeft: 0,
     },
     headerContainer: {
         flexDirection: "row",
@@ -26,13 +29,6 @@ const styles = StyleSheet.create({
     menuIcon: {
         width: SW(30),
         height: SH(30)
-    },
-    RepostText: {
-        backgroundColor: Colors.theme_color,
-        color: Colors.light,
-        padding: SW(10),
-        borderRadius: 10,
-        paddingHorizontal: SW(15)
     },
     image: {
         width: "100%",
@@ -60,7 +56,9 @@ const styles = StyleSheet.create({
         borderColor: Colors.gray,
         borderWidth: 1,
         padding: SW(10),
-        borderRadius: 10
+        borderRadius: 10,
+        marginHorizontal: SW(10),
+        marginVertical: SH(10)
     },
     userData: {
         flexDirection: "row",
@@ -72,94 +70,32 @@ const styles = StyleSheet.create({
         justifyContent: "space-evenly",
         alignItems: "center",
         marginVertical: SH(10),
-      },
-      IconsButton: {
+    },
+    IconsButton: {
         alignItems: "center",
         justifyContent: "center",
         width: SW(150),
         marginHorizontal: SW(10),
-      },
-      logotext: {
-        fontSize:SF(13),
+    },
+    logotext: {
+        fontSize: SF(13),
         textAlign: "center",
-        marginTop: 5,
+        marginTop: SH(5),
         color: Colors.theme_color,
-      },
-      Selectedicon: {
+    },
+    Selectedicon: {
         backgroundColor: Colors.theme_color,
         borderRadius: 50,
-        padding:SW(5),
-      },
-      icon: {
+        paddingHorizontal: SW(5),
+        paddingVertical: SH(5)
+    },
+    icon: {
         backgroundColor: "transparent",
-      },
-      
+    },
+
     text: {
         fontFamily: "Poppins-Regular",
         fontSize: SF(15)
     },
-    detail: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginTop: SH(20)
-    },
-    detailText: {
-        fontFamily: "Poppins-Bold",
-        fontSize: SF(15)
-    },
-    input: {
-        height: SH(40),
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: SH(10),
-        paddingLeft: SW(10),
-        borderRadius: 5,
-        backgroundColor: 'white',
-        color: Colors.dark
-    },
-    topinput: {
-        height: SH(30),
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: SH(10),
-        left: SW(60),
-        borderRadius: 5,
-        backgroundColor: 'white',
-        color: Colors.dark,
-        width: SW(130),
-        top: SH(40),
-        position: "absolute",
-        zIndex: 999,
-        padding: SW(5)
-    },
-    headText: {
-        fontFamily: "Poppins-Bold",
-        fontSize: SF(15),
-        marginVertical: SH(1)
-    },
-    button: {
-        backgroundColor: Colors.theme_color,
-        marginHorizontal: SW(90),
-        margin: SW(20),
-        padding: SW(10),
-        borderRadius: 10
-    },
-    buttonText: {
-        fontSize: SF(15),
-        color: Colors.light,
-        textAlign: "center"
-    },
-    inputHeading: {
-        fontSize: SF(15),
-        fontFamily: "Poppins-Medium",
-        paddingVertical: SH(7)
-    },
-    flex: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        padding: SW(7)
-    },
-
 })
 export default styles

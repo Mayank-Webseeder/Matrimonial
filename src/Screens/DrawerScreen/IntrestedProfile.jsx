@@ -54,6 +54,7 @@ const IntrestedProfile = ({ navigation }) => {
           <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => navigation.navigate('Notification')} />
         </View>
       </View>
+      <ScrollView>
       <View style={styles.sliderContainer}>
         <AppIntroSlider
           ref={sliderRef}
@@ -66,7 +67,6 @@ const IntrestedProfile = ({ navigation }) => {
           onSlideChange={(index) => setCurrentIndex(index)}
         />
       </View>
-      <ScrollView>
         <View>
           <View style={styles.ButtonContainer}>
             <TouchableOpacity

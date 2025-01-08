@@ -9,6 +9,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import { useFocusEffect } from '@react-navigation/native';
 import { SW, SH, SF } from '../../utils/Dimensions';
+
 const EventNews = ({ navigation }) => {
   const [page, setPage] = useState(1);
   const postsPerPage = 3;

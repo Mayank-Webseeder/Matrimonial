@@ -48,7 +48,7 @@ const KathavachakDetailsPage = ({ navigation, item }) => {
             />
             <View style={styles.header}>
                 <View style={{ flexDirection: 'row' }}>
-                    <TouchableOpacity onPress={() => navigation.navigate('Kathavachak')}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
                     <Text style={styles.headerText}>{pandit.name}</Text>

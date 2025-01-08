@@ -6,13 +6,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.light,
-    paddingTop:SW(20)
+    paddingTop: SH(25),
+    paddingHorizontal:SW(6)
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: SW(10),
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(10),
     paddingLeft:SW(5)
   },
   righticons: {
@@ -42,14 +44,16 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light,
     borderRadius: 10,
     overflow: 'hidden',
-    margin: SW(6),
+    marginHorizontal: SW(6),
+    marginVertical:SH(6),
     shadowColor: Colors.dark,
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
     width: '95%',
     marginHorizontal: SW(10),
-    padding: SW(10),
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(10),
     flexDirection: "row",
     justifyContent: "space-between"
   },
@@ -86,7 +90,7 @@ const styles = StyleSheet.create({
 
   Button: {
     backgroundColor: Colors.theme_color,
-    paddingHorizontal: SH(20),
+    paddingHorizontal: SW(20),
     paddingVertical: SH(5),
     borderRadius: 50,
   },
@@ -109,7 +113,8 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: 'white',
-    padding: SW(10),
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(10),
     width: '80%',
     borderRadius: 10,
   },
@@ -119,9 +124,11 @@ const styles = StyleSheet.create({
   },
   applyButton: {
     backgroundColor: Colors.theme_color,
-    padding: SW(10),
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(5),
     borderRadius: 5,
-    margin: SW(20),
+    marginHorizontal: SW(20),
+    marginVertical:SH(20),
     borderRadius: 50
   },
   applyButtonText: {
@@ -149,7 +156,8 @@ const styles = StyleSheet.create({
   headingText: {
     fontFamily: "Poppins-Bold",
     fontSize: SF(15),
-    margin: SH(10)
+    marginHorizontal: SH(10),
+    marginVertical:SH(10)
   },
 
 

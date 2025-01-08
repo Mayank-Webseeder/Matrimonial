@@ -6,14 +6,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.light,
-    paddingTop:SW(20)
+    paddingTop: SH(25),
+    paddingHorizontal:SW(6)
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: SW(10),
-    paddingLeft:0
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(10),
+    paddingLeft:0,
+    paddingBottom:0
   },
   righticons: {
     flexDirection: 'row',
@@ -51,14 +54,16 @@ const styles = StyleSheet.create({
   flexContainer1: {
     flexDirection: "row",
     justifyContent: "space-between",
-    padding: SW(10),
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(10),
     borderColor: Colors.gray,
     borderWidth: 1,
     marginTop: SH(10),
     borderRadius:10
   },
   flexContainer: {
-    padding: SW(10),
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(10),
     borderColor: Colors.gray,
     borderWidth: 1,
     borderRadius:10
@@ -89,8 +94,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    padding: SW(3),
-    backgroundColor: '#fff',
+    paddingHorizontal: SW(3),
+    paddingVertical:SH(3),
+    backgroundColor:Colors.light,
   },
   iconContainer: {
     alignItems: 'center',
@@ -102,8 +108,8 @@ const styles = StyleSheet.create({
   },
   interestedButton: {
     backgroundColor: Colors.theme_color,
-    paddingHorizontal: SH(20),
-    paddingVertical: SH(8),
+    paddingHorizontal: SW(20),
+    paddingVertical: SH(3),
     borderRadius: 8,
   },
   buttonText: {
@@ -122,7 +128,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
     backgroundColor: Colors.theme_color,
     paddingVertical: SH(4),
-    margin: SH(10),
+    marginVertical: SH(10),
+    marginHorizontal:SW(10),
     borderRadius: 10,
     marginHorizontal: SW(90)
   },
@@ -137,7 +144,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius:10,
     marginVertical: SH(15),
-    padding: SW(10)
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(10)
   },
   flexContainer4: {
     width: "100%",
@@ -159,7 +167,8 @@ const styles = StyleSheet.create({
   flexContainer5: {
     flexDirection: "row",
     justifyContent: "space-between",
-    padding: SW(10)
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(10)
   },
   bottomImage: {
     width: "100%",

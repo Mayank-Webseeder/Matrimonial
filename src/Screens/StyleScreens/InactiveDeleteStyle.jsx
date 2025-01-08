@@ -5,14 +5,16 @@ import { SW, SH, SF } from "../../utils/Dimensions";
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.light,
-        paddingTop: SW(20)
+    backgroundColor: Colors.light,
+    paddingTop: SH(25),
+    paddingHorizontal:SW(6)
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: SW(10),
+        paddingHorizontal: SW(10),
+        paddingVertical:SH(10),
         paddingLeft: 0
     },
     headerText: {
@@ -21,7 +23,8 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins-Regular"
     },
     optionsContainer: {
-        margin: SW(50),
+        marginHorizontal: SW(50),
+        marginVertical:SH(50)
     },
     optionButton: {
         backgroundColor: Colors.theme_color,
@@ -37,7 +40,8 @@ const styles = StyleSheet.create({
     },
     Text: {
         fontSize: SF(15),
-        margin: SW(25),
+        marginHorizontal: SW(25),
+        marginVertical:SH(25),
         color: Colors.theme_color,
         textAlign: "center"
     },
@@ -49,7 +53,8 @@ const styles = StyleSheet.create({
     },
     modalContainer: {
         width: SW(300),
-        padding: SW(20),
+        paddingHorizontal: SW(20),
+        paddingVertical:SH(20),
         backgroundColor: Colors.white,
         borderRadius: 10,
         alignItems: 'center',
@@ -71,7 +76,7 @@ const styles = StyleSheet.create({
         paddingVertical: SH(5),
         paddingHorizontal: SW(35),
         borderRadius: 5,
-        marginHorizontal: SH(10),
+        marginHorizontal: SW(10),
     },
     modalButtonText: {
         color: Colors.light,

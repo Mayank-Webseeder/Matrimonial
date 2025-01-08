@@ -75,7 +75,7 @@ const CommunityFilter = ({ navigation }) => {
             />
      <View style={styles.header}>
         <View style={{ flexDirection: 'row' }}>
-          <TouchableOpacity onPress={() => navigation.navigate('Community')}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons
               name="arrow-back-ios-new"
               size={25}

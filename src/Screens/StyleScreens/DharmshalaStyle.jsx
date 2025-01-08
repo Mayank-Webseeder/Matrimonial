@@ -6,13 +6,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.light,
-    paddingTop:SW(20)
+    paddingTop: SH(25),
+    paddingHorizontal:SW(6)
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: SW(10),
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(10),
     paddingLeft:0
   },
   headerText: {
@@ -26,7 +28,10 @@ const styles = StyleSheet.create({
   image: {
     width: SW(100),
     height: SH(90),
-    resizeMode: "contain"
+    resizeMode: "contain",
+    marginHorizontal:SW(10),
+    marginVertical:SH(10),
+    marginRight:0
   },
   searchbar: {
     display: "flex",
@@ -39,16 +44,16 @@ const styles = StyleSheet.create({
     width:SW(300)
   },
   card: {
-    backgroundColor:Colors.light,
+    backgroundColor: '#fff',
     borderRadius: 10,
     overflow: 'hidden',
-    margin: SW(6),
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
-    width: '98%',
-    padding: SW(10)
+    marginHorizontal: SW(10),
+    marginVertical:SH(10),
+    marginBottom:SH(3)
   },
   cardData: {
     flexDirection: "row"
@@ -73,14 +78,14 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: '#ccc',
     marginHorizontal: SH(2),
-    marginTop: SW(100)
+    marginTop: SH(105)
   },
   activeDot: {
     width: SW(25),
     height: SH(5),
     borderRadius: 4,
     backgroundColor: Colors.theme_color,
-    marginTop: SW(100)
+    marginTop: SH(105)
   },
   DharamSalaList: {
     marginVertical: SH(10),
@@ -93,6 +98,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: '#fff',
     marginHorizontal: SW(10),
+    marginVertical:0,
     paddingVertical: SH(10)
   },
   iconContainer: {
@@ -112,7 +118,7 @@ const styles = StyleSheet.create({
   },
   Button: {
     backgroundColor: Colors.theme_color,
-    paddingHorizontal: SH(15),
+    paddingHorizontal: SW(15),
     paddingVertical: SH(5),
     borderRadius: 8,
     alignItems: "center",
@@ -154,7 +160,8 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: 'white',
-    padding: SW(10),
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(10),
     width: '80%',
     borderRadius: 10,
   },
@@ -164,9 +171,11 @@ const styles = StyleSheet.create({
   },
   applyButton: {
     backgroundColor: Colors.theme_color,
-    padding: SW(10),
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(3),
     borderRadius: 5,
-    margin: SW(20),
+    marginHorizontal: SW(20),
+    marginVertical:SH(20),
     borderRadius: 50
   },
   applyButtonText: {
@@ -194,10 +203,12 @@ const styles = StyleSheet.create({
   headingText: {
     fontFamily: "Poppins-Bold",
     fontSize: SF(15),
-    margin: SH(10)
+    marginHorizontal: SH(10),
+    marginVertical:SH(10)
   },
   leftContainer:{
-    margin:SW(10)
+    marginHorizontal:SW(10),
+    marginVertical:SH(15)
   },
   RequestText:{
     color:Colors.light,

@@ -15,7 +15,7 @@ const CreatePost = ({navigation}) => {
 
             <View style={styles.header}>
                 <View style={{ flexDirection: 'row' }}>
-                    <TouchableOpacity onPress={() => navigation.navigate('EventNews')}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
                     <Text style={styles.headerText}>Create Post</Text>
@@ -43,7 +43,7 @@ const CreatePost = ({navigation}) => {
                 </View>
                 <View style={styles.righticons}>
                     <AntDesign name={'camerao'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} />
-                    <AntDesign name={'videocamera'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />
+                    <AntDesign name={'videocamera'} size={25} color={Colors.theme_color} />
                 </View>
             </View>
         </SafeAreaView>

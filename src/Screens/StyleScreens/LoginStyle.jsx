@@ -24,7 +24,8 @@ const styles = StyleSheet.create({
 
     button: {
         backgroundColor: Colors.theme_color,
-        padding: SW(7),
+        paddingHorizontal: SW(7),
+        paddingVertical:SH(7),
         marginHorizontal: SW(35),
         borderRadius: 50,
         marginTop: SH(35)
@@ -46,7 +47,8 @@ const styles = StyleSheet.create({
     },
     inputText: {
         borderColor: Colors.theme_color,
-        padding: SW(10),
+        paddingHorizontal: SW(10),
+        paddingVertical:SH(10),
         borderWidth: 1,
         borderRadius: 15,
         marginHorizontal: SW(25),

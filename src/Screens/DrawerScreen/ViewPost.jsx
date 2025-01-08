@@ -41,7 +41,7 @@ const ViewPost = ({ navigation, route }) => {
             />
       <View style={styles.header}>
         <View style={{ flexDirection: 'row' }}>
-          <TouchableOpacity onPress={() => navigation.navigate('EventNews')}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
           <Text style={styles.headerText}>{post.name}'s Post</Text>

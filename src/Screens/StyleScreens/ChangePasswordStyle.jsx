@@ -4,15 +4,17 @@ import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: Colors.light,
-        paddingTop: SW(20)
+      flex: 1,
+      backgroundColor: Colors.light,
+      paddingTop: SH(25),
+      paddingHorizontal:SW(6)
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: SW(10),
+        paddingHorizontal: SW(10),
+        paddingVertical:SH(10),
         paddingLeft: 0
     },
     headerText: {
@@ -23,12 +25,14 @@ const styles = StyleSheet.create({
     Text: {
       fontSize: SF(16),
       color: Colors.theme_color,
-      margin: SH(20),
+      marginVertical: SH(20),
+      marginHorizontal:SW(20),
       marginTop:SW(50),
     },
     inputContainer: {
       marginTop: SH(50),
-      margin:SW(20)
+      marginHorizontal:SW(20),
+      marginVertical:SH(20)
     },
     input: {
       backgroundColor: Colors.light_theme,
@@ -48,7 +52,7 @@ const styles = StyleSheet.create({
     },
     optionButton: {
       backgroundColor: Colors.theme_color,
-      paddingVertical:SW(5),
+      paddingVertical:SH(5),
       paddingHorizontal:SW(20),
       marginBottom:SH(15),
       borderRadius: 5,
@@ -69,26 +73,28 @@ const styles = StyleSheet.create({
     width: '80%',
     backgroundColor: '#fff',
     borderRadius: 10,
-    padding: 20,
+    paddingHorizontal:SW(20),
+    paddingVertical:SH(20),
     alignItems: 'center',
   },
   modalText: {
-    fontSize: 18,
+    fontSize:SF(18),
     color: Colors.darkGrey,
-    marginBottom: 20,
+    marginBottom: SH(20),
     textAlign: 'center',
   },
   modalButton: {
     backgroundColor: Colors.theme_color,
-    padding: 10,
+    paddingHorizontal: SW(3),
+    paddingVertical:SH(3),
     borderRadius: 8,
     width: '50%',
     alignItems: 'center',
   },
   modalButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    color:Colors.light,
+    fontSize:SF(15),
+    fontFamily:"Poppins-Bold"
   },
 });
 

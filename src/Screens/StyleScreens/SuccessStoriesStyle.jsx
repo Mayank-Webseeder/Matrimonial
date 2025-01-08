@@ -6,14 +6,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.light,
-        paddingTop: SW(20),
+        paddingTop: SH(25),
+        paddingHorizontal:SW(6)
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        // padding: SW(10),
-        // paddingLeft: 0
     },
     headerText: {
         color: Colors.theme_color,
@@ -55,7 +54,7 @@ const styles = StyleSheet.create({
     },
     ratingContainer: {
         flexDirection: 'row',
-        marginTop: 5,
+        marginTop:SH(5),
       },
 
 

@@ -6,13 +6,15 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.light,
-        paddingTop: SW(20),
+        paddingTop: SH(25),
+        paddingHorizontal:SW(6)
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: SW(10),
+        paddingHorizontal: SW(10),
+        paddingVertical: SH(10),
         paddingLeft: 0,
     },
     headerText: {
@@ -36,13 +38,18 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-Regular',
     },
     card: {
-        backgroundColor: Colors.light,
-        elevation: 5,
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        overflow: 'hidden',
         shadowColor: '#000',
         shadowOpacity: 0.1,
-        marginBottom: SH(10),
-        padding: SW(5),
-        borderRadius: 10,
+        shadowRadius: 5,
+        elevation: 3,
+        marginHorizontal: SW(10),
+        marginVertical:SH(10),
+        marginBottom: SH(3),
+        paddingHorizontal:SW(5),
+        paddingVertical:SH(5)
     },
     EventheaderImage: {
         width: SW(50),
@@ -55,26 +62,27 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     image1: {
-        width:SW(170),
+        width: SW(170),
         height: SH(150),
-        marginRight:0,
-        borderRadius:2,
+        marginRight: 0,
+        borderRadius: 2,
     },
-    image2:{
-        width:SW(343),
+    image2: {
+        width: SW(343),
         height: SH(150),
-        marginRight:0,
-        borderRadius:2,
+        marginRight: 0,
+        borderRadius: 2,
     },
     noImageText: {
         color: '#777',
-        fontSize:SF(13),
-        marginTop:SH(10),
+        fontSize: SF(13),
+        marginTop: SH(10),
     },
     captionText: {
-        margin: SW(7),
+        marginHorizontal: SW(7),
         fontSize: SF(12),
         fontFamily: 'Poppins-Regular',
+        marginVertical:SH(10)
     },
     name: {
         fontSize: SF(13),
@@ -95,7 +103,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: SW(10),
+        paddingHorizontal: SW(10),
+        paddingVertical:SH(3)
     },
     likeShare: {
         flexDirection: 'row',

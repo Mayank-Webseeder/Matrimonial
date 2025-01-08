@@ -73,7 +73,7 @@ const RoleRegisterForm = ({ navigation }) => {
             />
             <View style={styles.header}>
                 <View style={{ flexDirection: 'row' }}>
-                    <TouchableOpacity onPress={() => navigation.navigate('Pandit')}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
                     <Text style={styles.headerText}>Register</Text>

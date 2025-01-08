@@ -4,15 +4,17 @@ import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: Colors.light,
-        paddingTop: SW(30)
+    flex: 1,
+    backgroundColor: Colors.light,
+    paddingTop: SH(35),
+    paddingHorizontal:SW(6)
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: SW(10),
+        paddingHorizontal: SW(10),
+        paddingVertical:SH(7),
         paddingLeft: SW(1),
         paddingTop:0
 
@@ -40,18 +42,21 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderRadius: 10,
         overflow: 'hidden',
-        margin: SW(6),
+        marginHorizontal: SW(6),
+        marginVertical:SH(6),
         shadowColor: '#000',
         shadowOpacity: 0.1,
         shadowRadius: 5,
         elevation: 3,
         width: '98%',
-        padding: SW(2)
+        paddingHorizontal: SW(2),
+        paddingVertical:SH(2)
     },
     cardData: {
         flexDirection: 'row',
         alignItems: 'flex-start',
-        padding: SW(10),
+        paddingHorizontal: SW(10),
+        paddingVertical:SH(5)
     },
 
     CityArea: {
@@ -95,15 +100,15 @@ const styles = StyleSheet.create({
         height: SH(5),
         borderRadius: 4,
         backgroundColor: '#ccc',
-        marginHorizontal: SH(2),
-        marginTop: SW(100)
+        marginHorizontal: SW(2),
+        marginTop: SH(105)
       },
       activeDot: {
         width: SW(25),
         height: SH(5),
         borderRadius: 4,
         backgroundColor: Colors.theme_color,
-        marginTop: SW(100)
+        marginTop: SH(105)
       },
     
     panditListData: {
@@ -122,8 +127,8 @@ const styles = StyleSheet.create({
     },
     Button: {
         backgroundColor: Colors.theme_color,
-        paddingHorizontal: SH(6),
-        paddingVertical: SH(5),
+        paddingHorizontal: SW(6),
+        paddingVertical: SH(3),
         borderRadius: 8,
         alignItems: "center",
         width:SW(103),
@@ -134,19 +139,19 @@ const styles = StyleSheet.create({
         color: Colors.light,
         fontFamily: "Poppins-Regular",
         fontSize: SF(10.5),
-        marginLeft: SW(2)
     },
     mainContainer: {
         marginTop: SH(70),
         flex: 1
     },
     leftContainer:{
-        marginLeft:SH(10), flex: 1 ,marginTop:SH(7)
+        marginLeft:SW(10), flex: 1 ,marginTop:SH(7)
     },
     filterText: {
         flexDirection: "row",
         justifyContent: "space-between",
-        margin: SW(15)
+        marginHorizontal: SW(15),
+        marginVertical: SH(5)
 
     },
     filterHeading: {

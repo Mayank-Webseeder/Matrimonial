@@ -5,14 +5,16 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.light,
-        paddingTop: SW(20)
+    backgroundColor: Colors.light,
+    paddingTop: SH(25),
+    paddingHorizontal:SW(6)
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: SW(10),
+        paddingHorizontal: SW(10),
+        paddingVertical:SH(10),
         paddingLeft: 0
     },
 
@@ -20,7 +22,8 @@ const styles = StyleSheet.create({
         color: Colors.theme_color,
         fontSize: SF(15),
         fontFamily: "Poppins-Regular",
-        margin:SW(5)
+        marginHorizontal:SW(5),
+        marginVertical:SH(5)
     },
     righticons: {
         flexDirection: 'row',
@@ -33,15 +36,6 @@ const styles = StyleSheet.create({
     menuIcon: {
         width: SW(30),
         height: SH(30)
-    },
-    RepostText: {
-        backgroundColor: Colors.theme_color,
-        color: Colors.light,
-        padding: SW(5),
-        borderRadius: 10,
-        paddingHorizontal: SW(15),
-        fontFamily: "Poppins-Regular",
-        fontSize:SF(13)
     },
     image: {
         width: "100%",
@@ -68,8 +62,10 @@ const styles = StyleSheet.create({
         marginTop: SH(60),
         borderColor: Colors.gray,
         borderWidth: 1,
-        padding: SW(10),
-        borderRadius: 10
+        paddingHorizontal: SW(10),
+        paddingVertical:SH(10),
+        borderRadius: 10,
+        marginHorizontal:SW(10)
     },
     userData: {
         flexDirection: "row",
@@ -88,7 +84,8 @@ const styles = StyleSheet.create({
 
     },
     contentContainer:{
-     margin:SW(10)
+     marginHorizontal:SW(10),
+     marginVertical:SH(10)
     },
     logotext: {
         color: Colors.theme_color,
@@ -98,12 +95,14 @@ const styles = StyleSheet.create({
     icon: {
         borderColor: Colors.theme_color,
         borderWidth: 1,
-        padding: SW(7),
+        paddingHorizontal: SW(7),
+        paddingVertical:SH(7),
         borderRadius: 50
     },
     Selectedicon: {
         backgroundColor: Colors.theme_color,
-        padding: SW(7),
+        paddingHorizontal: SW(7),
+        paddingVertical:SH(7),
         borderRadius: 50,
       },
     text: {
@@ -143,8 +142,10 @@ const styles = StyleSheet.create({
     button: {
         backgroundColor: Colors.theme_color,
         marginHorizontal: SW(90),
-        margin: SW(20),
-        padding: SW(10),
+        marginHorizontal: SW(20),
+        marginVertical:SH(20),
+        paddingHorizontal: SW(10),
+        paddingVertical:SH(5),
         borderRadius: 10
     },
     buttonText: {
@@ -161,7 +162,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: SW(7)
+        paddingHorizontal: SW(7),
+        paddingVertical:SH(7)
     },
     selectedButton: {
         backgroundColor: Colors.theme_color

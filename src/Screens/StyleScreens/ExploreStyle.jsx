@@ -6,13 +6,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.light,
-    paddingTop:SW(20)
+    paddingTop: SH(25),
+    paddingHorizontal:SW(6)
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: SW(10),
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(10),
     paddingLeft:0
   },
   righticons: {
@@ -41,7 +43,7 @@ const styles = StyleSheet.create({
     height: SH(5),
     borderRadius: 4,
     backgroundColor: '#ccc',
-    marginHorizontal: SH(2),
+    marginHorizontal: SW(2),
     marginTop:SH(50)
   },
   activeDot: {
@@ -52,9 +54,10 @@ const styles = StyleSheet.create({
     marginTop:SH(50)
   },
   ProfileImage: {
-    width: "100%",
-    height: SH(300),
-    // marginHorizontal: SW(15),
+    width: "97%",
+    height: SH(250),
+    marginHorizontal: SW(5),
+    marginVertical:SH(5),
     borderRadius: 10
   },
   ButtonContainer: {
@@ -100,7 +103,8 @@ const styles = StyleSheet.create({
     disply: "flex",
     flexDirection: "row",
     justifyContent: "space-between", alignItems: "center",
-    margin: SW(10)
+    marginHorizontal: SW(10),
+    marginVertical:SH(10)
   },
   text: {
     fontFamily: "Poppins-Regular",
@@ -111,7 +115,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    padding: SW(10),
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(7),
     backgroundColor: Colors.light,
     marginHorizontal:SW(20)
   },
@@ -132,8 +137,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
-    padding: SW(5),
-    margin: SW(10)
+    paddingHorizontal: SW(5),
+    paddingVertical:SH(5),
+    marginHorizontal: SW(10),
+    marginVertical:SH(10)
   }
 
 });

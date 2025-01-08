@@ -25,7 +25,7 @@ const Notification = ({ navigation }) => {
             />
       <View style={styles.header}>
         <View style={{ flexDirection: "row" }}>
-          <TouchableOpacity onPress={() => navigation.navigate('Tabs')}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons name={'arrow-back-ios-new'} size={23} color={Colors.theme_color} />
           </TouchableOpacity>
           <Text style={styles.headerText}>Notifications</Text>

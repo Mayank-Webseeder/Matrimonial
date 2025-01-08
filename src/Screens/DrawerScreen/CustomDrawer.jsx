@@ -9,12 +9,13 @@ import Entypo from 'react-native-vector-icons/Entypo';
 const CustomDrawer = (props) => {
   const { navigation } = props;
   const [isAccountSettingsOpen, setAccountSettingsOpen] = useState(false);
+  const [isPanditOptionsOpen, setPanditOptionsOpen] = useState(false);
 
   const menuItems = [
     { title: 'Partners Preference', screen: 'PartnersPreference' },
     { title: 'Interested Profile', screen: 'Interested Profile' },
     { title: 'Saved Profile', screen: 'Saved Profile' },
-    { title: 'Pandit/Jyotish', screen: 'Pandit' },
+    { title: 'Pandit/Jyotish' },
     { title: 'Event/News', screen: 'EventNews' },
     { title: 'Dharmshala', screen: 'Dharmshala' },
     { title: 'Committees', screen: 'Community' },
@@ -25,6 +26,12 @@ const CustomDrawer = (props) => {
     { title: 'Share App' },
     { title: 'Feedback/Suggestion', screen: 'FeedBack' },
     { title: 'About Us' },
+  ];
+
+  const panditOptions = [
+    { title: 'Pandit', screen: 'Pandit' },
+    { title: 'Jyotish', screen: 'Joytish' },
+    { title: 'Kathavachak', screen: 'Kathavachak' },
   ];
 
   const accountSettingsOptions = [
@@ -99,6 +106,32 @@ const CustomDrawer = (props) => {
                   ))}
               </View>
             );
+          } else if (item.title === 'Pandit/Jyotish') {
+            return (
+              <View key={index}>
+                <TouchableOpacity
+                  style={styles.drawerButton}
+                  onPress={() => setPanditOptionsOpen(!isPanditOptionsOpen)}
+                >
+                  <Text style={styles.buttonText}>{item.title}</Text>
+                  <AntDesign
+                    name={isPanditOptionsOpen ? 'up' : 'down'}
+                    size={20}
+                    color={Colors.theme_color}
+                  />
+                </TouchableOpacity>
+                {isPanditOptionsOpen &&
+                  panditOptions.map((option, subIndex) => (
+                    <TouchableOpacity
+                      key={subIndex}
+                      style={[styles.drawerButton, styles.subOption]}
+                      onPress={() => handleNavigation(option.screen)}
+                    >
+                      <Text style={styles.subOptionText}>{option.title}</Text>
+                    </TouchableOpacity>
+                  ))}
+              </View>
+            );
           }
           return (
             <TouchableOpacity
@@ -152,7 +185,6 @@ const styles = StyleSheet.create({
     top: SH(20),
   },
   drawerButton: {
-    // marginHorizontal: SW(5),
     marginVertical: SH(1),
     paddingVertical: SH(10),
     paddingHorizontal: SW(10),
@@ -160,7 +192,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#c4a5b0',
     borderColor: Colors.theme_color,
     borderWidth: 1,
-    width:"100%",
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

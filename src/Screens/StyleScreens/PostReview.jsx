@@ -6,13 +6,15 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.light,
-        paddingTop: SW(30)
+        paddingTop: SH(25),
+        paddingHorizontal:SW(6)
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: SW(10),
+        paddingHorizontal: SW(10),
+        paddingVertical:SH(10),
         paddingLeft:0,
         backgroundColor: Colors.light,
     },
@@ -56,7 +58,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: Colors.gray,
         borderRadius: 10,
-        padding: SW(10),
+        paddingHorizontal: SW(10),
+        paddingVertical:SH(10),
         fontSize: SF(14),
         marginBottom: SH(20),
         backgroundColor: '#fff',
@@ -70,11 +73,12 @@ const styles = StyleSheet.create({
     },
     submitButton: {
         backgroundColor: Colors.theme_color,
-        padding: SW(3),
+        paddingHorizontal: SW(3),
+        paddingVertical:SH(3),
         borderRadius: 10,
         alignItems: 'center',
-        marginTop: SH(20),
-        margin:SW(20)
+        marginVertical: SH(20),
+        marginHorizontal:SW(20)
     },
     submitButtonText: {
         color: Colors.light,
@@ -82,7 +86,8 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins-Bold"
     },
     contentContainer:{
-        margin:SW(10)
+        marginHorizontal:SW(10),
+        marginVertical:SH(20)
     }
 });
 

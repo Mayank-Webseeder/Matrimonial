@@ -119,6 +119,10 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins-Regular",
         fontSize: SF(15)
     },
+    detail:{
+        flexDirection: "row",
+        justifyContent: "space-between",
+    },
     detailText: {
         fontFamily: "Poppins-Bold",
         fontSize: SF(15)

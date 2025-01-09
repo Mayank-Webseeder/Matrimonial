@@ -8,15 +8,15 @@ export const profileImages = [
 ]
 
 export const Category = [
-   { id: "1", image: require('../Images/pandit.png'), text: "PANDIT", screen: "Pandit" },
-   { id: "2", image: require('../Images/astro.png'), text: "JOYTISH", screen: "Joytish" },
-   { id: "3", image: require('../Images/kathavachak.png'), text: "KATHAVACHAK", screen: "Kathavachak" },
+   { id: "1", image: require('../Images/panditji.png'), text: "PANDIT", screen: "Pandit" },
+   { id: "2", image: require('../Images/astrologer.png'), text: "JOYTISH", screen: "Joytish" },
+   { id: "3", image: require('../Images/kathavachakLogo.png'), text: "KATHAVACHAK", screen: "Kathavachak" },
 ]
 
 export const communityData = [
-   { id: "1", image: require('../Images/Dharamsala.png'), text: "Dharm Shala", screen: "Dharmshala" },
-   { id: "2", image: require('../Images/event.png'), text: "Event & News", screen: "EventNews" },
-   { id: "3", image: require('../Images/community.png'), text: "Committee", screen: "Community" },
+   { id: "1", image: require('../Images/DharamsalaLogo.png'), text: "Dharm Shala", screen: "Dharmshala" },
+   { id: "2", image: require('../Images/eventsNews.png'), text: "Event & News", screen: "EventNews" },
+   { id: "3", image: require('../Images/commitee.png'), text: "Committee", screen: "Community" },
 ]
 
 export const slider = [

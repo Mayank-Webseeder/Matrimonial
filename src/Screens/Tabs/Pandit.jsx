@@ -10,7 +10,6 @@ import Feather from 'react-native-vector-icons/Feather';
 import { Rating } from 'react-native-ratings';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import { Dropdown } from 'react-native-element-dropdown';
-import { useFocusEffect } from '@react-navigation/native';
 
 const Pandit = ({ navigation }) => {
   const sliderRef = useRef(null);
@@ -40,31 +39,6 @@ const Pandit = ({ navigation }) => {
   const handleCloseFilter = () => {
     setModalVisible(false);
   };
-
-  // const handleBackPress = () => {
-  //   const state = navigation.getState();
-  //   const activeRoute = state.routes[state.index];
-
-  //   if (activeRoute.name === 'Pandit') {
-
-  //     if (state.history && state.history.some((h) => h.type === 'drawer')) {
-  //       navigation.toggleDrawer();
-  //     } else if (state.history && state.history.some((h) => h.type === 'tab')) {
-  //       navigation.navigate('HomeTab'); // Navigate to the home tab
-  //     } else {
-  //       navigation.goBack();
-  //     }
-  //     return true;
-  //   }
-  //   return false;
-  // };
-
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     BackHandler.addEventListener('hardwareBackPress', handleBackPress);
-  //     return () => BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
-  //   }, [navigation])
-  // );
 
   useEffect(() => {
     const interval = setInterval(() => {

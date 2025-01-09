@@ -118,6 +118,11 @@ const styles = StyleSheet.create({
         marginHorizontal:SW(14),
         marginVertical:SH(30),
         marginHorizontal:SW(15)
+    },
+    errorText:{
+        color:'red',
+        fontSize:SF(13),
+        fontFamily:"Poppins-Regular"
     }
 });
 

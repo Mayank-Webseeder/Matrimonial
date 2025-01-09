@@ -62,13 +62,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     image1: {
-        width: SW(170),
+        width: SW(160),
         height: SH(150),
         marginRight: 0,
         borderRadius: 2,
     },
     image2: {
-        width: SW(343),
+        width: SW(320),
         height: SH(150),
         marginRight: 0,
         borderRadius: 2,

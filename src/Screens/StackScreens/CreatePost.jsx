@@ -1,10 +1,22 @@
-import { Text, View, TouchableOpacity, Image, TextInput,SafeAreaView,StatusBar } from 'react-native'
-import React from 'react'
+import { Text, View, TouchableOpacity, Image, TextInput,SafeAreaView,StatusBar,ScrollView } from 'react-native'
+import React,{useState} from 'react'
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from '../StyleScreens/CreatePostStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { launchImageLibrary } from 'react-native-image-picker';
+
 const CreatePost = ({navigation}) => {
+    const [photos,setPhotos]=useState('');
+    
+    const handleImagePick = () => {
+            launchImageLibrary({ mediaType: 'photo', selectionLimit: 5 }, response => {
+                if (response.assets) {
+                    setPhotos(response.assets);
+                }
+            });
+        };
+    
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar 
@@ -21,6 +33,9 @@ const CreatePost = ({navigation}) => {
                     <Text style={styles.headerText}>Create Post</Text>
                 </View>
                 <View style={styles.righticons}>
+                    <TouchableOpacity style={styles.PostButton}>
+                       <Text style={styles.PostText}>Submit Post</Text>
+                    </TouchableOpacity>
                     <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} />
                     <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />
                 </View>
@@ -42,10 +57,22 @@ const CreatePost = ({navigation}) => {
                     <Text style={styles.Text}>Add Image or Video</Text>
                 </View>
                 <View style={styles.righticons}>
-                    <AntDesign name={'camerao'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} />
+              <TouchableOpacity onPress={handleImagePick}>
+              <AntDesign name={'camerao'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} />
+              </TouchableOpacity>
                     <AntDesign name={'videocamera'} size={25} color={Colors.theme_color} />
                 </View>
             </View>
+            {photos.length > 0 && (
+                        <View style={styles.photosContainer}>
+                            <Text style={styles.label}>Uploaded Photos:</Text>
+                            <ScrollView horizontal>
+                                {photos.map((photo, index) => (
+                                    <Image key={index} source={{ uri: photo.uri }} style={styles.photo} />
+                                ))}
+                            </ScrollView>
+                        </View>
+                    )}
         </SafeAreaView>
     )
 }

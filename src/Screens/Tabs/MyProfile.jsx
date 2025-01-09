@@ -61,7 +61,7 @@ const MyProfile = ({ navigation }) => {
                         <View style={styles.IconFlex}>
                             <TouchableOpacity
                                 style={styles.IconsButton}
-                            // onPress={() => handlePress('CreateBioData')}
+                            onPress={() => handlePress('Profile')}
                             >
                                 <FontAwesome
                                     name="id-card"

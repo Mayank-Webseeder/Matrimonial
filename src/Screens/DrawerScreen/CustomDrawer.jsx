@@ -98,7 +98,7 @@ const CustomDrawer = (props) => {
                   accountSettingsOptions.map((option, subIndex) => (
                     <TouchableOpacity
                       key={subIndex}
-                      style={[styles.drawerButton, styles.subOption]}
+                      style={styles.subOption}
                       onPress={() => handleNavigation(option.screen)}
                     >
                       <Text style={styles.subOptionText}>{option.title}</Text>
@@ -124,7 +124,7 @@ const CustomDrawer = (props) => {
                   panditOptions.map((option, subIndex) => (
                     <TouchableOpacity
                       key={subIndex}
-                      style={[styles.drawerButton, styles.subOption]}
+                      style={styles.subOption}
                       onPress={() => handleNavigation(option.screen)}
                     >
                       <Text style={styles.subOptionText}>{option.title}</Text>
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   userInfo: {
-    marginLeft: SW(9),
+    marginHorizontal: SW(9),
   },
   name: {
     fontSize: SF(13),
@@ -180,9 +180,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
   },
   editIcon: {
-    position: 'absolute',
-    right: SW(1),
-    top: SH(20),
+    marginHorizontal:SW(10)
   },
   drawerButton: {
     marginVertical: SH(1),
@@ -202,12 +200,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
   },
   subOption: {
-    marginLeft: SW(20),
+    marginHorizontal:0,
     borderWidth: 0,
     backgroundColor: Colors.light_theme,
+    marginVertical:SH(6)
   },
   subOptionText: {
-    fontSize: SF(12),
+    fontSize: SF(13),
     color: Colors.theme_color,
     fontFamily: 'Poppins-Regular',
   },

@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: SH(15),
     backgroundColor: Colors.gray,
     paddingVertical: SH(2),
+    borderRadius:5
   },
   headingStyle: {
     fontSize: SF(15),

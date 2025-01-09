@@ -2,12 +2,16 @@ import { StyleSheet} from 'react-native'
 import React from 'react'
 import RootNavigator from './src/Routing/RootNavigator';
 import { NavigationContainer } from '@react-navigation/native';
+import store from './src/ReduxStore/Store';
+import { Provider } from 'react-redux';
 
 const App = () => {
   return (
-    <NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
       <RootNavigator/>
     </NavigationContainer>
+    </Provider>
   )
 }
 

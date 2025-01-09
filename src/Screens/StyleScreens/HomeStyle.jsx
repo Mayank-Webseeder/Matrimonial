@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   CategoryContainer: {
     marginHorizontal: SW(10),
     marginVertical:SH(10),
-    backgroundColor: Colors.light_theme,
+    backgroundColor:'#faf8f2',
     marginHorizontal: SW(7),
     borderRadius: 10,
     paddingHorizontal: SW(4),
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     paddingVertical: SH(4),
     fontFamily: "Poppins-Bold",
     paddingBottom: 0,
-    fontSize: SF(12)
+    fontSize: SF(12),
   },
   sliderContainer: {
     marginBottom: SH(30)

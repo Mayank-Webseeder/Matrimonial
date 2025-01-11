@@ -137,8 +137,8 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         color: Colors.dark,
     },
-    heightinput:{
-        height: SH(40),
+    input1:{
+        height: SH(100),
         borderColor: 'gray',
         borderWidth: 1,
         marginBottom: SH(10),
@@ -146,7 +146,20 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         backgroundColor: 'white',
         color: Colors.dark,
-        paddingTop:SH(5)
+    },
+    heightinput:{
+        height: SH(30),
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: SH(10),
+        paddingLeft: SW(10),
+        borderRadius: 5,
+        backgroundColor: 'white',
+        color: Colors.dark,
+        paddingHorizontal:SH(5),
+        paddingVertical:SH(5),
+        width:SW(100),
+        marginTop:SH(10)
     },
     headText: {
         fontFamily: "Poppins-Bold",
@@ -181,7 +194,23 @@ const styles = StyleSheet.create({
     },
     selectedButton: {
         backgroundColor: Colors.theme_color
-    }
+    },
+    row:{
+        flexDirection:"row",
+        justifyContent:"space-between"
+    },
+    dropdown: {
+        height: SH(40),
+        width:"45%",
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: SH(10),
+        paddingLeft: SW(10),
+        borderRadius: 5,
+        backgroundColor: 'white',
+        color: Colors.dark,
+        marginHorizontal:SW(5)
+    },
 
 })
 export default styles

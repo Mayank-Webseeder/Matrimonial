@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, TouchableOpacity, Image, Text, ScrollView,SafeAreaView,StatusBar } from 'react-native';
+import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -11,12 +11,12 @@ import AppIntroSlider from 'react-native-app-intro-slider';
 import { SW } from '../../utils/Dimensions';
 import { DrawerActions } from '@react-navigation/native';
 
-const Explore = ({ navigation }) => {
+const Matrimony = ({ navigation }) => {
   const sliderRef = useRef(null);
   const [activeButton, setActiveButton] = useState(1);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  
+
   const girlsData = [
     {
       name: 'Priyanshi Sharma',
@@ -30,7 +30,7 @@ const Explore = ({ navigation }) => {
       occupation: 'Engineer',
       income: '₹10 LPA',
       qualification: 'MCA',
-      image:require('../../Images/Committee.png')
+      image: require('../../Images/Committee.png')
     },
   ];
 
@@ -47,7 +47,7 @@ const Explore = ({ navigation }) => {
       occupation: 'Doctor',
       income: '₹15 LPA',
       qualification: 'MBBS',
-      image:require('../../Images/profile3.png')
+      image: require('../../Images/profile3.png')
     },
   ];
 
@@ -75,11 +75,11 @@ const Explore = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar 
-                barStyle="dark-content" 
-                backgroundColor="transparent" 
-                translucent 
-            />
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="transparent"
+        translucent
+      />
       <View style={styles.header}>
         <View style={{ flexDirection: 'row' }}>
           <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
@@ -107,90 +107,90 @@ const Explore = ({ navigation }) => {
         </View>
         <View>
           <View style={styles.ButtonContainer}>
-           <View style={{flexDirection: 'row'}}>
-           <TouchableOpacity
-              style={[
-                styles.button,
-                activeButton === 1 ? styles.activeButton : styles.inactiveButton,
-                { width: SW(80) },
-              ]}
-              onPress={() => setActiveButton(1)}
-            >
-              <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>
-                Girls
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.button,
-                activeButton === 2 ? styles.activeButton : styles.inactiveButton,
-                { width: SW(80) },
-              ]}
-              onPress={() => setActiveButton(2)}
-            >
-              <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>
-                Boys
-              </Text>
-            </TouchableOpacity>
-           </View>
+            <View style={{ flexDirection: 'row' }}>
+              <TouchableOpacity
+                style={[
+                  styles.button,
+                  activeButton === 1 ? styles.activeButton : styles.inactiveButton,
+                  { width: SW(80) },
+                ]}
+                onPress={() => setActiveButton(1)}
+              >
+                <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>
+                  Girls
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.button,
+                  activeButton === 2 ? styles.activeButton : styles.inactiveButton,
+                  { width: SW(80) },
+                ]}
+                onPress={() => setActiveButton(2)}
+              >
+                <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>
+                  Boys
+                </Text>
+              </TouchableOpacity>
+            </View>
             <TouchableOpacity style={styles.button}>
               <Text style={styles.Text}>Set Preferences</Text>
             </TouchableOpacity>
-           
+
           </View>
         </View>
         {dataToDisplay.map((person, index) => (
           <TouchableOpacity
             key={index}
-            onPress={() => navigation.navigate('Location')}
+            onPress={() => navigation.navigate('MatrimonyPeopleProfile')}
           >
-           <View style={styles.card}>
-           <Image source={person.image} style={styles.ProfileImage} />
-           <View style={styles.profileData}>
-              <View>
-                <Text style={[styles.text, { fontFamily: 'Poppins-Bold' }]}>{person.name}</Text>
-                <Text style={styles.text}>Age: {person.age} / Height: {person.height}</Text>
-                <Text style={styles.text}>{person.subCaste}</Text>
-                <Text style={styles.text}>{person.maritalStatus}</Text>
-                <Text style={styles.text}>Manglik Status: {person.manglikStatus}</Text>
-                <Text style={styles.text}>Disability: {person.disability}</Text>
-              </View>
-              <View style={{alignItems:"flex-end"}}>
-                <Text style={styles.text}>{person.city}</Text>
-                <Text style={styles.text}>{person.occupation}</Text>
-                <Text style={styles.text}>{person.income}</Text>
-                <Text style={styles.text}>{person.qualification}</Text>
+            <View style={styles.card}>
+              <Image source={person.image} style={styles.ProfileImage} />
+              <View style={styles.profileData}>
+                <View>
+                  <Text style={[styles.text, { fontFamily: 'Poppins-Bold' }]}>{person.name}</Text>
+                  <Text style={styles.text}>Age: {person.age} / Height: {person.height}</Text>
+                  <Text style={styles.text}>{person.subCaste}</Text>
+                  <Text style={styles.text}>{person.maritalStatus}</Text>
+                  <Text style={styles.text}>Manglik Status: {person.manglikStatus}</Text>
+                  <Text style={styles.text}>Disability: {person.disability}</Text>
+                </View>
+                <View style={{ alignItems: "flex-end" }}>
+                  <Text style={styles.text}>{person.city}</Text>
+                  <Text style={styles.text}>{person.occupation}</Text>
+                  <Text style={styles.text}>{person.income}</Text>
+                  <Text style={styles.text}>{person.qualification}</Text>
+                </View>
               </View>
             </View>
-           </View>
             <View style={styles.sharecontainer}>
-          <View style={styles.iconContainer}>
-            <FontAwesome name="bookmark-o" size={24} color={Colors.dark} />
-            <Text style={styles.iconText}>Save</Text>
-          </View>
+              <View style={styles.iconContainer}>
+                <FontAwesome name="bookmark-o" size={24} color={Colors.dark} />
+                <Text style={styles.iconText}>Save</Text>
+              </View>
 
-          <View style={styles.iconContainer}>
-            <Feather name="send" size={24} color={Colors.dark} />
-            <Text style={styles.iconText}>Shares</Text>
-          </View>
+              <View style={styles.iconContainer}>
+                <Feather name="send" size={24} color={Colors.dark} />
+                <Text style={styles.iconText}>Shares</Text>
+              </View>
 
-          <View style={styles.iconContainer}>
-            <MaterialIcons name="call" size={24} color={Colors.dark} />
-            <Text style={styles.iconText}>Call</Text>
-          </View>
+              <View style={styles.iconContainer}>
+                <MaterialIcons name="call" size={24} color={Colors.dark} />
+                <Text style={styles.iconText}>Call</Text>
+              </View>
 
-          <TouchableOpacity style={styles.iconContainer} onPress={()=>navigation.navigate('ReportPage')} >
-                        <MaterialIcons name="error-outline" size={24} color={Colors.dark} />
-                            <Text style={styles.iconText}>Report</Text>
-                        </TouchableOpacity>
-        </View>
-        <Image source={person.image} style={styles.ProfileImage} />
+              <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ReportPage')} >
+                <MaterialIcons name="error-outline" size={24} color={Colors.dark} />
+                <Text style={styles.iconText}>Report</Text>
+              </TouchableOpacity>
+            </View>
+            <Image source={person.image} style={styles.ProfileImage} />
           </TouchableOpacity>
         ))}
-        
+
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-export default Explore;
+export default Matrimony;

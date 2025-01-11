@@ -1,21 +1,56 @@
 import { Text, View, Image, ImageBackground, SafeAreaView, StatusBar } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/MyProfileStyle';
 import { TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { DrawerActions } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { PROFILE_ENDPOINT } from '../../utils/BaseUrl';
+import axios from 'axios';
+import moment from "moment";
 
 const MyProfile = ({ navigation }) => {
     const [selectedButton, setSelectedButton] = useState('CreateBioData');
+    const [profileData, setProfileData] = useState({});
+    const [loading, setLoading] = useState(false);
+    const formattedDate = moment(profileData.dob).format("DD MMMM YYYY");
+    
+    const fetchProfile = async () => {
+        setLoading(true);
+        try {
+          const token = await AsyncStorage.getItem('userToken');
+          if (!token) throw new Error('No token found');
+          const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          };
+          console.log("headers in profile",headers);
+          const res = await axios.get(PROFILE_ENDPOINT, { headers });
+          const ProfileData = res.data.data;
+          console.log("ProfileData",ProfileData);
+          setProfileData(ProfileData);
+        } catch (error) {
+          console.error('Error fetching profile:', error.response ? error.response.data : error.message);
+        } finally {
+          setLoading(false);
+        }
+      };
 
+      useEffect(()=>{
+        fetchProfile();
+      },[])
+
+      
     const handlePress = (buttonName) => {
         setSelectedButton(buttonName);
         navigation.navigate(buttonName);
     };
 
-
+    // const loginData = useSelector((state) => state.auth.user);
+   
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar
@@ -37,22 +72,22 @@ const MyProfile = ({ navigation }) => {
                     <ImageBackground source={require('../../Images/profile3.png')} style={styles.image}>
                         <View style={styles.smallHeader}>
                             <Image source={require('../../Images/profile3.png')} style={styles.smallimage} />
-                            <Text style={styles.name}>Raj Shah</Text>
+                            <Text style={styles.name}>{profileData.username || 'NA'}</Text>
                         </View>
                     </ImageBackground>
 
                     <View style={styles.userDeatil}>
                         <View style={styles.userData}>
-                            <Text style={styles.text}>Raj Shah</Text>
-                            <Text style={styles.text}>124567890</Text>
+                            <Text style={styles.text}>{profileData.username || 'NA'}</Text>
+                            <Text style={styles.text}>{profileData.mobileNo}</Text>
                         </View>
                         <View style={styles.userData}>
-                            <Text style={styles.text}>Date of Birth: 23/04/1998</Text>
-                            <Text style={styles.text}>City: London</Text>
+                            <Text style={styles.text}>DOB: {formattedDate || 'NA'}</Text>
+                            <Text style={styles.text}>City: {profileData.city || 'NA'}</Text>
                         </View>
                         <View style={styles.userData}>
 
-                            <Text style={styles.text}>Gender: Male</Text>
+                            <Text style={styles.text}>Gender: {profileData.gender || 'NA'}</Text>
                         </View>
                     </View>
 
@@ -61,7 +96,7 @@ const MyProfile = ({ navigation }) => {
                         <View style={styles.IconFlex}>
                             <TouchableOpacity
                                 style={styles.IconsButton}
-                            onPress={() => handlePress('Profile')}
+                            onPress={() => handlePress('DetailedProfile')}
                             >
                                 <FontAwesome
                                     name="id-card"

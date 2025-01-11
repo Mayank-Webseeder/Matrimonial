@@ -13,7 +13,7 @@ import AppIntroSlider from 'react-native-app-intro-slider';
 import { Dropdown } from 'react-native-element-dropdown';
 
 
-const Community = ({ navigation }) => {
+const Committee = ({ navigation }) => {
   const [activeButton, setActiveButton] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [subcaste, setSubcaste] = useState('');
@@ -255,5 +255,5 @@ const Community = ({ navigation }) => {
   );
 };
 
-export default Community;
+export default Committee;
 

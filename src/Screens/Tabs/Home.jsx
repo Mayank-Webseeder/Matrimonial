@@ -67,12 +67,12 @@ const Home = ({ navigation }) => {
           <HeadingWithViewAll
             heading="MATRIMONY"
             showViewAll={true}
-            onViewAllPress={() => navigation.navigate('Explore')}
+            onViewAllPress={() => navigation.navigate('Matrimony')}
           />
 
           <FlatList
             data={profileImages}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.id}a
             renderItem={({ item }) => (
               <View style={styles.imageWrapper}>
                  <TouchableOpacity onPress={() => {

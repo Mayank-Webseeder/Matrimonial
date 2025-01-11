@@ -76,6 +76,29 @@ const styles = StyleSheet.create({
         marginLeft:SW(35),
         marginBottom:-SH(10),
         width:SW(80)
+    },
+    passwordContainer:{
+        borderColor: Colors.theme_color,
+        paddingHorizontal: SW(10),
+        paddingVertical:SH(10),
+        borderWidth: 1,
+        borderRadius: 15,
+        marginHorizontal: SW(25),
+        // paddingVertical: SH(20),
+        color: Colors.dark,
+        marginBottom:SH(15),
+        flexDirection:"row",
+        justifyContent:"space-between",
+        alignItems:"center"
+    },
+    passwordInput:{
+        color:Colors.dark
+    },
+    errorText:{
+        color:'red',
+        fontSize:SF(13),
+        fontFamily:"Poppins-Regular",
+        marginHorizontal:SW(30)
     }
 
 });

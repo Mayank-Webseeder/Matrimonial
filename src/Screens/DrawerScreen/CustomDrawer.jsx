@@ -18,7 +18,7 @@ const CustomDrawer = (props) => {
     { title: 'Pandit/Jyotish' },
     { title: 'Event/News', screen: 'EventNews' },
     { title: 'Dharmshala', screen: 'Dharmshala' },
-    { title: 'Committees', screen: 'Community' },
+    { title: 'Committees', screen: 'Committee' },
     { title: 'Activist', screen: 'Activist' },
     { title: 'Advertise with Us' },
     { title: 'Success Stories', screen: 'SuccessStories' },
@@ -30,7 +30,7 @@ const CustomDrawer = (props) => {
 
   const panditOptions = [
     { title: 'Pandit', screen: 'Pandit' },
-    { title: 'Jyotish', screen: 'Joytish' },
+    { title: 'Jyotish', screen: 'Jyotish' },
     { title: 'Kathavachak', screen: 'Kathavachak' },
   ];
 

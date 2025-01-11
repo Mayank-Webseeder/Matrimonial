@@ -123,6 +123,19 @@ const styles = StyleSheet.create({
         color:'red',
         fontSize:SF(13),
         fontFamily:"Poppins-Regular"
+    },
+    passwordContainer:{
+        borderColor: Colors.gray,
+        borderWidth: 1,
+        width: "100%",
+        borderRadius: 10,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent:"space-between",
+        paddingHorizontal: SW(10),
+    },
+    passwordInput:{
+        color:Colors.dark  
     }
 });
 

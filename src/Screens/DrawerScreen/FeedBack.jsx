@@ -11,6 +11,24 @@ const FeedBack = ({ navigation }) => {
 
   };
 
+  const renderStars = () => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <TouchableOpacity key={i} onPress={() => setRating(i)}>
+          <Entypo
+            name={i <= rating ? 'star' : 'star-outlined'}
+            size={30}
+            color={'#FF9900'}
+            style={styles.star}
+          />
+        </TouchableOpacity>
+      );
+    }
+    return stars;
+  };
+
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar
@@ -31,11 +49,9 @@ const FeedBack = ({ navigation }) => {
         <Text style={styles.Text}>Feedback</Text>
         <Text style={styles.description}>Share your experience in scaling</Text>
         <View style={styles.ratingContainer}>
-          <Entypo name={'star-outlined'} size={30} color={'#FF9900'} style={styles.star} />
-          <Entypo name={'star-outlined'} size={30} color={'#FF9900'} style={styles.star} />
-          <Entypo name={'star-outlined'} size={30} color={'#FF9900'} style={styles.star} />
-          <Entypo name={'star-outlined'} size={30} color={'#FF9900'} style={styles.star} />
-          <Entypo name={'star-outlined'} size={30} color={'#FF9900'} style={styles.star} />
+          <View style={styles.ratingContainer}>
+            {renderStars()}
+          </View>
         </View>
         <TextInput
           style={styles.textInput}
@@ -46,7 +62,7 @@ const FeedBack = ({ navigation }) => {
           placeholderTextColor={'gray'}
         />
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={styles.submitText}>SUBMIT</Text>
+          <Text style={styles.submitText}>Submit FeedBack</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

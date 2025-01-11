@@ -51,7 +51,7 @@ const SavedProfile = ({ navigation }) => {
           </View>
         )}
 
-        {activeCategory === "Community" && (
+        {activeCategory === "Committee" && (
           <View>
               <Image style={styles.image} source={item.image} />         
             <Text style={styles.name}>{item.name}</Text>
@@ -88,7 +88,7 @@ const SavedProfile = ({ navigation }) => {
       <View>
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.ButtonContainer}>
         <View style={styles.tabContainer}>
-          {["Biodata", "Pandit", "Dharmshala", "Community"].map((category, index) => (
+          {["Biodata", "Pandit", "Dharmshala", "Committee"].map((category, index) => (
             <TouchableOpacity
               key={index}
               style={[styles.tabButton, activeCategory === category && styles.activeTab]}

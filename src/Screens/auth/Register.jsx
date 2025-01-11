@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { Text, View, ImageBackground, TouchableOpacity, TextInput, ScrollView, SafeAreaView } from "react-native";
+import {
+    Text,
+    View,
+    ImageBackground,
+    TouchableOpacity,
+    TextInput,
+    ScrollView,
+    SafeAreaView,
+    ActivityIndicator
+} from "react-native";
 import styles from "../StyleScreens/RegisterStyle";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -7,6 +16,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import Colors from "../../utils/Colors";
 import axios from "axios";
 import { SIGNUP_ENDPOINT } from "../../utils/BaseUrl";
+import Toast from "react-native-toast-message";
 
 const Register = ({ navigation }) => {
     const [selectedDate, setSelectedDate] = useState(null);
@@ -15,60 +25,85 @@ const Register = ({ navigation }) => {
     const [gender, setGender] = useState(null);
     const [mobileNumber, setMobileNumber] = useState("");
     const [fullName, setFullName] = useState("");
-    const [otp, setOtp] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmpassword] = useState("");
-
-    const [errors, setErrors] = useState({}); 
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [errors, setErrors] = useState({});
+    const [isLoading, setIsLoading] = useState(false); // Loader state
 
     const validateFields = () => {
         const newErrors = {};
         if (!mobileNumber) newErrors.mobileNumber = "Mobile number is required.";
+        else if (!/^\d{10}$/.test(mobileNumber)) newErrors.mobileNumber = "Enter a valid 10-digit mobile number.";
         if (!fullName) newErrors.fullName = "Full name is required.";
         if (!selectedDate) newErrors.selectedDate = "Date of Birth is required.";
         if (!selectedCity) newErrors.selectedCity = "City is required.";
         if (!gender) newErrors.gender = "Gender is required.";
-        // if (!otp) newErrors.otp = "OTP is required.";
         if (!password) newErrors.password = "Password is required.";
         if (password !== confirmPassword) newErrors.confirmPassword = "Passwords do not match.";
-
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
-    const HandleLogin = async () => {
-        // if (!validateFields()) {
-        //     return;
-        // }
-    
-        // try {
-        //     const formattedDate = selectedDate
-        //         ? `${selectedDate.getDate().toString().padStart(2, "0")}/${
-        //               (selectedDate.getMonth() + 1).toString().padStart(2, "0")
-        //           }/${selectedDate.getFullYear()}`
-        //         : null;
-    
-        //     const payload = {
-        //         username: fullName.trim(),
-        //         mobileNo: mobileNumber,
-        //         password: password,
-        //         gender: gender,
-        //         dob: formattedDate,
-        //         city: selectedCity,
-        //     };
+    const HandleSignup = async () => {
+        if (!validateFields()) {
+            return;
+        }
 
-        //     console.log("payload",payload);
-    
-        //     const response = await axios.post(SIGNUP_ENDPOINT, payload);
-        //     console.log("Sign up Data", JSON.stringify(response.data));
-    
-        //     navigation.navigate("LoginSuccess");
-        // } catch (error) {
-        //     console.error("Sign up error:", error.message);
-        // }
-        navigation.navigate("LoginSuccess");
+        setIsLoading(true); // Start loader
+        try {
+            const formattedDate = selectedDate
+                ? `${selectedDate.getDate().toString().padStart(2, "0")}/${(selectedDate.getMonth() + 1).toString().padStart(2, "0")
+                }/${selectedDate.getFullYear()}`
+                : null;
+
+            const payload = {
+                username: fullName.trim(),
+                mobileNo: mobileNumber,
+                password: password,
+                gender: gender,
+                dob: formattedDate,
+                city: selectedCity,
+            };
+
+            const response = await axios.post(SIGNUP_ENDPOINT, payload);
+            const message = response.data.message;
+
+            if (message === "User already exists! Please sign in.") {
+                Toast.show({
+                    type: "success",
+                    text1: "Sign Up Successful",
+                    text2: "You have successfully signed up!",
+                    position: 'top',
+                    visibilityTime: 1000,
+                    textStyle: { fontSize: 10, color: "green" },
+                    onHide: () => navigation.navigate("Login")
+                });
+            } else {
+                Toast.show({
+                    type: "error",
+                    text1: "Sign Up Error",
+                    text2: message,
+                    position: 'top',
+                    visibilityTime: 1000,
+                    textStyle: { fontSize: 10, color: "red" },
+                });
+            }
+        } catch (error) {
+            Toast.show({
+                type: "error",
+                text1: "Sign Up Error",
+                text2: error.message,
+                position: 'top',
+                visibilityTime: 1000,
+                textStyle: { fontSize: 10, color: "red" },
+            });
+        } finally {
+            setIsLoading(false); // Stop loader
+        }
     };
-    
+
 
     const handleDateChange = (event, date) => {
         if (date) setSelectedDate(date);
@@ -118,6 +153,7 @@ const Register = ({ navigation }) => {
                             placeholder="Enter your mobile number"
                             value={mobileNumber}
                             onChangeText={setMobileNumber}
+                            maxLength={10}
                             placeholderTextColor={Colors.gray}
                         />
                         {errors.mobileNumber && (
@@ -141,7 +177,7 @@ const Register = ({ navigation }) => {
                     </View>
 
                     {/* Date of Birth */}
-                    <View style={styles.inputContainer}>
+                    <View>
                         <Text style={styles.title}>Date of Birth</Text>
                         <View style={styles.date}>
                             <Text style={styles.dateText}>
@@ -194,57 +230,69 @@ const Register = ({ navigation }) => {
                         )}
                     </View>
 
-                    {/* Enter OTP */}
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.title}>Enter OTP</Text>
-                        <TextInput
-                            style={styles.input}
-                            keyboardType="numeric"
-                            placeholder="Enter the OTP sent to your mobile"
-                            value={otp}
-                            onChangeText={setOtp}
-                            placeholderTextColor={Colors.gray}
-                        />
-                        {/* {errors.otp && (
-                            <Text style={styles.errorText}>{errors.otp}</Text>
-                        )} */}
-                    </View>
-
                     {/* Create Password */}
-                    <View style={styles.inputContainer}>
+                    <View>
                         <Text style={styles.title}>Create Password</Text>
-                        <TextInput
-                            style={styles.input}
-                            secureTextEntry
-                            placeholder="Create a strong password"
-                            value={password}
-                            onChangeText={setPassword}
-                            placeholderTextColor={Colors.gray}
-                        />
+                        <View style={styles.passwordContainer}>
+                            <TextInput
+                                style={styles.passwordInput}
+                                secureTextEntry={!showPassword}
+                                placeholder="Create a strong password"
+                                value={password}
+                                onChangeText={setPassword}
+                                placeholderTextColor={'gray'}
+                            />
+                            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                                <AntDesign
+                                    name={showPassword ? "eye" : "eyeo"}
+                                    size={20}
+                                    style={styles.eyeIcon}
+                                    color={Colors.dark}
+                                />
+                            </TouchableOpacity>
+                        </View>
                         {errors.password && (
                             <Text style={styles.errorText}>{errors.password}</Text>
                         )}
                     </View>
 
                     {/* Confirm Password */}
-                    <View style={styles.inputContainer}>
+                    <View>
                         <Text style={styles.title}>Confirm Password</Text>
-                        <TextInput
-                            style={styles.input}
-                            secureTextEntry
-                            placeholder="Confirm your password"
-                            value={confirmPassword}
-                            onChangeText={setConfirmpassword}
-                            placeholderTextColor={Colors.gray}
-                        />
+                        <View style={styles.passwordContainer}>
+                            <TextInput
+                                style={styles.passwordInput}
+                                secureTextEntry={!showConfirmPassword}
+                                placeholder="Confirm your password"
+                                value={confirmPassword}
+                                onChangeText={setConfirmpassword}
+                                placeholderTextColor={'gray'}
+                            />
+                            <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+                                <AntDesign
+                                    name={showConfirmPassword ? "eye" : "eyeo"}
+                                    size={20}
+                                    style={styles.eyeIcon}
+                                    color={Colors.dark}
+                                />
+                            </TouchableOpacity>
+                        </View>
                         {errors.confirmPassword && (
                             <Text style={styles.errorText}>{errors.confirmPassword}</Text>
                         )}
                     </View>
 
                     {/* Continue Button */}
-                    <TouchableOpacity style={styles.button} onPress={HandleLogin}>
-                        <Text style={styles.buttonText}>Sign Up</Text>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={HandleSignup}
+                        disabled={isLoading} // Disable button when loading
+                    >
+                        {isLoading ? (
+                            <ActivityIndicator  size={'large'} color={Colors.light} />
+                        ) : (
+                            <Text style={styles.buttonText}>Sign Up</Text>
+                        )}
                     </TouchableOpacity>
                 </ScrollView>
             </ImageBackground>
@@ -257,6 +305,7 @@ const Register = ({ navigation }) => {
                     onChange={handleDateChange}
                 />
             )}
+            <Toast />
         </SafeAreaView>
     );
 };

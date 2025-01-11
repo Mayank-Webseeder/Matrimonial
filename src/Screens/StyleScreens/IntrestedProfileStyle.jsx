@@ -49,11 +49,11 @@ const styles = StyleSheet.create({
     marginTop: SH(105)
   },
   ProfileImage: {
-    width: "90%",
+    width: "94%",
     height: SH(300),
-    marginHorizontal: SW(15),
+    marginHorizontal: SW(10),
     borderRadius: 10,
-    marginVertical:SH(10)
+    marginVertical:SH(10),
   },
   ButtonContainer: {
     flex: 1,
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     disply: "flex",
     flexDirection: "row",
     justifyContent: "space-between", alignItems: "center",
-    marginHorizontal: SW(25),
+    marginHorizontal: SW(10),
     marginVertical: SH(10)
   },
   text: {
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     fontSize: SF(15)
   },
   descriptionContainer: {
-    marginHorizontal: SW(20),
+    marginHorizontal: SW(10),
     marginVertical:SH(10),
     marginTop:0
   },
@@ -168,6 +168,53 @@ const styles = StyleSheet.create({
     color: Colors.light,
     fontFamily: "Poppins-Bold",
     fontSize: SF(14),
+  },
+  profileSection: {
+    marginHorizontal:SW(10),
+    marginVertical:SH(10),
+    borderWidth: 1,
+    borderColor: Colors.gray,
+    borderRadius: 10,
+    paddingHorizontal:0,
+    paddingVertical:SH(10),
+    backgroundColor: Colors.light,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width:SW(350),
+    backgroundColor: Colors.light,
+    paddingHorizontal:SW(20),
+    paddingVertical:SH(20),
+    borderRadius: 10,
+    alignItems: 'center',
+    marginHorizontal:SW(20)
+  },
+  modalText: {
+    fontSize:SF(16),
+    color: Colors.dark,
+    marginBottom:SH(20),
+    textAlign: 'center',
+  },
+  modalActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+  },
+  modalButton: {
+    paddingVertical:SH(5),
+    paddingHorizontal:SW(40),
+    backgroundColor: Colors.theme_color,
+    borderRadius: 10,
+    marginHorizontal:SW(10),
+  },
+  modalButtonText: {
+    color: Colors.light,
+    fontFamily:"Poppins-Bold"
   },
 
 });

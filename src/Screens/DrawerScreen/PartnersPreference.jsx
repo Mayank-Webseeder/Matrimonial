@@ -20,48 +20,95 @@ const PartnersPreference = ({ navigation }) => {
   const [Complexion, setComplexion] = useState('');
   const [disaAbility, setdisaAbility] = useState('');
   const [PartnersLivein, setPartnersLivein] = useState('');
-  const [District, setDistrict] = useState('');
+  const [subCaste, setSubCaste] = useState('');
   const [BodyStructure, setBodyStructure] = useState('');
   const [selectedButton, setSelectedButton] = useState('PartnersPreference');
   const [state, setState] = useState('');
   const [village, setVillage] = useState('');
-  const [feet, setFeet] = useState(null);
-  const [inches, setInches] = useState(null);
-  const [showHeightDropdowns, setShowHeightDropdowns] = useState(false);
-
-  const feetData = [
-    { label: '3', value: '3' },
-    { label: '4', value: '4' },
-    { label: '5', value: '5' },
-    { label: '6', value: '6' },
-    { label: '7', value: '7' },
-  ];
-
-  const inchesData = Array.from({ length: 11 }, (_, index) => ({
-    label: (index + 1).toString(),
-    value: (index + 1).toString(),
+  const [minIncome, setMinIncome] = useState('');
+  const [maxIncome, setMaxIncome] = useState('');
+  const [minAge, setMinAge] = useState('');
+  const [maxAge, setMaxAge] = useState('');
+  const [minHeightFeet, setMinHeightFeet] = useState('');
+  const [maxHeightFeet, setMaxHeightFeet] = useState('');
+  const [minWeight, setMinWeight] = useState('');
+  const [maxWeight, setMaxWeight] = useState('');
+  const [familyIncome, setFamilyIncome] = useState('');
+  const [familyFinancialStatus, setFamilyFinancialStatus] = useState('');
+ 
+  const [familyType, setFamilyType] = useState('');
+ 
+  const ageData = Array.from({ length: 18 }, (_, i) => ({
+    label: `${18 + i}`,
+    value: `${18 + i}`,
   }));
 
-  const toggleHeightDropdown = () => {
-    setShowHeightDropdowns(!showHeightDropdowns);
-  };
+  const feetData = Array.from({ length: 5 }, (_, i) => ({
+    label: `${3 + i} ft`,
+    value: `${3 + i}`,
+  }));
+
+  const weightData = Array.from({ length: 50 }, (_, i) => ({
+    label: `${40 + i} kg`,
+    value: `${40 + i}`,
+  }));
+
+  const incomeData = Array.from({ length: 20 }, (_, i) => ({
+    label: `${(i + 1) * 10000} INR`,
+    value: `${(i + 1) * 10000}`,
+  }));
+
 
   const maritalStatusData = [
     { label: 'Unmarried', value: 'Unmarried' },
     { label: 'Widow', value: 'Widow' },
     { label: 'Divorcee', value: 'Divorcee' },
-    { label: 'Doesn’t Matter', value: 'Doesn’t Matter' }
+    { label: 'Divorcee', value: 'Divorcee' },
+    { label: 'Annulled', value: 'Annulled' }
   ];
 
   const ManglikStatusData = [
-    { label: 'Pooja', value: 'Pooja' },
+    { label: 'Purna Manglik', value: 'Purna Manglik' },
+    { label: 'Anshik Manglik', value: 'Anshik Manglik' },
+    { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
   ];
+
   const OccupationData = [
-    { label: 'Nigeria', value: 'Nigeria' }
-  ]
+    { label: 'Defence', value: 'Defence' }, 
+    { label: 'Artist', value: 'Artist' }, 
+    { label: 'Private Job / Employee', value: 'Private Job / Employee' },
+    { label: 'Government Job / Employee', value: 'Government Job / Employee' },
+    { label: 'Self Employed', value: 'Self Employed' },
+    { label: 'Freelancer', value: 'Freelancer' },
+    { label: 'Agriculture Professional', value: 'Agriculture Professional' },
+    { label: 'Business Owner / Entrepreneur', value: 'Business Owner / Entrepreneur' },
+    { label: 'Officer', value: 'Officer' },
+    { label: 'Software Professional', value: 'Software Professional' },
+    { label: 'Education Professional', value: 'Education Professional' },
+    { label: 'Medical & Healthcare Professional', value: 'Medical & Healthcare Professional' },
+    { label: 'Doctor / Surgeon', value: 'Doctor / Surgeon' },
+    { label: 'Marketing Professional', value: 'Marketing Professional' },
+    { label: 'Politician', value: 'Politician' },
+    { label: 'Research Scholar', value: 'Research Scholar' },
+    { label: 'Retired', value: 'Retired' },
+    { label: 'Not Working', value: 'Not Working' },
+    { label: 'Other', value: 'Other' }
+];
+
+
   const QualificationData = [
-    { label: 'Nigeria', value: 'Nigeria' }
-  ]
+    { label: 'High School', value: 'High School' },
+    { label: 'Diploma', value: 'Diploma' },
+    { label: 'Bachelor\'s Degree', value: 'Bachelor\'s Degree' },
+    { label: 'Master\'s Degree', value: 'Master\'s Degree' },
+    { label: 'Doctorates', value: 'Doctorates' },
+    { label: 'Engineering', value: 'Engineering' },
+    { label: 'CA/CS', value: 'CA/CS' },
+    { label: 'MBBS', value: 'MBBS' },
+    { label: 'Law', value: 'Law' },
+    { label: 'Other', value: 'Other' },
+  ];
+
   const stateData = [
     { label: 'Barwani', value: 'Barwani' },
     { label: 'Khargone', value: 'Khargone' },
@@ -76,6 +123,26 @@ const PartnersPreference = ({ navigation }) => {
     { label: 'Jalgaon', value: 'Jalgaon' },
   ];
 
+  const FamilyTypeData = [
+    { label: 'Nuclear Family', value: 'Nuclear Family' },
+    { label: 'Joint Family', value: 'Joint Family' },
+    { label: 'Extended Family', value: 'Extended Family' },
+  ];
+
+  const FamilyFinancialStatusData = [
+    { label: 'Lower Class', value: 'Lower Class' },
+    { label: 'Middle Class', value: 'Middle Class' },
+    { label: 'Upper Middle Class', value: 'Upper Middle Class' },
+    { label: 'Upper Class', value: 'Upper Class' },
+  ];
+
+  const FamilyIncomeData = [
+    { label: 'Less than ₹1 Lakh', value: '<1L' },
+    { label: '₹1 Lakh - ₹5 Lakh', value: '1L-5L' },
+    { label: '₹5 Lakh - ₹10 Lakh', value: '5L-10L' },
+    { label: '₹10 Lakh - ₹20 Lakh', value: '10L-20L' },
+    { label: 'Above ₹20 Lakh', value: '>20L' },
+  ];
 
   const PartnersLiveinData = [
     { label: 'India', value: 'India' },
@@ -118,6 +185,13 @@ const PartnersPreference = ({ navigation }) => {
     { label: 'Occasionally', value: 'Occasionally' },
     { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
   ]
+
+
+  const subCasteOptions = [
+    { label: 'subCaste1', value: 'subCaste1' },
+    { label: 'subCaste2', value: 'subCaste2' },
+    { label: 'subCaste3', value: 'subCaste3' },
+  ];
 
   const handlePress = (buttonName) => {
     setSelectedButton(buttonName);
@@ -167,13 +241,13 @@ const PartnersPreference = ({ navigation }) => {
           <View style={styles.IconFlex}>
             <TouchableOpacity
               style={styles.IconsButton}
-              onPress={() => handlePress('Profile')}
+              onPress={() => handlePress('DetailedProfile')}
             >
               <AntDesign
                 name={'user'}
-                color={selectedButton === 'Profile' ? 'white' : Colors.theme_color} // Change icon color based on active state
+                color={selectedButton === 'DetailedProfile' ? 'white' : Colors.theme_color}
                 size={25}
-                style={selectedButton === 'Profile' ? styles.Selectedicon : styles.icon}
+                style={selectedButton === 'DetailedProfile' ? styles.Selectedicon : styles.icon}
               />
               <Text style={styles.logotext}>Detailed Profile</Text>
             </TouchableOpacity>
@@ -184,7 +258,7 @@ const PartnersPreference = ({ navigation }) => {
             >
               <FontAwesome5
                 name={'user-friends'}
-                color={selectedButton === 'PartnersPreference' ? 'white' : Colors.theme_color} // Icon color change
+                color={selectedButton === 'PartnersPreference' ? 'white' : Colors.theme_color}
                 size={25}
                 style={selectedButton === 'PartnersPreference' ? styles.Selectedicon : styles.icon}
               />
@@ -208,52 +282,89 @@ const PartnersPreference = ({ navigation }) => {
             <Text style={styles.detailText}>Preferences</Text>
             <View>
               <View>
-                <Text style={styles.inputHeading}>Age Criteria</Text>
-                <TextInput style={styles.input} />
+                <Text style={styles.inputHeading}>Sub Caste</Text>
+                <Dropdown
+                  style={styles.input}
+                  data={subCasteOptions}
+                  labelField="label"
+                  valueField="value"
+                  value={subCaste}
+                  onChange={item => setSubCaste(item.value)}
+                  placeholder="Select status"
+                />
               </View>
+              <View>
+                <Text style={styles.inputHeading}>Age Criteria</Text>
+                <View style={styles.row}>
+                  <Dropdown
+                    style={styles.dropdown}
+                    data={ageData}
+                    labelField="label"
+                    valueField="value"
+                    value={minAge}
+                    onChange={(item) => setMinAge(item.value)}
+                    placeholder="Min Age"
+                  />
+                  <Dropdown
+                    style={styles.dropdown}
+                    data={ageData}
+                    labelField="label"
+                    valueField="value"
+                    value={maxAge}
+                    onChange={(item) => setMaxAge(item.value)}
+                    placeholder="Max Age"
+                  />
+                </View>
+              </View>
+
+              {/* Height */}
               <View>
                 <Text style={styles.inputHeading}>Height</Text>
-
-                <TouchableOpacity onPress={toggleHeightDropdown} style={styles.inputWrapper}>
-
-                  <Text style={styles.heightinput}>{feet ? `${feet} feet ${inches} inches` : 'Select Height'}</Text>
-                </TouchableOpacity>
-
-                {showHeightDropdowns && (
-                  <View>
-
-                    <View style={styles.inputWrapper}>
-                      <Text style={styles.inputLabel}>Feet</Text>
-                      <Dropdown
-                        style={styles.input}
-                        data={feetData}
-                        labelField="label"
-                        valueField="value"
-                        value={feet}
-                        onChange={(item) => setFeet(item.value)}
-                        placeholder="Select Feet"
-                      />
-                    </View>
-
-
-                    <View style={styles.inputWrapper}>
-                      <Text style={styles.inputLabel}>Inches</Text>
-                      <Dropdown
-                        style={styles.input}
-                        data={inchesData}
-                        labelField="label"
-                        valueField="value"
-                        value={inches}
-                        onChange={(item) => setInches(item.value)}
-                        placeholder="Select Inches"
-                      />
-                    </View>
-                  </View>
-                )}
+                <View style={styles.row}>
+                  <Dropdown
+                    style={styles.dropdown}
+                    data={feetData}
+                    labelField="label"
+                    valueField="value"
+                    value={minHeightFeet}
+                    onChange={(item) => setMinHeightFeet(item.value)}
+                    placeholder="Min Height"
+                  />
+                  <Dropdown
+                    style={styles.dropdown}
+                    data={feetData}
+                    labelField="label"
+                    valueField="value"
+                    value={maxHeightFeet}
+                    onChange={(item) => setMaxHeightFeet(item.value)}
+                    placeholder="Max Height"
+                  />
+                </View>
               </View>
+
+              {/* Weight */}
               <View>
                 <Text style={styles.inputHeading}>Weight (in kg)</Text>
-                <TextInput style={styles.input} />
+                <View style={styles.row}>
+                  <Dropdown
+                    style={styles.dropdown}
+                    data={weightData}
+                    labelField="label"
+                    valueField="value"
+                    value={minWeight}
+                    onChange={(item) => setMinWeight(item.value)}
+                    placeholder="Min Weight"
+                  />
+                  <Dropdown
+                    style={styles.dropdown}
+                    data={weightData}
+                    labelField="label"
+                    valueField="value"
+                    value={maxWeight}
+                    onChange={(item) => setMaxWeight(item.value)}
+                    placeholder="Max Weight"
+                  />
+                </View>
               </View>
               <View>
                 <Text style={styles.inputHeading}>Partners Marital Status</Text>
@@ -268,8 +379,27 @@ const PartnersPreference = ({ navigation }) => {
                 />
               </View>
               <View>
-                <Text style={styles.inputHeading}>Income</Text>
-                <TextInput style={styles.input} />
+                <Text style={styles.inputHeading}>Income Range (in INR)</Text>
+                <View style={styles.row}>
+                  <Dropdown
+                    style={styles.dropdown}
+                    data={incomeData}
+                    labelField="label"
+                    valueField="value"
+                    value={minIncome}
+                    onChange={(item) => setMinIncome(item.value)}
+                    placeholder="Min Income"
+                  />
+                  <Dropdown
+                    style={styles.dropdown}
+                    data={incomeData}
+                    labelField="label"
+                    valueField="value"
+                    value={maxIncome}
+                    onChange={(item) => setMaxIncome(item.value)}
+                    placeholder="Max Income"
+                  />
+                </View>
               </View>
               <View>
                 <Text style={styles.inputHeading}>Occupation</Text>
@@ -420,8 +550,47 @@ const PartnersPreference = ({ navigation }) => {
                 />
               </View>
               <View>
+                <Text style={styles.inputHeading}>Family Type</Text>
+                <Dropdown
+                  style={styles.input}
+                  data={FamilyTypeData}
+                  labelField="label"
+                  valueField="value"
+                  placeholder="Select Family Type"
+                  value={familyType}
+                  onChange={(item) => setFamilyType(item.value)}
+                />
+              </View>
+
+              <View>
+                <Text style={styles.inputHeading}>Family Financial Status</Text>
+                <Dropdown
+                  style={styles.input}
+                  data={FamilyFinancialStatusData}
+                  labelField="label"
+                  valueField="value"
+                  placeholder="Select Family Financial Status"
+                  value={familyFinancialStatus}
+                  onChange={(item) => setFamilyFinancialStatus(item.value)}
+                />
+              </View>
+
+              <View>
+                <Text style={styles.inputHeading}>Family Income</Text>
+                <Dropdown
+                  style={styles.input}
+                  data={FamilyIncomeData}
+                  labelField="label"
+                  valueField="value"
+                  placeholder="Select Family Income"
+                  value={familyIncome}
+                  onChange={(item) => setFamilyIncome(item.value)}
+                />
+              </View>
+
+              <View>
                 <Text style={styles.inputHeading}>Expectations from Partner</Text>
-                <TextInput style={styles.input} multiline={true} numberOfLines={6} />
+                <TextInput style={styles.input1} multiline={true} numberOfLines={6} />
               </View>
             </View>
             <TouchableOpacity style={styles.button}>

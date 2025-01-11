@@ -9,8 +9,8 @@ import { TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { Dropdown } from 'react-native-element-dropdown';
 import { DrawerActions } from '@react-navigation/native';
-const Profile = ({ navigation }) => {
-  const [selectedButton, setSelectedButton] = useState('Profile');
+const DetailedProfile = ({ navigation }) => {
+  const [selectedButton, setSelectedButton] = useState('DetailedProfile');
   const [maritalStatus, setMaritalStatus] = useState('');
   const [ManglikStatus, setManglikStatus] = useState('');
   const [gotra, setGotra] = useState('');
@@ -19,6 +19,7 @@ const Profile = ({ navigation }) => {
   const [CurrentCity, setCurrentCity] = useState('');
   const [profileCreated, setProfileCreated] = useState('');
   const [fatherIncome, setfatherIncome] = useState('');
+  const [motherIncome, setmotherIncome] = useState('');
   const [familyType, setfamilyType] = useState('');
   const [cooking, setCooking] = useState('');
   const [partnerDietHabit, setpartnerDietHabit] = useState('');
@@ -26,31 +27,65 @@ const Profile = ({ navigation }) => {
   const [drinkingHabit, setdrinkingHabit] = useState('');
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [peoplePosition, setPeoplePosition] = useState(null);
+  const [Occupation, setOccupation] = useState('');
+  const [fatheroccupation, setFatheroccupation] = useState('');
+  const [motheroccupation, setMotheroccupation] = useState('');
+  const [Qualification, setQualification] = useState('');
+  const [minHeightFeet, setMinHeightFeet] = useState('');
+  const [maxHeightFeet, setMaxHeightFeet] = useState('');
+  const [minWeight, setMinWeight] = useState('');
+  const [maxWeight, setMaxWeight] = useState('');
 
-  const [feet, setFeet] = useState(null);
-  const [inches, setInches] = useState(null);
-  const [showHeightDropdowns, setShowHeightDropdowns] = useState(false); // State to manage visibility of dropdowns
-
-  const feetData = [
-    { label: '3', value: '3' },
-    { label: '4', value: '4' },
-    { label: '5', value: '5' },
-    { label: '6', value: '6' },
-    { label: '7', value: '7' },
-  ];
-
-  const inchesData = Array.from({ length: 11 }, (_, index) => ({
-    label: (index + 1).toString(),
-    value: (index + 1).toString(),
+  const feetData = Array.from({ length: 5 }, (_, i) => ({
+    label: `${3 + i} ft`,
+    value: `${3 + i}`,
   }));
 
-  const toggleHeightDropdown = () => {
-    setShowHeightDropdowns(!showHeightDropdowns);
-  };
+  const weightData = Array.from({ length: 50 }, (_, i) => ({
+    label: `${40 + i} kg`,
+    value: `${40 + i}`,
+  }));
 
+  const OccupationData = [
+    { label: 'Defence', value: 'Defence' }, 
+    { label: 'Artist', value: 'Artist' }, 
+    { label: 'Private Job / Employee', value: 'Private Job / Employee' },
+    { label: 'Government Job / Employee', value: 'Government Job / Employee' },
+    { label: 'Self Employed', value: 'Self Employed' },
+    { label: 'Freelancer', value: 'Freelancer' },
+    { label: 'Agriculture Professional', value: 'Agriculture Professional' },
+    { label: 'Business Owner / Entrepreneur', value: 'Business Owner / Entrepreneur' },
+    { label: 'Officer', value: 'Officer' },
+    { label: 'Software Professional', value: 'Software Professional' },
+    { label: 'Education Professional', value: 'Education Professional' },
+    { label: 'Medical & Healthcare Professional', value: 'Medical & Healthcare Professional' },
+    { label: 'Doctor / Surgeon', value: 'Doctor / Surgeon' },
+    { label: 'Marketing Professional', value: 'Marketing Professional' },
+    { label: 'Politician', value: 'Politician' },
+    { label: 'Research Scholar', value: 'Research Scholar' },
+    { label: 'Retired', value: 'Retired' },
+    { label: 'Not Working', value: 'Not Working' },
+    { label: 'Other', value: 'Other' }
+];
+
+
+  const QualificationData = [
+    { label: 'High School', value: 'High School' },
+    { label: 'Diploma', value: 'Diploma' },
+    { label: 'Bachelor\'s Degree', value: 'Bachelor\'s Degree' },
+    { label: 'Master\'s Degree', value: 'Master\'s Degree' },
+    { label: 'Doctorates', value: 'Doctorates' },
+    { label: 'Engineering', value: 'Engineering' },
+    { label: 'CA/CS', value: 'CA/CS' },
+    { label: 'MBBS', value: 'MBBS' },
+    { label: 'Law', value: 'Law' },
+    { label: 'Other', value: 'Other' },
+  ];
+  
   const toggleDropdown = () => {
     setDropdownVisible(!dropdownVisible);
   };
+
   const handlePress = (buttonName) => {
     setSelectedButton(buttonName);
     navigation.navigate(buttonName);
@@ -60,12 +95,16 @@ const Profile = ({ navigation }) => {
     { label: 'Unmarried', value: 'Unmarried' },
     { label: 'Widow', value: 'Widow' },
     { label: 'Divorcee', value: 'Divorcee' },
-    { label: 'Doesn’t Matter', value: 'Doesn’t Matter' }
+    { label: 'Divorcee', value: 'Divorcee' },
+    { label: 'Annulled', value: 'Annulled' }
   ];
 
   const ManglikStatusData = [
-    { label: 'Pooja', value: 'Pooja' },
+    { label: 'Purna Manglik', value: 'Purna Manglik' },
+    { label: 'Anshik Manglik', value: 'Anshik Manglik' },
+    { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
   ];
+
   const gotraData = [
     { label: 'Pooja', value: 'Pooja' }
   ]
@@ -75,8 +114,8 @@ const Profile = ({ navigation }) => {
     { label: '03', value: '03' },
   ]
   const LivingData = [
-    { label: 'yes', value: 'Yes' },
-    { label: 'Nes', value: 'No' },
+    { label: 'Abroad', value: 'Abroad' },
+    { label: 'India', value: 'India' },
   ]
   const ProfileCreatedData = [
     { label: 'Mother', value: 'Mother' },
@@ -89,21 +128,28 @@ const Profile = ({ navigation }) => {
     { label: 'Indore', value: 'Indore' },
     { label: 'Bhopal', value: 'Bhopal' },
   ]
-  const FatherIncome = [
-    { label: 'Single', value: 'Single' },
-    { label: 'Double', value: 'Double' },
+  const Income = [
+    { label: 'Less than ₹1 Lakh', value: '<1L' },
+    { label: '₹1 Lakh - ₹5 Lakh', value: '1L-5L' },
+    { label: '₹5 Lakh - ₹10 Lakh', value: '5L-10L' },
+    { label: '₹10 Lakh - ₹20 Lakh', value: '10L-20L' },
+    { label: 'Above ₹20 Lakh', value: '>20L' },
   ]
+
   const FamilyType = [
-    { label: 'Joint', value: 'Joint' },
-    { label: 'Not-Joint', value: 'Not-Joint' },
+    { label: 'Nuclear Family', value: 'Nuclear Family' },
+    { label: 'Joint Family', value: 'Joint Family' },
+    { label: 'Extended Family', value: 'Extended Family' },
   ]
   const CookingStatus = [
     { label: 'yes', value: 'Yes' },
-    { label: 'Nes', value: 'No' },
+    { label: 'No', value: 'No' },
   ]
   const DietHabit = [
-    { label: 'yes', value: 'Yes' },
-    { label: 'Nes', value: 'No' },
+    { label: 'Vegetarian', value: 'Vegetarian' },
+    { label: 'Non-Vegetarian', value: 'Non-Vegetarian' },
+    { label: 'Eggetarian', value: 'Eggetarian' },
+    { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
   ]
   const smokingStatusData = [
     { label: 'yes', value: 'Yes' },
@@ -140,12 +186,12 @@ const Profile = ({ navigation }) => {
             <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
           </TouchableOpacity>
           <Text style={styles.headerText}>Matrimony Profile</Text>
-          <TouchableOpacity onPress={toggleDropdown}>
+           <TouchableOpacity onPress={toggleDropdown} style={styles.dropdownContainer}>
             <AntDesign name={'caretdown'} color={Colors.theme_color} size={15} />
           </TouchableOpacity>
           {dropdownVisible && (
             <Dropdown
-              style={styles.topinput}
+              style={styles.heightinput}
               data={PeoplePosition}
               labelField="label"
               valueField="value"
@@ -185,13 +231,13 @@ const Profile = ({ navigation }) => {
           <View style={styles.IconFlex}>
             <TouchableOpacity
               style={styles.IconsButton}
-              onPress={() => handlePress('Profile')}
+              onPress={() => handlePress('DetailedProfile')}
             >
               <AntDesign
                 name={'user'}
-                color={selectedButton === 'Profile' ? 'white' : Colors.theme_color}
+                color={selectedButton === 'DetailedProfile' ? 'white' : Colors.theme_color}
                 size={25}
-                style={selectedButton === 'Profile' ? styles.Selectedicon : styles.icon}
+                style={selectedButton === 'DetailedProfile' ? styles.Selectedicon : styles.icon}
               />
               <Text style={styles.logotext}>Detailed Profile</Text>
             </TouchableOpacity>
@@ -255,47 +301,51 @@ const Profile = ({ navigation }) => {
               </View>
               <View>
                 <Text style={styles.inputHeading}>Height</Text>
-
-                <TouchableOpacity onPress={toggleHeightDropdown} style={styles.inputWrapper}>
-
-                  <Text style={styles.heightinput}>{feet ? `${feet} feet ${inches} inches` : 'Select Height'}</Text>
-                </TouchableOpacity>
-
-                {showHeightDropdowns && (
-                  <View>
-
-                    <View style={styles.inputWrapper}>
-                      <Text style={styles.inputLabel}>Feet</Text>
-                      <Dropdown
-                        style={styles.input}
-                        data={feetData}
-                        labelField="label"
-                        valueField="value"
-                        value={feet}
-                        onChange={(item) => setFeet(item.value)}
-                        placeholder="Select Feet"
-                      />
-                    </View>
-
-
-                    <View style={styles.inputWrapper}>
-                      <Text style={styles.inputLabel}>Inches</Text>
-                      <Dropdown
-                        style={styles.input}
-                        data={inchesData}
-                        labelField="label"
-                        valueField="value"
-                        value={inches}
-                        onChange={(item) => setInches(item.value)}
-                        placeholder="Select Inches"
-                      />
-                    </View>
-                  </View>
-                )}
+                <View style={styles.row}>
+                  <Dropdown
+                    style={styles.dropdown}
+                    data={feetData}
+                    labelField="label"
+                    valueField="value"
+                    value={minHeightFeet}
+                    onChange={(item) => setMinHeightFeet(item.value)}
+                    placeholder="Min Height"
+                  />
+                  <Dropdown
+                    style={styles.dropdown}
+                    data={feetData}
+                    labelField="label"
+                    valueField="value"
+                    value={maxHeightFeet}
+                    onChange={(item) => setMaxHeightFeet(item.value)}
+                    placeholder="Max Height"
+                  />
+                </View>
               </View>
+
+              {/* Weight */}
               <View>
                 <Text style={styles.inputHeading}>Weight (in kg)</Text>
-                <TextInput style={styles.input} />
+                <View style={styles.row}>
+                  <Dropdown
+                    style={styles.dropdown}
+                    data={weightData}
+                    labelField="label"
+                    valueField="value"
+                    value={minWeight}
+                    onChange={(item) => setMinWeight(item.value)}
+                    placeholder="Min Weight"
+                  />
+                  <Dropdown
+                    style={styles.dropdown}
+                    data={weightData}
+                    labelField="label"
+                    valueField="value"
+                    value={maxWeight}
+                    onChange={(item) => setMaxWeight(item.value)}
+                    placeholder="Max Weight"
+                  />
+                </View>
               </View>
               <View>
                 <Text style={styles.inputHeading}>Complexion</Text>
@@ -343,12 +393,28 @@ const Profile = ({ navigation }) => {
                 />
               </View>
               <View>
-                <Text style={styles.inputHeading}>Qualification</Text>
-                <TextInput style={styles.input} />
+                <Text style={styles.inputHeading}>Occupation</Text>
+                <Dropdown
+                  style={styles.input}
+                  data={OccupationData}
+                  labelField="label"
+                  valueField="value"
+                  value={Occupation}
+                  onChange={item => setOccupation(item.value)}
+                  placeholder="Select occupdation"
+                />
               </View>
               <View>
-                <Text style={styles.inputHeading}>Occupation</Text>
-                <TextInput style={styles.input} />
+                <Text style={styles.inputHeading}>Qualification</Text>
+                <Dropdown
+                  style={styles.input}
+                  data={QualificationData}
+                  labelField="label"
+                  valueField="value"
+                  value={Qualification}
+                  onChange={item => setQualification(item.value)}
+                  placeholder="Select Qualification"
+                />
               </View>
               <View>
                 <Text style={styles.inputHeading}>Income (Annually)</Text>
@@ -380,7 +446,7 @@ const Profile = ({ navigation }) => {
               </View>
               <View>
                 <Text style={styles.inputHeading}>About Me</Text>
-                <TextInput style={styles.aboutInput} multiline={true} numberOfLines={6} />
+                <TextInput style={styles.input1} multiline={true} numberOfLines={6} />
               </View>
               <View>
                 <Text style={styles.inputHeading}>Mobile no.</Text>
@@ -412,13 +478,21 @@ const Profile = ({ navigation }) => {
               </View>
               <View>
                 <Text style={styles.inputHeading}>Father Occupation</Text>
-                <TextInput style={styles.input} />
+                <Dropdown
+                  style={styles.input}
+                  data={OccupationData}
+                  labelField="label"
+                  valueField="value"
+                  value={fatheroccupation}
+                  onChange={item => setFatheroccupation(item.value)}
+                  placeholder="Select occupdation"
+                />
               </View>
               <View>
                 <Text style={styles.inputHeading}>Father Income (Annually)</Text>
                 <Dropdown
                   style={styles.input}
-                  data={FatherIncome}
+                  data={Income}
                   labelField="label"
                   valueField="value"
                   value={fatherIncome}
@@ -441,11 +515,27 @@ const Profile = ({ navigation }) => {
               </View>
               <View>
                 <Text style={styles.inputHeading}>Mother Occupation (If any)</Text>
-                <TextInput style={styles.input} />
+                <Dropdown
+                  style={styles.input}
+                  data={OccupationData}
+                  labelField="label"
+                  valueField="value"
+                  value={motheroccupation}
+                  onChange={item => setMotheroccupation(item.value)}
+                  placeholder="Select occupdation"
+                />
               </View>
               <View>
                 <Text style={styles.inputHeading}>Mother Income (Annually)</Text>
-                <TextInput style={styles.input} />
+                <Dropdown
+                  style={styles.input}
+                  data={Income}
+                  labelField="label"
+                  valueField="value"
+                  value={motherIncome}
+                  onChange={item => setmotherIncome(item.value)}
+                  placeholder="Select Income"
+                />
               </View>
               <View>
                 <Text style={styles.inputHeading}>Other family member Occupation (optional)</Text>
@@ -543,4 +633,4 @@ const Profile = ({ navigation }) => {
   );
 };
 
-export default Profile;
+export default DetailedProfile;

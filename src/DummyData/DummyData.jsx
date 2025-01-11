@@ -9,14 +9,14 @@ export const profileImages = [
 
 export const Category = [
    { id: "1", image: require('../Images/panditji.png'), text: "PANDIT", screen: "Pandit" },
-   { id: "2", image: require('../Images/astrologer.png'), text: "JOYTISH", screen: "Joytish" },
+   { id: "2", image: require('../Images/astrologer.png'), text: "JOYTISH", screen: "Jyotish" },
    { id: "3", image: require('../Images/kathavachakLogo.png'), text: "KATHAVACHAK", screen: "Kathavachak" },
 ]
 
 export const communityData = [
    { id: "1", image: require('../Images/DharamsalaLogo.png'), text: "Dharm Shala", screen: "Dharmshala" },
    { id: "2", image: require('../Images/eventsNews.png'), text: "Event & News", screen: "EventNews" },
-   { id: "3", image: require('../Images/commitee.png'), text: "Committee", screen: "Community" },
+   { id: "3", image: require('../Images/commitee.png'), text: "Committee", screen: "Committee" },
 ]
 
 export const slider = [
@@ -138,7 +138,7 @@ export const SavedProfileData = [
      subcaste: 'subcaste name',
      area: 'Area',
      image: require('../Images/Committee.png'),
-     category: 'Community',
+     category: 'Committee',
    },
    {
       id: 13,
@@ -147,7 +147,7 @@ export const SavedProfileData = [
       subcaste: 'subcaste name',
       area: 'Area',
       image: require('../Images/Committee.png'),
-      category: 'Community',
+      category: 'Committee',
     },
  ];
  

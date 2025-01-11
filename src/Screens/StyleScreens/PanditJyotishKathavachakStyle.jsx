@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     height: SH(40),
     borderColor: 'gray',
     borderWidth: 1,
-    marginBottom: SH(10),
+    marginBottom: SH(5),
     paddingLeft: SW(10),
     borderRadius: 5,
     backgroundColor: 'white',
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
   headingText: {
     fontFamily: "Poppins-Bold",
     fontSize: SF(15),
-    marginVertical: SH(10),
+    marginVertical: SH(5),
     marginHorizontal:SW(10)
   },
 

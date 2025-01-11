@@ -1,26 +1,36 @@
-import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, BackHandler, ScrollView,SafeAreaView,StatusBar } from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
+import {
+  Text,
+  View,
+  FlatList,
+  TouchableOpacity,
+  TextInput,
+  Image,
+  Modal,
+  ScrollView,
+  SafeAreaView,
+  StatusBar,
+} from 'react-native';
 import { PanditData, slider } from '../../DummyData/DummyData';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import styles from '../StyleScreens/PanditJyotishKathavachakStyle';
-import Colors from '../../utils/Colors';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import { Rating } from 'react-native-ratings';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import { Dropdown } from 'react-native-element-dropdown';
-import { useFocusEffect } from '@react-navigation/native';
+import styles from '../StyleScreens/PanditJyotishKathavachakStyle';
+import Colors from '../../utils/Colors';
 
 const Kathavachak = ({ navigation }) => {
   const sliderRef = useRef(null);
   const [activeButton, setActiveButton] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-
   const [modalVisible, setModalVisible] = useState(false);
   const [services, setServices] = useState('');
   const [locality, setLocality] = useState('');
-
+  const [rating, setRating] = useState(null); // New: Rating
+  const [experience, setExperience] = useState(null); // New: Experience
 
   const servicesData = [
     { label: 'Pooja', value: 'Pooja' },
@@ -32,6 +42,19 @@ const Kathavachak = ({ navigation }) => {
     { label: 'Badnagar', value: 'Badnagar' },
   ];
 
+  const ExperienceData = [
+    { label: '1-3 Years', value: '1-3' },
+    { label: '3-5 Years', value: '3-5' },
+    { label: '5+ Years', value: '5+' },
+  ];
+
+  const RatingData= [
+    { label: '1 Star', value: '1' },
+    { label: '2 Stars', value: '2' },
+    { label: '3 Stars', value: '3' },
+    { label: '4 Stars', value: '4' },
+    { label: '5 Stars', value: '5' },
+  ]
   const handleOpenFilter = () => {
     setModalVisible(true);
     setActiveButton(1);
@@ -40,31 +63,6 @@ const Kathavachak = ({ navigation }) => {
   const handleCloseFilter = () => {
     setModalVisible(false);
   };
-
-  const handleBackPress = () => {
-    const state = navigation.getState();
-    const activeRoute = state.routes[state.index];
-
-    if (activeRoute.name === 'Pandit') {
-
-      if (state.history && state.history.some((h) => h.type === 'drawer')) {
-        navigation.toggleDrawer();
-      } else if (state.history && state.history.some((h) => h.type === 'tab')) {
-        navigation.navigate('HomeTab'); // Navigate to the home tab
-      } else {
-        navigation.goBack();
-      }
-      return true;
-    }
-    return false;
-  };
-
-  useFocusEffect(
-    React.useCallback(() => {
-      BackHandler.addEventListener('hardwareBackPress', handleBackPress);
-      return () => BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
-    }, [navigation])
-  );
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -79,19 +77,6 @@ const Kathavachak = ({ navigation }) => {
 
     return () => clearInterval(interval);
   }, [currentIndex]);
-
-  const SliderrenderItem = ({ item }) => {
-    return (
-      <View>
-        <Image source={item.image} style={styles.sliderImage} />
-      </View>
-    );
-  };
-
-  const handleRegister = () => {
-    setActiveButton(2);
-    navigation.navigate('RoleRegisterForm');
-  };
 
   const renderItem = ({ item }) => {
     return (
@@ -129,14 +114,9 @@ const Kathavachak = ({ navigation }) => {
     );
   };
 
-
   return (
     <SafeAreaView style={styles.container}>
-        <StatusBar 
-                      barStyle="dark-content" 
-                      backgroundColor="transparent" 
-                      translucent 
-                  />
+      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={styles.header}>
         <View style={{ flexDirection: 'row' }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -145,26 +125,28 @@ const Kathavachak = ({ navigation }) => {
           <Text style={styles.headerText}>Kathavachak</Text>
         </View>
         <View style={styles.righticons}>
-          {/* <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} /> */}
-          <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />
+          <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => navigation.navigate('Notification')} />
         </View>
       </View>
       <ScrollView>
         <View style={styles.searchbar}>
           <AntDesign name={'search1'} size={20} color={'gray'} />
-          <TextInput placeholder='Search in Your city' placeholderTextColor={'gray'} />
+          <TextInput placeholder="Search in Your city" placeholderTextColor={'gray'} />
         </View>
 
         <View style={styles.sliderContainer}>
           <AppIntroSlider
             ref={sliderRef}
             data={slider}
-            renderItem={SliderrenderItem}
+            renderItem={({ item }) => (
+              <View>
+                <Image source={item.image} style={styles.sliderImage} />
+              </View>
+            )}
             showNextButton={false}
             showDoneButton={false}
             dotStyle={styles.dot}
             activeDotStyle={styles.activeDot}
-            onSlideChange={(index) => setCurrentIndex(index)}
           />
         </View>
 
@@ -178,7 +160,7 @@ const Kathavachak = ({ navigation }) => {
 
           <TouchableOpacity
             style={[styles.button, activeButton === 2 ? styles.activeButton : styles.inactiveButton]}
-            onPress={handleRegister}
+            onPress={() => navigation.navigate('RoleRegisterForm')}
           >
             <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>Register</Text>
           </TouchableOpacity>
@@ -187,13 +169,11 @@ const Kathavachak = ({ navigation }) => {
         <FlatList
           data={PanditData}
           renderItem={renderItem}
-
           keyExtractor={(item) => item.id.toString()}
           scrollEnabled={false}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.panditListData}
         />
-
       </ScrollView>
 
       <Modal
@@ -205,14 +185,13 @@ const Kathavachak = ({ navigation }) => {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.Filterheader}>
-              <TouchableOpacity onPress={handleCloseFilter} style={{ flexDirection: "row" }}>
-                <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
+              <TouchableOpacity onPress={handleCloseFilter} style={{ flexDirection: 'row' }}>
+                <MaterialIcons name="arrow-back-ios-new" size={20} color={Colors.theme_color} />
                 <Text style={styles.headerText}>Filter</Text>
               </TouchableOpacity>
             </View>
 
             <Text style={styles.headingText}>Locality</Text>
-
             <View style={styles.inputContainer}>
               <Dropdown
                 style={styles.dropdown}
@@ -220,11 +199,12 @@ const Kathavachak = ({ navigation }) => {
                 labelField="label"
                 valueField="value"
                 value={locality}
-                onChange={item => setLocality(item.value)}
-                placeholder="Locality"
+                onChange={(item) => setLocality(item.value)}
+                placeholder="Select Locality"
               />
               <MaterialIcons name={'search'} size={20} color={'gray'} style={styles.icon} />
             </View>
+
             <Text style={styles.headingText}>Services</Text>
             <View style={styles.inputContainer}>
               <Dropdown
@@ -232,12 +212,39 @@ const Kathavachak = ({ navigation }) => {
                 labelField="label"
                 valueField="value"
                 value={services}
-                onChange={item => setServices(item.value)}
-                placeholder="services"
+                onChange={(item) => setServices(item.value)}
+                placeholder="Select Services"
                 style={styles.dropdown}
               />
               <MaterialIcons name={'search'} size={20} color={'gray'} style={styles.icon} />
             </View>
+
+            <Text style={styles.headingText}>Rating</Text>
+            <View style={styles.inputContainer}>
+              <Dropdown
+                style={styles.dropdown}
+                data={RatingData}
+                labelField="label"
+                valueField="value"
+                value={rating}
+                onChange={(item) => setRating(item.value)}
+                placeholder="Select Rating"
+              />
+            </View>
+
+            <Text style={styles.headingText}>Experience</Text>
+            <View style={styles.inputContainer}>
+              <Dropdown
+                style={styles.dropdown}
+                data={ExperienceData}
+                labelField="label"
+                valueField="value"
+                value={experience}
+                onChange={(item) => setExperience(item.value)}
+                placeholder="Select Experience"
+              />
+            </View>
+
             <TouchableOpacity style={styles.applyButton} onPress={handleCloseFilter}>
               <Text style={styles.applyButtonText}>See results</Text>
             </TouchableOpacity>

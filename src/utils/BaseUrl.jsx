@@ -1,10 +1,8 @@
-const BASE_URL="http://localhost:8081/api/v1";
-
-
-const SIGNUP_ENDPOINT=`${BASE_URL}/user/signUp`;
-const LOGIN_ENDPOINT=`${BASE_URL}/user/signIn`;
-
+const SIGNUP_ENDPOINT="https://api-matrimonial.webseeder.tech/api/v1/user/signUp";
+const LOGIN_ENDPOINT="https://api-matrimonial.webseeder.tech/api/v1/user/signIn";
+const PROFILE_ENDPOINT="https://api-matrimonial.webseeder.tech/api/v1/user/view";
 export {
     SIGNUP_ENDPOINT,
-    LOGIN_ENDPOINT
+    LOGIN_ENDPOINT,
+    PROFILE_ENDPOINT
 }

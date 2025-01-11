@@ -62,13 +62,13 @@ const PhotoGallery = ({ navigation }) => {
                     <View style={styles.IconFlex}>
                         <TouchableOpacity
                             style={styles.IconsButton}
-                            onPress={() => handlePress('Profile')}
+                            onPress={() => handlePress('DetailedProfile')}
                         >
                             <AntDesign
                                 name={'user'}
-                                color={selectedButton === 'Profile' ? 'white' : Colors.theme_color} // Change icon color based on active state
+                                color={selectedButton === 'DetailedProfile' ? 'white' : Colors.theme_color} // Change icon color based on active state
                                 size={25}
-                                style={selectedButton === 'Profile' ? styles.Selectedicon : styles.icon}
+                                style={selectedButton === 'DetailedProfile' ? styles.Selectedicon : styles.icon}
                             />
                             <Text style={styles.logotext}>Detailed Profile</Text>
                         </TouchableOpacity>

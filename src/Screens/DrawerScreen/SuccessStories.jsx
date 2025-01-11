@@ -13,6 +13,7 @@ const SuccessStories = ({ navigation }) => {
   const handleStarPress = (storyId, rating) => {
     setRatings((prevRatings) => ({ ...prevRatings, [storyId]: rating }));
   };
+  
 
   const renderStars = (storyId) => {
     const currentRating = ratings[storyId] || 0;
@@ -60,7 +61,7 @@ const SuccessStories = ({ navigation }) => {
           <Text style={styles.headerText}>Success Stories</Text>
         </View>
         <View style={styles.righticons}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={()=>navigation.navigate('PostSuccessStories')}>
             <Text style={styles.postText}>Post</Text>
           </TouchableOpacity>
           <AntDesign

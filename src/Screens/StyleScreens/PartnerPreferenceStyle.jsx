@@ -123,6 +123,16 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         color: Colors.dark,
     },
+    input1:{
+        height: SH(100),
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: SH(10),
+        paddingLeft: SW(10),
+        borderRadius: 5,
+        backgroundColor: 'white',
+        color: Colors.dark,
+    },
     heightinput:{
         height: SH(40),
         borderColor: 'gray',
@@ -167,7 +177,23 @@ const styles = StyleSheet.create({
     },
     selectedButton: {
         backgroundColor: Colors.theme_color
-    }
+    },
+    row:{
+        flexDirection:"row",
+        justifyContent:"space-between"
+    },
+    dropdown: {
+        height: SH(40),
+        width:"45%",
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: SH(10),
+        paddingLeft: SW(10),
+        borderRadius: 5,
+        backgroundColor: 'white',
+        color: Colors.dark,
+        marginHorizontal:SW(5)
+    },
 
 })
 export default styles

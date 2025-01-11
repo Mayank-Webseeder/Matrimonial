@@ -63,7 +63,8 @@ const styles = StyleSheet.create({
     paddingVertical: SH(4),
     fontFamily: "Poppins-Bold",
     paddingBottom: 0,
-    fontSize: SF(12),
+    fontSize: SF(11),
+    textTransform:"uppercase"
   },
   sliderContainer: {
     marginBottom: SH(30)

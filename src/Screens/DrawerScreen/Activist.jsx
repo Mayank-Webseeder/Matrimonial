@@ -64,7 +64,7 @@ const Activist = ({ navigation }) => {
           <TouchableOpacity style={styles.button} onPress={handleOpenFilter}>
             <Text style={styles.buttonText}>Filter</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate('ActivistForm')}>
             <Text style={styles.buttonText}> Be an Activist</Text>
           </TouchableOpacity>
         </View>

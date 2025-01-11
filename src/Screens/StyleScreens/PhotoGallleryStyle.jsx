@@ -92,15 +92,15 @@ const styles = StyleSheet.create({
         borderColor: Colors.theme_color,
         borderWidth: 1,
         paddingHorizontal: SW(7),
-        paddingVertical: SH(10),
+        paddingVertical:SH(7),
         borderRadius: 50
     },
     Selectedicon: {
         backgroundColor: Colors.theme_color,
         paddingHorizontal: SW(7),
-        paddingVertical: SH(7),
+        paddingVertical:SH(7),
         borderRadius: 50,
-    },
+      },
     text: {
         fontFamily: "Poppins-Regular",
         fontSize: SF(15)

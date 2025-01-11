@@ -8,7 +8,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/LocationStyle';
 
-const Location = ({ navigation }) => {
+const MatrimonyPeopleProfile = ({ navigation }) => {
   const profileDetails = [
     { label: 'Sub-caste', value: true },
     { label: 'Manglik', value: true },
@@ -209,4 +209,4 @@ const Location = ({ navigation }) => {
   );
 };
 
-export default Location;
+export default MatrimonyPeopleProfile;

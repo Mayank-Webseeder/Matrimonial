@@ -72,7 +72,7 @@ const CustomDrawer = (props) => {
         </View>
         <TouchableOpacity
           style={styles.editIcon}
-          onPress={() => navigation.navigate('Profile')}
+          onPress={() => navigation.navigate('DetailedProfile')}
         >
           <AntDesign name="edit" size={20} color={Colors.theme_color} />
         </TouchableOpacity>

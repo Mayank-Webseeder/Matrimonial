@@ -67,7 +67,7 @@ const Home = ({ navigation }) => {
           <HeadingWithViewAll
             heading="MATRIMONY"
             showViewAll={true}
-            onViewAllPress={() => navigation.navigate('Matrimony')}
+            onViewAllPress={() => navigation.navigate('Matrimonial')}
           />
 
           <FlatList

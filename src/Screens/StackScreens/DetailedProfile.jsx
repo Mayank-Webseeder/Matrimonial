@@ -182,7 +182,7 @@ const DetailedProfile = ({ navigation }) => {
       />
       <View style={styles.header}>
         <View style={styles.headerContainer}>
-          <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
           </TouchableOpacity>
           <Text style={styles.headerText}>Matrimony Profile</Text>

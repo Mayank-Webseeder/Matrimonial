@@ -1,10 +1,10 @@
 export const profileImages = [
-   { id: "1", image: require('../Images/Profile1.png') ,screen:"Explore"},
-   { id: "2", image: require('../Images/profile2.png') ,screen:"Explore" },
-   { id: "3", image: require('../Images/profile3.png') ,screen:"Explore" },
-   { id: "4", image: require('../Images/Profile1.png') ,screen:"Explore"},
-   { id: "5", image: require('../Images/profile2.png') ,screen:"Explore"},
-   { id: "6", image: require('../Images/profile3.png') ,screen:"Explore"}
+   { id: "1", image: require('../Images/Profile1.png') ,screen:"Matrimonial"},
+   { id: "2", image: require('../Images/profile2.png') ,screen:"Matrimonial" },
+   { id: "3", image: require('../Images/profile3.png') ,screen:"Matrimonial" },
+   { id: "4", image: require('../Images/Profile1.png') ,screen:"Matrimonial"},
+   { id: "5", image: require('../Images/profile2.png') ,screen:"Matrimonial"},
+   { id: "6", image: require('../Images/profile3.png') ,screen:"Matrimonial"}
 ]
 
 export const Category = [

@@ -49,16 +49,16 @@ import Jyotish from '../Screens/DrawerScreen/Jyotish';
 import DetailedProfile from '../Screens/StackScreens/DetailedProfile';
 import MatrimonyPeopleProfile from '../Screens/StackScreens/MatrimonyPeopleProfile';
 import PostSuccessStories from '../Screens/StackScreens/PostSuccessStories';
-import Matrimony from '../Screens/Tabs/Matrimony';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoadingScreen from '../Screens/AppLoadingScreen/LoadingScreen';
+import Matrimonial from '../Screens/Tabs/Matrimonial';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
 function MyTabs() {
-  const iconSize = SF(25);
+  const iconSize = SF(30);
 
   return (
     <Tab.Navigator
@@ -77,11 +77,11 @@ function MyTabs() {
 
           //Assign icons based on the route name
 
-          if (route.name === 'Matrimony') {
+          if (route.name === 'Matrimonial') {
             tabBarIcon = (
               <MaterialCommunityIcons
                 name={focused ? 'heart-multiple' : 'heart-multiple-outline'}
-                size={23}
+                size={31}
                 color={Colors.light}
               />
             );
@@ -105,7 +105,7 @@ function MyTabs() {
             tabBarIcon = (
               <MaterialCommunityIcons
                 name={focused ? 'home' : 'home-outline'}
-                size={30}
+                size={iconSize}
                 color={Colors.light}
               />
             );
@@ -118,11 +118,11 @@ function MyTabs() {
           height: SH(55),
           borderTopLeftRadius: 15,
           borderTopRightRadius: 15,
-          paddingHorizontal:SW(15),
+          paddingHorizontal:SW(10),
         },
       })}
     >
-      <Tab.Screen name="Matrimony" component={Matrimony} options={{ tabBarLabel: 'Matrimony' }} />
+      <Tab.Screen name="Matrimonial" component={Matrimonial} options={{ tabBarLabel: 'Matrimonial' }} />
       <Tab.Screen name="Pandit" component={Pandit} options={{ tabBarLabel: 'Pandit' }} />
       <Tab.Screen name="Home" component={Home} options={{ tabBarLabel: 'Home' }} />
       <Tab.Screen name="EventNews" component={EventNews} options={{ tabBarLabel: 'EventNews' }} />
@@ -214,6 +214,7 @@ const RootNavigator = () => {
       <Stack.Screen name="KathavachakDetailsPage" component={KathavachakDetailsPage} />
       <Stack.Screen name="JyotishDetailsPage" component={JyotishDetailsPage} />
       <Stack.Screen name="CreatePost" component={CreatePost} />
+      <Stack.Screen name="MyProfile" component={MyProfile} />
       <Stack.Screen name="ViewPost" component={ViewPost} />
       <Stack.Screen name="PostReview" component={PostReview} />
       <Stack.Screen name="ReportPage" component={ReportPage} />

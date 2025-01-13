@@ -20,9 +20,10 @@ const styles = StyleSheet.create({
     },
 
     headerText: {
-        color: Colors.theme_color,
-        fontSize: SF(15),
-        fontFamily: "Poppins-Regular"
+      color: Colors.theme_color,
+      fontSize: SF(15),
+      fontFamily: "Poppins-Regular",
+      marginHorizontal: SW(10)
     },
   
     label: {

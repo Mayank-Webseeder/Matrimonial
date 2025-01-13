@@ -5,22 +5,23 @@ import Colors from "../../utils/Colors";
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-    backgroundColor: Colors.light,
-    paddingTop: SH(25),
-    paddingHorizontal:SW(6)
+        backgroundColor: Colors.light,
+        paddingTop: SH(25),
+        paddingHorizontal: SW(6)
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: SW(10),
-        paddingVertical:SH(10),
+        paddingVertical: SH(10),
         paddingLeft: 0
     },
     headerText: {
         color: Colors.theme_color,
         fontSize: SF(15),
-        fontFamily: "Poppins-Regular"
+        fontFamily: "Poppins-Regular",
+        marginHorizontal: SW(10)
     },
     righticons: {
         flexDirection: 'row',
@@ -28,7 +29,7 @@ const styles = StyleSheet.create({
     postHeader: {
         flexDirection: "row",
         paddingHorizontal: SW(10),
-        paddingVertical:SH(5),
+        paddingVertical: SH(5),
         alignItems: "center"
     },
     postTextContainer: {
@@ -44,14 +45,14 @@ const styles = StyleSheet.create({
         color: Colors.dark,
         fontFamily: "Poppins-Regular",
         marginHorizontal: SW(15),
-        marginVertical:SH(10)
+        marginVertical: SH(10)
     },
     likeShareComment: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         marginVertical: SH(10),
-        marginHorizontal:SW(15)
+        marginHorizontal: SW(15)
     },
     likeShare: {
         flexDirection: 'row',

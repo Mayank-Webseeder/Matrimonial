@@ -16,8 +16,9 @@ const styles = StyleSheet.create({
     },
     headerText: {
         color: Colors.theme_color,
-        fontSize: SF(15),
-        fontFamily: "Poppins-Regular"
+    fontSize: SF(15),
+    fontFamily: "Poppins-Regular",
+    marginHorizontal: SW(10)
     },
     righticons: {
         flexDirection: 'row',

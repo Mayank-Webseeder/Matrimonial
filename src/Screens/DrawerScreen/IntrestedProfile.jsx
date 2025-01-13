@@ -58,7 +58,7 @@ const IntrestedProfile = ({ navigation }) => {
         translucent
       />
       <View style={styles.header}>
-        <View style={{ flexDirection: 'row' }}>
+        <View style={{ flexDirection: 'row',alignItems:"center" }}>
           <TouchableOpacity onPress={() => navigation.navigate('Tabs')}>
             <MaterialIcons
               name={'arrow-back-ios-new'}
@@ -66,7 +66,7 @@ const IntrestedProfile = ({ navigation }) => {
               color={Colors.theme_color}
             />
           </TouchableOpacity>
-          <Text style={{ color: Colors.theme_color }}>Matrimony</Text>
+          <Text style={styles.headerText}>Matrimony</Text>
         </View>
         <View style={styles.righticons}>
           <AntDesign

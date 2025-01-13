@@ -7,24 +7,35 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.light,
     paddingTop: SH(25),
-    paddingHorizontal:SW(6)
+    paddingHorizontal: SW(6)
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: SW(10),
-    paddingVertical:SH(10),
-    paddingLeft:0
-  },
-  righticons: {
-    flexDirection: 'row',
+    paddingVertical: SH(10),
+    paddingLeft: 0,
   },
   headerText: {
     color: Colors.theme_color,
     fontSize: SF(15),
-    fontFamily: "Poppins-Regular"
+    fontFamily: "Poppins-Regular",
+    marginHorizontal: SW(10)
   },
+  headerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignItems:"center"
+},
+  menuIcon: {
+    width: SW(30),
+    height: SH(30)
+  },
+  righticons: {
+    flexDirection: 'row',
+  },
+
   images: {
     width: SW(80),
     height: SH(80)

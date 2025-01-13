@@ -46,7 +46,7 @@ const InActiveDelete = ({ navigation }) => {
                 translucent 
             />
             <View style={styles.header}>
-                <View style={{ flexDirection: 'row' }}>
+                <View style={{ flexDirection: 'row',alignItems:"center" }}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>

@@ -81,9 +81,9 @@ const Matrimonial = ({navigation}) => {
           translucent
         />
         <View style={styles.header}>
-          <View style={{ flexDirection: 'row' }}>
+          <View style={styles.headerContainer}>
             <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
-              <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
+            <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
             </TouchableOpacity>
             <Text style={styles.headerText}>Matrimony</Text>
           </View>

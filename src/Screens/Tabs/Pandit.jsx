@@ -118,7 +118,7 @@ const Pandit = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={styles.header}>
-        <View style={{ flexDirection: 'row' }}>
+        <View style={styles.headerContainer}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>

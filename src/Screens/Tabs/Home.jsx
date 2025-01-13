@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, TouchableOpacity, FlatList, Image, SafeAreaView, Text,StatusBar } from 'react-native';
+import { View, TouchableOpacity, FlatList, Image, SafeAreaView, Text, StatusBar } from 'react-native';
 import { DrawerActions } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from '../StyleScreens/HomeStyle';
@@ -35,15 +35,18 @@ const Home = ({ navigation }) => {
   };
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar 
-                barStyle="dark-content" 
-                backgroundColor="transparent" 
-                translucent 
-            />
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="transparent"
+        translucent
+      />
       <View style={styles.header}>
+        <View style={styles.headerContainer}>
         <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
-          <Image source={require('../../Images/menu.png')} style={styles.menuIcon}/>
+          <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
         </TouchableOpacity>
+        <Text style={styles.headerText}>Home</Text>
+        </View>
         <View style={styles.righticons}>
           <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} />
           <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />
@@ -72,19 +75,19 @@ const Home = ({ navigation }) => {
 
           <FlatList
             data={profileImages}
-            keyExtractor={(item) => item.id}a
+            keyExtractor={(item) => item.id} a
             renderItem={({ item }) => (
               <View style={styles.imageWrapper}>
-                 <TouchableOpacity onPress={() => {
-                if (item.screen) {
-                  navigation.navigate(item.screen);
-                } else {
-                  console.warn("Screen not specified for this category.");
-                }
-              }}
-              >
-                <Image source={item.image} style={styles.ProfileImages} />
-              </TouchableOpacity>
+                <TouchableOpacity onPress={() => {
+                  if (item.screen) {
+                    navigation.navigate(item.screen);
+                  } else {
+                    console.warn("Screen not specified for this category.");
+                  }
+                }}
+                >
+                  <Image source={item.image} style={styles.ProfileImages} />
+                </TouchableOpacity>
               </View>
             )}
             horizontal={true}

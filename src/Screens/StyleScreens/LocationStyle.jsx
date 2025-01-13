@@ -20,11 +20,13 @@ const styles = StyleSheet.create({
   },
   righticons: {
     flexDirection: 'row',
+    alignItems:"center"
   },
   headerText: {
     color: Colors.theme_color,
     fontSize: SF(15),
-    fontFamily: "Poppins-Regular"
+    fontFamily: "Poppins-Regular",
+    marginHorizontal: SW(10)
   },
   topContainer: {
     marginBottom: SH(20)

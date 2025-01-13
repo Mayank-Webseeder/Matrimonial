@@ -7,20 +7,21 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.light,
     paddingTop: SH(25),
-    paddingHorizontal:SW(6)
+    paddingHorizontal: SW(6)
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: SW(10),
-    paddingVertical:SH(10),
-    paddingLeft:0
+    paddingVertical: SH(10),
+    paddingLeft: 0
   },
   headerText: {
     color: Colors.theme_color,
     fontSize: SF(15),
-    fontFamily: "Poppins-Regular"
+    fontFamily: "Poppins-Regular",
+    marginHorizontal: SW(10)
   },
   righticons: {
     flexDirection: 'row',
@@ -29,9 +30,9 @@ const styles = StyleSheet.create({
     width: SW(100),
     height: SH(90),
     resizeMode: "contain",
-    marginHorizontal:SW(10),
-    marginVertical:SH(10),
-    marginRight:0
+    marginHorizontal: SW(10),
+    marginVertical: SH(10),
+    marginRight: 0
   },
   searchbar: {
     display: "flex",
@@ -41,7 +42,7 @@ const styles = StyleSheet.create({
     marginHorizontal: SW(10),
     borderRadius: 50,
     paddingHorizontal: SW(10),
-    width:SW(300)
+    width: SW(300)
   },
   card: {
     backgroundColor: '#fff',
@@ -52,8 +53,8 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 3,
     marginHorizontal: SW(10),
-    marginVertical:SH(10),
-    marginBottom:SH(3)
+    marginVertical: SH(10),
+    marginBottom: SH(3)
   },
   cardData: {
     flexDirection: "row"
@@ -65,7 +66,7 @@ const styles = StyleSheet.create({
   sliderContainer: {
     marginBottom: SH(30),
     height: SH(180),
-    marginTop:SH(10)
+    marginTop: SH(10)
   },
   sliderImage: {
     width: "100%",
@@ -98,7 +99,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: '#fff',
     marginHorizontal: SW(10),
-    marginVertical:0,
+    marginVertical: 0,
     paddingVertical: SH(10)
   },
   iconContainer: {
@@ -161,7 +162,7 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: 'white',
     paddingHorizontal: SW(10),
-    paddingVertical:SH(10),
+    paddingVertical: SH(10),
     width: '80%',
     borderRadius: 10,
   },
@@ -172,10 +173,10 @@ const styles = StyleSheet.create({
   applyButton: {
     backgroundColor: Colors.theme_color,
     paddingHorizontal: SW(10),
-    paddingVertical:SH(3),
+    paddingVertical: SH(3),
     borderRadius: 5,
     marginHorizontal: SW(20),
-    marginVertical:SH(20),
+    marginVertical: SH(20),
     borderRadius: 50
   },
   applyButtonText: {
@@ -204,16 +205,16 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Bold",
     fontSize: SF(15),
     marginHorizontal: SH(10),
-    marginVertical:SH(10)
+    marginVertical: SH(10)
   },
-  leftContainer:{
-    marginHorizontal:SW(10),
-    marginVertical:SH(15)
+  leftContainer: {
+    marginHorizontal: SW(10),
+    marginVertical: SH(15)
   },
-  RequestText:{
-    color:Colors.light,
-    fontSize:SF(10),
-    fontFamily:"Poppins-Regular"
+  RequestText: {
+    color: Colors.light,
+    fontSize: SF(10),
+    fontFamily: "Poppins-Regular"
   },
   ButtonContainer: {
     flex: 1,

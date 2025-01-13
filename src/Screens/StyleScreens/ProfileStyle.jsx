@@ -162,9 +162,10 @@ const styles = StyleSheet.create({
         marginTop:SH(10)
     },
     headText: {
-        fontFamily: "Poppins-Bold",
+        color: Colors.theme_color,
         fontSize: SF(15),
-        marginVertical: SH(1)
+        fontFamily: "Poppins-Regular",
+        marginHorizontal: SW(10)
     },
     button: {
         backgroundColor: Colors.theme_color,

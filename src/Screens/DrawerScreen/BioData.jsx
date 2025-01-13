@@ -66,7 +66,7 @@ const BioData = ({ navigation }) => {
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.navigate('Tabs')} style={{ flexDirection: "row" }}>
           <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
-          <Text style={{ color: Colors.theme_color }}>Matrimony</Text>
+          <Text style={styles.headerText}>Matrimony</Text>
         </TouchableOpacity>
         <View style={styles.righticons}>
           <AntDesign name={'bells'} size={20} color={Colors.theme_color} />

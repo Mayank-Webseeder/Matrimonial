@@ -20,11 +20,13 @@ const styles = StyleSheet.create({
     headerContainer: {
         flexDirection: "row",
         alignItems: "center",
+        alignItems:"center"
     },
     headerText: {
-        fontSize: SF(15),
         color: Colors.theme_color,
-        marginRight: SW(10)
+        fontSize: SF(15),
+        fontFamily: "Poppins-Regular",
+        marginHorizontal: SW(10)
     },
     menuIcon: {
         width: SW(30),

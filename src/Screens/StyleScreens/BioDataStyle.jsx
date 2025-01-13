@@ -17,6 +17,12 @@ const styles = StyleSheet.create({
         paddingVertical:SH(15)
 
     },
+    headerText:{
+        color: Colors.theme_color,
+        fontSize: SF(15),
+        fontFamily: "Poppins-Regular",
+        marginHorizontal: SW(10)
+    },
     righticons: {
         flexDirection: 'row',
     },

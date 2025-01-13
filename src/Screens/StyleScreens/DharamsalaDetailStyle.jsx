@@ -7,25 +7,26 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.light,
     paddingTop: SH(25),
-    paddingHorizontal:SW(6)
+    paddingHorizontal: SW(6)
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: SW(10),
-    paddingLeft:0
+    paddingLeft: 0
   },
   headerText: {
     color: Colors.theme_color,
     fontSize: SF(15),
-    fontFamily: "Poppins-Regular"
+    fontFamily: "Poppins-Regular",
+    marginHorizontal: SW(10)
   },
   text: {
     paddingVertical: SH(4),
     fontFamily: "Poppins-Regular",
     color: Colors.theme_color,
-    fontSize:SF(15)
+    fontSize: SF(15)
   },
   sliderContainer: {
     marginBottom: SH(30),
@@ -54,7 +55,7 @@ const styles = StyleSheet.create({
 
   textContainer: {
     paddingHorizontal: SW(10),
-    paddingVertical:SH(10),
+    paddingVertical: SH(10),
     paddingBottom: 0
   },
   TextView: {
@@ -80,7 +81,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     alignItems: 'center',
     flexDirection: "row",
-    marginHorizontal:SW(10)
+    marginHorizontal: SW(10)
   },
   smalltext: {
     fontFamily: "Poppins-Regular",
@@ -100,8 +101,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     marginLeft: SW(10),
-    width:SW(120),
-    flexDirection:"row",
+    width: SW(120),
+    flexDirection: "row",
   },
   buttonText: {
     color: Colors.light,
@@ -109,39 +110,39 @@ const styles = StyleSheet.create({
     fontSize: SF(12),
     marginLeft: SW(2)
   },
-  RequestText:{
-    color:Colors.light,
-    fontSize:SF(10),
-    fontFamily:"Poppins-Regular"
+  RequestText: {
+    color: Colors.light,
+    fontSize: SF(10),
+    fontFamily: "Poppins-Regular"
   },
-  addWindowImage:{
-    width:"100%",
-    height:SH(180),
-    marginHorizontal:SW(5),
-    marginVertical:SH(5),
-    marginTop:SH(10)
+  addWindowImage: {
+    width: "100%",
+    height: SH(180),
+    marginHorizontal: SW(5),
+    marginVertical: SH(5),
+    marginTop: SH(10)
   },
   descriptionText: {
-    fontSize:SF(13),
+    fontSize: SF(13),
     fontWeight: 'Poppins-Bold',
-    marginBottom:SH(10),
-    color:Colors.dark,
+    marginBottom: SH(10),
+    color: Colors.dark,
   },
-  Text:{
+  Text: {
     fontSize: SF(13),
     color: Colors.dark,
     marginVertical: SH(5),
     fontFamily: 'Poppins-Bold',
   },
   smallText: {
-    fontSize:SF(13),
-    color:Colors.dark,
-    lineHeight:SH(15),
+    fontSize: SF(13),
+    color: Colors.dark,
+    lineHeight: SH(15),
   },
   viewMore: {
-    fontSize:SF(13),
-    color:Colors.theme_color,
-    marginTop:SH(5),
+    fontSize: SF(13),
+    color: Colors.theme_color,
+    marginTop: SH(5),
     fontFamily: 'Poppins-Bold',
   },
 

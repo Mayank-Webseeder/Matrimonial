@@ -1,4 +1,4 @@
-package com.matrimonial
+package com.webseeder.matrimonialapp
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

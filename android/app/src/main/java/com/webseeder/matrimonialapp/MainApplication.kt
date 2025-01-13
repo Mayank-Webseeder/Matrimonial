@@ -1,4 +1,4 @@
-package com.matrimonial
+package com.webseeder.matrimonialapp
 
 import android.app.Application
 import com.facebook.react.PackageList

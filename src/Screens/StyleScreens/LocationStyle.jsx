@@ -174,7 +174,8 @@ const styles = StyleSheet.create({
   },
   bottomImage: {
     width: "100%",
-    height: SH(200)
+    height: SH(180),
+    marginBottom:SH(20)
   }
 });
 

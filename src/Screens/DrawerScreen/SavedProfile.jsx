@@ -76,7 +76,7 @@ const SavedProfile = ({ navigation }) => {
           <TouchableOpacity onPress={() => navigation.navigate('Tabs')}>
             <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
           </TouchableOpacity>
-          <Text style={{ color: Colors.theme_color }}>Saved</Text>
+          <Text style={styles.headerText}>Saved</Text>
         </View>
         <View style={styles.righticons}>
           <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} />

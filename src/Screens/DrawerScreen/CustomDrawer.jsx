@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
   },
   subOption: {
-    marginHorizontal:0,
+    marginHorizontal:SW(10),
     borderWidth: 0,
     backgroundColor: Colors.light_theme,
     marginVertical:SH(6)

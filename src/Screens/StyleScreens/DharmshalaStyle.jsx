@@ -114,8 +114,9 @@ const styles = StyleSheet.create({
   iconText: {
     fontSize: SF(13),
     color: Colors.dark,
-    marginTop: SH(5),
-    marginLeft: SW(4)
+    marginVertical: SH(5),
+    marginHorizontal: SW(5),
+    fontFamily: "Poppins-Regular",
   },
   Button: {
     backgroundColor: Colors.theme_color,

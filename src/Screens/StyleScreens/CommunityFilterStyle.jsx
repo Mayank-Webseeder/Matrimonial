@@ -121,10 +121,10 @@ const styles = StyleSheet.create({
     },
 
     iconText: {
-        fontSize: SF(12),
-        color: Colors.dark,
-        marginTop: SH(5),
-        marginLeft: SW(3)
+    fontSize: SF(13),
+    color: Colors.dark,
+    marginVertical: SH(5),
+    marginHorizontal: SW(5)
     },
     Button: {
         backgroundColor: Colors.theme_color,
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
         paddingVertical: SH(3),
         borderRadius: 8,
         alignItems: "center",
-        width:SW(103),
+        width:SW(97),
         display:"flex",
         flexDirection:"row"
     },
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     },
     RequestText:{
       color:Colors.light,
-      fontSize:SF(10),
+      fontSize:SF(9),
       fontFamily: "Poppins-Regular",
     }
 

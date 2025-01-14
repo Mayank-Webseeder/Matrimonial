@@ -1,4 +1,4 @@
-import { Text, View, Image, ScrollView, TouchableOpacity, FlatList } from 'react-native';
+import { Text, View, Image, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import React, { useState } from 'react';
 import { PanditDetailData } from '../../DummyData/DummyData';
 import styles from '../StyleScreens/PanditDetailPageStyle';
@@ -91,11 +91,11 @@ const JyotishDetailsPage = ({ navigation, item }) => {
                             <Feather name="send" size={20} color={Colors.dark} />
                             <Text style={styles.iconText}>Shares</Text>
                         </View>
-                        <TouchableOpacity style={styles.Button}>
+                        <TouchableOpacity style={styles.Button} onPress={()=>Linking.openURL('tel:9893458940')}>
                             <MaterialIcons name="call" size={20} color={Colors.light} />
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ReportPage')} >
-                            <MaterialIcons name="error-outline" size={24} color={Colors.dark} />
+                            <MaterialIcons name="error-outline" size={20} color={Colors.dark} />
                             <Text style={styles.iconText}>Report</Text>
                         </TouchableOpacity>
                     </View>

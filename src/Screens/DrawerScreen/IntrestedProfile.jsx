@@ -1,15 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import {
-  View,
-  TouchableOpacity,
-  Image,
-  Text,
-  TextInput,
-  SafeAreaView,
-  StatusBar,
-  Modal,
-  Alert,
-} from 'react-native';
+import {View,TouchableOpacity,Image,Text,TextInput,SafeAreaView,StatusBar,Modal,Linking} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -187,12 +177,12 @@ const IntrestedProfile = ({ navigation }) => {
     </View>
     <View style={styles.sharecontainer}>
       <View style={styles.iconContainer}>
-        <FontAwesome name="bookmark-o" size={24} color={Colors.dark} />
+        <FontAwesome name="bookmark-o" size={20} color={Colors.dark} />
         <Text style={styles.iconText}>Save</Text>
       </View>
 
       <View style={styles.iconContainer}>
-        <Feather name="send" size={24} color={Colors.dark} />
+        <Feather name="send" size={20} color={Colors.dark} />
         <Text style={styles.iconText}>Shares</Text>
       </View>
 
@@ -207,12 +197,12 @@ const IntrestedProfile = ({ navigation }) => {
         <TouchableOpacity style={styles.interestedButton}>
           <Text style={styles.buttonText}>Confirm</Text>
         </TouchableOpacity>
-      )}
+      )}c
 
-      <View style={styles.iconContainer}>
-        <MaterialIcons name="call" size={24} color={Colors.dark} />
+      <TouchableOpacity style={styles.iconContainer} onPress={()=>Linking.openURL('tel:9893458940')}>
+        <MaterialIcons name="call" size={20} color={Colors.dark} />
         <Text style={styles.iconText}>Call</Text>
-      </View>
+      </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.iconContainer}

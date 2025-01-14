@@ -4,40 +4,48 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/PartnerPreferenceStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Feather from 'react-native-vector-icons/Feather';
 import { TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { Dropdown } from 'react-native-element-dropdown';
 import { DrawerActions } from '@react-navigation/native';
+import { CREATE_BIODATA, UPDATE_BIODATA } from '../../utils/BaseUrl';
+import axios from 'axios';
+
+import {
+  maritalStatusData, OccupationData, QualificationData, ManglikStatusData, stateData, Villages, FamilyTypeData,
+  FamilyFinancialStatusData, FamilyIncomeData, PartnersLiveinData, BodyStructureData, ComplexionData, DietHabit, Disabilities,
+  smokingStatusData, DrinkingHabit, subCasteOptions
+} from '../../DummyData/DropdownData';
 const PartnersPreference = ({ navigation }) => {
-  const [maritalStatus, setMaritalStatus] = useState('');
-  const [ManglikStatus, setManglikStatus] = useState('');
-  const [partnerDietHabit, setpartnerDietHabit] = useState('');
-  const [smokingStatus, setsmokingStatus] = useState('');
-  const [drinkingHabit, setdrinkingHabit] = useState('');
-  const [Occupation, setOccupation] = useState('');
-  const [Qualification, setQualification] = useState('');
-  const [Complexion, setComplexion] = useState('');
-  const [disaAbility, setdisaAbility] = useState('');
-  const [PartnersLivein, setPartnersLivein] = useState('');
-  const [subCaste, setSubCaste] = useState('');
-  const [BodyStructure, setBodyStructure] = useState('');
   const [selectedButton, setSelectedButton] = useState('PartnersPreference');
-  const [state, setState] = useState('');
-  const [village, setVillage] = useState('');
-  const [minIncome, setMinIncome] = useState('');
-  const [maxIncome, setMaxIncome] = useState('');
+  const [subCaste, setSubCaste] = useState('');
   const [minAge, setMinAge] = useState('');
   const [maxAge, setMaxAge] = useState('');
   const [minHeightFeet, setMinHeightFeet] = useState('');
   const [maxHeightFeet, setMaxHeightFeet] = useState('');
   const [minWeight, setMinWeight] = useState('');
   const [maxWeight, setMaxWeight] = useState('');
+  const [maritalStatus, setMaritalStatus] = useState('');
+  const [minIncome, setMinIncome] = useState('');
+  const [maxIncome, setMaxIncome] = useState('');
+  const [Occupation, setOccupation] = useState('');
+  const [Qualification, setQualification] = useState('');
+  const [disaAbility, setdisaAbility] = useState('');
+  const [ManglikStatus, setManglikStatus] = useState('');
+  const [PartnersLivein, setPartnersLivein] = useState('');
+  const [district, setDistrict] = useState('');
+  const [state, setState] = useState('');
+  const [village, setVillage] = useState('');
+  const [BodyStructure, setBodyStructure] = useState('');
+  const [Complexion, setComplexion] = useState('');
+  const [partnerDietHabit, setpartnerDietHabit] = useState('');
+  const [smokingStatus, setsmokingStatus] = useState('');
+  const [drinkingHabit, setdrinkingHabit] = useState('');
   const [familyIncome, setFamilyIncome] = useState('');
   const [familyFinancialStatus, setFamilyFinancialStatus] = useState('');
- 
   const [familyType, setFamilyType] = useState('');
- 
+  const [partnerExpectations, setpartnerExpectations] = useState('');
+
   const ageData = Array.from({ length: 18 }, (_, i) => ({
     label: `${18 + i}`,
     value: `${18 + i}`,
@@ -58,145 +66,91 @@ const PartnersPreference = ({ navigation }) => {
     value: `${(i + 1) * 10000}`,
   }));
 
-
-  const maritalStatusData = [
-    { label: 'Unmarried', value: 'Unmarried' },
-    { label: 'Widow', value: 'Widow' },
-    { label: 'Divorcee', value: 'Divorcee' },
-    { label: 'Divorcee', value: 'Divorcee' },
-    { label: 'Annulled', value: 'Annulled' }
-  ];
-
-  const ManglikStatusData = [
-    { label: 'Purna Manglik', value: 'Purna Manglik' },
-    { label: 'Anshik Manglik', value: 'Anshik Manglik' },
-    { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
-  ];
-
-  const OccupationData = [
-    { label: 'Defence', value: 'Defence' }, 
-    { label: 'Artist', value: 'Artist' }, 
-    { label: 'Private Job / Employee', value: 'Private Job / Employee' },
-    { label: 'Government Job / Employee', value: 'Government Job / Employee' },
-    { label: 'Self Employed', value: 'Self Employed' },
-    { label: 'Freelancer', value: 'Freelancer' },
-    { label: 'Agriculture Professional', value: 'Agriculture Professional' },
-    { label: 'Business Owner / Entrepreneur', value: 'Business Owner / Entrepreneur' },
-    { label: 'Officer', value: 'Officer' },
-    { label: 'Software Professional', value: 'Software Professional' },
-    { label: 'Education Professional', value: 'Education Professional' },
-    { label: 'Medical & Healthcare Professional', value: 'Medical & Healthcare Professional' },
-    { label: 'Doctor / Surgeon', value: 'Doctor / Surgeon' },
-    { label: 'Marketing Professional', value: 'Marketing Professional' },
-    { label: 'Politician', value: 'Politician' },
-    { label: 'Research Scholar', value: 'Research Scholar' },
-    { label: 'Retired', value: 'Retired' },
-    { label: 'Not Working', value: 'Not Working' },
-    { label: 'Other', value: 'Other' }
-];
-
-
-  const QualificationData = [
-    { label: 'High School', value: 'High School' },
-    { label: 'Diploma', value: 'Diploma' },
-    { label: 'Bachelor\'s Degree', value: 'Bachelor\'s Degree' },
-    { label: 'Master\'s Degree', value: 'Master\'s Degree' },
-    { label: 'Doctorates', value: 'Doctorates' },
-    { label: 'Engineering', value: 'Engineering' },
-    { label: 'CA/CS', value: 'CA/CS' },
-    { label: 'MBBS', value: 'MBBS' },
-    { label: 'Law', value: 'Law' },
-    { label: 'Other', value: 'Other' },
-  ];
-
-  const stateData = [
-    { label: 'Barwani', value: 'Barwani' },
-    { label: 'Khargone', value: 'Khargone' },
-    { label: 'Indore', value: 'Indore' },
-    { label: 'Bhopal', value: 'Bhopal' },
-  ];
-
-  const Villages = [
-    { label: 'Ajnaria', value: 'Ajnaria' },
-    { label: 'Badhawani', value: 'Badhawani' },
-    { label: 'Bhamkheda', value: 'Bhamkheda' },
-    { label: 'Jalgaon', value: 'Jalgaon' },
-  ];
-
-  const FamilyTypeData = [
-    { label: 'Nuclear Family', value: 'Nuclear Family' },
-    { label: 'Joint Family', value: 'Joint Family' },
-    { label: 'Extended Family', value: 'Extended Family' },
-  ];
-
-  const FamilyFinancialStatusData = [
-    { label: 'Lower Class', value: 'Lower Class' },
-    { label: 'Middle Class', value: 'Middle Class' },
-    { label: 'Upper Middle Class', value: 'Upper Middle Class' },
-    { label: 'Upper Class', value: 'Upper Class' },
-  ];
-
-  const FamilyIncomeData = [
-    { label: 'Less than ₹1 Lakh', value: '<1L' },
-    { label: '₹1 Lakh - ₹5 Lakh', value: '1L-5L' },
-    { label: '₹5 Lakh - ₹10 Lakh', value: '5L-10L' },
-    { label: '₹10 Lakh - ₹20 Lakh', value: '10L-20L' },
-    { label: 'Above ₹20 Lakh', value: '>20L' },
-  ];
-
-  const PartnersLiveinData = [
-    { label: 'India', value: 'India' },
-    { label: 'Abroad', value: 'Abroad' },
-  ]
-  const BodyStructureData = [
-    { label: 'Slim', value: 'Slim' },
-    { label: 'Normal', value: 'Normal' },
-    { label: 'Fatty', value: 'Fatty' },
-    { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
-  ]
-
-  const ComplexionData = [
-    { label: 'Pale', value: 'Pale' },
-    { label: 'Fair', value: 'Fair' },
-    { label: 'Medium', value: 'Medium' },
-    { label: 'Olive', value: 'Olive' },
-    { label: 'Naturally brown ', value: 'Naturally brown ' },
-    { label: 'Dark Brown/Black', value: 'Dark Brown/Black' },
-    { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
-  ]
-  const DietHabit = [
-    { label: 'yes', value: 'Yes' },
-    { label: 'Nes', value: 'No' },
-  ]
-  const Disabilities = [
-    { label: 'yes', value: 'Yes' },
-    { label: 'Nes', value: 'No' },
-    { label: 'Doesn’t Matter', value: 'Doesn’t Matter' }
-  ]
-  const smokingStatusData = [
-    { label: 'yes', value: 'Yes' },
-    { label: 'Nes', value: 'No' },
-    { label: 'Doesn’t Matter', value: 'Doesn’t Matter' }
-  ]
-
-  const DrinkingHabit = [
-    { label: 'yes', value: 'Yes' },
-    { label: 'Nes', value: 'No' },
-    { label: 'Occasionally', value: 'Occasionally' },
-    { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
-  ]
-
-
-  const subCasteOptions = [
-    { label: 'subCaste1', value: 'subCaste1' },
-    { label: 'subCaste2', value: 'subCaste2' },
-    { label: 'subCaste3', value: 'subCaste3' },
-  ];
-
   const handlePress = (buttonName) => {
     setSelectedButton(buttonName);
     navigation.navigate(buttonName);
   };
+
+  // create bio data api 
+  // const createBiodata = async () => {
+  //   try {
+  //     const payload = {
+  //       subCaste: subCaste,
+  //       minAge: minAge,
+  //       maxAge: maxAge,
+  //       minHeightFeet: minHeightFeet,
+  //       maxHeightFeet: maxHeightFeet,
+  //       minWeight: minWeight,
+  //       maxWeight: maxWeight,
+  //       maritalStatus: maritalStatus,
+  //       minIncome: minIncome,
+  //       maxIncome: maxIncome,
+  //       Occupation: Occupation,
+  //       Qualification: Qualification,
+  //       disaAbility: disaAbility,
+  //       ManglikStatus: ManglikStatus,
+  //       PartnersLivein: PartnersLivein,
+  //       district: district,
+  //       state: state,
+  //       village: village,
+  //       BodyStructure: BodyStructure,
+  //       Complexion: Complexion,
+  //       partnerDietHabit: partnerDietHabit,
+  //       smokingStatus: smokingStatus,
+  //       drinkingHabit: drinkingHabit,
+  //       familyIncome: familyIncome,
+  //       familyFinancialStatus: familyFinancialStatus,
+  //       familyType: familyType,
+  //       partnerExpectations: partnerExpectations,
+  //     }
+  //     const response = await axios.post(CREATE_BIODATA, payload);
+
+  //   }
+  //   catch (error) {
+  //     console.log("error", error);
+  //   }
+  // }
+
+  // update bio data 
+
+  // const updateBiodata = async () => {
+  //   try {
+  //     const payload = {
+  //       subCaste: subCaste,
+  //       minAge: minAge,
+  //       maxAge: maxAge,
+  //       minHeightFeet: minHeightFeet,
+  //       maxHeightFeet: maxHeightFeet,
+  //       minWeight: minWeight,
+  //       maxWeight: maxWeight,
+  //       maritalStatus: maritalStatus,
+  //       minIncome: minIncome,
+  //       maxIncome: maxIncome,
+  //       Occupation: Occupation,
+  //       Qualification: Qualification,
+  //       disaAbility: disaAbility,
+  //       ManglikStatus: ManglikStatus,
+  //       PartnersLivein: PartnersLivein,
+  //       district: district,
+  //       state: state,
+  //       village: village,
+  //       BodyStructure: BodyStructure,
+  //       Complexion: Complexion,
+  //       partnerDietHabit: partnerDietHabit,
+  //       smokingStatus: smokingStatus,
+  //       drinkingHabit: drinkingHabit,
+  //       familyIncome: familyIncome,
+  //       familyFinancialStatus: familyFinancialStatus,
+  //       familyType: familyType,
+  //       partnerExpectations: partnerExpectations,
+  //     }
+  //     const response = await axios.post(UPDATE_BIODATA, payload);
+
+  //   }
+  //   catch (error) {
+  //     console.log("error", error);
+  //   }
+  // }
 
 
   return (
@@ -462,7 +416,7 @@ const PartnersPreference = ({ navigation }) => {
                 />
               </View>
               <View>
-                <Text style={styles.inputHeading}>District</Text>
+                <Text style={styles.inputHeading} value={district} onchange={item => setDistrict(item.value)}>District</Text>
                 <TextInput style={styles.input} />
               </View>
               <View>
@@ -589,7 +543,7 @@ const PartnersPreference = ({ navigation }) => {
               </View>
 
               <View>
-                <Text style={styles.inputHeading}>Expectations from Partner</Text>
+                <Text style={styles.inputHeading} value={partnerExpectations} onchange={item => setpartnerExpectations(item.value)}>Expectations from Partner</Text>
                 <TextInput style={styles.input1} multiline={true} numberOfLines={6} />
               </View>
             </View>

@@ -1,4 +1,4 @@
-import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView,StatusBar } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, Linking, SafeAreaView,StatusBar } from 'react-native';
 import React, { useState } from 'react';
 import { ActivistData } from '../../DummyData/DummyData';
 import { Image } from 'react-native';
@@ -7,22 +7,12 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from '../StyleScreens/ActivistStyle';
 import Colors from '../../utils/Colors';
 import { Dropdown } from 'react-native-element-dropdown';
-
+import { subCasteOptions,LocalityData } from '../../DummyData/DropdownData';
 const Activist = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [subcaste, setSubcaste] = useState('');
   const [locality, setLocality] = useState('');
 
-  const subcasteData = [
-    { label: 'OBC', value: 'OBC' },
-    { label: 'General', value: 'General' },
-    { label: 'ST', value: 'ST' },
-    { label: 'SC', value: 'SC' },
-  ];
-
-  const LocalityData = [
-    { label: 'Badnagar', value: 'Badnagar' },
-  ];
 
   const handleOpenFilter = () => {
     setModalVisible(true);
@@ -44,7 +34,7 @@ const Activist = ({ navigation }) => {
           </View>
         </View>
         <View>
-          <TouchableOpacity style={styles.Button}>
+          <TouchableOpacity style={styles.Button} onPress={()=>Linking.openURL('tel:9893458940')}>
             <Text style={styles.buttonText}>Connect</Text>
           </TouchableOpacity>
         </View>
@@ -95,7 +85,7 @@ const Activist = ({ navigation }) => {
       <FlatList
         data={ActivistData}
         renderItem={renderItem}
-        ListHeaderComponent={renderHeader} // Correctly passing the header component
+        ListHeaderComponent={renderHeader} 
         keyExtractor={(item) => item.id.toString()}
         scrollEnabled={true}
         showsVerticalScrollIndicator={false}
@@ -119,7 +109,7 @@ const Activist = ({ navigation }) => {
             <Text style={styles.headingText}>Sub-Caste</Text>
             <View style={styles.inputContainer}>
               <Dropdown
-                data={subcasteData}
+                data={subCasteOptions}
                 labelField="label"
                 valueField="value"
                 value={subcaste}

@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { View, TouchableOpacity, Image, Text, ScrollView,SafeAreaView,StatusBar } from 'react-native';
+import { View, TouchableOpacity, Image, Text, ScrollView,SafeAreaView,StatusBar,Linking } from 'react-native';
 import styles from '../StyleScreens/DharamsalaDetailStyle';
 import Colors from '../../utils/Colors';
 import { DharamsalaSlider } from '../../DummyData/DummyData';
@@ -107,7 +107,7 @@ const DharamsalaDetail = ({ navigation }) => {
           <Feather name="send" size={20} color={Colors.dark} />
           <Text style={styles.iconText}>Shares</Text>
         </View>
-        <TouchableOpacity style={styles.Button}>
+        <TouchableOpacity style={styles.Button} onPress={()=>Linking.openURL('tel:9893458940')}>
           <MaterialIcons name="call" size={20} color={Colors.light} />
           <Text style={styles.RequestText}>Request for call</Text>
         </TouchableOpacity>

@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: Colors.light,
         paddingTop: SH(25),
-        paddingHorizontal:SW(6)
+        paddingHorizontal: SW(6)
     },
     header: {
         flexDirection: 'row',
@@ -47,10 +47,10 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         elevation: 3,
         marginHorizontal: SW(10),
-        marginVertical:SH(10),
+        marginVertical: SH(10),
         marginBottom: SH(3),
-        paddingHorizontal:SW(5),
-        paddingVertical:SH(5)
+        paddingHorizontal: SW(5),
+        paddingVertical: SH(5)
     },
     EventheaderImage: {
         width: SW(50),
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
         marginHorizontal: SW(7),
         fontSize: SF(12),
         fontFamily: 'Poppins-Regular',
-        marginVertical:SH(10)
+        marginVertical: SH(10)
     },
     name: {
         fontSize: SF(13),
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingHorizontal: SW(10),
-        paddingVertical:SH(3)
+        paddingVertical: SH(3)
     },
     likeShare: {
         flexDirection: 'row',
@@ -113,9 +113,10 @@ const styles = StyleSheet.create({
     },
     shareText: {
         fontSize: SF(10),
-        fontFamily: 'Poppins-Regular',
         color: Colors.dark,
-        marginLeft: SW(4),
+        marginVertical: SH(5),
+        marginHorizontal: SW(10),
+        fontFamily: "Poppins-Regular",
     },
     bannerImage: {
         width: '100%',

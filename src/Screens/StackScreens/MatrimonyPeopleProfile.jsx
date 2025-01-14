@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView,StatusBar,SafeAreaView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ScrollView,StatusBar,SafeAreaView,Linking } from 'react-native';
 import Swiper from 'react-native-swiper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -26,6 +26,8 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
     { label: 'Drink', value: false },
     { label: 'Cooking', value: false },
   ];
+
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -90,10 +92,10 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               <Text style={styles.buttonText}>Interested</Text>
             </TouchableOpacity>
 
-            <View style={styles.iconContainer}>
+            <TouchableOpacity style={styles.iconContainer} onPress={()=>Linking.openURL('tel:9893458940')}>
               <MaterialIcons name="call" size={24} color={Colors.dark} />
               <Text style={styles.iconText}>Call</Text>
-            </View>
+            </TouchableOpacity>
 
             <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ReportPage')} >
               <MaterialIcons name="error-outline" size={24} color={Colors.dark} />
@@ -171,7 +173,9 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             <Text style={styles.text}>Permanent Address: 01, Sagar Vihar Colony, Shukliya, Near MR10, Chandragupt Chouraha, Indore, 452010, M.P.</Text>
           </View>
         </View>
+        <TouchableOpacity onPress={()=>Linking.openURL('tel:9893458940')}>
         <Text style={styles.ButtonText}>Request for contact</Text>
+        </TouchableOpacity>
         <View style={styles.flexContainer1}>
           <View>
             <Text style={styles.HeadingText}>Other Details:</Text>

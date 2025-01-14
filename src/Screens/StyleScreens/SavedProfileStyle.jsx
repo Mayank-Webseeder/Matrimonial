@@ -6,25 +6,28 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.light,
-    paddingTop: SH(25),
-    paddingHorizontal:SW(6)
+    paddingTop: SH(35),
+    paddingHorizontal: SW(6)
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: SW(10),
-    paddingVertical:SH(10),
-    paddingLeft:SW(5)
-  },
-  righticons: {
-    flexDirection: 'row',
+    paddingVertical: SH(7),
+    paddingLeft: SW(1),
+    paddingTop: 0
+
   },
   headerText: {
     color: Colors.theme_color,
     fontSize: SF(15),
     fontFamily: "Poppins-Regular",
     marginHorizontal: SW(10)
+  },
+  righticons: {
+    flexDirection: 'row',
+    alignItems:"center"
   },
   tabContainer: {
     flexDirection: 'row',

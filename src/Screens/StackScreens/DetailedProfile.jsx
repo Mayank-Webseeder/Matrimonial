@@ -4,37 +4,64 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/ProfileStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Feather from 'react-native-vector-icons/Feather';
 import { TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { Dropdown } from 'react-native-element-dropdown';
-import { DrawerActions } from '@react-navigation/native';
+import { CREATE_BIODATA, UPDATE_BIODATA } from '../../utils/BaseUrl';
+import axios from 'axios';
+import {
+  OccupationData, QualificationData, maritalStatusData, ManglikStatusData, gotraData, MotherGotraData, LivingData,
+  ProfileCreatedData, CityData, Income, FamilyType, CookingStatus, DietHabit, smokingStatusData, DrinkingHabit, PeoplePosition
+} from '../../DummyData/DropdownData';
+
 const DetailedProfile = ({ navigation }) => {
   const [selectedButton, setSelectedButton] = useState('DetailedProfile');
-  const [maritalStatus, setMaritalStatus] = useState('');
-  const [ManglikStatus, setManglikStatus] = useState('');
-  const [gotra, setGotra] = useState('');
-  const [Mothergotra, setMotherGotra] = useState('');
-  const [livingStatus, setlivingStatus] = useState('');
-  const [CurrentCity, setCurrentCity] = useState('');
-  const [profileCreated, setProfileCreated] = useState('');
-  const [fatherIncome, setfatherIncome] = useState('');
-  const [motherIncome, setmotherIncome] = useState('');
-  const [familyType, setfamilyType] = useState('');
-  const [cooking, setCooking] = useState('');
-  const [partnerDietHabit, setpartnerDietHabit] = useState('');
-  const [smokingStatus, setsmokingStatus] = useState('');
-  const [drinkingHabit, setdrinkingHabit] = useState('');
-  const [dropdownVisible, setDropdownVisible] = useState(false);
   const [peoplePosition, setPeoplePosition] = useState(null);
-  const [Occupation, setOccupation] = useState('');
-  const [fatheroccupation, setFatheroccupation] = useState('');
-  const [motheroccupation, setMotheroccupation] = useState('');
-  const [Qualification, setQualification] = useState('');
+  const [personalDetail, setpersonalDetail] = useState('');
+
+  const [fullname, setFullName] = useState('');
+  const [dob, setDob] = useState('');
+  const [birthPlace, setBirthPlace] = useState('');
+  const [maritalStatus, setMaritalStatus] = useState('');
+  const [ability, setAbility] = useState('');
   const [minHeightFeet, setMinHeightFeet] = useState('');
   const [maxHeightFeet, setMaxHeightFeet] = useState('');
   const [minWeight, setMinWeight] = useState('');
   const [maxWeight, setMaxWeight] = useState('');
+  const [complexion, setComplexion] = useState('');
+  const [ManglikStatus, setManglikStatus] = useState('');
+  const [nadi, setNadi] = useState('');
+  const [gotra, setGotra] = useState('');
+  const [Mothergotra, setMotherGotra] = useState('');
+  const [Qualification, setQualification] = useState('');
+  const [Occupation, setOccupation] = useState('');
+  const [income, setIncome] = useState('');
+  const [livingStatus, setlivingStatus] = useState('');
+  const [CurrentCity, setCurrentCity] = useState('');
+  const [aboutme, setAboutme] = useState('');
+  const [mobileNumber, setMobileNumber] = useState('');
+  const [profileCreatedBy, setProfileCreatedBy] = useState('');
+  const [fatherName, setFatherName] = useState('');
+  const [fatheroccupation, setFatheroccupation] = useState('');
+  const [motherName, setMotherName] = useState('');
+  const [motheroccupation, setMotheroccupation] = useState('');
+  const [fatherIncome, setfatherIncome] = useState('');
+  const [motherIncome, setmotherIncome] = useState('');
+  const [OtherFamilyOccupation, setOtherFamilyOccupation] = useState('');
+  const [familyType, setfamilyType] = useState('');
+  const [Siblings, setSiblings] = useState('');
+  const [familyInfo, setFamilyInfo] = useState('');
+  const [fatherMobileNumber, setfatherMobileNumber] = useState('');
+  const [motherMobileNumber, setmotherMobileNumber] = useState('');
+  const [familyMobileNumber, setfamilyMobileNumber] = useState('');
+  const [parmanentAddress, setparmanentAddress] = useState('');
+  const [residentialAddress, setresidentialAddress] = useState('');
+  const [cooking, setCooking] = useState('');
+  const [partnerDietHabit, setpartnerDietHabit] = useState('');
+  const [smokingStatus, setsmokingStatus] = useState('');
+  const [drinkingHabit, setdrinkingHabit] = useState('');
+  const [hobbies, sethobbies] = useState('');
+  const [dropdownVisible, setDropdownVisible] = useState(false);
 
   const feetData = Array.from({ length: 5 }, (_, i) => ({
     label: `${3 + i} ft`,
@@ -46,42 +73,6 @@ const DetailedProfile = ({ navigation }) => {
     value: `${40 + i}`,
   }));
 
-  const OccupationData = [
-    { label: 'Defence', value: 'Defence' }, 
-    { label: 'Artist', value: 'Artist' }, 
-    { label: 'Private Job / Employee', value: 'Private Job / Employee' },
-    { label: 'Government Job / Employee', value: 'Government Job / Employee' },
-    { label: 'Self Employed', value: 'Self Employed' },
-    { label: 'Freelancer', value: 'Freelancer' },
-    { label: 'Agriculture Professional', value: 'Agriculture Professional' },
-    { label: 'Business Owner / Entrepreneur', value: 'Business Owner / Entrepreneur' },
-    { label: 'Officer', value: 'Officer' },
-    { label: 'Software Professional', value: 'Software Professional' },
-    { label: 'Education Professional', value: 'Education Professional' },
-    { label: 'Medical & Healthcare Professional', value: 'Medical & Healthcare Professional' },
-    { label: 'Doctor / Surgeon', value: 'Doctor / Surgeon' },
-    { label: 'Marketing Professional', value: 'Marketing Professional' },
-    { label: 'Politician', value: 'Politician' },
-    { label: 'Research Scholar', value: 'Research Scholar' },
-    { label: 'Retired', value: 'Retired' },
-    { label: 'Not Working', value: 'Not Working' },
-    { label: 'Other', value: 'Other' }
-];
-
-
-  const QualificationData = [
-    { label: 'High School', value: 'High School' },
-    { label: 'Diploma', value: 'Diploma' },
-    { label: 'Bachelor\'s Degree', value: 'Bachelor\'s Degree' },
-    { label: 'Master\'s Degree', value: 'Master\'s Degree' },
-    { label: 'Doctorates', value: 'Doctorates' },
-    { label: 'Engineering', value: 'Engineering' },
-    { label: 'CA/CS', value: 'CA/CS' },
-    { label: 'MBBS', value: 'MBBS' },
-    { label: 'Law', value: 'Law' },
-    { label: 'Other', value: 'Other' },
-  ];
-  
   const toggleDropdown = () => {
     setDropdownVisible(!dropdownVisible);
   };
@@ -91,87 +82,119 @@ const DetailedProfile = ({ navigation }) => {
     navigation.navigate(buttonName);
   };
 
-  const maritalStatusData = [
-    { label: 'Unmarried', value: 'Unmarried' },
-    { label: 'Widow', value: 'Widow' },
-    { label: 'Divorcee', value: 'Divorcee' },
-    { label: 'Divorcee', value: 'Divorcee' },
-    { label: 'Annulled', value: 'Annulled' }
-  ];
+  // create bio data api 
 
-  const ManglikStatusData = [
-    { label: 'Purna Manglik', value: 'Purna Manglik' },
-    { label: 'Anshik Manglik', value: 'Anshik Manglik' },
-    { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
-  ];
+  // const createBiodata = async () => {
+  //   try {
+  //   const payload = {
+  //     fullname:fullname,
+  //     dob:dob,
+  //     birthPlace:birthPlace,
+  //     maritalStatus:maritalStatus,
+  //     ability:ability,
+  //     minHeightFeet:minHeightFeet,
+  //     maxHeightFeet:maxHeightFeet,
+  //     minWeight:minWeight,
+  //     maxWeight:maxWeight,
+  //     complexion:complexion,
+  //     ManglikStatus:ManglikStatus,
+  //     nadi:nadi,
+  //     gotra:gotra,
+  //     Mothergotra:Mothergotra,
+  //     Qualification:Qualification,
+  //     Occupation:Occupation,
+  //     income:income,
+  //     livingStatus:livingStatus,
+  //     CurrentCity:CurrentCity,
+  //     aboutme:aboutme,
+  //     mobileNumber:mobileNumber,
+  //     profileCreatedBy:profileCreatedBy,
+  //     fatherName:fatherName,
+  //     fatheroccupation:fatheroccupation,
+  //     motherName:motherName,
+  //     motheroccupation:motheroccupation,
+  //     fatherIncome:fatherIncome,
+  //     motherIncome:motherIncome,
+  //     OtherFamilyOccupation:OtherFamilyOccupation,
+  //     familyType:familyType,
+  //     Siblings:Siblings,
+  //     familyInfo:familyInfo,
+  //     fatherMobileNumber:fatherMobileNumber,
+  //     motherMobileNumber:motherMobileNumber,
+  //     familyMobileNumber:familyMobileNumber,
+  //     parmanentAddress:parmanentAddress,
+  //     residentialAddress:residentialAddress,
+  //     cooking:cooking,
+  //     partnerDietHabit:partnerDietHabit,
+  //     smokingStatus:smokingStatus,
+  //     drinkingHabit:drinkingHabit,
+  //     hobbies:hobbies,
+  //   };
+    
+  //   const response = await axios.post(CreateBioData, payload);
 
-  const gotraData = [
-    { label: 'Pooja', value: 'Pooja' }
-  ]
-  const MotherGotraData = [
-    { label: '01', value: '01' },
-    { label: '02', value: '02' },
-    { label: '03', value: '03' },
-  ]
-  const LivingData = [
-    { label: 'Abroad', value: 'Abroad' },
-    { label: 'India', value: 'India' },
-  ]
-  const ProfileCreatedData = [
-    { label: 'Mother', value: 'Mother' },
-    { label: 'Father', value: 'Father' },
-    { label: 'Sister', value: 'Sister' },
-    { label: 'Brother', value: 'Brother' },
-  ]
+  //   }
+  //   catch (error) {
+  //     console.log("error", error);
+  //   }
+  // }
 
-  const CityData = [
-    { label: 'Indore', value: 'Indore' },
-    { label: 'Bhopal', value: 'Bhopal' },
-  ]
-  const Income = [
-    { label: 'Less than ₹1 Lakh', value: '<1L' },
-    { label: '₹1 Lakh - ₹5 Lakh', value: '1L-5L' },
-    { label: '₹5 Lakh - ₹10 Lakh', value: '5L-10L' },
-    { label: '₹10 Lakh - ₹20 Lakh', value: '10L-20L' },
-    { label: 'Above ₹20 Lakh', value: '>20L' },
-  ]
+  // update bio data 
 
-  const FamilyType = [
-    { label: 'Nuclear Family', value: 'Nuclear Family' },
-    { label: 'Joint Family', value: 'Joint Family' },
-    { label: 'Extended Family', value: 'Extended Family' },
-  ]
-  const CookingStatus = [
-    { label: 'yes', value: 'Yes' },
-    { label: 'No', value: 'No' },
-  ]
-  const DietHabit = [
-    { label: 'Vegetarian', value: 'Vegetarian' },
-    { label: 'Non-Vegetarian', value: 'Non-Vegetarian' },
-    { label: 'Eggetarian', value: 'Eggetarian' },
-    { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
-  ]
-  const smokingStatusData = [
-    { label: 'yes', value: 'Yes' },
-    { label: 'Nes', value: 'No' },
-    { label: 'Doesn’t Matter', value: 'Doesn’t Matter' }
-  ]
+  // const updateBiodata = async () => {
+  //   try {
+  //     const payload = {
+  //       fullname:fullname,
+  //       dob:dob,
+  //       birthPlace:birthPlace,
+  //       maritalStatus:maritalStatus,
+  //       ability:ability,
+  //       minHeightFeet:minHeightFeet,
+  //       maxHeightFeet:maxHeightFeet,
+  //       minWeight:minWeight,
+  //       maxWeight:maxWeight,
+  //       complexion:complexion,
+  //       ManglikStatus:ManglikStatus,
+  //       nadi:nadi,
+  //       gotra:gotra,
+  //       Mothergotra:Mothergotra,
+  //       Qualification:Qualification,
+  //       Occupation:Occupation,
+  //       income:income,
+  //       livingStatus:livingStatus,
+  //       CurrentCity:CurrentCity,
+  //       aboutme:aboutme,
+  //       mobileNumber:mobileNumber,
+  //       profileCreatedBy:profileCreatedBy,
+  //       fatherName:fatherName,
+  //       fatheroccupation:fatheroccupation,
+  //       motherName:motherName,
+  //       motheroccupation:motheroccupation,
+  //       fatherIncome:fatherIncome,
+  //       motherIncome:motherIncome,
+  //       OtherFamilyOccupation:OtherFamilyOccupation,
+  //       familyType:familyType,
+  //       Siblings:Siblings,
+  //       familyInfo:familyInfo,
+  //       fatherMobileNumber:fatherMobileNumber,
+  //       motherMobileNumber:motherMobileNumber,
+  //       familyMobileNumber:familyMobileNumber,
+  //       parmanentAddress:parmanentAddress,
+  //       residentialAddress:residentialAddress,
+  //       cooking:cooking,
+  //       partnerDietHabit:partnerDietHabit,
+  //       smokingStatus:smokingStatus,
+  //       drinkingHabit:drinkingHabit,
+  //       hobbies:hobbies,
+  //     };
+  //     const response = await axios.post(UPDATE_BIODATA, payload);
 
-  const DrinkingHabit = [
-    { label: 'yes', value: 'Yes' },
-    { label: 'Nes', value: 'No' },
-    { label: 'Occasionally', value: 'Occasionally' },
-    { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
-  ]
+  //   }
+  //   catch (error) {
+  //     console.log("error", error);
+  //   }
+  // }
 
-  const PeoplePosition = [
-    { label: 'Admin', value: 'Admin' },
-    { label: 'Activist', value: 'Activist' },
-    { label: 'Pandit', value: 'Pandit' },
-    { label: 'Kathavachak', value: 'Kathavachak' },
-    { label: 'Jyotish', value: 'Jyotish' },
-    { label: 'Member', value: 'Member' },
-  ]
 
   return (
     <SafeAreaView style={styles.container}>
@@ -186,7 +209,7 @@ const DetailedProfile = ({ navigation }) => {
             <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
           </TouchableOpacity>
           <Text style={styles.headerText}>Matrimony Profile</Text>
-           <TouchableOpacity onPress={toggleDropdown} style={styles.dropdownContainer}>
+          <TouchableOpacity onPress={toggleDropdown} style={styles.dropdownContainer}>
             <AntDesign name={'caretdown'} color={Colors.theme_color} size={15} />
           </TouchableOpacity>
           {dropdownVisible && (
@@ -275,15 +298,15 @@ const DetailedProfile = ({ navigation }) => {
             </View>
             <View>
               <View>
-                <Text style={styles.inputHeading}>Full Name</Text>
+                <Text style={styles.inputHeading} value={fullname} onchange={item => setFullName(item.value)}>Full Name</Text>
                 <TextInput style={styles.input} />
               </View>
               <View>
-                <Text style={styles.inputHeading}>Date of Birth</Text>
+                <Text style={styles.inputHeading} value={dob} onchange={item => setDob(item.value)}>Date of Birth</Text>
                 <TextInput style={styles.input} />
               </View>
               <View>
-                <Text style={styles.inputHeading}>Place of Birth</Text>
+                <Text style={styles.inputHeading} value={birthPlace} onchange={item => setBirthPlace(item.value)}>Place of Birth</Text>
                 <TextInput style={styles.input} />
               </View>
               <View>
@@ -298,6 +321,11 @@ const DetailedProfile = ({ navigation }) => {
                   placeholder="Select a service"
                 />
 
+              </View>
+              <View>
+                <Text style={styles.inputHeading} value={ability} onchange={item => setAbility(item.value)}>
+                  Special Ability (physical, mental, etc.)</Text>
+                <TextInput style={styles.input} />
               </View>
               <View>
                 <Text style={styles.inputHeading}>Height</Text>
@@ -348,7 +376,7 @@ const DetailedProfile = ({ navigation }) => {
                 </View>
               </View>
               <View>
-                <Text style={styles.inputHeading}>Complexion</Text>
+                <Text style={styles.inputHeading} value={complexion} onchange={item => setComplexion(item.value)}>Complexion</Text>
                 <TextInput style={styles.input} />
               </View>
               <View>
@@ -364,7 +392,7 @@ const DetailedProfile = ({ navigation }) => {
                 />
               </View>
               <View>
-                <Text style={styles.inputHeading}>Nadi</Text>
+                <Text style={styles.inputHeading} value={nadi} onchange={item => setNadi(item.value)}>Nadi</Text>
                 <TextInput style={styles.input} />
               </View>
               <View>
@@ -393,18 +421,6 @@ const DetailedProfile = ({ navigation }) => {
                 />
               </View>
               <View>
-                <Text style={styles.inputHeading}>Occupation</Text>
-                <Dropdown
-                  style={styles.input}
-                  data={OccupationData}
-                  labelField="label"
-                  valueField="value"
-                  value={Occupation}
-                  onChange={item => setOccupation(item.value)}
-                  placeholder="Select occupdation"
-                />
-              </View>
-              <View>
                 <Text style={styles.inputHeading}>Qualification</Text>
                 <Dropdown
                   style={styles.input}
@@ -417,7 +433,19 @@ const DetailedProfile = ({ navigation }) => {
                 />
               </View>
               <View>
-                <Text style={styles.inputHeading}>Income (Annually)</Text>
+                <Text style={styles.inputHeading}>Occupation</Text>
+                <Dropdown
+                  style={styles.input}
+                  data={OccupationData}
+                  labelField="label"
+                  valueField="value"
+                  value={Occupation}
+                  onChange={item => setOccupation(item.value)}
+                  placeholder="Select occupdation"
+                />
+              </View>
+              <View>
+                <Text style={styles.inputHeading} value={income} onchange={item => setIncome(item.value)}>Income (Annually)</Text>
                 <TextInput style={styles.input} />
               </View>
               <View>
@@ -445,11 +473,11 @@ const DetailedProfile = ({ navigation }) => {
                 />
               </View>
               <View>
-                <Text style={styles.inputHeading}>About Me</Text>
+                <Text style={styles.inputHeading} value={aboutme} onchange={item => setAboutme(item.value)}>About Me</Text>
                 <TextInput style={styles.input1} multiline={true} numberOfLines={6} />
               </View>
               <View>
-                <Text style={styles.inputHeading}>Mobile no.</Text>
+                <Text style={styles.inputHeading} value={mobileNumber} onchange={item => setMobileNumber(item.value)}>Mobile no.</Text>
                 <TextInput style={styles.input} multiline={true} numberOfLines={6} />
               </View>
 
@@ -460,8 +488,8 @@ const DetailedProfile = ({ navigation }) => {
                   data={ProfileCreatedData}
                   labelField="label"
                   valueField="value"
-                  value={profileCreated}
-                  onChange={item => setProfileCreated(item.value)}
+                  value={profileCreatedBy}
+                  onChange={item => setProfileCreatedBy(item.value)}
                   placeholder="Select Person"
                 />
               </View>
@@ -469,11 +497,11 @@ const DetailedProfile = ({ navigation }) => {
             <Text style={styles.headText}>Family details </Text>
             <View>
               <View>
-                <Text style={styles.inputHeading}>Father Full Name</Text>
+                <Text style={styles.inputHeading} value={fatherName} onchange={item => setFatherName(item.value)}>Father Full Name</Text>
                 <TextInput style={styles.input} />
               </View>
               <View>
-                <Text style={styles.inputHeading}>Mother Full Name</Text>
+                <Text style={styles.inputHeading} value={motherName} onchange={item => setMotherName(item.value)}>Mother Full Name</Text>
                 <TextInput style={styles.input} />
               </View>
               <View>
@@ -502,18 +530,6 @@ const DetailedProfile = ({ navigation }) => {
 
               </View>
               <View>
-                <Text style={styles.inputHeading}>Family Type</Text>
-                <Dropdown
-                  style={styles.input}
-                  data={FamilyType}
-                  labelField="label"
-                  valueField="value"
-                  value={familyType}
-                  onChange={item => setfamilyType(item.value)}
-                  placeholder="Select type"
-                />
-              </View>
-              <View>
                 <Text style={styles.inputHeading}>Mother Occupation (If any)</Text>
                 <Dropdown
                   style={styles.input}
@@ -539,37 +555,57 @@ const DetailedProfile = ({ navigation }) => {
               </View>
               <View>
                 <Text style={styles.inputHeading}>Other family member Occupation (optional)</Text>
+                <Dropdown
+                  style={styles.input}
+                  data={OccupationData}
+                  labelField="label"
+                  valueField="value"
+                  value={OtherFamilyOccupation}
+                  onChange={item => setOtherFamilyOccupation(item.value)}
+                  placeholder="Select occupdation"
+                />
+              </View>
+              <View>
+                <Text style={styles.inputHeading}>Family Type</Text>
+                <Dropdown
+                  style={styles.input}
+                  data={FamilyType}
+                  labelField="label"
+                  valueField="value"
+                  value={familyType}
+                  onChange={item => setfamilyType(item.value)}
+                  placeholder="Select type"
+                />
+              </View>
+              <View>
+                <Text style={styles.inputHeading} value={Siblings} onchange={item => setSiblings(item.value)}>Siblings</Text>
                 <TextInput style={styles.input} />
               </View>
               <View>
-                <Text style={styles.inputHeading}>Siblings</Text>
-                <TextInput style={styles.input} />
-              </View>
-              <View>
-                <Text style={styles.inputHeading}>Any family member info. (optinal)</Text>
+                <Text style={styles.inputHeading} value={familyInfo} onchange={item => setFamilyInfo(item.value)}>Any family member info. (optinal)</Text>
                 <TextInput style={styles.input} multiline={true} numberOfLines={6} />
               </View>
               <View>
-                <Text style={styles.inputHeading}>Father Mobile no.</Text>
+                <Text style={styles.inputHeading} value={fatherMobileNumber} onchange={item => setfatherMobileNumber(item.value)}>Father Mobile no.</Text>
                 <TextInput style={styles.input} />
               </View>
               <View>
-                <Text style={styles.inputHeading}>Mother Mobile no.</Text>
+                <Text style={styles.inputHeading} value={motherMobileNumber} onchange={item => setmotherMobileNumber(item.value)}>Mother Mobile no.</Text>
                 <TextInput style={styles.input} />
               </View>
               <View>
-                <Text style={styles.inputHeading}>Family member Mobile no.</Text>
+                <Text style={styles.inputHeading} value={familyMobileNumber} onchange={item => setfamilyMobileNumber(item.value)}>Family member Mobile no.</Text>
                 <TextInput style={styles.input} />
               </View>
               <View>
-                <Text style={styles.inputHeading}>Permanent Address</Text>
+                <Text style={styles.inputHeading} value={parmanentAddress} onchange={item => setparmanentAddress(item.value)}>Permanent Address</Text>
                 <TextInput style={styles.input} />
               </View>
               <View>
-                <Text style={styles.inputHeading}>Residential Address</Text>
+                <Text style={styles.inputHeading} value={residentialAddress} onchange={item => setresidentialAddress(item.value)}>Residential Address</Text>
                 <TextInput style={styles.input} />
               </View>
-              <Text style={styles.headText}>Other Personal Detail</Text>
+              <Text style={styles.headText} value={personalDetail} onchange={item => setpersonalDetail(item.value)} >Other Personal Detail</Text>
               <View>
                 <Text style={styles.inputHeading}>Do you know cooking</Text>
                 <Dropdown
@@ -619,7 +655,7 @@ const DetailedProfile = ({ navigation }) => {
                 />
               </View>
               <View>
-                <Text style={styles.inputHeading}>Your Hobbies</Text>
+                <Text style={styles.inputHeading} value={hobbies} onchange={item => sethobbies(item.value)}>Your Hobbies</Text>
                 <TextInput style={styles.input} multiline={true} numberOfLines={6} />
               </View>
             </View>

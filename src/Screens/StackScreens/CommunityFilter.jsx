@@ -1,4 +1,4 @@
-import { Text, View, FlatList, TouchableOpacity, TextInput, ScrollView,StatusBar,SafeAreaView } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, ScrollView,StatusBar,SafeAreaView,Linking } from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 import { slider, CommitteeFilterDataList } from '../../DummyData/DummyData';
 import { Image } from 'react-native';
@@ -47,16 +47,16 @@ const CommunityFilter = ({ navigation }) => {
             <Text style={styles.text}>{item.profile}</Text>
             <View style={styles.sharecontainer}>
               <View style={styles.iconContainer}>
-                <FontAwesome name="bookmark-o" size={19} color={Colors.dark} />
+                <FontAwesome name="bookmark-o" size={15} color={Colors.dark} />
                 <Text style={styles.iconText}>Save</Text>
               </View>
 
               <View style={styles.iconContainer}>
-                <Feather name="send" size={19} color={Colors.dark} />
+                <Feather name="send" size={15} color={Colors.dark} />
                 <Text style={styles.iconText}>Shares</Text>
               </View>
-              <TouchableOpacity style={styles.Button}>
-                <MaterialIcons name="call" size={20} color={Colors.light} />
+              <TouchableOpacity style={styles.Button} onPress={()=>Linking.openURL('tel:9893458940')} >
+                <MaterialIcons name="call" size={15} color={Colors.light} />
                 <Text style={styles.RequestText}>Request for call</Text>
               </TouchableOpacity>
             </View>

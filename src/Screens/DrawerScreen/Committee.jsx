@@ -1,5 +1,5 @@
 
-import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar,Linking } from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 import { slider, CommitteeDataList } from '../../DummyData/DummyData';
 import { Image } from 'react-native';
@@ -11,23 +11,13 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import { Dropdown } from 'react-native-element-dropdown';
-
+import { subCasteOptions,LocalityData } from '../../DummyData/DropdownData';
 
 const Committee = ({ navigation }) => {
   const [activeButton, setActiveButton] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [subcaste, setSubcaste] = useState('');
   const [locality, setLocality] = useState('');
-
-  const subcasteData = [
-    { label: 'OBC', value: 'OBC' },
-    { label: 'General', value: 'General' },
-    { label: 'ST', value: 'ST' },
-    { label: 'SC', value: 'SC' },
-  ];
-
-  const LocalityData = [{ label: 'Badnagar', value: 'Badnagar' }];
-
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -208,7 +198,7 @@ const Committee = ({ navigation }) => {
             <Text style={styles.headingText}>Sub-Caste</Text>
             <View style={styles.inputContainer}>
               <Dropdown
-                data={subcasteData}
+                data={subCasteOptions}
                 labelField="label"
                 valueField="value"
                 value={subcaste}

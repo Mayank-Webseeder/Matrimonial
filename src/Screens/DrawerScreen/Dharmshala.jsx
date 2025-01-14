@@ -6,7 +6,7 @@ import {
   TextInput,
   Modal,
   ScrollView,
-  SafeAreaView,StatusBar
+  SafeAreaView, StatusBar, Linking
 } from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 import { slider, DharamsalaData } from '../../DummyData/DummyData';
@@ -19,21 +19,13 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import { Dropdown } from 'react-native-element-dropdown';
 import AppIntroSlider from 'react-native-app-intro-slider';
+import { subCasteOptions, LocalityData } from '../../DummyData/DropdownData';
 
 const Dharmshala = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [subcaste, setSubcaste] = useState('');
   const [locality, setLocality] = useState('');
   const [activeButton, setActiveButton] = useState(null);
-  
-  const subcasteData = [
-    { label: 'OBC', value: 'OBC' },
-    { label: 'General', value: 'General' },
-    { label: 'ST', value: 'ST' },
-    { label: 'SC', value: 'SC' },
-  ];
-
-  const LocalityData = [{ label: 'Badnagar', value: 'Badnagar' }];
 
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -86,7 +78,7 @@ const Dharmshala = ({ navigation }) => {
             <Feather name="send" size={20} color={Colors.dark} />
             <Text style={styles.iconText}>Shares</Text>
           </View>
-          <TouchableOpacity style={styles.Button}>
+          <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL('tel:9893458940')}>
             <MaterialIcons name="call" size={20} color={Colors.light} />
           </TouchableOpacity>
         </View>
@@ -99,24 +91,24 @@ const Dharmshala = ({ navigation }) => {
     setActiveButton(1);
     console.log("Modal opened:", modalVisible); // Debugging
   };
-  
+
 
   const handleCloseFilter = () => {
     setModalVisible(false);
   };
 
-  const handleUploadButton=()=>{
-   setActiveButton(2)
-   navigation.navigate('DharamsalaSubmissionPage')
+  const handleUploadButton = () => {
+    setActiveButton(2)
+    navigation.navigate('DharamsalaSubmissionPage')
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar 
-                barStyle="dark-content" 
-                backgroundColor="transparent" 
-                translucent 
-            />
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="transparent"
+        translucent
+      />
       {/* Fixed Header */}
       <View style={styles.header}>
         <View style={{ flexDirection: 'row' }}>
@@ -143,7 +135,7 @@ const Dharmshala = ({ navigation }) => {
 
       {/* Scrollable Content */}
       <ScrollView>
-      <View>
+        <View>
           {/* Search and Filter Section */}
           <View style={styles.searchContainer}>
             <View style={styles.searchbar}>
@@ -169,23 +161,23 @@ const Dharmshala = ({ navigation }) => {
             />
           </View>
         </View>
-     
-        <View style={styles.ButtonContainer}>
-        <TouchableOpacity
-          style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton]}
-          onPress={handleOpenFilter}
-        >
-          <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Filter</Text>
-        </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.button, activeButton === 2 ? styles.activeButton : styles.inactiveButton]}
-          onPress={handleUploadButton}
-        >
-          <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>Upload</Text>
-        </TouchableOpacity>
-      </View>
-      
+        <View style={styles.ButtonContainer}>
+          <TouchableOpacity
+            style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton]}
+            onPress={handleOpenFilter}
+          >
+            <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Filter</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.button, activeButton === 2 ? styles.activeButton : styles.inactiveButton]}
+            onPress={handleUploadButton}
+          >
+            <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>Upload</Text>
+          </TouchableOpacity>
+        </View>
+
 
         {/* Dharamsala List */}
         <FlatList
@@ -223,7 +215,7 @@ const Dharmshala = ({ navigation }) => {
             <Text style={styles.headingText}>Sub-Caste</Text>
             <View style={styles.inputContainer}>
               <Dropdown
-                data={subcasteData}
+                data={subCasteOptions}
                 labelField="label"
                 valueField="value"
                 value={subcaste}

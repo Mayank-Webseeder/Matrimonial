@@ -196,7 +196,7 @@ const EventNews = ({ navigation }) => {
             <Text style={styles.shareText}>25k Likes</Text>
           </View>
           <View style={styles.likeShare}>
-            <EvilIcons name="comment" size={20} color={Colors.dark} />
+            <EvilIcons name="comment" size={25} color={Colors.dark} />
             <Text style={styles.shareText}>90 Comments</Text>
           </View>
           <View style={styles.likeShare}>

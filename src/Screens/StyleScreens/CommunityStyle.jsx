@@ -6,16 +6,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.light,
-    paddingTop: SH(25),
-    paddingHorizontal:SW(6)
+    paddingTop: SH(35),
+    paddingHorizontal: SW(6)
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: SW(10),
-    paddingVertical:SH(10),
-    paddingLeft: 0
+    paddingVertical: SH(7),
+    paddingLeft: SW(1),
+    paddingTop: 0
+
   },
   headerText: {
     color: Colors.theme_color,
@@ -25,11 +27,7 @@ const styles = StyleSheet.create({
   },
   righticons: {
     flexDirection: 'row',
-  },
-  headerText: {
-    color: Colors.theme_color,
-    fontSize: SF(15),
-    fontFamily: "Poppins-Regular"
+    alignItems:"center"
   },
   image: {
     width: SW(100),
@@ -44,7 +42,7 @@ const styles = StyleSheet.create({
     marginHorizontal: SW(10),
     borderRadius: 50,
     paddingHorizontal: SW(10),
-    width:SW(320)
+    width: SW(320)
   },
   card: {
     backgroundColor: '#fff',
@@ -54,15 +52,15 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
-    marginBottom:SH(3),
-    marginHorizontal:SW(10),
-    marginVertical:SH(10)
+    marginBottom: SH(3),
+    marginHorizontal: SW(10),
+    marginVertical: SH(10)
   },
   cardData: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     paddingHorizontal: SW(10),
-    paddingVertical:SH(10)
+    paddingVertical: SH(10)
   },
 
   CityArea: {
@@ -167,8 +165,8 @@ const styles = StyleSheet.create({
   iconText: {
     fontSize: SF(13),
     color: Colors.dark,
-    marginTop: SH(5),
-    marginLeft: SW(4)
+    marginVertical: SH(5),
+    marginHorizontal: SW(10)
   },
   Button: {
     backgroundColor: Colors.theme_color,
@@ -210,7 +208,7 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: 'white',
     paddingHorizontal: SW(10),
-    paddingVertical:SH(10),
+    paddingVertical: SH(10),
     width: '80%',
     borderRadius: 10,
   },
@@ -221,10 +219,10 @@ const styles = StyleSheet.create({
   applyButton: {
     backgroundColor: Colors.theme_color,
     paddingHorizontal: SW(10),
-    paddingVertical:SH(5),
+    paddingVertical: SH(5),
     borderRadius: 5,
     marginHorizontal: SW(20),
-    marginVertical:SH(20),
+    marginVertical: SH(20),
     borderRadius: 50
   },
   applyButtonText: {
@@ -253,7 +251,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Bold",
     fontSize: SF(15),
     marginHorizontal: SW(10),
-    marginVertical:SH(10)
+    marginVertical: SH(10)
   },
 
 

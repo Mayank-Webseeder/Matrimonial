@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     paddingVertical: SH(3),
     borderRadius: 8,
     alignItems: "center",
-    width:SW(90)
+    width:SW(75)
   },
   buttonText: {
     color: Colors.light,
@@ -181,7 +181,10 @@ const styles = StyleSheet.create({
     marginLeft: SW(2)
   },
   iconText: {
-    marginHorizontal: SW(5),
+    fontSize: SF(13),
+    color: Colors.dark,
+    marginVertical: SH(5),
+    marginHorizontal: SW(10),
     fontFamily: "Poppins-Regular",
   },
   contentContainer:{

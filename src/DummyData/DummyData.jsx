@@ -192,6 +192,13 @@ export const ActivistData = [
       city: "Indore",
       subcaste: "Sub-caste name",
       image: require('../Images/profile3.png')
+   },
+   {
+      id: "7",
+      name: "Raj Sharma",
+      city: "Indore",
+      subcaste: "Sub-caste name",
+      image: require('../Images/profile3.png')
    }
 ]
 

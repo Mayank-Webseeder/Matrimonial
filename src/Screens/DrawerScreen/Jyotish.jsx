@@ -9,7 +9,7 @@ import {
   Modal,
   ScrollView,
   SafeAreaView,
-  StatusBar,
+  StatusBar,Linking
 } from 'react-native';
 import { PanditData, slider } from '../../DummyData/DummyData';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -21,6 +21,7 @@ import AppIntroSlider from 'react-native-app-intro-slider';
 import { Dropdown } from 'react-native-element-dropdown';
 import styles from '../StyleScreens/PanditJyotishKathavachakStyle';
 import Colors from '../../utils/Colors';
+import { servicesData,LocalityData,ExperienceData,RatingData } from '../../DummyData/DropdownData';
 
 const Jyotish = ({ navigation }) => {
   const sliderRef = useRef(null);
@@ -29,32 +30,9 @@ const Jyotish = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [services, setServices] = useState('');
   const [locality, setLocality] = useState('');
-  const [rating, setRating] = useState(null); // New: Rating
-  const [experience, setExperience] = useState(null); // New: Experience
+  const [rating, setRating] = useState(null);
+  const [experience, setExperience] = useState(null); 
 
-  const servicesData = [
-    { label: 'Pooja', value: 'Pooja' },
-    { label: 'Hawan', value: 'Hawan' },
-    { label: 'Griha Pravesh', value: 'Griha Pravesh' },
-  ];
-
-  const LocalityData = [
-    { label: 'Badnagar', value: 'Badnagar' },
-  ];
-
-  const ExperienceData = [
-    { label: '1-3 Years', value: '1-3' },
-    { label: '3-5 Years', value: '3-5' },
-    { label: '5+ Years', value: '5+' },
-  ];
-
-  const RatingData= [
-    { label: '1 Star', value: '1' },
-    { label: '2 Stars', value: '2' },
-    { label: '3 Stars', value: '3' },
-    { label: '4 Stars', value: '4' },
-    { label: '5 Stars', value: '5' },
-  ]
   const handleOpenFilter = () => {
     setModalVisible(true);
     setActiveButton(1);
@@ -96,20 +74,22 @@ const Jyotish = ({ navigation }) => {
           </View>
         </View>
         <View style={styles.sharecontainer}>
-          <View style={styles.iconContainer}>
-            <FontAwesome name="bookmark-o" size={20} color={Colors.dark} />
-            <Text style={styles.iconText}>Save</Text>
-          </View>
-
-          <View style={styles.iconContainer}>
-            <Feather name="send" size={20} color={Colors.dark} />
-            <Text style={styles.iconText}>Shares</Text>
-          </View>
-
-          <TouchableOpacity style={styles.Button}>
-            <MaterialIcons name="call" size={22} color={Colors.light} />
-          </TouchableOpacity>
+        <View style={styles.iconContainer}>
+          <FontAwesome name="bookmark-o" size={20} color={Colors.dark} />
+          <Text style={styles.iconText}>Save</Text>
         </View>
+
+        <View style={styles.iconContainer}>
+          <Feather name="send" size={20} color={Colors.dark} />
+          <Text style={styles.iconText}>Shares</Text>
+        </View>
+
+        <TouchableOpacity 
+          style={styles.Button} 
+          onPress={() => Linking.openURL('tel:9893458940')}>
+          <MaterialIcons name="call" size={20} color={Colors.light} />
+        </TouchableOpacity>
+      </View>
       </TouchableOpacity>
     );
   };

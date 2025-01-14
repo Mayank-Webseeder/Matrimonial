@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar } from 'react-native';
+import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar, Linking} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -174,10 +174,10 @@ const Matrimonial = ({navigation}) => {
                   <Text style={styles.iconText}>Shares</Text>
                 </View>
   
-                <View style={styles.iconContainer}>
+                <TouchableOpacity style={styles.iconContainer} onPress={()=>Linking.openURL('tel:9893458940')}>
                   <MaterialIcons name="call" size={24} color={Colors.dark} />
                   <Text style={styles.iconText}>Call</Text>
-                </View>
+                </TouchableOpacity>
   
                 <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ReportPage')} >
                   <MaterialIcons name="error-outline" size={24} color={Colors.dark} />

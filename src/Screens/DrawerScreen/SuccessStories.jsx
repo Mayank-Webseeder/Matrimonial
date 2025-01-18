@@ -6,6 +6,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import styles from '../StyleScreens/SuccessStoriesStyle';
 import { SuccessStoriesData } from '../../DummyData/DummyData';
+import Globalstyles from '../../utils/GlobalCss';
 
 const SuccessStories = ({ navigation }) => {
   const [ratings, setRatings] = useState({}); 
@@ -47,18 +48,18 @@ const SuccessStories = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={Globalstyles.container}>
       <StatusBar 
                 barStyle="dark-content" 
                 backgroundColor="transparent" 
                 translucent 
             />
-      <View style={styles.header}>
+      <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
-          <Text style={styles.headerText}>Success Stories</Text>
+          <Text style={Globalstyles.headerText}>Success Stories</Text>
         </View>
         <View style={styles.righticons}>
           <TouchableOpacity onPress={()=>navigation.navigate('PostSuccessStories')}>

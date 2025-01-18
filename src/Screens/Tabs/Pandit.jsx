@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, SafeAreaView, StatusBar, Linking } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, SafeAreaView, StatusBar, Linking,Pressable } from 'react-native';
 import { PanditData, slider } from '../../DummyData/DummyData';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -10,7 +10,9 @@ import AppIntroSlider from 'react-native-app-intro-slider';
 import { Dropdown } from 'react-native-element-dropdown';
 import styles from '../StyleScreens/PanditJyotishKathavachakStyle';
 import Colors from '../../utils/Colors';
-import { servicesData, LocalityData, ExperienceData, RatingData } from '../../DummyData/DropdownData';
+import { servicesData, LocalityData, ExperienceData, RatingData, panditServices } from '../../DummyData/DropdownData';
+import Globalstyles from '../../utils/GlobalCss';
+import Entypo from 'react-native-vector-icons/Entypo';
 const Pandit = ({ navigation }) => {
   const sliderRef = useRef(null);
   const [activeButton, setActiveButton] = useState(null);
@@ -46,8 +48,8 @@ const Pandit = ({ navigation }) => {
 
   const renderItem = ({ item }) => {
     return (
-      <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('PanditDetailPage')}>
-        <View style={styles.cardData}>
+      <View style={styles.card}>
+        <Pressable style={styles.cardData} onPress={() => navigation.navigate('PanditDetailPage')}>
           <Image source={item.image} style={styles.image} />
           <View style={styles.leftContainer}>
             <Text style={styles.text}>{item.name}</Text>
@@ -60,7 +62,7 @@ const Pandit = ({ navigation }) => {
               <Text style={styles.text}>{item.area}</Text>
             </View>
           </View>
-        </View>
+        </Pressable>
         <View style={styles.sharecontainer}>
           <View style={styles.iconContainer}>
             <FontAwesome name="bookmark-o" size={20} color={Colors.dark} />
@@ -78,43 +80,43 @@ const Pandit = ({ navigation }) => {
             <MaterialIcons name="call" size={20} color={Colors.light} />
           </TouchableOpacity>
         </View>
-      </TouchableOpacity>
+      </View>
     );
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={Globalstyles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
-      <View style={styles.header}>
+      <View style={Globalstyles.header}>
         <View style={styles.headerContainer}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
-          <Text style={styles.headerText}>Pandit</Text>
+          <Text style={Globalstyles.headerText}>Pandit</Text>
         </View>
-        <View style={styles.righticons}>
+        <View style={styles.headerContainer}>
           <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => navigation.navigate('Notification')} />
         </View>
       </View>
       <ScrollView>
         <View style={styles.searchbar}>
-          <AntDesign name={'search1'} size={20} color={'gray'} />
           <TextInput placeholder="Search in Your city" placeholderTextColor={'gray'} />
+          <AntDesign name={'search1'} size={20} color={'gray'} />
         </View>
 
-        <View style={styles.sliderContainer}>
+        <View style={Globalstyles.sliderContainer}>
           <AppIntroSlider
             ref={sliderRef}
             data={slider}
             renderItem={({ item }) => (
               <View>
-                <Image source={item.image} style={styles.sliderImage} />
+                <Image source={item.image} style={Globalstyles.sliderImage} />
               </View>
             )}
             showNextButton={false}
             showDoneButton={false}
-            dotStyle={styles.dot}
-            activeDotStyle={styles.activeDot}
+            dotStyle={Globalstyles.dot}
+            activeDotStyle={Globalstyles.activeDot}
           />
         </View>
 
@@ -154,68 +156,70 @@ const Pandit = ({ navigation }) => {
           <View style={styles.modalContent}>
             <View style={styles.Filterheader}>
               <TouchableOpacity onPress={handleCloseFilter} style={{ flexDirection: 'row' }}>
-                <MaterialIcons name="arrow-back-ios-new" size={20} color={Colors.theme_color} />
-                <Text style={styles.headerText}>Filter</Text>
+                <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
+                <Text style={Globalstyles.headerText}>Filter</Text>
               </TouchableOpacity>
             </View>
 
-            <Text style={styles.headingText}>Locality</Text>
-            <View style={styles.inputContainer}>
-              <Dropdown
-                style={styles.dropdown}
-                data={LocalityData}
-                labelField="label"
-                valueField="value"
-                value={locality}
-                onChange={(item) => setLocality(item.value)}
-                placeholder="Select Locality"
-              />
-              <MaterialIcons name={'search'} size={20} color={'gray'} style={styles.icon} />
+            <View style={Globalstyles.form}>
+              <Text style={Globalstyles.title}>Locality</Text>
+              <View>
+                <TextInput
+                  style={Globalstyles.input1}
+                  value={locality}
+                  onChangeText={(text) => setLocality(text)}
+                  placeholder="Enter Locality"
+                />
+              </View>
+
+              <Text style={Globalstyles.title}>Services</Text>
+              <View>
+                <Dropdown
+                  data={panditServices}
+                  labelField="label"
+                  valueField="value"
+                  value={services}
+                  onChange={(item) => setServices(item.value)}
+                  placeholder="Select Services"
+                  style={Globalstyles.input1}
+                />
+              </View>
+
+              <Text style={Globalstyles.title}>Rating</Text>
+              <View>
+                <Dropdown
+                  style={Globalstyles.input1}
+                  data={RatingData}
+                  labelField="label"
+                  valueField="value"
+                  value={rating}
+                  onChange={(item) => setRating(item.value)}
+                  placeholder="Select Rating"
+                />
+              </View>
+
+              <Text style={Globalstyles.title}>Experience</Text>
+              <View>
+                <Dropdown
+                  style={Globalstyles.input1}
+                  data={ExperienceData}
+                  labelField="label"
+                  valueField="value"
+                  value={experience}
+                  onChange={(item) => setExperience(item.value)}
+                  placeholder="Select Experience"
+                />
+              </View>
+              <TouchableOpacity style={styles.applyButton} onPress={handleCloseFilter}>
+                <Text style={styles.applyButtonText}>See results</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.crossButton}>
+                <View style={styles.circle}>
+                  <Entypo name="cross" size={25} color={Colors.light} />
+                </View>
+              </TouchableOpacity>
             </View>
 
-            <Text style={styles.headingText}>Services</Text>
-            <View style={styles.inputContainer}>
-              <Dropdown
-                data={servicesData}
-                labelField="label"
-                valueField="value"
-                value={services}
-                onChange={(item) => setServices(item.value)}
-                placeholder="Select Services"
-                style={styles.dropdown}
-              />
-              <MaterialIcons name={'search'} size={20} color={'gray'} style={styles.icon} />
-            </View>
-
-            <Text style={styles.headingText}>Rating</Text>
-            <View style={styles.inputContainer}>
-              <Dropdown
-                style={styles.dropdown}
-                data={RatingData}
-                labelField="label"
-                valueField="value"
-                value={rating}
-                onChange={(item) => setRating(item.value)}
-                placeholder="Select Rating"
-              />
-            </View>
-
-            <Text style={styles.headingText}>Experience</Text>
-            <View style={styles.inputContainer}>
-              <Dropdown
-                style={styles.dropdown}
-                data={ExperienceData}
-                labelField="label"
-                valueField="value"
-                value={experience}
-                onChange={(item) => setExperience(item.value)}
-                placeholder="Select Experience"
-              />
-            </View>
-
-            <TouchableOpacity style={styles.applyButton} onPress={handleCloseFilter}>
-              <Text style={styles.applyButtonText}>See results</Text>
-            </TouchableOpacity>
           </View>
         </View>
       </Modal>

@@ -3,28 +3,10 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: Colors.light,
-        paddingTop: SH(25),
-        paddingHorizontal:SW(6)
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: SW(15),
-        paddingVertical:SH(15)
-
-    },
-    headerText:{
-        color: Colors.theme_color,
-        fontSize: SF(15),
-        fontFamily: "Poppins-Regular",
-        marginHorizontal: SW(10)
-    },
+ 
     righticons: {
         flexDirection: 'row',
+        alignItems:"center"
     },
     images: {
         width: SW(80),

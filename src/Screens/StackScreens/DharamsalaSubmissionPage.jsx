@@ -4,7 +4,7 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import Colors from '../../utils/Colors';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-
+import Globalstyles from '../../utils/GlobalCss';
 
 const DharamsalaSubmissionPage = ({navigation}) => {
     const [dharamsalaName, setDharamsalaName] = useState('');
@@ -49,13 +49,13 @@ const DharamsalaSubmissionPage = ({navigation}) => {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={Globalstyles.container}>
             <StatusBar 
                 barStyle="dark-content" 
                 backgroundColor="transparent" 
                 translucent 
             />
-            <View style={styles.header}>
+            <View style={Globalstyles.header}>
                 <View style={{ flexDirection: 'row' }}>
                     <TouchableOpacity onPress={() => navigation.navigate('Dharmshala')}>
                         <MaterialIcons
@@ -64,43 +64,43 @@ const DharamsalaSubmissionPage = ({navigation}) => {
                             color={Colors.theme_color}
                         />
                     </TouchableOpacity>
-                    <Text style={styles.headerText}>Dharmshala</Text>
+                    <Text style={Globalstyles.headerText}>Dharmshala</Text>
                 </View>
 
             </View>
-            <View style={styles.contentContainer}>
+            <View style={Globalstyles.form}>
                 <Text style={styles.title}>Upload Your Dharamsala Details</Text>
 
-                <Text style={styles.label}>Dharamsala Name *</Text>
+                <Text style={Globalstyles.title}>Dharamsala Name *</Text>
                 <TextInput
-                    style={styles.input}
+                    style={Globalstyles.input}
                     placeholder="Enter Dharamsala Name"
                     value={dharamsalaName}
                     onChangeText={setDharamsalaName}
                     placeholderTextColor={'gray'}
                 />
 
-                <Text style={styles.label}>Sub-Caste Name *</Text>
+                <Text style={Globalstyles.title}>Sub-Caste Name *</Text>
                 <TextInput
-                    style={styles.input}
+                    style={Globalstyles.input}
                     placeholder="Enter Sub-Caste Name"
                     value={subCasteName}
                     onChangeText={setSubCasteName}
                     placeholderTextColor={'gray'}
                 />
 
-                <Text style={styles.label}>City *</Text>
+                <Text style={Globalstyles.title}>City *</Text>
                 <TextInput
-                    style={styles.input}
+                    style={Globalstyles.input}
                     placeholder="Enter City"
                     value={city}
                     onChangeText={setCity}
                     placeholderTextColor={'gray'}
                 />
 
-                <Text style={styles.label}>Description (Optional)</Text>
+                <Text style={Globalstyles.title}>Description (Optional)</Text>
                 <TextInput
-                    style={[styles.input, styles.textArea]}
+                    style={[Globalstyles.input, styles.textArea]}
                     placeholder="Enter Description"
                     value={description}
                     onChangeText={setDescription}
@@ -108,8 +108,8 @@ const DharamsalaSubmissionPage = ({navigation}) => {
                     multiline
                 />
 
-              <View style={{flexDirection:"row",justifyContent:"space-between"}}>
-              <Text style={styles.label}>Upload Dharamsala Image *</Text>
+              <View style={{flexDirection:"row",justifyContent:"space-between",alignItems:"center"}}>
+              <Text style={Globalstyles.title}>Upload Dharamsala Image *</Text>
                 <TouchableOpacity style={styles.uploadButton} onPress={handleImageUpload}>
                     <Text style={styles.uploadButtonText}>
                         {image ? 'Change Image' : 'Upload Image'}
@@ -125,25 +125,8 @@ const DharamsalaSubmissionPage = ({navigation}) => {
         </SafeAreaView>
     );
 };
-
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: Colors.light,
-        paddingTop: SW(20)
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: SW(10),
-        paddingLeft: 0
-    },
-    headerText: {
-        color: Colors.theme_color,
-        fontSize: SF(15),
-        fontFamily: "Poppins-Regular"
-    },
+   
     title: {
         fontSize: SF(13),
         fontWeight: 'bold',
@@ -152,19 +135,7 @@ const styles = StyleSheet.create({
         marginBottom: SH(20),
        
     },
-    label: {
-        fontSize: SF(13),
-        fontFamily: "Poppins-Medium",
-        color: Colors.dark,
-        marginBottom: SH(5),
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: Colors.gray,
-        borderRadius: 5,
-        padding: SW(7),
-        marginBottom: SH(10),
-    },
+    
     textArea: {
         height: SH(100),
         textAlignVertical: 'top',

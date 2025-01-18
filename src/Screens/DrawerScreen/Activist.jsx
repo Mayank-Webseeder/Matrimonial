@@ -8,12 +8,17 @@ import styles from '../StyleScreens/ActivistStyle';
 import Colors from '../../utils/Colors';
 import { Dropdown } from 'react-native-element-dropdown';
 import { subCasteOptions,LocalityData } from '../../DummyData/DropdownData';
+import Globalstyles from '../../utils/GlobalCss';
+import Entypo from 'react-native-vector-icons/Entypo';
+import { SH } from '../../utils/Dimensions';
+
 const Activist = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [subcaste, setSubcaste] = useState('');
   const [locality, setLocality] = useState('');
-
-
+   const [filteredOptions, setFilteredOptions] = useState([]);
+ const [listHeight, setListHeight] = useState(0);
+   
   const handleOpenFilter = () => {
     setModalVisible(true);
   };
@@ -21,6 +26,23 @@ const Activist = ({ navigation }) => {
   const handleCloseFilter = () => {
     setModalVisible(false);
   };
+
+   const handleInputChange = (text) => {
+         setSubcaste(text);
+         if (text.trim() === '') {
+           setFilteredOptions([]); 
+         } else {
+           const filtered = subCasteOptions.filter((option) =>
+             option.label.toLowerCase().includes(text.toLowerCase())
+           );
+           setFilteredOptions(filtered);
+         }
+       };
+     
+       const handleOptionSelect = (value) => {
+         setSubcaste(value.label);
+         setFilteredOptions([]);
+       };
 
   const renderItem = ({ item }) => {
     return (
@@ -46,8 +68,8 @@ const Activist = ({ navigation }) => {
     return (
       <View>
         <View style={styles.searchbar}>
-          <AntDesign name={'search1'} size={20} color={'gray'} />
           <TextInput placeholder='Search in Your city' placeholderTextColor={'gray'} />
+          <AntDesign name={'search1'} size={20} color={'gray'} />
         </View>
 
         <View style={styles.ButtonContainer}>
@@ -63,21 +85,21 @@ const Activist = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={Globalstyles.container}>
       <StatusBar 
                 barStyle="dark-content" 
                 backgroundColor="transparent" 
                 translucent 
             />
-      <View style={styles.header}>
-        <View style={{ flexDirection: "row" }}>
+      <View style={Globalstyles.header}>
+        <View style={{ flexDirection: "row", alignItems:"center" }}>
           <TouchableOpacity onPress={() => { navigation.navigate('Tabs') }}>
-            <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
+            <MaterialIcons name={'arrow-back-ios-new'} size={25} color={Colors.theme_color} />
           </TouchableOpacity>
-          <Text style={styles.headerText}>Activist</Text>
+          <Text style={Globalstyles.headerText}>Activist</Text>
         </View>
-        <View style={{ flexDirection: "row" }}>
-          <AntDesign name="search1" size={25} color={Colors.theme_color} style={styles.searchIcon} />
+        <View style={{ flexDirection: "row" ,alignItems:"center" }}>
+          {/* <AntDesign name="search1" size={25} color={Colors.theme_color} style={styles.searchIcon} /> */}
           <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />
         </View>
       </View>
@@ -92,53 +114,79 @@ const Activist = ({ navigation }) => {
         contentContainerStyle={styles.panditListData}
       />
 
-      <Modal
-        visible={modalVisible}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={handleCloseFilter}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.Filterheader}>
-              <TouchableOpacity onPress={handleCloseFilter} style={{ flexDirection: "row" }}>
-                <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
-                <Text style={styles.headerText}>Filter</Text>
-              </TouchableOpacity>
-            </View>
-            <Text style={styles.headingText}>Sub-Caste</Text>
-            <View style={styles.inputContainer}>
-              <Dropdown
-                data={subCasteOptions}
-                labelField="label"
-                valueField="value"
-                value={subcaste}
-                onChange={item => setSubcaste(item.value)}
-                placeholder="Caste"
-                style={styles.dropdown}
-              />
-              <MaterialIcons name={'search'} size={20} color={'gray'} style={styles.icon} />
-            </View>
-            <Text style={styles.headingText}>Locality</Text>
+<Modal
+  visible={modalVisible}
+  transparent={true}
+  animationType="slide"
+  onRequestClose={handleCloseFilter}
+>
+  <View style={styles.modalOverlay}>
+    <View style={styles.modalContent}>
+      <View style={styles.Filterheader}>
+        <TouchableOpacity onPress={handleCloseFilter} style={{ flexDirection: 'row' }}>
+          <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
+          <Text style={Globalstyles.headerText}>Filter</Text>
+        </TouchableOpacity>
+      </View>
 
-            <View style={styles.inputContainer}>
-              <Dropdown
-                style={styles.dropdown}
-                data={LocalityData}
-                labelField="label"
-                valueField="value"
-                value={locality}
-                onChange={item => setLocality(item.value)}
-                placeholder="Locality"
+      <View style={Globalstyles.form}>
+        <Text style={Globalstyles.title}>Locality</Text>
+        <View>
+          <TextInput
+            style={Globalstyles.input}
+            value={locality}
+            onChangeText={(text) => setLocality(text)}
+            placeholder="Enter Locality"
+          />
+        </View>
+        <View>
+          <Text style={Globalstyles.title}>Sub-Caste</Text>
+          <View>
+            <TextInput
+              value={subcaste}
+              onChangeText={handleInputChange}
+              placeholder="Type your caste"
+              style={Globalstyles.input}
+            />
+            {filteredOptions.length > 0 && (
+              <FlatList
+                data={filteredOptions.slice(0, 2)}
+                scrollEnabled={false}
+                keyExtractor={(item) => item.value}
+                style={[Globalstyles.suggestions, { marginBottom: 10 }]}
+                renderItem={({ item }) => (
+                  <TouchableOpacity onPress={() => handleOptionSelect(item)}>
+                    <Text style={styles.label}>{item.label}</Text>
+                  </TouchableOpacity>
+                )}
+                onLayout={(event) => {
+                  const height = event.nativeEvent.layout.height;
+                  setListHeight(height); // Update list height dynamically
+                }}
               />
-              <MaterialIcons name={'search'} size={20} color={'gray'} style={styles.icon} />
-            </View>
-            <TouchableOpacity style={styles.applyButton} onPress={handleCloseFilter}>
-              <Text style={styles.applyButtonText}>See results</Text>
-            </TouchableOpacity>
+            )}
           </View>
         </View>
-      </Modal>
+        <TouchableOpacity style={styles.applyButton} onPress={handleCloseFilter}>
+          <Text style={styles.applyButtonText}>See results</Text>
+        </TouchableOpacity>
+
+        {/* Dynamically position the cross button */}
+        <TouchableOpacity
+          onPress={() => setModalVisible(false)}
+          style={[
+            styles.crossButton,
+            { top: SH(200) + listHeight + 100 },
+          ]}
+        >
+          <View style={styles.circle}>
+            <Entypo name="cross" size={25} color={Colors.light} />
+          </View>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </View>
+</Modal>
     </SafeAreaView>
   );
 };

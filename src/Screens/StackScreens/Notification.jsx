@@ -4,6 +4,7 @@ import styles from '../StyleScreens/NotificationsStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
 import { NotificationData } from '../../DummyData/DummyData';
+import Globalstyles from '../../utils/GlobalCss';
 const Notification = ({ navigation }) => {
 
   const renderItem = ({ item }) => {
@@ -17,21 +18,21 @@ const Notification = ({ navigation }) => {
     )
   }
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={Globalstyles.container}>
       <StatusBar 
                 barStyle="dark-content" 
                 backgroundColor="transparent" 
                 translucent 
             />
-      <View style={styles.header}>
-        <View style={{ flexDirection: "row" }}>
+      <View style={Globalstyles.header}>
+        <View style={{ flexDirection: "row",alignItems:"center" }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <MaterialIcons name={'arrow-back-ios-new'} size={23} color={Colors.theme_color} />
+            <MaterialIcons name={'arrow-back-ios-new'} size={25} color={Colors.theme_color} />
           </TouchableOpacity>
-          <Text style={styles.headerText}>Notifications</Text>
+          <Text style={Globalstyles.headerText}>Notifications</Text>
         </View>
       </View>
-      <View>
+      <View style={{flex:1}}>
         <FlatList
           data={NotificationData}
           renderItem={renderItem}

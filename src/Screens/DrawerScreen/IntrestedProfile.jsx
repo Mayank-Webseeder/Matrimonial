@@ -9,6 +9,7 @@ import Colors from '../../utils/Colors';
 import { slider } from '../../DummyData/DummyData';
 import { ScrollView } from 'react-native-gesture-handler';
 import AppIntroSlider from 'react-native-app-intro-slider';
+import Globalstyles from '../../utils/GlobalCss';
 
 const IntrestedProfile = ({ navigation }) => {
   const sliderRef = useRef(null);
@@ -41,22 +42,22 @@ const IntrestedProfile = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={Globalstyles.container}>
       <StatusBar
         barStyle="dark-content"
         backgroundColor="transparent"
         translucent
       />
-      <View style={styles.header}>
+      <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row',alignItems:"center" }}>
-          <TouchableOpacity onPress={() => navigation.navigate('Tabs')}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons
               name={'arrow-back-ios-new'}
-              size={20}
+              size={25}
               color={Colors.theme_color}
             />
           </TouchableOpacity>
-          <Text style={styles.headerText}>Matrimony</Text>
+          <Text style={Globalstyles.headerText}>Matrimony</Text>
         </View>
         <View style={styles.righticons}>
           <AntDesign

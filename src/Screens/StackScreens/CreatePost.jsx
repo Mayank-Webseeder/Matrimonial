@@ -5,6 +5,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from '../StyleScreens/CreatePostStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { launchImageLibrary } from 'react-native-image-picker';
+import Globalstyles from '../../utils/GlobalCss';
 
 const CreatePost = ({navigation}) => {
     const [photos,setPhotos]=useState('');
@@ -18,26 +19,19 @@ const CreatePost = ({navigation}) => {
         };
     
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={Globalstyles.container}>
             <StatusBar 
                 barStyle="dark-content" 
                 backgroundColor="transparent" 
                 translucent 
             />
 
-            <View style={styles.header}>
-                <View style={{ flexDirection: 'row' }}>
+            <View style={Globalstyles.header}>
+                <View style={{ flexDirection: 'row',alignItems:"center" }}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
-                    <Text style={styles.headerText}>Create Post</Text>
-                </View>
-                <View style={styles.righticons}>
-                    <TouchableOpacity style={styles.PostButton}>
-                       <Text style={styles.PostText}>Submit Post</Text>
-                    </TouchableOpacity>
-                    <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} />
-                    <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />
+                    <Text style={Globalstyles.headerText}>Create Post</Text>
                 </View>
             </View>
             <View style={styles.postHeader}>
@@ -48,24 +42,25 @@ const CreatePost = ({navigation}) => {
                 </View>
             </View>
             <View style={styles.textContainer}>
-                <TextInput style={styles.input} placeholder='Heading' placeholderTextColor={'gray'} />
-                <TextInput style={styles.input} placeholder='Sub-Heading' placeholderTextColor={'gray'} />
-                <TextInput style={styles.Textinput} placeholder='What’s on your mind?' placeholderTextColor={'gray'} />
+                <TextInput style={Globalstyles.input} placeholder='Title' placeholderTextColor={'gray'} />
+                <TextInput style={Globalstyles.textInput} 
+                placeholder='What’s on your mind?' placeholderTextColor={'gray'}
+                textAlignVertical='top' />
             </View>
             <View style={styles.addPhoto}>
                 <View>
-                    <Text style={styles.Text}>Add Image or Video</Text>
+                    <Text style={styles.Text}>Add Image ( Max Limit 5 )</Text>
                 </View>
                 <View style={styles.righticons}>
               <TouchableOpacity onPress={handleImagePick}>
               <AntDesign name={'camerao'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} />
               </TouchableOpacity>
-                    <AntDesign name={'videocamera'} size={25} color={Colors.theme_color} />
+                    {/* <AntDesign name={'videocamera'} size={25} color={Colors.theme_color} /> */}
                 </View>
             </View>
             {photos.length > 0 && (
                         <View style={styles.photosContainer}>
-                            <Text style={styles.label}>Uploaded Photos:</Text>
+                            <Text style={Globalstyles.title}>Uploaded Photos:</Text>
                             <ScrollView horizontal>
                                 {photos.map((photo, index) => (
                                     <Image key={index} source={{ uri: photo.uri }} style={styles.photo} />
@@ -73,6 +68,9 @@ const CreatePost = ({navigation}) => {
                             </ScrollView>
                         </View>
                     )}
+                     <TouchableOpacity style={styles.PostButton}>
+                       <Text style={styles.PostText}>Submit Post</Text>
+                    </TouchableOpacity>
         </SafeAreaView>
     )
 }

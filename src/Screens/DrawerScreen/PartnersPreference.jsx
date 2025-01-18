@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, Image, ImageBackground, TextInput, ScrollView, SafeAreaView, StatusBar } from 'react-native'
-import React, { useState } from 'react'
+import { StyleSheet, Text, View, Image, ImageBackground, TextInput, ScrollView, SafeAreaView, StatusBar, ActivityIndicator,FlatList } from 'react-native'
+import React, { useState, useEffect } from 'react'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/PartnerPreferenceStyle';
@@ -8,191 +8,208 @@ import { TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { Dropdown } from 'react-native-element-dropdown';
 import { DrawerActions } from '@react-navigation/native';
-import { CREATE_BIODATA, UPDATE_BIODATA } from '../../utils/BaseUrl';
+import { CREATE_PARTNER_PERFRENCES, UPDATE_PARTNER_PERFRENCES, GET_BIODATA } from '../../utils/BaseUrl';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Globalstyles from '../../utils/GlobalCss';
+import { useSelector } from 'react-redux';
+import moment from "moment";
 
 import {
-  maritalStatusData, OccupationData, QualificationData, ManglikStatusData, stateData, Villages, FamilyTypeData,
-  FamilyFinancialStatusData, FamilyIncomeData, PartnersLiveinData, BodyStructureData, ComplexionData, DietHabit, Disabilities,
-  smokingStatusData, DrinkingHabit, subCasteOptions
+  OccupationData, QualificationData, FamilyTypeData,
+  FamilyFinancialStatusData, PartnersLiveinData, BodyStructureData, ComplexionData, DietHabit, Disabilities, subCasteOptions,
+  PartnermaritalStatusData,
+  PartnersmokingStatusData,
+  PartnerDrinkingHabit,
+  PartnerManglikStatusData,
+  Income,CityData,StateData
 } from '../../DummyData/DropdownData';
+import Toast from 'react-native-toast-message';
+
+
 const PartnersPreference = ({ navigation }) => {
   const [selectedButton, setSelectedButton] = useState('PartnersPreference');
-  const [subCaste, setSubCaste] = useState('');
-  const [minAge, setMinAge] = useState('');
-  const [maxAge, setMaxAge] = useState('');
-  const [minHeightFeet, setMinHeightFeet] = useState('');
-  const [maxHeightFeet, setMaxHeightFeet] = useState('');
-  const [minWeight, setMinWeight] = useState('');
-  const [maxWeight, setMaxWeight] = useState('');
-  const [maritalStatus, setMaritalStatus] = useState('');
-  const [minIncome, setMinIncome] = useState('');
-  const [maxIncome, setMaxIncome] = useState('');
-  const [Occupation, setOccupation] = useState('');
-  const [Qualification, setQualification] = useState('');
-  const [disaAbility, setdisaAbility] = useState('');
-  const [ManglikStatus, setManglikStatus] = useState('');
-  const [PartnersLivein, setPartnersLivein] = useState('');
-  const [district, setDistrict] = useState('');
-  const [state, setState] = useState('');
-  const [village, setVillage] = useState('');
-  const [BodyStructure, setBodyStructure] = useState('');
-  const [Complexion, setComplexion] = useState('');
-  const [partnerDietHabit, setpartnerDietHabit] = useState('');
-  const [smokingStatus, setsmokingStatus] = useState('');
-  const [drinkingHabit, setdrinkingHabit] = useState('');
-  const [familyIncome, setFamilyIncome] = useState('');
-  const [familyFinancialStatus, setFamilyFinancialStatus] = useState('');
-  const [familyType, setFamilyType] = useState('');
-  const [partnerExpectations, setpartnerExpectations] = useState('');
+  const [isEditing, setIsEditing] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const profileData = useSelector((state) => state.profile);
+    const [showTimePicker, setShowTimePicker] = useState(false);
+    const [stateInput, setStateInput] = useState('');
+    const [subCasteInput, setSubCasteInput] = useState('');
+    const [filteredStates, setFilteredStates] = useState([]);
+    const [filteredCities, setFilteredCities] = useState([]);
+    const [filteredSubCaste, setFilteredSubCaste] = useState([]);
+    const [cityInput, setCityInput] = useState('');
+  const [selectedState, setSelectedState] = useState('');
+    const [selectedCity, setSelectedCity] = useState('');
+    const [selectedSubCaste, setSelectedSubCaste] = useState('');
+  console.log("profileData", profileData);
 
-  const ageData = Array.from({ length: 18 }, (_, i) => ({
+  const formattedDate = moment(profileData?.profiledata?.dob).format("DD MMMM YYYY");
+
+  const [biodata, setBiodata] = useState({
+    partnerSubCaste: '',
+    partnerMinAge: '',
+    partnerMaxAge: '',
+    partnerMinHeightFeet: '',
+    partnerMaxHeightFeet: '',
+    partnerMaritalStatus: '',
+    partnerIncome: '',
+    partnerOccupation: '',
+    partnerQualification: '',
+    partnerDisabilities: '',
+    partnerManglikStatus: '',
+    partnersLivingStatus: '',
+    partnerState: '',
+    partnerCity: '',
+    partnerBodyStructure: '',
+    partnerComplexion: '',
+    partnerDietaryHabits: '',
+    partnerSmokingHabits: '',
+    partnerDrinkingHabits: '',
+    partnerExprecations: '',
+    partnerFamilyType: '',
+    partnerFamilyFinancialStatus: '',
+    partnerFamilyIncome: ''
+  });
+  
+  const handleStateInputChange = (text) => {
+    setStateInput(text);
+    if (text) {
+      // Filter the StateData based on the input
+      const filtered = StateData.filter((item) =>
+        item?.label?.toLowerCase().includes(text.toLowerCase())
+      ).map(item => item.label);
+      setFilteredStates(filtered);
+    } else {
+      setFilteredStates([]);
+    }
+  };
+  
+  // Handle state selection to update both the input field and biodata.partnerState
+  const handleStateSelect = (item) => {
+    setStateInput(item);  // Set input value to the selected state
+    setSelectedState(item);  // Optionally store selected state if needed
+    setBiodata((prevBiodata) => ({
+      ...prevBiodata,
+      partnerState: item,  // Update biodata with selected state
+    }));
+    setFilteredStates([]);  // Clear suggestions after selection
+  };
+
+    const handleCityInputChange = (text) => {
+      setCityInput(text);
+      if (text) {
+        // Filter the CityData based on the input
+        const filtered = CityData.filter((item) =>
+          item?.label?.toLowerCase().includes(text.toLowerCase())
+        ).map(item => item.label);
+        setFilteredCities(filtered);
+      } else {
+        setFilteredCities([]);
+      }
+    };
+    
+    // Handle city selection to update both the input field and biodata.partnerCity
+    const handleCitySelect = (item) => {
+      setCityInput(item);  // Set input value to the selected city
+      setSelectedCity(item);  // Optionally store selected city if needed
+      setBiodata((prevBiodata) => ({
+        ...prevBiodata,
+        partnerCity: item,  // Update biodata with selected city
+      }));
+      setFilteredCities([]);  // Clear suggestions after selection
+    };
+  
+    const handleSubCasteInputChange = (text) => {
+      setSubCasteInput(text);
+      if (text) {
+        const filtered = subCasteOptions.filter((item) =>
+          item?.label?.toLowerCase().includes(text.toLowerCase())
+        ).map(item => item.label);
+        setFilteredSubCaste(filtered);
+      } else {
+        setFilteredSubCaste([]);
+      }
+    };
+
+    // Sub Caste input handler
+    const handleSubCasteSelect = (item) => {
+      setSubCasteInput(item);
+      setSelectedSubCaste(item);
+      setBiodata((prevBiodata) => ({
+        ...prevBiodata,
+        partnerSubCaste: item,
+      }));
+      setFilteredSubCaste([]);
+    };
+
+  const ageData = Array.from({ length: 82 }, (_, i) => ({
     label: `${18 + i}`,
     value: `${18 + i}`,
   }));
 
-  const feetData = Array.from({ length: 5 }, (_, i) => ({
-    label: `${3 + i} ft`,
-    value: `${3 + i}`,
-  }));
 
-  const weightData = Array.from({ length: 50 }, (_, i) => ({
-    label: `${40 + i} kg`,
-    value: `${40 + i}`,
-  }));
+  const heightData = Array.from({ length: 4 }, (_, feetIndex) =>
+    Array.from({ length: 12 }, (_, inchesIndex) => ({
+      label: `${4 + feetIndex} ' ${inchesIndex} '' `,
+      value: `${4 + feetIndex}-${inchesIndex}`,
+    }))
+  ).flat();
 
-  const incomeData = Array.from({ length: 20 }, (_, i) => ({
-    label: `${(i + 1) * 10000} INR`,
-    value: `${(i + 1) * 10000}`,
-  }));
 
   const handlePress = (buttonName) => {
     setSelectedButton(buttonName);
     navigation.navigate(buttonName);
   };
 
-  // create bio data api 
-  // const createBiodata = async () => {
-  //   try {
-  //     const payload = {
-  //       subCaste: subCaste,
-  //       minAge: minAge,
-  //       maxAge: maxAge,
-  //       minHeightFeet: minHeightFeet,
-  //       maxHeightFeet: maxHeightFeet,
-  //       minWeight: minWeight,
-  //       maxWeight: maxWeight,
-  //       maritalStatus: maritalStatus,
-  //       minIncome: minIncome,
-  //       maxIncome: maxIncome,
-  //       Occupation: Occupation,
-  //       Qualification: Qualification,
-  //       disaAbility: disaAbility,
-  //       ManglikStatus: ManglikStatus,
-  //       PartnersLivein: PartnersLivein,
-  //       district: district,
-  //       state: state,
-  //       village: village,
-  //       BodyStructure: BodyStructure,
-  //       Complexion: Complexion,
-  //       partnerDietHabit: partnerDietHabit,
-  //       smokingStatus: smokingStatus,
-  //       drinkingHabit: drinkingHabit,
-  //       familyIncome: familyIncome,
-  //       familyFinancialStatus: familyFinancialStatus,
-  //       familyType: familyType,
-  //       partnerExpectations: partnerExpectations,
-  //     }
-  //     const response = await axios.post(CREATE_BIODATA, payload);
-
-  //   }
-  //   catch (error) {
-  //     console.log("error", error);
-  //   }
-  // }
-
-  // update bio data 
-
-  // const updateBiodata = async () => {
-  //   try {
-  //     const payload = {
-  //       subCaste: subCaste,
-  //       minAge: minAge,
-  //       maxAge: maxAge,
-  //       minHeightFeet: minHeightFeet,
-  //       maxHeightFeet: maxHeightFeet,
-  //       minWeight: minWeight,
-  //       maxWeight: maxWeight,
-  //       maritalStatus: maritalStatus,
-  //       minIncome: minIncome,
-  //       maxIncome: maxIncome,
-  //       Occupation: Occupation,
-  //       Qualification: Qualification,
-  //       disaAbility: disaAbility,
-  //       ManglikStatus: ManglikStatus,
-  //       PartnersLivein: PartnersLivein,
-  //       district: district,
-  //       state: state,
-  //       village: village,
-  //       BodyStructure: BodyStructure,
-  //       Complexion: Complexion,
-  //       partnerDietHabit: partnerDietHabit,
-  //       smokingStatus: smokingStatus,
-  //       drinkingHabit: drinkingHabit,
-  //       familyIncome: familyIncome,
-  //       familyFinancialStatus: familyFinancialStatus,
-  //       familyType: familyType,
-  //       partnerExpectations: partnerExpectations,
-  //     }
-  //     const response = await axios.post(UPDATE_BIODATA, payload);
-
-  //   }
-  //   catch (error) {
-  //     console.log("error", error);
-  //   }
-  // }
-
-
+  const handleSave=()=>{
+    navigation.navigate('PhotoGallery')
+  }
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={Globalstyles.container}>
       <StatusBar
         barStyle="dark-content"
         backgroundColor="transparent"
         translucent
       />
-      <View style={styles.header}>
+      <View style={Globalstyles.header}>
         <View style={styles.headerContainer}>
           <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
             <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
           </TouchableOpacity>
-          <View style={styles.headerContainer}>
-            <Text style={styles.headerText}>Matrimony Profile</Text>
+          <View>
+            <Text style={Globalstyles.headerText}>Matrimony Profile</Text>
           </View>
         </View>
       </View>
+      <ScrollView style={{flex:1}}>
+      <ImageBackground source={require('../../Images/profile3.png')} style={styles.image}>
+        <View style={styles.smallHeader}>
+          <MaterialIcons
+            name="add-a-photo"
+            color={Colors.theme_color}
+            size={40}
+            style={styles.cameraIcon}
+          />
+        </View>
+      </ImageBackground>
+      <Text style={styles.editText} onPress={() => navigation.navigate('UpdateProfile')}>Edit Profile</Text>
+      <View style={styles.userDeatil}>
+        <View style={styles.userData}>
+          <Text style={styles.text}>{profileData?.profiledata?.username || 'NA'}</Text>
+          <Text style={styles.text}>{profileData?.profiledata?.mobileNo}</Text>
+        </View>
+        <View style={styles.userData}>
+          <Text style={styles.text}>DOB: {formattedDate || 'NA'}</Text>
+          <Text style={styles.text}>City: {profileData?.profiledata?.city || 'NA'}</Text>
+        </View>
+        <View style={styles.userData}>
 
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View>
-          <ImageBackground source={require('../../Images/profile3.png')} style={styles.image}>
-            <View style={styles.smallHeader}>
-              <Image source={require('../../Images/profile3.png')} style={styles.smallimage} />
-              <Text style={styles.name}>Raj Shah</Text>
-            </View>
-          </ImageBackground>
-
-          <View style={styles.userDeatil}>
-            <View style={styles.userData}>
-              <Text style={styles.text}>User ID: 1212312313</Text>
-              <Text style={styles.text}>23 yrs</Text>
-            </View>
-            <View style={styles.userData}>
-              <Text style={styles.text}>Unmarried</Text>
-              <Text style={styles.text}>Lives in London</Text>
-            </View>
-
-          </View>
-
-          <View style={styles.IconFlex}>
+          <Text style={styles.text}>Gender: {profileData?.profiledata?.gender || 'NA'}</Text>
+        </View>
+      </View>
+      
+      <View style={styles.IconFlex}>
             <TouchableOpacity
               style={styles.IconsButton}
               onPress={() => handlePress('DetailedProfile')}
@@ -232,329 +249,310 @@ const PartnersPreference = ({ navigation }) => {
               <Text style={styles.logotext}>Photo Gallery</Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.contentContainer}>
-            <Text style={styles.detailText}>Preferences</Text>
-            <View>
-              <View>
-                <Text style={styles.inputHeading}>Sub Caste</Text>
-                <Dropdown
-                  style={styles.input}
-                  data={subCasteOptions}
-                  labelField="label"
-                  valueField="value"
-                  value={subCaste}
-                  onChange={item => setSubCaste(item.value)}
-                  placeholder="Select status"
-                />
-              </View>
-              <View>
-                <Text style={styles.inputHeading}>Age Criteria</Text>
+          <View style={Globalstyles.form}>
+          <Text style={styles.detailText}>Preferences</Text>
+          <Text style={Globalstyles.title}>Sub-Caste</Text>
+          <TextInput
+          style={Globalstyles.input}
+          value={subCasteInput}
+          onChangeText={handleSubCasteInputChange}
+          placeholder="Type your sub caste"
+        />
+        {filteredSubCaste.length > 0 && subCasteInput ? (
+          <FlatList
+            data={filteredSubCaste.slice(0, 5)}
+            scrollEnabled={false}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => handleSubCasteSelect(item)}>
+                <Text style={Globalstyles.listItem}>{item}</Text>
+              </TouchableOpacity>
+            )}
+            style={Globalstyles.suggestions}
+          />
+        ) : null}
+
+                 <Text style={Globalstyles.title}>Age Criteria</Text>
                 <View style={styles.row}>
                   <Dropdown
-                    style={styles.dropdown}
+                    style={[styles.dropdown, !isEditing && styles.readOnly]}
                     data={ageData}
                     labelField="label"
                     valueField="value"
-                    value={minAge}
-                    onChange={(item) => setMinAge(item.value)}
+                    value={biodata.partnerMinAge}
+                    editable={isEditing}
+                    onChange={(item) => setBiodata({ ...biodata, partnerMinAge: item.value })}
                     placeholder="Min Age"
                   />
                   <Dropdown
-                    style={styles.dropdown}
+                    style={[styles.dropdown, !isEditing && styles.readOnly]}
                     data={ageData}
                     labelField="label"
                     valueField="value"
-                    value={maxAge}
-                    onChange={(item) => setMaxAge(item.value)}
-                    placeholder="Max Age"
+                    value={biodata.partnerMaxAge}
+                    editable={isEditing}
+                    onChange={(item) => setBiodata({ ...biodata, partnerMaxAge: item.value })}
+                    placeholder="Min Age"
                   />
                 </View>
-              </View>
-
-              {/* Height */}
-              <View>
-                <Text style={styles.inputHeading}>Height</Text>
+                <Text style={Globalstyles.title}>Height Criteria</Text>
                 <View style={styles.row}>
                   <Dropdown
-                    style={styles.dropdown}
-                    data={feetData}
+                    style={[styles.dropdown, !isEditing && styles.readOnly]}
+                    data={heightData}
                     labelField="label"
                     valueField="value"
-                    value={minHeightFeet}
-                    onChange={(item) => setMinHeightFeet(item.value)}
+                    value={biodata.partnerMinHeightFeet} 
+                    editable={isEditing}
+                    onChange={(item) => {
+                      setBiodata({
+                        ...biodata,
+                        partnerMinHeightFeet: item.label, 
+                      });
+                    }}
                     placeholder="Min Height"
                   />
                   <Dropdown
-                    style={styles.dropdown}
-                    data={feetData}
+                    style={[styles.dropdown, !isEditing && styles.readOnly]}
+                    data={heightData}
                     labelField="label"
                     valueField="value"
-                    value={maxHeightFeet}
-                    onChange={(item) => setMaxHeightFeet(item.value)}
+                    value={biodata.partnerMaxHeightFeet} 
+                    editable={isEditing}
+                    onChange={(item) => {
+                      setBiodata({
+                        ...biodata,
+                        partnerMaxAge: item.label, 
+                      });
+                    }}
                     placeholder="Max Height"
                   />
                 </View>
-              </View>
-
-              {/* Weight */}
-              <View>
-                <Text style={styles.inputHeading}>Weight (in kg)</Text>
-                <View style={styles.row}>
-                  <Dropdown
-                    style={styles.dropdown}
-                    data={weightData}
-                    labelField="label"
-                    valueField="value"
-                    value={minWeight}
-                    onChange={(item) => setMinWeight(item.value)}
-                    placeholder="Min Weight"
-                  />
-                  <Dropdown
-                    style={styles.dropdown}
-                    data={weightData}
-                    labelField="label"
-                    valueField="value"
-                    value={maxWeight}
-                    onChange={(item) => setMaxWeight(item.value)}
-                    placeholder="Max Weight"
-                  />
-                </View>
-              </View>
-              <View>
-                <Text style={styles.inputHeading}>Partners Marital Status</Text>
+                <View>
+                <Text style={Globalstyles.title}>Partners Marital Status</Text>
                 <Dropdown
-                  style={styles.input}
-                  data={maritalStatusData}
+                  style={[Globalstyles.input, !isEditing && styles.readOnly]}
+                  data={PartnermaritalStatusData}
                   labelField="label"
                   valueField="value"
-                  value={maritalStatus}
-                  onChange={item => setMaritalStatus(item.value)}
+                  value={biodata.partnerMaritalStatus}
+                  editable={isEditing}
+                  onChange={(item) => setBiodata({ ...biodata, partnerMaritalStatus: item.value })}
                   placeholder="Select status"
                 />
-              </View>
-              <View>
-                <Text style={styles.inputHeading}>Income Range (in INR)</Text>
-                <View style={styles.row}>
-                  <Dropdown
-                    style={styles.dropdown}
-                    data={incomeData}
-                    labelField="label"
-                    valueField="value"
-                    value={minIncome}
-                    onChange={(item) => setMinIncome(item.value)}
-                    placeholder="Min Income"
-                  />
-                  <Dropdown
-                    style={styles.dropdown}
-                    data={incomeData}
-                    labelField="label"
-                    valueField="value"
-                    value={maxIncome}
-                    onChange={(item) => setMaxIncome(item.value)}
-                    placeholder="Max Income"
-                  />
-                </View>
-              </View>
-              <View>
-                <Text style={styles.inputHeading}>Occupation</Text>
+                <Text style={Globalstyles.title}>Income Range (in INR)</Text>
                 <Dropdown
-                  style={styles.input}
+                  style={[Globalstyles.input, !isEditing && styles.readOnly]}
+                  data={Income}
+                  labelField="label"
+                  valueField="value"
+                  value={biodata.partnerIncome}
+                  editable={isEditing}
+                  onChange={(item) => setBiodata({ ...biodata, partnerIncome: item.value })}
+                  placeholder="Income"
+                />
+                 <Text style={Globalstyles.title}>Occupation</Text>
+                <Dropdown
+                  style={[Globalstyles.input, !isEditing && styles.readOnly]}
                   data={OccupationData}
                   labelField="label"
                   valueField="value"
-                  value={Occupation}
-                  onChange={item => setOccupation(item.value)}
+                  value={biodata.partnerOccupation}
+                  editable={isEditing}
+                  onChange={(item) => setBiodata({ ...biodata, partnerOccupation: item.value })}
                   placeholder="Select occupdation"
                 />
-              </View>
-              <View>
+
                 <Text style={styles.inputHeading}>Qualification</Text>
                 <Dropdown
-                  style={styles.input}
+                  style={[Globalstyles.input, !isEditing && styles.readOnly]}
                   data={QualificationData}
                   labelField="label"
                   valueField="value"
-                  value={Qualification}
-                  onChange={item => setQualification(item.value)}
+                  value={biodata.partnerQualification}
+                  editable={isEditing}
+                  onChange={(item) => setBiodata({ ...biodata, partnerQualification: item.value })}
                   placeholder="Select Qualification"
                 />
-              </View>
-              <View>
-                <Text style={styles.inputHeading}>Disabilities (Physical/Mental)</Text>
+                <Text style={Globalstyles.title}>Disabilities (Physical/Mental)</Text>
                 <Dropdown
-                  style={styles.input}
+                  style={[Globalstyles.input, !isEditing && styles.readOnly]}
                   data={Disabilities}
                   labelField="label"
                   valueField="value"
-                  value={disaAbility}
-                  onChange={item => setdisaAbility(item.value)}
+                  value={biodata.partnerDisabilities}
+                  editable={isEditing}
+                  onChange={(item) => setBiodata({ ...biodata, partnerDisabilities: item.value })}
                   placeholder="Select disability"
                 />
-              </View>
-              <View>
-                <Text style={styles.inputHeading}>Manglik Status</Text>
+                <Text style={Globalstyles.title}>Manglik Status</Text>
                 <Dropdown
-                  style={styles.input}
-                  data={ManglikStatusData}
+                  style={[Globalstyles.input, !isEditing && styles.readOnly]}
+                  data={PartnerManglikStatusData}
                   labelField="label"
                   valueField="value"
-                  value={ManglikStatus}
-                  onChange={item => setManglikStatus(item.value)}
+                  value={biodata.partnerManglikStatus}
+                  editable={isEditing}
+                  onChange={(item) => setBiodata({ ...biodata, partnerManglikStatus: item.value })}
                   placeholder="Select status"
                 />
-              </View>
-              <View>
-                <Text style={styles.inputHeading}>Partners Livein</Text>
+                <Text style={Globalstyles.title}>Partners Livein</Text>
                 <Dropdown
-                  style={styles.input}
+                  style={[Globalstyles.input, !isEditing && styles.readOnly]}
                   data={PartnersLiveinData}
                   labelField="label"
                   valueField="value"
-                  value={PartnersLivein}
-                  onChange={item => setPartnersLivein(item.value)}
+                  value={biodata.partnersLivingStatus}
+                  editable={isEditing}
+                  onChange={(item) => setBiodata({ ...biodata, partnersLivingStatus: item.value })}
                   placeholder="Select Livein"
                 />
-              </View>
-              <View>
-                <Text style={styles.inputHeading} value={district} onchange={item => setDistrict(item.value)}>District</Text>
-                <TextInput style={styles.input} />
-              </View>
-              <View>
-                <Text style={styles.inputHeading}>State</Text>
+                <Text style={Globalstyles.title}>State</Text>
+        <TextInput
+          style={Globalstyles.input}
+          value={stateInput}
+          onChangeText={handleStateInputChange}
+          placeholder="Type your state"
+        />
+        {filteredStates.length > 0 && stateInput ? (
+          <FlatList
+            data={filteredStates.slice(0, 5)}
+            scrollEnabled={false}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => handleStateSelect(item)}>
+                <Text style={Globalstyles.listItem}>{item}</Text>
+              </TouchableOpacity>
+            )}
+            style={Globalstyles.suggestions}
+          />
+        ) : null}
+
+                   <Text style={Globalstyles.title}>City / Village</Text>
+                <TextInput
+          style={Globalstyles.input}
+          value={cityInput}
+          onChangeText={handleCityInputChange}
+          placeholder="Type your city"
+        />
+        {filteredCities.length > 0 && cityInput ? (
+          <FlatList
+            data={filteredCities.slice(0, 5)}
+            scrollEnabled={false}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => handleCitySelect(item)}>
+                <Text style={Globalstyles.listItem}>{item}</Text>
+              </TouchableOpacity>
+            )}
+            style={Globalstyles.suggestions}
+          />
+        ) : null}
+<Text style={Globalstyles.title}>Partners body Structure</Text>
                 <Dropdown
-                  style={styles.input}
-                  data={stateData}
-                  labelField="label"
-                  valueField="value"
-                  value={state}
-                  onChange={item => setState(item.value)}
-                  placeholder="Select state"
-                />
-              </View>
-              <View>
-                <Text style={styles.inputHeading}>Village</Text>
-                <Dropdown
-                  style={styles.input}
-                  data={Villages}
-                  labelField="label"
-                  valueField="value"
-                  value={village}
-                  onChange={item => setVillage(item.value)}
-                  placeholder="Select village"
-                />
-              </View>
-              <View>
-                <Text style={styles.inputHeading}>Partners body Structure</Text>
-                <Dropdown
-                  style={styles.input}
+                  style={[Globalstyles.input, !isEditing && styles.readOnly]}
                   data={BodyStructureData}
                   labelField="label"
                   valueField="value"
-                  value={BodyStructure}
-                  onChange={item => setBodyStructure(item.value)}
+                  value={biodata.partnerBodyStructure}
+                  editable={isEditing}
+                  onChange={(item) => setBiodata({ ...biodata, partnerBodyStructure: item.value })}
                   placeholder="Select structure"
                 />
-              </View>
-              <View>
-                <Text style={styles.inputHeading}>Complexion</Text>
+                 <Text style={Globalstyles.title}>Complexion</Text>
                 <Dropdown
-                  style={styles.input}
+                  style={[Globalstyles.input, !isEditing && styles.readOnly]}
                   data={ComplexionData}
                   labelField="label"
                   valueField="value"
-                  value={Complexion}
-                  onChange={item => setComplexion(item.value)}
+                  value={biodata.partnerComplexion}
+                  editable={isEditing}
+                  onChange={(item) => setBiodata({ ...biodata, partnerComplexion: item.value })}
                   placeholder="Select Complexion"
                 />
-              </View>
-              <View>
-                <Text style={styles.inputHeading}>Partner Dietary Habits</Text>
+                 <Text style={Globalstyles.title}>Partner Dietary Habits</Text>
                 <Dropdown
-                  style={styles.input}
+                  style={[Globalstyles.input, !isEditing && styles.readOnly]}
                   data={DietHabit}
                   labelField="label"
                   valueField="value"
-                  value={partnerDietHabit}
-                  onChange={item => setpartnerDietHabit(item.value)}
+                  value={biodata.partnerDietaryHabits}
+                  editable={isEditing}
+                  onChange={(item) => setBiodata({ ...biodata, partnerDietaryHabits: item.value })}
                   placeholder="Select Diet"
                 />
-              </View>
-              <View>
-                <Text style={styles.inputHeading}>Smoking Habits</Text>
+                <Text style={Globalstyles.title}>Smoking Habits</Text>
                 <Dropdown
-                  style={styles.input}
-                  data={smokingStatusData}
+                  style={[Globalstyles.input, !isEditing && styles.readOnly]}
+                  data={PartnersmokingStatusData}
                   labelField="label"
                   valueField="value"
-                  value={smokingStatus}
-                  onChange={item => setsmokingStatus(item.value)}
+                  value={biodata.partnerSmokingHabits}
+                  editable={isEditing}
+                  onChange={(item) => setBiodata({ ...biodata, partnerSmokingHabits: item.value })}
                   placeholder="Select smoking"
                 />
-              </View>
-              <View>
-                <Text style={styles.inputHeading}>Drinking Habits</Text>
+                <Text style={Globalstyles.title}>Drinking Habits</Text>
                 <Dropdown
-                  style={styles.input}
-                  data={DrinkingHabit}
+                  style={[Globalstyles.input, !isEditing && styles.readOnly]}
+                  data={PartnerDrinkingHabit}
                   labelField="label"
                   valueField="value"
-                  value={drinkingHabit}
-                  onChange={item => setdrinkingHabit(item.value)}
+                  value={biodata.partnerDrinkingHabits}
+                  editable={isEditing}
+                  onChange={(item) => setBiodata({ ...biodata, partnerDrinkingHabits: item.value })}
                   placeholder="Select Habit"
                 />
-              </View>
-              <View>
-                <Text style={styles.inputHeading}>Family Type</Text>
+                <Text style={Globalstyles.title}>Family Type</Text>
                 <Dropdown
-                  style={styles.input}
+                  style={[Globalstyles.input, !isEditing && styles.readOnly]}
                   data={FamilyTypeData}
                   labelField="label"
                   valueField="value"
                   placeholder="Select Family Type"
-                  value={familyType}
-                  onChange={(item) => setFamilyType(item.value)}
+                  value={biodata.partnerFamilyType}
+                  editable={isEditing}
+                  onChange={(item) => setBiodata({ ...biodata, partnerFamilyType: item.value })}
                 />
-              </View>
-
-              <View>
-                <Text style={styles.inputHeading}>Family Financial Status</Text>
+                 <Text style={Globalstyles.title}>Family Financial Status</Text>
                 <Dropdown
-                  style={styles.input}
+                  style={[Globalstyles.input, !isEditing && styles.readOnly]}
                   data={FamilyFinancialStatusData}
                   labelField="label"
                   valueField="value"
                   placeholder="Select Family Financial Status"
-                  value={familyFinancialStatus}
-                  onChange={(item) => setFamilyFinancialStatus(item.value)}
+                  value={biodata.partnerFamilyFinancialStatus}
+                  editable={isEditing}
+                  onChange={(item) => setBiodata({ ...biodata, partnerFamilyFinancialStatus: item.value })}
                 />
-              </View>
-
-              <View>
-                <Text style={styles.inputHeading}>Family Income</Text>
+                <Text style={Globalstyles.title}>Family Income</Text>
                 <Dropdown
-                  style={styles.input}
-                  data={FamilyIncomeData}
+                  style={Globalstyles.input}
+                  data={Income}
                   labelField="label"
                   valueField="value"
                   placeholder="Select Family Income"
-                  value={familyIncome}
-                  onChange={(item) => setFamilyIncome(item.value)}
+                  value={biodata.partnerFamilyIncome}
+                  editable={isEditing}
+                  onChange={(item) => setBiodata({ ...biodata, partnerFamilyIncome: item.value })}
                 />
-              </View>
-
-              <View>
-                <Text style={styles.inputHeading} value={partnerExpectations} onchange={item => setpartnerExpectations(item.value)}>Expectations from Partner</Text>
-                <TextInput style={styles.input1} multiline={true} numberOfLines={6} />
-              </View>
-            </View>
-            <TouchableOpacity style={styles.button}>
-              <Text style={styles.buttonText}>Continue</Text>
+                <Text style={Globalstyles.title}>Expectations from Partner</Text>
+                <TextInput style={Globalstyles.textInput}
+                  multiline={true} numberOfLines={6}
+                  value={biodata.partnerExprecations}
+                  editable={isEditing}
+                  onChangeText={(text) =>
+                    setBiodata({ ...biodata, partnerExprecations: text })
+                  }
+                  textAlignVertical='top' />
+                    <TouchableOpacity style={styles.button} onPress={handleSave}>
+              <Text style={styles.buttonText}>Submit</Text>
             </TouchableOpacity>
+              </View>
           </View>
-        </View>
       </ScrollView>
     </SafeAreaView>
-  );
-};
+  )
+}
 
-export default PartnersPreference;
+export default PartnersPreference

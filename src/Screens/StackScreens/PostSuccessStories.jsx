@@ -5,6 +5,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { SH, SW, SF } from '../../utils/Dimensions';
+import Globalstyles from '../../utils/GlobalCss';
 
 const PostSuccessStories = ({ navigation }) => {
     const [rating, setRating] = useState(0);
@@ -50,18 +51,18 @@ const PostSuccessStories = ({ navigation }) => {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={Globalstyles.container}>
             <StatusBar
                 barStyle="dark-content"
                 backgroundColor="transparent"
                 translucent
             />
-            <View style={styles.header}>
+            <View style={Globalstyles.header}>
                 <View style={{ flexDirection: 'row', alignItems: "center" }}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
-                    <Text style={styles.headerText}>Post Story</Text>
+                    <Text style={Globalstyles.headerText}>Post Story</Text>
                 </View>
             </View>
 

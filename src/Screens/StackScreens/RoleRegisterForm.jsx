@@ -1,24 +1,39 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, SafeAreaView, StatusBar } from 'react-native';
+import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, SafeAreaView, StatusBar, FlatList } from 'react-native';
 import styles from '../StyleScreens/RoleRegisterStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
 import { Checkbox } from 'react-native-paper';
 import { Dropdown } from 'react-native-element-dropdown';
 import { launchImageLibrary } from 'react-native-image-picker';
+import Globalstyles from '../../utils/GlobalCss';
+import { subCasteOptions, StateData, CityData, panditServices, jyotishServices, kathavachakServices } from '../../DummyData/DropdownData';
 
 const RoleRegisterForm = ({ navigation }) => {
     const [name, setName] = useState('');
     const [mobile, setMobile] = useState('');
-    const [address, setAddress] = useState('');
-    const [state, setState] = useState('');
-    const [city, setCity] = useState('');
+    const [stateInput, setStateInput] = useState('');
+    const [cityInput, setCityInput] = useState('');
     const [aadhar, setAadhar] = useState('');
     const [subCaste, setSubCaste] = useState('');
     const [selectedRoles, setSelectedRoles] = useState([]);
-    const [checked, setChecked] = useState({}); 
+    const [checked, setChecked] = useState({});
     const [photos, setPhotos] = useState([]);
+    const [description, setDescription] = useState('');
     const [profilePhoto, setProfilePhoto] = useState('');
+    const [website, setWebsite] = useState('');
+    const [youtube, setYoutube] = useState('');
+    const [whatsapp, setWhatsapp] = useState('');
+    const [facebook, setFacebook] = useState('');
+    const [instagram, setInstagram] = useState('');
+    const [subCasteInput, setSubCasteInput] = useState('');
+    const [filteredStates, setFilteredStates] = useState([]);
+    const [filteredCities, setFilteredCities] = useState([]);
+    const [filteredSubCaste, setFilteredSubCaste] = useState([]);
+    const [selectedState, setSelectedState] = useState('');
+    const [selectedCity, setSelectedCity] = useState('');
+    const [selectedSubCaste, setSelectedSubCaste] = useState('');
+    const [area, setArea] = useState('');
 
     const roleOptions = [
         { label: 'Pandit', value: 'Pandit' },
@@ -27,28 +42,10 @@ const RoleRegisterForm = ({ navigation }) => {
     ];
 
     const servicesOptions = {
-        Pandit: [
-            { label: 'Pooja', value: 'Pooja' },
-            { label: 'Hawan', value: 'Hawan' },
-            { label: 'Griha Pravesh', value: 'Griha Pravesh' },
-        ],
-        Jyotish: [
-            { label: 'Astrology Consultation', value: 'Astrology Consultation' },
-            { label: 'Horoscope Reading', value: 'Horoscope Reading' },
-            { label: 'Palmistry', value: 'Palmistry' },
-        ],
-        Kathavachak: [
-            { label: 'Bhagwat Katha', value: 'Bhagwat Katha' },
-            { label: 'Shiv Puran', value: 'Shiv Puran' },
-            { label: 'Ramayan Katha', value: 'Ramayan Katha' },
-        ],
+        Pandit: panditServices,
+        Jyotish: jyotishServices,
+        Kathavachak: kathavachakServices,
     };
-
-    const subCasteOptions = [
-        { label: 'subCaste1', value: 'subCaste1' },
-        { label: 'subCaste2', value: 'subCaste2' },
-        { label: 'subCaste3', value: 'subCaste3' },
-    ];
 
     const handleRoleChange = (roleValue) => {
         setSelectedRoles(prevRoles => {
@@ -77,55 +74,160 @@ const RoleRegisterForm = ({ navigation }) => {
 
     const handleSubmit = () => {
         console.log({
-            name, mobile, address, state, city, aadhar, subCaste, services: checked, profilePhoto, photos,
+            name, mobile, aadhar, subCaste, services: checked, profilePhoto, photos, state: selectedState || stateInput,
+            subCaste: selectedSubCaste || subCasteInput, city: selectedCity || cityInput,
         });
     };
 
+    const handleStateInputChange = (text) => {
+        setStateInput(text);
+        if (text) {
+            const filtered = StateData.filter((item) =>
+                item?.label?.toLowerCase().includes(text.toLowerCase())
+            ).map(item => item.label);
+            setFilteredStates(filtered);
+        } else {
+            setFilteredStates([]);
+        }
+    };
+
+    const handleCityInputChange = (text) => {
+        setCityInput(text);
+        if (text) {
+            const filtered = CityData.filter((item) =>
+                item?.label?.toLowerCase().includes(text.toLowerCase())
+            ).map(item => item.label);
+            setFilteredCities(filtered);
+        } else {
+            setFilteredCities([]);
+        }
+    };
+
+    // Sub Caste input handler
+    const handleSubCasteInputChange = (text) => {
+        setSubCasteInput(text);
+        if (text) {
+            const filtered = subCasteOptions.filter((item) =>
+                item?.label?.toLowerCase().includes(text.toLowerCase())
+            ).map(item => item.label);
+            setFilteredSubCaste(filtered);
+        } else {
+            setFilteredSubCaste([]);
+        }
+    };
+
+
+
     return (
-        <SafeAreaView contentContainerStyle={styles.container}>
+        <SafeAreaView style={Globalstyles.container}>
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
-            <View style={styles.header}>
-                <View style={{ flexDirection: 'row' }}>
+            <View style={Globalstyles.header}>
+                <View style={{ flexDirection: 'row', alignItems: "center" }}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
-                    <Text style={styles.headerText}>Register</Text>
+                    <Text style={Globalstyles.headerText}>Register</Text>
                 </View>
             </View>
 
             <ScrollView>
-                <View style={styles.form}>
-                    <Text style={styles.label}>Name</Text>
-                    <TextInput style={styles.input} value={name} onChangeText={setName} />
+                <View style={Globalstyles.form}>
+                    <Text style={styles.editText}>Edit Details</Text>
+                    <Text style={Globalstyles.title}>Name</Text>
+                    <TextInput style={Globalstyles.input} value={name} onChangeText={setName} />
 
-                    <Text style={styles.label}>Mobile No.</Text>
-                    <TextInput style={styles.input} value={mobile} onChangeText={setMobile} keyboardType="phone-pad" />
+                    <Text style={Globalstyles.title}>Mobile No.</Text>
+                    <TextInput style={Globalstyles.input} value={mobile} onChangeText={setMobile} keyboardType="phone-pad" />
 
-                    <Text style={styles.label}>Address</Text>
-                    <TextInput style={styles.input} value={address} onChangeText={setAddress} multiline />
-
-                    <Text style={styles.label}>State</Text>
-                    <TextInput style={styles.input} value={state} onChangeText={setState} />
-
-                    <Text style={styles.label}>City</Text>
-                    <TextInput style={styles.input} value={city} onChangeText={setCity} />
-
-                    <Text style={styles.label}>Aadhar No.</Text>
-                    <TextInput style={styles.input} value={aadhar} onChangeText={setAadhar} keyboardType="number-pad" />
-
-                    <Text style={styles.label}>Sub Caste</Text>
-                    <Dropdown
-                        style={styles.input}
-                        data={subCasteOptions}
-                        labelField="label"
-                        valueField="value"
-                        value={subCaste}
-                        onChange={item => setSubCaste(item.value)}
-                        placeholder="Select Sub Caste"
+                    <Text style={Globalstyles.title}>State</Text>
+                    <TextInput
+                        style={Globalstyles.input}
+                        value={stateInput}
+                        onChangeText={handleStateInputChange}
+                        placeholder="Type your state"
                     />
+                    {filteredStates.length > 0 && stateInput ? (
+                        <FlatList
+                            data={filteredStates}
+                            keyExtractor={(item, index) => index.toString()}
+                            scrollEnabled={false}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        setStateInput(item);
+                                        setSelectedState(item);
+                                        setFilteredStates([]);
+                                    }}
+                                >
+                                    <Text style={Globalstyles.listItem}>{item}</Text>
+                                </TouchableOpacity>
+                            )}
+                            style={Globalstyles.suggestions}
+                        />
+                    ) : null}
+
+                    <Text style={Globalstyles.title}>Village / City</Text>
+                    <TextInput
+                        style={Globalstyles.input}
+                        value={cityInput}
+                        onChangeText={handleCityInputChange}
+                        placeholder="Type your city"
+                    />
+                    {filteredCities.length > 0 && cityInput ? (
+                        <FlatList
+                            data={filteredCities}
+                            scrollEnabled={false}
+                            keyExtractor={(item, index) => index.toString()}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        setCityInput(item);
+                                        setSelectedCity(item);
+                                        setFilteredCities([]);
+                                    }}
+                                >
+                                    <Text style={Globalstyles.listItem}>{item}</Text>
+                                </TouchableOpacity>
+                            )}
+                            style={Globalstyles.suggestions}
+                        />
+                    ) : null}
+
+                    <Text style={Globalstyles.title}>Area (optional)</Text>
+                    <TextInput style={Globalstyles.input} value={area} onChangeText={setArea} />
+
+                    <Text style={Globalstyles.title}>Aadhar No. (Optional)</Text>
+                    <TextInput style={Globalstyles.input} value={aadhar} onChangeText={setAadhar} keyboardType="number-pad" />
+
+                    <Text style={Globalstyles.title}>Sub Caste</Text>
+                    <TextInput
+                        style={Globalstyles.input}
+                        value={subCasteInput}
+                        onChangeText={handleSubCasteInputChange}
+                        placeholder="Type your sub caste"
+                    />
+                    {filteredSubCaste.length > 0 && subCasteInput ? (
+                        <FlatList
+                            data={filteredSubCaste.slice(0, 5)}
+                            scrollEnabled={false}
+                            keyExtractor={(item, index) => index.toString()}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        setSubCasteInput(item);
+                                        setSelectedSubCaste(item);
+                                        setFilteredSubCaste([]);
+                                    }}
+                                >
+                                    <Text style={Globalstyles.listItem}>{item}</Text>
+                                </TouchableOpacity>
+                            )}
+                            style={Globalstyles.suggestions}
+                        />
+                    ) : null}
 
                     {/* Role Selection with Checkboxes */}
-                    <Text style={styles.label}>You are Registering for</Text>
+                    <Text style={Globalstyles.title}>You are Registering for</Text>
                     <View style={styles.checkboxContainer}>
                         {roleOptions.map(role => (
                             <View key={role.value} style={styles.checkboxItem}>
@@ -156,11 +258,17 @@ const RoleRegisterForm = ({ navigation }) => {
                         </View>
                     ))}
 
-                    <Text style={styles.label}>Profile Photo</Text>
-                    <TextInput style={styles.input} value={profilePhoto} onChangeText={setProfilePhoto} />
+                    <Text style={Globalstyles.title}>Profile Photo</Text>
+                    <TextInput style={Globalstyles.input} value={profilePhoto} onChangeText={setProfilePhoto} />
+
+                    <Text style={Globalstyles.title}>Add Description</Text>
+                    <TextInput style={Globalstyles.textInput} value={description} onChangeText={setDescription}
+                        textAlignVertical='top'
+                    />
+
 
                     <View style={styles.photopickContainer}>
-                        <Text style={styles.label}>Photos (Up to 5)</Text>
+                        <Text style={Globalstyles.title}>Photos (Up to 5)</Text>
                         <TouchableOpacity style={styles.PickPhotoButton} onPress={handleImagePick}>
                             <Text style={styles.PickPhotoText}>Pick Photos</Text>
                         </TouchableOpacity>
@@ -176,6 +284,17 @@ const RoleRegisterForm = ({ navigation }) => {
                             </ScrollView>
                         </View>
                     )}
+
+                    <Text style={Globalstyles.title}>Website Link</Text>
+                    <TextInput style={Globalstyles.input} value={website} onChangeText={setWebsite} />
+                    <Text style={Globalstyles.title}>Youtube Link</Text>
+                    <TextInput style={Globalstyles.input} value={youtube} onChangeText={setYoutube} />
+                    <Text style={Globalstyles.title}>Whatsapp Link</Text>
+                    <TextInput style={Globalstyles.input} value={whatsapp} onChangeText={setWhatsapp} />
+                    <Text style={Globalstyles.title}>Facebook Link</Text>
+                    <TextInput style={Globalstyles.input} value={facebook} onChangeText={setFacebook} />
+                    <Text style={Globalstyles.title}>Instagram Link</Text>
+                    <TextInput style={Globalstyles.input} value={instagram} onChangeText={setInstagram} />
 
                     <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                         <Text style={styles.buttonText}>Save</Text>

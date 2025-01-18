@@ -6,6 +6,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import styles from '../StyleScreens/PostReview';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Colors from '../../utils/Colors';
+import Globalstyles from '../../utils/GlobalCss';
 
 
 const PostReview = ({ navigation }) => {
@@ -65,18 +66,18 @@ const PostReview = ({ navigation }) => {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={Globalstyles.container}>
             <StatusBar 
                 barStyle="dark-content" 
                 backgroundColor="transparent" 
                 translucent 
             />
-            <View style={styles.header}>
+            <View style={Globalstyles.header}>
                 <View style={{ alignItems:"center",flexDirection:"row"}}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
-                    <Text style={styles.headerText}>Post a Review</Text>
+                    <Text style={Globalstyles.headerText}>Post a Review</Text>
                 </View>
                 <View style={styles.righticons}>
                     {/* <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} /> */}
@@ -84,30 +85,21 @@ const PostReview = ({ navigation }) => {
                 </View>
             </View>
 
-            <TouchableOpacity style={styles.imageContainer} onPress={handleImagePicker}>
-                {image ? (
-                    <Image source={{ uri: image }} style={styles.image} />
-                ) : (
-                    <View style={styles.uploadPlaceholder}>
-                        <MaterialIcons name="add-a-photo" size={40} color={Colors.gray} />
-                        <Text style={styles.uploadText}>Upload Photo (Optional)</Text>
-                    </View>
-                )}
-            </TouchableOpacity>
 
-           <View style={styles.contentContainer}>
-           <Text style={styles.label}>Description (Optional)</Text>
+           <View style={Globalstyles.form}>
+           <Text style={Globalstyles.title}>Rating (Required)</Text>
+           <View style={styles.starContainer}>{renderStars()}</View>
+
+           <Text style={Globalstyles.title}>Description (Optional)</Text>
             <TextInput
-                style={styles.textInput}
+                style={Globalstyles.textInput}
                 placeholder="Write your review..."
                 placeholderTextColor={Colors.gray}
                 multiline
                 value={description}
                 onChangeText={setDescription}
+                textAlignVertical='top'
             />
-
-            <Text style={styles.label}>Rating (Required)</Text>
-            <View style={styles.starContainer}>{renderStars()}</View>
 
             <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
                 <Text style={styles.submitButtonText}>Submit Review</Text>

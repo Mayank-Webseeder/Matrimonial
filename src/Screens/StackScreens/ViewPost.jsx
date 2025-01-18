@@ -6,6 +6,7 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styles from '../StyleScreens/ViewPostStyle';
+import Globalstyles from '../../utils/GlobalCss';
 
 const ViewPost = ({ navigation, route }) => {
   const { post } = route.params;
@@ -33,18 +34,18 @@ const ViewPost = ({ navigation, route }) => {
   }, [images]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={Globalstyles.container}>
       <StatusBar 
                 barStyle="dark-content" 
                 backgroundColor="transparent" 
                 translucent 
             />
-      <View style={styles.header}>
-        <View style={{ flexDirection: 'row' }}>
+      <View style={Globalstyles.header}>
+        <View style={{ flexDirection: 'row',alignItems:"center" }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
-          <Text style={styles.headerText}>{post.name}'s Post</Text>
+          <Text style={Globalstyles.headerText}>{post.name}'s Post</Text>
         </View>
         <View style={styles.righticons}>
           <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} />
@@ -71,7 +72,7 @@ const ViewPost = ({ navigation, route }) => {
         </Text>
 
         {images.length > 0 && (
-          <View style={styles.imageScrollContainer}>
+          <View>
             {images.map((image, index) => (
               <View key={index} style={styles.card}>
                <View>

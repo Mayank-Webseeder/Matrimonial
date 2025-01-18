@@ -7,7 +7,7 @@ import {
     TextInput,
     ScrollView,
     SafeAreaView,
-    ActivityIndicator
+    ActivityIndicator, FlatList
 } from "react-native";
 import styles from "../StyleScreens/RegisterStyle";
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -17,16 +17,20 @@ import Colors from "../../utils/Colors";
 import axios from "axios";
 import { SIGNUP_ENDPOINT } from "../../utils/BaseUrl";
 import Toast from "react-native-toast-message";
-
+import { CityData, genderData } from "../../DummyData/DropdownData";
+import Globalstyles from "../../utils/GlobalCss";
 const Register = ({ navigation }) => {
     const [selectedDate, setSelectedDate] = useState(null);
     const [showDatePicker, setShowDatePicker] = useState(false);
+    const [cityInput, setCityInput] = useState('');
+    const [filteredCities, setFilteredCities] = useState(CityData);
     const [selectedCity, setSelectedCity] = useState(null);
     const [gender, setGender] = useState(null);
     const [mobileNumber, setMobileNumber] = useState("");
     const [fullName, setFullName] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmpassword] = useState("");
+    const [otp, setOtp] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [errors, setErrors] = useState({});
@@ -104,9 +108,22 @@ const Register = ({ navigation }) => {
         }
     };
 
+    const handleCityInputChange = (text) => {
+        setCityInput(text);
+        if (text) {
+            const filtered = CityData.filter((item) =>
+                item?.label?.toLowerCase().includes(text.toLowerCase())
+            ).map(item => item.label);
+            setFilteredCities(filtered);
+        } else {
+            setFilteredCities([]);
+        }
+    };
 
     const handleDateChange = (event, date) => {
-        if (date) setSelectedDate(date);
+        if (date && date !== selectedDate) {
+            setSelectedDate(date); // Only update if date has changed
+        }
         setShowDatePicker(false);
     };
 
@@ -116,17 +133,6 @@ const Register = ({ navigation }) => {
         const year = date.getFullYear();
         return `${day}/${month}/${year}`;
     };
-
-    const cityData = [
-        { label: "Indore", value: "Indore" },
-        { label: "Bhopal", value: "Bhopal" },
-        { label: "Gwalior", value: "Gwalior" },
-    ];
-
-    const genderData = [
-        { label: "Male", value: "Male" },
-        { label: "Female", value: "Female" },
-    ];
 
     return (
         <SafeAreaView style={styles.container}>
@@ -144,11 +150,139 @@ const Register = ({ navigation }) => {
                 <ScrollView style={styles.contentContainer}>
                     <Text style={styles.text}>Sign Up</Text>
 
-                    {/* Mobile Number */}
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.title}>Mobile Number</Text>
+                    <View style={Globalstyles.form}>
+                        <Text style={Globalstyles.title}>Full Name</Text>
                         <TextInput
-                            style={styles.input}
+                            style={Globalstyles.input}
+                            placeholder="Enter your full name"
+                            value={fullName}
+                            onChangeText={setFullName}
+                            placeholderTextColor={Colors.gray}
+                        />
+                        {errors.fullName && (
+                            <Text style={styles.errorText}>{errors.fullName}</Text>
+                        )}
+                        {/* Date of Birth */}
+                        <View>
+                            <Text style={styles.title}>Date of Birth</Text>
+                            <View style={Globalstyles.input1}>
+                                <Text style={Globalstyles.date}>
+                                    {selectedDate ? formatDate(selectedDate) : " "}
+                                </Text>
+                                <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+                                    <AntDesign name={"down"} size={20} style={styles.arrow} />
+                                </TouchableOpacity>
+                            </View>
+                            {errors.selectedDate && (
+                                <Text style={styles.errorText}>{errors.selectedDate}</Text>
+                            )}
+                        </View>
+
+                        {/* City */}
+                        <Text style={Globalstyles.title}>City</Text>
+                        <TextInput
+                            style={Globalstyles.input}
+                            value={cityInput}
+                            onChangeText={handleCityInputChange}
+                            placeholder="Type your city"
+                        />
+                        {filteredCities.length > 0 && cityInput ? (
+                            <FlatList
+                                data={filteredCities}
+                                scrollEnabled={false}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity
+                                        onPress={() => {
+                                            setCityInput(item);
+                                            setSelectedCity(item);
+                                            setFilteredCities([]);
+                                        }}
+                                    >
+                                        <Text style={Globalstyles.listItem}>{item}</Text>
+                                    </TouchableOpacity>
+                                )}
+                                style={Globalstyles.suggestions}
+                            />
+                        ) : null}
+
+                        {errors.selectedCity && (
+                            <Text style={styles.errorText}>{errors.selectedCity}</Text>
+                        )}
+
+
+                        {/* Gender */}
+                        <Text style={Globalstyles.title}>Gender</Text>
+                        <Dropdown
+                            data={genderData}
+                            labelField="label"
+                            valueField="value"
+                            placeholder="Select Gender"
+                            value={gender}
+                            onChange={(item) => setGender(item.value)}
+                            style={Globalstyles.input}
+                        />
+
+                        {errors.gender && (
+                            <Text style={styles.errorText}>{errors.gender}</Text>
+                        )}
+
+                        {/* Create Password */}
+                        <View>
+                            <Text style={Globalstyles.title}>Create Password</Text>
+                            <View style={Globalstyles.input1}>
+                                <TextInput
+                                    style={Globalstyles.TextInput}
+                                    secureTextEntry={!showPassword}
+                                    placeholder="Create a strong password"
+                                    value={password}
+                                    onChangeText={setPassword}
+                                    placeholderTextColor={'gray'}
+                                />
+                                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                                    <AntDesign
+                                        name={showPassword ? "eye" : "eyeo"}
+                                        size={20}
+                                        style={styles.eyeIcon}
+                                        color={Colors.dark}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                            {errors.password && (
+                                <Text style={styles.errorText}>{errors.password}</Text>
+                            )}
+                        </View>
+
+                        {/* Confirm Password */}
+                        <View>
+                            <Text style={Globalstyles.title}>Confirm Password</Text>
+                            <View style={Globalstyles.input1}>
+                                <TextInput
+                                    style={Globalstyles.TextInput}
+                                    secureTextEntry={!showConfirmPassword}
+                                    placeholder="Create a strong password"
+                                    value={confirmPassword}
+                                    onChangeText={setConfirmpassword}
+                                    placeholderTextColor={'gray'}
+                                />
+                                <TouchableOpacity onPress={() => setShowConfirmPassword(!confirmPassword)}>
+                                    <AntDesign
+                                        name={showPassword ? "eye" : "eyeo"}
+                                        size={20}
+                                        style={styles.eyeIcon}
+                                        color={Colors.dark}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                            {errors.confirmPassword && (
+                                <Text style={styles.errorText}>{errors.confirmPassword}</Text>
+                            )}
+                        </View>
+
+                        {/* Mobile Number */}
+                        <Text style={Globalstyles.title}>Mobile Number</Text>
+                        <TextInput
+                            style={Globalstyles.input}
                             keyboardType="numeric"
                             placeholder="Enter your mobile number"
                             value={mobileNumber}
@@ -159,129 +293,22 @@ const Register = ({ navigation }) => {
                         {errors.mobileNumber && (
                             <Text style={styles.errorText}>{errors.mobileNumber}</Text>
                         )}
-                    </View>
-
-                    {/* Full Name */}
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.title}>Full Name</Text>
+                        {/* Mobile Number */}
+                        <Text style={Globalstyles.title}>Otp</Text>
                         <TextInput
-                            style={styles.input}
-                            placeholder="Enter your full name"
-                            value={fullName}
-                            onChangeText={setFullName}
+                            style={Globalstyles.input}
+                            keyboardType="numeric"
+                            placeholder="Enter your otp"
+                            value={otp}
+                            onChangeText={setOtp}
+                            maxLength={6}
                             placeholderTextColor={Colors.gray}
                         />
-                        {errors.fullName && (
-                            <Text style={styles.errorText}>{errors.fullName}</Text>
-                        )}
-                    </View>
 
-                    {/* Date of Birth */}
-                    <View>
-                        <Text style={styles.title}>Date of Birth</Text>
-                        <View style={styles.date}>
-                            <Text style={styles.dateText}>
-                                {selectedDate ? formatDate(selectedDate) : " "}
-                            </Text>
-                            <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-                                <AntDesign name={"down"} size={20} style={styles.arrow} />
-                            </TouchableOpacity>
-                        </View>
-                        {errors.selectedDate && (
-                            <Text style={styles.errorText}>{errors.selectedDate}</Text>
-                        )}
+                        {/* {errors.Otp && (
+                            <Text style={styles.errorText}>{errors.Otp}</Text>
+                        )} */}
                     </View>
-
-                    {/* City */}
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.title}>City</Text>
-                        <Dropdown
-                            data={cityData}
-                            labelField="label"
-                            valueField="value"
-                            placeholder=" "
-                            value={selectedCity}
-                            onChange={(item) => setSelectedCity(item.value)}
-                            style={styles.dropdown}
-                            placeholderStyle={styles.dropdownPlaceholder}
-                            selectedTextStyle={styles.dropdownSelectedText}
-                        />
-                        {errors.selectedCity && (
-                            <Text style={styles.errorText}>{errors.selectedCity}</Text>
-                        )}
-                    </View>
-
-                    {/* Gender */}
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.title}>Gender</Text>
-                        <Dropdown
-                            data={genderData}
-                            labelField="label"
-                            valueField="value"
-                            placeholder=" "
-                            value={gender}
-                            onChange={(item) => setGender(item.value)}
-                            style={styles.dropdown}
-                            placeholderStyle={styles.dropdownPlaceholder}
-                            selectedTextStyle={styles.dropdownSelectedText}
-                        />
-                        {errors.gender && (
-                            <Text style={styles.errorText}>{errors.gender}</Text>
-                        )}
-                    </View>
-
-                    {/* Create Password */}
-                    <View>
-                        <Text style={styles.title}>Create Password</Text>
-                        <View style={styles.passwordContainer}>
-                            <TextInput
-                                style={styles.passwordInput}
-                                secureTextEntry={!showPassword}
-                                placeholder="Create a strong password"
-                                value={password}
-                                onChangeText={setPassword}
-                                placeholderTextColor={'gray'}
-                            />
-                            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                                <AntDesign
-                                    name={showPassword ? "eye" : "eyeo"}
-                                    size={20}
-                                    style={styles.eyeIcon}
-                                    color={Colors.dark}
-                                />
-                            </TouchableOpacity>
-                        </View>
-                        {errors.password && (
-                            <Text style={styles.errorText}>{errors.password}</Text>
-                        )}
-                    </View>
-
-                    {/* Confirm Password */}
-                    <View>
-                        <Text style={styles.title}>Confirm Password</Text>
-                        <View style={styles.passwordContainer}>
-                            <TextInput
-                                style={styles.passwordInput}
-                                secureTextEntry={!showConfirmPassword}
-                                placeholder="Confirm your password"
-                                value={confirmPassword}
-                                onChangeText={setConfirmpassword}
-                                placeholderTextColor={'gray'}
-                            />
-                            <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
-                                <AntDesign
-                                    name={showConfirmPassword ? "eye" : "eyeo"}
-                                    size={20}
-                                    style={styles.eyeIcon}
-                                    color={Colors.dark}
-                                />
-                            </TouchableOpacity>
-                        </View>
-                        {errors.confirmPassword && (
-                            <Text style={styles.errorText}>{errors.confirmPassword}</Text>
-                        )}
-                    </View>
-
                     {/* Continue Button */}
                     <TouchableOpacity
                         style={styles.button}
@@ -289,7 +316,7 @@ const Register = ({ navigation }) => {
                         disabled={isLoading} // Disable button when loading
                     >
                         {isLoading ? (
-                            <ActivityIndicator  size={'large'} color={Colors.light} />
+                            <ActivityIndicator size={'large'} color={Colors.light} />
                         ) : (
                             <Text style={styles.buttonText}>Sign Up</Text>
                         )}

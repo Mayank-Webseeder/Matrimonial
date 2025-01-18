@@ -19,12 +19,12 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         marginTop: SH(175),
         paddingHorizontal: SW(10),
-        paddingVertical:SH(5),
+        paddingVertical: SH(5),
         marginBottom: SH(10),
         shadowColor: Colors.theme_color,
-        elevation: 5, 
-        shadowOffset: { width: 0, height: 2 }, 
-        shadowOpacity: 0.25, 
+        elevation: 5,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
         shadowRadius: 3.84,
     },
     text: {
@@ -32,18 +32,8 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins-Bold",
         color: Colors.theme_color,
         marginVertical: SH(2),
-        marginLeft:0
-    },
-    date: {
-        borderColor: Colors.gray,
-        borderWidth: 1,
-        width: "100%",
-        borderRadius: 10,
-        flexDirection: "row",
-        alignItems: "center",
-        paddingHorizontal: SW(10),
-        paddingVertical: SH(10),
-        color:Colors.dark
+        marginLeft: 0,
+        textAlign: "center"
     },
     dateText: {
         flex: 1,
@@ -57,29 +47,15 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins-Medium",
         fontSize: SF(16),
     },
-    input: {
-        borderColor: Colors.gray,
-        borderWidth: 1,
-        width: "100%",
-        borderRadius: 10,
-        flexDirection: "row",
-        alignItems: "center",
-        paddingHorizontal: SW(10),
-        paddingVertical: SH(10),
-        color:Colors.dark
-    },
-    inputContainer: {
-        marginVertical: SH(5)
 
-    },
     button: {
         backgroundColor: Colors.theme_color,
         paddingHorizontal: SW(5),
-        paddingVertical:SH(5),
+        paddingVertical: SH(5),
         borderRadius: 50,
         marginTop: SH(30),
         width: "100%",
-        marginBottom:SH(20)
+        marginBottom: SH(20)
     },
 
     buttonText: {
@@ -97,14 +73,14 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingHorizontal: SW(10),
         paddingVertical: SH(10),
-        color:Colors.dark
+        color: Colors.dark
     }, modalContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
-    dropdown:{
+    dropdown: {
         borderColor: Colors.gray,
         borderWidth: 1,
         width: "100%",
@@ -114,28 +90,19 @@ const styles = StyleSheet.create({
         paddingHorizontal: SW(10),
         paddingVertical: SH(7),
     },
-    backArrow:{
-        marginHorizontal:SW(14),
-        marginVertical:SH(30),
-        marginHorizontal:SW(15)
+    backArrow: {
+        marginHorizontal: SW(14),
+        marginVertical: SH(30),
+        marginHorizontal: SW(15)
     },
-    errorText:{
-        color:'red',
-        fontSize:SF(13),
-        fontFamily:"Poppins-Regular"
+    errorText: {
+        color: 'red',
+        fontSize: SF(13),
+        fontFamily: "Poppins-Regular"
     },
-    passwordContainer:{
-        borderColor: Colors.gray,
-        borderWidth: 1,
-        width: "100%",
-        borderRadius: 10,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent:"space-between",
-        paddingHorizontal: SW(10),
-    },
-    passwordInput:{
-        color:Colors.dark  
+   
+    passwordInput: {
+        color: Colors.dark
     }
 });
 

@@ -3,30 +3,11 @@ import Colors from "../../utils/Colors";
 import { SH, SW, SF } from "../../utils/Dimensions";
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: Colors.light,
-        paddingTop: SH(25),
-        paddingHorizontal: SW(6)
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: SW(10),
-        paddingVertical: SH(10),
-        paddingLeft: 0,
-    },
+
     headerContainer: {
         flexDirection: "row",
         alignItems: "center",
         alignItems:"center"
-    },
-    headerText: {
-        color: Colors.theme_color,
-        fontSize: SF(15),
-        fontFamily: "Poppins-Regular",
-        marginHorizontal: SW(10)
     },
     menuIcon: {
         width: SW(30),
@@ -34,18 +15,17 @@ const styles = StyleSheet.create({
     },
     image: {
         width: "100%",
-        height: SH(270)
+        height: SH(230),
+        marginVertical:SH(10)
     },
-    smallimage: {
-        width: SW(100),
-        height: SH(100),
-        borderRadius: 50,
+    cameraIcon: {
+        position:"absolute",
+        top:SH(200)
     },
     smallHeader: {
         alignItems: "center",
         justifyContent: "center",
-        flex: 1,
-        marginTop: SH(235)
+        flex: 1
     },
     name: {
         textAlign: "center",
@@ -54,7 +34,6 @@ const styles = StyleSheet.create({
         fontSize: SF(17)
     },
     userDeatil: {
-        marginTop: SH(60),
         borderColor: Colors.gray,
         borderWidth: 1,
         padding: SW(10),
@@ -99,5 +78,12 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins-Regular",
         fontSize: SF(15)
     },
+    editText:{
+     color:Colors.theme_color,
+     paddingVertical:SH(15),
+     textAlign:"center",
+     fontFamily:"Poppins-Bold",
+    //  marginLeft:SW(250)
+    }
 })
 export default styles

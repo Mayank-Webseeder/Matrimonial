@@ -9,6 +9,7 @@ import Colors from '../../utils/Colors';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import AppIntroSlider from 'react-native-app-intro-slider';
+import Globalstyles from '../../utils/GlobalCss';
 
 const CommunityFilter = ({ navigation }) => {
 
@@ -67,14 +68,14 @@ const CommunityFilter = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={Globalstyles.container}>
       <StatusBar 
                 barStyle="dark-content" 
                 backgroundColor="transparent" 
                 translucent 
             />
-     <View style={styles.header}>
-        <View style={{ flexDirection: 'row' }}>
+     <View style={Globalstyles.header}>
+        <View style={{ flexDirection: 'row',alignItems:"center" }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons
               name="arrow-back-ios-new"
@@ -82,7 +83,7 @@ const CommunityFilter = ({ navigation }) => {
               color={Colors.theme_color}
             />
           </TouchableOpacity>
-          <Text style={styles.headerText}>Committee</Text>
+          <Text style={Globalstyles.headerText}>Committee</Text>
         </View>
         <View style={styles.righticons}>
           <AntDesign
@@ -100,15 +101,13 @@ const CommunityFilter = ({ navigation }) => {
 
  <View>
           {/* Search and Filter Section */}
-          <View style={styles.searchContainer}>
-            <View style={styles.searchbar}>
-              <AntDesign name={'search1'} size={20} color={'gray'} />
+          <View style={styles.searchbar}>
               <TextInput
                 placeholder="Search in Your city"
                 placeholderTextColor={'gray'}
               />
+                <AntDesign name={'search1'} size={20} color={'gray'} />
             </View>
-          </View>
 
           {/* Image Slider */}
           <View style={styles.sliderContainer}>

@@ -3,30 +3,10 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.light,
-    paddingTop: SH(25),
-    paddingHorizontal:SW(6)
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: SW(10),
-    paddingVertical:SH(10),
-    paddingLeft:0,
-    paddingBottom:0
-  },
+ 
   righticons: {
     flexDirection: 'row',
     alignItems:"center"
-  },
-  headerText: {
-    color: Colors.theme_color,
-    fontSize: SF(15),
-    fontFamily: "Poppins-Regular",
-    marginHorizontal: SW(10)
   },
   topContainer: {
     marginBottom: SH(20)
@@ -129,9 +109,8 @@ const styles = StyleSheet.create({
     fontSize: SF(12),
     textAlign: "center",
     backgroundColor: Colors.theme_color,
-    paddingVertical: SH(4),
-    marginVertical: SH(10),
-    marginHorizontal:SW(10),
+    paddingVertical: SH(5),
+    marginTop: SH(10),
     borderRadius: 10,
     marginHorizontal: SW(90)
   },
@@ -172,11 +151,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: SW(10),
     paddingVertical:SH(10)
   },
-  bottomImage: {
-    width: "100%",
-    height: SH(180),
-    marginBottom:SH(20)
-  }
+ 
 });
 
 export default styles;

@@ -8,6 +8,7 @@ import HeadingWithViewAll from '../../Components/HeadingWithViewAll';
 import { profileImages, Category, communityData, slider } from '../../DummyData/DummyData';
 import { ScrollView } from 'react-native-gesture-handler';
 import AppIntroSlider from 'react-native-app-intro-slider';
+import Globalstyles from '../../utils/GlobalCss';
 
 const Home = ({ navigation }) => {
   const sliderRef = useRef(null);
@@ -29,42 +30,46 @@ const Home = ({ navigation }) => {
   const renderItem = ({ item }) => {
     return (
       <View>
-        <Image source={item.image} style={styles.sliderImage} />
+        <Image source={item.image} style={Globalstyles.sliderImage} />
       </View>
     );
   };
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={Globalstyles.container}>
       <StatusBar
         barStyle="dark-content"
         backgroundColor="transparent"
         translucent
       />
-      <View style={styles.header}>
+      <View style={Globalstyles.header}>
         <View style={styles.headerContainer}>
         <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
           <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
         </TouchableOpacity>
-        <Text style={styles.headerText}>Home</Text>
+        <Text style={Globalstyles.headerText}>Home</Text>
         </View>
         <View style={styles.righticons}>
-          <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} />
+          {/* <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} /> */}
           <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />
         </View>
       </View>
       <ScrollView>
-        <View style={styles.sliderContainer}>
+      <View style={styles.sliderContainer}>
           <AppIntroSlider
             ref={sliderRef}
             data={slider}
-            renderItem={renderItem}
+            renderItem={({ item }) => (
+              <View>
+                <Image source={item.image} style={styles.sliderImage} />
+              </View>
+            )}
             showNextButton={false}
             showDoneButton={false}
             dotStyle={styles.dot}
             activeDotStyle={styles.activeDot}
-            onSlideChange={(index) => setCurrentIndex(index)}
           />
         </View>
+
 
         <View>
           <HeadingWithViewAll
@@ -145,7 +150,7 @@ const Home = ({ navigation }) => {
             showsHorizontalScrollIndicator={false}
           />
         </View>
-        <Image source={require('../../Images/slider.png')} style={styles.bottomImage} />
+        <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
       </ScrollView>
     </SafeAreaView>
   );

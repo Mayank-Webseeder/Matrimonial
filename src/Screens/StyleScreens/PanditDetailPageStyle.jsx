@@ -2,35 +2,12 @@ import { StyleSheet } from "react-native";
 import Colors from "../../utils/Colors";
 import { SH, SW, SF } from "../../utils/Dimensions";
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.light,
-    paddingTop: SH(25),
-    paddingHorizontal:SW(6)
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: SW(10),
-    paddingVertical:SH(10),
-    backgroundColor: Colors.light,
-    paddingLeft:0
-  },
- 
-  headerText: {
-    color: Colors.theme_color,
-    fontSize: SF(15),
-    fontFamily: "Poppins-Regular",
-    marginHorizontal: SW(10)
-  },
-
   profileSection: {
     alignItems: 'center',
-    marginBottom:SH(20),
+    marginBottom: SH(20),
     flexDirection: "row",
     marginHorizontal: SW(10),
-    marginVertical:SH(5)
+    marginVertical: SH(5)
   },
   profileImage: {
     width: SW(120),
@@ -53,7 +30,7 @@ const styles = StyleSheet.create({
   },
   rating: {
     fontSize: SF(13),
-    marginVertical:SH(10),
+    marginVertical: SH(10),
   },
   FlexContainer: {
     flexDirection: "row",
@@ -65,7 +42,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: SF(15),
     fontFamily: 'Poppins-Bold',
-    marginBottom:SH(8),
+    marginBottom: SH(8),
   },
   text: {
     fontSize: SF(13),
@@ -82,9 +59,9 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     elevation: 5,
     paddingHorizontal: SW(5),
-    paddingVertical:SH(3),
+    paddingVertical: SH(3),
     marginHorizontal: SW(5),
-    marginVertical:SH(5),
+    marginVertical: SH(5),
     width: '30%',
     alignItems: 'center',
     justifyContent: 'center',
@@ -108,15 +85,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 10,
     overflow: 'hidden',
-    marginHorizontal: SW(6),
-    marginVertical:0,
+    marginHorizontal: SW(10),
+    marginVertical: SH(2),
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
-    width: '98%',
+    width: '95%',
     paddingHorizontal: SW(10),
-    paddingVertical:SH(2)
+    paddingVertical: SH(10),
+  },
+  reviewRating: {
+    marginLeft: -SW(255)
   },
   reviewName: {
     fontSize: SF(16),
@@ -130,23 +110,22 @@ const styles = StyleSheet.create({
   reviewDate: {
     fontSize: SF(13),
     color: 'gray',
-    marginLeft: SW(75)
   },
   reviewText: {
     fontSize: SF(13),
     marginVertical: SH(5),
     fontFamily: "Poppins-Regular",
   },
-  helpfulText: {
-    fontSize: SF(13),
-    color: 'gray',
-    fontFamily: "Poppins-Regular",
+  FlexContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between"
   },
   images: {
     width: SW(100),
     height: SH(100),
     marginHorizontal: SW(5),
-    marginVertical:SH(5),
+    marginVertical: SH(5),
     resizeMode: "contain"
   },
   socialIcons: {
@@ -172,7 +151,7 @@ const styles = StyleSheet.create({
     paddingVertical: SH(3),
     borderRadius: 8,
     alignItems: "center",
-    width:SW(75)
+    width: SW(75)
   },
   buttonText: {
     color: Colors.light,
@@ -187,66 +166,66 @@ const styles = StyleSheet.create({
     marginHorizontal: SW(10),
     fontFamily: "Poppins-Regular",
   },
-  contentContainer:{
-    marginHorizontal:SW(10),
-    marginVertical:SH(10)
+  contentContainer: {
+    marginHorizontal: SW(10),
+    marginVertical: SH(10)
   },
-  websiteIcon:{
-    width:SW(30),
-    height:SH(30)
+  websiteIcon: {
+    width: SW(30),
+    height: SH(30)
   },
-  Bottomimage:{
-    width:"100%",
-    height:SH(180),
-    resizeMode:"cover",
-    marginBottom:SH(10)
+  Bottomimage: {
+    width: "100%",
+    height: SH(180),
+    resizeMode: "cover",
+    marginBottom: SH(10)
   },
-  ReviewPost:{
-   flexDirection:"row",
-   justifyContent:"space-between",
-   alignItems:"center"
+  ReviewPost: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center"
   },
-  postReviewButton:{
-    paddingHorizontal:SW(10),
-    backgroundColor:Colors.theme_color,
-    borderRadius:5,
-    paddingVertical:SH(4)
+  postReviewButton: {
+    paddingHorizontal: SW(10),
+    backgroundColor: Colors.theme_color,
+    borderRadius: 5,
+    paddingVertical: SH(4)
   },
-  postReviewText:{
-    fontSize:SF(13),
-    color:Colors.light,
-    fontFamily:"poppins-Regular"
+  postReviewText: {
+    fontSize: SF(13),
+    color: Colors.light,
+    fontFamily: "poppins-Regular"
 
   },
-  viewMoreButton:{
-    paddingHorizontal:SW(4),
-    backgroundColor:Colors.theme_color,
-    borderRadius:5,
-    marginHorizontal:SW(100),
-    paddingVertical:SW(3),
+  viewMoreButton: {
+    paddingHorizontal: SW(4),
+    backgroundColor: Colors.theme_color,
+    borderRadius: 5,
+    marginHorizontal: SW(100),
+    paddingVertical: SW(3),
   },
-  viewMoreText:{
-    fontSize:SF(13),
-    color:Colors.light,
-    fontFamily:"poppins-Regular",
-    textAlign:"center"
+  viewMoreText: {
+    fontSize: SF(13),
+    color: Colors.light,
+    fontFamily: "poppins-Regular",
+    textAlign: "center"
   },
   imageContainer: {
     flexDirection: 'column',
-    marginTop:SH(10),
+    marginTop: SH(10),
   },
   imageRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom:SH(2),
+    marginBottom: SH(2),
   },
   image: {
-    width:'50%',
-    height:SH(100),
-    marginBottom:SH(1),
-    marginRight:SW(2),
-    borderRadius:3
+    width: '50%',
+    height: SH(100),
+    marginBottom: SH(1),
+    marginRight: SW(2),
+    borderRadius: 3
   },
-  
+
 });
 export default styles;

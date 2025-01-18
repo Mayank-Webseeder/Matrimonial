@@ -14,6 +14,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { launchImageLibrary } from 'react-native-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import Globalstyles from '../../utils/GlobalCss';
 
 export default function ActivistForm({navigation}) {
   const [subCaste, setSubCaste] = useState('');
@@ -58,24 +59,24 @@ export default function ActivistForm({navigation}) {
 
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <View style={{ flexDirection: 'row' }}>
+    <SafeAreaView style={Globalstyles.container}>
+      <View style={Globalstyles.header}>
+        <View style={{ flexDirection: 'row',alignItems:"center" }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
-          <Text style={styles.headerText}>Activist</Text>
+          <Text style={Globalstyles.headerText}>Activist</Text>
         </View>
 
       </View>
-      <ScrollView>
-        <Text style={styles.label}>Name</Text>
-        <TextInput style={styles.input} placeholder="Enter your name" />
+      <ScrollView style={Globalstyles.form}>
+        <Text style={Globalstyles.title}>Name</Text>
+        <TextInput style={Globalstyles.input} placeholder="Enter your name" />
 
         {/* Sub Caste Dropdown */}
-        <Text style={styles.label}>Sub Caste</Text>
+        <Text style={Globalstyles.title}>Sub Caste</Text>
         <Dropdown
-          style={styles.dropdown}
+          style={Globalstyles.input1}
           data={subCasteOptions}
           labelField="label"
           valueField="value"
@@ -84,8 +85,8 @@ export default function ActivistForm({navigation}) {
           onChange={(item) => setSubCaste(item.value)}
         />
         <View>
-          <Text style={styles.label}>Date of Birth</Text>
-          <View style={styles.input}>
+          <Text style={Globalstyles.title}>Date of Birth</Text>
+          <View style={Globalstyles.input1}>
             <Text style={styles.dateText}>
               {selectedDate ? formatDate(selectedDate) : " "}
             </Text>
@@ -99,9 +100,9 @@ export default function ActivistForm({navigation}) {
         </View>
 
         {/* State Dropdown */}
-        <Text style={styles.label}>State</Text>
+        <Text style={Globalstyles.title}>State</Text>
         <Dropdown
-          style={styles.dropdown}
+          style={Globalstyles.input1}
           data={stateOptions}
           labelField="label"
           valueField="value"
@@ -111,23 +112,23 @@ export default function ActivistForm({navigation}) {
         />
 
         {/* City/Village Input */}
-        <Text style={styles.label}>City/Village</Text>
-        <TextInput style={styles.input} placeholder="Enter city/village" />
+        <Text style={Globalstyles.title}>City/Village</Text>
+        <TextInput style={Globalstyles.input} placeholder="Enter city/village" />
 
         {/* Contact Input */}
-        <Text style={styles.label}>Contact</Text>
+        <Text style={Globalstyles.title}>Contact</Text>
         <TextInput
-          style={styles.input}
+          style={Globalstyles.input}
           placeholder="Enter contact number"
           keyboardType="numeric"
         />
 
         {/* Known Activist ID Input */}
-        <Text style={styles.label}>Known Activist ID No.</Text>
-        <TextInput style={styles.input} placeholder="Enter ID" />
+        <Text style={Globalstyles.title}>Known Activist ID No.</Text>
+        <TextInput style={Globalstyles.input} placeholder="Enter ID" />
 
         {/* Committee Membership Yes/No */}
-        <Text style={styles.label}>Are you engaged in any committee?</Text>
+        <Text style={Globalstyles.title}>Are you engaged in any committee?</Text>
         <View style={styles.radioGroup}>
           <TouchableOpacity
             style={[
@@ -150,13 +151,13 @@ export default function ActivistForm({navigation}) {
         </View>
 
         {/* Profile Picture Upload */}
-        <Text style={styles.label}>Profile Picture</Text>
+        <Text style={Globalstyles.title}>Profile Picture</Text>
         <TouchableOpacity style={styles.uploadButton} onPress={handleImagePick}>
           <Text style={styles.uploadText}>Upload</Text>
         </TouchableOpacity>
         {photos.length > 0 && (
           <View style={styles.photosContainer}>
-            <Text style={styles.label}>Uploaded Photos:</Text>
+            <Text style={Globalstyles.title}>Uploaded Photos:</Text>
             <View>
               {photos.map((photo, index) => (
                 <Image key={index} source={{ uri: photo.uri }} style={styles.photo} />

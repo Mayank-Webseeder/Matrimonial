@@ -10,6 +10,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Globalstyles from '../../utils/GlobalCss';
 const PanditDetailPage = ({ navigation, item }) => {
     const pandit = PanditDetailData[0];
     const [userRating, setUserRating] = useState(0);
@@ -39,18 +40,18 @@ const PanditDetailPage = ({ navigation, item }) => {
     
     
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={Globalstyles.container}>
             <StatusBar 
                 barStyle="dark-content" 
                 backgroundColor="transparent" 
                 translucent 
             />
-            <View style={styles.header}>
+            <View style={Globalstyles.header}>
                 <View style={{ flexDirection: 'row' }}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
-                    <Text style={styles.headerText}>{pandit.name}</Text>
+                    <Text style={Globalstyles.headerText}>{pandit.name}</Text>
                 </View>
                 <View style={styles.righticons}>
                     {/* <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} /> */}
@@ -153,24 +154,22 @@ const PanditDetailPage = ({ navigation, item }) => {
                 <View style={styles.section}>
                     <Text style={[styles.sectionTitle, { textAlign: "center" }]}>Reviews</Text>
                     {pandit.reviews.slice(0, 2).map((review, index) => (
-                        <View key={index} style={styles.reviewContainer}>
-                            <Text style={styles.reviewName}>{review.reviewerName} ({review.reviewerCountry})</Text>
-                            <Text style={styles.reviewStatus}>{review.reviewerStatus}</Text>
-                            <View style={styles.reviewRating}>
-                                <Rating
-                                    type="star"
-                                    ratingCount={5}
-                                    imageSize={15}
-                                    startingValue={review.rating}
-                                    readonly
-                                />
-                            </View>
-                            <Text style={styles.reviewText}>{review.reviewText}</Text>
-                            <View style={styles.FlexContainer}>
-                                <Text style={styles.helpfulText}>Helpful? | Yes ({review.helpful.yes}) | No ({review.helpful.no})</Text>
-                                <Text style={styles.reviewDate}>{review.reviewDate}</Text>
-                            </View>
-                        </View>
+                         <View key={index} style={styles.reviewContainer}>
+                         <View style={styles.FlexContainer}>
+                             <Text style={styles.reviewName}>{review.reviewerName} ({review.reviewerCountry})</Text>
+                             <Text style={styles.reviewDate}>{review.reviewDate}</Text>
+                         </View>
+                         <View style={styles.reviewRating}>
+                             <Rating
+                                 type="star"
+                                 ratingCount={5}
+                                 imageSize={15}
+                                 startingValue={review.rating}
+                                 readonly
+                             />
+                         </View>
+                         <Text style={styles.reviewText}>{review.reviewText}</Text>
+                     </View>
                     ))}
                     {pandit.reviews.length > 2 && (
                         <TouchableOpacity

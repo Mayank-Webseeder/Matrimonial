@@ -4,6 +4,7 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import Colors from '../../utils/Colors';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Globalstyles from '../../utils/GlobalCss';
 
 const CommitteeSubmissionPage = ({ navigation }) => {
     const [dharamsalaName, setDharamsalaName] = useState('');
@@ -48,14 +49,14 @@ const CommitteeSubmissionPage = ({ navigation }) => {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={Globalstyles.container}>
             <StatusBar 
                 barStyle="dark-content" 
                 backgroundColor="transparent" 
                 translucent 
             />
-            <View style={styles.header}>
-                <View style={{ flexDirection: 'row' }}>
+            <View style={Globalstyles.header}>
+                <View style={{ flexDirection: 'row',alignItems:"center" }}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons
                             name="arrow-back-ios-new"
@@ -63,43 +64,43 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                             color={Colors.theme_color}
                         />
                     </TouchableOpacity>
-                    <Text style={styles.headerText}>Committee</Text>
+                    <Text style={Globalstyles.headerText}>Committee</Text>
                 </View>
             </View>
-            <View style={styles.contentContainer}>
+            <View style={Globalstyles.form}>
                 <Text style={styles.title}>Upload Committee Details</Text>
 
                 {/* Dharamsala Name */}
-                <Text style={styles.label}>Committee Name *</Text>
+                <Text style={Globalstyles.title}>Committee Name *</Text>
                 <TextInput
-                    style={styles.input}
+                    style={Globalstyles.input}
                     placeholder="Enter Committee Name"
                     value={dharamsalaName}
                     onChangeText={setDharamsalaName}
                     placeholderTextColor={'gray'}
                 />
 
-                <Text style={styles.label}>Sub-Caste Name *</Text>
+                <Text style={Globalstyles.title}>Sub-Caste Name *</Text>
                 <TextInput
-                    style={styles.input}
+                    style={Globalstyles.input}
                     placeholder="Enter Sub-Caste Name"
                     value={subCasteName}
                     onChangeText={setSubCasteName}
                     placeholderTextColor={'gray'}
                 />
 
-                <Text style={styles.label}>City *</Text>
+                <Text style={Globalstyles.title}>City *</Text>
                 <TextInput
-                    style={styles.input}
+                    style={Globalstyles.input}
                     placeholder="Enter City"
                     value={city}
                     onChangeText={setCity}
                     placeholderTextColor={'gray'}
                 />
 
-                <Text style={styles.label}>Area *</Text>
+                <Text style={Globalstyles.title}>Area *</Text>
                 <TextInput
-                    style={styles.input}
+                    style={Globalstyles.input}
                     placeholder="Enter Area"
                     value={area}
                     onChangeText={setArea}
@@ -107,7 +108,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                 />
 
                 <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                    <Text style={styles.label}>Upload Your Committe Image *</Text>
+                    <Text style={Globalstyles.label}>Upload Your Committe Image *</Text>
                     <TouchableOpacity style={styles.uploadButton} onPress={handleImageUpload}>
                         <Text style={styles.uploadButtonText}>
                             {image ? 'Change Image' : 'Upload Image'}

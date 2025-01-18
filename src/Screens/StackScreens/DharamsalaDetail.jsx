@@ -8,6 +8,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AppIntroSlider from 'react-native-app-intro-slider';
+import Globalstyles from '../../utils/GlobalCss';
 
 const DharamsalaDetail = ({ navigation }) => {
 
@@ -46,18 +47,18 @@ const DharamsalaDetail = ({ navigation }) => {
   const truncatedDescription = `This hotel has a terrace and a small rooftop pool, open all year round. Located opposite the Valencia Botanical Garden and the Nuevo Centro shopping centre, the property also has a gym and sauna.`;
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={Globalstyles.container}>
       <StatusBar 
                 barStyle="dark-content" 
                 backgroundColor="transparent" 
                 translucent 
             />
-      <View style={styles.header}>
-        <View style={{ flexDirection: 'row' }}>
+      <View style={Globalstyles.header}>
+        <View style={{ flexDirection: 'row',alignItems:"center" }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
-          <Text style={styles.headerText}>Hotel NH Valencia Center</Text>
+          <Text style={Globalstyles.headerText}>Hotel NH Valencia Center</Text>
         </View>
         <View style={styles.righticons}>
           {/* <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} /> */}
@@ -112,7 +113,7 @@ const DharamsalaDetail = ({ navigation }) => {
           <Text style={styles.RequestText}>Request for call</Text>
         </TouchableOpacity>
       </View>
-      <Image source={require('../../Images/slider.png')} style={styles.addWindowImage}/>
+      <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage}/>
      </ScrollView>
     </SafeAreaView>
   );

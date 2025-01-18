@@ -5,6 +5,7 @@ import Colors from '../../utils/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from '../StyleScreens/ReportPageStyle';
+import Globalstyles from '../../utils/GlobalCss';
 
 const ReportPage = ({ navigation, route }) => {
   const { profileName, profilePhoto } = route.params || {};
@@ -39,13 +40,13 @@ const ReportPage = ({ navigation, route }) => {
   };
 
   return (
-    <View style={styles.container}>
-        <View style={styles.header}>
+    <View style={Globalstyles.container}>
+        <View style={Globalstyles.header}>
                 <View style={{ alignItems:"center",flexDirection:"row"}}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
-                    <Text style={styles.headerText}>Post a Review</Text>
+                    <Text style={Globalstyles.headerText}>Post a Review</Text>
                 </View>
                 <View style={styles.righticons}>
                     {/* <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} /> */}
@@ -55,9 +56,9 @@ const ReportPage = ({ navigation, route }) => {
      
 
      <View style={styles.contentContainer}>
-     <Text style={styles.label}>Reason for Reporting</Text>
+     <Text style={Globalstyles.title}>Reason for Reporting</Text>
       <Dropdown
-        style={[styles.dropdown, isFocus && { borderColor: Colors.theme_color }]}
+        style={[Globalstyles.input1, isFocus && { borderColor: Colors.theme_color }]}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
         data={reportOptions}
@@ -74,14 +75,15 @@ const ReportPage = ({ navigation, route }) => {
         }}
       />
 
-      <Text style={styles.label}>Additional Details (Optional)</Text>
+      <Text style={Globalstyles.title}>Additional Details (Optional)</Text>
       <TextInput
-        style={styles.textInput}
+        style={Globalstyles.textInput}
         placeholder="Add more details about the issue..."
         placeholderTextColor={Colors.gray}
         multiline
         value={additionalDetails}
         onChangeText={setAdditionalDetails}
+        textAlignVertical='top'
       />
 
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>

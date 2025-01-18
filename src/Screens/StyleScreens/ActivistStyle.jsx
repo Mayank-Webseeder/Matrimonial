@@ -3,28 +3,10 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.light,
-    paddingTop: SH(25),
-    paddingHorizontal:SW(6)
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: SW(10),
-    paddingVertical:SH(10),
-    paddingLeft:SW(5)
-  },
+
   righticons: {
     flexDirection: 'row',
-  },
-  headerText: {
-    color: Colors.theme_color,
-    fontSize: SF(15),
-    fontFamily: "Poppins-Regular",
-    marginHorizontal: SW(10)
+    alignItems:"center"
   },
   image: {
     width: SW(70),
@@ -40,6 +22,8 @@ const styles = StyleSheet.create({
     marginHorizontal: SW(10),
     borderRadius: 50,
     paddingHorizontal: SW(10),
+    width: SW(350),
+    justifyContent:"space-between"
   },
   card: {
     backgroundColor: Colors.light,
@@ -126,42 +110,39 @@ const styles = StyleSheet.create({
   applyButton: {
     backgroundColor: Colors.theme_color,
     paddingHorizontal: SW(10),
-    paddingVertical:SH(5),
+    paddingVertical: SH(5),
     borderRadius: 5,
     marginHorizontal: SW(20),
-    marginVertical:SH(20),
+    marginVertical: SH(20),
     borderRadius: 50
   },
   applyButtonText: {
-    fontFamily: "Poppins-Bold",
+    fontFamily: "Poppins-Medium",
     color: Colors.light,
-    textAlign: "center"
+    textAlign: "center",
+    fontSize: SF(17)
   },
-  inputContainer: {
-    height: SH(40),
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: SH(10),
-    paddingLeft: SW(10),
-    borderRadius: 5,
-    backgroundColor: 'white',
-    color: Colors.dark,
-    flexDirection: "row",
+  circle: {
+    width: SW(50),
+    height: SH(50),
+    borderRadius: 25,
+    backgroundColor: Colors.theme_color,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  crossButton: {
+    justifyContent: "center",
     alignItems: "center",
-    justifyContent: "space-between"
+    position: "absolute",
+    top: SH(300),
+    left: SW(150)
   },
-  dropdown: {
-    flex: 1,
-    marginRight: SW(10),
-  },
-  headingText: {
-    fontFamily: "Poppins-Bold",
-    fontSize: SF(15),
-    marginHorizontal: SH(10),
-    marginVertical:SH(10)
-  },
-
-
+  label:{
+    fontSize: SF(13),
+    marginBottom: SH(5),
+    fontFamily: "Poppins-Medium"
+  }
+ 
 });
 
 export default styles;

@@ -6,9 +6,10 @@ import Colors from '../../utils/Colors';
 import { EventData } from '../../DummyData/DummyData';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
-import EvilIcons from 'react-native-vector-icons/EvilIcons';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { useFocusEffect } from '@react-navigation/native';
 import { SW, SH, SF } from '../../utils/Dimensions';
+import Globalstyles from '../../utils/GlobalCss';
 
 const EventNews = ({ navigation }) => {
   const [page, setPage] = useState(1);
@@ -176,15 +177,12 @@ const EventNews = ({ navigation }) => {
             {images.length > 0 && <Image source={images[0]} style={styles.EventheaderImage} />}
           </View>
           <View>
-            <Text style={styles.name}>{item.name}</Text>
+            <Text style={styles.name}>{item.name}   <Text style={styles.hour}>{item.hour} hours ago</Text></Text>
             <Text style={styles.date_time}>{item.date_time}</Text>
-          </View>
-          <View>
-            <Text style={styles.hour}>{item.hour} hours ago</Text>
           </View>
         </View>
 
-        <View style={styles.container}>
+        <View style={styles.Imagecontainer}>
           {renderImages(images, item)}
         </View>
 
@@ -196,7 +194,7 @@ const EventNews = ({ navigation }) => {
             <Text style={styles.shareText}>25k Likes</Text>
           </View>
           <View style={styles.likeShare}>
-            <EvilIcons name="comment" size={25} color={Colors.dark} />
+            <FontAwesome5 name="comment" size={20} color={Colors.dark} />
             <Text style={styles.shareText}>90 Comments</Text>
           </View>
           <View style={styles.likeShare}>
@@ -205,22 +203,22 @@ const EventNews = ({ navigation }) => {
           </View>
         </View>
       </View>
-    );
+    );e
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={Globalstyles.container}>
       <StatusBar
         barStyle="dark-content"
         backgroundColor="transparent"
         translucent
       />
-      <View style={styles.header}>
-        <View style={{ flexDirection: 'row' }}>
+      <View style={Globalstyles.header}>
+        <View style={{ flexDirection: 'row',alignItems:"center" }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
-          <Text style={styles.headerText}>News & Events</Text>
+          <Text style={Globalstyles.headerText}>News & Events</Text>
         </View>
         <View style={styles.righticons}>
           <TouchableOpacity style={styles.button} onPress={handlePress}>

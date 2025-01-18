@@ -6,6 +6,7 @@ import styles from "../StyleScreens/SavedProfileStyle";
 import Colors from "../../utils/Colors";
 import { SavedProfileData } from "../../DummyData/DummyData";
 import HeadingWithViewAll from "../../Components/HeadingWithViewAll";
+import Globalstyles from "../../utils/GlobalCss";
 
 const SavedProfile = ({ navigation }) => {
   const [activeCategory, setActiveCategory] = useState("Biodata");
@@ -64,19 +65,19 @@ const SavedProfile = ({ navigation }) => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={Globalstyles.container}>
        <StatusBar 
                       barStyle="dark-content" 
                       backgroundColor="transparent" 
                       translucent 
                   />
       {/* Header */}
-      <View style={styles.header}>
-        <View style={{ flexDirection: "row" }}>
+      <View style={Globalstyles.header}>
+        <View style={{ flexDirection: "row",alignItems:"center" }}>
           <TouchableOpacity onPress={() => navigation.navigate('Tabs')}>
-            <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
+            <MaterialIcons name={'arrow-back-ios-new'} size={25} color={Colors.theme_color} />
           </TouchableOpacity>
-          <Text style={styles.headerText}>Saved</Text>
+          <Text style={Globalstyles.headerText}>Saved</Text>
         </View>
         <View style={styles.righticons}>
           <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} />
@@ -99,7 +100,7 @@ const SavedProfile = ({ navigation }) => {
           ))}
         </View>
       </ScrollView>
-      <HeadingWithViewAll heading={"MATRIMONY Saved Profile"} />
+      <HeadingWithViewAll heading={"MATRIMONY SAVED PROFILE"} />
 
       </View>
       {/* Heading with View All */}

@@ -2,52 +2,6 @@ import { StyleSheet } from "react-native";
 import Colors from "../../utils/Colors";
 import { SH, SW, SF } from "../../utils/Dimensions";
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: Colors.light,
-        paddingTop: SH(25),
-        paddingHorizontal: SW(6),
-        paddingBottom: SH(20)
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: SW(10),
-        paddingVertical: SH(10),
-        paddingLeft: 0
-    },
-    headerText: {
-        color: Colors.theme_color,
-        fontSize: SF(15),
-        fontFamily: "Poppins-Regular",
-        marginHorizontal: SW(10)
-    },
-    label: {
-        fontSize: SF(15),
-        marginBottom: SH(5),
-        fontFamily: "Poppins-Medium",
-    },
-    input: {
-        borderColor: Colors.gray,
-        borderWidth: 1,
-        width: "100%",
-        borderRadius: 10,
-        flexDirection: "row",
-        alignItems: "center",
-        paddingHorizontal: SW(10),
-        paddingVertical: SH(10),
-        color: Colors.dark,
-        marginVertical: SH(5)
-    },
-    dropdown: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 5,
-        paddingHorizontal: SW(10),
-        paddingVertical: SH(10),
-        marginBottom: SH(15),
-    },
     radioGroup: {
         flexDirection: 'row',
         marginBottom: SH(15),
@@ -76,7 +30,7 @@ const styles = StyleSheet.create({
         marginBottom: SH(15),
     },
     uploadText: {
-        color:Colors.theme_color,
+        color: Colors.theme_color,
     },
     submitButton: {
         backgroundColor: Colors.theme_color,
@@ -84,6 +38,7 @@ const styles = StyleSheet.create({
         paddingVertical: SH(5),
         borderRadius: 5,
         alignItems: 'center',
+        marginBottom:SH(20)
     },
     submitText: {
         color: '#fff',

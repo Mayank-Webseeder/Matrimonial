@@ -3,30 +3,9 @@ import Colors from "../../utils/Colors";
 import { SH, SW, SF } from "../../utils/Dimensions";
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    backgroundColor: Colors.light,
-    paddingTop: SH(25),
-    paddingHorizontal:SW(6)
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: SW(10),
-        paddingVertical:SH(10),
-        paddingLeft: 0
-    },
-
-    headerText: {
-        color: Colors.theme_color,
-        fontSize: SF(15),
-        fontFamily: "Poppins-Regular",
-        marginHorizontal:SW(5),
-        marginVertical:SH(5)
-    },
     righticons: {
         flexDirection: 'row',
+        alignItems: "center"
     },
     headerContainer: {
         flexDirection: "row",
@@ -40,28 +19,38 @@ const styles = StyleSheet.create({
     RepostText: {
         backgroundColor: Colors.theme_color,
         color: Colors.light,
-        paddingHorizontal: SW(5),
-        paddingVertical:SH(5),
-        borderRadius: 10,
-        paddingHorizontal: SW(15),
+        paddingVertical: SH(5),
+        borderRadius:5,
         fontFamily: "Poppins-Regular",
-        fontSize:SF(13)
+        fontSize: SF(13),
+        marginLeft:SW(260),
+        marginVertical:SH(10),
+        textAlign:"center",
+        marginHorizontal:SW(20),
+        marginTop:0
     },
     image: {
         width: "100%",
-        height: SH(250)
+        height: SH(230),
+        marginVertical:SH(10)
     },
-    smallimage: {
-        width: SW(100),
-        height: SH(100),
-        borderRadius: 50,
+    cameraIcon: {
+        position:"absolute",
+        top:SH(200)
     },
     smallHeader: {
         alignItems: "center",
         justifyContent: "center",
-        flex: 1,
-        marginTop: SH(200)
+        flex: 1
     },
+    editText:{
+        color:Colors.theme_color,
+        paddingVertical:SH(15),
+        textAlign:"center",
+        fontFamily:"Poppins-Bold",
+        paddingBottom:0
+       //  marginLeft:SW(250)
+       },
     name: {
         textAlign: "center",
         color: Colors.dark,
@@ -69,13 +58,12 @@ const styles = StyleSheet.create({
         fontSize: SF(15)
     },
     userDeatil: {
-        marginTop: SH(60),
         borderColor: Colors.gray,
         borderWidth: 1,
         paddingHorizontal: SW(10),
-        paddingVertical:SH(10),
+        paddingVertical: SH(10),
         borderRadius: 10,
-        marginHorizontal:SW(10)
+        marginHorizontal: SW(10)
     },
     userData: {
         flexDirection: "row",
@@ -93,9 +81,9 @@ const styles = StyleSheet.create({
         marginHorizontal: SW(15)
 
     },
-    contentContainer:{
-     marginHorizontal:SW(10),
-     marginVertical:SH(10)
+    contentContainer: {
+        marginHorizontal: SW(10),
+        marginVertical: SH(10)
     },
     logotext: {
         color: Colors.theme_color,
@@ -106,20 +94,20 @@ const styles = StyleSheet.create({
         borderColor: Colors.theme_color,
         borderWidth: 1,
         paddingHorizontal: SW(7),
-        paddingVertical:SH(7),
+        paddingVertical: SH(7),
         borderRadius: 50
     },
     Selectedicon: {
         backgroundColor: Colors.theme_color,
         paddingHorizontal: SW(7),
-        paddingVertical:SH(7),
+        paddingVertical: SH(7),
         borderRadius: 50,
-      },
+    },
     text: {
         fontFamily: "Poppins-Regular",
         fontSize: SF(15)
     },
-    detail:{
+    detail: {
         flexDirection: "row",
         justifyContent: "space-between",
     },
@@ -137,7 +125,21 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         color: Colors.dark,
     },
-    input1:{
+    DobInput: {
+        height: SH(40),
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: SH(10),
+        paddingLeft: SW(10),
+        borderRadius: 5,
+        backgroundColor: 'white',
+        color: Colors.dark,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        paddingRight: SW(10)
+    },
+    input1: {
         height: SH(100),
         borderColor: 'gray',
         borderWidth: 1,
@@ -147,7 +149,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         color: Colors.dark,
     },
-    heightinput:{
+    heightinput: {
         height: SH(30),
         borderColor: 'gray',
         borderWidth: 1,
@@ -156,24 +158,26 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         backgroundColor: 'white',
         color: Colors.dark,
-        paddingHorizontal:SH(5),
-        paddingVertical:SH(5),
-        width:SW(100),
-        marginTop:SH(10)
+        paddingHorizontal: SH(5),
+        paddingVertical: SH(5),
+        width: SW(100),
+        marginTop: SH(10)
     },
     headText: {
         color: Colors.theme_color,
         fontSize: SF(15),
-        fontFamily: "Poppins-Regular",
-        marginHorizontal: SW(10)
+        fontFamily: "Poppins-Bold",
+        marginHorizontal: SW(10),
+        marginLeft: 0,
+        marginVertical: SH(10)
     },
     button: {
         backgroundColor: Colors.theme_color,
         marginHorizontal: SW(90),
         marginHorizontal: SW(20),
-        marginVertical:SH(20),
+        marginVertical: SH(20),
         paddingHorizontal: SW(10),
-        paddingVertical:SH(5),
+        paddingVertical: SH(5),
         borderRadius: 10
     },
     buttonText: {
@@ -191,18 +195,18 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         paddingHorizontal: SW(7),
-        paddingVertical:SH(7)
+        paddingVertical: SH(7)
     },
     selectedButton: {
         backgroundColor: Colors.theme_color
     },
-    row:{
-        flexDirection:"row",
-        justifyContent:"space-between"
+    row: {
+        flexDirection: "row",
+        justifyContent: "space-between"
     },
     dropdown: {
         height: SH(40),
-        width:"45%",
+        width: "45%",
         borderColor: 'gray',
         borderWidth: 1,
         marginBottom: SH(10),
@@ -210,8 +214,13 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         backgroundColor: 'white',
         color: Colors.dark,
-        marginHorizontal:SW(5)
+        marginHorizontal: SW(5)
     },
+    loading: {
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: SH(300)
+    }
 
 })
 export default styles

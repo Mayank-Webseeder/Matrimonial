@@ -8,6 +8,7 @@ import styles from '../StyleScreens/BioDataStyle';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import HeadingWithViewAll from '../../Components/HeadingWithViewAll';
 import { SavedProfileData } from '../../DummyData/DummyData';
+import Globalstyles from '../../utils/GlobalCss';
 const BioData = ({ navigation }) => {
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -57,16 +58,16 @@ const BioData = ({ navigation }) => {
 
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={Globalstyles.container}>
       <StatusBar 
                 barStyle="dark-content" 
                 backgroundColor="transparent" 
                 translucent 
             />
-      <View style={styles.header}>
+      <View style={Globalstyles.header}>
         <TouchableOpacity onPress={() => navigation.navigate('Tabs')} style={{ flexDirection: "row" }}>
           <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} />
-          <Text style={styles.headerText}>Matrimony</Text>
+          <Text style={Globalstyles.headerText}>Matrimony</Text>
         </TouchableOpacity>
         <View style={styles.righticons}>
           <AntDesign name={'bells'} size={20} color={Colors.theme_color} />

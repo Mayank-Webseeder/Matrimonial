@@ -3,28 +3,12 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: Colors.light,
-        paddingTop: SH(25),
-        paddingHorizontal: SW(6)
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: SW(10),
-        paddingVertical: SH(10),
-        paddingLeft: 0,
-    },
-    headerText: {
-        color: Colors.theme_color,
-        fontSize: SF(15),
-        fontFamily: "Poppins-Regular",
-        marginHorizontal: SW(10)
-    },
     righticons: {
         flexDirection: 'row',
+        alignItems: "center"
+    },
+    Imagecontainer: {
+        marginVertical: SH(10)
     },
     button: {
         backgroundColor: Colors.theme_color,
@@ -32,11 +16,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: SW(15),
         marginRight: SW(10),
         justifyContent: 'center',
+        height: SH(30)
     },
     buttonText: {
         color: Colors.light,
         fontSize: SF(13),
         fontFamily: 'Poppins-Regular',
+        textAlign: "center"
     },
     card: {
         backgroundColor: '#fff',
@@ -58,8 +44,8 @@ const styles = StyleSheet.create({
         borderRadius: 30,
     },
     cardheader: {
+        display:"flex",
         flexDirection: 'row',
-        justifyContent: 'flex-start',
         alignItems: 'center',
     },
     image1: {
@@ -88,7 +74,7 @@ const styles = StyleSheet.create({
     name: {
         fontSize: SF(13),
         fontFamily: 'Poppins-Bold',
-        marginLeft: SW(5),
+        marginLeft: SW(10),
     },
     date_time: {
         fontSize: SF(12),

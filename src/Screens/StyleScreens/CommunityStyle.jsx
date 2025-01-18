@@ -3,35 +3,13 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.light,
-    paddingTop: SH(35),
-    paddingHorizontal: SW(6)
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: SW(10),
-    paddingVertical: SH(7),
-    paddingLeft: SW(1),
-    paddingTop: 0
-
-  },
-  headerText: {
-    color: Colors.theme_color,
-    fontSize: SF(15),
-    fontFamily: "Poppins-Regular",
-    marginHorizontal: SW(10)
-  },
   righticons: {
     flexDirection: 'row',
     alignItems:"center"
   },
   image: {
     width: SW(100),
-    height: SH(100),
+    height: SH(90),
     resizeMode: "contain"
   },
   searchbar: {
@@ -42,7 +20,8 @@ const styles = StyleSheet.create({
     marginHorizontal: SW(10),
     borderRadius: 50,
     paddingHorizontal: SW(10),
-    width: SW(320)
+    width: SW(350),
+    justifyContent:"space-between"
   },
   card: {
     backgroundColor: '#fff',
@@ -65,7 +44,6 @@ const styles = StyleSheet.create({
 
   CityArea: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     marginTop: SH(5),
   },
 
@@ -73,7 +51,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    marginTop: SH(10),
+    marginHorizontal:SW(25),
+    paddingVertical:SH(10),
+    paddingTop:0
   },
 
   iconContainer: {
@@ -83,7 +63,8 @@ const styles = StyleSheet.create({
   },
   text: {
     fontFamily: "Poppins-Regular",
-    fontSize: SF(12)
+    fontSize: SF(12),
+    marginRight:SW(10)
   },
   Nametext: {
     fontFamily: "Poppins-Bold",
@@ -226,34 +207,31 @@ const styles = StyleSheet.create({
     borderRadius: 50
   },
   applyButtonText: {
-    fontFamily: "Poppins-Bold",
+    fontFamily: "Poppins-Medium",
     color: Colors.light,
-    textAlign: "center"
+    textAlign: "center",
+    fontSize: SF(17)
   },
-  inputContainer: {
-    height: SH(40),
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: SH(10),
-    paddingLeft: SW(10),
-    borderRadius: 5,
-    backgroundColor: 'white',
-    color: Colors.dark,
-    flexDirection: "row",
+  circle: {
+    width: SW(50),
+    height: SH(50),
+    borderRadius: 25,
+    backgroundColor: Colors.theme_color,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  crossButton: {
+    justifyContent: "center",
     alignItems: "center",
-    justifyContent: "space-between"
+    position: "absolute",
+    top: SH(300),
+    left: SW(150)
   },
-  dropdown: {
-    flex: 1,
-    marginRight: SW(10),
-  },
-  headingText: {
-    fontFamily: "Poppins-Bold",
-    fontSize: SF(15),
-    marginHorizontal: SW(10),
-    marginVertical: SH(10)
-  },
-
+  label:{
+    fontSize: SF(13),
+    marginBottom: SH(5),
+    fontFamily: "Poppins-Medium"
+  }
 
 });
 

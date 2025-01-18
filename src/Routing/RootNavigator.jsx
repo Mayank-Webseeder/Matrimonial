@@ -52,6 +52,7 @@ import PostSuccessStories from '../Screens/StackScreens/PostSuccessStories';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoadingScreen from '../Screens/AppLoadingScreen/LoadingScreen';
 import Matrimonial from '../Screens/Tabs/Matrimonial';
+import UpdateProfile from '../Screens/StackScreens/UpdateProfile';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -81,13 +82,17 @@ function MyTabs() {
             tabBarIcon = (
               <MaterialCommunityIcons
                 name={focused ? 'heart-multiple' : 'heart-multiple-outline'}
-                size={31}
+                size={25}
                 color={Colors.light}
               />
             );
           } else if (route.name === 'Pandit') {
             tabBarIcon = (
-              <Image source={require('../Images/pandit.png')} style={{Width:SW(25),height:SH(25),borderRadius:20,resizeMode:"contain"}}/>
+              <MaterialCommunityIcons
+              name={focused ? 'meditation' : 'meditation'}
+              size={iconSize}
+              color={Colors.light}
+            />
             );
           } else if (route.name === 'EventNews') {
             tabBarIcon = (
@@ -122,9 +127,9 @@ function MyTabs() {
         },
       })}
     >
-      <Tab.Screen name="Matrimonial" component={Matrimonial} options={{ tabBarLabel: 'Matrimonial' }} />
-      <Tab.Screen name="Pandit" component={Pandit} options={{ tabBarLabel: 'Pandit' }} />
       <Tab.Screen name="Home" component={Home} options={{ tabBarLabel: 'Home' }} />
+      <Tab.Screen name="Pandit" component={Pandit} options={{ tabBarLabel: 'Pandit' }} />
+      <Tab.Screen name="Matrimonial" component={Matrimonial} options={{ tabBarLabel: 'Matrimonial' }} />
       <Tab.Screen name="EventNews" component={EventNews} options={{ tabBarLabel: 'EventNews' }} />
       <Tab.Screen name="MyProfile" component={MyProfile} options={{ tabBarLabel: 'You' }} />
     </Tab.Navigator>
@@ -140,7 +145,7 @@ function MyDrawer() {
       screenOptions={{
         headerShown: false,
         drawerStyle: {
-          width: (210)
+          width:SW(240)
         },
       }}
     >
@@ -225,6 +230,7 @@ const RootNavigator = () => {
       <Stack.Screen name="DetailedProfile" component={DetailedProfile} />
       <Stack.Screen name="MatrimonyPeopleProfile" component={MatrimonyPeopleProfile} />
       <Stack.Screen name="PostSuccessStories" component={PostSuccessStories} />
+      <Stack.Screen name="UpdateProfile" component={UpdateProfile} />
     </Stack.Navigator>
   );
 };

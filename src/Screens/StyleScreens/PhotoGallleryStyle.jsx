@@ -3,29 +3,10 @@ import Colors from "../../utils/Colors";
 import { SH, SW, SF } from "../../utils/Dimensions";
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: Colors.light,
-        paddingTop: SH(25),
-        paddingHorizontal: SW(6)
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: SW(10),
-        paddingVertical: SH(10),
-        paddingLeft: 0
-    },
-
-    headerText: {
-        color: Colors.theme_color,
-    fontSize: SF(15),
-    fontFamily: "Poppins-Regular",
-    marginHorizontal: SW(10)
-    },
+   
     righticons: {
         flexDirection: 'row',
+        alignItems:"center"
     },
     headerContainer: {
         flexDirection: "row",
@@ -40,17 +21,22 @@ const styles = StyleSheet.create({
         width: "100%",
         height: SH(250)
     },
-    smallimage: {
-        width: SW(100),
-        height: SH(100),
-        borderRadius: 50,
+    cameraIcon: {
+        position:"absolute",
+        top:SH(220)
     },
     smallHeader: {
         alignItems: "center",
         justifyContent: "center",
-        flex: 1,
-        marginTop: SH(200)
+        flex: 1
     },
+    editText:{
+        color:Colors.theme_color,
+        paddingVertical:SH(15),
+        textAlign:"center",
+        fontFamily:"Poppins-Bold",
+       //  marginLeft:SW(250)
+       },
     name: {
         textAlign: "center",
         color: Colors.dark,
@@ -58,7 +44,6 @@ const styles = StyleSheet.create({
         fontSize: SF(15)
     },
     userDeatil: {
-        marginTop: SH(60),
         borderColor: Colors.gray,
         borderWidth: 1,
         paddingHorizontal: SW(10),
@@ -143,6 +128,7 @@ const styles = StyleSheet.create({
         marginBottom: SH(10)
 
     }
+
 
 })
 export default styles

@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import styles from '../StyleScreens/FeedbackStyle';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { DrawerActions } from '@react-navigation/native';
+import Globalstyles from '../../utils/GlobalCss';
 const FeedBack = ({ navigation }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
@@ -30,18 +31,18 @@ const FeedBack = ({ navigation }) => {
 
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={Globalstyles.container}>
       <StatusBar
         barStyle="dark-content"
         backgroundColor="transparent"
         translucent
       />
-      <View style={styles.header}>
+      <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: "center" }}>
           <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
             <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
           </TouchableOpacity>
-          <Text style={styles.headerText}>Feedback</Text>
+          <Text style={Globalstyles.headerText}>Feedback</Text>
         </View>
       </View>
 

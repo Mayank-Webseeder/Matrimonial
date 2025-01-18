@@ -3,6 +3,7 @@ import { Text, View, TouchableOpacity, Modal, TextInput,SafeAreaView,StatusBar }
 import Colors from '../../utils/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styles from '../StyleScreens/ChangePasswordStyle';
+import Globalstyles from '../../utils/GlobalCss';
 
 const ChangePassword = ({ navigation }) => {
   const [newPassword, setNewPassword] = useState('');
@@ -25,18 +26,18 @@ const ChangePassword = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={Globalstyles.container}>
       <StatusBar 
                 barStyle="dark-content" 
                 backgroundColor="transparent" 
                 translucent 
             />
-      <View style={styles.header}>
-        <View style={{ flexDirection: 'row' }}>
+      <View style={Globalstyles.header}>
+        <View style={{ flexDirection: 'row',alignItems:"center" }}>
           <TouchableOpacity onPress={() => navigation.navigate('Tabs')}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
-          <Text style={styles.headerText}>Change Password</Text>
+          <Text style={Globalstyles.headerText}>Change Password</Text>
         </View>
       </View>
 

@@ -3,6 +3,7 @@ import { Text, View, Switch, TouchableOpacity,SafeAreaView,StatusBar } from 'rea
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/NotificationSettingStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Globalstyles from '../../utils/GlobalCss';
 
 const PrivacySettings = ({ navigation }) => {
   const [inactivateId, setInactivateId] = useState(false);
@@ -15,18 +16,18 @@ const PrivacySettings = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={Globalstyles.container}>
       <StatusBar 
                 barStyle="dark-content" 
                 backgroundColor="transparent" 
                 translucent 
             />
-      <View style={styles.header}>
-        <View style={{ flexDirection: 'row' }}>
+      <View style={Globalstyles.header}>
+        <View style={{ flexDirection: 'row',alignItems:"center" }}>
           <TouchableOpacity onPress={() => navigation.navigate('Tabs')}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
-          <Text style={styles.headerText}>Privacy Settings</Text>
+          <Text style={Globalstyles.headerText}>Privacy Settings</Text>
         </View>
       </View>
 

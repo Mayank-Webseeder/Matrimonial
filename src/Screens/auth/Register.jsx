@@ -165,8 +165,8 @@ const Register = ({ navigation }) => {
                         {/* Date of Birth */}
                         <View>
                             <Text style={styles.title}>Date of Birth</Text>
-                            <View style={Globalstyles.input1}>
-                                <Text style={Globalstyles.date}>
+                            <View style={Globalstyles.inputContainer}>
+                                <Text style={styles.dateText}>
                                     {selectedDate ? formatDate(selectedDate) : " "}
                                 </Text>
                                 <TouchableOpacity onPress={() => setShowDatePicker(true)}>
@@ -230,9 +230,9 @@ const Register = ({ navigation }) => {
                         {/* Create Password */}
                         <View>
                             <Text style={Globalstyles.title}>Create Password</Text>
-                            <View style={Globalstyles.input1}>
+                            <View style={Globalstyles.inputContainer}>
                                 <TextInput
-                                    style={{ color: Colors.dark }}
+                                   style={Globalstyles.input1}
                                     secureTextEntry={!showPassword}
                                     placeholder="Create a strong password"
                                     value={password}
@@ -256,9 +256,9 @@ const Register = ({ navigation }) => {
                         {/* Confirm Password */}
                         <View>
                             <Text style={Globalstyles.title}>Confirm Password</Text>
-                            <View style={Globalstyles.input1}>
+                            <View style={Globalstyles.inputContainer}>
                                 <TextInput
-                                    style={{ color: Colors.dark }}
+                                    style={Globalstyles.input1}
                                     secureTextEntry={!showConfirmPassword}
                                     placeholder="Create a strong password"
                                     value={confirmPassword}

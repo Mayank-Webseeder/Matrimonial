@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: SF(16),
         color: Colors.dark,
+        paddingVertical:SH(10)
     },
     arrow: {
         marginLeft: SW(10),
@@ -74,7 +75,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: SW(10),
         paddingVertical: SH(10),
         color: Colors.dark
-    }, modalContainer: {
+    },
+     modalContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
@@ -103,7 +105,8 @@ const styles = StyleSheet.create({
    
     passwordInput: {
         color: Colors.dark
-    }
+    },
+    
 });
 
 export default styles;

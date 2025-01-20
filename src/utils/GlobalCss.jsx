@@ -49,12 +49,12 @@ const Globalstyles = StyleSheet.create({
     borderRadius: 5,
     color: Colors.dark
   },
-  textInput:{
+  textInput: {
     height: SH(100),
     borderColor: '#ccc',
     borderWidth: 1,
     marginBottom: SH(15),
-    paddingHorizontal: SW(10),
+    padding: SW(10),
     borderRadius: 5,
     color: Colors.dark
   },
@@ -73,20 +73,17 @@ const Globalstyles = StyleSheet.create({
     shadowRadius: 4,
   },
   input1: {
-    borderColor: '#ccc',
-    borderWidth: 1,
-    marginBottom: SH(15),
-    padding: SW(10),
-    borderRadius: 5,
-    color: Colors.dark,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    color: Colors.dark, display: "flex", flexDirection: "row", alignItems: "center"
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    borderColor: '#ccc',
+    borderWidth: 1,
+    marginBottom: SH(15),
+    paddingHorizontal: SW(10),
+    borderRadius: 5,
   },
   bottomImage: {
     width: "98%",
@@ -119,6 +116,17 @@ const Globalstyles = StyleSheet.create({
     backgroundColor: Colors.theme_color,
     marginTop: SW(100)
   },
+  dropdown:{
+    borderColor: '#ccc',
+    borderWidth: 1,
+    marginBottom: SH(15),
+    padding: SW(10),
+    borderRadius: 5,
+    color: Colors.dark,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  }
 })
 
 export default Globalstyles;

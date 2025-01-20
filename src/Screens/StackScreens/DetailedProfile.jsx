@@ -1187,9 +1187,9 @@ const DetailedProfile = ({ navigation }) => {
             />
           </View>
           <Text style={Globalstyles.title}>Upload Your One Closeup Image</Text>
-          <View style={Globalstyles.input1}>
+          <View style={Globalstyles.inputContainer}>
             <TextInput
-              style={{ color: "#000" }}
+              style={Globalstyles.input1}
               value={getFileName(images.closeupImage?.uri)}
               placeholder="Upload Your Image"
               editable={false}
@@ -1201,9 +1201,9 @@ const DetailedProfile = ({ navigation }) => {
             </TouchableOpacity>
           </View>
           <Text style={Globalstyles.title}>Upload Your One Full Image</Text>
-          <View style={Globalstyles.input1}>
+          <View style={Globalstyles.inputContainer}>
             <TextInput
-              style={styles.textInput}
+              style={Globalstyles.input1}
               value={getFileName(images.fullImage?.uri)}
               placeholder="Upload Your Image"
               editable={false}
@@ -1214,9 +1214,9 @@ const DetailedProfile = ({ navigation }) => {
             </TouchableOpacity>
           </View>
           <Text style={Globalstyles.title}>Upload Your One Best Image</Text>
-          <View style={Globalstyles.input1}>
+          <View style={Globalstyles.inputContainer}>
             <TextInput
-              style={styles.textInput}
+              style={Globalstyles.input1}
               value={getFileName(images.bestImage?.uri)}
               placeholder="Upload Your Image"
               editable={false}

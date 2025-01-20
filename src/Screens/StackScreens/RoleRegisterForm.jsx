@@ -370,7 +370,7 @@ const RoleRegisterForm = ({ navigation }) => {
                     <Text style={Globalstyles.title}>Experience</Text>
                     <View>
                         <Dropdown
-                            style={Globalstyles.input1}
+                            style={Globalstyles.input}
                             data={ExperienceData}
                             labelField="label"
                             valueField="value"

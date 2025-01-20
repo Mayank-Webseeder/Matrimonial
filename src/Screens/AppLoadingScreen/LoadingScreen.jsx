@@ -7,7 +7,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setProfiledata} from '../../ReduxStore/Slices/ProfileSlice';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
-
 const LoadingScreen = () => {
   const dispatch=useDispatch();
 
@@ -38,7 +37,6 @@ const LoadingScreen = () => {
   useEffect(() => {
     fetchProfile();
   }, [])
-
   return (
     <View style={styles.container}>
       <Image source={require('../../Images/MatrimonialLogo.png')} style={styles.appLogo} />

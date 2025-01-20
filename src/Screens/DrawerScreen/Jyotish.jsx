@@ -109,7 +109,7 @@ const Jyotish = ({ navigation }) => {
           <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => navigation.navigate('Notification')} />
         </View>
       </View>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.searchbar}>
           <TextInput placeholder="Search in Your city" placeholderTextColor={'gray'} />
           <AntDesign name={'search1'} size={20} color={'gray'} />

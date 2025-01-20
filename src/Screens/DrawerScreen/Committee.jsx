@@ -106,7 +106,7 @@ const Committee = ({ navigation }) => {
 
 
   return (
-    <SafeAreaView style={Globalstyles.container}>
+    <SafeAreaView style={Globalstyles.container} showsVerticalScrollIndicator={false}>
       <StatusBar
         barStyle="dark-content"
         backgroundColor="transparent"
@@ -137,7 +137,7 @@ const Committee = ({ navigation }) => {
       </View>
 
       {/* Scrollable Content */}
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View>
           {/* Search and Filter Section */}
           <View style={styles.searchbar}>

@@ -61,7 +61,7 @@ const CreatePost = ({navigation}) => {
             {photos.length > 0 && (
                         <View style={styles.photosContainer}>
                             <Text style={Globalstyles.title}>Uploaded Photos:</Text>
-                            <ScrollView horizontal>
+                            <ScrollView showsHorizontalScrollIndicator={false} horizontal={true}>
                                 {photos.map((photo, index) => (
                                     <Image key={index} source={{ uri: photo.uri }} style={styles.photo} />
                                 ))}

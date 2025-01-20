@@ -15,19 +15,13 @@ import Toast from 'react-native-toast-message';
 import { useSelector } from 'react-redux';
 import moment from "moment";
 import { launchImageLibrary } from 'react-native-image-picker';
-
-import {
-  OccupationData, QualificationData, maritalStatusData, ManglikStatusData, gotraData, MotherGotraData, LivingData, ComplexionData,
-  ProfileCreatedData, CityData, Income, FamilyType, CookingStatus, DietHabit, smokingStatusData, DrinkingHabit, PeoplePosition,
-  MotherOccupationData,
-  MotherIncome,
-  StateData,
-  TobacooHabit, subCasteOptions,
-  MyDisabilities,
-  MyComplexionData
-} from '../../DummyData/DropdownData';
 import Globalstyles from '../../utils/GlobalCss';
 
+import {
+  OccupationData, QualificationData, maritalStatusData, ManglikStatusData, LivingData, ProfileCreatedData, CityData, Income,
+  FamilyType, CookingStatus, DietHabit, smokingStatusData, DrinkingHabit, PeoplePosition, StateData, TobacooHabit, subCasteOptions,
+  MyDisabilities, MyComplexionData
+} from '../../DummyData/DropdownData';
 
 const DetailedProfile = ({ navigation }) => {
   const [selectedButton, setSelectedButton] = useState('DetailedProfile');
@@ -41,42 +35,6 @@ const DetailedProfile = ({ navigation }) => {
     fullImage: null,
     bestImage: null,
   });
-
-  const pickImage = async (field) => {
-    const options = {
-      mediaType: 'photo',
-      includeBase64: false, // Set to true if you need base64 string
-      quality: 1, // Set the image quality
-    };
-
-    launchImageLibrary(options, (response) => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.errorCode) {
-        console.error('ImagePicker Error: ', response.errorCode);
-      } else {
-        const selectedImage = response.assets[0];
-        setImages((prevState) => ({
-          ...prevState,
-          [field]: selectedImage,
-        }));
-      }
-    });
-  };
-
-  const getFileName = (uri) => {
-    if (!uri) return "";
-
-    const splitUri = uri.split('/');
-    const fullFileName = splitUri[splitUri.length - 1];
-    const baseName = fullFileName.split('.')[0];
-    const shortenedName = baseName.substring(0, 15);
-
-    return shortenedName;
-  };
-
-
-
   const profileData = useSelector((state) => state.profile);
   console.log("profileData", profileData);
   const formattedDate = moment(profileData?.profiledata?.dob).format("DD MMMM YYYY");
@@ -124,6 +82,7 @@ const DetailedProfile = ({ navigation }) => {
     partnerDietHabit: "",
     smokingHabit: "",
     drinkingHabit: "",
+    TobacooHabit: "",
     hobbies: [],
     closeupImage: null,
     fullImage: null,
@@ -140,7 +99,7 @@ const DetailedProfile = ({ navigation }) => {
   const [selectedState, setSelectedState] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
   const [selectedSubCaste, setSelectedSubCaste] = useState('');
-
+  const [detialedProfileData, setDetailProfileData] = useState(' ');
   const handleTimeChange = (event, selectedDate) => {
     setShowTimePicker(false); // Close the picker
     if (selectedDate) {
@@ -152,6 +111,38 @@ const DetailedProfile = ({ navigation }) => {
     }
   };
 
+  const pickImage = async (field) => {
+    const options = {
+      mediaType: 'photo',
+      includeBase64: false, // Set to true if you need base64 string
+      quality: 1, // Set the image quality
+    };
+
+    launchImageLibrary(options, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.errorCode) {
+        console.error('ImagePicker Error: ', response.errorCode);
+      } else {
+        const selectedImage = response.assets[0];
+        setImages((prevState) => ({
+          ...prevState,
+          [field]: selectedImage,
+        }));
+      }
+    });
+  };
+
+  const getFileName = (uri) => {
+    if (!uri) return "";
+
+    const splitUri = uri.split('/');
+    const fullFileName = splitUri[splitUri.length - 1];
+    const baseName = fullFileName.split('.')[0];
+    const shortenedName = baseName.substring(0, 15);
+
+    return shortenedName;
+  };
 
 
   const handleStateInputChange = (text) => {
@@ -278,10 +269,220 @@ const DetailedProfile = ({ navigation }) => {
     return `${day}/${month}/${year}`;
   };
 
+  // const getBiodata = async () => {
+  //   try {
+  //     const token = await AsyncStorage.getItem('userToken');
+  //     if (!token) throw new Error('No token found');
 
-  const handleSave = () => {
-    navigation.navigate('PartnersPreference')
+  //     const headers = {
+  //       'Content-Type': 'application/json',
+  //       'Authorization': `Bearer ${token}`,
+  //     };
+
+  //     const response = await axios.get(GET_BIODATA, { headers });
+  //     console.log("data", JSON.stringify(biodata))
+  //     if (response.data && response.data.data && response.data.data.personalDetails) {
+  //       setBiodata(response.data.data.personalDetails);
+  //       setIsEditable(false);
+  //     } else {
+  //       setBiodata({
+  //         fullname: "",
+  //         dob: "",
+  //         placeofbirth: "",
+  //         maritalStatus: "",
+  //         minHeightFeet: 0,
+  //         maxHeightFeet: 0,
+  //         weight: 0,
+  //         complexion: "",
+  //         manglikStatus: "",
+  //         specialAbility: "",
+  //         nadi: "",
+  //         gotraSelf: "",
+  //         gotraMother: "",
+  //         qualification: "",
+  //         occupation: "",
+  //         annualIncome: 0,
+  //         livingStatus: "",
+  //         currentCity: "",
+  //         aboutMe: "",
+  //         mobileNo: "",
+  //         profileCreatedBy: "",
+  //         fatherName: "",
+  //         fatherOccupation: "",
+  //         motherName: "",
+  //         motherOccupation: "",
+  //         fatherIncomeAnnually: 0,
+  //         motherIncomeAnnually: 0,
+  //         otherFamilyMemberOccupation: "",
+  //         familyType: "",
+  //         siblings: 0,
+  //         otherFamilyMemberInfo: "",
+  //         fatherMobileNo: "",
+  //         motherMobileNo: "",
+  //         familyMemberMobileNo: "",
+  //         permanentAddress: "",
+  //         residentialAddress: "",
+  //         knowCooking: false,
+  //         partnerDietHabit: "",
+  //         smokingHabit: "",
+  //         drinkingHabit: "",
+  //         TobacooHabit: "",
+  //         hobbies: [],
+  //       });
+  //     }
+  //     setIsEditable(true);
+  //   } catch (error) {
+  //     setIsEditable(true);
+  //     console.error("Error fetching biodata:", error);
+  //     setBiodata({
+  //       fullname: "",
+  //       dob: "",
+  //       placeofbirth: "",
+  //       maritalStatus: "",
+  //       minHeightFeet: 0,
+  //       maxHeightFeet: 0,
+  //       weight: 0,
+  //       complexion: "",
+  //       manglikStatus: "",
+  //       specialAbility: "",
+  //       nadi: "",
+  //       gotraSelf: "",
+  //       gotraMother: "",
+  //       qualification: "",
+  //       occupation: "",
+  //       annualIncome: 0,
+  //       livingStatus: "",
+  //       currentCity: "",
+  //       aboutMe: "",
+  //       mobileNo: "",
+  //       profileCreatedBy: "",
+  //       fatherName: "",
+  //       fatherOccupation: "",
+  //       motherName: "",
+  //       motherOccupation: "",
+  //       fatherIncomeAnnually: 0,
+  //       motherIncomeAnnually: 0,
+  //       otherFamilyMemberOccupation: "",
+  //       familyType: "",
+  //       siblings: 0,
+  //       otherFamilyMemberInfo: "",
+  //       fatherMobileNo: "",
+  //       motherMobileNo: "",
+  //       familyMemberMobileNo: "",
+  //       permanentAddress: "",
+  //       residentialAddress: "",
+  //       knowCooking: false,
+  //       partnerDietHabit: "",
+  //       smokingHabit: "",
+  //       drinkingHabit: "",
+  //       TobacooHabit: "",
+  //       hobbies: [],
+  //     });
+  //   }
+  //   finally {
+  //     setIsLoading(false)
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   getBiodata();
+  // }, []);
+
+  // const constructPayload = (biodata, isNew = false) => {
+  //   const keys = [
+  //     'fullname', 'dob', 'placeofbirth', 'maritalStatus', 'specialAbility',
+  //     'minHeightFeet', 'maxHeightFeet', 'weight', 'complexion', 'manglikStatus',
+  //     'nadi', 'gotraSelf', 'gotraMother', 'qualification', 'occupation',
+  //     'annualIncome', 'livingStatus', 'currentCity', 'aboutMe', 'mobileNo',
+  //     'profileCreatedBy', 'fatherName', 'fatherOccupation', 'motherName',
+  //     'motherOccupation', 'fatherIncomeAnnually', 'motherIncomeAnnually',
+  //     'otherFamilyMemberOccupation', 'familyType', 'siblings', 'otherFamilyMemberInfo',
+  //     'fatherMobileNo', 'motherMobileNo', 'familyMemberMobileNo', 'permanentAddress',
+  //     'residentialAddress', 'knowCooking', 'partnerDietHabit', 'smokingHabit',
+  //     'drinkingHabit', 'TobacooHabit', 'hobbies',
+  //   ];
+
+  //   // Construct payload dynamically
+  //   const payload = {};
+  //   keys.forEach((key) => {
+  //     if (biodata[key] !== undefined && biodata[key] !== '') {
+  //       payload[key] = biodata[key];
+  //     } else if (isNew) {
+  //       payload[key] = '';
+  //     }
+  //   });
+
+  //   return payload;
+  // };
+
+
+  // const handleSave = async () => {
+  //   try {
+  //     const token = await AsyncStorage.getItem('userToken');
+  //     if (!token) throw new Error('No token found');
+
+  //     const headers = {
+  //       'Content-Type': 'application/json',
+  //       Authorization: `Bearer ${token}`,
+  //     };
+
+  //     // Dynamically construct the payload
+  //     const payload = biodata?._id
+  //       ? { ...constructPayload(biodata) } // Update existing profile
+  //       : { ...constructPayload(biodata, true) }; // Create new profile
+
+  //     console.log("payload", payload);
+  //     const apiCall = biodata?._id ? axios.put : axios.post;
+  //     const endpoint = biodata?._id ? UPDATE_PERSONAL_DETAILS : CREATE_PERSONAL_DETAILS;
+
+  //     const response = await apiCall(endpoint, payload, { headers });
+  //     console.log('Save response:', response.data);
+
+  //     // Show success toast
+  //     Toast.show({
+  //       type: 'success',
+  //       text1: biodata?._id ? 'Profile Updated Successfully' : 'Detailed Profile Created Successfully',
+  //       text2: 'Your changes have been saved!',
+  //       position: 'top',
+  //       visibilityTime: 1000,
+  //       textStyle: { fontSize: 10, color: 'green' },
+  //     });
+
+  //     // Reset editing state
+  //     setIsEditing(false);
+  //     navigation.navigate('PartnersPreference');
+  //   } catch (error) {
+  //     console.error('Error saving biodata:', error);
+  //     Toast.show({
+  //       type: 'error',
+  //       text1: 'Error',
+  //       text2: error.response?.data?.message || error.message || 'Something went wrong',
+  //       position: 'top',
+  //       visibilityTime: 1000,
+  //       textStyle: { fontSize: 10, color: 'red' },
+  //     });
+  //   }
+  // };
+
+
+   const handleSave = () => {
+    navigation.navigate('PhotoGallery')
   }
+
+  const handleInputChange = (field, value) => {
+    setBiodata((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+
+  // if (isLoading) {
+  //   return <View style={styles.loading}>
+  //     <ActivityIndicator size={'large'} color={Colors.theme_color} />
+  //   </View>;
+  // }
+
   return (
     <SafeAreaView style={Globalstyles.container}>
       <StatusBar
@@ -314,7 +515,7 @@ const DetailedProfile = ({ navigation }) => {
           )}
         </View>
       </View>
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
         <ImageBackground source={require('../../Images/profile3.png')} style={styles.image}>
           <View style={styles.smallHeader}>
             <MaterialIcons
@@ -385,8 +586,8 @@ const DetailedProfile = ({ navigation }) => {
           <View style={styles.detail}>
             <Text style={Globalstyles.title}>Personal Details</Text>
             <TouchableOpacity onPress={() => setIsEditing(true)}>
-              <Text style={styles.detailText}>Edit</Text>
-            </TouchableOpacity>
+                <Text style={styles.detailText}>Edit</Text>
+              </TouchableOpacity>
           </View>
           <Text style={Globalstyles.title}>Sub-Caste</Text>
           <TextInput
@@ -394,6 +595,7 @@ const DetailedProfile = ({ navigation }) => {
             value={subCasteInput}
             onChangeText={handleSubCasteInputChange}
             placeholder="Type your sub caste"
+            placeholderTextColor={'gray'}
           />
           {filteredSubCaste.length > 0 && subCasteInput ? (
             <FlatList
@@ -413,20 +615,22 @@ const DetailedProfile = ({ navigation }) => {
             <Text style={Globalstyles.title}>Full Name</Text>
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
-              value={biodata.fullname}
+              value={biodata?.fullname}
               editable={isEditing}
-              onChangeText={(text) => setBiodata({ ...biodata, fullname: text })}
-
+              onChangeText={(text) => handleInputChange("fullname", text)}
+              placeholderTextColor={'gray'}
+              placeholder='Enter Your Full Name'
             />
           </View>
           <View>
             <Text style={Globalstyles.title}>Date of Birth</Text>
             <TextInput
-              style={[styles.DobInput, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata.dob ? formatDate(biodata.dob) : ""}
               editable={isEditing}
               onFocus={() => setShowDatePicker(true)}
               placeholder="Select your date of birth"
+              placeholderTextColor={'gray'}
             />
 
             {showDatePicker && (
@@ -441,7 +645,7 @@ const DetailedProfile = ({ navigation }) => {
           <View>
             <Text style={Globalstyles.title}>Time of Birth</Text>
             <TextInput
-              style={[styles.DobInput, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata.timeOfBirth}
               editable={isEditing}
               onFocus={() => setShowTimePicker(true)} // Open time picker
@@ -464,7 +668,9 @@ const DetailedProfile = ({ navigation }) => {
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata.placeofbirth}
               editable={isEditing}
-              onChangeText={(text) => setBiodata({ ...biodata, placeofbirth: text })}
+              onChangeText={(text) => handleInputChange("placeofbirth", text)}
+              placeholderTextColor={'gray'}
+              placeholder='Enter Your Birth Place'
             />
           </View>
           <View>
@@ -476,7 +682,7 @@ const DetailedProfile = ({ navigation }) => {
               valueField="value"
               value={biodata.maritalStatus}
               editable={isEditing}
-              onChange={(item) => setBiodata({ ...biodata, maritalStatus: item.value })}
+              onChange={(text) => handleInputChange("maritalStatus", text)}
               placeholder="Select marital status"
             />
           </View>
@@ -490,7 +696,7 @@ const DetailedProfile = ({ navigation }) => {
               valueField="value"
               value={biodata.specialAbility}
               editable={isEditing}
-              onChange={(item) => setBiodata({ ...biodata, specialAbility: item.value })}
+              onChange={(text) => handleInputChange("specialAbility", text.value)}
               placeholder="Select disability"
             />
           </View>
@@ -503,7 +709,7 @@ const DetailedProfile = ({ navigation }) => {
               valueField="value"
               value={biodata.minHeightFeet}
               editable={isEditing}
-              onChange={(item) => setBiodata({ ...biodata, minHeightFeet: item.value })}
+              onChange={(text) => handleInputChange("minHeightFeet", text.value)}
               placeholder="Height"
             />
           </View>
@@ -516,7 +722,7 @@ const DetailedProfile = ({ navigation }) => {
               valueField="value"
               value={biodata.weight}
               editable={isEditing}
-              onChange={(item) => setBiodata({ ...biodata, minWeight: item.value })}
+              onChange={(text) => handleInputChange("weight", text.value)}
               placeholder="Weight"
             />
           </View>
@@ -529,7 +735,7 @@ const DetailedProfile = ({ navigation }) => {
               valueField="value"
               value={biodata.complexion}
               editable={isEditing}
-              onChange={(item) => setBiodata({ ...biodata, complexion: item.value })}
+              onChange={(text) => handleInputChange("complexion", text.value)}
               placeholder="Select Complexion"
             />
           </View>
@@ -542,7 +748,7 @@ const DetailedProfile = ({ navigation }) => {
               valueField="value"
               value={biodata.manglikStatus}
               editable={isEditing}
-              onChange={(item) => setBiodata({ ...biodata, manglikStatus: item.value })}
+              onChange={(text) => handleInputChange("manglikStatus", text.value)}
               placeholder="Select status"
             />
           </View>
@@ -552,7 +758,9 @@ const DetailedProfile = ({ navigation }) => {
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata.nadi}
               editable={isEditing}
-              onChangeText={(text) => setBiodata({ ...biodata, nadi: text })}
+              onChangeText={(text) => handleInputChange("nadi", text)}
+              placeholderTextColor={'gray'}
+              placeholder='Enter Your Nadi'
             />
           </View>
           <View>
@@ -561,7 +769,9 @@ const DetailedProfile = ({ navigation }) => {
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata.gotraSelf}
               editable={isEditing}
-              onChangeText={(text) => setBiodata({ ...biodata, gotraSelf: text })}
+              onChangeText={(text) => handleInputChange("gotraSelf", text)}
+              placeholderTextColor={'gray'}
+              placeholder={'Enter Your Self Gotra'}
             />
           </View>
           <View>
@@ -570,7 +780,9 @@ const DetailedProfile = ({ navigation }) => {
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata.gotraMother}
               editable={isEditing}
-              onChangeText={(text) => setBiodata({ ...biodata, gotraMother: text })}
+              onChangeText={(text) => handleInputChange("gotraMother", text)}
+              placeholderTextColor={'gray'}
+              placeholder={'Enter Your Mother Gotra'}
             />
           </View>
           <View>
@@ -582,7 +794,7 @@ const DetailedProfile = ({ navigation }) => {
               valueField="value"
               value={biodata.qualification}
               editable={isEditing}
-              onChange={(item) => setBiodata({ ...biodata, qualification: item.value })}
+              onChange={(text) => handleInputChange("qualification", text.value)}
               placeholder="Select Qualification"
               disabled={!isEditing}
             />
@@ -596,7 +808,7 @@ const DetailedProfile = ({ navigation }) => {
               valueField="value"
               value={biodata.occupation}
               editable={isEditing}
-              onChange={(item) => setBiodata({ ...biodata, occupation: item.value })}
+              onChange={(text) => handleInputChange("occupation", text.value)}
               placeholder="Select occupation"
               disabled={!isEditing}
             />
@@ -610,7 +822,7 @@ const DetailedProfile = ({ navigation }) => {
               valueField="value"
               value={biodata.annualIncome}
               editable={isEditing}
-              onChange={(item) => setBiodata({ ...biodata, annualIncome: item.value })}
+              onChange={(text) => handleInputChange("annualIncome", text.value)}
               placeholder="Select Income"
               disabled={!isEditing}
             />
@@ -625,7 +837,7 @@ const DetailedProfile = ({ navigation }) => {
               valueField="value"
               value={biodata.livingStatus}
               editable={isEditing}
-              onChange={(item) => setBiodata({ ...biodata, livingStatus: item.value })}
+              onChange={(text) => handleInputChange("livingStatus", text.value)}
               placeholder="Select Status"
               disabled={!isEditing}
             />
@@ -636,7 +848,8 @@ const DetailedProfile = ({ navigation }) => {
               style={Globalstyles.input}
               value={cityInput}
               onChangeText={handleCityInputChange}
-              placeholder="Type your city"
+              placeholder="Enter your city"
+              placeholderTextColor={'gray'}
             />
             {filteredCities.length > 0 && cityInput ? (
               <FlatList
@@ -660,7 +873,7 @@ const DetailedProfile = ({ navigation }) => {
               numberOfLines={6}
               value={biodata.aboutMe}
               editable={isEditing}
-              onChangeText={(text) => setBiodata({ ...biodata, aboutMe: text })}
+              onChangeText={(text) => handleInputChange("aboutMe", text)}
               placeholder="Write about yourself..."
               placeholderTextColor="gray"
               textAlignVertical="top"
@@ -672,10 +885,12 @@ const DetailedProfile = ({ navigation }) => {
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata.mobileNo}
-              onChangeText={(text) => setBiodata({ ...biodata, mobileNo: text })}
+              onChangeText={(text) => handleInputChange("mobileNo", text)}
               keyboardType="phone-pad"
               maxLength={10}
               editable={isEditing}
+              placeholderTextColor={'gray'}
+              placeholder='Enter Your Mobile no.'
             />
           </View>
           <View>
@@ -687,7 +902,7 @@ const DetailedProfile = ({ navigation }) => {
               valueField="value"
               value={biodata.profileCreatedBy}
               editable={isEditing}
-              onChange={(item) => setBiodata({ ...biodata, profileCreatedBy: item.value })}
+              onChange={(text) => handleInputChange("profileCreatedBy", text.value)}
               placeholder="Select Person"
               disabled={!isEditing}
             />
@@ -698,8 +913,10 @@ const DetailedProfile = ({ navigation }) => {
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata.fatherName}
-              onChangeText={(text) => setBiodata({ ...biodata, fatherName: text })}
+              onChangeText={(text) => handleInputChange("fatherName", text)}
               editable={isEditing}
+              placeholderTextColor={'gray'}
+              placeholder='Enter Your Father Name'
             />
           </View>
           <View>
@@ -707,8 +924,10 @@ const DetailedProfile = ({ navigation }) => {
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata.motherName}
-              onChangeText={(text) => setBiodata({ ...biodata, motherName: text })}
+              onChangeText={(text) => handleInputChange("motherName", text)}
               editable={isEditing}
+              placeholderTextColor={'gray'}
+              placeholder='Enter Your Mother Name'
             />
           </View>
           <View>
@@ -720,7 +939,7 @@ const DetailedProfile = ({ navigation }) => {
               valueField="value"
               value={biodata.fatherOccupation}
               editable={isEditing}
-              onChange={(item) => setBiodata({ ...biodata, fatherOccupation: item.value })}
+              onChange={(text) => handleInputChange("fatherOccupation", text.value)}
               placeholder="Select Occupation"
               disabled={!isEditing}
             />
@@ -734,7 +953,7 @@ const DetailedProfile = ({ navigation }) => {
               valueField="value"
               value={biodata.fatherIncomeAnnually}
               editable={isEditing}
-              onChange={(item) => setBiodata({ ...biodata, fatherIncomeAnnually: item.value })}
+              onChange={(text) => handleInputChange("fatherIncomeAnnually", text.value)}
               placeholder="Select Income"
               disabled={!isEditing}
             />
@@ -749,7 +968,7 @@ const DetailedProfile = ({ navigation }) => {
               valueField="value"
               value={biodata.motherOccupation}
               editable={isEditing}
-              onChange={(item) => setBiodata({ ...biodata, motherOccupation: item.value })}
+              onChange={(text) => handleInputChange("motherOccupation", text.value)}
               placeholder="Select Occupation"
               disabled={!isEditing}
             />
@@ -763,7 +982,7 @@ const DetailedProfile = ({ navigation }) => {
               valueField="value"
               value={biodata.motherIncomeAnnually}
               editable={isEditing}
-              onChange={(item) => setBiodata({ ...biodata, motherIncomeAnnually: item.value })}
+              onChange={(text) => handleInputChange("motherIncomeAnnually", text.value)}
               placeholder="Select Income"
               disabled={!isEditing}
             />
@@ -778,7 +997,7 @@ const DetailedProfile = ({ navigation }) => {
               valueField="value"
               value={biodata.familyType}
               editable={isEditing}
-              onChange={(item) => setBiodata({ ...biodata, familyType: item.value })}
+              onChange={(text) => handleInputChange("familyType", text.value)}
               placeholder="Select Type"
               disabled={!isEditing}
             />
@@ -792,7 +1011,7 @@ const DetailedProfile = ({ navigation }) => {
               valueField="value"
               value={biodata.siblings}
               editable={isEditing}
-              onChange={(item) => setBiodata({ ...biodata, siblings: item.value })}
+              onChange={(text) => handleInputChange("siblings", text.value)}
               placeholder="Select Type"
               disabled={!isEditing}
             />
@@ -802,10 +1021,12 @@ const DetailedProfile = ({ navigation }) => {
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata.otherFamilyMemberInfo}
-              onChangeText={(text) => setBiodata({ ...biodata, otherFamilyMemberInfo: text })}
+              onChangeText={(text) => handleInputChange("otherFamilyMemberInfo", text)}
               multiline={true}
               numberOfLines={6}
               editable={isEditing}
+              placeholderTextColor={'gray'}
+              placeholder='Enter Your Family Info.'
             />
           </View>
           <View>
@@ -813,10 +1034,12 @@ const DetailedProfile = ({ navigation }) => {
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata.fatherMobileNo}
-              onChangeText={(text) => setBiodata({ ...biodata, fatherMobileNo: text })}
+              onChangeText={(text) => handleInputChange("fatherMobileNo", text)}
               keyboardType="phone-pad"
               maxLength={10}
               editable={isEditing}
+              placeholderTextColor={'gray'}
+              placeholder='Enter Your Contact No. 1'
             />
           </View>
 
@@ -825,10 +1048,12 @@ const DetailedProfile = ({ navigation }) => {
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata.motherMobileNo}
-              onChangeText={(text) => setBiodata({ ...biodata, motherMobileNo: text })}
+              onChangeText={(text) => handleInputChange("motherMobileNo", text)}
               keyboardType="phone-pad"
               maxLength={10}
               editable={isEditing}
+              placeholderTextColor={'gray'}
+              placeholder='Enter Your Contact No. 2'
             />
           </View>
           <View>
@@ -837,7 +1062,8 @@ const DetailedProfile = ({ navigation }) => {
               style={Globalstyles.input}
               value={stateInput}
               onChangeText={handleStateInputChange}
-              placeholder="Type your state"
+              placeholder="Type your Address"
+              placeholderTextColor={'gray'}
             />
             {filteredStates.length > 0 && stateInput ? (
               <FlatList
@@ -860,6 +1086,7 @@ const DetailedProfile = ({ navigation }) => {
               value={cityInput}
               onChangeText={handleCityInputChange}
               placeholder="Type your city"
+              placeholderTextColor={'gray'}
             />
             {filteredCities.length > 0 && cityInput ? (
               <FlatList
@@ -885,7 +1112,7 @@ const DetailedProfile = ({ navigation }) => {
               valueField="value"
               value={biodata.knowCooking}
               editable={isEditing}
-              onChange={(item) => setBiodata({ ...biodata, knowCooking: item.value })}
+              onChange={(text) => handleInputChange("knowCooking", text.value)}
               placeholder="Select Status"
               disabled={!isEditing}
             />
@@ -899,7 +1126,7 @@ const DetailedProfile = ({ navigation }) => {
               valueField="value"
               value={biodata.partnerDietHabit}
               editable={isEditing}
-              onChange={(item) => setBiodata({ ...biodata, partnerDietHabit: item.value })}
+              onChange={(text) => handleInputChange("partnerDietHabit", text.value)}
               placeholder="Select Habit"
               disabled={!isEditing}
             />
@@ -913,7 +1140,7 @@ const DetailedProfile = ({ navigation }) => {
               valueField="value"
               value={biodata.smokingHabit}
               editable={isEditing}
-              onChange={(item) => setBiodata({ ...biodata, smokingHabit: item.value })}
+              onChange={(text) => handleInputChange("smokingHabit", text.value)}
               placeholder="Select Status"
               disabled={!isEditing}
             />
@@ -927,7 +1154,7 @@ const DetailedProfile = ({ navigation }) => {
               valueField="value"
               value={biodata.drinkingHabit}
               editable={isEditing}
-              onChange={(item) => setBiodata({ ...biodata, drinkingHabit: item.value })}
+              onChange={(text) => handleInputChange("drinkingHabit", text.value)}
               placeholder="Select Habit"
               disabled={!isEditing}
             />
@@ -939,9 +1166,9 @@ const DetailedProfile = ({ navigation }) => {
               data={TobacooHabit}
               labelField="label"
               valueField="value"
-              value={biodata.drinkingHabit}
+              value={biodata.TobacooHabit}
               editable={isEditing}
-              onChange={(item) => setBiodata({ ...biodata, drinkingHabit: item.value })}
+              onChange={(text) => handleInputChange("TobacooHabit", text.value)}
               placeholder="Select Habit"
               disabled={!isEditing}
             />
@@ -951,10 +1178,12 @@ const DetailedProfile = ({ navigation }) => {
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata.hobbies}
-              onChangeText={(text) => setBiodata({ ...biodata, hobbies: text })}
+              onChangeText={(text) => handleInputChange("hobbies", text)}
               multiline={true}
               numberOfLines={6}
               editable={isEditing}
+              placeholderTextColor={'gray'}
+              placeholder='Enter Your Hobbies'
             />
           </View>
           <Text style={Globalstyles.title}>Upload Your One Closeup Image</Text>
@@ -962,8 +1191,10 @@ const DetailedProfile = ({ navigation }) => {
             <TextInput
               style={{ color: "#000" }}
               value={getFileName(images.closeupImage?.uri)}
-              placeholder="Select an image"
+              placeholder="Upload Your Image"
               editable={false}
+              placeholderTextColor={'gray'}
+              onChangeText={(text) => handleInputChange("closeupImage", text)}
             />
             <TouchableOpacity onPress={() => pickImage("closeupImage")}>
               <MaterialIcons name="attach-file" size={24} color="black" />
@@ -974,8 +1205,9 @@ const DetailedProfile = ({ navigation }) => {
             <TextInput
               style={styles.textInput}
               value={getFileName(images.fullImage?.uri)}
-              placeholder="Select an image"
+              placeholder="Upload Your Image"
               editable={false}
+              placeholderTextColor={'gray'}
             />
             <TouchableOpacity onPress={() => pickImage("fullImage")}>
               <MaterialIcons name="attach-file" size={24} color="black" />
@@ -986,16 +1218,19 @@ const DetailedProfile = ({ navigation }) => {
             <TextInput
               style={styles.textInput}
               value={getFileName(images.bestImage?.uri)}
-              placeholder="Select an image"
+              placeholder="Upload Your Image"
               editable={false}
+              placeholderTextColor={'gray'}
             />
             <TouchableOpacity onPress={() => pickImage("bestImage")}>
               <MaterialIcons name="attach-file" size={24} color="black" />
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.button} onPress={handleSave}>
-            <Text style={styles.buttonText}>Continue</Text>
-          </TouchableOpacity>
+          {isEditing && (
+            <TouchableOpacity style={styles.button} onPress={handleSave}>
+              <Text style={styles.buttonText}>Continue</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>

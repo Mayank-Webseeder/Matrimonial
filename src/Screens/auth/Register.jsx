@@ -147,7 +147,7 @@ const Register = ({ navigation }) => {
                     color={Colors.light}
                     onPress={() => navigation.navigate("Splash")}
                 />
-                <ScrollView style={styles.contentContainer}>
+                <ScrollView style={styles.contentContainer} showsVerticalScrollIndicator={false}>
                     <Text style={styles.text}>Sign Up</Text>
 
                     <View style={Globalstyles.form}>
@@ -232,7 +232,7 @@ const Register = ({ navigation }) => {
                             <Text style={Globalstyles.title}>Create Password</Text>
                             <View style={Globalstyles.input1}>
                                 <TextInput
-                                    style={Globalstyles.TextInput}
+                                    style={{ color: Colors.dark }}
                                     secureTextEntry={!showPassword}
                                     placeholder="Create a strong password"
                                     value={password}
@@ -258,7 +258,7 @@ const Register = ({ navigation }) => {
                             <Text style={Globalstyles.title}>Confirm Password</Text>
                             <View style={Globalstyles.input1}>
                                 <TextInput
-                                    style={Globalstyles.TextInput}
+                                    style={{ color: Colors.dark }}
                                     secureTextEntry={!showConfirmPassword}
                                     placeholder="Create a strong password"
                                     value={confirmPassword}

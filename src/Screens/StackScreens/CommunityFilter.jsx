@@ -97,7 +97,7 @@ const CommunityFilter = ({ navigation }) => {
         </View>
       </View>
  
- <ScrollView>
+ <ScrollView showsVerticalScrollIndicator={false}>
 
  <View>
           {/* Search and Filter Section */}

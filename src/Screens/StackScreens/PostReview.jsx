@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, Alert,StatusBar,SafeAreaView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity,StatusBar, SafeAreaView } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -7,46 +7,60 @@ import styles from '../StyleScreens/PostReview';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Colors from '../../utils/Colors';
 import Globalstyles from '../../utils/GlobalCss';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { PANDIT_REVIEW } from '../../utils/BaseUrl';
+import Toast from 'react-native-toast-message';
 
-
-const PostReview = ({ navigation }) => {
-    const [image, setImage] = useState(null);
+const PostReview = ({ navigation, route }) => {
     const [description, setDescription] = useState('');
     const [rating, setRating] = useState(0);
+    const { panditId } = route.params;
 
-    const handleImagePicker = async () => {
-        const options = {
-            mediaType: 'photo',
-            quality: 1,
-        };
+    const handleSubmit = async () => {
+        try {
+            const token = await AsyncStorage.getItem("userToken");
+            if (!token) throw new Error("Authorization token is missing.");
 
-        launchImageLibrary(options, response => {
-            if (response.didCancel) {
-                console.log('User cancelled image picker');
-            } else if (response.errorCode) {
-                Alert.alert('Error', `Image picker error: ${response.errorMessage}`);
+            const headers = {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            };
+
+            const payload = {
+                panditId: panditId,
+                rating: rating,
+                review: description,
+            };
+
+            const response = await axios.post(PANDIT_REVIEW, payload, { headers });
+
+            if (response.status === 200) {
+                Toast.show({
+                    type: 'success',
+                    text1: 'Success',
+                    text2: 'Your review has been posted successfully!',
+                    position: 'top',
+                });
+                navigation.goBack();
             } else {
-                const uri = response.assets && response.assets[0].uri;
-                setImage(uri);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Error',
+                    text2: 'Failed to post the review. Please try again.',
+                    position: 'top',
+                });
             }
-        });
-    };
-
-    const handleSubmit = () => {
-        if (rating === 0) {
-            Alert.alert('Error', 'Please provide a rating before submitting.');
-            return;
+        } catch (error) {
+            console.error('Error posting review:', error);
+            const errorMessage = error.response?.data?.message || 'An error occurred while posting the review.';
+            Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: errorMessage,
+                position: 'top',
+            });
         }
-
-        const reviewData = {
-            image,
-            description,
-            rating,
-        };
-
-        console.log('Review Data:', reviewData);
-        Alert.alert('Success', 'Your review has been submitted!');
-        navigation?.goBack(); 
     };
 
     const renderStars = () => {
@@ -67,13 +81,13 @@ const PostReview = ({ navigation }) => {
 
     return (
         <SafeAreaView style={Globalstyles.container}>
-            <StatusBar 
-                barStyle="dark-content" 
-                backgroundColor="transparent" 
-                translucent 
+            <StatusBar
+                barStyle="dark-content"
+                backgroundColor="transparent"
+                translucent
             />
             <View style={Globalstyles.header}>
-                <View style={{ alignItems:"center",flexDirection:"row"}}>
+                <View style={{ alignItems: "center", flexDirection: "row" }}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
@@ -81,30 +95,32 @@ const PostReview = ({ navigation }) => {
                 </View>
                 <View style={styles.righticons}>
                     {/* <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} /> */}
-                    <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification')}}/>
+                    <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />
                 </View>
             </View>
 
 
-           <View style={Globalstyles.form}>
-           <Text style={Globalstyles.title}>Rating (Required)</Text>
-           <View style={styles.starContainer}>{renderStars()}</View>
+            <View style={Globalstyles.form}>
+                <Text style={Globalstyles.title}>Rating (Required)</Text>
+                <View style={styles.starContainer}>{renderStars()}</View>
 
-           <Text style={Globalstyles.title}>Description (Optional)</Text>
-            <TextInput
-                style={Globalstyles.textInput}
-                placeholder="Write your review..."
-                placeholderTextColor={Colors.gray}
-                multiline
-                value={description}
-                onChangeText={setDescription}
-                textAlignVertical='top'
-            />
+                <Text style={Globalstyles.title}>Description (Optional)</Text>
+                <TextInput
+                    style={Globalstyles.textInput}
+                    placeholder="Write your review..."
+                    placeholderTextColor={Colors.gray}
+                    multiline
+                    value={description}
+                    onChangeText={setDescription}
+                    textAlignVertical='top'
+                />
 
-            <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-                <Text style={styles.submitButtonText}>Submit Review</Text>
-            </TouchableOpacity>
-           </View>
+                <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+                    <Text style={styles.submitButtonText}>Submit Review</Text>
+                </TouchableOpacity>
+            </View>
+            <Toast />
+
         </SafeAreaView>
     );
 };

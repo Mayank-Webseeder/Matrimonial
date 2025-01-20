@@ -2,11 +2,11 @@ import { StyleSheet } from "react-native";
 import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 const styles = StyleSheet.create({
-  editText:{
-    fontSize:SF(15),
-    color:Colors.theme_color,
-    marginLeft:SW(250),
-    fontFamily:"Poppins-Bold"
+  editText: {
+    fontSize: SF(15),
+    color: Colors.theme_color,
+    marginLeft: SW(250),
+    fontFamily: "Poppins-Bold"
   },
   button: {
     backgroundColor: '#800020',
@@ -50,7 +50,8 @@ const styles = StyleSheet.create({
   photo: {
     width: SW(100),
     height: SH(100),
-    marginRight: SW(5),
+    marginHorizontal: SW(5),
+    marginVertical: SH(5),
     borderRadius: 10,
   },
   checkboxContainer: {
@@ -63,19 +64,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between"
   },
-  checkboxContainer1:{
+  checkboxContainer1: {
     borderColor: '#ccc',
     borderWidth: 1,
-    marginBottom:SH(5),
+    marginBottom: SH(5),
     borderRadius: 5,
-    height:SH(40),
-    justifyContent:"center",
+    height: SH(40),
+    justifyContent: "center",
   },
   checkboxItem: {
     flexDirection: "row",
     alignItems: "center"
   },
-  servicesLabel:{
+  servicesLabel: {
     fontSize: SF(15),
     marginBottom: SH(5),
     fontFamily: "Poppins-Bold"

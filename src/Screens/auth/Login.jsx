@@ -3,10 +3,10 @@ import { Text, View, ImageBackground, TouchableOpacity, TextInput, ScrollView, S
 import styles from "../StyleScreens/LoginStyle";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import axios from "axios";
-import { LOGIN_ENDPOINT } from "../../utils/BaseUrl";
+import { LOGIN_ENDPOINT ,PROFILE_ENDPOINT } from "../../utils/BaseUrl";
 import Colors from "../../utils/Colors";
 import { useDispatch } from "react-redux";
-import { setLoginData } from "../../ReduxStore/Slices/authSlice";
+import { setLoginData  } from "../../ReduxStore/Slices/authSlice";
 import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -16,6 +16,7 @@ const Login = ({ navigation }) => {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
+
    const dispatch=useDispatch();
     const validateFields = () => {
         const newErrors = {};
@@ -66,7 +67,9 @@ const Login = ({ navigation }) => {
                     position: "top",
                     visibilityTime: 1000,
                     textStyle: { fontSize: 10, color: "green" },
-                    onHide: () => navigation.navigate("MainApp"),
+                    onHide: async () => {
+                        navigation.navigate("MainApp");
+                    },
                 });
             } else {
                 Toast.show({
@@ -104,8 +107,6 @@ const Login = ({ navigation }) => {
             setLoading(false);
         }
     };
-    
-
 
     return (
         <SafeAreaView style={styles.container}>
@@ -123,7 +124,7 @@ const Login = ({ navigation }) => {
                     </Text>
 
                     {/* Mobile Number */}
-                    <Text style={styles.phoneText}>Phone Number</Text>
+                    <Text style={styles.HeadingText}>Phone Number</Text>
                     <TextInput
                         style={styles.inputText}
                         keyboardType="numeric"
@@ -137,7 +138,7 @@ const Login = ({ navigation }) => {
                     )}
 
                     {/* Password */}
-                    <Text style={styles.password}>Password</Text>
+                    <Text style={styles.HeadingText}>Password</Text>
 
                     <View style={styles.passwordContainer}>
                         <TextInput

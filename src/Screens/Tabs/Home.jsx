@@ -53,7 +53,7 @@ const Home = ({ navigation }) => {
           <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />
         </View>
       </View>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.sliderContainer}>
           <AppIntroSlider
             ref={sliderRef}

@@ -24,7 +24,7 @@ const AllReviewsPage = ({ route, navigation }) => {
                     <Text style={[Globalstyles.headerText, { textAlign: "left" }]}>All Reviews</Text>
                 </View>
             </View>
-            <ScrollView style={{ marginVertical: SH(10) }}>
+            <ScrollView style={{ marginVertical: SH(10) }} showsVerticalScrollIndicator={false}>
                 {reviews.map((review, index) => (
                     <View key={index} style={styles.reviewContainer}>
                         <View style={styles.FlexContainer}>

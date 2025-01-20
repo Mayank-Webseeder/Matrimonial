@@ -145,7 +145,7 @@ const Dharmshala = ({ navigation }) => {
       </View>
 
       {/* Scrollable Content */}
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View>
           {/* Search and Filter Section */}
           <View style={styles.searchContainer}>

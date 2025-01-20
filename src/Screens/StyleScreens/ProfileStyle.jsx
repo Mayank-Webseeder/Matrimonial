@@ -113,7 +113,8 @@ const styles = StyleSheet.create({
     },
     detailText: {
         fontFamily: "Poppins-Bold",
-        fontSize: SF(15)
+        fontSize: SF(15),
+        color:Colors.theme_color
     },
     input: {
         height: SH(40),

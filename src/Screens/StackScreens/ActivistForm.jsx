@@ -69,7 +69,7 @@ export default function ActivistForm({navigation}) {
         </View>
 
       </View>
-      <ScrollView style={Globalstyles.form}>
+      <ScrollView style={Globalstyles.form} showsVerticalScrollIndicator={false}>
         <Text style={Globalstyles.title}>Name</Text>
         <TextInput style={Globalstyles.input} placeholder="Enter your name" />
 

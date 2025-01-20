@@ -40,7 +40,7 @@ const PhotoGallery = ({ navigation }) => {
                 </View>
             </View>
 
-            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false} >
                 <View>
                 <ImageBackground source={require('../../Images/profile3.png')} style={styles.image}>
                         <View style={styles.smallHeader}>

@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
   rating: {
     fontSize: SF(13),
     marginVertical: SH(10),
+    marginHorizontal:SW(3)
   },
   FlexContainer: {
     flexDirection: "row",
@@ -58,8 +59,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light,
     borderRadius: 50,
     elevation: 5,
-    paddingHorizontal: SW(5),
-    paddingVertical: SH(3),
+    paddingHorizontal: SW(10),
+    paddingVertical: SH(5),
     marginHorizontal: SW(5),
     marginVertical: SH(5),
     width: '30%',
@@ -72,6 +73,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
     textAlign: 'center',
     color: Colors.dark,
+    textAlign:"center"
   },
   ratingCount: {
     marginRight: SW(260),

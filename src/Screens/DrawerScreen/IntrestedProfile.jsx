@@ -74,7 +74,7 @@ const IntrestedProfile = ({ navigation }) => {
           />
         </View>
       </View>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.sliderContainer}>
           <AppIntroSlider
             ref={sliderRef}

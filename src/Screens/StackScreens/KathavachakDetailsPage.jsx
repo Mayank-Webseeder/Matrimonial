@@ -58,7 +58,7 @@ const KathavachakDetailsPage = ({ navigation, item }) => {
                     <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />
                 </View>
             </View>
-            <ScrollView>
+            <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.profileSection}>
                     <Image source={pandit.image} style={styles.profileImage} />
                     <View>

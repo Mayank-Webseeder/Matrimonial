@@ -234,7 +234,7 @@ const EventNews = ({ navigation }) => {
           />
         </View>
       </View>
-      <ScrollView style={styles.bottomContainer}>
+      <ScrollView style={styles.bottomContainer} showsVerticalScrollIndicator={false}>
 
 
         <FlatList

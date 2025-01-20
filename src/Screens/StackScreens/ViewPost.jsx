@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Image, ScrollView, Text, View, TouchableOpacity,SafeAreaView,StatusBar } from 'react-native';
+import { Image, ScrollView, Text, View, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
@@ -11,7 +11,7 @@ import Globalstyles from '../../utils/GlobalCss';
 const ViewPost = ({ navigation, route }) => {
   const { post } = route.params;
   const images = [post.image1, post.image2, post.image3, post.image4].filter(Boolean);
-  
+
   const [imageAspectRatios, setImageAspectRatios] = useState([]);
 
   useEffect(() => {
@@ -35,13 +35,13 @@ const ViewPost = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={Globalstyles.container}>
-      <StatusBar 
-                barStyle="dark-content" 
-                backgroundColor="transparent" 
-                translucent 
-            />
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="transparent"
+        translucent
+      />
       <View style={Globalstyles.header}>
-        <View style={{ flexDirection: 'row',alignItems:"center" }}>
+        <View style={{ flexDirection: 'row', alignItems: "center" }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
@@ -58,7 +58,7 @@ const ViewPost = ({ navigation, route }) => {
         </View>
       </View>
 
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}  >
         <View style={styles.postHeader}>
           <Image source={require('../../Images/user.png')} />
           <View style={styles.postTextContainer}>
@@ -75,12 +75,12 @@ const ViewPost = ({ navigation, route }) => {
           <View>
             {images.map((image, index) => (
               <View key={index} style={styles.card}>
-               <View>
-               <Image
-                  source={image}
-                  style={[styles.image, { aspectRatio: imageAspectRatios[index] || 1 }]} 
-                  resizeMode="cover"
-                />
+                <View>
+                  <Image
+                    source={image}
+                    style={[styles.image, { aspectRatio: imageAspectRatios[index] || 1 }]}
+                    resizeMode="cover"
+                  />
                 </View>
                 <View style={styles.likeShareComment}>
                   <View style={styles.likeShare}>

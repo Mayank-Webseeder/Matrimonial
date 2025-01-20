@@ -7,55 +7,22 @@ import { TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { DrawerActions } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { PROFILE_ENDPOINT } from '../../utils/BaseUrl';
-import axios from 'axios';
 import moment from "moment";
-import { setProfiledata } from '../../ReduxStore/Slices/ProfileSlice';
-import { useDispatch } from 'react-redux';
 import Globalstyles from '../../utils/GlobalCss';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const MyProfile = ({ navigation }) => {
-    const dispatch=useDispatch();
     const [selectedButton, setSelectedButton] = useState('CreateBioData');
-    const [profileData, setProfileData] = useState({});
-    const [loading, setLoading] = useState(false);
+    const ProfileData = useSelector((state) => state.profile);
+    const profileData=ProfileData?.profiledata || {};
+    console.log("profileData",profileData);
     const formattedDate = moment(profileData.dob).format("DD MMMM YYYY");
     
-    const fetchProfile = async () => {
-        setLoading(true);
-        try {
-          const token = await AsyncStorage.getItem('userToken');
-          if (!token) throw new Error('No token found');
-          const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          };
-          console.log("headers in profile",headers);
-          const res = await axios.get(PROFILE_ENDPOINT, { headers });
-          const ProfileData = res.data.data;
-          dispatch(setProfiledata(ProfileData));
-          console.log("ProfileData",ProfileData);
-          setProfileData(ProfileData);
-        } catch (error) {
-          console.error('Error fetching profile:', error.response ? error.response.data : error.message);
-        } finally {
-          setLoading(false);
-        }
-      };
 
-      useEffect(()=>{
-        fetchProfile();
-      },[])
-
-      
     const handlePress = (buttonName) => {
         setSelectedButton(buttonName);
         navigation.navigate(buttonName);
     };
-
-    // const loginData = useSelector((state) => state.auth.user);
    
     return (
         <SafeAreaView style={Globalstyles.container}>

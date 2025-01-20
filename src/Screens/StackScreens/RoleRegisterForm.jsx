@@ -4,10 +4,14 @@ import styles from '../StyleScreens/RoleRegisterStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
 import { Checkbox } from 'react-native-paper';
-import { Dropdown } from 'react-native-element-dropdown';
+import Toast from 'react-native-toast-message';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Globalstyles from '../../utils/GlobalCss';
-import { subCasteOptions, StateData, CityData, panditServices, jyotishServices, kathavachakServices } from '../../DummyData/DropdownData';
+import { subCasteOptions, StateData, CityData, panditServices, jyotishServices, kathavachakServices, ExperienceData } from '../../DummyData/DropdownData';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CREATE_PANDIT } from '../../utils/BaseUrl';
+import { Dropdown } from 'react-native-element-dropdown';
 
 const RoleRegisterForm = ({ navigation }) => {
     const [name, setName] = useState('');
@@ -34,6 +38,7 @@ const RoleRegisterForm = ({ navigation }) => {
     const [selectedCity, setSelectedCity] = useState('');
     const [selectedSubCaste, setSelectedSubCaste] = useState('');
     const [area, setArea] = useState('');
+    const [experience, setExperience] = useState(null);
 
     const roleOptions = [
         { label: 'Pandit', value: 'Pandit' },
@@ -72,12 +77,79 @@ const RoleRegisterForm = ({ navigation }) => {
         });
     };
 
-    const handleSubmit = () => {
-        console.log({
-            name, mobile, aadhar, subCaste, services: checked, profilePhoto, photos, state: selectedState || stateInput,
-            subCaste: selectedSubCaste || subCasteInput, city: selectedCity || cityInput,
-        });
+    const handleSubmit = async () => {
+        const roleApiMapping = {
+            Pandit: CREATE_PANDIT,
+        };
+
+        if (!name || !mobile || !area || !selectedState || !selectedCity || !aadhar || !selectedSubCaste || !profilePhoto || !photos.length) {
+            Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: 'All required fields must be filled.',
+            });
+            return;
+        }
+
+        const commonPayload = {
+            fullName: name,
+            mobileNo: mobile,
+            residentialAddress: area,
+            state: selectedState,
+            city: selectedCity,
+            aadharNo: aadhar,
+            subCaste: selectedSubCaste,
+            profilePhoto: profilePhoto,
+            additionalPhotos: photos.map(photo => photo.uri),
+        };
+
+        try {
+            const token = await AsyncStorage.getItem("userToken");
+            if (!token) throw new Error("Authorization token is missing.");
+
+            const headers = {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            };
+
+            for (const role of selectedRoles) {
+                const url = roleApiMapping[role];
+                const payload = {
+                    ...commonPayload,
+                    [`${role.toLowerCase()}Services`]: Object.keys(checked).filter(service => checked[service]),
+                };
+
+                try {
+                    const response = await axios.post(url, payload, { headers });
+                    Toast.show({
+                        type: 'success',
+                        text1: 'Success!',
+                        text2: `Successfully registered for ${role}.`,
+                    });
+                } catch (apiError) {
+                    // Log detailed error to a logging service like Sentry
+                    console.error(`API Error for ${role}:`, apiError.response?.data || apiError.message);
+
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Registration Failed',
+                        text2: apiError.response?.data?.message || `Failed to register for ${role}.`,
+                    });
+                }
+            }
+        } catch (error) {
+            // Log unexpected errors to a logging service
+            console.error('Unexpected error:', error.message);
+
+            Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: error.message,
+            });
+        }
     };
+
+
 
     const handleStateInputChange = (text) => {
         setStateInput(text);
@@ -116,7 +188,26 @@ const RoleRegisterForm = ({ navigation }) => {
         }
     };
 
+    const selectImage = async () => {
+        const options = {
+            mediaType: 'photo',
+            quality: 1,
+            includeBase64: false,
+        };
 
+        launchImageLibrary(options, (response) => {
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.errorCode) {
+                console.error('Image Picker Error:', response?.errorMessage);
+            } else {
+                // Get the selected image's URI
+                const uri = response?.assets[0]?.uri;
+                setProfilePhoto(uri);
+                console.log('Selected Image URI:', uri);
+            }
+        });
+    };
 
     return (
         <SafeAreaView style={Globalstyles.container}>
@@ -130,14 +221,21 @@ const RoleRegisterForm = ({ navigation }) => {
                 </View>
             </View>
 
-            <ScrollView>
+            <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={Globalstyles.form}>
                     <Text style={styles.editText}>Edit Details</Text>
                     <Text style={Globalstyles.title}>Name</Text>
-                    <TextInput style={Globalstyles.input} value={name} onChangeText={setName} />
+                    <TextInput style={Globalstyles.input}
+                        value={name}
+                        onChangeText={setName}
+                        placeholder='Enter Your Full Name'
+                        placeholderTextColor={'gray'}
+                    />
 
                     <Text style={Globalstyles.title}>Mobile No.</Text>
-                    <TextInput style={Globalstyles.input} value={mobile} onChangeText={setMobile} keyboardType="phone-pad" />
+                    <TextInput style={Globalstyles.input} value={mobile} onChangeText={setMobile} keyboardType="phone-pad"
+                        placeholder="Enter Your Mobile No."
+                        placeholderTextColor={'gray'} />
 
                     <Text style={Globalstyles.title}>State</Text>
                     <TextInput
@@ -145,6 +243,7 @@ const RoleRegisterForm = ({ navigation }) => {
                         value={stateInput}
                         onChangeText={handleStateInputChange}
                         placeholder="Type your state"
+                        placeholderTextColor={'gray'}
                     />
                     {filteredStates.length > 0 && stateInput ? (
                         <FlatList
@@ -172,6 +271,7 @@ const RoleRegisterForm = ({ navigation }) => {
                         value={cityInput}
                         onChangeText={handleCityInputChange}
                         placeholder="Type your city"
+                        placeholderTextColor={'gray'}
                     />
                     {filteredCities.length > 0 && cityInput ? (
                         <FlatList
@@ -194,10 +294,18 @@ const RoleRegisterForm = ({ navigation }) => {
                     ) : null}
 
                     <Text style={Globalstyles.title}>Area (optional)</Text>
-                    <TextInput style={Globalstyles.input} value={area} onChangeText={setArea} />
+                    <TextInput style={Globalstyles.input}
+                        value={area} onChangeText={setArea}
+                        placeholder='Enter Your Area'
+                        placeholderTextColor={'gray'}
+                    />
 
                     <Text style={Globalstyles.title}>Aadhar No. (Optional)</Text>
-                    <TextInput style={Globalstyles.input} value={aadhar} onChangeText={setAadhar} keyboardType="number-pad" />
+                    <TextInput style={Globalstyles.input}
+                        value={aadhar} onChangeText={setAadhar}
+                        placeholder='Enter Your Aadhar No.'
+                        placeholderTextColor={'gray'}
+                    />
 
                     <Text style={Globalstyles.title}>Sub Caste</Text>
                     <TextInput
@@ -205,6 +313,7 @@ const RoleRegisterForm = ({ navigation }) => {
                         value={subCasteInput}
                         onChangeText={handleSubCasteInputChange}
                         placeholder="Type your sub caste"
+                        placeholderTextColor={'gray'}
                     />
                     {filteredSubCaste.length > 0 && subCasteInput ? (
                         <FlatList
@@ -258,18 +367,45 @@ const RoleRegisterForm = ({ navigation }) => {
                         </View>
                     ))}
 
+                    <Text style={Globalstyles.title}>Experience</Text>
+                    <View>
+                        <Dropdown
+                            style={Globalstyles.input1}
+                            data={ExperienceData}
+                            labelField="label"
+                            valueField="value"
+                            value={experience}
+                            onChange={(item) => setExperience(item.value)}
+                            placeholder="Select Experience"
+                        />
+                    </View>
+
                     <Text style={Globalstyles.title}>Profile Photo</Text>
-                    <TextInput style={Globalstyles.input} value={profilePhoto} onChangeText={setProfilePhoto} />
+                    <TouchableOpacity
+                        style={Globalstyles.input}
+                        onPress={selectImage} // Function to handle the image selection
+                    >
+                        <Text style={{ color: 'gray' }}>Upload Your Profile Photo</Text>
+                    </TouchableOpacity>
+
+                    {profilePhoto && (
+                        <Image
+                            source={{ uri: profilePhoto }} // Display the selected profile photo
+                            style={styles.photo}
+                        />
+                    )}
 
                     <Text style={Globalstyles.title}>Add Description</Text>
                     <TextInput style={Globalstyles.textInput} value={description} onChangeText={setDescription}
-                        textAlignVertical='top'
+                        textAlignVertical='top' placeholder="Add Your Description"
+                        placeholderTextColor={'gray'}
                     />
 
 
                     <View style={styles.photopickContainer}>
                         <Text style={Globalstyles.title}>Photos (Up to 5)</Text>
-                        <TouchableOpacity style={styles.PickPhotoButton} onPress={handleImagePick}>
+                        <TouchableOpacity style={styles.PickPhotoButton}
+                            onPress={handleImagePick} >
                             <Text style={styles.PickPhotoText}>Pick Photos</Text>
                         </TouchableOpacity>
                     </View>
@@ -277,7 +413,7 @@ const RoleRegisterForm = ({ navigation }) => {
                     {photos.length > 0 && (
                         <View style={styles.photosContainer}>
                             <Text style={styles.label}>Uploaded Photos:</Text>
-                            <ScrollView horizontal>
+                            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
                                 {photos.map((photo, index) => (
                                     <Image key={index} source={{ uri: photo.uri }} style={styles.photo} />
                                 ))}
@@ -286,21 +422,32 @@ const RoleRegisterForm = ({ navigation }) => {
                     )}
 
                     <Text style={Globalstyles.title}>Website Link</Text>
-                    <TextInput style={Globalstyles.input} value={website} onChangeText={setWebsite} />
+                    <TextInput style={Globalstyles.input} value={website} onChangeText={setWebsite}
+                        placeholder="Gave Your Website Link"
+                        placeholderTextColor={'gray'} />
                     <Text style={Globalstyles.title}>Youtube Link</Text>
-                    <TextInput style={Globalstyles.input} value={youtube} onChangeText={setYoutube} />
+                    <TextInput style={Globalstyles.input} value={youtube} onChangeText={setYoutube}
+                        placeholder="Gave Your Youtube Link"
+                        placeholderTextColor={'gray'} />
                     <Text style={Globalstyles.title}>Whatsapp Link</Text>
-                    <TextInput style={Globalstyles.input} value={whatsapp} onChangeText={setWhatsapp} />
+                    <TextInput style={Globalstyles.input} value={whatsapp} onChangeText={setWhatsapp}
+                        placeholder="Gave Your Whatsapp Link"
+                        placeholderTextColor={'gray'} />
                     <Text style={Globalstyles.title}>Facebook Link</Text>
-                    <TextInput style={Globalstyles.input} value={facebook} onChangeText={setFacebook} />
+                    <TextInput style={Globalstyles.input} value={facebook} onChangeText={setFacebook}
+                        placeholder="Gave Your Facebook Link"
+                        placeholderTextColor={'gray'} />
                     <Text style={Globalstyles.title}>Instagram Link</Text>
-                    <TextInput style={Globalstyles.input} value={instagram} onChangeText={setInstagram} />
+                    <TextInput style={Globalstyles.input} value={instagram} onChangeText={setInstagram}
+                        placeholder="Gave Your Instagram Link"
+                        placeholderTextColor={'gray'} />
 
                     <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                         <Text style={styles.buttonText}>Save</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
+            <Toast />
         </SafeAreaView>
     );
 };

@@ -1,14 +1,5 @@
 import React, { useState } from "react";
-import {
-    Text,
-    View,
-    ImageBackground,
-    TouchableOpacity,
-    TextInput,
-    ScrollView,
-    SafeAreaView,
-    ActivityIndicator, FlatList
-} from "react-native";
+import { Text, View, ImageBackground, TouchableOpacity, TextInput, ScrollView, SafeAreaView, ActivityIndicator, FlatList } from "react-native";
 import styles from "../StyleScreens/RegisterStyle";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -19,6 +10,7 @@ import { SIGNUP_ENDPOINT } from "../../utils/BaseUrl";
 import Toast from "react-native-toast-message";
 import { CityData, genderData } from "../../DummyData/DropdownData";
 import Globalstyles from "../../utils/GlobalCss";
+
 const Register = ({ navigation }) => {
     const [selectedDate, setSelectedDate] = useState(null);
     const [showDatePicker, setShowDatePicker] = useState(false);
@@ -34,7 +26,7 @@ const Register = ({ navigation }) => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [errors, setErrors] = useState({});
-    const [isLoading, setIsLoading] = useState(false); // Loader state
+    const [isLoading, setIsLoading] = useState(false);
 
     const validateFields = () => {
         const newErrors = {};
@@ -42,7 +34,9 @@ const Register = ({ navigation }) => {
         else if (!/^\d{10}$/.test(mobileNumber)) newErrors.mobileNumber = "Enter a valid 10-digit mobile number.";
         if (!fullName) newErrors.fullName = "Full name is required.";
         if (!selectedDate) newErrors.selectedDate = "Date of Birth is required.";
-        if (!selectedCity) newErrors.selectedCity = "City is required.";
+        if (!cityInput.trim()) {
+            newErrors.selectedCity = "City is required.";
+        }
         if (!gender) newErrors.gender = "Gender is required.";
         if (!password) newErrors.password = "Password is required.";
         if (password !== confirmPassword) newErrors.confirmPassword = "Passwords do not match.";
@@ -50,12 +44,25 @@ const Register = ({ navigation }) => {
         return Object.keys(newErrors).length === 0;
     };
 
+
+    const handleCityInputChange = (text) => {
+        setCityInput(text);
+        const filtered = CityData.filter((item) =>
+            item.label.toLowerCase().includes(text.toLowerCase())
+        ).map((item) => item.label);
+
+        setFilteredCities(filtered);
+        const exactMatch = CityData.find((item) => item.label.toLowerCase() === text.toLowerCase());
+        setSelectedCity(exactMatch ? exactMatch.label : null);
+    };
+
+
     const HandleSignup = async () => {
         if (!validateFields()) {
             return;
         }
 
-        setIsLoading(true); // Start loader
+        setIsLoading(true);
         try {
             const formattedDate = selectedDate
                 ? `${selectedDate.getDate().toString().padStart(2, "0")}/${(selectedDate.getMonth() + 1).toString().padStart(2, "0")
@@ -68,61 +75,51 @@ const Register = ({ navigation }) => {
                 password: password,
                 gender: gender,
                 dob: formattedDate,
-                city: selectedCity,
+                city: selectedCity || cityInput.trim(),
             };
 
+            console.log("payload", payload);
+
             const response = await axios.post(SIGNUP_ENDPOINT, payload);
+            console.log("response", response.data)
             const message = response.data.message;
 
-            if (message === "User already exists! Please sign in.") {
+            if (response.status === 200 && message === "User account created successfully.") {
                 Toast.show({
                     type: "success",
                     text1: "Sign Up Successful",
                     text2: "You have successfully signed up!",
-                    position: 'top',
+                    position: "top",
                     visibilityTime: 1000,
-                    textStyle: { fontSize: 10, color: "green" },
-                    onHide: () => navigation.navigate("Login")
+                    onHide: () => navigation.navigate("Login"),
                 });
             } else {
                 Toast.show({
                     type: "error",
                     text1: "Sign Up Error",
-                    text2: message,
-                    position: 'top',
+                    text2: message || "Something went wrong!",
+                    position: "top",
                     visibilityTime: 1000,
-                    textStyle: { fontSize: 10, color: "red" },
                 });
             }
         } catch (error) {
+            console.error("Sign Up Error:", error); // Debug error
             Toast.show({
                 type: "error",
                 text1: "Sign Up Error",
-                text2: error.message,
-                position: 'top',
+                text2: error.message || "An error occurred. Please try again.",
+                position: "top",
                 visibilityTime: 1000,
-                textStyle: { fontSize: 10, color: "red" },
             });
         } finally {
             setIsLoading(false); // Stop loader
         }
     };
 
-    const handleCityInputChange = (text) => {
-        setCityInput(text);
-        if (text) {
-            const filtered = CityData.filter((item) =>
-                item?.label?.toLowerCase().includes(text.toLowerCase())
-            ).map(item => item.label);
-            setFilteredCities(filtered);
-        } else {
-            setFilteredCities([]);
-        }
-    };
 
     const handleDateChange = (event, date) => {
         if (date && date !== selectedDate) {
-            setSelectedDate(date); // Only update if date has changed
+            setSelectedDate(date);
         }
         setShowDatePicker(false);
     };
@@ -194,9 +191,9 @@ const Register = ({ navigation }) => {
                                 renderItem={({ item }) => (
                                     <TouchableOpacity
                                         onPress={() => {
-                                            setCityInput(item);
-                                            setSelectedCity(item);
-                                            setFilteredCities([]);
+                                            setCityInput(item); // Set the input field value
+                                            setSelectedCity(item); // Mark as selected city
+                                            setFilteredCities([]); // Clear suggestions
                                         }}
                                     >
                                         <Text style={Globalstyles.listItem}>{item}</Text>
@@ -204,7 +201,16 @@ const Register = ({ navigation }) => {
                                 )}
                                 style={Globalstyles.suggestions}
                             />
-                        ) : null}
+                        ) : cityInput && (
+                            <TouchableOpacity
+                                onPress={() => {
+                                    setSelectedCity(cityInput); // Accept user-typed input as city
+                                    setFilteredCities([]); // Clear suggestions
+                                }}
+                            >
+                            </TouchableOpacity>
+                        )}
+
 
                         {errors.selectedCity && (
                             <Text style={styles.errorText}>{errors.selectedCity}</Text>
@@ -227,12 +233,11 @@ const Register = ({ navigation }) => {
                             <Text style={styles.errorText}>{errors.gender}</Text>
                         )}
 
-                        {/* Create Password */}
                         <View>
                             <Text style={Globalstyles.title}>Create Password</Text>
                             <View style={Globalstyles.inputContainer}>
                                 <TextInput
-                                   style={Globalstyles.input1}
+                                    style={Globalstyles.input1}
                                     secureTextEntry={!showPassword}
                                     placeholder="Create a strong password"
                                     value={password}
@@ -260,14 +265,14 @@ const Register = ({ navigation }) => {
                                 <TextInput
                                     style={Globalstyles.input1}
                                     secureTextEntry={!showConfirmPassword}
-                                    placeholder="Create a strong password"
+                                    placeholder="Confirm your password"
                                     value={confirmPassword}
                                     onChangeText={setConfirmpassword}
                                     placeholderTextColor={'gray'}
                                 />
-                                <TouchableOpacity onPress={() => setShowConfirmPassword(!confirmPassword)}>
+                                <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
                                     <AntDesign
-                                        name={showPassword ? "eye" : "eyeo"}
+                                        name={showConfirmPassword ? "eye" : "eyeo"}
                                         size={20}
                                         style={styles.eyeIcon}
                                         color={Colors.dark}
@@ -278,6 +283,7 @@ const Register = ({ navigation }) => {
                                 <Text style={styles.errorText}>{errors.confirmPassword}</Text>
                             )}
                         </View>
+
 
                         {/* Mobile Number */}
                         <Text style={Globalstyles.title}>Mobile Number</Text>
@@ -313,7 +319,7 @@ const Register = ({ navigation }) => {
                     <TouchableOpacity
                         style={styles.button}
                         onPress={HandleSignup}
-                        disabled={isLoading} // Disable button when loading
+                        disabled={isLoading}
                     >
                         {isLoading ? (
                             <ActivityIndicator size={'large'} color={Colors.light} />

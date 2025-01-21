@@ -9,10 +9,47 @@ import { profileImages, Category, communityData, slider } from '../../DummyData/
 import { ScrollView } from 'react-native-gesture-handler';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import Globalstyles from '../../utils/GlobalCss';
+import { useDispatch } from 'react-redux';
+import axios from 'axios';
+import { PROFILE_ENDPOINT } from '../../utils/BaseUrl';
+import { setProfiledata } from '../../ReduxStore/Slices/ProfileSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Home = ({ navigation }) => {
+
+  const dispatch = useDispatch();
+
+  const fetchProfile = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) throw new Error("No token found");
+
+      const headers = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      };
+
+      console.log("headers in profile", headers);
+      const res = await axios.get(PROFILE_ENDPOINT, { headers });
+      const ProfileData = res.data.data;
+
+      dispatch(setProfiledata(ProfileData));
+      console.log("ProfileData", ProfileData);
+    } catch (error) {
+      console.error(
+        "Error fetching profile:",
+        error.response ? error.response.data : error.message
+      );
+    }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+  }, [])
+
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  
   useEffect(() => {
     const interval = setInterval(() => {
       if (currentIndex < slider.length - 1) {
@@ -27,13 +64,6 @@ const Home = ({ navigation }) => {
     return () => clearInterval(interval);
   }, [currentIndex]);
 
-  const renderItem = ({ item }) => {
-    return (
-      <View>
-        <Image source={item.image} style={Globalstyles.sliderImage} />
-      </View>
-    );
-  };
   return (
     <SafeAreaView style={Globalstyles.container}>
       <StatusBar
@@ -43,10 +73,10 @@ const Home = ({ navigation }) => {
       />
       <View style={Globalstyles.header}>
         <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
-          <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
-        </TouchableOpacity>
-        <Text style={Globalstyles.headerText}>Home</Text>
+          <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
+            <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
+          </TouchableOpacity>
+          <Text style={Globalstyles.headerText}>Home</Text>
         </View>
         <View style={styles.righticons}>
           {/* <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} /> */}
@@ -54,7 +84,7 @@ const Home = ({ navigation }) => {
         </View>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
-      <View style={styles.sliderContainer}>
+        <View style={styles.sliderContainer}>
           <AppIntroSlider
             ref={sliderRef}
             data={slider}

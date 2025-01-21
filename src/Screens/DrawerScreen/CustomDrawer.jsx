@@ -50,7 +50,7 @@ const CustomDrawer = (props) => {
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem("userToken");
-      navigation.navigate("Login");
+      navigation.navigate('Login');
     } catch (error) {
       console.error("Error logging out:", error);
     }

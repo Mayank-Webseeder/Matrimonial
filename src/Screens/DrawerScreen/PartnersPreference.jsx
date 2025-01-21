@@ -39,7 +39,7 @@ const PartnersPreference = ({ navigation }) => {
   const [selectedSubCaste, setSelectedSubCaste] = useState('');
   console.log("profileData", profileData);
 
-  const formattedDate = moment(profileData?.profiledata?.dob).format("DD MMMM YYYY");
+   const formattedDate = moment(profileData.dob).format("DD/MM/YYYY");
 
   const [biodata, setBiodata] = useState({
     partnerSubCaste: '',

@@ -40,13 +40,13 @@ export const MotherOccupationData = [
   { label: 'Research Scholar', value: 'Research Scholar' },
   { label: 'Retired', value: 'Retired' },
   { label: 'Not Working', value: 'Not Working' },
-  { label: 'Home Maker', value: 'Home Maker' }, // Added for mother occupation
+  { label: 'Home Maker', value: 'Home Maker' },
   { label: 'Other', value: 'Other' }
 ];
 
 export const QualificationData = [
   { label: 'High School', value: 'High School' },
-  { label: 'Higher Secondary', value: 'Higher Secondary' }, // Added
+  { label: 'Higher Secondary', value: 'Higher Secondary' },
   { label: 'Diploma', value: 'Diploma' },
   { label: 'Bachelor\'s Degree', value: 'Bachelor\'s Degree' },
   { label: 'Master\'s Degree', value: 'Master\'s Degree' },
@@ -55,7 +55,7 @@ export const QualificationData = [
   { label: 'CA/CS', value: 'CA/CS' },
   { label: 'MBBS', value: 'MBBS' },
   { label: 'Law', value: 'Law' },
-  { label: 'Management', value: 'Management' }, // Added
+  { label: 'Management', value: 'Management' },
   { label: 'Other', value: 'Other' },
 ];
 
@@ -89,48 +89,6 @@ export const PartnerManglikStatusData = [
   { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
 ];
 
-
-export const gotraData = [
-  { label: 'Atri', value: 'Atri' },
-  { label: 'Bharadwaj', value: 'Bharadwaj' },
-  { label: 'Kaushik', value: 'Kaushik' },
-  { label: 'Vasishta', value: 'Vasishta' },
-  { label: 'Kashyap', value: 'Kashyap' },
-  { label: 'Gautam', value: 'Gautam' },
-  { label: 'Agastya', value: 'Agastya' },
-  { label: 'Jamdagni', value: 'Jamdagni' },
-  { label: 'Mudgal', value: 'Mudgal' },
-  { label: 'Vishwamitra', value: 'Vishwamitra' },
-  { label: 'Angiras', value: 'Angiras' },
-  { label: 'Dhananjay', value: 'Dhananjay' },
-  { label: 'Shandilya', value: 'Shandilya' },
-  { label: 'Pulastya', value: 'Pulastya' },
-  { label: 'Pulaha', value: 'Pulaha' },
-  { label: 'Parashara', value: 'Parashara' },
-  { label: 'Kanva', value: 'Kanva' },
-];
-
-export const MotherGotraData = [
-  { label: 'Atri', value: 'Atri' },
-  { label: 'Bharadwaj', value: 'Bharadwaj' },
-  { label: 'Kaushik', value: 'Kaushik' },
-  { label: 'Vasishta', value: 'Vasishta' },
-  { label: 'Kashyap', value: 'Kashyap' },
-  { label: 'Gautam', value: 'Gautam' },
-  { label: 'Agastya', value: 'Agastya' },
-  { label: 'Jamdagni', value: 'Jamdagni' },
-  { label: 'Mudgal', value: 'Mudgal' },
-  { label: 'Vishwamitra', value: 'Vishwamitra' },
-  { label: 'Angiras', value: 'Angiras' },
-  { label: 'Dhananjay', value: 'Dhananjay' },
-  { label: 'Shandilya', value: 'Shandilya' },
-  { label: 'Pulastya', value: 'Pulastya' },
-  { label: 'Pulaha', value: 'Pulaha' },
-  { label: 'Parashara', value: 'Parashara' },
-  { label: 'Kanva', value: 'Kanva' },
-];
-
-
 export const LivingData = [
   { label: 'yes', value: 'yes' },
   { label: 'No', value: 'No' },
@@ -138,46 +96,44 @@ export const LivingData = [
 
 export const ProfileCreatedData = [
   { label: 'Self', value: 'Self' },
-  { label: 'Relative', value: 'Relative' },
-  { label: 'Other', value: 'Other' },
   { label: 'Mother', value: 'Mother' },
   { label: 'Father', value: 'Father' },
-  { label: 'Sister', value: 'Sister' },
-  { label: 'Brother', value: 'Brother' },
-  { label: 'Friend', value: 'Friend' },
+  { label: 'Cousin', value: 'Cousin' },
+  { label: 'Relative', value: 'Relative' },
+  { label: 'Other', value: 'Other' },
 ];
 
 export const CityData = [
-  { label: 'Indore' }, 
-  { label: 'Bhopal' }, 
-  { label: 'Gwalior' }, 
-  { label: 'Jabalpur' }, 
-  { label: 'Ujjain' }, 
-  { label: 'Sagar' }, 
-  { label: 'Ratlam' }, 
-  { label: 'Dewas' }, 
+  { label: 'Indore' },
+  { label: 'Bhopal' },
+  { label: 'Gwalior' },
+  { label: 'Jabalpur' },
+  { label: 'Ujjain' },
+  { label: 'Sagar' },
+  { label: 'Ratlam' },
+  { label: 'Dewas' },
   { label: 'Satna' },
-  { label: 'Rewa' }, 
-  { label: 'Chhindwara' }, 
-  { label: 'Morena' }, 
-  { label: 'Damoh' }, 
-  { label: 'Mandsaur' }, 
-  { label: 'Khargone' }, 
-  { label: 'Vidisha' }, 
+  { label: 'Rewa' },
+  { label: 'Chhindwara' },
+  { label: 'Morena' },
+  { label: 'Damoh' },
+  { label: 'Mandsaur' },
+  { label: 'Khargone' },
+  { label: 'Vidisha' },
   { label: 'Shivpuri' },
-  { label: 'Sehore' }, 
-  { label: 'Hoshangabad' }, 
-  { label: 'Neemuch' }, 
-  { label: 'Khandwa' }, 
-  { label: 'Burhanpur' }, 
-  { label: 'Chhatarpur' }, 
+  { label: 'Sehore' },
+  { label: 'Hoshangabad' },
+  { label: 'Neemuch' },
+  { label: 'Khandwa' },
+  { label: 'Burhanpur' },
+  { label: 'Chhatarpur' },
   { label: 'Balaghat' },
-  { label: 'Tikamgarh' }, 
-  { label: 'Itarsi' }, 
-  { label: 'Katni' }, 
-  { label: 'Shahdol' }, 
-  { label: 'Seoni' }, 
-  { label: 'Betul' }, 
+  { label: 'Tikamgarh' },
+  { label: 'Itarsi' },
+  { label: 'Katni' },
+  { label: 'Shahdol' },
+  { label: 'Seoni' },
+  { label: 'Betul' },
   { label: 'Panna' },
 ];
 
@@ -185,7 +141,6 @@ export const CityData = [
 export const genderData = [
   { label: "Male", value: "Male" },
   { label: "Female", value: "Female" },
-  { label: "Transgender", value: "Transgender" },
 ];
 
 
@@ -346,7 +301,7 @@ export const Disabilities = [
   { label: 'Doesn’t Matter', value: 'Doesn’t Matter' }
 ]
 
-export const MyDisabilities=[
+export const MyDisabilities = [
   { label: 'yes', value: 'Yes' },
   { label: 'No', value: 'No' },
 ]
@@ -355,22 +310,22 @@ export const subCasteOptions = [
   { label: 'Anavil', value: 'Anavil' },
   { label: 'Anavil Desai', value: 'Anavil Desai' },
   { label: 'Audichya', value: 'Audichya' },
-  { label: 'Bagda', value: 'Bagda' },
-  { label: 'Banagom', value: 'Banagom' },
-  { label: 'Barai', value: 'Barai' },
+  { label: 'Bagra', value: 'Bagra' },
+  { label: 'Baragoan', value: 'Baragoan' },
+  { label: 'Bardai', value: 'Bardai' },
   { label: 'Barendra', value: 'Barendra' },
   { label: 'Bhargav', value: 'Bhargav' },
   { label: 'Bhatt', value: 'Bhatt' },
   { label: 'Bhojak', value: 'Bhojak' },
   { label: 'Bhumihar', value: 'Bhumihar' },
   { label: 'Chaubisa', value: 'Chaubisa' },
-  { label: 'Baizagi', value: 'Baizagi' },
+  { label: 'Bairagi', value: 'Bairagi' },
   { label: 'Dakaut', value: 'Dakaut' },
   { label: 'Dadhich', value: 'Dadhich' },
   { label: 'Daivadnya', value: 'Daivadnya' },
-  { label: 'Danka', value: 'Danka' },
+  { label: 'Danva', value: 'Danva' },
   { label: 'Deshastha', value: 'Deshastha' },
-  { label: 'Devrushe', value: 'Devrushe' },
+  { label: 'Devrukhe', value: 'Devrukhe' },
   { label: 'Dhiman', value: 'Dhiman' },
   { label: 'Dravida', value: 'Dravida' },
   { label: 'Embrandiri', value: 'Embrandiri' },
@@ -378,7 +333,7 @@ export const subCasteOptions = [
   { label: 'Gaur', value: 'Gaur' },
   { label: 'Gurjar Gaur', value: 'Gurjar Gaur' },
   { label: 'Aadi Gaur', value: 'Aadi Gaur' },
-  { label: 'Sheti Gaur', value: 'Sheti Gaur' },
+  { label: 'Shri Gaur', value: 'Shri Gaur' },
   { label: 'Goswami', value: 'Goswami' },
   { label: 'Gurukkal', value: 'Gurukkal' },
   { label: 'Halua', value: 'Halua' },
@@ -387,11 +342,11 @@ export const subCasteOptions = [
   { label: 'Iyengar', value: 'Iyengar' },
   { label: 'Iyer', value: 'Iyer' },
   { label: 'Jangid', value: 'Jangid' },
-  { label: 'Jamza', value: 'Jamza' },
-  { label: 'Jhalua', value: 'Jhalua' },
+  { label: 'Jangra', value: 'Jangra' },
+  { label: 'Jhadua', value: 'Jhadua' },
   { label: 'Jijhotia', value: 'Jijhotia' },
   { label: 'Jyotish', value: 'Jyotish' },
-  { label: 'Karnatkubj', value: 'Karnatkubj' },
+  { label: 'Kanyakubj', value: 'Kanyakubj' },
   { label: 'Karhade', value: 'Karhade' },
   { label: 'Khandelwal', value: 'Khandelwal' },
   { label: 'Kokanastha', value: 'Kokanastha' },
@@ -399,10 +354,10 @@ export const subCasteOptions = [
   { label: 'Koteshwara', value: 'Koteshwara' },
   { label: 'Kulin', value: 'Kulin' },
   { label: 'Kumaoni', value: 'Kumaoni' },
-  { label: 'Madhuca', value: 'Madhuca' },
+  { label: 'Madhwa', value: 'Madhwa' },
   { label: 'Maithil', value: 'Maithil' },
-  { label: 'Madhya Brahmin', value: 'Madhya Brahmin' },
-  { label: 'Madh', value: 'Madh' },
+  { label: 'Malviya Brahmin', value: 'Malviya Brahmin' },
+  { label: 'Modh', value: 'Modh' },
   { label: 'Mohyal', value: 'Mohyal' },
   { label: 'Nagar', value: 'Nagar' },
   { label: 'Namboodiri', value: 'Namboodiri' },
@@ -412,46 +367,37 @@ export const subCasteOptions = [
   { label: 'Panda', value: 'Panda' },
   { label: 'Panicker', value: 'Panicker' },
   { label: 'Pushkarna', value: 'Pushkarna' },
-  { label: 'Rajgar', value: 'Rajgar' },
-  { label: 'Khadayatu', value: 'Khadayatu' },
+  { label: 'Rajgor', value: 'Rajgor' },
+  { label: 'Khadayata', value: 'Khadayata' },
   { label: 'Pandit', value: 'Pandit' },
   { label: 'Pareek', value: 'Pareek' },
   { label: 'Patnaick', value: 'Patnaick' },
-  { label: 'Razhi', value: 'Razhi' },
+  { label: 'Rarhi', value: 'Rarhi' },
   { label: 'Rigvedi', value: 'Rigvedi' },
   { label: 'Rudraj', value: 'Rudraj' },
   { label: 'Sakal Dwipi', value: 'Sakal Dwipi' },
   { label: 'Sanketi', value: 'Sanketi' },
-  { label: 'Sanua', value: 'Sanua' },
+  { label: 'Sarua', value: 'Sarua' },
   { label: 'Shivalli', value: 'Shivalli' },
   { label: 'Shri Mali', value: 'Shri Mali' },
+  { label: 'Shukla Yajurvedi', value: 'Shukla Yajurvedi' },
+  { label: 'Smartha', value: 'Smartha' },
   { label: 'Sikhwal', value: 'Sikhwal' },
   { label: 'SriVaishnava', value: 'SriVaishnava' },
   { label: 'Stanika', value: 'Stanika' },
-  { label: 'Shukla Yajurvedi Smartha', value: 'Shukla Yajurvedi Smartha' },
   { label: 'Swarnakar Brahmin', value: 'Swarnakar Brahmin' },
-  { label: 'Samadya Saraswat', value: 'Samadya Saraswat' },
+  { label: 'Sanadya', value: 'Sanadya' },
+  { label: 'Saraswat', value: 'Saraswat' },
   { label: 'Saryuparin', value: 'Saryuparin' },
   { label: 'Tyagi', value: 'Tyagi' },
   { label: 'Tapodhan', value: 'Tapodhan' },
   { label: 'Vaidiki', value: 'Vaidiki' },
   { label: 'Valam', value: 'Valam' },
   { label: 'Vaikhanasa', value: 'Vaikhanasa' },
-  { label: 'Velanady', value: 'Velanady' },
+  { label: 'Velanadu', value: 'Velanadu' },
   { label: 'Vyas', value: 'Vyas' },
   { label: 'Viswabrahmin', value: 'Viswabrahmin' },
   { label: 'Zalora', value: 'Zalora' }
-];
-
-
-export const servicesData = [
-  { label: 'Pooja', value: 'Pooja' },
-  { label: 'Hawan', value: 'Hawan' },
-  { label: 'Griha Pravesh', value: 'Griha Pravesh' },
-];
-
-export const LocalityData = [
-  { label: 'Badnagar', value: 'Badnagar' },
 ];
 
 export const ExperienceData = [
@@ -460,7 +406,7 @@ export const ExperienceData = [
   { label: '5+ Years', value: '5+' },
 ];
 
-export const RatingData= [
+export const RatingData = [
   { label: '1 Stars', value: '1' },
   { label: '2 Stars', value: '2' },
   { label: '3 Stars', value: '3' },
@@ -506,7 +452,7 @@ export const jyotishServices = [
 
 export const kathavachakServices = [
   { label: "Bhagwat Katha", value: "bhagwat_katha" },
-  { label: "Shiv Kirtan", value: "shiv_kirtan" },
+  { label: "Shiv Puran", value: "shiv_puran" },
   { label: "Satsang Evam Bhajan", value: "satsang_evam_bhajan" },
   { label: "Sundar Kand", value: "sundar_kand" },
   { label: "Shri Ram Katha", value: "shri_ram_katha" },

@@ -203,7 +203,7 @@ const Pandit = ({ navigation }) => {
               <Text style={Globalstyles.title}>Locality</Text>
               <View>
                 <TextInput
-                  style={Globalstyles.input1}
+                  style={Globalstyles.input}
                   value={locality}
                   onChangeText={(text) => setLocality(text)}
                   placeholder="Enter Locality"
@@ -226,7 +226,7 @@ const Pandit = ({ navigation }) => {
               <Text style={Globalstyles.title}>Rating</Text>
               <View>
                 <Dropdown
-                  style={Globalstyles.input1}
+                  style={Globalstyles.input}
                   data={RatingData}
                   labelField="label"
                   valueField="value"
@@ -239,7 +239,7 @@ const Pandit = ({ navigation }) => {
               <Text style={Globalstyles.title}>Experience</Text>
               <View>
                 <Dropdown
-                  style={Globalstyles.input1}
+                  style={Globalstyles.input}
                   data={ExperienceData}
                   labelField="label"
                   valueField="value"

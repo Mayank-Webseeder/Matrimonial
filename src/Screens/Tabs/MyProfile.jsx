@@ -16,8 +16,7 @@ const MyProfile = ({ navigation }) => {
     const ProfileData = useSelector((state) => state.profile);
     const profileData=ProfileData?.profiledata || {};
     console.log("profileData",profileData);
-    const formattedDate = moment(profileData.dob).format("DD MMMM YYYY");
-    
+    const formattedDate = moment(profileData.dob).format("DD/MM/YYYY");
 
     const handlePress = (buttonName) => {
         setSelectedButton(buttonName);

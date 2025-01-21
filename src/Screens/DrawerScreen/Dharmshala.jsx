@@ -123,7 +123,7 @@ const Dharmshala = ({ navigation }) => {
       {/* Fixed Header */}
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: "center" }}>
-          <TouchableOpacity onPress={() => navigation.navigation.goBack()}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons
               name="arrow-back-ios-new"
               size={25}

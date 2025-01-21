@@ -3,21 +3,22 @@ import { Text, View, ImageBackground, TouchableOpacity, TextInput, ScrollView, S
 import styles from "../StyleScreens/LoginStyle";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import axios from "axios";
-import { LOGIN_ENDPOINT ,PROFILE_ENDPOINT } from "../../utils/BaseUrl";
+import { LOGIN_ENDPOINT } from "../../utils/BaseUrl";
 import Colors from "../../utils/Colors";
 import { useDispatch } from "react-redux";
-import { setLoginData  } from "../../ReduxStore/Slices/authSlice";
+import { setLoginData } from "../../ReduxStore/Slices/authSlice";
 import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Login = ({ navigation }) => {
+
     const [mobileNumber, setMobileNumber] = useState("");
     const [password, setPassword] = useState("");
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
 
-   const dispatch=useDispatch();
+    const dispatch = useDispatch();
     const validateFields = () => {
         const newErrors = {};
         if (!mobileNumber) newErrors.mobileNumber = "Mobile number is required.";
@@ -32,33 +33,33 @@ const Login = ({ navigation }) => {
             return;
         }
         setLoading(true);
-    
+
         try {
             const payload = {
                 mobileNo: mobileNumber.trim(),
                 password: password,
             };
-    
+
             console.log("Login payload:", payload);
-    
+
             const response = await axios.post(LOGIN_ENDPOINT, payload);
             const LoginData = response.data;
             const token = LoginData.user.token;
-    
+
             console.log("Token from response:", token);
-    
+
             // Store the token in AsyncStorage
             await AsyncStorage.setItem("userToken", token);
-    
+
             // Retrieve the token from AsyncStorage to confirm it was stored correctly
             const storedToken = await AsyncStorage.getItem("userToken");
             console.log("Retrieved token from AsyncStorage:", storedToken);
-    
+
             console.log("LoginData:", LoginData);
-    
+
             dispatch(setLoginData(LoginData));
             const message = response.data.message;
-    
+
             if (response.status === 200 && message === "Login successful") {
                 Toast.show({
                     type: "success",
@@ -67,11 +68,10 @@ const Login = ({ navigation }) => {
                     position: "top",
                     visibilityTime: 1000,
                     textStyle: { fontSize: 10, color: "green" },
-                    onHide: async () => {
-                        navigation.navigate("MainApp");
-                    },
                 });
-            } else {
+                navigation.navigate("MainApp");
+            }
+            else {
                 Toast.show({
                     type: "error",
                     text1: "Login Failed",
@@ -83,7 +83,7 @@ const Login = ({ navigation }) => {
             }
         } catch (error) {
             setLoading(false);
-    
+
             if (error.response && error.response.status === 401) {
                 Toast.show({
                     type: "error",
@@ -169,13 +169,13 @@ const Login = ({ navigation }) => {
                         disabled={loading}
                     >
                         {loading ? (
-                            <ActivityIndicator size="large" color={Colors.light}/>
+                            <ActivityIndicator size="large" color={Colors.light} />
                         ) : (
                             <Text style={styles.buttonText}>Login</Text>
                         )}
                     </TouchableOpacity>
 
-                   <Toast/>
+                    <Toast />
                 </ScrollView>
             </ImageBackground>
         </SafeAreaView>

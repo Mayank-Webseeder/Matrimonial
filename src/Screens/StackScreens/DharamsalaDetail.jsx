@@ -83,8 +83,7 @@ const DharamsalaDetail = ({ navigation }) => {
         <View style={styles.TextView}>
           <Text style={styles.Text}>Hotel NH Valencia Center</Text>
           <Text style={styles.Text}>Sub-Caste Name</Text>
-          <Text style={styles.smalltext}>Address</Text>
-          <Text style={styles.smalltext}>Mira road,Bombay, India</Text>
+          <Text style={styles.smalltext}>Indore</Text>
         </View>
          <View style={styles.TextView}>
       <Text style={styles.Text}>Description</Text>

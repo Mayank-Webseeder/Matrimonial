@@ -36,60 +36,60 @@ const ReportPage = ({ navigation, route }) => {
     console.log('Report Data:', reportData);
 
     Alert.alert('Success', 'Your report has been submitted!');
-    navigation?.goBack(); 
+    navigation?.goBack();
   };
 
   return (
     <View style={Globalstyles.container}>
-        <View style={Globalstyles.header}>
-                <View style={{ alignItems:"center",flexDirection:"row"}}>
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
-                    </TouchableOpacity>
-                    <Text style={Globalstyles.headerText}>Post a Review</Text>
-                </View>
-                <View style={styles.righticons}>
-                    {/* <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} /> */}
-                    <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification')}}/>
-                </View>
-            </View>
-     
+      <View style={Globalstyles.header}>
+        <View style={{ alignItems: "center", flexDirection: "row" }}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
+          </TouchableOpacity>
+          <Text style={Globalstyles.headerText}>Post a Review</Text>
+        </View>
+        <View style={styles.righticons}>
+          {/* <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} /> */}
+          <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />
+        </View>
+      </View>
 
-     <View style={styles.contentContainer}>
-     <Text style={Globalstyles.title}>Reason for Reporting</Text>
-      <Dropdown
-        style={[Globalstyles.input1, isFocus && { borderColor: Colors.theme_color }]}
-        placeholderStyle={styles.placeholderStyle}
-        selectedTextStyle={styles.selectedTextStyle}
-        data={reportOptions}
-        maxHeight={300}
-        labelField="label"
-        valueField="value"
-        placeholder={!isFocus ? 'Select a reason' : '...'}
-        value={selectedReason}
-        onFocus={() => setIsFocus(true)}
-        onBlur={() => setIsFocus(false)}
-        onChange={item => {
-          setSelectedReason(item.value);
-          setIsFocus(false);
-        }}
-      />
 
-      <Text style={Globalstyles.title}>Additional Details (Optional)</Text>
-      <TextInput
-        style={Globalstyles.textInput}
-        placeholder="Add more details about the issue..."
-        placeholderTextColor={Colors.gray}
-        multiline
-        value={additionalDetails}
-        onChangeText={setAdditionalDetails}
-        textAlignVertical='top'
-      />
+      <View style={styles.contentContainer}>
+        <Text style={Globalstyles.title}>Reason for Reporting</Text>
+        <Dropdown
+          style={[Globalstyles.input, isFocus && { borderColor: Colors.theme_color }]}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          data={reportOptions}
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={!isFocus ? 'Select a reason' : '...'}
+          value={selectedReason}
+          onFocus={() => setIsFocus(true)}
+          onBlur={() => setIsFocus(false)}
+          onChange={item => {
+            setSelectedReason(item.value);
+            setIsFocus(false);
+          }}
+        />
 
-      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.submitButtonText}>Submit Report</Text>
-      </TouchableOpacity>
-     </View>
+        <Text style={Globalstyles.title}>Additional Details (Optional)</Text>
+        <TextInput
+          style={Globalstyles.textInput}
+          placeholder="Add more details about the issue..."
+          placeholderTextColor={Colors.gray}
+          multiline
+          value={additionalDetails}
+          onChangeText={setAdditionalDetails}
+          textAlignVertical='top'
+        />
+
+        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+          <Text style={styles.submitButtonText}>Submit Report</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };

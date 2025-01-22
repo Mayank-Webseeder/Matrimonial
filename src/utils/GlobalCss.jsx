@@ -87,7 +87,7 @@ const Globalstyles = StyleSheet.create({
   },
   bottomImage: {
     width: "98%",
-    height: SH(160),
+    height: SH(200),
     resizeMode: 'cover',
     marginVertical: SH(10),
     marginHorizontal: SW(5),

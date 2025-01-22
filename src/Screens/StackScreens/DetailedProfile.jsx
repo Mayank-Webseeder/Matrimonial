@@ -19,16 +19,12 @@ import Globalstyles from '../../utils/GlobalCss';
 
 import {
   OccupationData, QualificationData, maritalStatusData, ManglikStatusData, LivingData, ProfileCreatedData, CityData, Income,
-  FamilyType, CookingStatus, DietHabit, smokingStatusData, DrinkingHabit, PeoplePosition, StateData, TobacooHabit, subCasteOptions,
+  FamilyType, CookingStatus, DietHabit, smokingStatusData, DrinkingHabit, StateData, TobacooHabit, subCasteOptions,
   MyDisabilities, MyComplexionData
 } from '../../DummyData/DropdownData';
 
 const DetailedProfile = ({ navigation }) => {
-  const [selectedButton, setSelectedButton] = useState('DetailedProfile');
   const [isEditing, setIsEditing] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
-  const [peoplePosition, setPeoplePosition] = useState(null);
-  const [dropdownVisible, setDropdownVisible] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [images, setImages] = useState({
     closeupImage: null,
@@ -37,6 +33,7 @@ const DetailedProfile = ({ navigation }) => {
   });
   const profileData = useSelector((state) => state.profile);
   console.log("profileData", profileData);
+  
   const formattedDate = moment(profileData.dob).format("DD/MM/YYYY");
   const [biodata, setBiodata] = useState({
     subCaste: "",
@@ -100,6 +97,12 @@ const DetailedProfile = ({ navigation }) => {
   const [selectedCity, setSelectedCity] = useState('');
   const [selectedSubCaste, setSelectedSubCaste] = useState('');
   const [detialedProfileData, setDetailProfileData] = useState(' ');
+
+  
+  const handleSave = () => {
+    navigation.navigate("MainPartnerPrefrence")
+  };
+  
   const handleTimeChange = (event, selectedDate) => {
     setShowTimePicker(false); // Close the picker
     if (selectedDate) {
@@ -233,14 +236,6 @@ const DetailedProfile = ({ navigation }) => {
     label: `${i + 1} Sibling${i > 0 ? 's' : ''}`
   }));
 
-  const toggleDropdown = () => {
-    setDropdownVisible(!dropdownVisible);
-  };
-
-  const handlePress = (buttonName) => {
-    setSelectedButton(buttonName);
-    navigation.navigate(buttonName);
-  };
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || biodata.dob;
@@ -465,10 +460,6 @@ const DetailedProfile = ({ navigation }) => {
   // };
 
 
-   const handleSave = () => {
-    navigation.navigate('PhotoGallery')
-  }
-
   const handleInputChange = (field, value) => {
     setBiodata((prev) => ({
       ...prev,
@@ -490,98 +481,9 @@ const DetailedProfile = ({ navigation }) => {
         backgroundColor="transparent"
         translucent
       />
-      <View style={Globalstyles.header}>
-        <View style={styles.headerContainer}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
-          </TouchableOpacity>
-          <Text style={Globalstyles.headerText}>Matrimony Profile</Text>
-          <TouchableOpacity onPress={toggleDropdown} style={styles.dropdownContainer}>
-            <AntDesign name={'caretdown'} color={Colors.theme_color} size={15} />
-          </TouchableOpacity>
-          {dropdownVisible && (
-            <Dropdown
-              style={styles.heightinput}
-              data={PeoplePosition}
-              labelField="label"
-              valueField="value"
-              value={peoplePosition}
-              onChange={(item) => {
-                setPeoplePosition(item.value);
-                setDropdownVisible(false);
-              }}
-              placeholder="Select"
-            />
-          )}
-        </View>
-      </View>
+    
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-        <ImageBackground source={require('../../Images/profile3.png')} style={styles.image}>
-          <View style={styles.smallHeader}>
-            <MaterialIcons
-              name="add-a-photo"
-              color={Colors.theme_color}
-              size={40}
-              style={styles.cameraIcon}
-            />
-          </View>
-        </ImageBackground>
-        <Text style={styles.editText} onPress={() => navigation.navigate('UpdateProfile')}>Edit Profile</Text>
-        <Text style={styles.RepostText}>Repost</Text>
-        <View style={styles.userDeatil}>
-          <View style={styles.userData}>
-            <Text style={styles.text}>{profileData?.profiledata?.username || 'NA'}</Text>
-            <Text style={styles.text}>{profileData?.profiledata?.mobileNo}</Text>
-          </View>
-          <View style={styles.userData}>
-            <Text style={styles.text}>DOB: {formattedDate || 'NA'}</Text>
-            <Text style={styles.text}>City: {profileData?.profiledata?.city || 'NA'}</Text>
-          </View>
-          <View style={styles.userData}>
-
-            <Text style={styles.text}>Gender: {profileData?.profiledata?.gender || 'NA'}</Text>
-          </View>
-        </View>
-        <View style={styles.IconFlex}>
-          <TouchableOpacity
-            style={styles.IconsButton}
-            onPress={() => handlePress('DetailedProfile')}
-          >
-            <AntDesign
-              name={'user'}
-              color={selectedButton === 'DetailedProfile' ? 'white' : Colors.theme_color}
-              size={25}
-              style={selectedButton === 'DetailedProfile' ? styles.Selectedicon : styles.icon}
-            />
-            <Text style={styles.logotext}>Detailed Profile</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.IconsButton}
-            onPress={() => handlePress('PartnersPreference')}
-          >
-            <FontAwesome5
-              name={'user-friends'}
-              color={selectedButton === 'PartnersPreference' ? 'white' : Colors.theme_color}
-              size={25}
-              style={selectedButton === 'PartnersPreference' ? styles.Selectedicon : styles.icon}
-            />
-            <Text style={styles.logotext}>Partner Preference</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.IconsButton}
-            onPress={() => handlePress('PhotoGallery')}
-          >
-            <MaterialIcons
-              name={'insert-photo'}
-              color={selectedButton === 'PhotoGallery' ? 'white' : Colors.theme_color}
-              size={25}
-              style={selectedButton === 'PhotoGallery' ? styles.Selectedicon : styles.icon}
-            />
-            <Text style={styles.logotext}>Photo Gallery</Text>
-          </TouchableOpacity>
-        </View>
+   
         <View style={Globalstyles.form}>
           <View style={styles.detail}>
             <Text style={Globalstyles.title}>Personal Details</Text>
@@ -1057,12 +959,14 @@ const DetailedProfile = ({ navigation }) => {
             />
           </View>
           <View>
-            <Text style={Globalstyles.title}> Address</Text>
+            <Text style={styles.headText}> Address</Text>
+           
+           <Text style={Globalstyles.title}>State</Text>
             <TextInput
               style={Globalstyles.input}
               value={stateInput}
               onChangeText={handleStateInputChange}
-              placeholder="Type your Address"
+              placeholder="Type your State"
               placeholderTextColor={'gray'}
             />
             {filteredStates.length > 0 && stateInput ? (
@@ -1226,11 +1130,16 @@ const DetailedProfile = ({ navigation }) => {
               <MaterialIcons name="attach-file" size={24} color="black" />
             </TouchableOpacity>
           </View>
-          {isEditing && (
+
+          {/* {isEditing && (
             <TouchableOpacity style={styles.button} onPress={handleSave}>
               <Text style={styles.buttonText}>Continue</Text>
             </TouchableOpacity>
-          )}
+          )} */}
+
+          <TouchableOpacity style={styles.button} onPress={handleSave}>
+              <Text style={styles.buttonText}>Continue</Text>
+            </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>

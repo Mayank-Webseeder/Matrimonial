@@ -66,9 +66,13 @@ const styles = StyleSheet.create({
     fontSize: SF(12),
     marginRight:SW(10)
   },
-  Nametext: {
+  title: {
     fontFamily: "Poppins-Bold",
     fontSize: SF(15)
+  },
+  Nametext:{
+    fontFamily: "Poppins-Medium",
+    fontSize: SF(13)
   },
   sliderContainer: {
     marginBottom: SH(30),
@@ -157,6 +161,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center"
   },
+  RequestText: {
+    color: Colors.light,
+    fontSize: SF(9),
+    fontFamily: "Poppins-Regular",
+},
   buttonText: {
     color: Colors.light,
     fontFamily: "Poppins-Regular",

@@ -174,9 +174,6 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             <Text style={styles.text}>Permanent Address: 01, Sagar Vihar Colony, Shukliya, Near MR10, Chandragupt Chouraha, Indore, 452010, M.P.</Text>
           </View>
         </View>
-        <TouchableOpacity onPress={()=>Linking.openURL('tel:9893458940')}>
-        <Text style={styles.ButtonText}>Request for contact</Text>
-        </TouchableOpacity>
         <View style={styles.flexContainer1}>
           <View>
             <Text style={styles.HeadingText}>Other Details:</Text>
@@ -210,6 +207,15 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         </View>
         <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
       </ScrollView>
+      <View style={styles.bottomContainer}>
+        <TouchableOpacity style={styles.declineButton}>
+        <Text style={styles.declineButtonText}>Decline</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.acceptButton}>
+        <Text style={styles.acceptButtonText}>Accept</Text>
+        </TouchableOpacity>
+       
+      </View>
     </SafeAreaView>
   );
 };

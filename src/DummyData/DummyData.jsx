@@ -388,6 +388,7 @@ export const CommitteeDataList = [
       city: "Indore",
       area: "area",
       subcaste:"Sub-caste",
+      CommitteeTitle:"CommitteeTitle",
       image: require('../Images/Committee.png')
    },
    {
@@ -396,6 +397,7 @@ export const CommitteeDataList = [
       city: "Bhopal",
       area: "area",
       subcaste:"Sub-caste",
+      CommitteeTitle:"CommitteeTitle",
       image: require('../Images/Committee.png')
    },
    {
@@ -404,6 +406,7 @@ export const CommitteeDataList = [
       city: "Indore",
       area: "area",
       subcaste:"Sub-caste",
+      CommitteeTitle:"CommitteeTitle",
       image: require('../Images/Committee.png')
    },
    {
@@ -411,35 +414,11 @@ export const CommitteeDataList = [
       name: "Vineshkumarji group",
       city: "city",
       area: "area",
+      CommitteeTitle:"CommitteeTitle",
       image: require('../Images/Committee.png')
    }
 ]
-export const CommitteeFilterDataList = [
-   {
-      id: "1",
-      name: "Vineshkumarji ",
-      profile:"President",
-      image: require('../Images/Committee.png')
-   },
-   {
-      id: "2",
-      name: "Vineshkumarji ",
-      profile:"President",
-      image: require('../Images/Committee.png')
-   },
-   {
-      id: "3",
-      name: "Vineshkumarji ",
-      profile:"President",
-      image: require('../Images/Committee.png')
-   },
-   {
-      id: "4",
-      name: "Vineshkumarji ",
-      profile:"President",
-      image: require('../Images/Committee.png')
-   }
-]
+
 export const PanditDetailData = [
    {
      id: "1",

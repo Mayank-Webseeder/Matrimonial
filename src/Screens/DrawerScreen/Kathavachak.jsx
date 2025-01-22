@@ -177,7 +177,7 @@ const Kathavachak = ({ navigation }) => {
               <Text style={Globalstyles.title}>Locality</Text>
               <View>
                 <TextInput
-                  style={Globalstyles.input1}
+                  style={Globalstyles.input}
                   value={locality}
                   onChangeText={(text) => setLocality(text)}
                   placeholder="Enter Locality"
@@ -193,14 +193,14 @@ const Kathavachak = ({ navigation }) => {
                   value={services}
                   onChange={(item) => setServices(item.value)}
                   placeholder="Select Services"
-                  style={Globalstyles.input1}
+                  style={Globalstyles.input}
                 />
               </View>
 
               <Text style={Globalstyles.title}>Rating</Text>
               <View>
                 <Dropdown
-                  style={Globalstyles.input1}
+                  style={Globalstyles.input}
                   data={RatingData}
                   labelField="label"
                   valueField="value"
@@ -213,7 +213,7 @@ const Kathavachak = ({ navigation }) => {
               <Text style={Globalstyles.title}>Experience</Text>
               <View>
                 <Dropdown
-                  style={Globalstyles.input1}
+                  style={Globalstyles.input}
                   data={ExperienceData}
                   labelField="label"
                   valueField="value"

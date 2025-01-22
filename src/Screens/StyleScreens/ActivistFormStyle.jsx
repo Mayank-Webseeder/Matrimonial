@@ -59,6 +59,10 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: SF(16),
         color: Colors.dark,
+        paddingVertical:SH(10)
+    },
+    arrow: {
+        marginLeft: SW(10),
     },
 });
 

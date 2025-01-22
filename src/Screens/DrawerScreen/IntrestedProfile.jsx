@@ -1,45 +1,61 @@
-import React, { useRef, useState, useEffect } from 'react';
-import {View,TouchableOpacity,Image,Text,TextInput,SafeAreaView,StatusBar,Modal,Linking} from 'react-native';
+import React, { useState } from 'react';
+import { View, TouchableOpacity, Text, SafeAreaView, StatusBar, Image, FlatList } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Feather from 'react-native-vector-icons/Feather';
 import styles from '../StyleScreens/IntrestedProfileStyle';
 import Colors from '../../utils/Colors';
-import { slider } from '../../DummyData/DummyData';
 import { ScrollView } from 'react-native-gesture-handler';
-import AppIntroSlider from 'react-native-app-intro-slider';
 import Globalstyles from '../../utils/GlobalCss';
 
+// Import local image
+import profileImage from '../../Images/Profile1.png';
+
 const IntrestedProfile = ({ navigation }) => {
-  const sliderRef = useRef(null);
-  const [activeButton, setActiveButton] = useState(1); // Default to Interest Sent
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [value, setValue] = useState('');
-  const [showProfile, setShowProfile] = useState(true); // Control profile visibility
-  const [isModalVisible, setModalVisible] = useState(false); // Modal visibility
+  const [activeButton, setActiveButton] = useState(1); // Track selected button
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (currentIndex < slider.length - 1) {
-        setCurrentIndex((prevIndex) => prevIndex + 1);
-        sliderRef.current?.goToSlide(currentIndex + 1);
-      } else {
-        setCurrentIndex(0);
-        sliderRef.current?.goToSlide(0);
-      }
-    }, 2000);
+  // Mock data for Interest Sent and Interest Received
+  const interestSentData = [
+    { id: 1, name: 'John Doe', dp: profileImage, status: 'Pending',user_id:"abc1234e" },
+    { id: 2, name: 'Jane Smith', dp:profileImage, status: 'Accepted',user_id:"abc1234e" },
+    { id: 3, name: 'Mark Jacobs', dp:profileImage, status: 'Declined',user_id:"abc1234e" },
+  ];
 
-    return () => clearInterval(interval);
-  }, [currentIndex]);
+  const interestReceivedData = [
+    { id: 1, name: 'Alice Lee', dp:profileImage, status: 'Pending',user_id:"abc1234e" },
+    { id: 2, name: 'Bob Turner', dp:profileImage, status: 'You Accepted',user_id:"abc1234e" },
+    { id: 3, name: 'Charlie Brown', dp:profileImage, status: 'You Declined',user_id:"abc1234e" },
+  ];
 
-  const renderItem = ({ item }) => {
-    return (
-      <View>
-        <Image source={item.image} style={styles.sliderImage} />
+  // Render Item for Interest Sent or Received
+  const renderIntrestsentItem = (item) => (
+    <View style={styles.card}>
+      <View style={styles.leftContent}>
+        <Image source={item.dp} style={styles.dpImage} />
+        <View style={styles.cardContent}>
+          <Text style={styles.userId}>{item.user_id}</Text>
+          <Text style={styles.name}>{item.name}</Text>
+        </View>
       </View>
-    );
-  };
+      <TouchableOpacity style={styles.Statusbutton}>
+        <Text style={styles.StatusbuttonText}>{item.status}</Text>
+      </TouchableOpacity>
+    </View>
+  );
+  
+  const renderIntrestReceviedItem = (item) => (
+    <TouchableOpacity style={styles.card} onPress={()=>navigation.navigate('MatrimonyPeopleProfile')}>
+      <View style={styles.leftContent}>
+        <Image source={item.dp} style={styles.dpImage} />
+        <View style={styles.cardContent}>
+          <Text style={styles.userId}>{item.user_id}</Text>
+          <Text style={styles.name}>{item.name}</Text>
+        </View>
+      </View>
+      <TouchableOpacity style={styles.Statusbutton}>
+        <Text style={styles.StatusbuttonText}>{item.status}</Text>
+      </TouchableOpacity>
+    </TouchableOpacity>
+  );
 
   return (
     <SafeAreaView style={Globalstyles.container}>
@@ -49,7 +65,7 @@ const IntrestedProfile = ({ navigation }) => {
         translucent
       />
       <View style={Globalstyles.header}>
-        <View style={{ flexDirection: 'row',alignItems:"center" }}>
+        <View style={{ flexDirection: 'row', alignItems: "center" }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons
               name={'arrow-back-ios-new'}
@@ -59,34 +75,9 @@ const IntrestedProfile = ({ navigation }) => {
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>Matrimony</Text>
         </View>
-        <View style={styles.righticons}>
-          <AntDesign
-            name={'search1'}
-            size={25}
-            color={Colors.theme_color}
-            style={{ marginHorizontal: 10 }}
-          />
-          <AntDesign
-            name={'bells'}
-            size={25}
-            color={Colors.theme_color}
-            onPress={() => navigation.navigate('Notification')}
-          />
-        </View>
       </View>
+
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.sliderContainer}>
-          <AppIntroSlider
-            ref={sliderRef}
-            data={slider}
-            renderItem={renderItem}
-            showNextButton={false}
-            showDoneButton={false}
-            dotStyle={styles.dot}
-            activeDotStyle={styles.activeDot}
-            onSlideChange={(index) => setCurrentIndex(index)}
-          />
-        </View>
         <View>
           <View style={styles.ButtonContainer}>
             <TouchableOpacity
@@ -97,9 +88,7 @@ const IntrestedProfile = ({ navigation }) => {
               onPress={() => setActiveButton(1)}
             >
               <Text
-                style={
-                  activeButton === 1 ? styles.activeText : styles.inactiveText
-                }
+                style={activeButton === 1 ? styles.activeText : styles.inactiveText}
               >
                 Interest Sent
               </Text>
@@ -110,157 +99,39 @@ const IntrestedProfile = ({ navigation }) => {
                 styles.button,
                 activeButton === 2 ? styles.activeButton : styles.inactiveButton,
               ]}
-              onPress={() => {
-                setActiveButton(2);
-                setShowProfile(true); // Ensure profile is visible when switching to "Interest Received"
-              }}
+              onPress={() => setActiveButton(2)}
             >
               <Text
-                style={
-                  activeButton === 2 ? styles.activeText : styles.inactiveText
-                }
+                style={activeButton === 2 ? styles.activeText : styles.inactiveText}
               >
                 Interest Received
               </Text>
             </TouchableOpacity>
+          </View>
 
-          </View>
-          <View style={styles.searchBar}>
-            <TextInput
-              style={styles.input}
-              value={value}
-              onChangeText={setValue}
+          {/* Display List Based on Active Button */}
+          {activeButton === 1 && (
+            <FlatList
+              data={interestSentData}
+              renderItem={({ item }) => renderIntrestsentItem(item)}
+              keyExtractor={(item) => item.id.toString()}
+              scrollEnabled={false}
             />
-            {!value && (
-              <Text style={styles.placeholder}>Set Preferences</Text>
-            )}
-            <AntDesign
-              name="search1"
-              size={20}
-              color={Colors.theme_color}
-              style={styles.icon}
+          )}
+
+          {activeButton === 2 && (
+            <FlatList
+              data={interestReceivedData}
+              renderItem={({ item }) => renderIntrestReceviedItem(item)}
+              keyExtractor={(item) => item.id.toString()}
+              scrollEnabled={false}
             />
-          </View>
+          )}
         </View>
-        {showProfile && (
-  <View style={styles.profileSection}>
-    <Image
-      source={require('../../Images/profile3.png')}
-      style={styles.ProfileImage}
-    />
-    <View style={styles.profileData}>
-      <View>
-        <Text style={[styles.text, { fontFamily: 'Poppins-Bold' }]}>
-          Raj Sharma
-        </Text>
-        <Text style={styles.text}>Age: 25 / Height-5.95</Text>
-        <Text style={styles.text}>Sub-caste name</Text>
-        <Text style={styles.text}>Marital Status</Text>
-        <Text style={styles.text}>Maglik Status :-</Text>
-        <Text style={styles.text}>Disability :- No</Text>
-      </View>
-      <View>
-        <Text style={styles.text}>Indore</Text>
-        <Text style={styles.text}>Occupation</Text>
-        <Text style={styles.text}>Income</Text>
-        <Text style={styles.text}>Qualification</Text>
-      </View>
-    </View>
-    <View style={styles.descriptionContainer}>
-      <Text style={styles.description}>Description</Text>
-      <Text style={styles.descriptionText}>
-        Acharya Kiran is a well-known Astrologer. Having experience in
-        the field of Vedic Astrology. Born and brought up in a Brahmin
-        family, she has also benefited from the immense knowledge
-        related to her grandfather. She has had a natural liking for
-        Astrology since the age of 15
-      </Text>
-    </View>
-    <View style={styles.sharecontainer}>
-      <View style={styles.iconContainer}>
-        <FontAwesome name="bookmark-o" size={20} color={Colors.dark} />
-        <Text style={styles.iconText}>Save</Text>
-      </View>
-
-      <View style={styles.iconContainer}>
-        <Feather name="send" size={20} color={Colors.dark} />
-        <Text style={styles.iconText}>Shares</Text>
-      </View>
-
-      {activeButton === 1 ? (
-        <TouchableOpacity
-          style={styles.interestedButton}
-          onPress={() => setModalVisible(true)}
-        >
-          <Text style={styles.buttonText}>Un Interested</Text>
-        </TouchableOpacity>
-      ) : (
-        <TouchableOpacity style={styles.interestedButton}>
-          <Text style={styles.buttonText}>Confirm</Text>
-        </TouchableOpacity>
-      )}c
-
-      <TouchableOpacity style={styles.iconContainer} onPress={()=>Linking.openURL('tel:9893458940')}>
-        <MaterialIcons name="call" size={20} color={Colors.dark} />
-        <Text style={styles.iconText}>Call</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.iconContainer}
-        onPress={() => navigation.navigate('ReportPage')}
-      >
-        <MaterialIcons
-          name="error-outline"
-          size={24}
-          color={Colors.dark}
-        />
-        <Text style={styles.iconText}>Report</Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-)}
-{/* Always show this image at the bottom */}
-<Image
-  source={require('../../Images/profile3.png')}
-  style={styles.ProfileImage}
-/>
-
       </ScrollView>
+      <View>
 
-      {/* Modal */}
-      <Modal
-        transparent
-        visible={isModalVisible}
-        animationType="slide"
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalText}>
-              Do you really want to remove this profile from the Interested
-              list?
-            </Text>
-            <View style={styles.modalActions}>
-              <TouchableOpacity
-                style={styles.modalButton}
-                onPress={() => {
-                  setShowProfile(false);
-                  setModalVisible(false);
-                }}
-              >
-                <Text style={styles.modalButtonText}>Yes</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.modalButton}
-                onPress={() => setModalVisible(false)}
-              >
-                <Text style={styles.modalButtonText}>No</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-    
+      </View>
     </SafeAreaView>
   );
 };

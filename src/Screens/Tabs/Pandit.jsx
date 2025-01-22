@@ -219,7 +219,7 @@ const Pandit = ({ navigation }) => {
                   value={services}
                   onChange={(item) => setServices(item.value)}
                   placeholder="Select Services"
-                  style={Globalstyles.input1}
+                  style={Globalstyles.input}
                 />
               </View>
 

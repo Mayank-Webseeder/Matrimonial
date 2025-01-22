@@ -11,11 +11,11 @@ const styles = StyleSheet.create({
   },
   sliderContainer: {
     marginBottom: SH(30),
-    height: SH(180),
+    // height: SH(180),
   },
   sliderImage: {
     width: "100%",
-    height: SH(250),
+    height: SH(190),
     resizeMode: 'cover',
   },
   dot: {
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   },
   addWindowImage: {
     width: "100%",
-    height: SH(180),
+    height: SH(200),
     marginHorizontal: SW(5),
     marginVertical: SH(5),
     marginTop: SH(10)

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, Alert, StyleSheet, ScrollView,SafeAreaView,StatusBar } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, Alert, StyleSheet, ScrollView, SafeAreaView, StatusBar } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Colors from '../../utils/Colors';
 import { SH, SW, SF } from '../../utils/Dimensions';
@@ -12,23 +12,29 @@ const CommitteeSubmissionPage = ({ navigation }) => {
     const [city, setCity] = useState('');
     const [area, setArea] = useState('');
     const [image, setImage] = useState(null);
-
-    const handleImageUpload = async () => {
-        const options = {
-            mediaType: 'photo',
-            quality: 1,
-        };
-
-        launchImageLibrary(options, response => {
+    const [contact, setContact] = useState(null);
+    
+    const handleImageUpload = () => {
+        setActiveButton(2);
+        navigation.navigate('DharamsalaSubmissionPage'); // Navigate to submission page
+        // Or if you want to let the user upload images directly here
+        launchImageLibrary(
+          { mediaType: 'photo', selectionLimit: 3, quality: 0.5 },
+          (response) => {
             if (response.didCancel) {
-                Alert.alert('Image Upload Cancelled');
+              console.log('User cancelled image picker');
             } else if (response.errorCode) {
-                Alert.alert('Error', response.errorMessage);
-            } else if (response.assets && response.assets.length > 0) {
-                setImage(response.assets[0].uri);
+              console.log('ImagePicker Error: ', response.errorMessage);
+            } else {
+              // Handle the selected images
+              const images = response.assets;
+              console.log('Selected images:', images);
+              // Here, you can update the state with the selected images
+              // For example: setSelectedImages(images);
             }
-        });
-    };
+          }
+        );
+      };
 
     const handleSubmit = () => {
         if (!dharamsalaName || !subCasteName || !city || !area || !image) {
@@ -50,13 +56,13 @@ const CommitteeSubmissionPage = ({ navigation }) => {
 
     return (
         <SafeAreaView style={Globalstyles.container}>
-            <StatusBar 
-                barStyle="dark-content" 
-                backgroundColor="transparent" 
-                translucent 
+            <StatusBar
+                barStyle="dark-content"
+                backgroundColor="transparent"
+                translucent
             />
             <View style={Globalstyles.header}>
-                <View style={{ flexDirection: 'row',alignItems:"center" }}>
+                <View style={{ flexDirection: 'row', alignItems: "center" }}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons
                             name="arrow-back-ios-new"
@@ -71,10 +77,10 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                 <Text style={styles.title}>Upload Committee Details</Text>
 
                 {/* Dharamsala Name */}
-                <Text style={Globalstyles.title}>Committee Name *</Text>
+                <Text style={Globalstyles.title}>Committee President Name *</Text>
                 <TextInput
                     style={Globalstyles.input}
-                    placeholder="Enter Committee Name"
+                    placeholder="Enter President Name"
                     value={dharamsalaName}
                     onChangeText={setDharamsalaName}
                     placeholderTextColor={'gray'}
@@ -83,7 +89,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                 <Text style={Globalstyles.title}>Sub-Caste Name *</Text>
                 <TextInput
                     style={Globalstyles.input}
-                    placeholder="Enter Sub-Caste Name"
+                    placeholder="Sub-Caste"
                     value={subCasteName}
                     onChangeText={setSubCasteName}
                     placeholderTextColor={'gray'}
@@ -92,7 +98,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                 <Text style={Globalstyles.title}>City *</Text>
                 <TextInput
                     style={Globalstyles.input}
-                    placeholder="Enter City"
+                    placeholder="City"
                     value={city}
                     onChangeText={setCity}
                     placeholderTextColor={'gray'}
@@ -101,14 +107,14 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                 <Text style={Globalstyles.title}>Area *</Text>
                 <TextInput
                     style={Globalstyles.input}
-                    placeholder="Enter Area"
+                    placeholder="Area"
                     value={area}
                     onChangeText={setArea}
                     placeholderTextColor={'gray'}
                 />
 
                 <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                    <Text style={Globalstyles.label}>Upload Your Committe Image *</Text>
+                    <Text style={Globalstyles.label}>Upload President Image *</Text>
                     <TouchableOpacity style={styles.uploadButton} onPress={handleImageUpload}>
                         <Text style={styles.uploadButtonText}>
                             {image ? 'Change Image' : 'Upload Image'}
@@ -116,6 +122,15 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
                 {image && <Image source={{ uri: image }} style={styles.imagePreview} />}
+
+                <Text style={Globalstyles.title}>Contact Number Of President *</Text>
+                <TextInput
+                    style={Globalstyles.input}
+                    placeholder="Enter Contact No."
+                    value={contact}
+                    onChangeText={setContact}
+                    placeholderTextColor={'gray'}
+                />
 
                 <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
                     <Text style={styles.submitButtonText}>Submit</Text>
@@ -130,14 +145,14 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: Colors.light,
         paddingTop: SH(25),
-        paddingHorizontal:SW(6)
+        paddingHorizontal: SW(6)
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: SW(10),
-        paddingVertical:SH(10),
+        paddingVertical: SH(10),
         paddingLeft: 0,
     },
     headerText: {

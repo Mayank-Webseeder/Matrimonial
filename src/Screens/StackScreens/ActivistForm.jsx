@@ -76,7 +76,7 @@ export default function ActivistForm({navigation}) {
         {/* Sub Caste Dropdown */}
         <Text style={Globalstyles.title}>Sub Caste</Text>
         <Dropdown
-          style={Globalstyles.input1}
+          style={Globalstyles.input}
           data={subCasteOptions}
           labelField="label"
           valueField="value"
@@ -86,7 +86,7 @@ export default function ActivistForm({navigation}) {
         />
         <View>
           <Text style={Globalstyles.title}>Date of Birth</Text>
-          <View style={Globalstyles.input1}>
+          <View style={Globalstyles.inputContainer}>
             <Text style={styles.dateText}>
               {selectedDate ? formatDate(selectedDate) : " "}
             </Text>
@@ -102,7 +102,7 @@ export default function ActivistForm({navigation}) {
         {/* State Dropdown */}
         <Text style={Globalstyles.title}>State</Text>
         <Dropdown
-          style={Globalstyles.input1}
+          style={Globalstyles.input}
           data={stateOptions}
           labelField="label"
           valueField="value"

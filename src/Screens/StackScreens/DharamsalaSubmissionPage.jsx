@@ -1,31 +1,23 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, Alert, StyleSheet, ScrollView,StatusBar,SafeAreaView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, Alert, StyleSheet, ScrollView, StatusBar, SafeAreaView } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Colors from '../../utils/Colors';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Globalstyles from '../../utils/GlobalCss';
 
-const DharamsalaSubmissionPage = ({navigation}) => {
+const DharamsalaSubmissionPage = ({ navigation }) => {
     const [dharamsalaName, setDharamsalaName] = useState('');
     const [subCasteName, setSubCasteName] = useState('');
     const [city, setCity] = useState('');
+    const [contact, setContact] = useState('');
     const [description, setDescription] = useState('');
     const [image, setImage] = useState(null);
 
-    const handleImageUpload = async () => {
-        const options = {
-            mediaType: 'photo',
-            quality: 1,
-        };
-
-        launchImageLibrary(options, response => {
-            if (response.didCancel) {
-                Alert.alert('Image Upload Cancelled');
-            } else if (response.errorCode) {
-                Alert.alert('Error', response.errorMessage);
-            } else if (response.assets && response.assets.length > 0) {
-                setImage(response.assets[0].uri);
+    const handleImageUpload = () => {
+        launchImageLibrary({ mediaType: 'photo', selectionLimit: 3 }, response => {
+            if (response.assets) {
+                setPhotos(response.assetsd);
             }
         });
     };
@@ -50,14 +42,14 @@ const DharamsalaSubmissionPage = ({navigation}) => {
 
     return (
         <SafeAreaView style={Globalstyles.container}>
-            <StatusBar 
-                barStyle="dark-content" 
-                backgroundColor="transparent" 
-                translucent 
+            <StatusBar
+                barStyle="dark-content"
+                backgroundColor="transparent"
+                translucent
             />
             <View style={Globalstyles.header}>
                 <View style={{ flexDirection: 'row' }}>
-                    <TouchableOpacity onPress={() => navigation.navigate('Dharmshala')}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons
                             name="arrow-back-ios-new"
                             size={25}
@@ -98,6 +90,15 @@ const DharamsalaSubmissionPage = ({navigation}) => {
                     placeholderTextColor={'gray'}
                 />
 
+                <Text style={Globalstyles.title}>Contact *</Text>
+                <TextInput
+                    style={Globalstyles.input}
+                    placeholder="Enter Person's Contact No."
+                    value={contact}
+                    onChangeText={setContact}
+                    placeholderTextColor={'gray'}
+                />
+
                 <Text style={Globalstyles.title}>Description (Optional)</Text>
                 <TextInput
                     style={[Globalstyles.input, styles.textArea]}
@@ -107,15 +108,14 @@ const DharamsalaSubmissionPage = ({navigation}) => {
                     placeholderTextColor={'gray'}
                     multiline
                 />
-
-              <View style={{flexDirection:"row",justifyContent:"space-between",alignItems:"center"}}>
-              <Text style={Globalstyles.title}>Upload Dharamsala Image *</Text>
-                <TouchableOpacity style={styles.uploadButton} onPress={handleImageUpload}>
-                    <Text style={styles.uploadButtonText}>
-                        {image ? 'Change Image' : 'Upload Image'}
-                    </Text>
-                </TouchableOpacity>
-              </View>
+                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                    <Text style={Globalstyles.title}>Upload Images *(Max Limit 3)</Text>
+                    <TouchableOpacity style={styles.uploadButton} onPress={handleImageUpload}>
+                        <Text style={styles.uploadButtonText}>
+                            {image ? 'Change Image' : 'Upload Image'}
+                        </Text>
+                    </TouchableOpacity>
+                </View>
                 {image && <Image source={{ uri: image }} style={styles.imagePreview} />}
 
                 <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
@@ -126,16 +126,16 @@ const DharamsalaSubmissionPage = ({navigation}) => {
     );
 };
 const styles = StyleSheet.create({
-   
+
     title: {
         fontSize: SF(13),
         fontWeight: 'bold',
         color: Colors.theme_color,
         // textAlign: 'center',
         marginBottom: SH(20),
-       
+
     },
-    
+
     textArea: {
         height: SH(100),
         textAlignVertical: 'top',
@@ -172,9 +172,9 @@ const styles = StyleSheet.create({
         fontFamily: "poppins-Medium",
         fontSize: SF(13)
     },
-    contentContainer:{
-        margin:SW(15),
-        marginTop:0
+    contentContainer: {
+        margin: SW(15),
+        marginTop: 0
     }
 });
 

@@ -14,18 +14,15 @@ import { SH, SF, SW } from '../utils/Dimensions';
 import Colors from '../utils/Colors';
 import Dharmshala from '../Screens/DrawerScreen/Dharmshala';
 import Activist from '../Screens/DrawerScreen/Activist';
-import PartnersPreference from '../Screens/DrawerScreen/PartnersPreference';
 import FeedBack from '../Screens/DrawerScreen/FeedBack';
 import Kathavachak from '../Screens/DrawerScreen/Kathavachak';
 import Notification from '../Screens/StackScreens/Notification';
 import DharamsalaDetail from '../Screens/StackScreens/DharamsalaDetail';
-import CommunityFilter from '../Screens/StackScreens/CommunityFilter';
 import RoleRegisterForm from '../Screens/StackScreens/RoleRegisterForm';
 import PanditDetailPage from '../Screens/StackScreens/PanditDetailPage';
 import KathavachakDetailsPage from '../Screens/StackScreens/KathavachakDetailsPage';
 import JyotishDetailsPage from '../Screens/StackScreens/JyotishDetailsPage';
 import Register from '../Screens/auth/Register';
-import PhotoGallery from '../Screens/DrawerScreen/PhotoGallery';
 import { Image } from 'react-native';
 import CreatePost from '../Screens/StackScreens/CreatePost';
 import ViewPost from '../Screens/StackScreens/ViewPost';
@@ -46,13 +43,18 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Committee from '../Screens/DrawerScreen/Committee';
 import ActivistForm from '../Screens/StackScreens/ActivistForm';
 import Jyotish from '../Screens/DrawerScreen/Jyotish';
-import DetailedProfile from '../Screens/StackScreens/DetailedProfile';
+
 import MatrimonyPeopleProfile from '../Screens/StackScreens/MatrimonyPeopleProfile';
 import PostSuccessStories from '../Screens/StackScreens/PostSuccessStories';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoadingScreen from '../Screens/AppLoadingScreen/LoadingScreen';
 import Matrimonial from '../Screens/Tabs/Matrimonial';
 import UpdateProfile from '../Screens/StackScreens/UpdateProfile';
+import MatrimonyPage from '../Screens/StackScreens/MatrimonyPage';
+import DetailedProfile from '../Screens/StackScreens/DetailedProfile';
+import PartnersPreference from '../Screens/StackScreens/PartnersPreference';
+import PhotoGallery from '../Screens/StackScreens/PhotoGallery';
+import MainPartnerPrefrence from '../Screens/DrawerScreen/MainPartnerPrefrence';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -150,25 +152,24 @@ function MyDrawer() {
       }}
     >
       <Drawer.Screen name="Tabs" component={MyTabs} />
+      <Drawer.Screen name="MainPartnerPrefrence" component={MainPartnerPrefrence} />
       <Drawer.Screen name="Interested Profile" component={IntrestedProfile} />
       <Drawer.Screen name="Saved Profile" component={SavedProfile} />
       <Drawer.Screen name="Pandit" component={Pandit} />
       <Drawer.Screen name="EventNews" component={EventNews} />
       <Drawer.Screen name="Dharmshala" component={Dharmshala} />
       <Drawer.Screen name="BioData" component={BioData} />
-      <Drawer.Screen name="DetailedProfile" component={DetailedProfile} />
       <Drawer.Screen name="Committee" component={Committee} />
       <Drawer.Screen name="Activist" component={Activist} />
-      <Drawer.Screen name="PartnersPreference" component={PartnersPreference} />
       <Drawer.Screen name="FeedBack" component={FeedBack} />
       <Drawer.Screen name="Jyotish" component={Jyotish} />
       <Drawer.Screen name="Kathavachak" component={Kathavachak} />
-      <Drawer.Screen name="PhotoGallery" component={PhotoGallery} />
       <Drawer.Screen name="SuccessStories" component={SuccessStories} />
       <Drawer.Screen name="NotificationSettings" component={NotificationSettings} />
       <Drawer.Screen name="ChangePassword" component={ChangePassword} />
       <Drawer.Screen name="PrivacySettings" component={PrivacySettings} />
-      <Drawer.Screen name="InActiveDelete" component={InActiveDelete} />
+      <Drawer.Screen name="InActiveDelete" component={InActiveDelete} /> 
+   
     </Drawer.Navigator>
   );
 }
@@ -213,7 +214,6 @@ const RootNavigator = () => {
       <Stack.Screen name="BioData" component={BioData} />
       <Stack.Screen name="Notification" component={Notification} />
       <Stack.Screen name="DharamsalaDetail" component={DharamsalaDetail} />
-      <Stack.Screen name="CommunityFilter" component={CommunityFilter} />
       <Stack.Screen name="RoleRegisterForm" component={RoleRegisterForm} />
       <Stack.Screen name="PanditDetailPage" component={PanditDetailPage} />
       <Stack.Screen name="KathavachakDetailsPage" component={KathavachakDetailsPage} />
@@ -228,7 +228,11 @@ const RootNavigator = () => {
       <Stack.Screen name="CommitteeSubmissionPage" component={CommitteeSubmissionPage} />
       <Stack.Screen name="ActivistForm" component={ActivistForm} />
       <Stack.Screen name="DetailedProfile" component={DetailedProfile} />
+      <Stack.Screen name="PartnersPreference" component={PartnersPreference} />
+      <Stack.Screen name="PhotoGallery" component={PhotoGallery} />
+      <Stack.Screen name="MainPartnerPrefrence" component={MainPartnerPrefrence} />
       <Stack.Screen name="MatrimonyPeopleProfile" component={MatrimonyPeopleProfile} />
+      <Stack.Screen name="MatrimonyPage" component={MatrimonyPage} />
       <Stack.Screen name="PostSuccessStories" component={PostSuccessStories} />
       <Stack.Screen name="UpdateProfile" component={UpdateProfile} />
     </Stack.Navigator>

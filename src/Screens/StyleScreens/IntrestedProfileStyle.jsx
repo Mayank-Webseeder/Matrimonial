@@ -3,44 +3,7 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
-  righticons: {
-    flexDirection: 'row',
-  },
-  images: {
-    width: SW(80),
-    height: SH(80)
-  },
-  sliderContainer: {
-    marginBottom: SH(30),
-    height: SH(180),
-  },
-  sliderImage: {
-    width: "100%",
-    height: SH(220),
-    resizeMode: 'contain',
-  },
-  dot: {
-    width: SW(25),
-    height: SH(5),
-    borderRadius: 4,
-    backgroundColor: '#ccc',
-    marginHorizontal: SH(2),
-    marginTop: SH(105)
-  },
-  activeDot: {
-    width: SW(25),
-    height: SH(5),
-    borderRadius: 4,
-    backgroundColor: Colors.theme_color,
-    marginTop: SH(105)
-  },
-  ProfileImage: {
-    width: "94%",
-    height: SH(300),
-    marginHorizontal: SW(10),
-    borderRadius: 10,
-    marginVertical:SH(10),
-  },
+
   ButtonContainer: {
     flex: 1,
     display: "flex",
@@ -74,135 +37,58 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Regular",
     fontSize: SF(15)
   },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 50,
+  card: {
+    paddingVertical: SH(10),
     paddingHorizontal: SW(10),
-    height: SH(30),
-    backgroundColor: Colors.gray,
-    marginHorizontal: SW(10),
-    marginVertical: SH(5),
-    marginBottom: SH(10)
-  },
-  icon: {
-    marginHorizontal: SW(10),
-  },
-  input: {
-    flex: 1,
-    fontSize: SF(16),
-    color: Colors.theme_color,
-    textAlign: 'center',
-  },
-  placeholder: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    textAlign: 'center',
-    fontSize: SF(16),
-    fontFamily: "Poppins-Bold",
-    color: Colors.theme_color,
-  },
-  profileData: {
-    disply: "flex",
+    marginVertical: SH(10),
+    borderColor: "gray",
+    borderRadius: 10,
+    borderWidth: 0.5,
     flexDirection: "row",
-    justifyContent: "space-between", alignItems: "center",
-    marginHorizontal: SW(10),
-    marginVertical: SH(10)
+    justifyContent: "space-between",
+    alignItems: "center",
   },
-  text: {
-    fontFamily: "Poppins-Regular",
-    fontSize: SF(15)
+  leftContent: {
+    flexDirection: "row",
+    alignItems: "center",
   },
-  descriptionContainer: {
-    marginHorizontal: SW(10),
-    marginVertical:SH(10),
-    marginTop:0
+  dpImage: {
+    width:SW(50), 
+    height:SH(50),
+    borderRadius: 25,
+    marginRight:SW(10),
   },
-  description: {
-    fontFamily: "Poppins-Bold",
-    fontSize: SF(17)
+  cardContent: {
+    flexDirection: "column", 
   },
-  descriptionText: {
-    fontFamily: "Poppins-Regular",
-    fontSize: SF(12)
+  userId: {
+    fontWeight: "bold",
+    fontSize:SF(14),
   },
-  sharecontainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    paddingHorizontal: SW(10),
-    paddingVertical:SH(5),
-    backgroundColor: Colors.light,
-  },
-  iconContainer: {
-    alignItems: 'center',
-  },
-  iconText: {
-    fontSize: SF(12),
-    color: Colors.dark,
-    marginTop: SH(5),
-    fontFamily: "Poppins-Regular",
-  },
-  interestedButton: {
-    backgroundColor: Colors.theme_color,
-    paddingHorizontal: SW(20),
-    paddingVertical: SH(3),
-    borderRadius: 8,
-  },
-  buttonText: {
-    color: Colors.light,
-    fontFamily: "Poppins-Bold",
-    fontSize: SF(14),
-  },
-  profileSection: {
-    marginHorizontal:SW(10),
-    marginVertical:SH(10),
-    borderWidth: 1,
-    borderColor: Colors.gray,
-    borderRadius: 10,
-    paddingHorizontal:0,
-    paddingVertical:SH(10),
-    backgroundColor: Colors.light,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    width:SW(350),
-    backgroundColor: Colors.light,
-    paddingHorizontal:SW(20),
-    paddingVertical:SH(20),
-    borderRadius: 10,
-    alignItems: 'center',
-    marginHorizontal:SW(20)
-  },
-  modalText: {
+  name: {
     fontSize:SF(16),
-    color: Colors.dark,
-    marginBottom:SH(20),
-    textAlign: 'center',
+    color: "black",
   },
-  modalActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
+  status: {
+    fontSize:SF(14),
+    color: "gray",
+    marginTop:SH(5),
   },
-  modalButton: {
-    paddingVertical:SH(5),
-    paddingHorizontal:SW(40),
-    backgroundColor: Colors.theme_color,
-    borderRadius: 10,
-    marginHorizontal:SW(10),
+  Statusbutton: {
+    backgroundColor: Colors.light_theme,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    borderColor:Colors.theme_color,
+    borderWidth:1
   },
-  modalButtonText: {
-    color: Colors.light,
-    fontFamily:"Poppins-Bold"
+  StatusbuttonText: {
+    color:Colors.dark,
+    fontFamily:"Poppins-Medium"
   },
-
+  
 });
 
 export default styles;

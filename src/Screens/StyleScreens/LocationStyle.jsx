@@ -3,10 +3,10 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
- 
+
   righticons: {
     flexDirection: 'row',
-    alignItems:"center"
+    alignItems: "center"
   },
   topContainer: {
     marginBottom: SH(20)
@@ -37,18 +37,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     paddingHorizontal: SW(10),
-    paddingVertical:SH(10),
+    paddingVertical: SH(10),
     borderColor: Colors.gray,
     borderWidth: 1,
     marginTop: SH(10),
-    borderRadius:10
+    borderRadius: 10
   },
   flexContainer: {
     paddingHorizontal: SW(10),
-    paddingVertical:SH(10),
+    paddingVertical: SH(10),
     borderColor: Colors.gray,
     borderWidth: 1,
-    borderRadius:10
+    borderRadius: 10
   },
   flex: {
     flexDirection: "row",
@@ -77,8 +77,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-around',
     paddingHorizontal: SW(3),
-    paddingVertical:SH(3),
-    backgroundColor:Colors.light,
+    paddingVertical: SH(3),
+    backgroundColor: Colors.light,
   },
   iconContainer: {
     alignItems: 'center',
@@ -123,10 +123,10 @@ const styles = StyleSheet.create({
   flexContainer3: {
     borderColor: Colors.gray,
     borderWidth: 1,
-    borderRadius:10,
+    borderRadius: 10,
     marginVertical: SH(15),
     paddingHorizontal: SW(10),
-    paddingVertical:SH(10)
+    paddingVertical: SH(10)
   },
   flexContainer4: {
     width: "100%",
@@ -149,9 +149,42 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     paddingHorizontal: SW(10),
-    paddingVertical:SH(10)
+    paddingVertical: SH(10)
   },
- 
+  bottomContainer: {
+    paddingVertical: SH(10),
+    paddingHorizontal: SW(10),
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    borderColor: "gray",
+    borderWidth: 1
+  },
+  declineButton: {
+    backgroundColor: "#fc8397",
+    paddingVertical: SH(10),
+    paddingHorizontal: SH(60),
+    borderRadius: 50,
+    marginHorizontal: SW(10),
+  },
+  declineButtonText: {
+    color: "red",
+    fontFamily: "Poppins-Regular",
+    fontSize: SF(15)
+  },
+  acceptButton: {
+    backgroundColor: "#cce3d5",
+    paddingVertical: SH(10),
+    paddingHorizontal: SH(60),
+    borderRadius: 50,
+    marginHorizontal: SW(10)
+  },
+  acceptButtonText: {
+    color: "#58b87b", fontFamily: "Poppins-Regular",
+    fontSize: SF(15)
+  }
 });
 
 export default styles;

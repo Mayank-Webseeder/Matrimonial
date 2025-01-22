@@ -18,7 +18,7 @@ const CustomDrawer = (props) => {
   const Id = ProfileData?.profiledata?._id || 'user id';
 
   const menuItems = [
-    { title: 'Partners Preference', screen: 'PartnersPreference' },
+    { title: 'Partners Preference', screen: 'MainPartnerPrefrence' },
     { title: 'Interested Profile', screen: 'Interested Profile' },
     { title: 'Saved Profile', screen: 'Saved Profile' },
     { title: 'Pandit/Jyotish' },

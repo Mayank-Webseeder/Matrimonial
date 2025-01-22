@@ -66,9 +66,10 @@ const Committee = ({ navigation }) => {
 
   const renderItem = ({ item }) => (
     <View style={styles.card}>
-      <Pressable style={styles.cardData} onPress={() => navigation.navigate('CommunityFilter')}>
+      <Pressable style={styles.cardData}>
         <Image source={item.image} style={styles.image} />
         <View style={styles.leftContainer}>
+        <Text style={styles.title}>{item.CommitteeTitle}</Text>
           <Text style={styles.Nametext}>{item.name}</Text>
           <View style={styles.CityArea}>
             <Text style={styles.text}>{item.city}</Text>
@@ -86,6 +87,10 @@ const Committee = ({ navigation }) => {
               <Feather name="send" size={20} color={Colors.dark} />
               <Text style={styles.iconText}>Shares</Text>
             </View>
+            <TouchableOpacity style={styles.Button} onPress={()=>Linking.openURL('tel:9893458940')} >
+                <MaterialIcons name="call" size={15} color={Colors.light} />
+                <Text style={styles.RequestText}>Request for call</Text>
+              </TouchableOpacity>
           </View>
     </View>
   );

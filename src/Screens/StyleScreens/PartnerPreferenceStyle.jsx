@@ -148,6 +148,15 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins-Medium",
         paddingVertical: SH(7)
     },
+    detail: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+    },
+    detailText: {
+        fontFamily: "Poppins-Bold",
+        fontSize: SF(15),
+        color: Colors.theme_color
+    },
     flex: {
         flexDirection: "row",
         justifyContent: "space-between",

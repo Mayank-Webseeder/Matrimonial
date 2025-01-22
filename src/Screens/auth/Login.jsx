@@ -69,7 +69,10 @@ const Login = ({ navigation }) => {
                     visibilityTime: 1000,
                     textStyle: { fontSize: 10, color: "green" },
                 });
-                navigation.navigate("MainApp");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AppStack" }],
+                  });
             }
             else {
                 Toast.show({

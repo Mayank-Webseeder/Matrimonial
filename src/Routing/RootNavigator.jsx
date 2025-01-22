@@ -1,4 +1,4 @@
-import React,{useEffect,useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -57,6 +57,8 @@ import PhotoGallery from '../Screens/StackScreens/PhotoGallery';
 import MainPartnerPrefrence from '../Screens/DrawerScreen/MainPartnerPrefrence';
 
 const Stack = createNativeStackNavigator();
+const AppStackNavigator = createNativeStackNavigator();
+const AuthStackNavigator = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -71,8 +73,8 @@ function MyTabs() {
         tabBarShowLabel: true,
         tabBarLabelStyle: {
           fontSize: SF(9),
-         fontFamily:"Poppins-Medium",
-         
+          fontFamily: "Poppins-Medium",
+
           color: Colors.light,
         },
         tabBarIcon: ({ focused }) => {
@@ -91,10 +93,10 @@ function MyTabs() {
           } else if (route.name === 'Pandit') {
             tabBarIcon = (
               <MaterialCommunityIcons
-              name={focused ? 'meditation' : 'meditation'}
-              size={iconSize}
-              color={Colors.light}
-            />
+                name={focused ? 'meditation' : 'meditation'}
+                size={iconSize}
+                color={Colors.light}
+              />
             );
           } else if (route.name === 'EventNews') {
             tabBarIcon = (
@@ -105,9 +107,9 @@ function MyTabs() {
               />
             );
           } else if (route.name === 'MyProfile') {
-           tabBarIcon=(
-            <Image source={require('../Images/user.png')} style={{Width:SW(25),height:SH(25),borderRadius:20,resizeMode:"contain"}}/>
-           )
+            tabBarIcon = (
+              <Image source={require('../Images/user.png')} style={{ Width: SW(25), height: SH(25), borderRadius: 20, resizeMode: "contain" }} />
+            )
           } else if (route.name === 'Home') {
             tabBarIcon = (
               <MaterialCommunityIcons
@@ -125,7 +127,7 @@ function MyTabs() {
           height: SH(55),
           borderTopLeftRadius: 15,
           borderTopRightRadius: 15,
-          paddingHorizontal:SW(10),
+          paddingHorizontal: SW(10),
         },
       })}
     >
@@ -147,7 +149,7 @@ function MyDrawer() {
       screenOptions={{
         headerShown: false,
         drawerStyle: {
-          width:SW(240)
+          width: SW(240)
         },
       }}
     >
@@ -168,11 +170,48 @@ function MyDrawer() {
       <Drawer.Screen name="NotificationSettings" component={NotificationSettings} />
       <Drawer.Screen name="ChangePassword" component={ChangePassword} />
       <Drawer.Screen name="PrivacySettings" component={PrivacySettings} />
-      <Drawer.Screen name="InActiveDelete" component={InActiveDelete} /> 
-   
+      <Drawer.Screen name="InActiveDelete" component={InActiveDelete} />
     </Drawer.Navigator>
   );
 }
+
+const AppStack = () => (
+  <AppStackNavigator.Navigator screenOptions={{ headerShown: false }} initialRouteName='MainApp'>
+    <AppStackNavigator.Screen name="MainApp" component={MyDrawer} />
+    <AppStackNavigator.Screen name="BioData" component={BioData} />
+    <AppStackNavigator.Screen name="Notification" component={Notification} />
+    <AppStackNavigator.Screen name="DharamsalaDetail" component={DharamsalaDetail} />
+    <AppStackNavigator.Screen name="RoleRegisterForm" component={RoleRegisterForm} />
+    <AppStackNavigator.Screen name="PanditDetailPage" component={PanditDetailPage} />
+    <AppStackNavigator.Screen name="KathavachakDetailsPage" component={KathavachakDetailsPage} />
+    <AppStackNavigator.Screen name="JyotishDetailsPage" component={JyotishDetailsPage} />
+    <AppStackNavigator.Screen name="CreatePost" component={CreatePost} />
+    <AppStackNavigator.Screen name="MyProfile" component={MyProfile} />
+    <AppStackNavigator.Screen name="ViewPost" component={ViewPost} />
+    <AppStackNavigator.Screen name="PostReview" component={PostReview} />
+    <AppStackNavigator.Screen name="ReportPage" component={ReportPage} />
+    <AppStackNavigator.Screen name="AllReviewsPage" component={AllReviewsPage} />
+    <AppStackNavigator.Screen name="DharamsalaSubmissionPage" component={DharamsalaSubmissionPage} />
+    <AppStackNavigator.Screen name="CommitteeSubmissionPage" component={CommitteeSubmissionPage} />
+    <AppStackNavigator.Screen name="ActivistForm" component={ActivistForm} />
+    <AppStackNavigator.Screen name="DetailedProfile" component={DetailedProfile} />
+    <AppStackNavigator.Screen name="PartnersPreference" component={PartnersPreference} />
+    <AppStackNavigator.Screen name="PhotoGallery" component={PhotoGallery} />
+    <AppStackNavigator.Screen name="MainPartnerPrefrence" component={MainPartnerPrefrence} />
+    <AppStackNavigator.Screen name="MatrimonyPeopleProfile" component={MatrimonyPeopleProfile} />
+    <AppStackNavigator.Screen name="MatrimonyPage" component={MatrimonyPage} />
+    <AppStackNavigator.Screen name="PostSuccessStories" component={PostSuccessStories} />
+    <AppStackNavigator.Screen name="UpdateProfile" component={UpdateProfile} />
+  </AppStackNavigator.Navigator>
+);
+
+const AuthStack = () => (
+  <AuthStackNavigator.Navigator screenOptions={{ headerShown: false }} initialRouteName='Splash'>
+    <AuthStackNavigator.Screen name="Splash" component={Splash} />
+    <AuthStackNavigator.Screen name="Register" component={Register} />
+    <AuthStackNavigator.Screen name="Login" component={Login} />
+  </AuthStackNavigator.Navigator>
+);
 
 const RootNavigator = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -181,14 +220,8 @@ const RootNavigator = () => {
   useEffect(() => {
     const checkUserToken = async () => {
       const token = await AsyncStorage.getItem('userToken');
-      console.log('token in root file ', token);
-
-      if (token) {
-        setInitialRoute("MainApp");
-      } else {
-        setInitialRoute('Splash');
-      }
-
+      console.log('Token in root file:', token);
+      setInitialRoute(token ? 'AppStack' : 'AuthStack');
       setIsLoading(false);
     };
 
@@ -196,47 +229,16 @@ const RootNavigator = () => {
   }, []);
 
   if (isLoading) {
-    return <LoadingScreen/>;
+    return <LoadingScreen />;
   }
 
-
   return (
-    <Stack.Navigator
-    initialRouteName={initialRoute}
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name="Splash" component={Splash} />
-      <Stack.Screen name="Register" component={Register} />
-      <Stack.Screen name="Login" component={Login} />
-      <Stack.Screen name="MainApp" component={MyDrawer} />
-      <Stack.Screen name="BioData" component={BioData} />
-      <Stack.Screen name="Notification" component={Notification} />
-      <Stack.Screen name="DharamsalaDetail" component={DharamsalaDetail} />
-      <Stack.Screen name="RoleRegisterForm" component={RoleRegisterForm} />
-      <Stack.Screen name="PanditDetailPage" component={PanditDetailPage} />
-      <Stack.Screen name="KathavachakDetailsPage" component={KathavachakDetailsPage} />
-      <Stack.Screen name="JyotishDetailsPage" component={JyotishDetailsPage} />
-      <Stack.Screen name="CreatePost" component={CreatePost} />
-      <Stack.Screen name="MyProfile" component={MyProfile} />
-      <Stack.Screen name="ViewPost" component={ViewPost} />
-      <Stack.Screen name="PostReview" component={PostReview} />
-      <Stack.Screen name="ReportPage" component={ReportPage} />
-      <Stack.Screen name="AllReviewsPage" component={AllReviewsPage} />
-      <Stack.Screen name="DharamsalaSubmissionPage" component={DharamsalaSubmissionPage} />
-      <Stack.Screen name="CommitteeSubmissionPage" component={CommitteeSubmissionPage} />
-      <Stack.Screen name="ActivistForm" component={ActivistForm} />
-      <Stack.Screen name="DetailedProfile" component={DetailedProfile} />
-      <Stack.Screen name="PartnersPreference" component={PartnersPreference} />
-      <Stack.Screen name="PhotoGallery" component={PhotoGallery} />
-      <Stack.Screen name="MainPartnerPrefrence" component={MainPartnerPrefrence} />
-      <Stack.Screen name="MatrimonyPeopleProfile" component={MatrimonyPeopleProfile} />
-      <Stack.Screen name="MatrimonyPage" component={MatrimonyPage} />
-      <Stack.Screen name="PostSuccessStories" component={PostSuccessStories} />
-      <Stack.Screen name="UpdateProfile" component={UpdateProfile} />
+    <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={initialRoute}>
+      <Stack.Screen name="AuthStack" component={AuthStack} />
+      <Stack.Screen name="AppStack" component={AppStack} />
     </Stack.Navigator>
   );
 };
+
 
 export default RootNavigator;

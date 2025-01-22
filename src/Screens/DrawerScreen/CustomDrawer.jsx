@@ -50,12 +50,17 @@ const CustomDrawer = (props) => {
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem("userToken");
-      navigation.navigate('Login');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "AuthStack" }],
+      });
+  
+      console.log("Logged out successfully");
     } catch (error) {
       console.error("Error logging out:", error);
     }
   };
-
+  
   const handleDropdownToggle = (dropdown) => {
     setOpenDropdown((prev) => (prev === dropdown ? null : dropdown));
   };

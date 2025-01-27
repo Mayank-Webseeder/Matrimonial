@@ -9,44 +9,8 @@ import { profileImages, Category, communityData, slider } from '../../DummyData/
 import { ScrollView } from 'react-native-gesture-handler';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import Globalstyles from '../../utils/GlobalCss';
-import { useDispatch } from 'react-redux';
-import axios from 'axios';
-import { PROFILE_ENDPOINT } from '../../utils/BaseUrl';
-import { setProfiledata } from '../../ReduxStore/Slices/ProfileSlice';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Home = ({ navigation }) => {
-
-  const dispatch = useDispatch();
-
-  const fetchProfile = async () => {
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
-
-      const headers = {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      };
-
-      console.log("headers in profile", headers);
-      const res = await axios.get(PROFILE_ENDPOINT, { headers });
-      const ProfileData = res.data.data;
-
-      dispatch(setProfiledata(ProfileData));
-      console.log("ProfileData", ProfileData);
-    } catch (error) {
-      console.error(
-        "Error fetching profile:",
-        error.response ? error.response.data : error.message
-      );
-    }
-  };
-
-  useEffect(() => {
-    fetchProfile();
-  }, [])
-
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   

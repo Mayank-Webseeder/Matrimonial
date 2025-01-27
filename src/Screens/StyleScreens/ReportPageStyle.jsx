@@ -58,7 +58,12 @@ const styles = StyleSheet.create({
     marginVertical: SH(5),
     paddingVertical: SH(5),
     paddingHorizontal: SW(5)
-  }
+  },
+  errorText: {
+    color: 'red',
+    fontSize: SF(13),
+    fontFamily: "Poppins-Regular"
+},
 });
 
 export default styles;

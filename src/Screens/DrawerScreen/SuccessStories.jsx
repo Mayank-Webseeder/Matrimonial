@@ -1,5 +1,5 @@
-import { Text, View, TouchableOpacity, Image, FlatList,SafeAreaView,StatusBar } from 'react-native';
-import React, { useState } from 'react';
+import { Text, View, TouchableOpacity, Image, FlatList, SafeAreaView, StatusBar } from 'react-native';
+import React from 'react';
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -9,26 +9,17 @@ import { SuccessStoriesData } from '../../DummyData/DummyData';
 import Globalstyles from '../../utils/GlobalCss';
 
 const SuccessStories = ({ navigation }) => {
-  const [ratings, setRatings] = useState({}); 
-
-  const handleStarPress = (storyId, rating) => {
-    setRatings((prevRatings) => ({ ...prevRatings, [storyId]: rating }));
-  };
-  
-
-  const renderStars = (storyId) => {
-    const currentRating = ratings[storyId] || 0;
+  const renderStars = (rating) => {
     const stars = [];
-    for (let i = 1; i <= 5; i++) {
+    for (let i = 1; i <= rating; i++) {
       stars.push(
-        <TouchableOpacity key={i} onPress={() => handleStarPress(storyId, i)}>
-          <FontAwesome
-            name={i <= currentRating ? 'star' : 'star-o'}
-            size={20}
-            color={'#FF9900'}
-            style={{ marginHorizontal: 2 }}
-          />
-        </TouchableOpacity>
+        <FontAwesome
+          key={i}
+          name={'star'}
+          size={20}
+          color={'#FF9900'}
+          style={{ marginHorizontal: 2 }}
+        />
       );
     }
     return stars;
@@ -41,7 +32,7 @@ const SuccessStories = ({ navigation }) => {
         <View style={styles.textContainer}>
           <Text style={styles.storyName}>{item.name}</Text>
           <Text style={styles.storyDescription}>{item.description}</Text>
-          <View style={styles.ratingContainer}>{renderStars(item.id)}</View>
+          <View style={styles.ratingContainer}>{renderStars(item.rating)}</View>
         </View>
       </View>
     );
@@ -50,10 +41,10 @@ const SuccessStories = ({ navigation }) => {
   return (
     <SafeAreaView style={Globalstyles.container}>
       <StatusBar 
-                barStyle="dark-content" 
-                backgroundColor="transparent" 
-                translucent 
-            />
+        barStyle="dark-content" 
+        backgroundColor="transparent" 
+        translucent 
+      />
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -62,7 +53,7 @@ const SuccessStories = ({ navigation }) => {
           <Text style={Globalstyles.headerText}>Success Stories</Text>
         </View>
         <View style={styles.righticons}>
-          <TouchableOpacity onPress={()=>navigation.navigate('PostSuccessStories')}>
+          <TouchableOpacity onPress={() => navigation.navigate('PostSuccessStories')}>
             <Text style={styles.postText}>Post</Text>
           </TouchableOpacity>
           <AntDesign

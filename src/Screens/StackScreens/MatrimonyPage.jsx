@@ -1,4 +1,4 @@
-import { Text, View, Image, ImageBackground, ScrollView, SafeAreaView, StatusBar, Modal } from 'react-native'
+import { Text, View, Image, ScrollView, SafeAreaView, StatusBar } from 'react-native'
 import React, { useState } from 'react'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Colors from '../../utils/Colors';
@@ -10,8 +10,6 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { useSelector } from 'react-redux';
 import moment from "moment";
 import Globalstyles from '../../utils/GlobalCss';
-import { launchImageLibrary } from 'react-native-image-picker';
-
 import {
     PeoplePosition,
 } from '../../DummyData/DropdownData';
@@ -23,24 +21,11 @@ const MatrimonyPage = ({ navigation }) => {
     const [activeComponent, setActiveComponent] = useState("DetailedProfile");
     const [peoplePosition, setPeoplePosition] = useState(null);
     const [dropdownVisible, setDropdownVisible] = useState(false);
-    const [modalVisible, setModalVisible] = useState(false);
-    const [selectedImage, setSelectedImage] = useState(null);
     const profileData = useSelector((state) => state.profile);
-    const formattedDate = moment(profileData.dob).format("DD/MM/YYYY");
-
-    const handleSelectImage = () => {
-        launchImageLibrary({ mediaType: 'photo' }, (response) => {
-            if (response.assets && response.assets.length > 0) {
-                setSelectedImage(response.assets[0].uri);
-                setModalVisible(false);
-            }
-        });
-    };
-
-    const handleDeleteImage = () => {
-        setSelectedImage(null);
-        setModalVisible(false);
-    };
+    console.log("profileData in myprofile", profileData);
+    const image = profileData?.profiledata?.photoUrl?.[0];
+    console.log("image", image);
+    const formattedDate = moment(profileData?.profiledata?.dob).format("DD/MM/YYYY");
 
     const handlePress = (componentName) => {
         setActiveComponent(componentName);
@@ -77,7 +62,7 @@ const MatrimonyPage = ({ navigation }) => {
                     </TouchableOpacity>
                     {dropdownVisible && (
                         <Dropdown
-                            style={styles.heightinput}
+                            style={styles.dropdown}
                             data={PeoplePosition}
                             labelField="label"
                             valueField="value"
@@ -91,38 +76,42 @@ const MatrimonyPage = ({ navigation }) => {
                     )}
                 </View>
             </View>
-            <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-                <ImageBackground
-                    source={selectedImage ? { uri: selectedImage } : require('../../Images/profile3.png')}
-                    style={styles.image}>
-                    <TouchableOpacity style={styles.smallHeader} onPress={() => {
-                        console.log("Opening Modal...");
-                        setModalVisible(true);
-                    }}>
-                        <MaterialIcons
-                            name="add-a-photo"
-                            color={Colors.theme_color}
-                            size={40}
-                            style={styles.cameraIcon}
-                        />
-                    </TouchableOpacity>
+            <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
 
-                </ImageBackground>
-                <Text style={styles.editText} onPress={() => navigation.navigate('UpdateProfile')}>Edit Profile</Text>
-                <Text style={styles.RepostText}>Repost</Text>
-                <View style={styles.userDeatil}>
-                    <View style={styles.userData}>
-                        <Text style={styles.text}>{profileData?.profiledata?.username || 'NA'}</Text>
-                        <Text style={styles.text}>{profileData?.profiledata?.mobileNo}</Text>
+                <View style={styles.topContainer}>
+
+                    <Image source={image ? { uri: image } : require('../../Images/Profile.png')} style={styles.image} />
+                    <View style={styles.userDeatil}>
+                        <View>
+                            <Text style={styles.text}>{profileData?.profiledata?.username || 'NA'}</Text>
+                            <Text style={styles.text}>DOB: {formattedDate || 'NA'}</Text>
+                            <Text style={styles.text}>City: {profileData?.profiledata?.city || 'NA'}</Text>
+                        </View>
+                        <View>
+                            <Text style={styles.text}>
+                                Contact: {profileData?.profiledata?.mobileNo}</Text>
+                            <Text style={styles.text}>Gender: {profileData?.profiledata?.gender || 'NA'}</Text>
+                        </View>
                     </View>
-                    <View style={styles.userData}>
-                        <Text style={styles.text}>DOB: {formattedDate || 'NA'}</Text>
-                        <Text style={styles.text}>City: {profileData?.profiledata?.city || 'NA'}</Text>
-                    </View>
-                    <View style={styles.userData}>
-                        <Text style={styles.text}>Gender: {profileData?.profiledata?.gender || 'NA'}</Text>
-                    </View>
+
                 </View>
+                {/* <Image source={ image? { uri: image }: require('../../Images/Profile.png')} style={styles.image} />
+                */}
+                <Text style={styles.RepostText}>Repost</Text>
+
+                {/* <View style={styles.userDeatil}>
+                        <View>
+                            <Text style={styles.text}>{profileData?.profiledata?.username || 'NA'}</Text>
+                            <Text style={styles.text}>DOB: {formattedDate || 'NA'}</Text>
+                            <Text style={styles.text}>City: {profileData?.profiledata?.city || 'NA'}</Text>
+                        </View>
+                        <View>
+                        <Text style={styles.text}>
+                        Contact: {profileData?.profiledata?.mobileNo}</Text>
+                            <Text style={styles.text}>Gender: {profileData?.profiledata?.gender  || 'NA'}</Text>
+                        </View>
+                    </View> */}
+
 
                 {/* Tab Buttons */}
                 <View style={styles.IconFlex}>
@@ -195,39 +184,6 @@ const MatrimonyPage = ({ navigation }) => {
 
                 {/* Render Active Component */}
                 {renderActiveComponent()}
-                <Modal
-                    visible={modalVisible}
-                    transparent={true}
-                    animationType="slide"
-                    onRequestClose={() => setModalVisible(false)} // Ensures proper handling of the back button.
-                >
-                    <View style={styles.modalContainer}>
-                        <View style={styles.modalContent}>
-                            <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
-                                <TouchableOpacity
-                                    onPress={() => setModalVisible(false)}
-                                >
-                                    <AntDesign name="close" size={20} color={Colors.theme_color} />
-                                </TouchableOpacity>
-                                <Text style={styles.modalTitle}>Profile Photo</Text>
-
-                                <TouchableOpacity
-                                    onPress={handleDeleteImage}
-                                >
-                                    <MaterialIcons name={'delete'} size={30} color={'red'} />
-                                </TouchableOpacity>
-                            </View>
-
-                            {/* Option to Choose from Gallery */}
-                            <TouchableOpacity
-                                onPress={handleSelectImage} style={styles.gallery}
-                            >
-                                <MaterialIcons name={'add-a-photo'} size={20} color={Colors.theme_color} />
-                                <Text style={styles.Gallerytext}>Gallery</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </Modal>
 
             </ScrollView>
         </SafeAreaView>
@@ -235,4 +191,3 @@ const MatrimonyPage = ({ navigation }) => {
 };
 
 export default MatrimonyPage;
-

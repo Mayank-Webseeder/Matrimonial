@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, ImageBackground, TouchableOpacity, TextInput, ScrollView, SafeAreaView, ActivityIndicator, FlatList } from "react-native";
+import { Text, View, ImageBackground, TouchableOpacity, TextInput, ScrollView, SafeAreaView, ActivityIndicator, FlatList, Image } from "react-native";
 import styles from "../StyleScreens/RegisterStyle";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -10,7 +10,7 @@ import { SIGNUP_ENDPOINT } from "../../utils/BaseUrl";
 import Toast from "react-native-toast-message";
 import { CityData, genderData } from "../../DummyData/DropdownData";
 import Globalstyles from "../../utils/GlobalCss";
-
+import ImageCropPicker from 'react-native-image-crop-picker';
 const Register = ({ navigation }) => {
     const [selectedDate, setSelectedDate] = useState(null);
     const [showDatePicker, setShowDatePicker] = useState(false);
@@ -27,6 +27,29 @@ const Register = ({ navigation }) => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+    const [selectedImageName, setSelectedImageName] = useState("Upload Image");
+    const [selectedImage, setSelectedImage] = useState(null);
+
+
+    const handleImageUpload = () => {
+        ImageCropPicker.openPicker({
+            width: 300,
+            height: 250,
+            cropping: true,
+            includeBase64: true,
+        })
+            .then(image => {
+                setSelectedImage(image.path);
+                const imageName = image.path.split('/').pop();
+                setSelectedImageName(imageName);
+                setSelectedImage(image.data);
+                console.log('Selected Image:', image);
+            })
+            .catch(error => {
+                console.error('Image Picking Error:', error);
+            });
+    };
+    
 
     const validateFields = () => {
         const newErrors = {};
@@ -65,9 +88,8 @@ const Register = ({ navigation }) => {
         setIsLoading(true);
         try {
             const formattedDate = selectedDate
-                ? `${selectedDate.getDate().toString().padStart(2, "0")}/${(selectedDate.getMonth() + 1).toString().padStart(2, "0")
-                }/${selectedDate.getFullYear()}`
-                : null;
+            ? `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, "0")}-${selectedDate.getDate().toString().padStart(2, "0")}`
+            : null;        
 
             const payload = {
                 username: fullName.trim(),
@@ -76,6 +98,7 @@ const Register = ({ navigation }) => {
                 gender: gender,
                 dob: formattedDate,
                 city: selectedCity || cityInput.trim(),
+                photoUrl: selectedImage,
             };
 
             console.log("payload", payload);
@@ -103,7 +126,7 @@ const Register = ({ navigation }) => {
                 });
             }
         } catch (error) {
-            console.error("Sign Up Error:", error); // Debug error
+            console.error("Sign Up Error:", error);
             Toast.show({
                 type: "error",
                 text1: "Sign Up Error",
@@ -112,7 +135,7 @@ const Register = ({ navigation }) => {
                 visibilityTime: 1000,
             });
         } finally {
-            setIsLoading(false); // Stop loader
+            setIsLoading(false); 
         }
     };
 
@@ -161,7 +184,7 @@ const Register = ({ navigation }) => {
                         )}
                         {/* Date of Birth */}
                         <View>
-                            <Text style={styles.title}>Date of Birth</Text>
+                            <Text style={Globalstyles.title}>Date of Birth</Text>
                             <View style={Globalstyles.inputContainer}>
                                 <Text style={styles.dateText}>
                                     {selectedDate ? formatDate(selectedDate) : " "}
@@ -181,7 +204,8 @@ const Register = ({ navigation }) => {
                             style={Globalstyles.input}
                             value={cityInput}
                             onChangeText={handleCityInputChange}
-                            placeholder="Type your city"
+                            placeholder="Enter your city"
+                            placeholderTextColor={Colors.gray}
                         />
                         {filteredCities.length > 0 && cityInput ? (
                             <FlatList
@@ -191,9 +215,9 @@ const Register = ({ navigation }) => {
                                 renderItem={({ item }) => (
                                     <TouchableOpacity
                                         onPress={() => {
-                                            setCityInput(item); // Set the input field value
-                                            setSelectedCity(item); // Mark as selected city
-                                            setFilteredCities([]); // Clear suggestions
+                                            setCityInput(item); 
+                                            setSelectedCity(item); 
+                                            setFilteredCities([]); 
                                         }}
                                     >
                                         <Text style={Globalstyles.listItem}>{item}</Text>
@@ -204,8 +228,8 @@ const Register = ({ navigation }) => {
                         ) : cityInput && (
                             <TouchableOpacity
                                 onPress={() => {
-                                    setSelectedCity(cityInput); // Accept user-typed input as city
-                                    setFilteredCities([]); // Clear suggestions
+                                    setSelectedCity(cityInput); 
+                                    setFilteredCities([]); 
                                 }}
                             >
                             </TouchableOpacity>
@@ -227,6 +251,7 @@ const Register = ({ navigation }) => {
                             value={gender}
                             onChange={(item) => setGender(item.value)}
                             style={Globalstyles.input}
+                            
                         />
 
                         {errors.gender && (
@@ -242,7 +267,7 @@ const Register = ({ navigation }) => {
                                     placeholder="Create a strong password"
                                     value={password}
                                     onChangeText={setPassword}
-                                    placeholderTextColor={'gray'}
+                                    placeholderTextColor={Colors.gray}
                                 />
                                 <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                                     <AntDesign
@@ -268,7 +293,7 @@ const Register = ({ navigation }) => {
                                     placeholder="Confirm your password"
                                     value={confirmPassword}
                                     onChangeText={setConfirmpassword}
-                                    placeholderTextColor={'gray'}
+                                    placeholderTextColor={Colors.gray}
                                 />
                                 <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
                                     <AntDesign
@@ -282,6 +307,12 @@ const Register = ({ navigation }) => {
                             {errors.confirmPassword && (
                                 <Text style={styles.errorText}>{errors.confirmPassword}</Text>
                             )}
+                        </View>
+                        <Text style={Globalstyles.title}>Upload Your Profile Image</Text>
+                        <View style={Globalstyles.input}>
+                            <TouchableOpacity onPress={handleImageUpload}>
+                                <Text style={styles.imagePlaceholder}>{selectedImageName}</Text>
+                            </TouchableOpacity>
                         </View>
 
 

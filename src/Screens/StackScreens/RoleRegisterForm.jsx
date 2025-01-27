@@ -5,13 +5,13 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
 import { Checkbox } from 'react-native-paper';
 import Toast from 'react-native-toast-message';
-import { launchImageLibrary } from 'react-native-image-picker';
 import Globalstyles from '../../utils/GlobalCss';
 import { subCasteOptions, StateData, CityData, panditServices, jyotishServices, kathavachakServices, ExperienceData } from '../../DummyData/DropdownData';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CREATE_PANDIT } from '../../utils/BaseUrl';
 import { Dropdown } from 'react-native-element-dropdown';
+import ImageCropPicker from 'react-native-image-crop-picker';
 
 const RoleRegisterForm = ({ navigation }) => {
     const [name, setName] = useState('');
@@ -39,7 +39,10 @@ const RoleRegisterForm = ({ navigation }) => {
     const [selectedSubCaste, setSelectedSubCaste] = useState('');
     const [area, setArea] = useState('');
     const [experience, setExperience] = useState(null);
+    const [selectedImageName, setSelectedImageName] = useState("Upload Image");
+    const [selectedImage, setSelectedImage] = useState(null);
 
+    console.log("selectedImageName", selectedImageName);
     const roleOptions = [
         { label: 'Pandit', value: 'Pandit' },
         { label: 'Jyotish', value: 'Jyotish' },
@@ -69,13 +72,28 @@ const RoleRegisterForm = ({ navigation }) => {
         }));
     };
 
-    const handleImagePick = () => {
-        launchImageLibrary({ mediaType: 'photo', selectionLimit: 5 }, response => {
-            if (response.assets) {
-                setPhotos(response.assets);
-            }
-        });
+    const handleCropPick = () => {
+        ImageCropPicker.openPicker({
+            multiple: false,
+            cropping: true,
+            width: 400,
+            height: 400,
+        }).then(image => {
+            const newPhoto = {
+                uri: image.path,
+            };
+            addPhotos([newPhoto]);
+        }).catch(err => console.log('Crop Picker Error:', err));
     };
+
+    const addPhotos = (newPhotos) => {
+        if (photos.length + newPhotos.length <= 5) {
+            setPhotos(prevPhotos => [...prevPhotos, ...newPhotos]);
+        } else {
+            alert('You can only upload up to 5 photos.');
+        }
+    };
+
 
     const handleSubmit = async () => {
         const roleApiMapping = {
@@ -188,26 +206,23 @@ const RoleRegisterForm = ({ navigation }) => {
         }
     };
 
-    const selectImage = async () => {
-        const options = {
-            mediaType: 'photo',
-            quality: 1,
-            includeBase64: false,
-        };
-
-        launchImageLibrary(options, (response) => {
-            if (response.didCancel) {
-                console.log('User cancelled image picker');
-            } else if (response.errorCode) {
-                console.error('Image Picker Error:', response?.errorMessage);
-            } else {
-                // Get the selected image's URI
-                const uri = response?.assets[0]?.uri;
-                setProfilePhoto(uri);
-                console.log('Selected Image URI:', uri);
-            }
-        });
+    const handleImageUpload = () => {
+        ImageCropPicker.openPicker({
+            width: 300,
+            height: 250,
+            cropping: true,
+        })
+            .then(image => {
+                setSelectedImage(image.path);
+                const imageName = image.path.split('/').pop();
+                setSelectedImageName(imageName);
+                console.log('Selected Image:', image);
+            })
+            .catch(error => {
+                console.error('Image Picking Error:', error);
+            });
     };
+
 
     return (
         <SafeAreaView style={Globalstyles.container}>
@@ -229,21 +244,21 @@ const RoleRegisterForm = ({ navigation }) => {
                         value={name}
                         onChangeText={setName}
                         placeholder='Enter Your Full Name'
-                        placeholderTextColor={'gray'}
+                       placeholderTextColor={Colors.gray}
                     />
 
                     <Text style={Globalstyles.title}>Mobile No.</Text>
                     <TextInput style={Globalstyles.input} value={mobile} onChangeText={setMobile} keyboardType="phone-pad"
                         placeholder="Enter Your Mobile No."
-                        placeholderTextColor={'gray'} />
+                       placeholderTextColor={Colors.gray} />
 
                     <Text style={Globalstyles.title}>State</Text>
                     <TextInput
                         style={Globalstyles.input}
                         value={stateInput}
                         onChangeText={handleStateInputChange}
-                        placeholder="Type your state"
-                        placeholderTextColor={'gray'}
+                        placeholder="Enter your state"
+                       placeholderTextColor={Colors.gray}
                     />
                     {filteredStates.length > 0 && stateInput ? (
                         <FlatList
@@ -270,8 +285,8 @@ const RoleRegisterForm = ({ navigation }) => {
                         style={Globalstyles.input}
                         value={cityInput}
                         onChangeText={handleCityInputChange}
-                        placeholder="Type your city"
-                        placeholderTextColor={'gray'}
+                        placeholder="Enter your city"
+                       placeholderTextColor={Colors.gray}
                     />
                     {filteredCities.length > 0 && cityInput ? (
                         <FlatList
@@ -297,14 +312,14 @@ const RoleRegisterForm = ({ navigation }) => {
                     <TextInput style={Globalstyles.input}
                         value={area} onChangeText={setArea}
                         placeholder='Enter Your Area'
-                        placeholderTextColor={'gray'}
+                       placeholderTextColor={Colors.gray} multiline={true}
                     />
 
                     <Text style={Globalstyles.title}>Aadhar No. (Optional)</Text>
                     <TextInput style={Globalstyles.input}
                         value={aadhar} onChangeText={setAadhar}
                         placeholder='Enter Your Aadhar No.'
-                        placeholderTextColor={'gray'}
+                       placeholderTextColor={Colors.gray}
                     />
 
                     <Text style={Globalstyles.title}>Sub Caste</Text>
@@ -312,8 +327,8 @@ const RoleRegisterForm = ({ navigation }) => {
                         style={Globalstyles.input}
                         value={subCasteInput}
                         onChangeText={handleSubCasteInputChange}
-                        placeholder="Type your sub caste"
-                        placeholderTextColor={'gray'}
+                        placeholder="Enter your sub caste"
+                       placeholderTextColor={Colors.gray}
                     />
                     {filteredSubCaste.length > 0 && subCasteInput ? (
                         <FlatList
@@ -377,39 +392,34 @@ const RoleRegisterForm = ({ navigation }) => {
                             value={experience}
                             onChange={(item) => setExperience(item.value)}
                             placeholder="Select Experience"
+                            placeholderStyle={{ color: '#E7E7E7' }}
                         />
                     </View>
 
                     <Text style={Globalstyles.title}>Profile Photo</Text>
-                    <TouchableOpacity
-                        style={Globalstyles.input}
-                        onPress={selectImage} // Function to handle the image selection
-                    >
-                        <Text style={{ color: 'gray' }}>Upload Your Profile Photo</Text>
-                    </TouchableOpacity>
-
-                    {profilePhoto && (
-                        <Image
-                            source={{ uri: profilePhoto }} // Display the selected profile photo
-                            style={styles.photo}
-                        />
-                    )}
+                    <View style={Globalstyles.input}>
+                        <TouchableOpacity onPress={handleImageUpload}>
+                            <Text style={styles.imagePlaceholder}>{selectedImageName}</Text>
+                        </TouchableOpacity>
+                    </View>
 
                     <Text style={Globalstyles.title}>Add Description</Text>
                     <TextInput style={Globalstyles.textInput} value={description} onChangeText={setDescription}
                         textAlignVertical='top' placeholder="Add Your Description"
-                        placeholderTextColor={'gray'}
+                       placeholderTextColor={Colors.gray} multiline={true}
                     />
 
 
                     <View style={styles.photopickContainer}>
-                        <Text style={Globalstyles.title}>Photos (Up to 5)</Text>
-                        <TouchableOpacity style={styles.PickPhotoButton}
-                            onPress={handleImagePick} >
-                            <Text style={styles.PickPhotoText}>Pick Photos</Text>
+                        <Text style={styles.title}>Photos (Up to 5)</Text>
+
+                        {/* Crop Picker Button */}
+                        <TouchableOpacity style={styles.PickPhotoButton} onPress={handleCropPick}>
+                            <Text style={styles.PickPhotoText}>Pick & Crop Photo</Text>
                         </TouchableOpacity>
                     </View>
 
+                    {/* Display Selected Photos */}
                     {photos.length > 0 && (
                         <View style={styles.photosContainer}>
                             <Text style={styles.label}>Uploaded Photos:</Text>
@@ -420,27 +430,26 @@ const RoleRegisterForm = ({ navigation }) => {
                             </ScrollView>
                         </View>
                     )}
-
                     <Text style={Globalstyles.title}>Website Link</Text>
                     <TextInput style={Globalstyles.input} value={website} onChangeText={setWebsite}
                         placeholder="Gave Your Website Link"
-                        placeholderTextColor={'gray'} />
+                       placeholderTextColor={Colors.gray} />
                     <Text style={Globalstyles.title}>Youtube Link</Text>
                     <TextInput style={Globalstyles.input} value={youtube} onChangeText={setYoutube}
                         placeholder="Gave Your Youtube Link"
-                        placeholderTextColor={'gray'} />
+                       placeholderTextColor={Colors.gray} />
                     <Text style={Globalstyles.title}>Whatsapp Link</Text>
                     <TextInput style={Globalstyles.input} value={whatsapp} onChangeText={setWhatsapp}
                         placeholder="Gave Your Whatsapp Link"
-                        placeholderTextColor={'gray'} />
+                       placeholderTextColor={Colors.gray} />
                     <Text style={Globalstyles.title}>Facebook Link</Text>
                     <TextInput style={Globalstyles.input} value={facebook} onChangeText={setFacebook}
                         placeholder="Gave Your Facebook Link"
-                        placeholderTextColor={'gray'} />
-                    <Text style={Globalstyles.title}>Instagram Link</Text>
+                       placeholderTextColor={Colors.gray} />
+                    <Text style={Globalstyles.title}> Link</Text>
                     <TextInput style={Globalstyles.input} value={instagram} onChangeText={setInstagram}
                         placeholder="Gave Your Instagram Link"
-                        placeholderTextColor={'gray'} />
+                       placeholderTextColor={Colors.gray} />
 
                     <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                         <Text style={styles.buttonText}>Save</Text>

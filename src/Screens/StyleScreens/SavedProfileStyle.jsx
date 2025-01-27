@@ -15,13 +15,14 @@ const styles = StyleSheet.create({
     paddingVertical:SH(10)
   },
   tabButton: {
-    padding: 10,
+    paddingVertical:SH(10),
+    paddingHorizontal:SW(10),
     borderRadius: 5,
     backgroundColor: Colors.light,
     width: SW(100),
     height: SH(40),
     borderWidth: 1,
-    borderColor: Colors.dark,
+    borderColor: Colors.theme_color,
     marginRight: SW(10)
   },
   activeTab: {
@@ -30,7 +31,8 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: SF(14),
     fontFamily: 'Poppins-Regular',
-    textAlign: "center"
+    textAlign: "center",
+    color:Colors.theme_color
   },
   activeTabText: {
     color:Colors.light,

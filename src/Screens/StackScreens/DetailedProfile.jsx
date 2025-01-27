@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux';
 import moment from "moment";
 import { launchImageLibrary } from 'react-native-image-picker';
 import Globalstyles from '../../utils/GlobalCss';
+import ImageCropPicker from 'react-native-image-crop-picker';
 
 import {
   OccupationData, QualificationData, maritalStatusData, ManglikStatusData, LivingData, ProfileCreatedData, CityData, Income,
@@ -26,14 +27,9 @@ import {
 const DetailedProfile = ({ navigation }) => {
   const [isEditing, setIsEditing] = useState(true);
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [images, setImages] = useState({
-    closeupImage: null,
-    fullImage: null,
-    bestImage: null,
-  });
   const profileData = useSelector((state) => state.profile);
   console.log("profileData", profileData);
-  
+
   const formattedDate = moment(profileData.dob).format("DD/MM/YYYY");
   const [biodata, setBiodata] = useState({
     subCaste: "",
@@ -97,12 +93,18 @@ const DetailedProfile = ({ navigation }) => {
   const [selectedCity, setSelectedCity] = useState('');
   const [selectedSubCaste, setSelectedSubCaste] = useState('');
   const [detialedProfileData, setDetailProfileData] = useState(' ');
+  const [selectedImage, setSelectedImage] = useState(null);
 
-  
+  const [imageNames, setImageNames] = useState({
+    closeupImageName: "Upload One Closeup Image",
+    fullImageName: "Upload One Full Image",
+    bestImageName: "Upload One Best Image",
+  });
+
   const handleSave = () => {
     navigation.navigate("MainPartnerPrefrence")
   };
-  
+
   const handleTimeChange = (event, selectedDate) => {
     setShowTimePicker(false); // Close the picker
     if (selectedDate) {
@@ -114,38 +116,25 @@ const DetailedProfile = ({ navigation }) => {
     }
   };
 
-  const pickImage = async (field) => {
-    const options = {
-      mediaType: 'photo',
-      includeBase64: false, // Set to true if you need base64 string
-      quality: 1, // Set the image quality
-    };
-
-    launchImageLibrary(options, (response) => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.errorCode) {
-        console.error('ImagePicker Error: ', response.errorCode);
-      } else {
-        const selectedImage = response.assets[0];
-        setImages((prevState) => ({
+  const handleImageSelection = (field) => {
+    ImageCropPicker.openPicker({
+      width: 400,
+      height: 400,
+      cropping: true,
+    })
+      .then(image => {
+        const imageName = image.path.split('/').pop();
+        setImageNames(prevState => ({
           ...prevState,
-          [field]: selectedImage,
+          [field]: imageName,
         }));
-      }
-    });
+        console.log(`${field} selected:`, image);
+      })
+      .catch(error => {
+        console.error(`Error picking ${field}:`, error);
+      });
   };
 
-  const getFileName = (uri) => {
-    if (!uri) return "";
-
-    const splitUri = uri.split('/');
-    const fullFileName = splitUri[splitUri.length - 1];
-    const baseName = fullFileName.split('.')[0];
-    const shortenedName = baseName.substring(0, 15);
-
-    return shortenedName;
-  };
 
 
   const handleStateInputChange = (text) => {
@@ -481,15 +470,15 @@ const DetailedProfile = ({ navigation }) => {
         backgroundColor="transparent"
         translucent
       />
-    
+
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-   
+
         <View style={Globalstyles.form}>
           <View style={styles.detail}>
             <Text style={Globalstyles.title}>Personal Details</Text>
             <TouchableOpacity onPress={() => setIsEditing(true)}>
-                <Text style={styles.detailText}>Edit</Text>
-              </TouchableOpacity>
+              <Text style={styles.detailText}>Edit</Text>
+            </TouchableOpacity>
           </View>
           <Text style={Globalstyles.title}>Sub-Caste</Text>
           <TextInput
@@ -497,7 +486,7 @@ const DetailedProfile = ({ navigation }) => {
             value={subCasteInput}
             onChangeText={handleSubCasteInputChange}
             placeholder="Type your sub caste"
-            placeholderTextColor={'gray'}
+            placeholderTextColor={Colors.gray}
           />
           {filteredSubCaste.length > 0 && subCasteInput ? (
             <FlatList
@@ -520,8 +509,8 @@ const DetailedProfile = ({ navigation }) => {
               value={biodata?.fullname}
               editable={isEditing}
               onChangeText={(text) => handleInputChange("fullname", text)}
-              placeholderTextColor={'gray'}
               placeholder='Enter Your Full Name'
+              placeholderTextColor={Colors.gray}
             />
           </View>
           <View>
@@ -532,7 +521,7 @@ const DetailedProfile = ({ navigation }) => {
               editable={isEditing}
               onFocus={() => setShowDatePicker(true)}
               placeholder="Select your date of birth"
-              placeholderTextColor={'gray'}
+               placeholderTextColor={Colors.gray}
             />
 
             {showDatePicker && (
@@ -552,7 +541,7 @@ const DetailedProfile = ({ navigation }) => {
               editable={isEditing}
               onFocus={() => setShowTimePicker(true)} // Open time picker
               placeholder="HH:MM AM/PM"
-              placeholderTextColor="gray"
+              placeholderTextColor={Colors.gray}
             />
             {showTimePicker && (
               <DateTimePicker
@@ -571,7 +560,7 @@ const DetailedProfile = ({ navigation }) => {
               value={biodata.placeofbirth}
               editable={isEditing}
               onChangeText={(text) => handleInputChange("placeofbirth", text)}
-              placeholderTextColor={'gray'}
+               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Birth Place'
             />
           </View>
@@ -586,13 +575,14 @@ const DetailedProfile = ({ navigation }) => {
               editable={isEditing}
               onChange={(text) => handleInputChange("maritalStatus", text)}
               placeholder="Select marital status"
+              placeholderStyle={{ color: '#E7E7E7' }}
             />
           </View>
           <View>
             <Text style={Globalstyles.title}>
               Disabilities (physical, mental, etc.)</Text>
             <Dropdown
-              style={[styles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly]}
               data={MyDisabilities}
               labelField="label"
               valueField="value"
@@ -600,6 +590,7 @@ const DetailedProfile = ({ navigation }) => {
               editable={isEditing}
               onChange={(text) => handleInputChange("specialAbility", text.value)}
               placeholder="Select disability"
+              placeholderStyle={{ color: '#E7E7E7' }}
             />
           </View>
           <View>
@@ -613,6 +604,7 @@ const DetailedProfile = ({ navigation }) => {
               editable={isEditing}
               onChange={(text) => handleInputChange("minHeightFeet", text.value)}
               placeholder="Height"
+              placeholderStyle={{ color: '#E7E7E7' }}
             />
           </View>
           <View>
@@ -626,6 +618,7 @@ const DetailedProfile = ({ navigation }) => {
               editable={isEditing}
               onChange={(text) => handleInputChange("weight", text.value)}
               placeholder="Weight"
+              placeholderStyle={{ color: '#E7E7E7' }}
             />
           </View>
           <View>
@@ -639,6 +632,7 @@ const DetailedProfile = ({ navigation }) => {
               editable={isEditing}
               onChange={(text) => handleInputChange("complexion", text.value)}
               placeholder="Select Complexion"
+              placeholderStyle={{ color: '#E7E7E7' }}
             />
           </View>
           <View>
@@ -652,6 +646,7 @@ const DetailedProfile = ({ navigation }) => {
               editable={isEditing}
               onChange={(text) => handleInputChange("manglikStatus", text.value)}
               placeholder="Select status"
+              placeholderStyle={{ color: '#E7E7E7' }}
             />
           </View>
           <View>
@@ -661,7 +656,7 @@ const DetailedProfile = ({ navigation }) => {
               value={biodata.nadi}
               editable={isEditing}
               onChangeText={(text) => handleInputChange("nadi", text)}
-              placeholderTextColor={'gray'}
+               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Nadi'
             />
           </View>
@@ -672,7 +667,7 @@ const DetailedProfile = ({ navigation }) => {
               value={biodata.gotraSelf}
               editable={isEditing}
               onChangeText={(text) => handleInputChange("gotraSelf", text)}
-              placeholderTextColor={'gray'}
+               placeholderTextColor={Colors.gray}
               placeholder={'Enter Your Self Gotra'}
             />
           </View>
@@ -683,7 +678,7 @@ const DetailedProfile = ({ navigation }) => {
               value={biodata.gotraMother}
               editable={isEditing}
               onChangeText={(text) => handleInputChange("gotraMother", text)}
-              placeholderTextColor={'gray'}
+               placeholderTextColor={Colors.gray}
               placeholder={'Enter Your Mother Gotra'}
             />
           </View>
@@ -699,6 +694,7 @@ const DetailedProfile = ({ navigation }) => {
               onChange={(text) => handleInputChange("qualification", text.value)}
               placeholder="Select Qualification"
               disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
             />
           </View>
           <View>
@@ -713,6 +709,7 @@ const DetailedProfile = ({ navigation }) => {
               onChange={(text) => handleInputChange("occupation", text.value)}
               placeholder="Select occupation"
               disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
             />
           </View>
           <View>
@@ -727,6 +724,7 @@ const DetailedProfile = ({ navigation }) => {
               onChange={(text) => handleInputChange("annualIncome", text.value)}
               placeholder="Select Income"
               disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
             />
 
           </View>
@@ -742,6 +740,7 @@ const DetailedProfile = ({ navigation }) => {
               onChange={(text) => handleInputChange("livingStatus", text.value)}
               placeholder="Select Status"
               disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
             />
           </View>
           <View>
@@ -751,7 +750,7 @@ const DetailedProfile = ({ navigation }) => {
               value={cityInput}
               onChangeText={handleCityInputChange}
               placeholder="Enter your city"
-              placeholderTextColor={'gray'}
+               placeholderTextColor={Colors.gray}
             />
             {filteredCities.length > 0 && cityInput ? (
               <FlatList
@@ -777,7 +776,7 @@ const DetailedProfile = ({ navigation }) => {
               editable={isEditing}
               onChangeText={(text) => handleInputChange("aboutMe", text)}
               placeholder="Write about yourself..."
-              placeholderTextColor="gray"
+              placeholderTextColor={Colors.gray}
               textAlignVertical="top"
             />
           </View>
@@ -791,7 +790,7 @@ const DetailedProfile = ({ navigation }) => {
               keyboardType="phone-pad"
               maxLength={10}
               editable={isEditing}
-              placeholderTextColor={'gray'}
+               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Mobile no.'
             />
           </View>
@@ -807,6 +806,7 @@ const DetailedProfile = ({ navigation }) => {
               onChange={(text) => handleInputChange("profileCreatedBy", text.value)}
               placeholder="Select Person"
               disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
             />
           </View>
           <Text style={styles.headText}>Family details </Text>
@@ -817,7 +817,7 @@ const DetailedProfile = ({ navigation }) => {
               value={biodata.fatherName}
               onChangeText={(text) => handleInputChange("fatherName", text)}
               editable={isEditing}
-              placeholderTextColor={'gray'}
+               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Father Name'
             />
           </View>
@@ -828,7 +828,7 @@ const DetailedProfile = ({ navigation }) => {
               value={biodata.motherName}
               onChangeText={(text) => handleInputChange("motherName", text)}
               editable={isEditing}
-              placeholderTextColor={'gray'}
+               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Mother Name'
             />
           </View>
@@ -844,6 +844,7 @@ const DetailedProfile = ({ navigation }) => {
               onChange={(text) => handleInputChange("fatherOccupation", text.value)}
               placeholder="Select Occupation"
               disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
             />
           </View>
           <View>
@@ -858,6 +859,7 @@ const DetailedProfile = ({ navigation }) => {
               onChange={(text) => handleInputChange("fatherIncomeAnnually", text.value)}
               placeholder="Select Income"
               disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
             />
 
           </View>
@@ -873,6 +875,7 @@ const DetailedProfile = ({ navigation }) => {
               onChange={(text) => handleInputChange("motherOccupation", text.value)}
               placeholder="Select Occupation"
               disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
             />
           </View>
           <View>
@@ -887,6 +890,7 @@ const DetailedProfile = ({ navigation }) => {
               onChange={(text) => handleInputChange("motherIncomeAnnually", text.value)}
               placeholder="Select Income"
               disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
             />
           </View>
 
@@ -902,6 +906,7 @@ const DetailedProfile = ({ navigation }) => {
               onChange={(text) => handleInputChange("familyType", text.value)}
               placeholder="Select Type"
               disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
             />
           </View>
           <View>
@@ -916,6 +921,7 @@ const DetailedProfile = ({ navigation }) => {
               onChange={(text) => handleInputChange("siblings", text.value)}
               placeholder="Select Type"
               disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
             />
           </View>
           <View>
@@ -927,7 +933,7 @@ const DetailedProfile = ({ navigation }) => {
               multiline={true}
               numberOfLines={6}
               editable={isEditing}
-              placeholderTextColor={'gray'}
+               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Family Info.'
             />
           </View>
@@ -940,7 +946,7 @@ const DetailedProfile = ({ navigation }) => {
               keyboardType="phone-pad"
               maxLength={10}
               editable={isEditing}
-              placeholderTextColor={'gray'}
+               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Contact No. 1'
             />
           </View>
@@ -954,20 +960,20 @@ const DetailedProfile = ({ navigation }) => {
               keyboardType="phone-pad"
               maxLength={10}
               editable={isEditing}
-              placeholderTextColor={'gray'}
+               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Contact No. 2'
             />
           </View>
           <View>
             <Text style={styles.headText}> Address</Text>
-           
-           <Text style={Globalstyles.title}>State</Text>
+
+            <Text style={Globalstyles.title}>State</Text>
             <TextInput
               style={Globalstyles.input}
               value={stateInput}
               onChangeText={handleStateInputChange}
               placeholder="Type your State"
-              placeholderTextColor={'gray'}
+               placeholderTextColor={Colors.gray}
             />
             {filteredStates.length > 0 && stateInput ? (
               <FlatList
@@ -990,7 +996,7 @@ const DetailedProfile = ({ navigation }) => {
               value={cityInput}
               onChangeText={handleCityInputChange}
               placeholder="Type your city"
-              placeholderTextColor={'gray'}
+               placeholderTextColor={Colors.gray}
             />
             {filteredCities.length > 0 && cityInput ? (
               <FlatList
@@ -1019,6 +1025,7 @@ const DetailedProfile = ({ navigation }) => {
               onChange={(text) => handleInputChange("knowCooking", text.value)}
               placeholder="Select Status"
               disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
             />
           </View>
           <View>
@@ -1033,6 +1040,7 @@ const DetailedProfile = ({ navigation }) => {
               onChange={(text) => handleInputChange("partnerDietHabit", text.value)}
               placeholder="Select Habit"
               disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
             />
           </View>
           <View>
@@ -1047,6 +1055,7 @@ const DetailedProfile = ({ navigation }) => {
               onChange={(text) => handleInputChange("smokingHabit", text.value)}
               placeholder="Select Status"
               disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
             />
           </View>
           <View>
@@ -1061,6 +1070,7 @@ const DetailedProfile = ({ navigation }) => {
               onChange={(text) => handleInputChange("drinkingHabit", text.value)}
               placeholder="Select Habit"
               disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
             />
           </View>
           <View>
@@ -1075,7 +1085,9 @@ const DetailedProfile = ({ navigation }) => {
               onChange={(text) => handleInputChange("TobacooHabit", text.value)}
               placeholder="Select Habit"
               disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
             />
+            
           </View>
           <View>
             <Text style={Globalstyles.title}>Your Hobbies</Text>
@@ -1086,48 +1098,29 @@ const DetailedProfile = ({ navigation }) => {
               multiline={true}
               numberOfLines={6}
               editable={isEditing}
-              placeholderTextColor={'gray'}
+               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Hobbies'
             />
           </View>
           <Text style={Globalstyles.title}>Upload Your One Closeup Image</Text>
-          <View style={Globalstyles.inputContainer}>
-            <TextInput
-              style={Globalstyles.input1}
-              value={getFileName(images.closeupImage?.uri)}
-              placeholder="Upload Your Image"
-              editable={false}
-              placeholderTextColor={'gray'}
-              onChangeText={(text) => handleInputChange("closeupImage", text)}
-            />
-            <TouchableOpacity onPress={() => pickImage("closeupImage")}>
-              <MaterialIcons name="attach-file" size={24} color="black" />
+          <View style={Globalstyles.input}>
+            <TouchableOpacity onPress={() => handleImageSelection('closeupImageName')}>
+              <Text style={styles.imagePlaceholder}>{imageNames.closeupImageName}</Text>
             </TouchableOpacity>
           </View>
+
+          {/* Full Image */}
           <Text style={Globalstyles.title}>Upload Your One Full Image</Text>
-          <View style={Globalstyles.inputContainer}>
-            <TextInput
-              style={Globalstyles.input1}
-              value={getFileName(images.fullImage?.uri)}
-              placeholder="Upload Your Image"
-              editable={false}
-              placeholderTextColor={'gray'}
-            />
-            <TouchableOpacity onPress={() => pickImage("fullImage")}>
-              <MaterialIcons name="attach-file" size={24} color="black" />
+          <View style={Globalstyles.input}>
+            <TouchableOpacity onPress={() => handleImageSelection('fullImageName')}>
+              <Text style={styles.imagePlaceholder}>{imageNames.fullImageName}</Text>
             </TouchableOpacity>
           </View>
+          {/* Best Image */}
           <Text style={Globalstyles.title}>Upload Your One Best Image</Text>
-          <View style={Globalstyles.inputContainer}>
-            <TextInput
-              style={Globalstyles.input1}
-              value={getFileName(images.bestImage?.uri)}
-              placeholder="Upload Your Image"
-              editable={false}
-              placeholderTextColor={'gray'}
-            />
-            <TouchableOpacity onPress={() => pickImage("bestImage")}>
-              <MaterialIcons name="attach-file" size={24} color="black" />
+          <View style={Globalstyles.input}>
+            <TouchableOpacity onPress={() => handleImageSelection('bestImageName')}>
+              <Text style={styles.imagePlaceholder}>{imageNames.bestImageName}</Text>
             </TouchableOpacity>
           </View>
 
@@ -1138,8 +1131,8 @@ const DetailedProfile = ({ navigation }) => {
           )} */}
 
           <TouchableOpacity style={styles.button} onPress={handleSave}>
-              <Text style={styles.buttonText}>Continue</Text>
-            </TouchableOpacity>
+            <Text style={styles.buttonText}>Continue</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>

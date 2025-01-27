@@ -31,6 +31,10 @@ const styles = StyleSheet.create({
     },
     uploadText: {
         color: Colors.theme_color,
+        textAlign: "center"
+    },
+    imagePreviewContainer: {
+        marginVertical: SH(10)
     },
     submitButton: {
         backgroundColor: Colors.theme_color,
@@ -38,7 +42,7 @@ const styles = StyleSheet.create({
         paddingVertical: SH(5),
         borderRadius: 5,
         alignItems: 'center',
-        marginBottom:SH(20)
+        marginBottom: SH(20)
     },
     submitText: {
         color: '#fff',
@@ -59,7 +63,7 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: SF(16),
         color: Colors.dark,
-        paddingVertical:SH(10)
+        paddingVertical: SH(10)
     },
     arrow: {
         marginLeft: SW(10),

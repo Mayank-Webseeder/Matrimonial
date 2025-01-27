@@ -3,7 +3,10 @@ import Colors from "../../utils/Colors";
 import { SH, SW, SF } from "../../utils/Dimensions";
 
 const styles = StyleSheet.create({
-
+    container1: {
+        flexGrow: 1,
+        marginVertical: SH(10)
+    },
     headerContainer: {
         flexDirection: "row",
         alignItems: "center",
@@ -14,13 +17,15 @@ const styles = StyleSheet.create({
         height: SH(30)
     },
     image: {
-        width: "100%",
-        height: SH(230),
-        marginVertical: SH(10)
+        width: '100%',
+        height: undefined,
+        aspectRatio: 1.5, 
+        resizeMode: 'cover',
+        borderRadius: 10
     },
     cameraIcon: {
         position: "absolute",
-        top: SH(200)
+        top: SH(0)
     },
     smallHeader: {
         alignItems: "center",
@@ -39,13 +44,15 @@ const styles = StyleSheet.create({
         padding: SW(10),
         borderRadius: 10,
         marginHorizontal: SW(10),
-        marginVertical: SH(10)
-    },
-    userData: {
+        marginVertical: SH(10),
         flexDirection: "row",
-        justifyContent: "space-between",
-        marginVertical: SH(10)
+       justifyContent: "space-between",
     },
+    // userData: {
+    //     // flexDirection: "row",
+    //     // justifyContent: "space-between",
+    //     marginVertical: SH(10)
+    // },
     IconFlex: {
         flexDirection: "row",
         justifyContent: "space-evenly",
@@ -76,14 +83,29 @@ const styles = StyleSheet.create({
 
     text: {
         fontFamily: "Poppins-Regular",
-        fontSize: SF(15)
+        fontSize: SF(15),
+        paddingVertical:SH(3)
     },
     editText: {
         color: Colors.theme_color,
-        paddingVertical: SH(15),
+        paddingVertical: SH(3),
+        paddingHorizontal: SW(10),
+        borderRadius: 5,
         textAlign: "center",
-        fontFamily: "Poppins-Bold",
-        //  marginLeft:SW(250)
+        fontFamily: "Poppins-Medium",
+        backgroundColor: Colors.light_theme,
+        marginHorizontal: SW(5),
+        marginVertical: SH(5),
+        fontSize: SF(12),
+        borderColor: Colors.theme_color,
+        borderWidth: 1
+    },
+    profileButtons: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "center",
+        marginHorizontal: SW(10),
+        marginVertical: SH(5)
     },
     modalContainer: {
         flex: 1,
@@ -109,15 +131,30 @@ const styles = StyleSheet.create({
     gallery: {
         borderColor: Colors.theme_color,
         borderWidth: 1,
-        borderRadius: 50,
-        paddingVertical: SH(7),
-        marginRight: SW(217),
+        borderRadius: 10,
+        paddingVertical: SH(10),
+        paddingHorizontal: SH(20),
+        marginRight: SW(10),
         alignItems: "center"
     },
     Gallerytext: {
         fontFamily: "Poppins-Regular",
-        fontSize: SF(10),
-        color: Colors.theme_color
+        fontSize: SF(13),
+        color: Colors.theme_color,
+        marginHorizontal:SW(5)
     },
+    camera: {
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 10,
+        borderBottomWidth: 1,
+        borderColor: "#ddd",
+    },
+    CameraText: {
+        marginLeft: 10,
+        color: Colors.theme_color,
+        fontSize: 16,
+    },
+    
 })
 export default styles

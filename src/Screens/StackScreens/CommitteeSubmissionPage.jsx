@@ -1,40 +1,69 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, Alert, StyleSheet, ScrollView, SafeAreaView, StatusBar } from 'react-native';
-import { launchImageLibrary } from 'react-native-image-picker';
+import { View, Text, TextInput, TouchableOpacity, Image, Alert, StyleSheet, ScrollView, SafeAreaView, StatusBar,FlatList } from 'react-native';
 import Colors from '../../utils/Colors';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Globalstyles from '../../utils/GlobalCss';
-
+import ImageCropPicker from 'react-native-image-crop-picker';
+import { CityData,subCasteOptions } from '../../DummyData/DropdownData';
 const CommitteeSubmissionPage = ({ navigation }) => {
     const [dharamsalaName, setDharamsalaName] = useState('');
-    const [subCasteName, setSubCasteName] = useState('');
-    const [city, setCity] = useState('');
     const [area, setArea] = useState('');
     const [image, setImage] = useState(null);
     const [contact, setContact] = useState(null);
-    
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedImageName, setSelectedImageName] = useState("Upload Image");
+
+     const [subCasteInput, setSubCasteInput] = useState('');
+        const [cityInput, setCityInput] = useState('');
+        const [filteredCities, setFilteredCities] = useState([]);
+        const [filteredSubCaste, setFilteredSubCaste] = useState([]);
+        const [selectedCity, setSelectedCity] = useState('');
+        const [selectedSubCaste, setSelectedSubCaste] = useState('');
+
+
+         const handleCityInputChange = (text) => {
+                setCityInput(text);
+                if (text) {
+                    const filtered = CityData.filter((item) =>
+                        item?.label?.toLowerCase().includes(text.toLowerCase())
+                    ).map(item => item.label);
+                    setFilteredCities(filtered);
+                } else {
+                    setFilteredCities([]);
+                }
+            };
+        
+            // Sub Caste input handler
+            const handleSubCasteInputChange = (text) => {
+                setSubCasteInput(text);
+                if (text) {
+                    const filtered = subCasteOptions.filter((item) =>
+                        item?.label?.toLowerCase().includes(text.toLowerCase())
+                    ).map(item => item.label);
+                    setFilteredSubCaste(filtered);
+                } else {
+                    setFilteredSubCaste([]);
+                }
+            };
+        
+
     const handleImageUpload = () => {
-        setActiveButton(2);
-        navigation.navigate('DharamsalaSubmissionPage'); // Navigate to submission page
-        // Or if you want to let the user upload images directly here
-        launchImageLibrary(
-          { mediaType: 'photo', selectionLimit: 3, quality: 0.5 },
-          (response) => {
-            if (response.didCancel) {
-              console.log('User cancelled image picker');
-            } else if (response.errorCode) {
-              console.log('ImagePicker Error: ', response.errorMessage);
-            } else {
-              // Handle the selected images
-              const images = response.assets;
-              console.log('Selected images:', images);
-              // Here, you can update the state with the selected images
-              // For example: setSelectedImages(images);
-            }
-          }
-        );
-      };
+        ImageCropPicker.openPicker({
+            width: 300,
+            height: 250,
+            cropping: true,
+        })
+            .then(image => {
+                setSelectedImage(image.path);
+                const imageName = image.path.split('/').pop();
+                setSelectedImageName(imageName);
+                console.log('Selected Image:', image);
+            })
+            .catch(error => {
+                console.error('Image Picking Error:', error);
+            });
+    };
 
     const handleSubmit = () => {
         if (!dharamsalaName || !subCasteName || !city || !area || !image) {
@@ -83,45 +112,93 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     placeholder="Enter President Name"
                     value={dharamsalaName}
                     onChangeText={setDharamsalaName}
-                    placeholderTextColor={'gray'}
+                    placeholderTextColor={Colors.gray}
                 />
 
                 <Text style={Globalstyles.title}>Sub-Caste Name *</Text>
                 <TextInput
                     style={Globalstyles.input}
-                    placeholder="Sub-Caste"
-                    value={subCasteName}
-                    onChangeText={setSubCasteName}
-                    placeholderTextColor={'gray'}
+                    value={subCasteInput}
+                    onChangeText={handleSubCasteInputChange}
+                    placeholder="Enter your sub caste"
+                    placeholderTextColor={Colors.gray}
                 />
+                {filteredSubCaste.length > 0 && subCasteInput ? (
+                    <FlatList
+                        data={filteredSubCaste.slice(0, 5)}
+                        scrollEnabled={false}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity
+                                onPress={() => {
+                                    setSubCasteInput(item);
+                                    setSelectedSubCaste(item);
+                                    setFilteredSubCaste([]);
+                                }}
+                            >
+                                <Text style={Globalstyles.listItem}>{item}</Text>
+                            </TouchableOpacity>
+                        )}
+                        style={Globalstyles.suggestions}
+                    />
+                ) : null}
+
+
 
                 <Text style={Globalstyles.title}>City *</Text>
                 <TextInput
                     style={Globalstyles.input}
-                    placeholder="City"
-                    value={city}
-                    onChangeText={setCity}
-                    placeholderTextColor={'gray'}
+                    value={cityInput}
+                    onChangeText={handleCityInputChange}
+                    placeholder="Enter your city"
+                    placeholderTextColor={Colors.gray}
                 />
+                {filteredCities.length > 0 && cityInput ? (
+                    <FlatList
+                        data={filteredCities}
+                        scrollEnabled={false}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity
+                                onPress={() => {
+                                    setCityInput(item);
+                                    setSelectedCity(item);
+                                    setFilteredCities([]);
+                                }}
+                            >
+                                <Text style={Globalstyles.listItem}>{item}</Text>
+                            </TouchableOpacity>
+                        )}
+                        style={Globalstyles.suggestions}
+                    />
+                ) : null}
 
                 <Text style={Globalstyles.title}>Area *</Text>
                 <TextInput
                     style={Globalstyles.input}
-                    placeholder="Area"
+                    placeholder="Enter Your Area"
                     value={area}
                     onChangeText={setArea}
-                    placeholderTextColor={'gray'}
+                    placeholderTextColor={Colors.gray}
                 />
 
-                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                    <Text style={Globalstyles.label}>Upload President Image *</Text>
+                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                    <Text style={Globalstyles.title}>Upload President Image *</Text>
                     <TouchableOpacity style={styles.uploadButton} onPress={handleImageUpload}>
                         <Text style={styles.uploadButtonText}>
-                            {image ? 'Change Image' : 'Upload Image'}
+                            {selectedImage ? 'Change Image' : 'Upload Image'}
                         </Text>
                     </TouchableOpacity>
                 </View>
-                {image && <Image source={{ uri: image }} style={styles.imagePreview} />}
+
+                {/* Image Preview */}
+                {selectedImage && (
+                    <View style={styles.imagePreviewContainer}>
+                        <Text style={Globalstyles.title}>Uploaded Image</Text>
+                        <Text style={styles.imageName}>{selectedImageName}</Text>
+                    </View>
+                )}
+
 
                 <Text style={Globalstyles.title}>Contact Number Of President *</Text>
                 <TextInput
@@ -129,7 +206,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     placeholder="Enter Contact No."
                     value={contact}
                     onChangeText={setContact}
-                    placeholderTextColor={'gray'}
+                    placeholderTextColor={Colors.gray}
                 />
 
                 <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
@@ -172,12 +249,13 @@ const styles = StyleSheet.create({
         color: Colors.dark,
         marginBottom: SH(5),
     },
-    input: {
-        borderWidth: 1,
-        borderColor: Colors.gray,
-        borderRadius: 5,
-        padding: SW(7),
-        marginBottom: SH(10),
+    imagePreviewContainer: {
+        marginVertical: SH(15)
+    },
+    imageName: {
+        color: Colors.dark,
+        fontFamily: "Poppins-Regular",
+        fontSize: SF(11),
     },
     uploadButton: {
         backgroundColor: Colors.theme_color,

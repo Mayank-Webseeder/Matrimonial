@@ -3,15 +3,16 @@ import React, { useState } from 'react';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
-import { launchImageLibrary } from 'react-native-image-picker';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import Globalstyles from '../../utils/GlobalCss';
+import ImageCropPicker from 'react-native-image-crop-picker';
+
 
 const PostSuccessStories = ({ navigation }) => {
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
-    const [photos, setPhotos] = useState([]);
-
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedImageName, setSelectedImageName] = useState("Upload Image");
     const handleSubmit = () => {
         if (!rating || !comment || photos.length === 0) {
             alert('Please provide a rating, comment, and upload a photo before submitting.');
@@ -26,11 +27,20 @@ const PostSuccessStories = ({ navigation }) => {
     };
 
     const handleImagePick = () => {
-        launchImageLibrary({ mediaType: 'photo', selectionLimit: 1 }, response => {
-            if (response.assets) {
-                setPhotos(response.assets);
-            }
-        });
+        ImageCropPicker.openPicker({
+            width: 300,
+            height: 250,
+            cropping: true,
+        })
+            .then(image => {
+                setSelectedImage(image.path);
+                const imageName = image.path.split('/').pop();
+                setSelectedImageName(imageName);
+                console.log('Selected Image:', image);
+            })
+            .catch(error => {
+                console.error('Image Picking Error:', error);
+            });
     };
 
     const renderStars = () => {
@@ -66,7 +76,7 @@ const PostSuccessStories = ({ navigation }) => {
                 </View>
             </View>
 
-            <View style={styles.feedBackContainer}>
+            <View style={Globalstyles.form}>
                 <Text style={styles.Text}>Post Your Success Story</Text>
                 <Text style={styles.description}>Share your experience in scaling</Text>
                 <View style={styles.ratingContainer}>
@@ -75,19 +85,19 @@ const PostSuccessStories = ({ navigation }) => {
                 <TextInput
                     style={styles.textInput}
                     placeholder="Add your thoughts..."
-                    multiline
+                    multiline={true}
                     value={comment}
                     onChangeText={setComment}
-                    placeholderTextColor={'gray'}
+                    placeholderTextColor={Colors.gray}
                 />
                 <Text style={styles.description}>Upload your one couple picture</Text>
                 <TouchableOpacity style={styles.uploadButton} onPress={handleImagePick}>
-                    <Text style={styles.uploadText}>Upload</Text>
+                    <Text style={styles.uploadText}>{selectedImage ? 'Change Image' : 'Upload Image'}</Text>
                 </TouchableOpacity>
-                {photos.length > 0 && (
+                {selectedImage && (
                     <View style={styles.photosContainer}>
-                        <Text style={styles.label}>Uploaded Photo:</Text>
-                        <Image source={{ uri: photos[0]?.uri }} style={styles.photo} />
+                        <Text style={Globalstyles.title}>Uploaded Image</Text>
+                        <Text style={styles.imageName}>{selectedImageName}</Text>
                     </View>
                 )}
                 <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
@@ -128,7 +138,7 @@ const styles = StyleSheet.create({
 
     description: {
         fontSize: SF(13),
-        color: Colors.dark,
+        color: Colors.theme_color,
         marginBottom: SH(10),
         fontFamily: "Poppins-Bold"
     },
@@ -163,10 +173,6 @@ const styles = StyleSheet.create({
         width: SW(30),
         height: SH(30)
     },
-    feedBackContainer: {
-        paddingHorizontal: SW(10),
-        paddingVertical: SH(10)
-    },
     uploadButton: {
         borderWidth: 1,
         borderColor: '#ccc',
@@ -178,15 +184,9 @@ const styles = StyleSheet.create({
     },
     uploadText: {
         color: Colors.theme_color,
+        textAlign: "center"
     },
     photosContainer: {
         paddingVertical: SH(10),
-    },
-
-    photo: {
-        width: SW(100),
-        height: SH(100),
-        marginRight: SW(5),
-        borderRadius: 10,
     },
 })

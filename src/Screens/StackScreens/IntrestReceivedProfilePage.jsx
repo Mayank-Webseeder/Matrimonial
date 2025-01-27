@@ -10,7 +10,7 @@ import styles from '../StyleScreens/LocationStyle';
 import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 
-const MatrimonyPeopleProfile = ({ navigation }) => {
+const IntrestReceivedProfilePage = ({ navigation }) => {
   const profileDetails = [
     { label: 'Sub-caste', value: true },
     { label: 'Manglik', value: true },
@@ -208,7 +208,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         </View>
         <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
       </ScrollView>
-      {/* <View style={styles.bottomContainer}>
+      <View style={styles.bottomContainer}>
         <TouchableOpacity style={styles.declineButton}>
           <Entypo name={'cross'} color={Colors.light} size={20}/>
         <Text style={styles.declineButtonText}>Decline</Text>
@@ -218,9 +218,9 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         <Text style={styles.acceptButtonText}>Accept</Text>
         </TouchableOpacity>
        
-      </View> */}
+      </View>
     </SafeAreaView>
   );
 };
 
-export default MatrimonyPeopleProfile;
+export default IntrestReceivedProfilePage;

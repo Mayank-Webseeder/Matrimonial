@@ -137,6 +137,7 @@ const Activist = ({ navigation }) => {
             value={locality}
             onChangeText={(text) => setLocality(text)}
             placeholder="Enter Locality"
+            placeholderTextColor={Colors.gray}
           />
         </View>
         <View>
@@ -146,6 +147,7 @@ const Activist = ({ navigation }) => {
               value={subcaste}
               onChangeText={handleInputChange}
               placeholder="Type your caste"
+              placeholderTextColor={Colors.gray}
               style={Globalstyles.input}
             />
             {filteredOptions.length > 0 && (

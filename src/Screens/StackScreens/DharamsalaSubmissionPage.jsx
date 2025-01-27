@@ -1,39 +1,81 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, Alert, StyleSheet, ScrollView, StatusBar, SafeAreaView } from 'react-native';
-import { launchImageLibrary } from 'react-native-image-picker';
+import { View, Text, TextInput, TouchableOpacity, Image, Alert, StyleSheet, ScrollView, StatusBar, SafeAreaView, FlatList } from 'react-native';
 import Colors from '../../utils/Colors';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Globalstyles from '../../utils/GlobalCss';
-
+import ImageCropPicker from 'react-native-image-crop-picker';
+import { CityData, subCasteOptions } from '../../DummyData/DropdownData';
 const DharamsalaSubmissionPage = ({ navigation }) => {
     const [dharamsalaName, setDharamsalaName] = useState('');
-    const [subCasteName, setSubCasteName] = useState('');
-    const [city, setCity] = useState('');
     const [contact, setContact] = useState('');
     const [description, setDescription] = useState('');
-    const [image, setImage] = useState(null);
+    const [photos, setPhotos] = useState([]);
+    const [subCasteInput, setSubCasteInput] = useState('');
+    const [cityInput, setCityInput] = useState('');
+    const [filteredCities, setFilteredCities] = useState([]);
+    const [filteredSubCaste, setFilteredSubCaste] = useState([]);
+    const [selectedCity, setSelectedCity] = useState('');
+    const [selectedSubCaste, setSelectedSubCaste] = useState('');
+    const handleCityInputChange = (text) => {
+        setCityInput(text);
+        if (text) {
+            const filtered = CityData.filter((item) =>
+                item?.label?.toLowerCase().includes(text.toLowerCase())
+            ).map(item => item.label);
+            setFilteredCities(filtered);
+        } else {
+            setFilteredCities([]);
+        }
+    };
+
+    // Sub Caste input handler
+    const handleSubCasteInputChange = (text) => {
+        setSubCasteInput(text);
+        if (text) {
+            const filtered = subCasteOptions.filter((item) =>
+                item?.label?.toLowerCase().includes(text.toLowerCase())
+            ).map(item => item.label);
+            setFilteredSubCaste(filtered);
+        } else {
+            setFilteredSubCaste([]);
+        }
+    };
 
     const handleImageUpload = () => {
-        launchImageLibrary({ mediaType: 'photo', selectionLimit: 3 }, response => {
-            if (response.assets) {
-                setPhotos(response.assetsd);
-            }
-        });
+        ImageCropPicker.openPicker({
+            multiple: false,
+            cropping: true,
+            width: 400,
+            height: 400,
+        }).then(image => {
+            const newPhoto = {
+                uri: image.path,
+            };
+            addPhotos([newPhoto]);
+        }).catch(err => console.log('Crop Picker Error:', err));
+    };
+
+    const addPhotos = (newPhotos) => {
+        if (photos.length + newPhotos.length <= 3) {
+            setPhotos(prevPhotos => [...prevPhotos, ...newPhotos]);
+        } else {
+            alert('You can only upload up to 3 photos.');
+        }
     };
 
     const handleSubmit = () => {
-        if (!dharamsalaName || !subCasteName || !city || !image) {
+        if (!dharamsalaName || !subCasteInput || !cityInput || !photos) {
             Alert.alert('Error', 'All mandatory fields must be filled.');
             return;
         }
 
         const formData = {
             dharamsalaName,
-            subCasteName,
-            city,
+            subCasteInput,
+            cityInput,
             description,
-            image,
+            photos,
         };
 
         console.log('Submitted Data:', formData);
@@ -69,26 +111,65 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     placeholder="Enter Dharamsala Name"
                     value={dharamsalaName}
                     onChangeText={setDharamsalaName}
-                    placeholderTextColor={'gray'}
+                    placeholderTextColor={Colors.gray}
                 />
 
                 <Text style={Globalstyles.title}>Sub-Caste Name *</Text>
                 <TextInput
                     style={Globalstyles.input}
-                    placeholder="Enter Sub-Caste Name"
-                    value={subCasteName}
-                    onChangeText={setSubCasteName}
-                    placeholderTextColor={'gray'}
+                    value={subCasteInput}
+                    onChangeText={handleSubCasteInputChange}
+                    placeholder="Enter your sub caste"
+                    placeholderTextColor={Colors.gray}
                 />
+                {filteredSubCaste.length > 0 && subCasteInput ? (
+                    <FlatList
+                        data={filteredSubCaste.slice(0, 5)}
+                        scrollEnabled={false}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity
+                                onPress={() => {
+                                    setSubCasteInput(item);
+                                    setSelectedSubCaste(item);
+                                    setFilteredSubCaste([]);
+                                }}
+                            >
+                                <Text style={Globalstyles.listItem}>{item}</Text>
+                            </TouchableOpacity>
+                        )}
+                        style={Globalstyles.suggestions}
+                    />
+                ) : null}
+
 
                 <Text style={Globalstyles.title}>City *</Text>
                 <TextInput
                     style={Globalstyles.input}
-                    placeholder="Enter City"
-                    value={city}
-                    onChangeText={setCity}
-                    placeholderTextColor={'gray'}
+                    value={cityInput}
+                    onChangeText={handleCityInputChange}
+                    placeholder="Enter your city"
+                    placeholderTextColor={Colors.gray}
                 />
+                {filteredCities.length > 0 && cityInput ? (
+                    <FlatList
+                        data={filteredCities}
+                        scrollEnabled={false}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity
+                                onPress={() => {
+                                    setCityInput(item);
+                                    setSelectedCity(item);
+                                    setFilteredCities([]);
+                                }}
+                            >
+                                <Text style={Globalstyles.listItem}>{item}</Text>
+                            </TouchableOpacity>
+                        )}
+                        style={Globalstyles.suggestions}
+                    />
+                ) : null}
 
                 <Text style={Globalstyles.title}>Contact *</Text>
                 <TextInput
@@ -96,7 +177,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     placeholder="Enter Person's Contact No."
                     value={contact}
                     onChangeText={setContact}
-                    placeholderTextColor={'gray'}
+                    placeholderTextColor={Colors.gray}
                 />
 
                 <Text style={Globalstyles.title}>Description (Optional)</Text>
@@ -105,18 +186,27 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     placeholder="Enter Description"
                     value={description}
                     onChangeText={setDescription}
-                    placeholderTextColor={'gray'}
-                    multiline
+                    placeholderTextColor={Colors.gray}
+                    multiline={true}
                 />
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                     <Text style={Globalstyles.title}>Upload Images *(Max Limit 3)</Text>
                     <TouchableOpacity style={styles.uploadButton} onPress={handleImageUpload}>
                         <Text style={styles.uploadButtonText}>
-                            {image ? 'Change Image' : 'Upload Image'}
+                            {photos ? 'add Image' : 'Upload Image'}
                         </Text>
                     </TouchableOpacity>
                 </View>
-                {image && <Image source={{ uri: image }} style={styles.imagePreview} />}
+                {photos.length > 0 && (
+                    <View style={styles.imagePreview}>
+                        {/* <Text style={styles.label}>Uploaded Photos:</Text> */}
+                        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                            {photos.map((photo, index) => (
+                                <Image key={index} source={{ uri: photo.uri }} style={styles.photo} />
+                            ))}
+                        </ScrollView>
+                    </View>
+                )}
 
                 <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
                     <Text style={styles.submitButtonText}>Submit</Text>
@@ -125,6 +215,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
         </SafeAreaView>
     );
 };
+
 const styles = StyleSheet.create({
 
     title: {
@@ -155,9 +246,16 @@ const styles = StyleSheet.create({
     },
     imagePreview: {
         width: '100%',
-        height: SH(200),
+        // height: SH(50),
         borderRadius: 5,
         marginBottom: SH(15),
+    },
+    photo: {
+        width: SW(70),
+        height: SH(70),
+        marginHorizontal: SW(5),
+        marginVertical: SH(5),
+        borderRadius: 10,
     },
     submitButton: {
         backgroundColor: Colors.theme_color,
@@ -165,6 +263,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         alignItems: 'center',
         margin: SH(50),
+        marginTop: SH(10),
         marginHorizontal: SW(50)
     },
     submitButtonText: {

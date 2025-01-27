@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import Colors from '../../utils/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -12,6 +12,7 @@ const ReportPage = ({ navigation, route }) => {
   const [selectedReason, setSelectedReason] = useState('');
   const [additionalDetails, setAdditionalDetails] = useState('');
   const [isFocus, setIsFocus] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const reportOptions = [
     { label: 'Fake Profile', value: 'Fake Profile' },
@@ -20,9 +21,20 @@ const ReportPage = ({ navigation, route }) => {
     { label: 'Other', value: 'Other' },
   ];
 
-  const handleSubmit = () => {
+  const validateForm = () => {
+    let validationErrors = {};
+
     if (!selectedReason) {
-      Alert.alert('Error', 'Please select a reason for reporting.');
+      validationErrors.reason = 'Please select a reason for reporting.';
+    }
+
+    setErrors(validationErrors);
+
+    return Object.keys(validationErrors).length === 0; // Return true if no errors
+  };
+
+  const handleSubmit = () => {
+    if (!validateForm()) {
       return;
     }
 
@@ -49,11 +61,9 @@ const ReportPage = ({ navigation, route }) => {
           <Text style={Globalstyles.headerText}>Post a Review</Text>
         </View>
         <View style={styles.righticons}>
-          {/* <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} /> */}
           <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />
         </View>
       </View>
-
 
       <View style={styles.contentContainer}>
         <Text style={Globalstyles.title}>Reason for Reporting</Text>
@@ -71,18 +81,20 @@ const ReportPage = ({ navigation, route }) => {
           onBlur={() => setIsFocus(false)}
           onChange={item => {
             setSelectedReason(item.value);
+            setErrors((prev) => ({ ...prev, reason: '' })); // Clear error
             setIsFocus(false);
           }}
         />
+        {errors.reason && <Text style={styles.errorText}>{errors.reason}</Text>}
 
         <Text style={Globalstyles.title}>Additional Details (Optional)</Text>
         <TextInput
           style={Globalstyles.textInput}
           placeholder="Add more details about the issue..."
           placeholderTextColor={Colors.gray}
-          multiline
+          multiline={true}
           value={additionalDetails}
-          onChangeText={setAdditionalDetails}
+          onChangeText={(text) => setAdditionalDetails(text)}
           textAlignVertical='top'
         />
 

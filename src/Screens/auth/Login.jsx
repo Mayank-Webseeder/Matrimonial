@@ -72,7 +72,7 @@ const Login = ({ navigation }) => {
                 navigation.reset({
                     index: 0,
                     routes: [{ name: "AppStack" }],
-                  });
+                });
             }
             else {
                 Toast.show({
@@ -80,7 +80,7 @@ const Login = ({ navigation }) => {
                     text1: "Login Failed",
                     text2: response.data.message || "Invalid credentials. Please try again.",
                     position: "top",
-                    visibilityTime: 2000,
+                    visibilityTime: 1000,
                     textStyle: { fontSize: 12, color: "red" },
                 });
             }
@@ -134,7 +134,7 @@ const Login = ({ navigation }) => {
                         placeholder="Enter your mobile number"
                         value={mobileNumber}
                         onChangeText={setMobileNumber}
-                        placeholderTextColor={'gray'}
+                        placeholderTextColor={Colors.gray}
                     />
                     {errors.mobileNumber && (
                         <Text style={styles.errorText}>{errors.mobileNumber}</Text>
@@ -147,10 +147,10 @@ const Login = ({ navigation }) => {
                         <TextInput
                             style={styles.passwordInput}
                             secureTextEntry={!passwordVisible}
-                            placeholder="Create a strong password"
+                            placeholder="Enter Your Password"
                             value={password}
                             onChangeText={setPassword}
-                            placeholderTextColor={'gray'}
+                            placeholderTextColor={Colors.gray}
                         />
                         <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
                             <AntDesign
@@ -178,9 +178,9 @@ const Login = ({ navigation }) => {
                         )}
                     </TouchableOpacity>
 
-                    <Toast />
                 </ScrollView>
             </ImageBackground>
+            <Toast />
         </SafeAreaView>
     );
 };

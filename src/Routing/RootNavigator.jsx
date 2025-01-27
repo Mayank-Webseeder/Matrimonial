@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Image ,ActivityIndicator,View,StyleSheet} from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -23,7 +24,6 @@ import PanditDetailPage from '../Screens/StackScreens/PanditDetailPage';
 import KathavachakDetailsPage from '../Screens/StackScreens/KathavachakDetailsPage';
 import JyotishDetailsPage from '../Screens/StackScreens/JyotishDetailsPage';
 import Register from '../Screens/auth/Register';
-import { Image } from 'react-native';
 import CreatePost from '../Screens/StackScreens/CreatePost';
 import ViewPost from '../Screens/StackScreens/ViewPost';
 import SuccessStories from '../Screens/DrawerScreen/SuccessStories';
@@ -55,6 +55,12 @@ import DetailedProfile from '../Screens/StackScreens/DetailedProfile';
 import PartnersPreference from '../Screens/StackScreens/PartnersPreference';
 import PhotoGallery from '../Screens/StackScreens/PhotoGallery';
 import MainPartnerPrefrence from '../Screens/DrawerScreen/MainPartnerPrefrence';
+import { useDispatch } from 'react-redux';
+import { PROFILE_ENDPOINT } from '../utils/BaseUrl';
+import { setProfiledata } from '../ReduxStore/Slices/ProfileSlice';
+import axios from 'axios';
+import ViewPanditImages from '../Screens/StackScreens/ViewPanditImages';
+import IntrestReceivedProfilePage from '../Screens/StackScreens/IntrestReceivedProfilePage';
 
 const Stack = createNativeStackNavigator();
 const AppStackNavigator = createNativeStackNavigator();
@@ -63,7 +69,53 @@ const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
 function MyTabs() {
+  const dispatch = useDispatch();
+  const [profiledata, setProfile] = useState('');
+  const image = profiledata?.photoUrl?.[0];
+  const [loading, setLoading] = useState(true); 
+
+  const fetchProfile = async () => {
+    setLoading(true); 
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) throw new Error("No token found");
+
+      const headers = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      };
+
+      console.log("headers in profile", headers);
+      const res = await axios.get(PROFILE_ENDPOINT, { headers });
+      const ProfileData = res.data.data;
+
+      setProfile(ProfileData);
+      dispatch(setProfiledata(ProfileData));
+
+      console.log("ProfileData", ProfileData);
+    } catch (error) {
+      console.error(
+        "Error fetching profile:",
+        error.response ? error.response.data : error.message
+      );
+    } finally {
+      setLoading(false); // Set loading to false after data fetching is completed
+    }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
   const iconSize = SF(30);
+
+  if (loading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color={Colors.theme_color} />
+      </View>
+    );
+  }
 
   return (
     <Tab.Navigator
@@ -74,14 +126,12 @@ function MyTabs() {
         tabBarLabelStyle: {
           fontSize: SF(9),
           fontFamily: "Poppins-Medium",
-
           color: Colors.light,
         },
         tabBarIcon: ({ focused }) => {
           let tabBarIcon;
 
           //Assign icons based on the route name
-
           if (route.name === 'Matrimonial') {
             tabBarIcon = (
               <MaterialCommunityIcons
@@ -108,8 +158,11 @@ function MyTabs() {
             );
           } else if (route.name === 'MyProfile') {
             tabBarIcon = (
-              <Image source={require('../Images/user.png')} style={{ Width: SW(25), height: SH(25), borderRadius: 20, resizeMode: "contain" }} />
-            )
+              <Image
+                source={image ? { uri: image } : require('../Images/Profile.png')}
+                style={{ width: SW(25), height: SH(25), borderRadius: 20, resizeMode: "cover" }}
+              />
+            );
           } else if (route.name === 'Home') {
             tabBarIcon = (
               <MaterialCommunityIcons
@@ -139,7 +192,6 @@ function MyTabs() {
     </Tab.Navigator>
   );
 }
-
 
 
 function MyDrawer() {
@@ -199,9 +251,11 @@ const AppStack = () => (
     <AppStackNavigator.Screen name="PhotoGallery" component={PhotoGallery} />
     <AppStackNavigator.Screen name="MainPartnerPrefrence" component={MainPartnerPrefrence} />
     <AppStackNavigator.Screen name="MatrimonyPeopleProfile" component={MatrimonyPeopleProfile} />
+    <AppStackNavigator.Screen name="IntrestReceivedProfilePage" component={IntrestReceivedProfilePage} />
     <AppStackNavigator.Screen name="MatrimonyPage" component={MatrimonyPage} />
     <AppStackNavigator.Screen name="PostSuccessStories" component={PostSuccessStories} />
     <AppStackNavigator.Screen name="UpdateProfile" component={UpdateProfile} />
+    <AppStackNavigator.Screen name="ViewPanditImages" component={ViewPanditImages} />
   </AppStackNavigator.Navigator>
 );
 
@@ -242,3 +296,12 @@ const RootNavigator = () => {
 
 
 export default RootNavigator;
+
+const styles = StyleSheet.create({
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.white,
+  },
+});

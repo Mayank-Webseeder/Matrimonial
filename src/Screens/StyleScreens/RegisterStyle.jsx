@@ -39,14 +39,10 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: SF(16),
         color: Colors.dark,
-        paddingVertical:SH(10)
+        paddingVertical: SH(10)
     },
     arrow: {
         marginLeft: SW(10),
-    },
-    title: {
-        fontFamily: "Poppins-Medium",
-        fontSize: SF(16),
     },
 
     button: {
@@ -65,32 +61,12 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins-Bold",
         fontSize: SF(17),
     },
-    inputContain: {
-        borderColor: Colors.gray,
-        borderWidth: 1,
-        width: "100%",
-        borderRadius: 10,
-        flexDirection: "row",
-        alignItems: "center",
-        paddingHorizontal: SW(10),
-        paddingVertical: SH(10),
-        color: Colors.dark
-    },
-     modalContainer: {
+
+    modalContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
-    dropdown: {
-        borderColor: Colors.gray,
-        borderWidth: 1,
-        width: "100%",
-        borderRadius: 10,
-        flexDirection: "row",
-        alignItems: "center",
-        paddingHorizontal: SW(10),
-        paddingVertical: SH(7),
     },
     backArrow: {
         marginHorizontal: SW(14),
@@ -102,11 +78,21 @@ const styles = StyleSheet.create({
         fontSize: SF(13),
         fontFamily: "Poppins-Regular"
     },
-   
-    passwordInput: {
-        color: Colors.dark
+    imageContainer: {
+        alignItems: 'center',
+        marginVertical:SH(20),
     },
-    
+    selectedImage: {
+        width:SW(150),
+        height:SH(150),
+        borderRadius: 75,
+    },
+    imagePlaceholder: {
+        color:Colors.gray,
+        fontSize:SF(15),
+        textDecorationLine: 'underline',
+    },
+
 });
 
 export default styles;

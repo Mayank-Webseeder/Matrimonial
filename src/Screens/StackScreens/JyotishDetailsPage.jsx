@@ -39,7 +39,6 @@ const JyotishDetailsPage = ({ navigation, item }) => {
       };
       
     
-    
     return (
         <View style={Globalstyles.container}>
             <View style={Globalstyles.header}>

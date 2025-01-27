@@ -5,45 +5,51 @@ import {
   TextInput,
   TouchableOpacity,
   SafeAreaView,
-  ScrollView, Image
+  ScrollView, FlatList
 } from 'react-native';
-import { Dropdown } from 'react-native-element-dropdown';
+
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/ActivistFormStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { launchImageLibrary } from 'react-native-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Globalstyles from '../../utils/GlobalCss';
+import ImageCropPicker from 'react-native-image-crop-picker';
+import { subCasteOptions, StateData, CityData } from '../../DummyData/DropdownData';
 
-export default function ActivistForm({navigation}) {
-  const [subCaste, setSubCaste] = useState('');
-  const [state, setState] = useState('');
+export default function ActivistForm({ navigation }) {
+  const [subCasteInput, setSubCasteInput] = useState('');
+  const [stateInput, setStateInput] = useState('');
+  const [cityInput, setCityInput] = useState('');
+  const [filteredStates, setFilteredStates] = useState([]);
+  const [filteredCities, setFilteredCities] = useState([]);
+  const [filteredSubCaste, setFilteredSubCaste] = useState([]);
   const [isCommitteeMember, setIsCommitteeMember] = useState(null);
-  const [photos, setPhotos] = useState('');
-  const [selectedCity, setSelectedCity] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const [errors, setErrors] = useState({});
   const [showDatePicker, setShowDatePicker] = useState(false);
-
-  const subCasteOptions = [
-    { label: 'Option 1', value: 'option1' },
-    { label: 'Option 2', value: 'option2' },
-  ];
-
-  const stateOptions = [
-    { label: 'MP', value: 'mp' },
-    { label: 'UP', value: 'up' },
-  ];
+  const [selectedImageName, setSelectedImageName] = useState("Upload Image");
+  const [selectedState, setSelectedState] = useState('');
+  const [selectedCity, setSelectedCity] = useState('');
+  const [selectedSubCaste, setSelectedSubCaste] = useState('');
 
   const handleImagePick = () => {
-    launchImageLibrary({ mediaType: 'photo', selectionLimit: 1 }, response => {
-      if (response.assets) {
-        setPhotos(response.assets);
-      }
-    });
+    ImageCropPicker.openPicker({
+      width: 300,
+      height: 250,
+      cropping: true,
+    })
+      .then(image => {
+        setSelectedImage(image.path);
+        const imageName = image.path.split('/').pop();
+        setSelectedImageName(imageName);
+        console.log('Selected Image:', image);
+      })
+      .catch(error => {
+        console.error('Image Picking Error:', error);
+      });
   };
-
 
   const handleDateChange = (event, date) => {
     if (date) setSelectedDate(date);
@@ -58,10 +64,47 @@ export default function ActivistForm({navigation}) {
   };
 
 
+  const handleStateInputChange = (text) => {
+    setStateInput(text);
+    if (text) {
+      const filtered = StateData.filter((item) =>
+        item?.label?.toLowerCase().includes(text.toLowerCase())
+      ).map(item => item.label);
+      setFilteredStates(filtered);
+    } else {
+      setFilteredStates([]);
+    }
+  };
+
+  const handleSubCasteInputChange = (text) => {
+    setSubCasteInput(text);
+    if (text) {
+      const filtered = subCasteOptions.filter((item) =>
+        item?.label?.toLowerCase().includes(text.toLowerCase())
+      ).map(item => item.label);
+      setFilteredSubCaste(filtered);
+    } else {
+      setFilteredSubCaste([]);
+    }
+  };
+
+  const handleCityInputChange = (text) => {
+    setCityInput(text);
+    if (text) {
+      const filtered = CityData.filter((item) =>
+        item?.label?.toLowerCase().includes(text.toLowerCase())
+      ).map(item => item.label);
+      setFilteredCities(filtered);
+    } else {
+      setFilteredCities([]);
+    }
+  };
+
+
   return (
     <SafeAreaView style={Globalstyles.container}>
       <View style={Globalstyles.header}>
-        <View style={{ flexDirection: 'row',alignItems:"center" }}>
+        <View style={{ display: "flex", flexDirection: 'row', alignItems: "center" }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
@@ -71,19 +114,37 @@ export default function ActivistForm({navigation}) {
       </View>
       <ScrollView style={Globalstyles.form} showsVerticalScrollIndicator={false}>
         <Text style={Globalstyles.title}>Name</Text>
-        <TextInput style={Globalstyles.input} placeholder="Enter your name" />
+        <TextInput style={Globalstyles.input} placeholder="Enter your Full Name"
+          placeholderTextColor={Colors.gray} />
 
         {/* Sub Caste Dropdown */}
         <Text style={Globalstyles.title}>Sub Caste</Text>
-        <Dropdown
+        <TextInput
           style={Globalstyles.input}
-          data={subCasteOptions}
-          labelField="label"
-          valueField="value"
-          placeholder="Select Sub Caste"
-          value={subCaste}
-          onChange={(item) => setSubCaste(item.value)}
+          value={subCasteInput}
+          onChangeText={handleSubCasteInputChange}
+          placeholder="Enter your sub caste"
+          placeholderTextColor={Colors.gray}
         />
+        {filteredSubCaste.length > 0 && subCasteInput ? (
+          <FlatList
+            data={filteredSubCaste.slice(0, 5)}
+            scrollEnabled={false}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                onPress={() => {
+                  setSubCasteInput(item);
+                  setSelectedSubCaste(item);
+                  setFilteredSubCaste([]);
+                }}
+              >
+                <Text style={Globalstyles.listItem}>{item}</Text>
+              </TouchableOpacity>
+            )}
+            style={Globalstyles.suggestions}
+          />
+        ) : null}
         <View>
           <Text style={Globalstyles.title}>Date of Birth</Text>
           <View style={Globalstyles.inputContainer}>
@@ -101,19 +162,61 @@ export default function ActivistForm({navigation}) {
 
         {/* State Dropdown */}
         <Text style={Globalstyles.title}>State</Text>
-        <Dropdown
+        <TextInput
           style={Globalstyles.input}
-          data={stateOptions}
-          labelField="label"
-          valueField="value"
-          placeholder="Select State"
-          value={state}
-          onChange={(item) => setState(item.value)}
+          value={stateInput}
+          onChangeText={handleStateInputChange}
+          placeholder="Enter your state"
+          placeholderTextColor={Colors.gray}
         />
+        {filteredStates.length > 0 && stateInput ? (
+          <FlatList
+            data={filteredStates}
+            keyExtractor={(item, index) => index.toString()}
+            scrollEnabled={false}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                onPress={() => {
+                  setStateInput(item);
+                  setSelectedState(item);
+                  setFilteredStates([]);
+                }}
+              >
+                <Text style={Globalstyles.listItem}>{item}</Text>
+              </TouchableOpacity>
+            )}
+            style={Globalstyles.suggestions}
+          />
+        ) : null}
 
         {/* City/Village Input */}
         <Text style={Globalstyles.title}>City/Village</Text>
-        <TextInput style={Globalstyles.input} placeholder="Enter city/village" />
+        <TextInput
+          style={Globalstyles.input}
+          value={cityInput}
+          onChangeText={handleCityInputChange}
+          placeholder="Enter your city"
+          placeholderTextColor={Colors.gray}
+        />
+        {filteredCities.length > 0 && cityInput ? (
+          <FlatList
+            data={filteredCities}
+            scrollEnabled={false}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                onPress={() => {
+                  setCityInput(item);
+                  setSelectedCity(item);
+                  setFilteredCities([]);
+                }}
+              >
+                <Text style={Globalstyles.listItem}>{item}</Text>
+              </TouchableOpacity>
+            )}
+            style={Globalstyles.suggestions}
+          />
+        ) : null}
 
         {/* Contact Input */}
         <Text style={Globalstyles.title}>Contact</Text>
@@ -121,11 +224,13 @@ export default function ActivistForm({navigation}) {
           style={Globalstyles.input}
           placeholder="Enter contact number"
           keyboardType="numeric"
+          placeholderTextColor={Colors.gray}
         />
 
         {/* Known Activist ID Input */}
         <Text style={Globalstyles.title}>Known Activist ID No.</Text>
-        <TextInput style={Globalstyles.input} placeholder="Enter ID" />
+        <TextInput style={Globalstyles.input} placeholder="Enter ID"
+          placeholderTextColor={Colors.gray} />
 
         {/* Committee Membership Yes/No */}
         <Text style={Globalstyles.title}>Are you engaged in any committee?</Text>
@@ -153,20 +258,16 @@ export default function ActivistForm({navigation}) {
         {/* Profile Picture Upload */}
         <Text style={Globalstyles.title}>Profile Picture</Text>
         <TouchableOpacity style={styles.uploadButton} onPress={handleImagePick}>
-          <Text style={styles.uploadText}>Upload</Text>
+          <Text style={styles.uploadText}>{selectedImage ? 'Change Image' : 'Upload Image'}</Text>
         </TouchableOpacity>
-        {photos.length > 0 && (
-          <View style={styles.photosContainer}>
-            <Text style={Globalstyles.title}>Uploaded Photos:</Text>
-            <View>
-              {photos.map((photo, index) => (
-                <Image key={index} source={{ uri: photo.uri }} style={styles.photo} />
-              ))}
-            </View>
+        {selectedImage && (
+          <View style={styles.imagePreviewContainer}>
+            <Text style={Globalstyles.title}>Uploaded Image</Text>
+            <Text style={styles.imageName}>{selectedImageName}</Text>
           </View>
         )}
         {/* Submit Button */}
-        <TouchableOpacity style={styles.submitButton} onPress={()=>navigation.goBack()}>
+        <TouchableOpacity style={styles.submitButton} onPress={() => navigation.goBack()}>
           <Text style={styles.submitText}>Submit</Text>
         </TouchableOpacity>
 

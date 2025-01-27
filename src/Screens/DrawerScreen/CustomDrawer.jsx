@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView ,Modal} from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -14,6 +14,7 @@ const CustomDrawer = (props) => {
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
 
   const ProfileData = useSelector((state) => state.profile);
+  const image = ProfileData?.profiledata?.photoUrl?.[0];
   const name = ProfileData?.profiledata?.username || 'userName';
   const Id = ProfileData?.profiledata?._id || 'user id';
 
@@ -54,13 +55,13 @@ const CustomDrawer = (props) => {
         index: 0,
         routes: [{ name: "AuthStack" }],
       });
-  
+
       console.log("Logged out successfully");
     } catch (error) {
       console.error("Error logging out:", error);
     }
   };
-  
+
   const handleDropdownToggle = (dropdown) => {
     setOpenDropdown((prev) => (prev === dropdown ? null : dropdown));
   };
@@ -86,21 +87,21 @@ const CustomDrawer = (props) => {
         onPress={() => navigation.goBack()}
       />
       <View style={styles.header}>
-        <View style={{ display: "flex", flexDirection: "row", alignItems: "center",justifyContent:"space-between" }}>
+        <View style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
           <Image
-            source={require('../../Images/Profile1.png')}
+            source={image ? { uri: image } : require('../../Images/Profile.png') }
             style={styles.profileImage}
           />
-          <View style={{marginHorizontal:SW(10)}}>
-          <View style={{ display: "flex", flexDirection: "row", alignItems: "center",justifyContent:"space-between" }}>
-            <Text style={styles.name}>{name}</Text>
-            <TouchableOpacity
-          onPress={() => navigation.navigate('DetailedProfile')}
-        >
-          <AntDesign name="edit" size={20} color={Colors.theme_color} />
-        </TouchableOpacity>
-          </View>
-          <Text style={styles.idText}>ID no: {Id}</Text>
+          <View style={{ marginHorizontal: SW(10) }}>
+            <View style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+              <Text style={styles.name}>{name}</Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('DetailedProfile')}
+              >
+                <AntDesign name="edit" size={20} color={Colors.theme_color} />
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.idText}>ID no: {Id}</Text>
           </View>
         </View>
       </View>
@@ -170,13 +171,13 @@ const CustomDrawer = (props) => {
             </TouchableOpacity>
           );
         })}
-         <View style={styles.logoutContainer}>
+        <View style={styles.logoutContainer}>
           <TouchableOpacity
             style={styles.logoutButton}
             onPress={() => setLogoutModalVisible(true)}
           >
             <Text style={styles.logoutText}>Logout</Text>
-            <AntDesign name={'logout'} size={25} color={Colors.theme_color} style={{marginHorizontal:SW(10)}} />
+            <AntDesign name={'logout'} size={25} color={Colors.theme_color} style={{ marginHorizontal: SW(10) }} />
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -228,9 +229,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between"
   },
   profileImage: {
-    width: SW(45),
-    height: SH(45),
-    borderRadius: 30,
+    width: SW(40),
+    height: SH(40),
+    borderRadius: 20, resizeMode: "cover"
   },
   userInfo: {
     marginHorizontal: SW(10),
@@ -245,7 +246,7 @@ const styles = StyleSheet.create({
     fontSize: SF(10),
     color: Colors.theme_color,
     fontFamily: 'Poppins-Regular',
-    marginVertical:SH(5)
+    marginVertical: SH(5)
   },
   drawerButton: {
     marginVertical: SH(1),
@@ -287,7 +288,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  logoutText:{
+  logoutText: {
     fontSize: SF(16),
     color: Colors.theme_color,
     fontFamily: 'Poppins-Bold',
@@ -325,7 +326,7 @@ const styles = StyleSheet.create({
     marginHorizontal: SW(10),
     paddingHorizontal: SW(20),
     paddingVertical: SH(10),
-    backgroundColor:Colors.light,
+    backgroundColor: Colors.light,
     borderRadius: 5,
   },
   confirmButton: {
@@ -340,7 +341,7 @@ const styles = StyleSheet.create({
     color: Colors.theme_color,
     textAlign: 'center',
   },
-  confirmButtonText:{
+  confirmButtonText: {
     fontSize: SF(13),
     color: Colors.light,
     textAlign: 'center',

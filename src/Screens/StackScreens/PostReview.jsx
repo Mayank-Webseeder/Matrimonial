@@ -109,7 +109,7 @@ const PostReview = ({ navigation, route }) => {
                     style={Globalstyles.textInput}
                     placeholder="Write your review..."
                     placeholderTextColor={Colors.gray}
-                    multiline
+                    multiline={true}
                     value={description}
                     onChangeText={setDescription}
                     textAlignVertical='top'

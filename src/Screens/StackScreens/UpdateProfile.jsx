@@ -1,37 +1,102 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, ScrollView,StatusBar,SafeAreaView } from 'react-native';
-import React, { useState } from 'react';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import moment from 'moment';
-import Colors from '../../utils/Colors';
-import Globalstyles from '../../utils/GlobalCss';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { SH,SW,SF } from '../../utils/Dimensions';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  StatusBar,
+  SafeAreaView,
+} from "react-native";
+import React, { useState } from "react";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import moment from "moment";
+import Colors from "../../utils/Colors";
+import Globalstyles from "../../utils/GlobalCss";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import { SH, SW, SF } from "../../utils/Dimensions";
+import { UPDATE_PROFILE } from "../../utils/BaseUrl";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
+import { useSelector } from "react-redux";
 
 const UpdateProfile = ({ navigation }) => {
-  const [username, setUsername] = useState('');
-  const [mobileNo, setMobileNo] = useState('');
-  const [dob, setDob] = useState(new Date());
-  const [city, setCity] = useState('');
-  const [gender, setGender] = useState('');
+  const ProfileData = useSelector((state) => state.profile);
+  const profileData = ProfileData?.profiledata || {};
+  const [username, setUsername] = useState(profileData.username || "");
+  const [mobileNo, setMobileNo] = useState(profileData.mobileNo || "");
+  const [dob, setDob] = useState(profileData.dob ? new Date(profileData.dob) : new Date());
+  const [city, setCity] = useState(profileData.city || "");
+  const [gender, setGender] = useState(profileData.gender || "");
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const handleUpdate = () => {
-    if (!username || !mobileNo || !city || !gender) {
-      Alert.alert('Error', 'Please fill all the fields');
-      return;
+  const update_profile = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) throw new Error("Authorization token is missing.");
+
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+
+      const payload = {
+        mobileNo,
+        username,
+        dob,
+        city,
+        gender,
+      };
+
+      const response = await axios.put(UPDATE_PROFILE, payload, { headers });
+      const message = response?.data?.message;
+      console.log("message", message);
+      if (message === `${username}, your profile has been updated successfully.`) {
+        Toast.show({
+          type: "success",
+          text1: "Profile Updated Successfully",
+          text2: "Your profile changes have been saved.",
+          position: "top",
+          visibilityTime: 3000,
+          textStyle: { fontSize: 10, color: "green" },
+        });
+        navigation.navigate("MainApp");
+      } else {
+        Toast.show({
+          type: "info",
+          text1: "Profile Updated",
+          text2: message || "Your profile has been updated.",
+          position: "top",
+          visibilityTime: 3000,
+          textStyle: { fontSize: 10, color: "red" },
+        });
+      }
+
+      console.log("Profile updated successfully:", response.data);
+    } catch (error) {
+      if (error.response) {
+        console.error("API Error:", error.response.data);
+        Toast.show({
+          type: "error",
+          text1: "Update Failed",
+          text2: error.response.data.message || "Unable to update profile. Please try again.",
+          position: "top",
+          visibilityTime: 3000,
+          textStyle: { fontSize: 10, color: "red" },
+        });
+      } else {
+        console.error("Error updating profile:", error.message);
+        Toast.show({
+          type: "error",
+          text1: "Update Failed",
+          text2: "Something went wrong. Please try again later.",
+          position: "top",
+          visibilityTime: 3000,
+          textStyle: { fontSize: 10, color: "red" },
+        });
+      }
     }
-
-    // Add your API call here to update the profile
-    console.log({
-      username,
-      mobileNo,
-      dob: moment(dob).format('YYYY-MM-DD'),
-      city,
-      gender,
-    });
-
-    Alert.alert('Success', 'Profile updated successfully!');
-    navigation.goBack(); // Navigate back to the profile screen
   };
 
   const handleDateChange = (event, selectedDate) => {
@@ -42,7 +107,7 @@ const UpdateProfile = ({ navigation }) => {
 
   return (
     <SafeAreaView style={Globalstyles.container}>
-         <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
+      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
         <View style={styles.headerContainer}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -50,15 +115,15 @@ const UpdateProfile = ({ navigation }) => {
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>Update Profile</Text>
         </View>
-       
       </View>
-      <View style={Globalstyles.form}>
+      <ScrollView contentContainerStyle={Globalstyles.form}>
         <Text style={Globalstyles.title}>Username</Text>
         <TextInput
           style={Globalstyles.input}
           placeholder="Enter your name"
           value={username}
           onChangeText={setUsername}
+          placeholderTextColor={Colors.gray}
         />
 
         <Text style={Globalstyles.title}>Mobile Number</Text>
@@ -68,11 +133,12 @@ const UpdateProfile = ({ navigation }) => {
           keyboardType="phone-pad"
           value={mobileNo}
           onChangeText={setMobileNo}
+          placeholderTextColor={Colors.gray}
         />
 
         <Text style={Globalstyles.title}>Date of Birth</Text>
         <TouchableOpacity onPress={() => setShowDatePicker(true)} style={Globalstyles.input}>
-          <Text style={styles.dateText}>{moment(dob).format('DD MMMM YYYY')}</Text>
+          <Text style={styles.dateText}>{moment(dob).format("DD MMMM YYYY")}</Text>
         </TouchableOpacity>
         {showDatePicker && (
           <DateTimePicker
@@ -87,6 +153,7 @@ const UpdateProfile = ({ navigation }) => {
         <TextInput
           style={Globalstyles.input}
           placeholder="Enter your city"
+          placeholderTextColor={Colors.gray}
           value={city}
           onChangeText={setCity}
         />
@@ -94,35 +161,32 @@ const UpdateProfile = ({ navigation }) => {
         <Text style={Globalstyles.title}>Gender</Text>
         <View style={styles.genderContainer}>
           <TouchableOpacity
-            style={[styles.genderButton, gender === 'Male' && styles.selectedGender]}
-            onPress={() => setGender('Male')}
+            style={[styles.genderButton, gender === "male" && styles.selectedGender]}
+            onPress={() => setGender("male")}
           >
-            <Text style={[styles.genderText, gender === 'Male' && styles.selectedGenderText]}>
+            <Text
+              style={[styles.genderText, gender === "male" && styles.selectedGenderText]}
+            >
               Male
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.genderButton, gender === 'Female' && styles.selectedGender]}
-            onPress={() => setGender('Female')}
+            style={[styles.genderButton, gender === "female" && styles.selectedGender]}
+            onPress={() => setGender("female")}
           >
-            <Text style={[styles.genderText, gender === 'Female' && styles.selectedGenderText]}>
+            <Text
+              style={[styles.genderText, gender === "female" && styles.selectedGenderText]}
+            >
               Female
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.genderButton, gender === 'Other' && styles.selectedGender]}
-            onPress={() => setGender('Other')}
-          >
-            <Text style={[styles.genderText, gender === 'Other' && styles.selectedGenderText]}>
-              Other
             </Text>
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.updateButton} onPress={handleUpdate}>
+        <TouchableOpacity style={styles.updateButton} onPress={update_profile}>
           <Text style={styles.updateButtonText}>Update Profile</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
+      <Toast />
     </SafeAreaView>
   );
 };
@@ -139,17 +203,18 @@ const styles = StyleSheet.create({
   dateText: {
     fontSize: 14,
     color: Colors.dark_gray,
-    paddingTop:SH(8)
+    paddingTop: SH(8)
   },
   genderContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom:SH(20),
+    marginVertical: SH(20),
+    marginRight: SW(100)
   },
   genderButton: {
     flex: 1,
-    marginHorizontal:SW(5),
-    paddingVertical:SW(5),
+    marginHorizontal: SW(5),
+    paddingVertical: SW(5),
     borderWidth: 1,
     borderColor: Colors.light_gray,
     borderRadius: 5,
@@ -159,7 +224,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.theme_color,
   },
   genderText: {
-    fontSize:SF(14),
+    fontSize: SF(14),
     color: Colors.dark_gray,
   },
   selectedGenderText: {
@@ -167,14 +232,14 @@ const styles = StyleSheet.create({
   },
   updateButton: {
     backgroundColor: Colors.theme_color,
-    paddingVertical:SH(5),
-    marginVertical:SH(30),
+    paddingVertical: SH(5),
+    marginVertical: SH(30),
     borderRadius: 5,
     alignItems: 'center',
   },
   updateButtonText: {
     color: 'white',
-    fontSize:SF(16),
-    fontFamily:"Poppins-Medium"
+    fontSize: SF(16),
+    fontFamily: "Poppins-Medium"
   },
 });

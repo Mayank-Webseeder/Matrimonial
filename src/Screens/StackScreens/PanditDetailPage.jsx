@@ -30,19 +30,27 @@ const PanditDetailPage = ({ navigation, item, route }) => {
         const rows = [];
         for (let i = 0; i < images.length; i += 2) {
             rows.push(
-                <View style={styles.imageRow} key={i}>
-                    <Image source={images[i]} style={styles.image} />
-                    {/* If there's an image next to it, show it */}
-                    {images[i + 1] && <Image source={images[i + 1]} style={styles.image} />}
-                </View>
+                <TouchableOpacity
+                style={styles.imageRow}
+                key={i}
+                onPress={() =>
+                  navigation.navigate('ViewPanditImages', {
+                    post: item,
+                    images: images.filter(Boolean), // Ensure this is a valid array of images
+                    panditDetails: panditDetails,  // Pass pandit details here
+                  })
+                }
+              >
+                <Image source={images[i]} style={styles.image} />
+                {/* If there's an image next to it, show it */}
+                {images[i + 1] && <Image source={images[i + 1]} style={styles.image} />}
+              </TouchableOpacity>
+              
             );
         }
 
         return <View style={styles.imageContainer}>{rows}</View>;
     };
-
-
-
     return (
         <SafeAreaView style={Globalstyles.container}>
             <StatusBar

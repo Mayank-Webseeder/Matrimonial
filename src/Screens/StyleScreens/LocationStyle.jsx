@@ -163,26 +163,31 @@ const styles = StyleSheet.create({
     borderWidth: 1
   },
   declineButton: {
-    backgroundColor: "#fc8397",
-    paddingVertical: SH(10),
-    paddingHorizontal: SH(60),
+    backgroundColor: "#c10007",
+    paddingVertical: SH(7),
+    paddingHorizontal: SH(40),
     borderRadius: 50,
     marginHorizontal: SW(10),
+    display:"flex",
+    flexDirection:"row"
   },
   declineButtonText: {
-    color: "red",
+    color: "#fff",
     fontFamily: "Poppins-Regular",
-    fontSize: SF(15)
+    fontSize: SF(15),
+    marginHorizontal:SW(5)
   },
   acceptButton: {
-    backgroundColor: "#cce3d5",
-    paddingVertical: SH(10),
-    paddingHorizontal: SH(60),
+    backgroundColor: "#008236",
+    paddingVertical: SH(7),
+    paddingHorizontal: SH(40),
     borderRadius: 50,
-    marginHorizontal: SW(10)
+    marginHorizontal: SW(10),
+    display:"flex",
+    flexDirection:"row"
   },
   acceptButtonText: {
-    color: "#58b87b", fontFamily: "Poppins-Regular",
+    color: "#fff", fontFamily: "Poppins-Regular",
     fontSize: SF(15)
   }
 });

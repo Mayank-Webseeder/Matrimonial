@@ -1,4 +1,4 @@
-import { Text, View, Image, ScrollView, TouchableOpacity,SafeAreaView,StatusBar,Linking } from 'react-native';
+import { Text, View, Image, ScrollView, TouchableOpacity, SafeAreaView, StatusBar, Linking } from 'react-native';
 import React, { useState } from 'react';
 import { PanditDetailData } from '../../DummyData/DummyData';
 import styles from '../StyleScreens/PanditDetailPageStyle';
@@ -10,6 +10,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Globalstyles from '../../utils/GlobalCss';
 
 const KathavachakDetailsPage = ({ navigation, item }) => {
     const pandit = PanditDetailData[0];
@@ -19,39 +20,39 @@ const KathavachakDetailsPage = ({ navigation, item }) => {
 
     const renderImages = (images) => {
         if (images.length === 0) {
-          return <Text style={styles.noImageText}>No images available for this post</Text>;
+            return <Text style={styles.noImageText}>No images available for this post</Text>;
         }
-      
+
         // Create rows of images
         const rows = [];
         for (let i = 0; i < images.length; i += 2) {
-          rows.push(
-            <View style={styles.imageRow} key={i}>
-              <Image source={images[i]} style={styles.image} />
-              {/* If there's an image next to it, show it */}
-              {images[i + 1] && <Image source={images[i + 1]} style={styles.image} />}
-            </View>
-          );
+            rows.push(
+                <View style={styles.imageRow} key={i}>
+                    <Image source={images[i]} style={styles.image} />
+                    {/* If there's an image next to it, show it */}
+                    {images[i + 1] && <Image source={images[i + 1]} style={styles.image} />}
+                </View>
+            );
         }
-      
+
         return <View style={styles.imageContainer}>{rows}</View>;
-      };
-      
-    
-    
+    };
+
+
+
     return (
-        <SafeAreaView style={styles.container}>
-            <StatusBar 
-                barStyle="dark-content" 
-                backgroundColor="transparent" 
-                translucent 
+        <SafeAreaView style={Globalstyles.container}>
+            <StatusBar
+                barStyle="dark-content"
+                backgroundColor="transparent"
+                translucent
             />
-            <View style={styles.header}>
+            <View style={Globalstyles.header}>
                 <View style={{ flexDirection: 'row' }}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
-                    <Text style={styles.headerText}>{pandit.name}</Text>
+                    <Text style={Globalstyles.headerText}>{pandit.name}</Text>
                 </View>
                 <View style={styles.righticons}>
                     {/* <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} /> */}
@@ -96,7 +97,7 @@ const KathavachakDetailsPage = ({ navigation, item }) => {
                             <Feather name="send" size={20} color={Colors.dark} />
                             <Text style={styles.iconText}>Shares</Text>
                         </View>
-                        <TouchableOpacity style={styles.Button} onPress={()=>Linking.openURL('tel:9893458940')}>
+                        <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL('tel:9893458940')}>
                             <MaterialIcons name="call" size={20} color={Colors.light} />
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ReportPage')} >
@@ -154,22 +155,22 @@ const KathavachakDetailsPage = ({ navigation, item }) => {
                 <View style={styles.section}>
                     <Text style={[styles.sectionTitle, { textAlign: "center" }]}>Reviews</Text>
                     {pandit.reviews.slice(0, 2).map((review, index) => (
-                         <View key={index} style={styles.reviewContainer}>
-                         <View style={styles.FlexContainer}>
-                             <Text style={styles.reviewName}>{review.reviewerName} ({review.reviewerCountry})</Text>
-                             <Text style={styles.reviewDate}>{review.reviewDate}</Text>
-                         </View>
-                         <View style={styles.reviewRating}>
-                             <Rating
-                                 type="star"
-                                 ratingCount={5}
-                                 imageSize={15}
-                                 startingValue={review.rating}
-                                 readonly
-                             />
-                         </View>
-                         <Text style={styles.reviewText}>{review.reviewText}</Text>
-                     </View>
+                        <View key={index} style={styles.reviewContainer}>
+                            <View style={styles.FlexContainer}>
+                                <Text style={styles.reviewName}>{review.reviewerName} ({review.reviewerCountry})</Text>
+                                <Text style={styles.reviewDate}>{review.reviewDate}</Text>
+                            </View>
+                            <View style={styles.reviewRating}>
+                                <Rating
+                                    type="star"
+                                    ratingCount={5}
+                                    imageSize={15}
+                                    startingValue={review.rating}
+                                    readonly
+                                />
+                            </View>
+                            <Text style={styles.reviewText}>{review.reviewText}</Text>
+                        </View>
                     ))}
                     {pandit.reviews.length > 2 && (
                         <TouchableOpacity

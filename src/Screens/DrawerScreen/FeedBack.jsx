@@ -4,6 +4,7 @@ import styles from '../StyleScreens/FeedbackStyle';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { DrawerActions } from '@react-navigation/native';
 import Globalstyles from '../../utils/GlobalCss';
+import Colors from '../../utils/Colors';
 const FeedBack = ({ navigation }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
@@ -46,7 +47,7 @@ const FeedBack = ({ navigation }) => {
         </View>
       </View>
 
-      <View style={styles.feedBackContainer}>
+      <View style={Globalstyles.form}>
         <Text style={styles.Text}>Feedback</Text>
         <Text style={styles.description}>Share your experience in scaling</Text>
         <View style={styles.ratingContainer}>
@@ -60,7 +61,7 @@ const FeedBack = ({ navigation }) => {
           multiline
           value={comment}
           onChangeText={setComment}
-          placeholderTextColor={'gray'}
+          placeholderTextColor={Colors.gray}
         />
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
           <Text style={styles.submitText}>Submit FeedBack</Text>

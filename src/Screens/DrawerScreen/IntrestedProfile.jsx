@@ -22,8 +22,8 @@ const IntrestedProfile = ({ navigation }) => {
 
   const interestReceivedData = [
     { id: 1, name: 'Alice Lee', dp:profileImage, status: 'Pending',user_id:"abc1234e" },
-    { id: 2, name: 'Bob Turner', dp:profileImage, status: 'You Accepted',user_id:"abc1234e" },
-    { id: 3, name: 'Charlie Brown', dp:profileImage, status: 'You Declined',user_id:"abc1234e" },
+    { id: 2, name: 'Bob Turner', dp:profileImage, status: 'Accepted',user_id:"abc1234e" },
+    { id: 3, name: 'Charlie Brown', dp:profileImage, status: 'Declined',user_id:"abc1234e" },
   ];
 
   // Render Item for Interest Sent or Received
@@ -43,7 +43,7 @@ const IntrestedProfile = ({ navigation }) => {
   );
   
   const renderIntrestReceviedItem = (item) => (
-    <TouchableOpacity style={styles.card} onPress={()=>navigation.navigate('MatrimonyPeopleProfile')}>
+    <TouchableOpacity style={styles.card} onPress={()=>navigation.navigate('IntrestReceivedProfilePage')}>
       <View style={styles.leftContent}>
         <Image source={item.dp} style={styles.dpImage} />
         <View style={styles.cardContent}>

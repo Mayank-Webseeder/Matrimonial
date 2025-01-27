@@ -510,19 +510,22 @@ export const PanditDetailData = [
       id: "1",
       name: "Arjun And Priya Story",
       description: "After years of searching, Priya and Arjun found each other on a matrimony platform. Initially hesitant, they connected over shared values and interests during virtual chats. Their bond grew stronger with every conversation, eventually leading to a heartfelt meeting arranged by their families. Today, they celebrate their love as a happily married couple, crediting the platform for bringing their destinies together.",
-      image:require('../Images/couple.png')
+      image:require('../Images/couple.png'),
+      rating:3
    },
    {
       id: "2",
       name: "Anjali And Ansual Story",
       description: "After years of searching, Priya and Arjun found each other on a matrimony platform. Initially hesitant, they connected over shared values and interests during virtual chats. Their bond grew stronger with every conversation, eventually leading to a heartfelt meeting arranged by their families. Today, they celebrate their love as a happily married couple, crediting the platform for bringing their destinies together.",
-      image:require('../Images/couple.png')
+      image:require('../Images/couple.png'),
+      rating:5
    },
    {
       id: "3",
       name: "Aparna And Yogesh Story",
       description: "After years of searching, Priya and Arjun found each other on a matrimony platform. Initially hesitant, they connected over shared values and interests during virtual chats. Their bond grew stronger with every conversation, eventually leading to a heartfelt meeting arranged by their families. Today, they celebrate their love as a happily married couple, crediting the platform for bringing their destinies together.",
-      image:require('../Images/couple.png')
+      image:require('../Images/couple.png'),
+      rating:4
    },
    
 ]

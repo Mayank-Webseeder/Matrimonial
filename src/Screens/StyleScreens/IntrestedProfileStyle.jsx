@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'black',
+    borderColor:Colors.theme_color,
     marginVertical: SH(10),
     borderRadius: 8,
     marginHorizontal: SW(6)
@@ -28,12 +28,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   activeText: {
-    color: 'white',
+    color:Colors.light,
     fontFamily: "Poppins-Regular",
     fontSize: SF(15)
   },
   inactiveText: {
-    color: 'black',
+    color:Colors.theme_color,
     fontFamily: "Poppins-Regular",
     fontSize: SF(15)
   },
@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
     paddingVertical: SH(10),
     paddingHorizontal: SW(10),
     marginVertical: SH(10),
+    marginHorizontal: SW(10),
     borderColor: "gray",
     borderRadius: 10,
     borderWidth: 0.5,
@@ -76,17 +77,19 @@ const styles = StyleSheet.create({
   },
   Statusbutton: {
     backgroundColor: Colors.light_theme,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 5,
+    paddingVertical:SH(5),
+    paddingHorizontal:SW(5),
+    borderRadius:50,
     justifyContent: "center",
     alignItems: "center",
     borderColor:Colors.theme_color,
-    borderWidth:1
+    borderWidth:1,
+    width:SW(100)
   },
   StatusbuttonText: {
-    color:Colors.dark,
-    fontFamily:"Poppins-Medium"
+    color:Colors.theme_color,
+    fontFamily:"Poppins-Medium",
+    fontSize:SF(13)
   },
   
 });

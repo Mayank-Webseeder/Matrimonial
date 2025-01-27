@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { SF, SH } from '../utils/Dimensions';
+import { SF, SH, SW } from '../utils/Dimensions';
 import Colors from '../utils/Colors';
 
 const HeadingWithViewAll = ({ heading, showViewAll = false, onViewAllPress, headingStyle }) => {
@@ -21,10 +21,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: SH(15),
+    paddingHorizontal: SW(15),
     backgroundColor: Colors.gray,
     paddingVertical: SH(2),
-    borderRadius:5
+    borderRadius: 5,
+    marginHorizontal: SW(5)
   },
   headingStyle: {
     fontSize: SF(15),

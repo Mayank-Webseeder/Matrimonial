@@ -4,19 +4,33 @@ import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from '../StyleScreens/CreatePostStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { launchImageLibrary } from 'react-native-image-picker';
 import Globalstyles from '../../utils/GlobalCss';
+import ImageCropPicker from 'react-native-image-crop-picker';
 
 const CreatePost = ({navigation}) => {
-    const [photos,setPhotos]=useState('');
-    
-    const handleImagePick = () => {
-            launchImageLibrary({ mediaType: 'photo', selectionLimit: 5 }, response => {
-                if (response.assets) {
-                    setPhotos(response.assets);
-                }
-            });
-        };
+    const [photos, setPhotos] = useState([]);
+
+    const handleImageUpload = () => {
+        ImageCropPicker.openPicker({
+            multiple: false,
+            cropping: true,
+            width: 400,
+            height: 400,
+        }).then(image => {
+            const newPhoto = {
+                uri: image.path,
+            };
+            addPhotos([newPhoto]);
+        }).catch(err => console.log('Crop Picker Error:', err));
+    };
+
+    const addPhotos = (newPhotos) => {
+        if (photos.length + newPhotos.length <= 5) {
+            setPhotos(prevPhotos => [...prevPhotos, ...newPhotos]);
+        } else {
+            alert('You can only upload up to 5 photos.');
+        }
+    };
     
     return (
         <SafeAreaView style={Globalstyles.container}>
@@ -42,17 +56,17 @@ const CreatePost = ({navigation}) => {
                 </View>
             </View>
             <View style={styles.textContainer}>
-                <TextInput style={Globalstyles.input} placeholder='Title' placeholderTextColor={'gray'} />
+                <TextInput style={Globalstyles.input} placeholder='Title' placeholderTextColor={Colors.gray} />
                 <TextInput style={Globalstyles.textInput} 
-                placeholder='What’s on your mind?' placeholderTextColor={'gray'}
-                textAlignVertical='top' />
+                placeholder='What’s on your mind?' placeholderTextColor={Colors.gray}
+                textAlignVertical='top' multiline={true} />
             </View>
             <View style={styles.addPhoto}>
                 <View>
                     <Text style={styles.Text}>Add Image ( Max Limit 5 )</Text>
                 </View>
                 <View style={styles.righticons}>
-              <TouchableOpacity onPress={handleImagePick}>
+              <TouchableOpacity onPress={handleImageUpload}>
               <AntDesign name={'camerao'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} />
               </TouchableOpacity>
                     {/* <AntDesign name={'videocamera'} size={25} color={Colors.theme_color} /> */}

@@ -180,6 +180,7 @@ const Jyotish = ({ navigation }) => {
                   value={locality}
                   onChangeText={(text) => setLocality(text)}
                   placeholder="Enter Locality"
+                  placeholderTextColor={Colors.gray}
                 />
               </View>
 
@@ -193,6 +194,7 @@ const Jyotish = ({ navigation }) => {
                   onChange={(item) => setServices(item.value)}
                   placeholder="Select Services"
                   style={Globalstyles.input}
+                  placeholderStyle={{ color: '#E7E7E7' }}
                 />
               </View>
 
@@ -206,6 +208,7 @@ const Jyotish = ({ navigation }) => {
                   value={rating}
                   onChange={(item) => setRating(item.value)}
                   placeholder="Select Rating"
+                  placeholderStyle={{ color: '#E7E7E7' }}
                 />
               </View>
 
@@ -219,6 +222,7 @@ const Jyotish = ({ navigation }) => {
                   value={experience}
                   onChange={(item) => setExperience(item.value)}
                   placeholder="Select Experience"
+                  placeholderStyle={{ color: '#E7E7E7' }}
                 />
               </View>
               <TouchableOpacity style={styles.applyButton} onPress={handleCloseFilter}>

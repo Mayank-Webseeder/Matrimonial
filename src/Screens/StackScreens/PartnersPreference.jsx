@@ -26,7 +26,6 @@ const PartnersPreference = ({ navigation }) => {
     const [selectedButton, setSelectedButton] = useState('PartnersPreference');
     const [isEditing, setIsEditing] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
-    const profileData = useSelector((state) => state.profile);
     const [showTimePicker, setShowTimePicker] = useState(false);
     const [stateInput, setStateInput] = useState('');
     const [subCasteInput, setSubCasteInput] = useState('');
@@ -37,6 +36,7 @@ const PartnersPreference = ({ navigation }) => {
     const [selectedState, setSelectedState] = useState('');
     const [selectedCity, setSelectedCity] = useState('');
     const [selectedSubCaste, setSelectedSubCaste] = useState('');
+    const profileData = useSelector((state) => state.profile);
     console.log("profileData", profileData);
 
     const formattedDate = moment(profileData.dob).format("DD/MM/YYYY");
@@ -310,7 +310,7 @@ const PartnersPreference = ({ navigation }) => {
                         value={subCasteInput}
                         onChangeText={handleSubCasteInputChange}
                         placeholder="Type Your Sub Caste"
-                        placeholderTextColor={'gray'}
+                        placeholderTextColor={Colors.gray}
                     />
                     {filteredSubCaste.length > 0 && subCasteInput ? (
                         <FlatList
@@ -337,6 +337,8 @@ const PartnersPreference = ({ navigation }) => {
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerMinAge: item.value })}
                             placeholder="Min Age"
+                            placeholderStyle={{ color: '#E7E7E7' }}
+
                         />
                         <Dropdown
                             style={[styles.dropdown, !isEditing && styles.readOnly]}
@@ -347,6 +349,7 @@ const PartnersPreference = ({ navigation }) => {
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerMaxAge: item.value })}
                             placeholder="Max Age"
+                            placeholderStyle={{ color: '#E7E7E7' }}
                         />
                     </View>
                     <Text style={Globalstyles.title}>Height Criteria</Text>
@@ -365,6 +368,7 @@ const PartnersPreference = ({ navigation }) => {
                                 });
                             }}
                             placeholder="Min Height"
+                            placeholderStyle={{ color: '#E7E7E7' }}
                         />
                         <Dropdown
                             style={[styles.dropdown, !isEditing && styles.readOnly]}
@@ -380,6 +384,7 @@ const PartnersPreference = ({ navigation }) => {
                                 });
                             }}
                             placeholder="Max Height"
+                            placeholderStyle={{ color: '#E7E7E7' }}
                         />
                     </View>
                     <View>
@@ -393,6 +398,7 @@ const PartnersPreference = ({ navigation }) => {
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerMaritalStatus: item.value })}
                             placeholder="Select status"
+                            placeholderStyle={{ color: '#E7E7E7' }}
                         />
                         <Text style={Globalstyles.title}>Income Range (in INR)</Text>
                         <Dropdown
@@ -404,6 +410,7 @@ const PartnersPreference = ({ navigation }) => {
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerIncome: item.value })}
                             placeholder="Income"
+                            placeholderStyle={{ color: '#E7E7E7' }}
                         />
                         <Text style={Globalstyles.title}>Occupation</Text>
                         <Dropdown
@@ -415,6 +422,7 @@ const PartnersPreference = ({ navigation }) => {
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerOccupation: item.value })}
                             placeholder="Select occupdation"
+                            placeholderStyle={{ color: '#E7E7E7' }}
                         />
 
                         <Text style={styles.inputHeading}>Qualification</Text>
@@ -427,6 +435,7 @@ const PartnersPreference = ({ navigation }) => {
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerQualification: item.value })}
                             placeholder="Select Qualification"
+                            placeholderStyle={{ color: '#E7E7E7' }}
                         />
                         <Text style={Globalstyles.title}>Disabilities (Physical/Mental)</Text>
                         <Dropdown
@@ -438,6 +447,7 @@ const PartnersPreference = ({ navigation }) => {
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerDisabilities: item.value })}
                             placeholder="Select disability"
+                            placeholderStyle={{ color: '#E7E7E7' }}
                         />
                         <Text style={Globalstyles.title}>Manglik Status</Text>
                         <Dropdown
@@ -449,6 +459,7 @@ const PartnersPreference = ({ navigation }) => {
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerManglikStatus: item.value })}
                             placeholder="Select status"
+                            placeholderStyle={{ color: '#E7E7E7' }}
                         />
                         <Text style={Globalstyles.title}>Partners Livein</Text>
                         <Dropdown
@@ -460,6 +471,7 @@ const PartnersPreference = ({ navigation }) => {
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnersLivingStatus: item.value })}
                             placeholder="Select Livein"
+                            placeholderStyle={{ color: '#E7E7E7' }}
                         />
                         <Text style={[Globalstyles.title, { color: Colors.theme_color }]}>Area</Text>
                         <Text style={Globalstyles.title}>State</Text>
@@ -467,8 +479,9 @@ const PartnersPreference = ({ navigation }) => {
                             style={Globalstyles.input}
                             value={stateInput}
                             onChangeText={handleStateInputChange}
-                            placeholder="Type your state"
-                            placeholderTextColor={'gray'}
+                            placeholder="Enter your state"
+
+                            placeholderTextColor={Colors.gray}
                         />
                         {filteredStates.length > 0 && stateInput ? (
                             <FlatList
@@ -489,8 +502,8 @@ const PartnersPreference = ({ navigation }) => {
                             style={Globalstyles.input}
                             value={cityInput}
                             onChangeText={handleCityInputChange}
-                            placeholder="Type your city"
-                            placeholderTextColor={'gray'}
+                            placeholder="Enter your city"
+                            placeholderTextColor={Colors.gray}
                         />
                         {filteredCities.length > 0 && cityInput ? (
                             <FlatList
@@ -514,7 +527,7 @@ const PartnersPreference = ({ navigation }) => {
                             value={biodata.partnerBodyStructure}
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerBodyStructure: item.value })}
-                            placeholder="Select structure"
+                            placeholder="Select structure" placeholderStyle={{ color: '#E7E7E7' }}
                         />
                         <Text style={Globalstyles.title}>Complexion</Text>
                         <Dropdown
@@ -526,6 +539,7 @@ const PartnersPreference = ({ navigation }) => {
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerComplexion: item.value })}
                             placeholder="Select Complexion"
+                            placeholderStyle={{ color: '#E7E7E7' }}
                         />
                         <Text style={Globalstyles.title}>Partner Dietary Habits</Text>
                         <Dropdown
@@ -537,6 +551,7 @@ const PartnersPreference = ({ navigation }) => {
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerDietaryHabits: item.value })}
                             placeholder="Select Diet"
+                            placeholderStyle={{ color: '#E7E7E7' }}
                         />
                         <Text style={Globalstyles.title}>Smoking Habits</Text>
                         <Dropdown
@@ -548,6 +563,7 @@ const PartnersPreference = ({ navigation }) => {
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerSmokingHabits: item.value })}
                             placeholder="Select smoking"
+                            placeholderStyle={{ color: '#E7E7E7' }}
                         />
                         <Text style={Globalstyles.title}>Drinking Habits</Text>
                         <Dropdown
@@ -559,6 +575,7 @@ const PartnersPreference = ({ navigation }) => {
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerDrinkingHabits: item.value })}
                             placeholder="Select Habit"
+                            placeholderStyle={{ color: '#E7E7E7' }}
                         />
                         <Text style={Globalstyles.title}>Family Type</Text>
                         <Dropdown
@@ -567,6 +584,7 @@ const PartnersPreference = ({ navigation }) => {
                             labelField="label"
                             valueField="value"
                             placeholder="Select Family Type"
+                            placeholderStyle={{ color: '#E7E7E7' }}
                             value={biodata.partnerFamilyType}
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerFamilyType: item.value })}
@@ -578,6 +596,7 @@ const PartnersPreference = ({ navigation }) => {
                             labelField="label"
                             valueField="value"
                             placeholder="Select Family Financial Status"
+                            placeholderStyle={{ color: '#E7E7E7' }}
                             value={biodata.partnerFamilyFinancialStatus}
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerFamilyFinancialStatus: item.value })}
@@ -589,6 +608,7 @@ const PartnersPreference = ({ navigation }) => {
                             labelField="label"
                             valueField="value"
                             placeholder="Select Family Income"
+                            placeholderStyle={{ color: '#E7E7E7' }}
                             value={biodata.partnerFamilyIncome}
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerFamilyIncome: item.value })}
@@ -598,8 +618,8 @@ const PartnersPreference = ({ navigation }) => {
                             multiline={true} numberOfLines={6}
                             value={biodata.partnerExpectations}
                             editable={isEditing}
-                            placeholder='Type Your Expectations '
-                            placeholderTextColor={'gray'}
+                            placeholder='Type Your Expectations'
+                            placeholderTextColor={Colors.gray}
                             onChangeText={(text) =>
                                 setBiodata({ ...biodata, partnerExpectations: text })
                             }

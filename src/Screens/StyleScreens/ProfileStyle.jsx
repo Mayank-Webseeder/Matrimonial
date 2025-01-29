@@ -143,6 +143,11 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
     },
+    Formtitle:{
+        fontFamily: "Poppins-Medium",
+        fontSize: SF(18),
+        color:Colors.theme_color
+    },
     detailText: {
         fontFamily: "Poppins-Bold",
         fontSize: SF(15),
@@ -248,17 +253,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center"
-    },
-    dropdown: {
-        height: SH(25),
-        width: SW(130),
-        borderColor: 'gray',
-        borderWidth: 1,
-        paddingLeft: SW(10),
-        borderRadius: 5,
-        backgroundColor: 'white',
-        color: Colors.dark,
-        marginHorizontal: SW(5)
     },
     loading: {
         justifyContent: "center",

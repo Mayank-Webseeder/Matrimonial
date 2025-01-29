@@ -6,21 +6,15 @@ import styles from '../StyleScreens/ProfileStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { Dropdown } from 'react-native-element-dropdown';
 import { useSelector } from 'react-redux';
 import moment from "moment";
 import Globalstyles from '../../utils/GlobalCss';
-import {
-    PeoplePosition,
-} from '../../DummyData/DropdownData';
 import DetailedProfile from './DetailedProfile';
 import PartnersPreference from './PartnersPreference';
 import PhotoGallery from './PhotoGallery';
 
 const MatrimonyPage = ({ navigation }) => {
     const [activeComponent, setActiveComponent] = useState("DetailedProfile");
-    const [peoplePosition, setPeoplePosition] = useState(null);
-    const [dropdownVisible, setDropdownVisible] = useState(false);
     const profileData = useSelector((state) => state.profile);
     console.log("profileData in myprofile", profileData);
     const image = profileData?.profiledata?.photoUrl?.[0];
@@ -29,10 +23,6 @@ const MatrimonyPage = ({ navigation }) => {
 
     const handlePress = (componentName) => {
         setActiveComponent(componentName);
-    };
-
-    const toggleDropdown = () => {
-        setDropdownVisible(!dropdownVisible);
     };
 
     const renderActiveComponent = () => {
@@ -56,24 +46,7 @@ const MatrimonyPage = ({ navigation }) => {
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
                     </TouchableOpacity>
-                    <Text style={Globalstyles.headerText}>Matrimony Profile</Text>
-                    <TouchableOpacity onPress={toggleDropdown} style={styles.dropdownContainer}>
-                        <AntDesign name={'caretdown'} color={Colors.theme_color} size={15} />
-                    </TouchableOpacity>
-                    {dropdownVisible && (
-                        <Dropdown
-                            style={styles.dropdown}
-                            data={PeoplePosition}
-                            labelField="label"
-                            valueField="value"
-                            value={peoplePosition}
-                            onChange={(item) => {
-                                setPeoplePosition(item.value);
-                                setDropdownVisible(false);
-                            }}
-                            placeholder="Select"
-                        />
-                    )}
+                    <Text style={Globalstyles.headerText}>{profileData?.profiledata?.username || 'NA'} Profile</Text>
                 </View>
             </View>
             <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>

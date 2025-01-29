@@ -299,7 +299,7 @@ const PartnersPreference = ({ navigation }) => {
 
                 <View style={Globalstyles.form}>
                     <View style={styles.detail}>
-                        <Text style={Globalstyles.title}>Preferences</Text>
+                        <Text style={styles.Formtitle}>Preferences</Text>
                         <TouchableOpacity>
                             <Text style={styles.detailText}>Edit</Text>
                         </TouchableOpacity>
@@ -309,7 +309,7 @@ const PartnersPreference = ({ navigation }) => {
                         style={Globalstyles.input}
                         value={subCasteInput}
                         onChangeText={handleSubCasteInputChange}
-                        placeholder="Type Your Sub Caste"
+                        placeholder="Enter Your Sub Caste"
                         placeholderTextColor={Colors.gray}
                     />
                     {filteredSubCaste.length > 0 && subCasteInput ? (

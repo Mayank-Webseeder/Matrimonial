@@ -26,6 +26,11 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         flex: 1
     },
+    Formtitle:{
+        fontFamily: "Poppins-Medium",
+        fontSize: SF(18),
+        color:Colors.theme_color
+    },
     editText: {
         color: Colors.theme_color,
         paddingVertical: SH(15),
@@ -33,6 +38,7 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins-Bold",
         //  marginLeft:SW(250)
     },
+    
     name: {
         textAlign: "center",
         color: Colors.dark,

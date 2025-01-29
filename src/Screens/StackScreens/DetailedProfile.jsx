@@ -475,7 +475,7 @@ const DetailedProfile = ({ navigation }) => {
 
         <View style={Globalstyles.form}>
           <View style={styles.detail}>
-            <Text style={Globalstyles.title}>Personal Details</Text>
+            <Text style={styles.Formtitle}>Personal Details</Text>
             <TouchableOpacity onPress={() => setIsEditing(true)}>
               <Text style={styles.detailText}>Edit</Text>
             </TouchableOpacity>
@@ -485,7 +485,7 @@ const DetailedProfile = ({ navigation }) => {
             style={Globalstyles.input}
             value={subCasteInput}
             onChangeText={handleSubCasteInputChange}
-            placeholder="Type your sub caste"
+            placeholder="Enter your sub caste"
             placeholderTextColor={Colors.gray}
           />
           {filteredSubCaste.length > 0 && subCasteInput ? (

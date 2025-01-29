@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     image: {
         width: '100%',
         height: undefined,
-        aspectRatio: 1.5, 
+        aspectRatio: 1.5,
         resizeMode: 'cover',
         borderRadius: 10
     },
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
         marginHorizontal: SW(10),
         marginVertical: SH(10),
         flexDirection: "row",
-       justifyContent: "space-between",
+        justifyContent: "space-between",
     },
     // userData: {
     //     // flexDirection: "row",
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     text: {
         fontFamily: "Poppins-Regular",
         fontSize: SF(15),
-        paddingVertical:SH(3)
+        paddingVertical: SH(3)
     },
     editText: {
         color: Colors.theme_color,
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins-Regular",
         fontSize: SF(13),
         color: Colors.theme_color,
-        marginHorizontal:SW(5)
+        marginHorizontal: SW(5)
     },
     camera: {
         flexDirection: "row",
@@ -155,6 +155,58 @@ const styles = StyleSheet.create({
         color: Colors.theme_color,
         fontSize: 16,
     },
-    
+    switchButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: SW(10),
+        paddingVertical: SH(10)
+    },
+    selectedProfileText: {
+        marginRight: SW(15),
+        color: Colors.theme_color,
+        fontFamily: "Poppins-Medium"
+    },
+    profilemodalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    profilemodalContainer: {
+        width: '80%',
+        backgroundColor: Colors.light,
+        borderRadius: 10,
+        paddingHorizontal: SW(10),
+        paddingVertical: SH(10),
+        alignItems: 'center',
+    },
+    profilemodalTitle: {
+        fontSize: SF(18),
+        fontFamily: "Poppins-Bold",
+        marginBottom: SH(10),
+    },
+    profilemodalItem: {
+        paddingHorizontal: SW(15),
+        paddingVertical: SH(15),
+        borderBottomWidth: 1,
+        borderBottomColor: '#ddd',
+        width: '100%',
+    },
+    profilemodalItemText: {
+        fontSize: SF(13),
+        color: '#333',
+    },
+    profilecloseButton: {
+        marginTop: SH(10),
+        paddingHorizontal: SW(50),
+        paddingVertical: SH(5),
+        backgroundColor: Colors.theme_color,
+        borderRadius: 5,
+    },
+    profilecloseButtonText: {
+        color: Colors.light,
+        fontFamily: "Poppins-Medium"
+    },
+
 })
 export default styles

@@ -446,7 +446,7 @@ const RoleRegisterForm = ({ navigation }) => {
                     <TextInput style={Globalstyles.input} value={facebook} onChangeText={setFacebook}
                         placeholder="Gave Your Facebook Link"
                        placeholderTextColor={Colors.gray} />
-                    <Text style={Globalstyles.title}> Link</Text>
+                    <Text style={Globalstyles.title}>Instagram Link</Text>
                     <TextInput style={Globalstyles.input} value={instagram} onChangeText={setInstagram}
                         placeholder="Gave Your Instagram Link"
                        placeholderTextColor={Colors.gray} />

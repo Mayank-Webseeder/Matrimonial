@@ -1,4 +1,4 @@
-import { Text, View, Image, SafeAreaView, StatusBar, Modal, PermissionsAndroid, Platform } from 'react-native';
+import { Text, View, Image, SafeAreaView, StatusBar, Modal, PermissionsAndroid, Platform, FlatList } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Colors from '../../utils/Colors';
@@ -16,13 +16,17 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UPLOAD_PROFILE_PHOTO } from '../../utils/BaseUrl';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
-
+import { PeoplePosition } from '../../DummyData/DropdownData';
+import { SH } from '../../utils/Dimensions';
 const MyProfile = ({ navigation }) => {
     const [selectedButton, setSelectedButton] = useState('CreateBioData');
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
     const ProfileData = useSelector((state) => state.profile);
     const profileData = ProfileData?.profiledata || {};
+    const [isProfileModalVisible, setProfileModalVisible] = useState(false);
+
+    const [selectedProfile, setSelectedProfile] = useState('');
     const image = profileData?.photoUrl?.[0];
     console.log("profileData", profileData);
     const formattedDate = moment(profileData.dob).format("DD/MM/YYYY");
@@ -31,6 +35,15 @@ const MyProfile = ({ navigation }) => {
         setSelectedButton(buttonName);
         navigation.navigate(buttonName);
     };
+
+    const openModal = () => setProfileModalVisible(true);
+    const closeModal = () => setProfileModalVisible(false);
+
+    const selectProfile = (profile) => {
+        setSelectedProfile(profile);
+        closeModal();
+    };
+
 
     useEffect(() => {
         const requestCameraPermission = async () => {
@@ -75,17 +88,17 @@ const MyProfile = ({ navigation }) => {
         try {
             const token = await AsyncStorage.getItem("userToken");
             if (!token) throw new Error("Authorization token is missing.");
-    
+
             const headers = {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`,
             };
-    
+
             const response = await axios.put(UPLOAD_PROFILE_PHOTO, { photoUrl: base64Data }, { headers });
             console.log("Profile image updated successfully:", response.data);
             const message = response?.data?.message;
             console.log("message", message);
-    
+
             if (message === "Profile image updated successfully.") {
                 console.log("Profile image uploaded, now fetching profile data...");
 
@@ -97,10 +110,10 @@ const MyProfile = ({ navigation }) => {
                     visibilityTime: 3000,
                     autoHide: true,
                 });
-    
+
                 console.log("Navigating to MainApp...");
                 navigation.reset({
-                    index: 0,  
+                    index: 0,
                     routes: [{ name: 'MainApp' }],
                 });
             }
@@ -110,7 +123,7 @@ const MyProfile = ({ navigation }) => {
             } else {
                 console.error("Error uploading profile image:", error.message);
             }
-    
+
             Toast.show({
                 type: 'error',
                 position: 'bottom',
@@ -121,44 +134,43 @@ const MyProfile = ({ navigation }) => {
             });
         }
     };
-    
-    
-    const handleImageUpload = async() => {
+
+
+    const handleImageUpload = async () => {
         ImageCropPicker.openPicker({
             width: 300,
             height: 250,
             cropping: true,
             includeBase64: true,
         })
-        .then(image => {
-            setSelectedImage(image.path);
-            setModalVisible(false);
-            console.log('Selected Image:', image);
-            upload_profile_image(image.data);
-        })
-        .catch(error => {
-            console.error('Image Picking Error:', error);
-        });
+            .then(image => {
+                setSelectedImage(image.path);
+                setModalVisible(false);
+                console.log('Selected Image:', image);
+                upload_profile_image(image.data);
+            })
+            .catch(error => {
+                console.error('Image Picking Error:', error);
+            });
     };
-    
+
     const handleCameraCapture = () => {
         ImageCropPicker.openCamera({
             cropping: true,
             width: 300,
             height: 250,
-            includeBase64: true, 
+            includeBase64: true,
         })
-        .then(image => {
-            setSelectedImage(image.path);
-            setModalVisible(false);
-            console.log('Captured Image:', image);
-            upload_profile_image(image.data);
-        })
-        .catch(error => {
-            console.error('Camera Error:', error);
-        });
+            .then(image => {
+                setSelectedImage(image.path);
+                setModalVisible(false);
+                console.log('Captured Image:', image);
+                upload_profile_image(image.data);
+            })
+            .catch(error => {
+                console.error('Camera Error:', error);
+            });
     };
-    
 
     return (
         <SafeAreaView style={Globalstyles.container}>
@@ -172,7 +184,40 @@ const MyProfile = ({ navigation }) => {
                     <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
                         <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
                     </TouchableOpacity>
-                    <Text style={Globalstyles.headerText}>My Profile</Text>
+                    {/* <Text style={Globalstyles.headerText}>My Profile</Text> */}
+                    <TouchableOpacity onPress={openModal} style={styles.switchButton}>
+                        <Text style={styles.selectedProfileText}>
+                            {selectedProfile || 'Switch Profile'}
+                        </Text>
+                        <AntDesign name="caretdown" color={Colors.theme_color} size={15} style={{ alignSelf: "center", marginBottom: SH(5) }} />
+                    </TouchableOpacity>
+                    <Modal
+                        transparent={true}
+                        visible={isProfileModalVisible}
+                        animationType="fade"
+                        onRequestClose={closeModal}
+                    >
+                        <View style={styles.profilemodalOverlay}>
+                            <View style={styles.profilemodalContainer}>
+                                <Text style={styles.profilemodalTitle}>Choose Profile</Text>
+                                <FlatList
+                                    data={PeoplePosition}
+                                    keyExtractor={(item) => item.value}
+                                    renderItem={({ item }) => (
+                                        <TouchableOpacity
+                                            style={styles.profilemodalItem}
+                                            onPress={() => selectProfile(item.label)}
+                                        >
+                                            <Text style={styles.profilemodalItemText}>{item.label}</Text>
+                                        </TouchableOpacity>
+                                    )}
+                                />
+                                <TouchableOpacity style={styles.profilecloseButton} onPress={closeModal}>
+                                    <Text style={styles.profilecloseButtonText}>Close</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </Modal>
                 </View>
             </View>
 

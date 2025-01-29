@@ -181,7 +181,13 @@ const Pandit = ({ navigation }) => {
           scrollEnabled={false}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.panditListData}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>No Pandit Data Available</Text>
+            </View>
+          }
         />
+
       </ScrollView>
 
       <Modal

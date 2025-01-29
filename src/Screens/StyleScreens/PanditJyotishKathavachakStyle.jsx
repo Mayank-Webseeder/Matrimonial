@@ -232,7 +232,18 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: SH(460),
     left: SW(150)
-  }
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height:SH(200),
+  },
+  emptyText: {
+    fontSize:SF(15),
+    color: Colors.gray,
+    fontFamily: 'Poppins-Regular',
+  },
+  
 
 });
 

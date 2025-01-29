@@ -200,12 +200,10 @@ export const PartnerDrinkingHabit = [
 ]
 
 export const PeoplePosition = [
-  { label: 'Admin', value: 'Admin' },
   { label: 'Activist', value: 'Activist' },
   { label: 'Pandit', value: 'Pandit' },
   { label: 'Kathavachak', value: 'Kathavachak' },
   { label: 'Jyotish', value: 'Jyotish' },
-  { label: 'Member', value: 'Member' },
 ]
 
 export const StateData = [

@@ -58,7 +58,7 @@ const ReportPage = ({ navigation, route }) => {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
-          <Text style={Globalstyles.headerText}>Post a Review</Text>
+          <Text style={Globalstyles.headerText}>Report</Text>
         </View>
         <View style={styles.righticons}>
           <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />

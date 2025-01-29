@@ -251,7 +251,7 @@ const Register = ({ navigation }) => {
                             value={gender}
                             onChange={(item) => setGender(item.value)}
                             style={Globalstyles.input}
-                            
+                            placeholderStyle={{ color: '#E7E7E7' }}
                         />
 
                         {errors.gender && (

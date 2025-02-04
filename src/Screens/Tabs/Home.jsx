@@ -21,6 +21,7 @@ const Home = ({ navigation }) => {
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [biodata, setBiodata] = useState("");
+  const [allbiodata, setallBiodata] = useState("");
   const [mybiodata, setMybiodata] = useState("");
   const [isLoading, setIsLoading] = useState("");
   const GetAll_Biodata = async () => {
@@ -37,8 +38,9 @@ const Home = ({ navigation }) => {
       console.log("headers in profile", headers);
       const res = await axios.get(GET_ALL_BIODATA_PROFILES, { headers });
       const biodata = res.data.data;
+      console.log("biodata",biodata);
       dispatch(setAllBiodata(biodata));
-      setBiodata(biodata);
+      setallBiodata(biodata);
     } catch (error) {
       console.error(
         "Error fetching profile:",
@@ -149,7 +151,7 @@ const Home = ({ navigation }) => {
           />
 
           <FlatList
-            data={biodata}
+            data={allbiodata}
             keyExtractor={(item) => item.user._id}
             renderItem={({ item }) => (
               <View style={styles.imageWrapper}>
@@ -167,8 +169,12 @@ const Home = ({ navigation }) => {
             )}
             horizontal={true}
             showsHorizontalScrollIndicator={false}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>No Matrimonial Profile Created Yet</Text>
+              </View>
+            }
           />
-
 
         </View>
 

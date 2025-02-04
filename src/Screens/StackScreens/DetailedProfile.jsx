@@ -21,7 +21,7 @@ import {
 } from '../../DummyData/DropdownData';
 
 const DetailedProfile = ({ navigation }) => {
-  const [isEditing, setIsEditing] = useState(true);
+  const [isEditing, setIsEditing] = useState(!myBiodata);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const MyprofileData = useSelector((state) => state.getBiodata);
   const myBiodata = MyprofileData?.Biodata?.personalDetails;
@@ -101,6 +101,14 @@ const DetailedProfile = ({ navigation }) => {
       }));
     }
   };
+
+  useEffect(() => {
+    if (myBiodata) {
+      setBiodata(myBiodata);
+      setIsEditing(false);
+    }
+  }, [myBiodata]);
+
 
   const handleImageSelection = (field) => {
     ImageCropPicker.openPicker({
@@ -292,18 +300,18 @@ const DetailedProfile = ({ navigation }) => {
     'knowCooking', 'dietaryHabit', 'smokingHabit', 'drinkingHabit', 'tobaccoHabits', 'hobbies',
     'closeUpPhoto', 'fullPhoto', 'bestPhoto'
   ];
-  
+
   const validateRequiredFields = (biodata) => {
     const newErrors = {};
     requiredFields.forEach(field => {
       if (!biodata[field] || biodata[field].trim() === '') {
-        newErrors[field] = `${field} is required`; 
+        newErrors[field] = `${field} is required`;
       }
     });
-    setErrors(newErrors);  
+    setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-  
+
 
   const constructPayload = (biodata, originalBiodata, isNew = false) => {
     const keys = [
@@ -334,20 +342,19 @@ const DetailedProfile = ({ navigation }) => {
 
   const handleSave = async () => {
     const isValid = validateRequiredFields(biodata);
-    if (!isValid) {
-      return; 
-    }
+    if (!isValid) return;
+
     try {
-      const token = await AsyncStorage.getItem('userToken');
-      if (!token) throw new Error('No token found');
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) throw new Error("No token found");
 
       const headers = {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
 
       const payload = biodata?._id
-        ? constructPayload(biodata, originalBiodata)
+        ? constructPayload(biodata, myBiodata)
         : constructPayload(biodata, {}, true);
 
       if (Object.keys(payload).length === 0) {
@@ -361,52 +368,32 @@ const DetailedProfile = ({ navigation }) => {
       const endpoint = biodata?._id ? UPDATE_PERSONAL_DETAILS : CREATE_PERSONAL_DETAILS;
 
       const response = await apiCall(endpoint, payload, { headers });
-      console.log('Save response:', response.data);
+      console.log("Save response:", response.data);
 
       const message = response?.data?.data?.message;
 
-      if (message === "Personal details created successfully.") {
+      if (message.includes("successfully")) {
         Toast.show({
-          type: 'success',
-          text1: 'Personal details created successfully.',
-          text2: 'Your details have been saved!',
-          position: 'top',
+          type: "success",
+          text1: message,
+          text2: "Your details have been saved!",
+          position: "top",
           visibilityTime: 5000,
-          textStyle: { fontSize: 12, color: 'green' },
-        });
-      } else if (message === "Personal details updated successfully.") {
-        Toast.show({
-          type: 'success',
-          text1: 'Personal details updated successfully.',
-          text2: 'Your changes have been saved!',
-          position: 'top',
-          visibilityTime: 1000,
-          textStyle: { fontSize: 12, color: 'blue' },
-        });
-      } else {
-        Toast.show({
-          type: 'info',
-          text1: 'Unexpected response',
-          text2: message || 'Something went wrong',
-          position: 'top',
-          visibilityTime: 5000,
-          textStyle: { fontSize: 12, color: 'orange' },
+          textStyle: { fontSize: 12, color: message.includes("created") ? "green" : "blue" },
         });
       }
 
-      setOriginalBiodata(biodata);
-      setIsEditing(false);
+      setIsEditing(false); // Save hone ke baad edit mode band ho jaye
       navigation.navigate("MainPartnerPrefrence");
-
     } catch (error) {
-      console.error('Error saving biodata:', error);
+      console.error("Error saving biodata:", error);
       Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: error.response?.data?.message || error.message || 'Something went wrong',
-        position: 'top',
+        type: "error",
+        text1: "Error",
+        text2: error.response?.data?.message || error.message || "Something went wrong",
+        position: "top",
         visibilityTime: 1000,
-        textStyle: { fontSize: 12, color: 'red' },
+        textStyle: { fontSize: 12, color: "red" },
       });
     }
   };
@@ -431,148 +418,150 @@ const DetailedProfile = ({ navigation }) => {
         <View style={Globalstyles.form}>
           <View style={styles.detail}>
             <Text style={styles.Formtitle}>Personal Details</Text>
-            <TouchableOpacity onPress={() => setIsEditing(true)}>
-              <Text style={styles.detailText}>Edit</Text>
-            </TouchableOpacity>
+            {!isEditing && (
+              <TouchableOpacity onPress={() => setIsEditing(true)}>
+                <Text style={styles.detailText}>Edit</Text>
+              </TouchableOpacity>
+            )}
           </View>
           <View>
-  {/* Sub-Caste Field */}
-  <Text style={Globalstyles.title}>Sub-Caste</Text>
-  <TextInput
-    style={[Globalstyles.input, { borderColor: errors.subCaste ? 'red' : '#ccc' }]}
-    value={biodata?.subCaste}
-    onChangeText={handleSubCasteInputChange}
-    placeholder="Enter your sub caste"
-    placeholderTextColor={Colors.gray}
-  />
-  {filteredSubCaste.length > 0 && subCasteInput ? (
-    <FlatList
-      data={filteredSubCaste.slice(0, 5)}
-      scrollEnabled={false}
-      keyExtractor={(item, index) => index.toString()}
-      renderItem={({ item }) => (
-        <TouchableOpacity onPress={() => handleSubCasteSelect(item)}>
-          <Text style={Globalstyles.listItem}>{item}</Text>
-        </TouchableOpacity>
-      )}
-      style={Globalstyles.suggestions}
-    />
-  ) : null}
-  {errors.subCaste && <Text style={{ color: 'red', fontSize: 12 }}>{errors.subCaste}</Text>}
-</View>
+            {/* Sub-Caste Field */}
+            <Text style={Globalstyles.title}>Sub-Caste</Text>
+            <TextInput
+              style={[Globalstyles.input, { borderColor: errors.subCaste ? 'red' : '#ccc' }]}
+              value={biodata?.subCaste}
+              onChangeText={handleSubCasteInputChange}
+              placeholder="Enter your sub caste"
+              placeholderTextColor={Colors.gray}
+            />
+            {filteredSubCaste.length > 0 && subCasteInput ? (
+              <FlatList
+                data={filteredSubCaste.slice(0, 5)}
+                scrollEnabled={false}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) => (
+                  <TouchableOpacity onPress={() => handleSubCasteSelect(item)}>
+                    <Text style={Globalstyles.listItem}>{item}</Text>
+                  </TouchableOpacity>
+                )}
+                style={Globalstyles.suggestions}
+              />
+            ) : null}
+            {errors.subCaste && <Text style={{ color: 'red', fontSize: 12 }}>{errors.subCaste}</Text>}
+          </View>
 
-<View>
-  {/* Full Name Field */}
-  <Text style={Globalstyles.title}>Full Name</Text>
-  <TextInput
-    style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.fullname ? 'red' : '#ccc' }]}
-    value={biodata?.fullname}
-    editable={isEditing}
-    onChangeText={(text) => handleInputChange("fullname", text)}
-    placeholder="Enter Your Full Name"
-    placeholderTextColor={Colors.gray}
-  />
-  {errors.fullname && <Text style={{ color: 'red', fontSize: 12 }}>{errors.fullname}</Text>}
-</View>
+          <View>
+            {/* Full Name Field */}
+            <Text style={Globalstyles.title}>Full Name</Text>
+            <TextInput
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.fullname ? 'red' : '#ccc' }]}
+              value={biodata?.fullname}
+              editable={isEditing}
+              onChangeText={(text) => handleInputChange("fullname", text)}
+              placeholder="Enter Your Full Name"
+              placeholderTextColor={Colors.gray}
+            />
+            {errors.fullname && <Text style={{ color: 'red', fontSize: 12 }}>{errors.fullname}</Text>}
+          </View>
 
-<View>
-  {/* Date of Birth Field */}
-  <Text style={Globalstyles.title}>Date of Birth</Text>
-  <TextInput
-    style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.dob ? 'red' : '#ccc' }]}
-    value={biodata.dob ? formatDate(biodata.dob) : ""}
-    editable={isEditing}
-    onFocus={() => setShowDatePicker(true)}
-    placeholder="Select your date of birth"
-    placeholderTextColor={Colors.gray}
-  />
-  {errors.dob && <Text style={{ color: 'red', fontSize: 12 }}>{errors.dob}</Text>}
+          <View>
+            {/* Date of Birth Field */}
+            <Text style={Globalstyles.title}>Date of Birth</Text>
+            <TextInput
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.dob ? 'red' : '#ccc' }]}
+              value={biodata.dob ? formatDate(biodata.dob) : ""}
+              editable={isEditing}
+              onFocus={() => setShowDatePicker(true)}
+              placeholder="Select your date of birth"
+              placeholderTextColor={Colors.gray}
+            />
+            {errors.dob && <Text style={{ color: 'red', fontSize: 12 }}>{errors.dob}</Text>}
 
-  {showDatePicker && (
-    <DateTimePicker
-      value={biodata.dob || new Date()}
-      mode="date"
-      display="default"
-      onChange={(event, selectedDate) => handleDateChange(event, selectedDate)}
-    />
-  )}
-</View>
+            {showDatePicker && (
+              <DateTimePicker
+                value={biodata.dob || new Date()}
+                mode="date"
+                display="default"
+                onChange={(event, selectedDate) => handleDateChange(event, selectedDate)}
+              />
+            )}
+          </View>
 
-<View>
-  {/* Time of Birth */}
-  <Text style={Globalstyles.title}>Time of Birth</Text>
-  <TextInput
-    style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.timeOfBirth ? 'red' : '#ccc' }]}
-    value={biodata.timeOfBirth}
-    editable={isEditing}
-    onFocus={() => setShowTimePicker(true)}
-    placeholder="HH:MM AM/PM"
-    placeholderTextColor={Colors.gray}
-  />
-  {showTimePicker && (
-    <DateTimePicker
-      value={new Date()}
-      mode="time"
-      display="spinner"
-      is24Hour={false}
-      onChange={handleTimeChange}
-    />
-  )}
-  {errors.timeOfBirth && <Text style={{ color: 'red', fontSize: 12 }}>{errors.timeOfBirth}</Text>}
-</View>
+          <View>
+            {/* Time of Birth */}
+            <Text style={Globalstyles.title}>Time of Birth</Text>
+            <TextInput
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.timeOfBirth ? 'red' : '#ccc' }]}
+              value={biodata.timeOfBirth}
+              editable={isEditing}
+              onFocus={() => setShowTimePicker(true)}
+              placeholder="HH:MM AM/PM"
+              placeholderTextColor={Colors.gray}
+            />
+            {showTimePicker && (
+              <DateTimePicker
+                value={new Date()}
+                mode="time"
+                display="spinner"
+                is24Hour={false}
+                onChange={handleTimeChange}
+              />
+            )}
+            {errors.timeOfBirth && <Text style={{ color: 'red', fontSize: 12 }}>{errors.timeOfBirth}</Text>}
+          </View>
 
-<View>
-  {/* Place of Birth */}
-  <Text style={Globalstyles.title}>Place of Birth</Text>
-  <TextInput
-    style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.placeofbirth ? 'red' : '#ccc' }]}
-    value={biodata.placeofbirth}
-    editable={isEditing}
-    onChangeText={(text) => handleInputChange("placeofbirth", text)}
-    placeholder="Enter Your Birth Place"
-    placeholderTextColor={Colors.gray}
-  />
-  {errors.placeofbirth && <Text style={{ color: 'red', fontSize: 12 }}>{errors.placeofbirth}</Text>}
-</View>
+          <View>
+            {/* Place of Birth */}
+            <Text style={Globalstyles.title}>Place of Birth</Text>
+            <TextInput
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.placeofbirth ? 'red' : '#ccc' }]}
+              value={biodata.placeofbirth}
+              editable={isEditing}
+              onChangeText={(text) => handleInputChange("placeofbirth", text)}
+              placeholder="Enter Your Birth Place"
+              placeholderTextColor={Colors.gray}
+            />
+            {errors.placeofbirth && <Text style={{ color: 'red', fontSize: 12 }}>{errors.placeofbirth}</Text>}
+          </View>
 
-<View>
-  {/* Marital Status */}
-  <Text style={Globalstyles.title}>Marital Status</Text>
-  <Dropdown
-    style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.maritalStatus ? 'red' : '#ccc' }]}
-    data={maritalStatusData}
-    labelField="label"
-    valueField="value"
-    value={biodata.maritalStatus}
-    editable={isEditing}
-    onChange={(text) => handleInputChange("maritalStatus", text.value)}
-    placeholder="Select marital status"
-    placeholderStyle={{ color: '#E7E7E7' }}
-  />
-  {errors.maritalStatus && <Text style={{ color: 'red', fontSize: 12 }}>{errors.maritalStatus}</Text>}
-</View>
+          <View>
+            {/* Marital Status */}
+            <Text style={Globalstyles.title}>Marital Status</Text>
+            <Dropdown
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.maritalStatus ? 'red' : '#ccc' }]}
+              data={maritalStatusData}
+              labelField="label"
+              valueField="value"
+              value={biodata.maritalStatus}
+              editable={isEditing}
+              onChange={(text) => handleInputChange("maritalStatus", text.value)}
+              placeholder="Select marital status"
+              placeholderStyle={{ color: '#E7E7E7' }}
+            />
+            {errors.maritalStatus && <Text style={{ color: 'red', fontSize: 12 }}>{errors.maritalStatus}</Text>}
+          </View>
 
-<View>
-  {/* Disabilities */}
-  <Text style={Globalstyles.title}>Disabilities (physical, mental, etc.)</Text>
-  <Dropdown
-    style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.disabilities ? 'red' : '#ccc' }]}
-    data={MyDisabilities}
-    labelField="label"
-    valueField="value"
-    value={biodata.disabilities}
-    editable={isEditing}
-    onChange={(text) => handleInputChange("disabilities", text.value)}
-    placeholder="Select disability"
-    placeholderStyle={{ color: '#E7E7E7' }}
-  />
-  {errors.disabilities && <Text style={{ color: 'red', fontSize: 12 }}>{errors.disabilities}</Text>}
-</View>
+          <View>
+            {/* Disabilities */}
+            <Text style={Globalstyles.title}>Disabilities (physical, mental, etc.)</Text>
+            <Dropdown
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.disabilities ? 'red' : '#ccc' }]}
+              data={MyDisabilities}
+              labelField="label"
+              valueField="value"
+              value={biodata.disabilities}
+              editable={isEditing}
+              onChange={(text) => handleInputChange("disabilities", text.value)}
+              placeholder="Select disability"
+              placeholderStyle={{ color: '#E7E7E7' }}
+            />
+            {errors.disabilities && <Text style={{ color: 'red', fontSize: 12 }}>{errors.disabilities}</Text>}
+          </View>
 
           <View>
             <Text style={Globalstyles.title}>Height</Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly,{ borderColor: errors.heightFeet ? 'red' : '#ccc' }]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.heightFeet ? 'red' : '#ccc' }]}
               data={heightData}
               labelField="label"
               valueField="value"
@@ -587,7 +576,7 @@ const DetailedProfile = ({ navigation }) => {
           <View>
             <Text style={Globalstyles.title}>Weight (in kg)</Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly,{ borderColor: errors.weight ? 'red' : '#ccc' }]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.weight ? 'red' : '#ccc' }]}
               data={weightData}
               labelField="label"
               valueField="value"
@@ -597,12 +586,12 @@ const DetailedProfile = ({ navigation }) => {
               placeholder="Weight"
               placeholderStyle={{ color: '#E7E7E7' }}
             />
-             {errors.weight && <Text style={{ color: 'red', fontSize: 12 }}>{errors.weight}</Text>}
+            {errors.weight && <Text style={{ color: 'red', fontSize: 12 }}>{errors.weight}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Complexion</Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly,{ borderColor: errors.complexion ? 'red' : '#ccc' }]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.complexion ? 'red' : '#ccc' }]}
               data={MyComplexionData}
               labelField="label"
               valueField="value"
@@ -617,7 +606,7 @@ const DetailedProfile = ({ navigation }) => {
           <View>
             <Text style={Globalstyles.title}>Manglik Status</Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.currentCity ? 'red' : '#ccc' }]}
               data={ManglikStatusData}
               labelField="label"
               valueField="value"
@@ -664,7 +653,7 @@ const DetailedProfile = ({ navigation }) => {
           <View>
             <Text style={Globalstyles.title}>Qualification</Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly,{ borderColor: errors.qualification ? 'red' : '#ccc' }]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.qualification ? 'red' : '#ccc' }]}
               data={QualificationData}
               labelField="label"
               valueField="value"
@@ -680,7 +669,7 @@ const DetailedProfile = ({ navigation }) => {
           <View>
             <Text style={Globalstyles.title}>Occupation</Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly,{borderColor: errors.occupation ? 'red' : '#ccc'}]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.occupation ? 'red' : '#ccc' }]}
               data={OccupationData}
               labelField="label"
               valueField="value"
@@ -696,7 +685,7 @@ const DetailedProfile = ({ navigation }) => {
           <View>
             <Text style={Globalstyles.title}>Income (Annually)</Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly,{borderColor: errors.annualIncome ? 'red' : '#ccc'}]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.annualIncome ? 'red' : '#ccc' }]}
               data={Income}
               labelField="label"
               valueField="value"
@@ -707,12 +696,12 @@ const DetailedProfile = ({ navigation }) => {
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
             />
-{errors.annualIncome && <Text style={{ color: 'red', fontSize: 12 }}>{errors.annualIncome}</Text>}
+            {errors.annualIncome && <Text style={{ color: 'red', fontSize: 12 }}>{errors.annualIncome}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Are you living with Family</Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly,{borderColor: errors.livingStatus ? 'red' : '#ccc'}]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.livingStatus ? 'red' : '#ccc' }]}
               data={LivingData}
               labelField="label"
               valueField="value"
@@ -753,7 +742,7 @@ const DetailedProfile = ({ navigation }) => {
           <View>
             <Text style={Globalstyles.title}>About Me</Text>
             <TextInput
-              style={[Globalstyles.textInput, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.currentCity ? 'red' : '#ccc' }]}
               multiline={true}
               numberOfLines={6}
               value={biodata.aboutMe}
@@ -763,12 +752,13 @@ const DetailedProfile = ({ navigation }) => {
               placeholderTextColor={Colors.gray}
               textAlignVertical="top"
             />
+            {errors.aboutMe && <Text style={{ color: 'red', fontSize: 12 }}>{errors.aboutMe}</Text>}
           </View>
 
           <View>
             <Text style={Globalstyles.title}>Mobile no.</Text>
             <TextInput
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.currentCity ? 'red' : '#ccc' }]}
               value={biodata.mobileNo}
               onChangeText={(text) => handleInputChange("mobileNo", text)}
               keyboardType="phone-pad"
@@ -778,10 +768,11 @@ const DetailedProfile = ({ navigation }) => {
               placeholder='Enter Your Mobile no.'
             />
           </View>
+          {errors.mobileNo && <Text style={{ color: 'red', fontSize: 12 }}>{errors.mobileNo}</Text>}
           <View>
             <Text style={Globalstyles.title}>Profile created by</Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.currentCity ? 'red' : '#ccc' }]}
               data={ProfileCreatedData}
               labelField="label"
               valueField="value"
@@ -792,34 +783,37 @@ const DetailedProfile = ({ navigation }) => {
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
             />
+            {errors.profileCreatedBy && <Text style={{ color: 'red', fontSize: 12 }}>{errors.profileCreatedBy}</Text>}
           </View>
           <Text style={styles.headText}>Family details </Text>
           <View>
             <Text style={Globalstyles.title}>Father Full Name</Text>
             <TextInput
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.currentCity ? 'red' : '#ccc' }]}
               value={biodata.fatherName}
               onChangeText={(text) => handleInputChange("fatherName", text)}
               editable={isEditing}
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Father Name'
             />
+            {errors.fatherName && <Text style={{ color: 'red', fontSize: 12 }}>{errors.fatherName}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Mother Full Name</Text>
             <TextInput
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.currentCity ? 'red' : '#ccc' }]}
               value={biodata.motherName}
               onChangeText={(text) => handleInputChange("motherName", text)}
               editable={isEditing}
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Mother Name'
             />
+            {errors.motherName && <Text style={{ color: 'red', fontSize: 12 }}>{errors.motherName}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Father Occupation</Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.currentCity ? 'red' : '#ccc' }]}
               data={OccupationData}
               labelField="label"
               valueField="value"
@@ -830,11 +824,12 @@ const DetailedProfile = ({ navigation }) => {
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
             />
+            {errors.fatherOccupation && <Text style={{ color: 'red', fontSize: 12 }}>{errors.fatherOccupation}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Father Income (Annually)</Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.currentCity ? 'red' : '#ccc' }]}
               data={Income}
               labelField="label"
               valueField="value"
@@ -845,12 +840,12 @@ const DetailedProfile = ({ navigation }) => {
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
             />
-
+            {errors.fatherIncomeAnnually && <Text style={{ color: 'red', fontSize: 12 }}>{errors.fatherIncomeAnnually}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Mother Occupation (If any)</Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.currentCity ? 'red' : '#ccc' }]}
               data={OccupationData}
               labelField="label"
               valueField="value"
@@ -861,11 +856,12 @@ const DetailedProfile = ({ navigation }) => {
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
             />
+            {errors.motherOccupation && <Text style={{ color: 'red', fontSize: 12 }}>{errors.motherOccupation}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Mother Income (Annually)</Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.currentCity ? 'red' : '#ccc' }]}
               data={Income}
               labelField="label"
               valueField="value"
@@ -876,12 +872,13 @@ const DetailedProfile = ({ navigation }) => {
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
             />
+            {errors.motherIncomeAnnually && <Text style={{ color: 'red', fontSize: 12 }}>{errors.motherIncomeAnnually}</Text>}
           </View>
 
           <View>
             <Text style={Globalstyles.title}>Family Type</Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.currentCity ? 'red' : '#ccc' }]}
               data={FamilyType}
               labelField="label"
               valueField="value"
@@ -892,11 +889,12 @@ const DetailedProfile = ({ navigation }) => {
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
             />
+            {errors.familyType && <Text style={{ color: 'red', fontSize: 12 }}>{errors.familyType}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Siblings</Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.currentCity ? 'red' : '#ccc' }]}
               data={siblings}
               labelField="label"
               valueField="value"
@@ -907,11 +905,12 @@ const DetailedProfile = ({ navigation }) => {
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
             />
+            {errors.siblings && <Text style={{ color: 'red', fontSize: 12 }}>{errors.siblings}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Any family member info. (optinal)</Text>
             <TextInput
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.currentCity ? 'red' : '#ccc' }]}
               value={biodata.otherFamilyMemberInfo}
               onChangeText={(text) => handleInputChange("otherFamilyMemberInfo", text)}
               multiline={true}
@@ -920,11 +919,12 @@ const DetailedProfile = ({ navigation }) => {
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Family Info.'
             />
+
           </View>
           <View>
             <Text style={Globalstyles.title}>Contact No. 1</Text>
             <TextInput
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.currentCity ? 'red' : '#ccc' }]}
               value={biodata.contactNumber1}
               onChangeText={(text) => handleInputChange("contactNumber1", text)}
               keyboardType="phone-pad"
@@ -933,12 +933,13 @@ const DetailedProfile = ({ navigation }) => {
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Contact No. 1'
             />
+            {errors.contactNumber1 && <Text style={{ color: 'red', fontSize: 12 }}>{errors.contactNumber1}</Text>}
           </View>
 
           <View>
             <Text style={Globalstyles.title}>Contact No. 2</Text>
             <TextInput
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.currentCity ? 'red' : '#ccc' }]}
               value={biodata.contactNumber2}
               onChangeText={(text) => handleInputChange("contactNumber2", text)}
               keyboardType="phone-pad"
@@ -947,6 +948,7 @@ const DetailedProfile = ({ navigation }) => {
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Contact No. 2'
             />
+            {errors.contactNumber2 && <Text style={{ color: 'red', fontSize: 12 }}>{errors.contactNumber2}</Text>}
           </View>
           <View>
             <Text style={styles.headText}> Address</Text>
@@ -972,6 +974,7 @@ const DetailedProfile = ({ navigation }) => {
                 style={Globalstyles.suggestions}
               />
             ) : null}
+            {errors.state && <Text style={{ color: 'red', fontSize: 12 }}>{errors.state}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>City/Village</Text>
@@ -995,12 +998,13 @@ const DetailedProfile = ({ navigation }) => {
                 style={Globalstyles.suggestions}
               />
             ) : null}
+            {errors.cityOrVillage && <Text style={{ color: 'red', fontSize: 12 }}>{errors.cityOrVillage}</Text>}
           </View>
           <Text style={styles.headText}>Other Personal Detail</Text>
           <View>
             <Text style={Globalstyles.title}>Do you know cooking</Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.currentCity ? 'red' : '#ccc' }]}
               data={CookingStatus}
               labelField="label"
               valueField="value"
@@ -1011,11 +1015,12 @@ const DetailedProfile = ({ navigation }) => {
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
             />
+            {errors.knowCooking && <Text style={{ color: 'red', fontSize: 12 }}>{errors.knowCooking}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}> Dietary Habits</Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.currentCity ? 'red' : '#ccc' }]}
               data={DietHabit}
               labelField="label"
               valueField="value"
@@ -1026,11 +1031,12 @@ const DetailedProfile = ({ navigation }) => {
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
             />
+            {errors.dietaryHabit && <Text style={{ color: 'red', fontSize: 12 }}>{errors.dietaryHabit}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Smoking Habits</Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.currentCity ? 'red' : '#ccc' }]}
               data={smokingStatusData}
               labelField="label"
               valueField="value"
@@ -1041,11 +1047,12 @@ const DetailedProfile = ({ navigation }) => {
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
             />
+            {errors.smokingHabit && <Text style={{ color: 'red', fontSize: 12 }}>{errors.smokingHabit}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Drinking Habits</Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.currentCity ? 'red' : '#ccc' }]}
               data={DrinkingHabit}
               labelField="label"
               valueField="value"
@@ -1056,11 +1063,12 @@ const DetailedProfile = ({ navigation }) => {
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
             />
+            {errors.drinkingHabit && <Text style={{ color: 'red', fontSize: 12 }}>{errors.drinkingHabit}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Tabacoo Habits</Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.currentCity ? 'red' : '#ccc' }]}
               data={TobacooHabit}
               labelField="label"
               valueField="value"
@@ -1071,12 +1079,12 @@ const DetailedProfile = ({ navigation }) => {
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
             />
-
+            {errors.tobaccoHabits && <Text style={{ color: 'red', fontSize: 12 }}>{errors.tobaccoHabits}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Your Hobbies</Text>
             <TextInput
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, { borderColor: errors.currentCity ? 'red' : '#ccc' }]}
               value={biodata.hobbies}
               onChangeText={(text) => handleInputChange("hobbies", text)}
               multiline={true}
@@ -1085,6 +1093,7 @@ const DetailedProfile = ({ navigation }) => {
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Hobbies'
             />
+            {errors.hobbies && <Text style={{ color: 'red', fontSize: 12 }}>{errors.hobbies}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Upload Your One Closeup Image</Text>
@@ -1100,6 +1109,7 @@ const DetailedProfile = ({ navigation }) => {
                 </Text>
               )}
             </TouchableOpacity>
+            {errors.closeUpPhoto && <Text style={{ color: 'red', fontSize: 12 }}>{errors.closeUpPhoto}</Text>}
           </View>
 
           <View>
@@ -1116,6 +1126,7 @@ const DetailedProfile = ({ navigation }) => {
                 </Text>
               )}
             </TouchableOpacity>
+            {errors.fullPhoto && <Text style={{ color: 'red', fontSize: 12 }}>{errors.fullPhoto}</Text>}
           </View>
 
           <View>
@@ -1132,13 +1143,12 @@ const DetailedProfile = ({ navigation }) => {
                 </Text>
               )}
             </TouchableOpacity>
+            {errors.bestPhoto && <Text style={{ color: 'red', fontSize: 12 }}>{errors.bestPhoto}</Text>}
           </View>
-
-
 
           {isEditing && (
             <TouchableOpacity style={styles.button} onPress={handleSave}>
-              <Text style={styles.buttonText}>Continue</Text>
+              <Text style={styles.buttonText}>{biodata?._id ? "Save" : "Continue"}</Text>
             </TouchableOpacity>
           )}
 

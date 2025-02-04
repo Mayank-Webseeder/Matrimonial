@@ -18,9 +18,11 @@ import Toast from 'react-native-toast-message';
 const MatrimonyPeopleProfile = ({ navigation }) => {
   const route = useRoute();
   const { userDetails, userId } = route.params || {};
+  console.log("userDetails",userDetails,"userId",userId)
   const user = userDetails.user || {};
+  console.log("user",user);
   const id=user?._id;
-  console.log("user",id);
+  console.log("id",id);
   const userpersonalDetails = userDetails.personalDetails || {};
   // console.log("user", userpersonalDetails)
   const partnerPreferences = userDetails.partnerPreferences || {};
@@ -30,35 +32,35 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
   // console.log("MyprofileData", MyprofileData);
 
-  useEffect(() => {
-    if (userId) {
-      fetchUserProfile(userId);
-    }
-  }, [userId]);
+  // useEffect(() => {
+  //   if (userId) {
+  //     fetchUserProfile(userId);
+  //   }
+  // }, [userId]);
 
   // Function to fetch profile details
 
-const fetchUserProfile = async (id) => {
-    setLoading(true);
-    const token = await AsyncStorage.getItem('userToken');
-    if (!token) throw new Error('No token found');
+// const fetchUserProfile = async (id) => {
+//     setLoading(true);
+//     const token = await AsyncStorage.getItem('userToken');
+//     if (!token) throw new Error('No token found');
 
-    const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    };
+//     const headers = {
+//       'Content-Type': 'application/json',
+//       'Authorization': `Bearer ${token}`,
+//     };
 
-    try {
-      const response = await axios.get(`${MATCHED_PROFILE}/${id}`, { headers });
-      if (response.data.status === "success") {
-        setProfileData(response.data);
-      }
-    } catch (error) {
-      console.error("Error fetching profile:", error);
-    } finally {
-      setLoading(false);
-    }
-};
+//     try {
+//       const response = await axios.get(`${MATCHED_PROFILE}/${id}`, { headers });
+//       if (response.data.status === "success") {
+//         setProfileData(response.data);
+//       }
+//     } catch (error) {
+//       console.error("Error fetching profile:", error);
+//     } finally {
+//       setLoading(false);
+//     }
+// };
 
 const sendInterestRequest = async () => {
   if (!id) {
@@ -110,13 +112,18 @@ const sendInterestRequest = async () => {
 
 
 
-  if (loading) {
-    return <ActivityIndicator size="large" color={Colors.theme_color} />;
-  }
+// if (loading) {
+//   return (
+//     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+//       <ActivityIndicator size="large" color={Colors.theme_color} />
+//     </View>
+//   );
+// }
 
-  if (!profileData) {
-    return <Text>No data found!</Text>;
-  }
+
+  // if (!profileData) {
+  //   return <Text>No data found!</Text>;
+  // }
 
   // Map API comparisonResults to UI labels
   const comparisonResults = profileData?.comparisonResults || {};

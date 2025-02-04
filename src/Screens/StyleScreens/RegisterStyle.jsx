@@ -54,7 +54,14 @@ const styles = StyleSheet.create({
         width: "100%",
         marginBottom: SH(20)
     },
-
+    otpButton:{
+     paddingHorizontal:SW(5)
+    },
+    otpButtonText:{
+     color:Colors.theme_color,
+     fontFamily:"Poppins-Bold",
+     fontSize:SF(13),
+    },
     buttonText: {
         textAlign: "center",
         color: Colors.light,

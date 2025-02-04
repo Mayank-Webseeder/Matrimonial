@@ -80,7 +80,18 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.theme_color,
     marginTop: SW(100)
   },
-
+  emptyContainer: {
+    width: '100%',
+    paddingHorizontal: SW(50), 
+    paddingVertical:SH(25)
+},
+emptyText: {
+    fontSize: SF(15),
+    color: Colors.gray,
+    fontFamily: 'Poppins-Regular',
+    textAlign: 'center',
+    lineHeight: SF(22),
+}
 });
 
 export default styles;

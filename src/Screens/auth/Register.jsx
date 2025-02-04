@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { Text, View, ImageBackground, TouchableOpacity, TextInput, ScrollView, SafeAreaView, ActivityIndicator, FlatList, Image } from "react-native";
+import { Text, View, ImageBackground, TouchableOpacity, TextInput, ScrollView, SafeAreaView, ActivityIndicator, FlatList } from "react-native";
 import styles from "../StyleScreens/RegisterStyle";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Dropdown } from 'react-native-element-dropdown';
 import Colors from "../../utils/Colors";
 import axios from "axios";
-import { SIGNUP_ENDPOINT } from "../../utils/BaseUrl";
+import { SIGNUP_ENDPOINT, OTP_ENDPOINT } from "../../utils/BaseUrl";
 import Toast from "react-native-toast-message";
 import { CityData, genderData } from "../../DummyData/DropdownData";
 import Globalstyles from "../../utils/GlobalCss";
@@ -29,7 +29,8 @@ const Register = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [selectedImageName, setSelectedImageName] = useState("Upload Image");
     const [selectedImage, setSelectedImage] = useState(null);
-
+    const [otpSent, setOtpSent] = useState(false);
+    const [isOtpLoading, setIsOtpLoading] = useState(false);
 
     const handleImageUpload = () => {
         ImageCropPicker.openPicker({
@@ -49,24 +50,6 @@ const Register = ({ navigation }) => {
                 console.error('Image Picking Error:', error);
             });
     };
-    
-
-    const validateFields = () => {
-        const newErrors = {};
-        if (!mobileNumber) newErrors.mobileNumber = "Mobile number is required.";
-        else if (!/^\d{10}$/.test(mobileNumber)) newErrors.mobileNumber = "Enter a valid 10-digit mobile number.";
-        if (!fullName) newErrors.fullName = "Full name is required.";
-        if (!selectedDate) newErrors.selectedDate = "Date of Birth is required.";
-        if (!cityInput.trim()) {
-            newErrors.selectedCity = "City is required.";
-        }
-        if (!gender) newErrors.gender = "Gender is required.";
-        if (!password) newErrors.password = "Password is required.";
-        if (password !== confirmPassword) newErrors.confirmPassword = "Passwords do not match.";
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
-
 
     const handleCityInputChange = (text) => {
         setCityInput(text);
@@ -79,17 +62,65 @@ const Register = ({ navigation }) => {
         setSelectedCity(exactMatch ? exactMatch.label : null);
     };
 
+    const validateFields = () => {
+        const newErrors = {};
 
-    const HandleSignup = async () => {
-        if (!validateFields()) {
+        if (!mobileNumber) newErrors.mobileNumber = "Mobile number is required.";
+        else if (!/^\d{10}$/.test(mobileNumber)) newErrors.mobileNumber = "Enter a valid 10-digit mobile number.";
+
+        if (!fullName) newErrors.fullName = "Full name is required.";
+        if (!selectedDate) newErrors.selectedDate = "Date of Birth is required.";
+        if (!cityInput.trim()) newErrors.selectedCity = "City is required.";
+        if (!gender) newErrors.gender = "Gender is required.";
+        if (!password) newErrors.password = "Password is required.";
+        if (password !== confirmPassword) newErrors.confirmPassword = "Passwords do not match.";
+        if (!otp) newErrors.otp = "OTP is required.";
+        else if (!/^\d{6}$/.test(otp)) newErrors.otp = "Enter a valid 6-digit OTP.";
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+
+    const handleSendOtp = async () => {
+        if (!/^\d{10}$/.test(mobileNumber)) {
+            Toast.show({ type: "error", text1: "Invalid Number", text2: "Enter a valid 10-digit mobile number" });
+            return;
+        }
+
+        try {
+            setIsOtpLoading(true);
+            const response = await axios.post(OTP_ENDPOINT, { mobileNo: mobileNumber });
+            console.log("OTP Response:", response.data);
+
+            if (response.status === 200 && response.data.success) {
+                setOtpSent(true);  // Mark OTP as sent
+                Toast.show({ type: "success", text1: "OTP Sent", text2: "Check your SMS for the OTP" });
+            } else {
+                throw new Error(response.data.message || "OTP request failed");
+            }
+        } catch (error) {
+            console.error("OTP Error:", error);
+            Toast.show({ type: "error", text1: "OTP Error", text2: "Failed to send OTP. Try again." });
+        } finally {
+            setIsOtpLoading(false);
+        }
+    };
+
+    const handleSignup = async () => {
+        if (!validateFields()) return;
+
+        // Manually entered OTP
+        if (!otp || otp.length !== 6) {
+            Toast.show({ type: "error", text1: "Invalid OTP", text2: "Please enter the correct OTP." });
             return;
         }
 
         setIsLoading(true);
         try {
-            const formattedDate = selectedDate
-            ? `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, "0")}-${selectedDate.getDate().toString().padStart(2, "0")}`
-            : null;        
+            const formattedDate = selectedDate ?
+                `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, "0")}-${selectedDate.getDate().toString().padStart(2, "0")}`
+                : null;
 
             const payload = {
                 username: fullName.trim(),
@@ -98,47 +129,30 @@ const Register = ({ navigation }) => {
                 gender: gender,
                 dob: formattedDate,
                 city: selectedCity || cityInput.trim(),
-                photoUrl: selectedImage,
+                otp: otp,  // Use manually entered OTP
             };
 
-            console.log("payload", payload);
-
+            console.log("SignUp Payload:", payload);
             const response = await axios.post(SIGNUP_ENDPOINT, payload);
-            console.log("response", response.data)
-            const message = response.data.message;
+            console.log("Signup Response:", response.data);
 
-            if (response.status === 200 && message === "User account created successfully.") {
+            if (response.status === 200 && response.data.message === "User account created successfully.") {
                 Toast.show({
                     type: "success",
                     text1: "Sign Up Successful",
                     text2: "You have successfully signed up!",
-                    position: "top",
-                    visibilityTime: 1000,
                     onHide: () => navigation.navigate("Login"),
                 });
             } else {
-                Toast.show({
-                    type: "error",
-                    text1: "Sign Up Error",
-                    text2: message || "Something went wrong!",
-                    position: "top",
-                    visibilityTime: 1000,
-                });
+                throw new Error(response.data.message || "Signup failed");
             }
         } catch (error) {
             console.error("Sign Up Error:", error);
-            Toast.show({
-                type: "error",
-                text1: "Sign Up Error",
-                text2: error.message || "An error occurred. Please try again.",
-                position: "top",
-                visibilityTime: 1000,
-            });
+            Toast.show({ type: "error", text1: "Sign Up Error", text2: error.message || "An error occurred. Please try again." });
         } finally {
-            setIsLoading(false); 
+            setIsLoading(false);
         }
     };
-
 
     const handleDateChange = (event, date) => {
         if (date && date !== selectedDate) {
@@ -215,9 +229,9 @@ const Register = ({ navigation }) => {
                                 renderItem={({ item }) => (
                                     <TouchableOpacity
                                         onPress={() => {
-                                            setCityInput(item); 
-                                            setSelectedCity(item); 
-                                            setFilteredCities([]); 
+                                            setCityInput(item);
+                                            setSelectedCity(item);
+                                            setFilteredCities([]);
                                         }}
                                     >
                                         <Text style={Globalstyles.listItem}>{item}</Text>
@@ -228,8 +242,8 @@ const Register = ({ navigation }) => {
                         ) : cityInput && (
                             <TouchableOpacity
                                 onPress={() => {
-                                    setSelectedCity(cityInput); 
-                                    setFilteredCities([]); 
+                                    setSelectedCity(cityInput);
+                                    setFilteredCities([]);
                                 }}
                             >
                             </TouchableOpacity>
@@ -315,41 +329,37 @@ const Register = ({ navigation }) => {
                             </TouchableOpacity>
                         </View>
 
-
                         {/* Mobile Number */}
                         <Text style={Globalstyles.title}>Mobile Number</Text>
-                        <TextInput
-                            style={Globalstyles.input}
-                            keyboardType="numeric"
-                            placeholder="Enter your mobile number"
-                            value={mobileNumber}
-                            onChangeText={setMobileNumber}
-                            maxLength={10}
-                            placeholderTextColor={Colors.gray}
-                        />
-                        {errors.mobileNumber && (
-                            <Text style={styles.errorText}>{errors.mobileNumber}</Text>
-                        )}
+                        <View style={{ flexDirection: "row", alignItems: "center" }}>
+                            <TextInput
+                                style={[Globalstyles.input, { flex: 1 }]}
+                                keyboardType="numeric"
+                                placeholder="Enter your mobile number"
+                                value={mobileNumber}
+                                onChangeText={setMobileNumber}
+                                maxLength={10}
+                                placeholderTextColor={Colors.gray}
+                                editable={!otpSent}
+                            />
+                            <TouchableOpacity style={styles.otpButton} onPress={handleSendOtp} disabled={isOtpLoading}>
+                                {isOtpLoading ? <ActivityIndicator size="small" color="#fff" /> : <Text style={styles.otpButtonText}>Send OTP</Text>}
+                            </TouchableOpacity>
+
+                        </View>
                         {/* Mobile Number */}
                         <Text style={Globalstyles.title}>Otp</Text>
-                        <TextInput
-                            style={Globalstyles.input}
-                            keyboardType="numeric"
-                            placeholder="Enter your otp"
-                            value={otp}
-                            onChangeText={setOtp}
-                            maxLength={6}
-                            placeholderTextColor={Colors.gray}
-                        />
 
-                        {/* {errors.Otp && (
+                        <TextInput style={Globalstyles.input} keyboardType="numeric" placeholder="Enter OTP" value={otp} onChangeText={setOtp} maxLength={6} />
+
+                        {errors.Otp && (
                             <Text style={styles.errorText}>{errors.Otp}</Text>
-                        )} */}
+                        )}
                     </View>
                     {/* Continue Button */}
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={HandleSignup}
+                        onPress={handleSignup}
                         disabled={isLoading}
                     >
                         {isLoading ? (

@@ -1,7 +1,7 @@
 // auth api's
 const SIGNUP_ENDPOINT = "https://api-matrimonial.webseeder.tech/api/v1/user/signUp";
 const LOGIN_ENDPOINT = "https://api-matrimonial.webseeder.tech/api/v1/user/signIn";
-
+const OTP_ENDPOINT="https://api-matrimonial.webseeder.tech/api/v1/user/sendOTP"
 // profile's apis
 const PROFILE_ENDPOINT = "https://api-matrimonial.webseeder.tech/api/v1/user/view";
 const UPLOAD_PROFILE_PHOTO=" https://api-matrimonial.webseeder.tech/api/v1/user/updateProfileImage";
@@ -34,6 +34,7 @@ const PANDIT_REVIEW="https://api-matrimonial.webseeder.tech/api/v1/pandit/addRev
 export {
     SIGNUP_ENDPOINT,
     LOGIN_ENDPOINT,
+    OTP_ENDPOINT,
     PROFILE_ENDPOINT,
     CREATE_PERSONAL_DETAILS,
     UPDATE_PERSONAL_DETAILS,

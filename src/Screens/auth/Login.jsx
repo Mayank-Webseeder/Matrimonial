@@ -47,41 +47,38 @@ const Login = ({ navigation }) => {
             const token = LoginData.user.token;
 
             console.log("Token from response:", token);
-
-            // Store the token in AsyncStorage
             await AsyncStorage.setItem("userToken", token);
 
-            // Retrieve the token from AsyncStorage to confirm it was stored correctly
             const storedToken = await AsyncStorage.getItem("userToken");
             console.log("Retrieved token from AsyncStorage:", storedToken);
 
             console.log("LoginData:", LoginData);
 
             dispatch(setLoginData(LoginData));
-            const message = response.data.message;
 
-            if (response.status === 200 && message === "Login successful") {
+            if (response.status === 200 && response.data.status) {
                 Toast.show({
                     type: "success",
                     text1: "Login Successful",
-                    text2: "You have Logged in!",
+                    text2: "You have logged in!",
                     position: "top",
-                    visibilityTime: 1000,
-                    textStyle: { fontSize: 10, color: 'green' },
+                    visibilityTime: 2000,
+                    textStyle: { fontSize: 14, color: "white" },
+                    backgroundColor: "green",
+                    onHide: () => navigation.reset({
+                        index: 0,
+                        routes: [{ name: "AppStack" }],
+                    }),
                 });
-                navigation.reset({
-                    index: 0,
-                    routes: [{ name: "AppStack" }],
-                });
-            }
-            else {
+            } else {
                 Toast.show({
                     type: "error",
                     text1: "Login Failed",
-                    text2: response.data.message || "Invalid credentials. Please try again.",
+                    text2: "Invalid credentials. Please try again.",
                     position: "top",
-                    visibilityTime: 1000,
-                    textStyle: { fontSize: 12, color: "red" },
+                    visibilityTime: 2000,
+                    textStyle: { fontSize: 14, color: "white" },
+                    backgroundColor: "red",
                 });
             }
         } catch (error) {
@@ -93,8 +90,9 @@ const Login = ({ navigation }) => {
                     text1: "Unauthorized",
                     text2: "Invalid mobile number or password. Please try again.",
                     position: "top",
-                    visibilityTime: 1000,
-                    textStyle: { fontSize: 10, color: "red" },
+                    visibilityTime: 2000,
+                    textStyle: { fontSize: 14, color: "white" },
+                    backgroundColor: "red",
                 });
             } else {
                 Toast.show({
@@ -102,8 +100,9 @@ const Login = ({ navigation }) => {
                     text1: "Error",
                     text2: "Something went wrong. Please try again.",
                     position: "top",
-                    visibilityTime: 1000,
-                    textStyle: { fontSize: 10, color: "red" },
+                    visibilityTime: 2000,
+                    textStyle: { fontSize: 14, color: "white" },
+                    backgroundColor: "red",
                 });
             }
         } finally {

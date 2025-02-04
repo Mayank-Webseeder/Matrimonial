@@ -26,8 +26,8 @@ const MainPartnerPrefrence = ({ navigation }) => {
         setActiveComponent(componentName);
     };
 
-    const toggleDropdown = () => {
-        setDropdownVisible(!dropdownVisible);
+    const capitalizeFirstLetter = (text) => {
+        return text ? text.charAt(0).toUpperCase() + text.slice(1) : "Unknown";
     };
 
     const renderActiveComponent = () => {
@@ -60,14 +60,14 @@ const MainPartnerPrefrence = ({ navigation }) => {
                     <Image source={image ? { uri: image } : require('../../Images/Profile.png')} style={styles.image} />
                     <View style={styles.userDeatil}>
                         <View>
-                            <Text style={styles.text}>{profileData?.profiledata?.username || 'NA'}</Text>
+                            <Text style={styles.text}>{capitalizeFirstLetter(profileData?.profiledata?.username || 'NA')}</Text>
                             <Text style={styles.text}>DOB: {formattedDate || 'NA'}</Text>
-                            <Text style={styles.text}>City: {profileData?.profiledata?.city || 'NA'}</Text>
+                            <Text style={styles.text}>City: {capitalizeFirstLetter(profileData?.profiledata?.city || 'NA')}</Text>
                         </View>
                         <View>
                             <Text style={styles.text}>
                                 Contact: {profileData?.profiledata?.mobileNo}</Text>
-                            <Text style={styles.text}>Gender: {profileData?.profiledata?.gender || 'NA'}</Text>
+                            <Text style={styles.text}>Gender: {capitalizeFirstLetter(profileData?.profiledata?.gender || 'NA')}</Text>
                         </View>
                     </View>
 
@@ -76,69 +76,60 @@ const MainPartnerPrefrence = ({ navigation }) => {
                 {/* Tab Buttons */}
                 <View style={styles.IconFlex}>
                     <TouchableOpacity
-                        style={[
-                            styles.IconsButton,
-                            activeComponent === "DetailedProfile" && styles.activeTab,
-                        ]}
+                        style={styles.IconsButton}
                         onPress={() => handlePress("DetailedProfile")}
                     >
-                        <AntDesign
-                            name={activeComponent === "DetailedProfile" ? "user" : "user"}
-                            color={activeComponent === "DetailedProfile" ? "white" : Colors.theme_color}
-                            size={20}
-                        />
-                        <Text
+                        <View
                             style={[
-                                styles.logotext,
-                                activeComponent === "DetailedProfile" && styles.activeTabText,
+                                styles.iconWrapper,
+                                activeComponent === "DetailedProfile" && styles.activeIcon,
                             ]}
                         >
-                            Detailed Profile
-                        </Text>
+                            <AntDesign
+                                name="user"
+                                color={activeComponent === "DetailedProfile" ? "white" : Colors.theme_color}
+                                size={20}
+                            />
+                        </View>
+                        <Text style={styles.logotext}>Detailed Profile</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={[
-                            styles.IconsButton,
-                            activeComponent === "PartnersPreference" && styles.activeTab,
-                        ]}
+                        style={styles.IconsButton}
                         onPress={() => handlePress("PartnersPreference")}
                     >
-                        <FontAwesome5
-                            name={activeComponent === "PartnersPreference" ? "user-friends" : "user-friends"}
-                            color={activeComponent === "PartnersPreference" ? "white" : Colors.theme_color}
-                            size={20}
-                        />
-                        <Text
+                        <View
                             style={[
-                                styles.logotext,
-                                activeComponent === "PartnersPreference" && styles.activeTabText,
+                                styles.iconWrapper,
+                                activeComponent === "PartnersPreference" && styles.activeIcon,
                             ]}
                         >
-                            Partner Preference
-                        </Text>
+                            <FontAwesome5
+                                name="user-friends"
+                                color={activeComponent === "PartnersPreference" ? "white" : Colors.theme_color}
+                                size={20}
+                            />
+                        </View>
+                        <Text style={styles.logotext}>Partner Preference</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={[
-                            styles.IconsButton,
-                            activeComponent === "PhotoGallery" && styles.activeTab,
-                        ]}
+                        style={styles.IconsButton}
                         onPress={() => handlePress("PhotoGallery")}
                     >
-                        <MaterialIcons
-                            name={activeComponent === "PhotoGallery" ? "photo" : "photo-library"}
-                            color={activeComponent === "PhotoGallery" ? "white" : Colors.theme_color}
-                            size={20}
-                        />
-                        <Text
+                        <View
                             style={[
-                                styles.logotext,
-                                activeComponent === "PhotoGallery" && styles.activeTabText,
+                                styles.iconWrapper,
+                                activeComponent === "PhotoGallery" && styles.activeIcon,
                             ]}
                         >
-                            Photo Gallery
-                        </Text>
+                            <MaterialIcons
+                                name="photo-library"
+                                color={activeComponent === "PhotoGallery" ? "white" : Colors.theme_color}
+                                size={20}
+                            />
+                        </View>
+                        <Text style={styles.logotext}>Photo Gallery</Text>
                     </TouchableOpacity>
                 </View>
 

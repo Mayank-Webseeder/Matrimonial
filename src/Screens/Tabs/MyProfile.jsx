@@ -44,6 +44,9 @@ const MyProfile = ({ navigation }) => {
         closeModal();
     };
 
+    const capitalizeFirstLetter = (text) => {
+        return text ? text.charAt(0).toUpperCase() + text.slice(1) : "Unknown";
+      };
 
     useEffect(() => {
         const requestCameraPermission = async () => {
@@ -239,14 +242,14 @@ const MyProfile = ({ navigation }) => {
                     </View>
                     <View style={styles.userDeatil}>
                         <View style={styles.userData}>
-                            <Text style={styles.text}>{profileData.username || 'NA'}</Text>
+                            <Text style={styles.text}>{capitalizeFirstLetter(profileData.username || 'NA')}</Text>
                             <Text style={styles.text}>DOB: {formattedDate || 'NA'}</Text>
-                            <Text style={styles.text}>City: {profileData.city || 'NA'}</Text>
+                            <Text style={styles.text}>City: {capitalizeFirstLetter(profileData.city || 'NA')}</Text>
                         </View>
                         <View style={styles.userData}>
                             <Text style={styles.text}>
                                 Contact: {profileData.mobileNo}</Text>
-                            <Text style={styles.text}>Gender: {profileData.gender || 'NA'}</Text>
+                            <Text style={styles.text}>Gender: {capitalizeFirstLetter(profileData.gender || 'NA')}</Text>
                         </View>
                     </View>
 

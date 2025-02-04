@@ -46,51 +46,57 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 0.5,
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
   },
   leftContent: {
     flexDirection: "row",
     alignItems: "center",
+    flex: 1, // Ensures it takes available space
   },
   dpImage: {
-    width:SW(50), 
-    height:SH(50),
+    width: SW(50),
+    height: SH(50),
     borderRadius: 25,
-    marginRight:SW(10),
+    marginRight: SW(10),
   },
   cardContent: {
-    flexDirection: "column", 
+    flexDirection: "column",
+    flexWrap: "wrap",
+    flex: 1,
+    justifyContent: "center",
   },
   userId: {
-    fontWeight: "bold",
-    fontSize:SF(14),
+    fontFamily:"poppins-Regular",
+    fontSize: SF(11),
   },
   name: {
-    fontSize:SF(16),
+    fontSize: SF(16),
     color: "black",
-  },
-  status: {
-    fontSize:SF(14),
-    color: "gray",
-    marginTop:SH(5),
+    fontFamily:"Poppins-Bold"
   },
   Statusbutton: {
     backgroundColor: Colors.light_theme,
-    paddingVertical:SH(5),
-    paddingHorizontal:SW(5),
-    borderRadius:50,
+    paddingVertical: SH(5),
+    paddingHorizontal: SW(10),
+    borderRadius: 50,
     justifyContent: "center",
     alignItems: "center",
-    borderColor:Colors.theme_color,
-    borderWidth:1,
-    width:SW(100)
+    borderColor: Colors.theme_color,
+    borderWidth: 1,
+    width: SW(100),
   },
   StatusbuttonText: {
-    color:Colors.theme_color,
-    fontFamily:"Poppins-Medium",
-    fontSize:SF(13)
+    color: Colors.theme_color,
+    fontFamily: "Poppins-Medium",
+    fontSize: SF(13),
+    
   },
+  noDataText:{
+    fontSize:SF(15),
+    color: Colors.gray,
+    fontFamily: 'Poppins-Regular',
+    textAlign:"center"
+  }
   
 });
 

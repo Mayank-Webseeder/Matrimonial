@@ -25,7 +25,8 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: '50%',
-    resizeMode: 'cover'
+    resizeMode: 'cover',
+    borderRadius:10
   },
   dot: {
     backgroundColor: Colors.light,
@@ -35,20 +36,49 @@ const styles = StyleSheet.create({
   },
   flexContainer1: {
     flexDirection: "row",
+    flexWrap: "wrap",
     justifyContent: "space-between",
     paddingHorizontal: SW(10),
     paddingVertical: SH(10),
     borderColor: Colors.gray,
     borderWidth: 1,
-    marginTop: SH(10),
-    borderRadius: 10
-  },
+    borderRadius: 10,
+    width: "100%",
+    marginVertical: SH(5),
+},
+
+leftContainer: {
+    width: "52%",
+    marginBottom: SH(10),
+},
+
+rightContainer: {
+    width: "48%",
+    paddingTop: SH(37),
+    paddingLeft:SW(5),
+    alignSelf: "flex-start",
+},
+
+HeadingText: {
+    fontSize: 18,
+    fontFamily: "Poppins-Bold",
+    marginBottom: SH(5),
+},
+
+text: {
+    fontSize: 14,
+    color: Colors.dark,
+    marginBottom: SH(5),
+    fontFamily: "Poppins-Regular",
+},
+
   flexContainer: {
     paddingHorizontal: SW(10),
     paddingVertical: SH(10),
     borderColor: Colors.gray,
     borderWidth: 1,
-    borderRadius: 10
+    borderRadius: 10,
+    
   },
   flex: {
     flexDirection: "row",
@@ -56,10 +86,7 @@ const styles = StyleSheet.create({
     alignItems: "center"
 
   },
-  text: {
-    fontSize: SF(13),
-    fontFamily: "Poppins-Regular"
-  },
+  
   toptext: {
     fontSize: SF(10),
     fontFamily: "Poppins-Regular"
@@ -71,6 +98,8 @@ const styles = StyleSheet.create({
   flexContainer2: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
   },
   sharecontainer: {
     flexDirection: 'row',
@@ -99,10 +128,6 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Medium",
     fontSize: SF(13),
   },
-  HeadingText: {
-    fontFamily: "Poppins-Bold",
-    fontSize: SF(15)
-  },
   ButtonText: {
     color: Colors.light,
     fontFamily: "Poppins-Bold",
@@ -117,14 +142,14 @@ const styles = StyleSheet.create({
   smallImage: {
     width: SW(80),
     height: SH(85),
-    resizeMode: "contain",
+    resizeMode: "cover",
     borderRadius: 50
   },
   flexContainer3: {
     borderColor: Colors.gray,
     borderWidth: 1,
     borderRadius: 10,
-    marginVertical: SH(15),
+    marginVertical: SH(5),
     paddingHorizontal: SW(10),
     paddingVertical: SH(10)
   },

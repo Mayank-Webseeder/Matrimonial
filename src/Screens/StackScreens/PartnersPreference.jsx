@@ -1,19 +1,14 @@
-import { StyleSheet, Text, View, Image, ImageBackground, TextInput, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, FlatList } from 'react-native'
+import {Text, View, TextInput, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, FlatList } from 'react-native'
 import React, { useState, useEffect } from 'react'
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/PartnerPreferenceStyle';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { TouchableOpacity } from 'react-native';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { Dropdown } from 'react-native-element-dropdown';
-import { DrawerActions } from '@react-navigation/native';
-import { CREATE_PARTNER_PERFRENCES, UPDATE_PARTNER_PERFRENCES, GET_BIODATA } from '../../utils/BaseUrl';
+import { CREATE_PARTNER_PERFRENCES, UPDATE_PARTNER_PERFRENCES } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Globalstyles from '../../utils/GlobalCss';
 import { useSelector } from 'react-redux';
-import moment from "moment";
 import Toast from 'react-native-toast-message';
 
 import {
@@ -25,7 +20,6 @@ import {
 const PartnersPreference = ({ navigation }) => {
     const [selectedButton, setSelectedButton] = useState('PartnersPreference');
     const [isEditing, setIsEditing] = useState(true);
-    const [isLoading, setIsLoading] = useState(true);
     const [showTimePicker, setShowTimePicker] = useState(false);
     const [stateInput, setStateInput] = useState('');
     const [subCasteInput, setSubCasteInput] = useState('');
@@ -35,42 +29,44 @@ const PartnersPreference = ({ navigation }) => {
     const [cityInput, setCityInput] = useState('');
     const [selectedState, setSelectedState] = useState('');
     const [selectedCity, setSelectedCity] = useState('');
+    const [originalBiodata, setOriginalBiodata] = useState({});
     const [selectedSubCaste, setSelectedSubCaste] = useState('');
     const profileData = useSelector((state) => state.profile);
-    console.log("profileData", profileData);
+    // console.log("profileData", profileData);
 
-    const formattedDate = moment(profileData.dob).format("DD/MM/YYYY");
+    const MyprofileData = useSelector((state) => state.getBiodata);
+    const myPartnerPreferences = MyprofileData?.Biodata?.partnerPreferences;
+    console.log("myBiodata", myPartnerPreferences);
 
     const [biodata, setBiodata] = useState({
-        partnerSubCaste: '',
-        partnerMinAge: '',
-        partnerMaxAge: '',
-        partnerMinHeightFeet: '',
-        partnerMaxHeightFeet: '',
-        partnerMaritalStatus: '',
-        partnerIncome: '',
-        partnerOccupation: '',
-        partnerQualification: '',
-        partnerDisabilities: '',
-        partnerManglikStatus: '',
-        partnersLivingStatus: '',
-        partnerState: '',
-        partnerCity: '',
-        partnerBodyStructure: '',
-        partnerComplexion: '',
-        partnerDietaryHabits: '',
-        partnerSmokingHabits: '',
-        partnerDrinkingHabits: '',
-        partnerExpectations: '',
-        partnerFamilyType: '',
-        partnerFamilyFinancialStatus: '',
-        partnerFamilyIncome: ''
+        partnerSubCaste: myPartnerPreferences?.partnerSubCaste || '',
+        partnerMinAge: myPartnerPreferences?.partnerMinAge || '',
+        partnerMaxAge: myPartnerPreferences?.partnerMaxAge || '',
+        partnerMinHeightFeet: myPartnerPreferences?.partnerMinHeightFeet || '',
+        partnerMaxHeightFeet: myPartnerPreferences?.partnerMaxHeightFeet || '',
+        partnerMaritalStatus: myPartnerPreferences?.partnerMaritalStatus || '',
+        partnerIncome: myPartnerPreferences?.partnerIncome || '',
+        partnerOccupation: myPartnerPreferences?.partnerOccupation || '',
+        partnerQualification: myPartnerPreferences?.partnerQualification || '',
+        partnerDisabilities: myPartnerPreferences?.partnerDisabilities || '',
+        partnerManglikStatus: myPartnerPreferences?.partnerManglikStatus || '',
+        partnersLivingStatus: myPartnerPreferences?.partnersLivingStatus || '',
+        partnerState: myPartnerPreferences?.partnerState || '',
+        partnerCity: myPartnerPreferences?.partnerCity || '',
+        partnerBodyStructure: myPartnerPreferences?.partnerBodyStructure || '',
+        partnerComplexion: myPartnerPreferences?.partnerComplexion || '',
+        partnerDietaryHabits: myPartnerPreferences?.partnerDietaryHabits || '',
+        partnerSmokingHabits: myPartnerPreferences?.partnerSmokingHabits || '',
+        partnerDrinkingHabits: myPartnerPreferences?.partnerDrinkingHabits || '',
+        partnerExpectations: myPartnerPreferences?.partnerExpectations || '',
+        partnerFamilyType: myPartnerPreferences?.partnerFamilyType || '',
+        partnerFamilyFinancialStatus: myPartnerPreferences?.partnerFamilyFinancialStatus || '',
+        partnerFamilyIncome: myPartnerPreferences?.partnerFamilyIncome || '',
     });
 
     const handleStateInputChange = (text) => {
         setStateInput(text);
         if (text) {
-            // Filter the StateData based on the input
             const filtered = StateData.filter((item) =>
                 item?.label?.toLowerCase().includes(text.toLowerCase())
             ).map(item => item.label);
@@ -78,23 +74,26 @@ const PartnersPreference = ({ navigation }) => {
         } else {
             setFilteredStates([]);
         }
+        setBiodata(prevState => ({
+            ...prevState,
+            partnerState: text,
+        }));
     };
 
     // Handle state selection to update both the input field and biodata.partnerState
     const handleStateSelect = (item) => {
-        setStateInput(item);  // Set input value to the selected state
-        setSelectedState(item);  // Optionally store selected state if needed
-        setBiodata((prevBiodata) => ({
+        setStateInput(item);
+        setSelectedState(item);
+        setBiodata(prevBiodata => ({
             ...prevBiodata,
-            partnerState: item,  // Update biodata with selected state
+            partnerState: item, // Correct key
         }));
-        setFilteredStates([]);  // Clear suggestions after selection
+        setFilteredStates([]);
     };
 
     const handleCityInputChange = (text) => {
         setCityInput(text);
         if (text) {
-            // Filter the CityData based on the input
             const filtered = CityData.filter((item) =>
                 item?.label?.toLowerCase().includes(text.toLowerCase())
             ).map(item => item.label);
@@ -102,17 +101,22 @@ const PartnersPreference = ({ navigation }) => {
         } else {
             setFilteredCities([]);
         }
+
+        setBiodata(prevState => ({
+            ...prevState,
+            partnerCity: text, // Save in biodata
+        }));
     };
+
 
     // Handle city selection to update both the input field and biodata.partnerCity
     const handleCitySelect = (item) => {
-        setCityInput(item);  // Set input value to the selected city
-        setSelectedCity(item);  // Optionally store selected city if needed
-        setBiodata((prevBiodata) => ({
-            ...prevBiodata,
-            partnerCity: item,  // Update biodata with selected city
+        setCityInput(item);
+        setBiodata(prevState => ({
+            ...prevState,
+            partnerCity: item, // Save selected city
         }));
-        setFilteredCities([]);  // Clear suggestions after selection
+        setFilteredCities([]);
     };
 
     const handleSubCasteInputChange = (text) => {
@@ -125,15 +129,19 @@ const PartnersPreference = ({ navigation }) => {
         } else {
             setFilteredSubCaste([]);
         }
+        setBiodata(prevState => ({
+            ...prevState,
+            partnerSubCaste: text,
+        }));
     };
 
     // Sub Caste input handler
     const handleSubCasteSelect = (item) => {
         setSubCasteInput(item);
         setSelectedSubCaste(item);
-        setBiodata((prevBiodata) => ({
+        setBiodata(prevBiodata => ({
             ...prevBiodata,
-            partnerSubCaste: item,
+            partnerSubCaste: item, // Correct key
         }));
         setFilteredSubCaste([]);
     };
@@ -151,141 +159,108 @@ const PartnersPreference = ({ navigation }) => {
         }))
     ).flat();
 
+    const handleSave = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userToken');
+            if (!token) throw new Error('No token found');
 
-    const handlePress = (buttonName) => {
-        setSelectedButton(buttonName);
-        navigation.navigate(buttonName);
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            };
+
+            let payload = {};
+
+            if (biodata?._id) {
+                Object.keys(biodata).forEach((key) => {
+                    if (biodata[key] !== originalBiodata[key]) {
+                        payload[key] = biodata[key];
+                    }
+                });
+
+                if (Object.keys(payload).length === 0) {
+                    Toast.show({
+                        type: "info",
+                        text1: "No changes detected.",
+                        text2: "You haven't made any modifications.",
+                        position: "top",
+                        visibilityTime: 1000,
+                        textStyle: { fontSize: 10, color: "blue" },
+                    });
+                    return;
+                }
+            } else {
+                payload = {
+                    partnerSubCaste: biodata.partnerSubCaste || "",
+                    partnerMinAge: biodata.partnerMinAge || "",
+                    partnerMaxAge: biodata.partnerMaxAge || "",
+                    partnerMinHeightFeet: biodata.partnerMinHeightFeet || "",
+                    partnerMaxHeightFeet: biodata.partnerMaxHeightFeet || "",
+                    partnerMaritalStatus: biodata.partnerMaritalStatus || "",
+                    partnerIncome: biodata.partnerIncome || "",
+                    partnerOccupation: biodata.partnerOccupation || "",
+                    partnerQualification: biodata.partnerQualification || "",
+                    partnerDisabilities: biodata.partnerDisabilities || "",
+                    partnerManglikStatus: biodata.partnerManglikStatus || "",
+                    partnersLivingStatus: biodata.partnersLivingStatus || "",
+                    partnerState: biodata.partnerState || "",
+                    partnerCity: biodata.partnerCity || "",
+                    partnerBodyStructure: biodata.partnerBodyStructure || "",
+                    partnerComplexion: biodata.partnerComplexion || "",
+                    partnerDietaryHabits: biodata.partnerDietaryHabits || "",
+                    partnerSmokingHabits: biodata.partnerSmokingHabits || "",
+                    partnerDrinkingHabits: biodata.partnerDrinkingHabits || "",
+                    partnerFamilyType: biodata.partnerFamilyType || "",
+                    partnerFamilyFinancialStatus: biodata.partnerFamilyFinancialStatus || "",
+                    partnerFamilyIncome: biodata.partnerFamilyIncome || "",
+                    partnerExpectations: biodata.partnerExpectations || "",
+                };
+            }
+
+            console.log("Payload:", payload);
+
+            const apiCall = biodata?._id ? axios.put : axios.post;
+            const endpoint = biodata?._id ? UPDATE_PARTNER_PERFRENCES : CREATE_PARTNER_PERFRENCES;
+            const response = await apiCall(endpoint, payload, { headers });
+            console.log("Save response:", response.data);
+
+            const message = response.data?.data?.message;
+
+            if (message === "Partner preferences updated successfully.") {
+                Toast.show({
+                    type: "success",
+                    text1: "Partner preferences updated successfully.",
+                    text2: "Your changes have been saved!",
+                    position: "top",
+                    visibilityTime: 1000,
+                    textStyle: { fontSize: 10, color: "green" },
+                });
+            } else if (message === "Partner preferences added successfully.") {
+                Toast.show({
+                    type: "success",
+                    text1: "Partner preferences added successfully.",
+                    text2: "Your preferences have been saved!",
+                    position: "top",
+                    visibilityTime: 1000,
+                    textStyle: { fontSize: 10, color: "green" },
+                });
+            }
+
+            setIsEditing(false);
+            navigation.navigate("MainApp");
+
+        } catch (error) {
+            console.error("Error saving biodata:", error);
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: error.response?.data?.message || error.message || "Something went wrong",
+                position: "top",
+                visibilityTime: 1000,
+                textStyle: { fontSize: 10, color: "red" },
+            });
+        }
     };
-
-    const handleSave = () => {
-        navigation.navigate('MainApp')
-    }
-
-    // const getBiodata = async () => {
-    //   try {
-    //     const token = await AsyncStorage.getItem('userToken');
-    //     if (!token) throw new Error('No token found');
-
-    //     const headers = {
-    //       'Content-Type': 'application/json',
-    //       'Authorization': `Bearer ${token}`,
-    //     };
-
-    //     const response = await axios.get(GET_BIODATA, { headers });
-    //     setBiodata(response.data.data.partnerPreferences);
-    //     console.log("data", JSON.stringify(biodata))
-    //     setIsEditable(true);
-
-    //   } catch (error) {
-    //     setIsLoading(false);
-    //     setIsEditable(true);
-    //     console.error("Error fetching biodata:", error);
-
-    //   }
-    // };
-
-    // useEffect(() => {
-    //   getBiodata()
-    // }, [])
-
-    // const handleSave = async () => {
-    //   try {
-    //     const token = await AsyncStorage.getItem('userToken');
-    //     if (!token) throw new Error('No token found');
-
-    //     const headers = {
-    //       'Content-Type': 'application/json',
-    //       'Authorization': `Bearer ${token}`,
-    //     };
-
-    //     // Construct the payload dynamically for CREATE or UPDATE
-    //     const payload = biodata?._id
-    //       ? {
-    //         ...(biodata.partnerSubCaste && { partnerSubCaste: biodata.partnerSubCaste }),
-    //         ...(biodata.partnerMinAge && { partnerMinAge: biodata.partnerMinAge }),
-    //         ...(biodata.partnerMaxAge && { partnerMaxAge: biodata.partnerMaxAge }),
-    //         ...(biodata.partnerMinHeightFeet && { partnerMinHeightFeet: biodata.partnerMinHeightFeet }),
-    //         ...(biodata.partnerMaxHeightFeet && { partnerMaxHeightFeet: biodata.partnerMaxHeightFeet }),
-    //         ...(biodata.partnerMaritalStatus && { partnerMaritalStatus: biodata.partnerMaritalStatus }),
-    //         ...(biodata.partnerIncome && { partnerIncome: biodata.partnerIncome }),
-    //         ...(biodata.partnerOccupation && { partnerOccupation: biodata.partnerOccupation }),
-    //         ...(biodata.partnerQualification && { partnerQualification: biodata.partnerQualification }),
-    //         ...(biodata.partnerDisabilities && { partnerDisabilities: biodata.partnerDisabilities }),
-    //         ...(biodata.partnerManglikStatus && { partnerManglikStatus: biodata.partnerManglikStatus }),
-    //         ...(biodata.partnersLivingStatus && { partnersLivingStatus: biodata.partnersLivingStatus }),
-    //         ...(biodata.partnerState && { partnerState: biodata.partnerState }),
-    //         ...(biodata.partnerCity && { partnerCity: biodata.partnerCity }),
-    //         ...(biodata.partnerBodyStructure && { partnerBodyStructure: biodata.partnerBodyStructure }),
-    //         ...(biodata.partnerComplexion && { partnerComplexion: biodata.partnerComplexion }),
-    //         ...(biodata.partnerDietaryHabits && { partnerDietaryHabits: biodata.partnerDietaryHabits }),
-    //         ...(biodata.partnerSmokingHabits && { partnerSmokingHabits: biodata.partnerSmokingHabits }),
-    //         ...(biodata.partnerDrinkingHabits && { partnerDrinkingHabits: biodata.partnerDrinkingHabits }),
-    //         ...(biodata.partnerExpectations && { partnerExpectations: biodata.partnerExpectations }),
-    //         ...(biodata.partnerFamilyType && { partnerFamilyType: biodata.partnerFamilyType }),
-    //         ...(biodata.partnerFamilyFinancialStatus && { partnerFamilyFinancialStatus: biodata.partnerFamilyFinancialStatus }),
-    //         ...(biodata.partnerFamilyIncome && { partnerFamilyIncome: biodata.partnerFamilyIncome }),
-    //       }
-    //       : {
-    //         partnerSubCaste: biodata.partnerSubCaste || "",
-    //         partnerMinAge: biodata.partnerMinAge || "",
-    //         partnerMaxAge: biodata.partnerMaxAge || "",
-    //         partnerMinHeightFeet: biodata.partnerMinHeightFeet || "",
-    //         partnerMaxHeightFeet: biodata.partnerMaxHeightFeet || "",
-    //         partnerMaritalStatus: biodata.partnerMaritalStatus || "",
-    //         partnerIncome: biodata.partnerIncome || "",
-    //         partnerOccupation: biodata.partnerOccupation || "",
-    //         partnerQualification: biodata.partnerQualification || "",
-    //         partnerDisabilities: biodata.partnerDisabilities || "",
-    //         partnerManglikStatus: biodata.partnerManglikStatus || "",
-    //         partnersLivingStatus: biodata.partnersLivingStatus || "",
-    //         partnerState: biodata.partnerState || "",
-    //         partnerCity: biodata.partnerCity || "",
-    //         partnerBodyStructure: biodata.partnerBodyStructure || "",
-    //         partnerComplexion: biodata.partnerComplexion || "",
-    //         partnerDietaryHabits: biodata.partnerDietaryHabits || "",
-    //         partnerSmokingHabits: biodata.partnerSmokingHabits || "",
-    //         partnerDrinkingHabits: biodata.partnerDrinkingHabits || "",
-    //         partnerExpectations: biodata.partnerExpectations || "",
-    //         partnerFamilyType: biodata.partnerFamilyType || "",
-    //         partnerFamilyFinancialStatus: biodata.partnerFamilyFinancialStatus || "",
-    //         partnerFamilyIncome: biodata.partnerFamilyIncome || "",
-    //       };
-
-    //     console.log("payload", payload);
-    //     const apiCall = biodata?._id ? axios.put : axios.post;
-    //     const endpoint = biodata?._id ? UPDATE_PARTNER_PERFRENCES : CREATE_PARTNER_PERFRENCES;
-
-    //     const response = await apiCall(endpoint, payload, { headers });
-    //     console.log("Save response:", response.data);
-
-    //     Toast.show({
-    //       type: "success",
-    //       text1: biodata?._id ? "Partner preferences updated successfully." : "Partner preferences added successfully.",
-    //       text2: "Your changes have been saved!",
-    //       position: 'top',
-    //       visibilityTime: 1000,
-    //       textStyle: { fontSize: 10, color: "green" },
-    //     });
-
-    //     setIsEditing(false);
-    //   } catch (error) {
-    //     console.error("Error saving biodata:", error);
-    //     Toast.show({
-    //       type: "error",
-    //       text1: "Error",
-    //       text2: error.response?.data?.message || error.message || "Something went wrong",
-    //       position: 'top',
-    //       visibilityTime: 1000,
-    //       textStyle: { fontSize: 10, color: "red" },
-    //     });
-    //   }
-    // };
-
-    // if (isLoading) {
-    //   return <View style={styles.loading}>
-    //     <ActivityIndicator size={'large'} color={Colors.theme_color} />
-    //   </View>;
-    // }
 
     return (
         <SafeAreaView style={Globalstyles.container}>
@@ -307,9 +282,9 @@ const PartnersPreference = ({ navigation }) => {
                     <Text style={Globalstyles.title}>Sub-Caste</Text>
                     <TextInput
                         style={Globalstyles.input}
-                        value={subCasteInput}
+                        value={biodata?.partnerSubCaste}
                         onChangeText={handleSubCasteInputChange}
-                        placeholder="Enter Your Sub Caste"
+                        placeholder="Enter your sub caste"
                         placeholderTextColor={Colors.gray}
                     />
                     {filteredSubCaste.length > 0 && subCasteInput ? (
@@ -477,10 +452,9 @@ const PartnersPreference = ({ navigation }) => {
                         <Text style={Globalstyles.title}>State</Text>
                         <TextInput
                             style={Globalstyles.input}
-                            value={stateInput}
+                            value={biodata?.partnerState}
                             onChangeText={handleStateInputChange}
-                            placeholder="Enter your state"
-
+                            placeholder="Type your State"
                             placeholderTextColor={Colors.gray}
                         />
                         {filteredStates.length > 0 && stateInput ? (
@@ -496,13 +470,12 @@ const PartnersPreference = ({ navigation }) => {
                                 style={Globalstyles.suggestions}
                             />
                         ) : null}
-
                         <Text style={Globalstyles.title}>City / Village</Text>
                         <TextInput
                             style={Globalstyles.input}
-                            value={cityInput}
+                            value={biodata?.partnerCity}
                             onChangeText={handleCityInputChange}
-                            placeholder="Enter your city"
+                            placeholder="Type your city/village"
                             placeholderTextColor={Colors.gray}
                         />
                         {filteredCities.length > 0 && cityInput ? (
@@ -630,6 +603,7 @@ const PartnersPreference = ({ navigation }) => {
                     </View>
                 </View>
             </ScrollView>
+            <Toast />
         </SafeAreaView>
     )
 }

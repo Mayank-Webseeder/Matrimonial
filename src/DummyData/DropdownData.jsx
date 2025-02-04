@@ -402,6 +402,9 @@ export const ExperienceData = [
   { label: '1-3 Years', value: '1-3' },
   { label: '3-5 Years', value: '3-5' },
   { label: '5+ Years', value: '5+' },
+  { label: '10+ Years', value: '10+' },
+  { label: '20+ Years', value: '20+' },
+  { label: '30+ Years', value: '30+' },
 ];
 
 export const RatingData = [

@@ -87,7 +87,7 @@ const RoleRegisterForm = ({ navigation }) => {
     };
 
     const addPhotos = (newPhotos) => {
-        if (photos.length + newPhotos.length <= 5) {
+        if (photos.length + newPhotos.length <= 4) {
             setPhotos(prevPhotos => [...prevPhotos, ...newPhotos]);
         } else {
             alert('You can only upload up to 5 photos.');
@@ -432,23 +432,23 @@ const RoleRegisterForm = ({ navigation }) => {
                     )}
                     <Text style={Globalstyles.title}>Website Link</Text>
                     <TextInput style={Globalstyles.input} value={website} onChangeText={setWebsite}
-                        placeholder="Gave Your Website Link"
+                        placeholder="give Your Website Link"
                        placeholderTextColor={Colors.gray} />
                     <Text style={Globalstyles.title}>Youtube Link</Text>
                     <TextInput style={Globalstyles.input} value={youtube} onChangeText={setYoutube}
-                        placeholder="Gave Your Youtube Link"
+                        placeholder="give Your Youtube Link"
                        placeholderTextColor={Colors.gray} />
                     <Text style={Globalstyles.title}>Whatsapp Link</Text>
                     <TextInput style={Globalstyles.input} value={whatsapp} onChangeText={setWhatsapp}
-                        placeholder="Gave Your Whatsapp Link"
+                        placeholder="give Your Whatsapp Link"
                        placeholderTextColor={Colors.gray} />
                     <Text style={Globalstyles.title}>Facebook Link</Text>
                     <TextInput style={Globalstyles.input} value={facebook} onChangeText={setFacebook}
-                        placeholder="Gave Your Facebook Link"
+                        placeholder="give Your Facebook Link"
                        placeholderTextColor={Colors.gray} />
                     <Text style={Globalstyles.title}>Instagram Link</Text>
                     <TextInput style={Globalstyles.input} value={instagram} onChangeText={setInstagram}
-                        placeholder="Gave Your Instagram Link"
+                        placeholder="give Your Instagram Link"
                        placeholderTextColor={Colors.gray} />
 
                     <TouchableOpacity style={styles.button} onPress={handleSubmit}>

@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, TouchableOpacity, FlatList, Image, SafeAreaView, Text, StatusBar } from 'react-native';
+import { View, TouchableOpacity, FlatList, Image, SafeAreaView, Text, StatusBar, ActivityIndicator } from 'react-native';
 import { DrawerActions } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from '../StyleScreens/HomeStyle';
@@ -9,11 +9,80 @@ import { profileImages, Category, communityData, slider } from '../../DummyData/
 import { ScrollView } from 'react-native-gesture-handler';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import Globalstyles from '../../utils/GlobalCss';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { GET_ALL_BIODATA_PROFILES, GET_BIODATA } from '../../utils/BaseUrl';
+import { useDispatch } from 'react-redux';
+import { setAllBiodata } from '../../ReduxStore/Slices/GetAllBiodataSlice';
+import { setBioData } from '../../ReduxStore/Slices/BiodataSlice';
+import { useFocusEffect } from '@react-navigation/native';
 const Home = ({ navigation }) => {
+  const dispatch = useDispatch();
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  
+  const [biodata, setBiodata] = useState("");
+  const [mybiodata, setMybiodata] = useState("");
+  const [isLoading, setIsLoading] = useState("");
+  const GetAll_Biodata = async () => {
+
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) throw new Error("No token found");
+
+      const headers = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      };
+
+      console.log("headers in profile", headers);
+      const res = await axios.get(GET_ALL_BIODATA_PROFILES, { headers });
+      const biodata = res.data.data;
+      dispatch(setAllBiodata(biodata));
+      setBiodata(biodata);
+    } catch (error) {
+      console.error(
+        "Error fetching profile:",
+        error.response ? error.response.data : error.message
+      );
+    }
+  }
+
+  const getBiodata = async () => {
+    try {
+      setIsLoading(true)
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+      const response = await axios.get(GET_BIODATA, { headers });
+      if (response.data && response.data.data && response.data.data.personalDetails) {
+        const fetchedData = response.data.data;
+        console.log("fetchedData", fetchedData);
+        dispatch(setBioData(fetchedData));
+        setMybiodata(fetchedData);
+        setIsLoading(false)
+      } else {
+        setBiodata({});
+      }
+    } catch (error) {
+      console.error("Error fetching biodata:", error);
+    }
+    finally {
+      setIsLoading(false)
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      GetAll_Biodata();
+      getBiodata();
+    }, [])
+  );
+
   useEffect(() => {
     const interval = setInterval(() => {
       if (currentIndex < slider.length - 1) {
@@ -27,6 +96,13 @@ const Home = ({ navigation }) => {
 
     return () => clearInterval(interval);
   }, [currentIndex]);
+
+
+  if (isLoading) {
+    return <View style={styles.loading}>
+      <ActivityIndicator size={'large'} color={Colors.theme_color} />
+    </View>;
+  }
 
   return (
     <SafeAreaView style={Globalstyles.container}>
@@ -73,25 +149,27 @@ const Home = ({ navigation }) => {
           />
 
           <FlatList
-            data={profileImages}
-            keyExtractor={(item) => item.id} a
+            data={biodata}
+            keyExtractor={(item) => item.user._id}
             renderItem={({ item }) => (
               <View style={styles.imageWrapper}>
-                <TouchableOpacity onPress={() => {
-                  if (item.screen) {
-                    navigation.navigate(item.screen);
-                  } else {
-                    console.warn("Screen not specified for this category.");
-                  }
-                }}
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate("MatrimonyPeopleProfile", { userDetails: item, userId: item.user._id });
+                  }}
                 >
-                  <Image source={item.image} style={styles.ProfileImages} />
+                  <Image
+                    source={{ uri: item.personalDetails.closeUpPhoto }}
+                    style={styles.ProfileImages}
+                  />
                 </TouchableOpacity>
               </View>
             )}
             horizontal={true}
             showsHorizontalScrollIndicator={false}
           />
+
+
         </View>
 
         <View>

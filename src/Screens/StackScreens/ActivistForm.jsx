@@ -33,6 +33,9 @@ export default function ActivistForm({ navigation }) {
   const [selectedState, setSelectedState] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
   const [selectedSubCaste, setSelectedSubCaste] = useState('');
+  const [name,setName]=useState('');
+  const [contact,setContact]=useState('');
+  const [activist_id,setActivist_id]=useState('');
 
   const handleImagePick = () => {
     ImageCropPicker.openPicker({
@@ -100,6 +103,28 @@ export default function ActivistForm({ navigation }) {
     }
   };
 
+  const validateForm = () => {
+    let newErrors = {};
+    
+    if (!name.trim()) newErrors.name = "Name is required";
+    if (!selectedSubCaste) newErrors.subCaste = "Sub caste is required";
+    if (!selectedDate) newErrors.dateOfBirth = "Date of Birth is required";
+    if (!selectedState) newErrors.state = "State is required";
+    if (!selectedCity) newErrors.city = "City is required";
+    if (!contact.trim()) newErrors.contact = "Contact number is required";
+    
+    // Known Activist ID is optional, so no validation
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = () => {
+    if (validateForm()) {
+      console.log("Form Submitted");
+      navigation.goBack();
+    }
+  };
 
   return (
     <SafeAreaView style={Globalstyles.container}>
@@ -114,9 +139,9 @@ export default function ActivistForm({ navigation }) {
       </View>
       <ScrollView style={Globalstyles.form} showsVerticalScrollIndicator={false}>
         <Text style={Globalstyles.title}>Name</Text>
-        <TextInput style={Globalstyles.input} placeholder="Enter your Full Name"
+        <TextInput style={Globalstyles.input} placeholder="Enter your Full Name" value={name} onChangeText={setName}
           placeholderTextColor={Colors.gray} />
-
+          {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
         {/* Sub Caste Dropdown */}
         <Text style={Globalstyles.title}>Sub Caste</Text>
         <TextInput
@@ -126,6 +151,7 @@ export default function ActivistForm({ navigation }) {
           placeholder="Enter your sub caste"
           placeholderTextColor={Colors.gray}
         />
+        {errors.subCasteInput && <Text style={styles.errorText}>{errors.subCasteInput}</Text>}
         {filteredSubCaste.length > 0 && subCasteInput ? (
           <FlatList
             data={filteredSubCaste.slice(0, 5)}
@@ -169,6 +195,7 @@ export default function ActivistForm({ navigation }) {
           placeholder="Enter your state"
           placeholderTextColor={Colors.gray}
         />
+         {errors.stateInput && <Text style={styles.errorText}>{errors.stateInput}</Text>}
         {filteredStates.length > 0 && stateInput ? (
           <FlatList
             data={filteredStates}
@@ -198,6 +225,7 @@ export default function ActivistForm({ navigation }) {
           placeholder="Enter your city"
           placeholderTextColor={Colors.gray}
         />
+         {errors.cityInput && <Text style={styles.errorText}>{errors.cityInput}</Text>}
         {filteredCities.length > 0 && cityInput ? (
           <FlatList
             data={filteredCities}
@@ -224,16 +252,16 @@ export default function ActivistForm({ navigation }) {
           style={Globalstyles.input}
           placeholder="Enter contact number"
           keyboardType="numeric"
-          placeholderTextColor={Colors.gray}
+          placeholderTextColor={Colors.gray} value={contact} onChangeText={setContact}
         />
-
+{errors.contact && <Text style={styles.errorText}>{errors.contact}</Text>}
         {/* Known Activist ID Input */}
         <Text style={Globalstyles.title}>Known Activist ID No.</Text>
-        <TextInput style={Globalstyles.input} placeholder="Enter ID"
+        <TextInput style={Globalstyles.input} placeholder="Enter ID" value={activist_id} onChangeText={setActivist_id}
           placeholderTextColor={Colors.gray} />
-
+     {errors.activist_id && <Text style={styles.errorText}>{errors.activist_id}</Text>}
         {/* Committee Membership Yes/No */}
-        <Text style={Globalstyles.title}>Are you engaged in any committee?</Text>
+        <Text style={Globalstyles.title}>Are you engaged to any Brahmin committee?</Text>
         <View style={styles.radioGroup}>
           <TouchableOpacity
             style={[
@@ -267,7 +295,7 @@ export default function ActivistForm({ navigation }) {
           </View>
         )}
         {/* Submit Button */}
-        <TouchableOpacity style={styles.submitButton} onPress={() => navigation.goBack()}>
+        <TouchableOpacity style={styles.submitButton} onPress={()=>handleSubmit}>
           <Text style={styles.submitText}>Submit</Text>
         </TouchableOpacity>
 

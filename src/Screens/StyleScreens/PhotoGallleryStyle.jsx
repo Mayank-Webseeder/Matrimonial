@@ -125,7 +125,8 @@ const styles = StyleSheet.create({
     bottomImage: {
         width: "100%",
         height: SH(300),
-        marginBottom: SH(10)
+        marginBottom: SH(10),
+        borderRadius:10
 
     }
 

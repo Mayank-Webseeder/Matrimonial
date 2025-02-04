@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView,StatusBar,SafeAreaView,Linking } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator } from 'react-native';
 import Swiper from 'react-native-swiper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -8,49 +8,146 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/LocationStyle';
 import Globalstyles from '../../utils/GlobalCss';
-import Entypo from 'react-native-vector-icons/Entypo';
-
+import { useRoute } from "@react-navigation/native";
+import moment from "moment";
+import axios from 'axios';
+import { MATCHED_PROFILE,SEND_REQUEST } from '../../utils/BaseUrl';
+import { useSelector } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-toast-message';
 const MatrimonyPeopleProfile = ({ navigation }) => {
-  const profileDetails = [
-    { label: 'Sub-caste', value: true },
-    { label: 'Manglik', value: true },
-    { label: 'Martial', value: true },
-    { label: 'Disability', value: false },
-    { label: 'Qualification', value: true },
-    { label: 'Occupation', value: true },
-    { label: 'Income', value: true },
-    { label: 'Family Type', value: false },
-    { label: 'Age', value: true },
-    { label: 'Height', value: true },
-    { label: 'Location', value: true },
-    { label: 'Diet', value: true },
-    { label: 'Smoke', value: false },
-    { label: 'Drink', value: false },
-    { label: 'Cooking', value: false },
-  ];
+  const route = useRoute();
+  const { userDetails, userId } = route.params || {};
+  const user = userDetails.user || {};
+  const id=user?._id;
+  console.log("user",id);
+  const userpersonalDetails = userDetails.personalDetails || {};
+  // console.log("user", userpersonalDetails)
+  const partnerPreferences = userDetails.partnerPreferences || {};
+  const [loading, setLoading] = useState(true);
+  const [profileData, setProfileData] = useState(null);
+  const MyprofileData = useSelector((state) => state.getBiodata);
+
+  // console.log("MyprofileData", MyprofileData);
+
+  useEffect(() => {
+    if (userId) {
+      fetchUserProfile(userId);
+    }
+  }, [userId]);
+
+  // Function to fetch profile details
+
+const fetchUserProfile = async (id) => {
+    setLoading(true);
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) throw new Error('No token found');
+
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    };
+
+    try {
+      const response = await axios.get(`${MATCHED_PROFILE}/${id}`, { headers });
+      if (response.data.status === "success") {
+        setProfileData(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+    } finally {
+      setLoading(false);
+    }
+};
+
+const sendInterestRequest = async () => {
+  if (!id) {
+    Toast.show({
+      type: 'error',
+      text1: 'Error',
+      text2: 'User ID not found!',
+    });
+    return;
+  }
+
+  try {
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) {
+      throw new Error('No token found');
+    }
+
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    };
+
+    const response = await axios.post(`${SEND_REQUEST}/${id}`, {}, { headers });
+
+    console.log("Response Data:", JSON.stringify(response?.data));
+
+    if (response.data.status === "success") {
+      Toast.show({
+        type: 'success',
+        text1: 'Interest Sent',
+        text2: 'Request sent successfully!',
+      });
+    } else {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: response.data.message || 'Something went wrong!',
+      });
+    }
+  } catch (error) {
+    console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
+    Toast.show({
+      type: 'error',
+      text1: 'Error',
+      text2: error.response?.data?.message || 'Failed to send interest!',
+    });
+  }
+};
 
 
+
+  if (loading) {
+    return <ActivityIndicator size="large" color={Colors.theme_color} />;
+  }
+
+  if (!profileData) {
+    return <Text>No data found!</Text>;
+  }
+
+  // Map API comparisonResults to UI labels
+  const comparisonResults = profileData?.comparisonResults || {};
+  const totalCriteria = Object.keys(comparisonResults).length;
+  const matchedCount = Object.values(comparisonResults).filter(value => value).length;
+
+
+
+  const calculateAge = (dob) => {
+    if (!dob) return "N/A";
+    const birthDate = moment(dob);
+    const currentDate = moment();
+    return currentDate.diff(birthDate, "years");
+  };
 
   return (
     <SafeAreaView style={Globalstyles.container}>
-      <StatusBar 
-                barStyle="dark-content" 
-                backgroundColor="transparent" 
-                translucent 
-            />
+      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
-        <View style={{ flexDirection: 'row',alignItems:"center" }}>
+        <View style={{ flexDirection: 'row', alignItems: "center" }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
-          <Text style={Globalstyles.headerText}>Raj Sharma</Text>
+          <Text style={Globalstyles.headerText}>{userpersonalDetails?.fullname}</Text>
         </View>
         <View style={styles.righticons}>
-          {/* <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} /> */}
           <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />
         </View>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false} >
+
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.sliderCotainer}>
           <Swiper
             style={styles.wrapper}
@@ -63,20 +160,23 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             prevButton={<MaterialIcons name="chevron-left" size={50} color={'gray'} />}
             nextButton={<MaterialIcons name="chevron-right" size={50} color={'gray'} />}
           >
-            <View style={styles.slide}>
-              <Image source={require('../../Images/profile3.png')} style={styles.image} />
+             <View style={styles.slide}>
+              <Image source={{ uri:userpersonalDetails?.closeUpPhoto }} style={styles.image} />
             </View>
             <View style={styles.slide}>
-              <Image source={require('../../Images/profile3.png')} style={styles.image} />
+              <Image source={{ uri: userpersonalDetails?.fullPhoto }} style={styles.image} />
             </View>
             <View style={styles.slide}>
-              <Image source={require('../../Images/profile3.png')} style={styles.image} />
+              <Image source={{ uri: userpersonalDetails?.bestPhoto }} style={styles.image} />
             </View>
           </Swiper>
         </View>
+
+        {/* Profile Info Section */}
         <View style={styles.flexContainer}>
           <View style={styles.flex}>
-            <Text style={styles.Idtext}>ID NO. :- 123456</Text>
+            {/* <Text style={styles.Idtext}>ID NO. :- {user?._id}</Text> */}
+            <Text style={styles.Idtext}>ID NO. :- 12345</Text>
             <Text style={styles.toptext}>92% Compatible according to your preference</Text>
           </View>
           <View style={styles.sharecontainer}>
@@ -84,141 +184,170 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               <FontAwesome name="bookmark-o" size={24} color={Colors.dark} />
               <Text style={styles.iconText}>Save</Text>
             </View>
-
             <View style={styles.iconContainer}>
               <Feather name="send" size={24} color={Colors.dark} />
               <Text style={styles.iconText}>Shares</Text>
             </View>
 
-            <TouchableOpacity style={styles.interestedButton}>
+            <TouchableOpacity style={styles.interestedButton} onPress={sendInterestRequest}>
               <Text style={styles.buttonText}>Interested</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.iconContainer} onPress={()=>Linking.openURL('tel:9893458940')}>
+            <TouchableOpacity style={styles.iconContainer} onPress={() => Linking.openURL('tel:9893458940')}>
               <MaterialIcons name="call" size={24} color={Colors.dark} />
               <Text style={styles.iconText}>Call</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ReportPage')} >
+            <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ReportPage')}>
               <MaterialIcons name="error-outline" size={24} color={Colors.dark} />
               <Text style={styles.iconText}>Report</Text>
             </TouchableOpacity>
           </View>
         </View>
+
+        {/* Personal Details Section */}
         <View style={styles.flexContainer1}>
-          <View>
-            <Text style={styles.HeadingText}>Raj Sharma</Text>
-            <Text style={styles.text}>Age: 24 / Height: 5.95 feet</Text>
-            <Text style={styles.text}>Sub-caste name</Text>
-            <Text style={styles.text}>Marital Status</Text>
-            <Text style={styles.text}>Maglik Status :-</Text>
-            <Text style={styles.text}>Disability :- No</Text>
-            <Text style={styles.text}>Profile created by :- Father</Text>
+          {/* Left Container */}
+          <View style={styles.leftContainer}>
+            {/* Fullname at the top */}
+            <Text style={styles.HeadingText}>{userpersonalDetails?.fullname}</Text>
+
+            {/* Other details */}
+            <Text style={styles.text}>Age: {calculateAge(userpersonalDetails.dob)} / Height: {userpersonalDetails?.heightFeet} feet</Text>
+            {userpersonalDetails?.subCaste && <Text style={styles.text}>SubCaste: {userpersonalDetails?.subCaste}</Text>}
+            {userpersonalDetails?.maritalStatus && <Text style={styles.text}>Marital Status: {userpersonalDetails?.maritalStatus}</Text>}
+            {userpersonalDetails?.manglikStatus && <Text style={styles.text}>Manglik Status: {userpersonalDetails?.manglikStatus}</Text>}
+            {userpersonalDetails?.disabilities && <Text style={styles.text}>Disability: {userpersonalDetails?.disabilities}</Text>}
+            {userpersonalDetails?.profileCreatedBy && <Text style={styles.text}>Profile Created By: {userpersonalDetails?.profileCreatedBy}</Text>}
           </View>
-          <View>
-            <Text />
-            <Text style={styles.text}>Indore</Text>
-            <Text style={styles.text}>Occupation</Text>
-            <Text style={styles.text}>Income</Text>
-            <Text style={styles.text}>Qualification</Text>
+
+          {/* Right Container */}
+          <View style={styles.rightContainer}>
+            {/* Right-side details */}
+            {userpersonalDetails?.cityOrVillage && <Text style={styles.text}>{userpersonalDetails?.cityOrVillage}</Text>}
+            {userpersonalDetails?.occupation && <Text style={styles.text}>{userpersonalDetails?.occupation}</Text>}
+            {userpersonalDetails?.annualIncome && <Text style={styles.text}>Income: {userpersonalDetails?.annualIncome}</Text>}
+            {userpersonalDetails?.qualification && <Text style={styles.text}>{userpersonalDetails?.qualification}</Text>}
           </View>
         </View>
-        <View style={styles.flexContainer1}>
-          <View>
-            <Text style={styles.HeadingText}>Horoscope</Text>
-            <Text style={styles.text}>Date of Birth: 01/01/1995 / Time: 12:45 PM</Text>
-            <Text style={styles.text}>Place of Birth: Indore</Text>
-            <View style={styles.flexContainer2}>
-              <Text style={styles.text}>Nadi :-</Text>
-              <Text style={styles.text}>Gotra (self) :- </Text>
+
+
+
+        {/* Horoscope Section */}
+        {userpersonalDetails?.dob && (
+          <View style={styles.flexContainer1}>
+            <View>
+              <Text style={styles.HeadingText}>Horoscope</Text>
+              <Text style={styles.text}>Date of Birth: {moment(userpersonalDetails.dob).format("DD-MM-YYYY")} / Time: {userpersonalDetails?.timeOfBirth}</Text>
+              {userpersonalDetails?.placeofbirth && <Text style={styles.text}>Place of Birth: {userpersonalDetails?.placeofbirth}</Text>}
+
+              <View style={styles.flexContainer2}>
+                {userpersonalDetails?.nadi && <Text style={styles.text}>Nadi: {userpersonalDetails?.nadi}</Text>}
+                {userpersonalDetails?.gotraSelf && <Text style={styles.text}>Gotra (Self): {userpersonalDetails?.gotraSelf}</Text>}
+              </View>
+
+              <View style={styles.flexContainer2}>
+                {userpersonalDetails?.manglikStatus && <Text style={styles.text}>Manglik Status: {userpersonalDetails?.manglikStatus}</Text>}
+                {userpersonalDetails?.gotraMother && <Text style={styles.text}>Gotra (Mother): {userpersonalDetails?.gotraMother}</Text>}
+              </View>
             </View>
-            <View style={styles.flexContainer2}>
-              <Text style={styles.text}>Maglik Status:-</Text>
-              <Text style={styles.text}>Gotra (Mother) :- </Text>
+          </View>
+        )}
+
+        {/* About Me Section */}
+        {userpersonalDetails?.aboutMe && (
+          <View style={styles.flexContainer1}>
+            <View>
+              <Text style={styles.HeadingText}>About Me</Text>
+              <Text style={styles.text}>{userpersonalDetails?.aboutMe}</Text>
+              <View style={styles.flexContainer2}>
+                {userpersonalDetails?.complexion && <Text style={styles.text}>Completion: {userpersonalDetails?.complexion}</Text>}
+                {userpersonalDetails?.weight && <Text style={styles.text}>Weight: {userpersonalDetails?.weight} kg </Text>}
+              </View>
+              <View style={styles.flexContainer2}>
+                {userpersonalDetails?.currentCity && <Text style={styles.text}>Currently in: {userpersonalDetails?.currentCity}</Text>}
+                {userpersonalDetails?.livingStatus && <Text style={styles.text}>Living with family: {userpersonalDetails?.livingStatus}</Text>}
+              </View>
             </View>
           </View>
-        </View>
-        <View style={styles.flexContainer1}>
-          <View>
-            <Text style={styles.HeadingText}>About Me</Text>
-            <Text style={styles.text}>Acharya Kiran is a well-known Astrologer. Having experience in the field of Vedic Astrology. Born and brought up in a Brahmin family, she has also benefited from the immense knowledge related to her grandfather. She has had a natural liking for Astrology since the age of 15.</Text>
-            <View style={styles.flexContainer2}>
-              <Text style={styles.text}>Completion: White</Text>
-              <Text style={styles.text}>Weight: 70kg </Text>
+        )}
+
+        {/* Family Section */}
+        {userpersonalDetails?.fatherName && (
+          <View style={styles.flexContainer1}>
+            <View>
+              <Text style={styles.HeadingText}>Family Section</Text>
+              {userpersonalDetails?.fatherName && <Text style={styles.text}>Father’s Name: {userpersonalDetails.fatherName}</Text>}
+              {userpersonalDetails?.fatherOccupation && <Text style={styles.text}>Father’s Occupation: {userpersonalDetails.fatherOccupation}</Text>}
+              {userpersonalDetails?.motherName && <Text style={styles.text}>Mother’s Name: {userpersonalDetails.motherName}</Text>}
+              {userpersonalDetails?.fatherIncomeAnnually && <Text style={styles.text}>Family Income: {userpersonalDetails.fatherIncomeAnnually}</Text>}
+              {userpersonalDetails?.familyType && <Text style={styles.text}>Family Type: {userpersonalDetails.familyType}</Text>}
+              <Text style={styles.HeadingText}>About My family</Text>
+              {userpersonalDetails?.otherFamilyMemberInfo && <Text style={styles.text}>{userpersonalDetails.otherFamilyMemberInfo}</Text>}
             </View>
-            <View style={styles.flexContainer2}>
-              <Text style={styles.text}>Currently Living city: Indore</Text>
-              <Text style={styles.text}>Living with family: Yes</Text>
+          </View>
+        )}
+
+        {/* Contact Section */}
+        {userpersonalDetails?.contactNumber1 && (
+          <View style={styles.flexContainer1}>
+            <View>
+              <Text style={styles.HeadingText}>Contact Details:</Text>
+              {userpersonalDetails?.contactNumber1 && <Text style={styles.text}>Mobile No. 1: {userpersonalDetails.contactNumber1}</Text>}
+              {userpersonalDetails?.contactNumber2 && <Text style={styles.text}>Mobile No. 2: {userpersonalDetails.contactNumber2}</Text>}
             </View>
           </View>
-        </View>
-        <View style={styles.flexContainer1}>
-          <View>
-            <Text style={styles.HeadingText}>Family Section</Text>
-            <Text style={styles.text}>Father’s Name: Aman Sharma</Text>
-            <Text style={styles.text}>Father’s Occupation:</Text>
-            <Text style={styles.text}>Mother’s Name: Shanti Sharma</Text>
-            <Text style={styles.text}>Family Income (Annually):</Text>
-            <Text style={styles.text}>Family Type:</Text>
-            <Text style={styles.text}>Brother’s: 1, Unmarried</Text>
-            <Text style={styles.text}>Sister’s: 2, married</Text>
-            <Text style={styles.HeadingText}>About My family</Text>
-            <Text style={styles.text}>Acharya Kiran is a well-known Astrologer. Having experience in the field of Vedic Astrology. Born and brought up in a Brahmin family, she has also benefited from the immense knowledge related to her grandfather. She has had a natural liking for Astrology since the age of 15.</Text>
-          </View>
-        </View>
-        <View style={styles.flexContainer1}>
-          <View>
-            <Text style={styles.HeadingText}>Contact Details:</Text>
-            <Text style={styles.text}>Mobile No. 1: 1234567890</Text>
-            <Text style={styles.text}>Mobile No. 2: 1234567890</Text>
-            <Text style={styles.text}>Email ID: raj.sharma@gmail.com</Text>
-            <Text style={styles.text}>Permanent Address: 01, Sagar Vihar Colony, Shukliya, Near MR10, Chandragupt Chouraha, Indore, 452010, M.P.</Text>
-          </View>
-        </View>
-        <View style={styles.flexContainer1}>
-          <View>
-            <Text style={styles.HeadingText}>Other Details:</Text>
-            <Text style={styles.text}>Cooking: Yes</Text>
-            <Text style={styles.text}>Diet: Yes</Text>
-            <Text style={styles.text}>Smoke: No</Text>
-            <Text style={styles.text}>Drink: No</Text>
-          </View>
-        </View>
-        <View style={styles.flexContainer3}>
-          <Text style={styles.HeadingText}>Expectation with partner</Text>
-          <Text style={styles.text}>Acharya Kiran is a well-known Astrologer. Having experience in the field of Vedic Astrology. Born and brought up in a Brahmin family, she has also benefited from the immense knowledge related to her grandfather. She has had a natural liking for Astrology since the age of 15.</Text>
-        </View>
-        <View style={styles.flexContainer3}>
-          <Text style={styles.HeadingText}>Matches</Text>
-          <View style={styles.flex}>
-            <Image source={require('../../Images/profile3.png')} style={styles.smallImage} />
-            <Text style={styles.text}>11/15</Text>
-            <Image source={require('../../Images/profile3.png')} style={styles.smallImage} />
-          </View>
-          {profileDetails.map((item, index) => (
-            <View key={index} style={styles.flexContainer5}>
-              <Text style={styles.label}>{item.label}</Text>
-              {item.value ? (
-                <MaterialIcons name="check" style={[styles.icon, styles.checkIcon]} />
-              ) : (
-                <MaterialIcons name="close" style={[styles.icon, styles.crossIcon]} />
-              )}
+        )}
+
+        {/* Other Details */}
+        {userpersonalDetails?.knowCooking && (
+          <View style={styles.flexContainer1}>
+            <View>
+              <Text style={styles.HeadingText}>Other Details:</Text>
+              {userpersonalDetails?.knowCooking && <Text style={styles.text}>Cooking: {userpersonalDetails.knowCooking}</Text>}
+              {userpersonalDetails?.dietaryHabit && <Text style={styles.text}>Diet: {userpersonalDetails.dietaryHabit}</Text>}
+              {userpersonalDetails?.smokingHabit && <Text style={styles.text}>Smoke: {userpersonalDetails.smokingHabit}</Text>}
+              {userpersonalDetails?.drinkingHabit && <Text style={styles.text}>Drinking: {userpersonalDetails.drinkingHabit}</Text>}
+              {userpersonalDetails?.tobaccoHabits && <Text style={styles.text}>Tobacco: {userpersonalDetails.tobaccoHabits}</Text>}
             </View>
-          ))}
-        </View>
+          </View>
+        )}
+
+        {partnerPreferences?.partnerExpectations &&
+          <View style={styles.flexContainer3}>
+            <Text style={styles.HeadingText}>
+              Expectation with partner</Text>
+            <Text>{partnerPreferences?.partnerExpectations}</Text>
+          </View>
+        }
+
+
+{MyprofileData?.Biodata && (
+  <View style={styles.flexContainer3}>
+    <Text style={styles.HeadingText}>Matches</Text>
+    <View style={styles.flex}>
+      <Image source={{ uri: MyprofileData?.Biodata?.personalDetails?.closeUpPhoto }} style={styles.smallImage} />
+      <Text style={styles.text}>{matchedCount}/{totalCriteria}</Text>
+      <Image source={{ uri: profileData?.data?.photoUrl?.[0] }} style={styles.smallImage} />
+    </View>
+
+    {/* Comparison List */}
+    {Object.keys(profileData?.comparisonResults || {}).map((key, index) => (
+      <View key={index} style={styles.flexContainer5}>
+        <Text style={styles.label}>{key.replace(/([A-Z])/g, " $1").trim()}</Text>
+        {profileData.comparisonResults[key] ? (
+          <MaterialIcons name="check" style={[styles.icon, styles.checkIcon]} />
+        ) : (
+          <MaterialIcons name="close" style={[styles.icon, styles.crossIcon]} />
+        )}
+      </View>
+    ))}
+  </View>
+)}
+
         <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
       </ScrollView>
-      {/* <View style={styles.bottomContainer}>
-        <TouchableOpacity style={styles.declineButton}>
-          <Entypo name={'cross'} color={Colors.light} size={20}/>
-        <Text style={styles.declineButtonText}>Decline</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.acceptButton}>
-        <Entypo name={'check'} color={Colors.light} size={20}/>
-        <Text style={styles.acceptButtonText}>Accept</Text>
-        </TouchableOpacity>
-       
-      </View> */}
+      <Toast/>
     </SafeAreaView>
   );
 };

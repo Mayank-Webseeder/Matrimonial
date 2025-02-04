@@ -20,6 +20,21 @@ const styles = StyleSheet.create({
         width: SW(30),
         height: SH(30)
     },
+    iconWrapper: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "transparent",
+        borderWidth: 1,
+        borderColor: Colors.theme_color,
+        borderRadius: 50,
+        marginVertical: SH(10)
+    },
+    activeIcon: {
+        backgroundColor: Colors.theme_color,
+    },
     RepostText: {
         backgroundColor: Colors.theme_color,
         color: Colors.light,
@@ -28,14 +43,16 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         fontFamily: "Poppins-Regular",
         fontSize: SF(13),
-        marginLeft: SW(280),
-        marginBottom: SH(5),
+        marginVertical: SH(5),
         textAlign: "center",
-        marginHorizontal: SW(20),
+        alignSelf: "flex-end",
+        marginHorizontal: SW(10),
+        marginBottom: 0
     },
+
     image: {
-        width:SW(140),
-        height:SH(150),
+        width: SW(140),
+        height: SH(150),
         resizeMode: 'cover',
         borderRadius: 100
     },
@@ -85,12 +102,6 @@ const styles = StyleSheet.create({
     IconFlex: {
         flexDirection: "row",
         justifyContent: "space-between",
-        marginVertical: SH(10),
-    },
-    IconsButton: {
-        alignItems: "center",
-        marginVertical: SH(5),
-        marginHorizontal: SW(15)
 
     },
     contentContainer: {
@@ -102,23 +113,15 @@ const styles = StyleSheet.create({
         fontSize: SF(12),
         fontFamily: "Poppins-Regular",
     },
-    activeTab: {
-        backgroundColor: Colors.theme_color,
-        borderRadius: 5,
-    },
-    activeTabText: {
-        color: "white",
-    },
+
     IconsButton: {
         flexDirection: "column",
         alignItems: "center",
         paddingVertical: SH(5),
         paddingHorizontal: SW(10),
-        borderWidth: 1,
-        borderColor: Colors.theme_color,
-        borderRadius: 10,
         marginHorizontal: SW(5),
         backgroundColor: "transparent",
+        paddingTop: 0
     },
     logotext: {
         fontSize: SF(12),
@@ -143,10 +146,10 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
     },
-    Formtitle:{
+    Formtitle: {
         fontFamily: "Poppins-Medium",
         fontSize: SF(18),
-        color:Colors.theme_color
+        color: Colors.theme_color
     },
     detailText: {
         fontFamily: "Poppins-Bold",
@@ -207,9 +210,17 @@ const styles = StyleSheet.create({
         paddingRight: SW(10)
     },
     imagePlaceholder: {
-        color: Colors.gray
+        color: Colors.gray,
+        fontSize: SF(15),
+        textAlign: 'center',
+        paddingVertical: SH(20),
     },
-
+    selectedImage: {
+        width: SW(100),
+        height: SH(100),
+        borderRadius: 8,
+        resizeMode: 'cover',
+    },
     headText: {
         color: Colors.theme_color,
         fontSize: SF(15),
@@ -224,7 +235,7 @@ const styles = StyleSheet.create({
         marginHorizontal: SW(20),
         marginVertical: SH(20),
         paddingHorizontal: SW(10),
-        paddingVertical: SH(5),
+        paddingVertical: SH(7),
         borderRadius: 10
     },
     buttonText: {
@@ -257,7 +268,7 @@ const styles = StyleSheet.create({
     loading: {
         justifyContent: "center",
         alignItems: "center",
-        marginTop: SH(300)
+        marginTop: SH(150)
     }
 
 })

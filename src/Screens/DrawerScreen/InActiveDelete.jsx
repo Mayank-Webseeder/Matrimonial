@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, TouchableOpacity, Modal,SafeAreaView,StatusBar } from 'react-native';
+import { Text, View, TouchableOpacity, Modal, SafeAreaView, StatusBar } from 'react-native';
 import Colors from '../../utils/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styles from '../StyleScreens/InactiveDeleteStyle';
@@ -10,28 +10,21 @@ const InActiveDelete = ({ navigation }) => {
     const [actionType, setActionType] = useState('');
     const [successModalVisible, setSuccessModalVisible] = useState(false);
 
-    const handleInactivate = () => {
-        setActionType('inactivate');
-        setIsModalVisible(true);
-    };
-
-    const handleDelete = () => {
-        setActionType('delete');
+    const handleAction = (type) => {
+        setActionType(type);
         setIsModalVisible(true);
     };
 
     const handleConfirm = () => {
         if (actionType === 'inactivate') {
-            console.log('Account Inactivated');
-        } else if (actionType === 'delete') {
+            console.log('Biodata Inactivated');
+        } else if (actionType === 'deleteBiodata') {
+            console.log('Biodata Deleted');
+        } else if (actionType === 'deleteAccount') {
             console.log('Account Deleted');
         }
         setIsModalVisible(false);
         setSuccessModalVisible(true);
-    };
-
-    const handleCancel = () => {
-        setIsModalVisible(false);
     };
 
     const closeSuccessModal = () => {
@@ -41,13 +34,9 @@ const InActiveDelete = ({ navigation }) => {
 
     return (
         <SafeAreaView style={Globalstyles.container}>
-            <StatusBar 
-                barStyle="dark-content" 
-                backgroundColor="transparent" 
-                translucent 
-            />
+            <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
             <View style={Globalstyles.header}>
-                <View style={{ flexDirection: 'row',alignItems:"center" }}>
+                <View style={{ flexDirection: 'row', alignItems: "center" }}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
@@ -58,32 +47,30 @@ const InActiveDelete = ({ navigation }) => {
             <Text style={styles.Text}>Do you really want to Inactivate or Delete your Profile?</Text>
 
             <View style={styles.optionsContainer}>
-                <TouchableOpacity style={styles.optionButton} onPress={handleInactivate}>
-                    <Text style={styles.optionText}>Inactivate Account</Text>
+                <TouchableOpacity style={styles.optionButton} onPress={() => handleAction('inactivate')}>
+                    <Text style={styles.optionText}>Inactivate My Biodata</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.optionButton} onPress={handleDelete}>
-                    <Text style={styles.optionText}>Delete Account</Text>
+                <TouchableOpacity style={styles.optionButton} onPress={() => handleAction('deleteBiodata')}>
+                    <Text style={styles.optionText}>Delete My Biodata</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.optionButton} onPress={() => handleAction('deleteAccount')}>
+                    <Text style={styles.optionText}>Delete My Account</Text>
                 </TouchableOpacity>
             </View>
 
-            {/* Modal for Inactivate/Delete Confirmation */}
-            <Modal
-                visible={isModalVisible}
-                transparent={true}
-                animationType="fade"
-                onRequestClose={handleCancel}
-            >
+            {/* Modal for Confirmation */}
+            <Modal visible={isModalVisible} transparent animationType="fade" onRequestClose={() => setIsModalVisible(false)}>
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContainer}>
                         <Text style={styles.modalText}>
-                            Are you sure you want to {actionType === 'inactivate' ? 'Inactivate' : 'Delete'} your account?
+                            Are you sure you want to {actionType === 'inactivate' ? 'Inactivate' : actionType === 'deleteBiodata' ? 'Delete your Biodata' : 'Delete your Account'}?
                         </Text>
                         <View style={styles.modalButtons}>
-                            <TouchableOpacity style={styles.modalButton} onPress={handleCancel}>
+                            <TouchableOpacity style={styles.modalButton} onPress={() => setIsModalVisible(false)}>
                                 <Text style={styles.modalButtonText}>Cancel</Text>
                             </TouchableOpacity>
-
                             <TouchableOpacity style={styles.modalButton} onPress={handleConfirm}>
                                 <Text style={styles.modalButtonText}>Confirm</Text>
                             </TouchableOpacity>
@@ -93,16 +80,11 @@ const InActiveDelete = ({ navigation }) => {
             </Modal>
 
             {/* Success Modal */}
-            <Modal
-                visible={successModalVisible}
-                transparent={true}
-                animationType="slide"
-                onRequestClose={closeSuccessModal}
-            >
+            <Modal visible={successModalVisible} transparent animationType="slide" onRequestClose={closeSuccessModal}>
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContainer}>
                         <Text style={styles.modalText}>
-                            {actionType === 'inactivate' ? 'Account Deactivated Successfully!' : 'Account Deleted Successfully!'}
+                            {actionType === 'inactivate' ? 'Biodata Inactivated Successfully!' : actionType === 'deleteBiodata' ? 'Biodata Deleted Successfully!' : 'Account Deleted Successfully!'}
                         </Text>
                         <TouchableOpacity style={styles.modalButton} onPress={closeSuccessModal}>
                             <Text style={styles.modalButtonText}>OK</Text>

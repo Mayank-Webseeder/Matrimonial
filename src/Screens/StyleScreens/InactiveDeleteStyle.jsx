@@ -8,20 +8,22 @@ const styles = StyleSheet.create({
         marginVertical:SH(50)
     },
     optionButton: {
-        backgroundColor: Colors.theme_color,
-        paddingVertical: SH(5),
+        backgroundColor: Colors.light_theme,
+        paddingVertical: SH(10),
         paddingHorizontal: SW(20),
         marginBottom: SH(15),
         borderRadius: 5,
+        borderColor:Colors.theme_color,
+        borderWidth:1
     },
     optionText: {
-        color: Colors.light,
+        color: Colors.theme_color,
         fontSize: SF(16),
         textAlign: 'center',
     },
     Text: {
-        fontSize: SF(15),
-        marginHorizontal: SW(25),
+        fontSize: SF(20),
+        marginHorizontal: SW(10),
         marginVertical:SH(25),
         color: Colors.theme_color,
         textAlign: "center"

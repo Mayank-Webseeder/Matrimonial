@@ -67,7 +67,7 @@ const Login = ({ navigation }) => {
                     text2: "You have Logged in!",
                     position: "top",
                     visibilityTime: 1000,
-                    textStyle: { fontSize: 10, color: "green" },
+                    textStyle: { fontSize: 10, color: 'green' },
                 });
                 navigation.reset({
                     index: 0,

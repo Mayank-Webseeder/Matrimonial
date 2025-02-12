@@ -1,4 +1,4 @@
-import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, Linking, SafeAreaView,StatusBar } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, Linking, SafeAreaView, StatusBar } from 'react-native';
 import React, { useState } from 'react';
 import { ActivistData } from '../../DummyData/DummyData';
 import { Image } from 'react-native';
@@ -7,7 +7,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from '../StyleScreens/ActivistStyle';
 import Colors from '../../utils/Colors';
 import { Dropdown } from 'react-native-element-dropdown';
-import { subCasteOptions,LocalityData } from '../../DummyData/DropdownData';
+import { subCasteOptions, LocalityData } from '../../DummyData/DropdownData';
 import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { SH } from '../../utils/Dimensions';
@@ -16,9 +16,9 @@ const Activist = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [subcaste, setSubcaste] = useState('');
   const [locality, setLocality] = useState('');
-   const [filteredOptions, setFilteredOptions] = useState([]);
- const [listHeight, setListHeight] = useState(0);
-   
+  const [filteredOptions, setFilteredOptions] = useState([]);
+  const [listHeight, setListHeight] = useState(0);
+
   const handleOpenFilter = () => {
     setModalVisible(true);
   };
@@ -27,22 +27,22 @@ const Activist = ({ navigation }) => {
     setModalVisible(false);
   };
 
-   const handleInputChange = (text) => {
-         setSubcaste(text);
-         if (text.trim() === '') {
-           setFilteredOptions([]); 
-         } else {
-           const filtered = subCasteOptions.filter((option) =>
-             option.label.toLowerCase().includes(text.toLowerCase())
-           );
-           setFilteredOptions(filtered);
-         }
-       };
-     
-       const handleOptionSelect = (value) => {
-         setSubcaste(value.label);
-         setFilteredOptions([]);
-       };
+  const handleInputChange = (text) => {
+    setSubcaste(text);
+    if (text.trim() === '') {
+      setFilteredOptions([]);
+    } else {
+      const filtered = subCasteOptions.filter((option) =>
+        option.label.toLowerCase().includes(text.toLowerCase())
+      );
+      setFilteredOptions(filtered);
+    }
+  };
+
+  const handleOptionSelect = (value) => {
+    setSubcaste(value.label);
+    setFilteredOptions([]);
+  };
 
   const renderItem = ({ item }) => {
     return (
@@ -56,7 +56,7 @@ const Activist = ({ navigation }) => {
           </View>
         </View>
         <View>
-          <TouchableOpacity style={styles.Button} onPress={()=>Linking.openURL('tel:9893458940')}>
+          <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL('tel:9893458940')}>
             <Text style={styles.buttonText}>Connect</Text>
           </TouchableOpacity>
         </View>
@@ -76,7 +76,7 @@ const Activist = ({ navigation }) => {
           <TouchableOpacity style={styles.button} onPress={handleOpenFilter}>
             <Text style={styles.buttonText}>Filter</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate('ActivistForm')}>
+          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ActivistForm')}>
             <Text style={styles.buttonText}> Be an Activist</Text>
           </TouchableOpacity>
         </View>
@@ -86,19 +86,19 @@ const Activist = ({ navigation }) => {
 
   return (
     <SafeAreaView style={Globalstyles.container}>
-      <StatusBar 
-                barStyle="dark-content" 
-                backgroundColor="transparent" 
-                translucent 
-            />
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="transparent"
+        translucent
+      />
       <View style={Globalstyles.header}>
-        <View style={{ flexDirection: "row", alignItems:"center" }}>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
           <TouchableOpacity onPress={() => { navigation.navigate('Tabs') }}>
             <MaterialIcons name={'arrow-back-ios-new'} size={25} color={Colors.theme_color} />
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>Activist</Text>
         </View>
-        <View style={{ flexDirection: "row" ,alignItems:"center" }}>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
           {/* <AntDesign name="search1" size={25} color={Colors.theme_color} style={styles.searchIcon} /> */}
           <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />
         </View>
@@ -107,88 +107,88 @@ const Activist = ({ navigation }) => {
       <FlatList
         data={ActivistData}
         renderItem={renderItem}
-        ListHeaderComponent={renderHeader} 
+        ListHeaderComponent={renderHeader}
         keyExtractor={(item) => item.id.toString()}
         scrollEnabled={true}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.panditListData}
       />
 
-<Modal
-  visible={modalVisible}
-  transparent={true}
-  animationType="slide"
-  onRequestClose={handleCloseFilter}
->
-  <View style={styles.modalOverlay}>
-    <View style={styles.modalContent}>
-      <View style={styles.Filterheader}>
-        <TouchableOpacity onPress={handleCloseFilter} style={{ flexDirection: 'row' }}>
-          <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
-          <Text style={Globalstyles.headerText}>Filter</Text>
-        </TouchableOpacity>
-      </View>
+      <Modal
+        visible={modalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={handleCloseFilter}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.Filterheader}>
+              <TouchableOpacity onPress={handleCloseFilter} style={{ flexDirection: 'row' }}>
+                <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
+                <Text style={Globalstyles.headerText}>Filter</Text>
+              </TouchableOpacity>
+            </View>
 
-      <View style={Globalstyles.form}>
-        <Text style={Globalstyles.title}>Locality</Text>
-        <View>
-          <TextInput
-            style={Globalstyles.input}
-            value={locality}
-            onChangeText={(text) => setLocality(text)}
-            placeholder="Enter Locality"
-            placeholderTextColor={Colors.gray}
-          />
-        </View>
-        <View>
-          <Text style={Globalstyles.title}>Sub-Caste</Text>
-          <View>
-            <TextInput
-              value={subcaste}
-              onChangeText={handleInputChange}
-              placeholder="Type your caste"
-              placeholderTextColor={Colors.gray}
-              style={Globalstyles.input}
-            />
-            {filteredOptions.length > 0 && (
-              <FlatList
-                data={filteredOptions.slice(0, 2)}
-                scrollEnabled={false}
-                keyExtractor={(item) => item.value}
-                style={[Globalstyles.suggestions, { marginBottom: 10 }]}
-                renderItem={({ item }) => (
-                  <TouchableOpacity onPress={() => handleOptionSelect(item)}>
-                    <Text style={styles.label}>{item.label}</Text>
-                  </TouchableOpacity>
-                )}
-                onLayout={(event) => {
-                  const height = event.nativeEvent.layout.height;
-                  setListHeight(height); // Update list height dynamically
-                }}
-              />
-            )}
+            <View style={Globalstyles.form}>
+              <Text style={Globalstyles.title}>Locality</Text>
+              <View>
+                <TextInput
+                  style={Globalstyles.input}
+                  value={locality}
+                  onChangeText={(text) => setLocality(text)}
+                  placeholder="Enter Locality"
+                  placeholderTextColor={Colors.gray}
+                />
+              </View>
+              <View>
+                <Text style={Globalstyles.title}>Sub-Caste</Text>
+                <View>
+                  <TextInput
+                    value={subcaste}
+                    onChangeText={handleInputChange}
+                    placeholder="Type your caste"
+                    placeholderTextColor={Colors.gray}
+                    style={Globalstyles.input}
+                  />
+                  {filteredOptions.length > 0 && (
+                    <FlatList
+                      data={filteredOptions.slice(0, 2)}
+                      scrollEnabled={false}
+                      keyExtractor={(item) => item.value}
+                      style={[Globalstyles.suggestions, { marginBottom: 10 }]}
+                      renderItem={({ item }) => (
+                        <TouchableOpacity onPress={() => handleOptionSelect(item)}>
+                          <Text style={styles.label}>{item.label}</Text>
+                        </TouchableOpacity>
+                      )}
+                      onLayout={(event) => {
+                        const height = event.nativeEvent.layout.height;
+                        setListHeight(height); // Update list height dynamically
+                      }}
+                    />
+                  )}
+                </View>
+              </View>
+              <TouchableOpacity style={styles.applyButton} onPress={handleCloseFilter}>
+                <Text style={styles.applyButtonText}>See results</Text>
+              </TouchableOpacity>
+
+              {/* Dynamically position the cross button */}
+              <TouchableOpacity
+                onPress={() => setModalVisible(false)}
+                style={[
+                  styles.crossButton,
+                  { top: SH(200) + listHeight + 100 },
+                ]}
+              >
+                <View style={styles.circle}>
+                  <Entypo name="cross" size={25} color={Colors.light} />
+                </View>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-        <TouchableOpacity style={styles.applyButton} onPress={handleCloseFilter}>
-          <Text style={styles.applyButtonText}>See results</Text>
-        </TouchableOpacity>
-
-        {/* Dynamically position the cross button */}
-        <TouchableOpacity
-          onPress={() => setModalVisible(false)}
-          style={[
-            styles.crossButton,
-            { top: SH(200) + listHeight + 100 },
-          ]}
-        >
-          <View style={styles.circle}>
-            <Entypo name="cross" size={25} color={Colors.light} />
-          </View>
-        </TouchableOpacity>
-      </View>
-    </View>
-  </View>
-</Modal>
+      </Modal>
     </SafeAreaView>
   );
 };

@@ -66,11 +66,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   userId: {
-    fontFamily:"poppins-Regular",
-    fontSize: SF(11),
+    fontFamily:"poppins-Bold",
+    fontSize: SF(15),
   },
   name: {
-    fontSize: SF(16),
+    fontSize: SF(14),
     color: "black",
     fontFamily:"Poppins-Bold"
   },
@@ -92,10 +92,11 @@ const styles = StyleSheet.create({
     
   },
   noDataText:{
-    fontSize:SF(15),
+    fontSize:SF(18),
     color: Colors.gray,
     fontFamily: 'Poppins-Regular',
-    textAlign:"center"
+    textAlign:"center",
+    marginTop:SH(100)
   }
   
 });

@@ -9,12 +9,12 @@ const UPDATE_PROFILE="https://api-matrimonial.webseeder.tech/api/v1/user/updateP
 
 // biodata api's
 const CREATE_PERSONAL_DETAILS = "https://api-matrimonial.webseeder.tech/api/v1/biodata/createPersonalDetails";
-const UPDATE_PERSONAL_DETAILS = "https://api-matrimonial.webseeder.tech/api/v1/biodata/updatePersonalDetails ";
+const UPDATE_PERSONAL_DETAILS = "https://api-matrimonial.webseeder.tech/api/v1/biodata/updatePersonalDetails";
 const CREATE_PARTNER_PERFRENCES = "https://api-matrimonial.webseeder.tech/api/v1/biodata/createPartnerPreferences";
 const UPDATE_PARTNER_PERFRENCES = "https://api-matrimonial.webseeder.tech/api/v1/biodata/updatePartnerPreferences";
 const GET_BIODATA = "https://api-matrimonial.webseeder.tech/api/v1/biodata/getBiodata";
-const GET_ALL_BIODATA_PROFILES = "https://api-matrimonial.webseeder.tech/api/v1/biodata/getAllBiodatas";
-
+const GET_ALL_BIODATA_PROFILES = "https://api-matrimonial.webseeder.tech/api/v1/user/feed";
+const REPOST="https://api-matrimonial.webseeder.tech/api/v1/biodata/repostBiodata"
 // send & received profiles api's 
 // matched profile
 const MATCHED_PROFILE="https://api-matrimonial.webseeder.tech/api/v1/user/profile";
@@ -30,6 +30,15 @@ const CREATE_PANDIT="https://api-matrimonial.webseeder.tech/api/v1/pandit/create
 const GET_ALL_PANDIT_DATA="https://api-matrimonial.webseeder.tech/api/v1/pandit/allPanditProfiles";
 const PANDIT_REVIEW="https://api-matrimonial.webseeder.tech/api/v1/pandit/addReviewRating/67811744a9969b543615e651";
 
+// filters API's
+
+const SET_PREFRENCE_FILTER_API="https://api-matrimonial.webseeder.tech/api/v1/user/getMatchProfiles";
+const MALE_FILTER_API="https://api-matrimonial.webseeder.tech/api/v1/user/feed?gender=male";
+const FEMALE_FILTER_API="https://api-matrimonial.webseeder.tech/api/v1/user/feed?gender=female";
+
+// saved api's 
+const SAVED_MATRIMONIAL_PROFILES="https://api-matrimonial.webseeder.tech/api/v1/saved/save-profile";
+const GET_SAVED_MATRIMONIAL_PROFILES="https://api-matrimonial.webseeder.tech/api/v1/saved/getSavedProfiles";
 
 export {
     SIGNUP_ENDPOINT,
@@ -52,5 +61,11 @@ export {
     SEND_REQUEST,
     REJECTED_API,
     ACCEPTED_API,
-    MATCHED_PROFILE
+    MATCHED_PROFILE,
+    SET_PREFRENCE_FILTER_API,
+    MALE_FILTER_API,
+    FEMALE_FILTER_API,
+    REPOST,
+    SAVED_MATRIMONIAL_PROFILES,
+    GET_SAVED_MATRIMONIAL_PROFILES
 }

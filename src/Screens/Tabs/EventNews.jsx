@@ -203,7 +203,7 @@ const EventNews = ({ navigation }) => {
           </View>
         </View>
       </View>
-    );e
+    );
   };
 
   return (

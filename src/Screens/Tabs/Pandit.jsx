@@ -16,6 +16,8 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import axios from 'axios';
 import { GET_ALL_PANDIT_DATA } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import { SH, SW } from '../../utils/Dimensions';
 
 const Pandit = ({ navigation }) => {
   const sliderRef = useRef(null);
@@ -27,6 +29,7 @@ const Pandit = ({ navigation }) => {
   const [rating, setRating] = useState(null);
   const [experience, setExperience] = useState(null);
   const [panditData, setPanditData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const AllPanditProfiles = panditData || {};
 
@@ -53,10 +56,9 @@ const Pandit = ({ navigation }) => {
     return () => clearInterval(interval);
   }, [currentIndex]);
 
-  // pandit data api
-
   const PanditDataAPI = async () => {
     try {
+      setIsLoading(true);
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("Authorization token is missing.");
 
@@ -65,20 +67,37 @@ const Pandit = ({ navigation }) => {
         "Authorization": `Bearer ${token}`,
       };
       const response = await axios.get(GET_ALL_PANDIT_DATA, { headers });
-      const panditdata = response.data.data;
-      setPanditData(panditdata);
-      console.log("response", JSON.stringify(response.data))
+      setPanditData(response.data.data);
+    } catch (error) {
+      console.log("Error fetching Pandit data:", error);
+    } finally {
+      setIsLoading(false);
     }
-    catch (error) {
-      console.log("error", error)
-    }
-  }
+  };
+
 
   useEffect(() => {
     PanditDataAPI();
     console.log("AllPanditProfiles", AllPanditProfiles);
   }, [])
 
+  const renderSkeleton = () => (
+    <SkeletonPlaceholder>
+      <View style={{ margin:SH(20) }}>
+        {[1, 2, 3, 4].map((_, index) => (
+          <View key={index} style={{ flexDirection: "row", marginBottom: 20 }}>
+            <View style={{ width:SW(80), height:SH(80), borderRadius: 40, marginRight:SW(10) }} />
+            <View>
+              <View style={{ width:SW(150), height:SH(20), borderRadius: 4 }} />
+              <View style={{ width:SW(100), height:SH(15), borderRadius: 4, marginTop:SH(6) }} />
+              <View style={{ width:SW(80), height:SH(15), borderRadius: 4, marginTop:SH(6) }} />
+            </View>
+          </View>
+        ))}
+      </View>
+    </SkeletonPlaceholder>
+  );
+  
   const renderItem = ({ item }) => {
     const rating = item.ratings?.length ? item.ratings[0] : 0;
 
@@ -174,19 +193,21 @@ const Pandit = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        <FlatList
-          data={AllPanditProfiles}
-          renderItem={renderItem}
-          keyExtractor={(item) => item._id}
-          scrollEnabled={false}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.panditListData}
-          ListEmptyComponent={
-            <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>No Pandit Data Available</Text>
-            </View>
-          }
-        />
+        {isLoading ? renderSkeleton() : (
+          <FlatList
+            data={AllPanditProfiles}
+            renderItem={renderItem}
+            keyExtractor={(item) => item._id}
+            scrollEnabled={false}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.panditListData}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>No Pandit Data Available</Text>
+              </View>
+            }
+          />
+        )}
 
       </ScrollView>
 

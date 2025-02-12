@@ -33,46 +33,6 @@ export const DharamsalaSlider = [
 
 export const SavedProfileData = [
    {
-     id: 1,
-     name: 'Raj Shah',
-     city: 'London',
-     age: 23,
-     height: '5.8',
-     subcaste: 'subcaste name',
-     image: require('../Images/profile3.png'),
-     category: 'Biodata',
-   },
-   {
-      id: 2,
-      name: 'Raj Shah',
-      city: 'London',
-      age: 23,
-      height: '5.8',
-      subcaste: 'subcaste name',
-      image: require('../Images/profile3.png'),
-      category: 'Biodata',
-    },
-    {
-      id: 3,
-      name: 'Raj Shah',
-      city: 'London',
-      age: 23,
-      height: '5.8',
-      subcaste: 'subcaste name',
-      image: require('../Images/profile3.png'),
-      category: 'Biodata',
-    },
-    {
-      id: 4,
-      name: 'Raj Shah',
-      city: 'London',
-      age: 23,
-      height: '5.8',
-      subcaste: 'subcaste name',
-      image: require('../Images/profile3.png'),
-      category: 'Biodata',
-    },
-   {
      id: 5,
      name: 'Priya Singh',
      city: 'Delhi',
@@ -244,37 +204,38 @@ export const DharamsalaData = [
 export const PanditData = [
    {
       id: "1",
-      name: "Raghuveer Sharma",
-      rating: "4.2",
-      city: "Indore",
-      area: "area",
+      name: "Vikram Joshi",
+      rating: "4.8",
+      city: "Ujjain",
+      area: "Mahakal Marg",
       image: require('../Images/PanditLogo.png')
    },
    {
       id: "2",
-      name: "Raghuveer Sharma",
-      rating: "3.0",
+      name: "Suresh Tripathi",
+      rating: "3.9",
       city: "Bhopal",
-      area: "area",
+      area: "Kolar Road",
       image: require('../Images/PanditLogo.png')
    },
    {
       id: "3",
-      name: "Raghuveer Sharma",
-      rating: "4",
+      name: "Rajesh Mishra",
+      rating: "4.5",
       city: "Indore",
-      area: "area",
+      area: "Vijay Nagar",
       image: require('../Images/PanditLogo.png')
    },
    {
       id: "4",
-      name: "Raghuveer Sharma",
-      rating: "2.5",
-      city: "city",
-      area: "area",
+      name: "Dinesh Shukla",
+      rating: "4.1",
+      city: "Gwalior",
+      area: "Lashkar",
       image: require('../Images/PanditLogo.png')
    }
-]
+];
+
 
 export const NotificationData = [
    {

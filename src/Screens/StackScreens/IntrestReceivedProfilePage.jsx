@@ -13,15 +13,18 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MATCHED_PROFILE } from '../../utils/BaseUrl';
-import { ACCEPTED_API, REJECTED_API } from '../../utils/BaseUrl';
+import { ACCEPTED_API, REJECTED_API , SAVED_MATRIMONIAL_PROFILES } from '../../utils/BaseUrl';
 import Toast from 'react-native-toast-message';
 const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const { userId, biodata, requestId } = route.params;
+  const _id=biodata?._id;
+  const personalDetails = biodata?.personalDetails;
+  console.log(userId, biodata, requestId)
   const [loading, setLoading] = useState(true);
   const [profileData, setProfileData] = useState(null);
 
   const MyprofileData = useSelector((state) => state.getBiodata);
-
+  console.log("MyprofileData", biodata);
   useEffect(() => {
     if (userId) {
       fetchUserProfile(userId);
@@ -40,7 +43,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
 
     try {
       const response = await axios.get(`${MATCHED_PROFILE}/${id}`, { headers });
-
+      console.log("response", JSON.stringify(response.data))
       if (response.data.status === "success") {
         setProfileData(response.data);
       }
@@ -58,6 +61,63 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   if (!profileData) {
     return <Text>No data found!</Text>;
   }
+
+  const savedProfiles = async () => {
+    if (!_id) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "User ID not found!",
+      });
+      return;
+    }
+  
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        throw new Error("No token found");
+      }
+  
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+  
+      const response = await axios.post(
+        `${SAVED_MATRIMONIAL_PROFILES}/${_id}`,
+        {}, 
+        { headers }
+      );
+  
+      console.log("Response Data:", JSON.stringify(response?.data));
+  
+      if (response?.data?.message) {
+        Toast.show({
+          type: "success",
+          text2: response.data.message,
+          position: "top",
+          visibilityTime: 3000,
+          textStyle: { fontSize: 14, color: "green" },
+        });
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: response.data.message || "Something went wrong!",
+        });
+      }
+    } catch (error) {
+      console.error(
+        "API Error:",
+        error?.response ? JSON.stringify(error.response.data) : error.message
+      );
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error.response?.data?.message || "Failed to send interest!",
+      });
+    }
+  };
 
   const acceptConnectionRequest = async (requestId) => {
     if (!requestId) {
@@ -77,13 +137,13 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
       console.log("Response Data:", JSON.stringify(response?.data));
 
       if (response.data.status === "success") {
-        Toast.show({ type: 'success', text1: 'Success', text2: 'Request accepted successfully!' });
+        Toast.show({ type: "success", text1: 'Success', text2: 'Request accepted successfully!' });
       } else {
-        Toast.show({ type: 'error', text1: 'Error', text2: response.data.message || 'Something went wrong!' });
+        Toast.show({ type: "error", text1: 'Error', text2: response.data.message || 'Something went wrong!' });
       }
     } catch (error) {
       console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
-      Toast.show({ type: 'error', text1: 'Error', text2: error.response?.data?.message || 'Failed to accept request!' });
+      Toast.show({ type: "error", text1: 'Error', text2: error.response?.data?.message || 'Failed to accept request!' });
     }
   };
 
@@ -120,6 +180,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const comparisonResults = profileData?.comparisonResults || {};
   const totalCriteria = Object.keys(comparisonResults).length;
   const matchedCount = Object.values(comparisonResults).filter(value => value).length;
+  const matchPercentage = totalCriteria > 0 ? Math.round((matchedCount / totalCriteria) * 100) : 0;
 
   return (
     <SafeAreaView style={Globalstyles.container}>
@@ -129,7 +190,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
-          <Text style={Globalstyles.headerText}>{biodata?.user?.username || 'Raj Sharma'}</Text>
+          <Text style={Globalstyles.headerText}>{personalDetails.fullname || 'Raj Sharma'}</Text>
         </View>
         <View style={styles.righticons}>
           <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />
@@ -149,27 +210,27 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
             nextButton={<MaterialIcons name="chevron-right" size={50} color={'gray'} />}
           >
             <View style={styles.slide}>
-              <Image source={{ uri: biodata?.personalDetails?.closeUpPhoto }} style={styles.image} />
+              <Image source={{ uri: personalDetails?.closeUpPhoto }} style={styles.image} />
             </View>
             <View style={styles.slide}>
-              <Image source={{ uri: biodata?.personalDetails?.fullPhoto }} style={styles.image} />
+              <Image source={{ uri: personalDetails?.fullPhoto }} style={styles.image} />
             </View>
             <View style={styles.slide}>
-              <Image source={{ uri: biodata?.personalDetails?.bestPhoto }} style={styles.image} />
+              <Image source={{ uri: personalDetails?.bestPhoto }} style={styles.image} />
             </View>
           </Swiper>
         </View>
         <View style={styles.flexContainer}>
           <View style={styles.flex}>
             {/* <Text style={styles.Idtext}>ID NO. :- {userId}</Text> */}
-            <Text style={styles.Idtext}>ID NO. :- 12345</Text>
-            <Text style={styles.toptext}>92% Compatible according to your preference</Text>
+            <Text style={styles.Idtext}>ID NO. :- {biodata?.bioDataId}</Text>
+            <Text style={styles.toptext}>{matchPercentage}% Compatible according to your preference</Text>
           </View>
           <View style={styles.sharecontainer}>
-            <View style={styles.iconContainer}>
+            <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
               <FontAwesome name="bookmark-o" size={24} color={Colors.dark} />
               <Text style={styles.iconText}>Save</Text>
-            </View>
+            </TouchableOpacity>
             <View style={styles.iconContainer}>
               <Feather name="send" size={24} color={Colors.dark} />
               <Text style={styles.iconText}>Shares</Text>
@@ -178,7 +239,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
               <Text style={styles.buttonText}>Confirm</Text>
             </TouchableOpacity> */}
 
-            <TouchableOpacity style={styles.iconContainer} onPress={() => Linking.openURL('tel:' + biodata?.personalDetails?.mobileNo)}>
+            <TouchableOpacity style={styles.iconContainer} onPress={() => Linking.openURL('tel:' + personalDetails?.mobileNo)}>
               <MaterialIcons name="call" size={24} color={Colors.dark} />
               <Text style={styles.iconText}>Call</Text>
             </TouchableOpacity>
@@ -191,70 +252,70 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         </View>
         <View style={styles.flexContainer1}>
           <View style={styles.leftContainer}>
-            <Text style={styles.HeadingText}>{biodata?.user?.username || 'Raj Sharma'}</Text>
-            {biodata?.personalDetails?.dob && <Text style={styles.text}>Age: {new Date().getFullYear() - new Date(biodata?.personalDetails?.dob).getFullYear()} / Height: {biodata?.personalDetails?.heightFeet} feet</Text>}
-            {biodata?.personalDetails?.subCaste && <Text style={styles.text}>Sub-caste: {biodata?.personalDetails?.subCaste}</Text>}
-            {biodata?.personalDetails?.maritalStatus && <Text style={styles.text}>Marital Status: {biodata?.personalDetails?.maritalStatus}</Text>}
-            {biodata?.personalDetails?.manglikStatus && <Text style={styles.text}>Manglik Status: {biodata?.personalDetails?.manglikStatus}</Text>}
-            {biodata?.personalDetails?.disabilities && <Text style={styles.text}>Disability: {biodata?.personalDetails?.disabilities}</Text>}
-            {biodata?.personalDetails?.profileCreatedBy && <Text style={styles.text}>Profile created by: {biodata?.personalDetails?.profileCreatedBy}</Text>}
+            <Text style={styles.HeadingText}>{personalDetails.fullname || 'Raj Sharma'}</Text>
+            {personalDetails?.dob && <Text style={styles.text}>Age: {new Date().getFullYear() - new Date(personalDetails?.dob).getFullYear()} / Height: {personalDetails?.heightFeet} feet</Text>}
+            {personalDetails?.subCaste && <Text style={styles.text}>Sub-caste: {personalDetails?.subCaste}</Text>}
+            {personalDetails?.maritalStatus && <Text style={styles.text}>Marital Status: {personalDetails?.maritalStatus}</Text>}
+            {personalDetails?.manglikStatus && <Text style={styles.text}>Manglik Status: {personalDetails?.manglikStatus}</Text>}
+            {personalDetails?.disabilities && <Text style={styles.text}>Disability: {personalDetails?.disabilities}</Text>}
+            {personalDetails?.profileCreatedBy && <Text style={styles.text}>Profile created by: {personalDetails?.profileCreatedBy}</Text>}
           </View>
           <View style={styles.rightContainer}>
-            {biodata?.personalDetails?.currentCity && <Text style={styles.text}>Location: {biodata?.personalDetails?.currentCity}</Text>}
-            {biodata?.personalDetails?.occupation && <Text style={styles.text}>Occupation: {biodata?.personalDetails?.occupation}</Text>}
-            {biodata?.personalDetails?.annualIncome && <Text style={styles.text}>Income: {biodata?.personalDetails?.annualIncome}</Text>}
-            {biodata?.personalDetails?.qualification && <Text style={styles.text}>Qualification: {biodata?.personalDetails?.qualification}</Text>}
+            {personalDetails?.currentCity && <Text style={styles.text}>Location: {personalDetails?.currentCity}</Text>}
+            {personalDetails?.occupation && <Text style={styles.text}>Occupation: {personalDetails?.occupation}</Text>}
+            {personalDetails?.annualIncome && <Text style={styles.text}>Income: {personalDetails?.annualIncome}</Text>}
+            {personalDetails?.qualification && <Text style={styles.text}>Qualification: {personalDetails?.qualification}</Text>}
           </View>
         </View >
         <View style={styles.flexContainer1}>
           <View>
             <Text style={styles.HeadingText}>Horoscope</Text>
-            {biodata?.personalDetails?.dob && <Text style={styles.text}>Date of Birth: {new Date(biodata?.personalDetails?.dob).toLocaleDateString()} / Time: {biodata?.personalDetails?.timeOfBirth}</Text>}
-            {biodata?.personalDetails?.placeofbirth && <Text style={styles.text}>Place of Birth: {biodata?.personalDetails?.placeofbirth}</Text>}
-            {biodata?.personalDetails?.nadi && <Text style={styles.text}>Nadi: {biodata?.personalDetails?.nadi}</Text>}
-            {biodata?.personalDetails?.gotraSelf && <Text style={styles.text}>Gotra (self): {biodata?.personalDetails?.gotraSelf}</Text>}
-            {biodata?.personalDetails?.gotraMother && <Text style={styles.text}>Gotra (Mother): {biodata?.personalDetails?.gotraMother}</Text>}
+            {personalDetails?.dob && <Text style={styles.text}>Date of Birth: {new Date(personalDetails?.dob).toLocaleDateString()} / Time: {personalDetails?.timeOfBirth}</Text>}
+            {personalDetails?.placeofbirth && <Text style={styles.text}>Place of Birth: {personalDetails?.placeofbirth}</Text>}
+            {personalDetails?.nadi && <Text style={styles.text}>Nadi: {personalDetails?.nadi}</Text>}
+            {personalDetails?.gotraSelf && <Text style={styles.text}>Gotra (self): {personalDetails?.gotraSelf}</Text>}
+            {personalDetails?.gotraMother && <Text style={styles.text}>Gotra (Mother): {personalDetails?.gotraMother}</Text>}
           </View>
         </View>
         <View style={styles.flexContainer1}>
           <View>
             <Text style={styles.HeadingText}>About Me</Text>
-            {biodata?.personalDetails?.aboutMe && <Text style={styles.text}>{biodata?.personalDetails?.aboutMe}</Text>}
-            {biodata?.personalDetails?.complexion && <Text style={styles.text}>Complexion: {biodata?.personalDetails?.complexion}</Text>}
-            {biodata?.personalDetails?.weight && <Text style={styles.text}>Weight: {biodata?.personalDetails?.weight}</Text>}
-            {biodata?.personalDetails?.livingStatus && <Text style={styles.text}>Currently Living city: {biodata?.personalDetails?.livingStatus}</Text>}
-            {biodata?.personalDetails?.familyType && <Text style={styles.text}>Living with family: {biodata?.personalDetails?.familyType}</Text>}
+            {personalDetails?.aboutMe && <Text style={styles.text}>{personalDetails?.aboutMe}</Text>}
+            {personalDetails?.complexion && <Text style={styles.text}>Complexion: {personalDetails?.complexion}</Text>}
+            {personalDetails?.weight && <Text style={styles.text}>Weight: {personalDetails?.weight}</Text>}
+            {personalDetails?.livingStatus && <Text style={styles.text}>Currently Living city: {personalDetails?.livingStatus}</Text>}
+            {personalDetails?.familyType && <Text style={styles.text}>Living with family: {personalDetails?.familyType}</Text>}
           </View>
         </View>
         <View style={styles.flexContainer1}>
           <View>
             <Text style={styles.HeadingText}>Family Section</Text>
-            {biodata?.personalDetails?.fatherName && <Text style={styles.text}>Father’s Name: {biodata?.personalDetails?.fatherName}</Text>}
-            {biodata?.personalDetails?.fatherOccupation && <Text style={styles.text}>Father’s Occupation: {biodata?.personalDetails?.fatherOccupation}</Text>}
-            {biodata?.personalDetails?.motherName && <Text style={styles.text}>Mother’s Name: {biodata?.personalDetails?.motherName}</Text>}
-            {biodata?.personalDetails?.motherOccupation && <Text style={styles.text}>Mother’s Occupation: {biodata?.personalDetails?.motherOccupation}</Text>}
-            {biodata?.personalDetails?.familyIncome && <Text style={styles.text}>Family Income (Annually): {biodata?.personalDetails?.familyIncome}</Text>}
-            {biodata?.personalDetails?.familyType && <Text style={styles.text}>Family Type: {biodata?.personalDetails?.familyType}</Text>}
-            {biodata?.personalDetails?.siblings && <Text style={styles.text}>Siblings: {biodata?.personalDetails?.siblings}</Text>}
-            {biodata?.personalDetails?.otherFamilyMemberInfo && <Text style={styles.text}>Other Family Members: {biodata?.personalDetails?.otherFamilyMemberInfo}</Text>}
+            {personalDetails?.fatherName && <Text style={styles.text}>Father’s Name: {personalDetails?.fatherName}</Text>}
+            {personalDetails?.fatherOccupation && <Text style={styles.text}>Father’s Occupation: {personalDetails?.fatherOccupation}</Text>}
+            {personalDetails?.motherName && <Text style={styles.text}>Mother’s Name: {personalDetails?.motherName}</Text>}
+            {personalDetails?.motherOccupation && <Text style={styles.text}>Mother’s Occupation: {personalDetails?.motherOccupation}</Text>}
+            {personalDetails?.familyIncome && <Text style={styles.text}>Family Income (Annually): {personalDetails?.familyIncome}</Text>}
+            {personalDetails?.familyType && <Text style={styles.text}>Family Type: {personalDetails?.familyType}</Text>}
+            {personalDetails?.siblings && <Text style={styles.text}>Siblings: {personalDetails?.siblings}</Text>}
+            {personalDetails?.otherFamilyMemberInfo && <Text style={styles.text}>Other Family Members: {personalDetails?.otherFamilyMemberInfo}</Text>}
           </View>
         </View>
         <View style={styles.flexContainer1}>
           <View>
             <Text style={styles.HeadingText}>Contact Details:</Text>
-            {biodata?.personalDetails?.contactNumber1 && <Text style={styles.text}>Mobile No. 1: {biodata?.personalDetails?.contactNumber1}</Text>}
-            {biodata?.personalDetails?.contactNumber2 && <Text style={styles.text}>Mobile No. 2: {biodata?.personalDetails?.contactNumber2}</Text>}
-            {biodata?.personalDetails?.emailId && <Text style={styles.text}>Email ID: {biodata?.personalDetails?.emailId}</Text>}
-            {biodata?.personalDetails?.permanentAddress && <Text style={styles.text}>Permanent Address: {biodata?.personalDetails?.permanentAddress}</Text>}
+            {personalDetails?.contactNumber1 && <Text style={styles.text}>Mobile No. 1: {personalDetails?.contactNumber1}</Text>}
+            {personalDetails?.contactNumber2 && <Text style={styles.text}>Mobile No. 2: {personalDetails?.contactNumber2}</Text>}
+            {personalDetails?.emailId && <Text style={styles.text}>Email ID: {personalDetails?.emailId}</Text>}
+            {personalDetails?.permanentAddress && <Text style={styles.text}>Permanent Address: {personalDetails?.permanentAddress}</Text>}
           </View>
         </View>
         <View style={styles.flexContainer1}>
           <View>
             <Text style={styles.HeadingText}>Other Details:</Text>
-            {biodata?.personalDetails?.knowCooking && <Text style={styles.text}>Cooking: {biodata?.personalDetails?.knowCooking ? 'Yes' : 'No'}</Text>}
-            {biodata?.personalDetails?.dietaryHabit && <Text style={styles.text}>Diet: {biodata?.personalDetails?.dietaryHabit}</Text>}
-            {biodata?.personalDetails?.smokingHabit && <Text style={styles.text}>Smoke: {biodata?.personalDetails?.smokingHabit}</Text>}
-            {biodata?.personalDetails?.drinkingHabit && <Text style={styles.text}>Drink: {biodata?.personalDetails?.drinkingHabit}</Text>}
+            {personalDetails?.knowCooking && <Text style={styles.text}>Cooking: {personalDetails?.knowCooking ? 'Yes' : 'No'}</Text>}
+            {personalDetails?.dietaryHabit && <Text style={styles.text}>Diet: {personalDetails?.dietaryHabit}</Text>}
+            {personalDetails?.smokingHabit && <Text style={styles.text}>Smoke: {personalDetails?.smokingHabit}</Text>}
+            {personalDetails?.drinkingHabit && <Text style={styles.text}>Drink: {personalDetails?.drinkingHabit}</Text>}
           </View>
         </View>
         <View style={styles.flexContainer3}>

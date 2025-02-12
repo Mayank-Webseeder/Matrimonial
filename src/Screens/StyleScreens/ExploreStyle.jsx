@@ -92,16 +92,52 @@ const styles = StyleSheet.create({
   },
 
   profileData: {
-    disply: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between", alignItems: "center",
+    display: "flex",
+    flexDirection: "column",
     marginHorizontal: SW(10),
-    marginVertical:SH(10)
+    marginVertical: SH(10),
+    paddingVertical: SH(10),
+    paddingHorizontal: SW(10),
   },
+  
+  nameContainer: {
+    // alignItems: "center",
+    marginBottom: SH(5), // Adds space below the name
+  },
+  
+  columnsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  
+  leftColumn: {
+    flex: 1,
+    paddingRight: SW(10),
+    alignSelf: "stretch",
+  },
+  
+  rightColumn: {
+    flex: 1,
+    paddingLeft: SW(12),
+    alignSelf: "stretch",
+  },
+  
   text: {
     fontFamily: "Poppins-Regular",
-    fontSize: SF(15)
+    fontSize: SF(15),
+    flexWrap: "wrap",
+    maxWidth: "100%",
   },
+  
+  rowItem: {
+    minHeight: SH(25), // Ensures row height consistency
+    justifyContent: "center",
+  },
+  
+  boldText: {
+    fontFamily: "Poppins-Bold",
+    fontSize: SF(18),
+  }, 
  
   sharecontainer: {
     flexDirection: 'row',
@@ -133,7 +169,17 @@ const styles = StyleSheet.create({
     paddingVertical:SH(5),
     marginHorizontal: SW(10),
     marginVertical:SH(10)
-  }
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height:SH(200),
+  },
+  emptyText: {
+    fontSize:SF(15),
+    color: Colors.gray,
+    fontFamily: 'Poppins-Regular',
+  },
 
 });
 

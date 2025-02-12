@@ -54,13 +54,15 @@ const styles = StyleSheet.create({
         width: "100%",
         marginBottom: SH(20)
     },
-    otpButton:{
-     paddingHorizontal:SW(5)
+    otpButton: {
+        paddingHorizontal: SW(5),
+        paddingVertical: SH(5),
+        marginBottom: SH(15)
     },
-    otpButtonText:{
-     color:Colors.theme_color,
-     fontFamily:"Poppins-Bold",
-     fontSize:SF(13),
+    otpButtonText: {
+        color: Colors.theme_color,
+        fontFamily: "Poppins-Bold",
+        fontSize: SF(13),
     },
     buttonText: {
         textAlign: "center",
@@ -87,16 +89,16 @@ const styles = StyleSheet.create({
     },
     imageContainer: {
         alignItems: 'center',
-        marginVertical:SH(20),
+        marginVertical: SH(20),
     },
     selectedImage: {
-        width:SW(150),
-        height:SH(150),
+        width: SW(150),
+        height: SH(150),
         borderRadius: 75,
     },
     imagePlaceholder: {
-        color:Colors.gray,
-        fontSize:SF(15),
+        color: Colors.gray,
+        fontSize: SF(15),
         textDecorationLine: 'underline',
     },
 

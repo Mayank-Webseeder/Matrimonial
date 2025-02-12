@@ -16,7 +16,7 @@ const CustomDrawer = (props) => {
   const ProfileData = useSelector((state) => state.profile);
   const image = ProfileData?.profiledata?.photoUrl?.[0];
   const name = ProfileData?.profiledata?.username || 'userName';
-  const Id = ProfileData?.profiledata?._id || 'user id';
+  const Id = ProfileData?.profiledata?.userId || 'user id';
 
   const menuItems = [
     { title: 'Partners Preference', screen: 'MainPartnerPrefrence' },
@@ -87,24 +87,28 @@ const CustomDrawer = (props) => {
         onPress={() => navigation.goBack()}
       />
       <View style={styles.header}>
-        <View style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+
+          {/* Profile Image on the Left */}
           <Image
-            source={image ? { uri: image } : require('../../Images/Profile.png') }
+            source={image ? { uri: image } : require('../../Images/Profile.png')}
             style={styles.profileImage}
           />
-          <View style={{ marginHorizontal: SW(10) }}>
-            <View style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-              <Text style={styles.name}>{name}</Text>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('DetailedProfile')}
-              >
-                <AntDesign name="edit" size={20} color={Colors.theme_color} />
-              </TouchableOpacity>
-            </View>
-            <Text style={styles.idText}>ID no: {Id}</Text>
+
+          {/* Name and ID in Center */}
+          <View style={{ marginLeft: -SW(40) }}>
+            <Text style={styles.name}>{name}</Text>
+            <Text style={styles.idText}>ID Number: {Id}</Text>
           </View>
+
+          {/* Edit Icon on the Right */}
+          <TouchableOpacity onPress={() => navigation.navigate('MatrimonyPage')}>
+            <AntDesign name="edit" size={20} color={Colors.theme_color} />
+          </TouchableOpacity>
+
         </View>
       </View>
+
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {menuItems.map((item, index) => {
@@ -226,15 +230,14 @@ const styles = StyleSheet.create({
     paddingVertical: SH(10),
     borderBottomWidth: 0,
     position: 'relative',
-    justifyContent: "space-between"
+    justifyContent: "space-between",
+    paddingHorizontal: SW(10),
   },
   profileImage: {
     width: SW(40),
     height: SH(40),
-    borderRadius: 20, resizeMode: "cover"
-  },
-  userInfo: {
-    marginHorizontal: SW(10),
+    borderRadius: 20,
+    resizeMode: "cover",
   },
   name: {
     fontSize: SF(13),
@@ -246,8 +249,9 @@ const styles = StyleSheet.create({
     fontSize: SF(10),
     color: Colors.theme_color,
     fontFamily: 'Poppins-Regular',
-    marginVertical: SH(5)
+    marginTop: SH(2),
   },
+
   drawerButton: {
     marginVertical: SH(1),
     paddingVertical: SH(11),

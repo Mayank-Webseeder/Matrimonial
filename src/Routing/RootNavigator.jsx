@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Image ,ActivityIndicator,View,StyleSheet} from 'react-native';
+import { Image, ActivityIndicator, View, StyleSheet } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -72,10 +72,10 @@ function MyTabs() {
   const dispatch = useDispatch();
   const [profiledata, setProfile] = useState('');
   const image = profiledata?.photoUrl?.[0];
-  const [loading, setLoading] = useState(true); 
+  // const [loading, setLoading] = useState(true); 
 
   const fetchProfile = async () => {
-    setLoading(true); 
+    // setLoading(true); 
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
@@ -98,8 +98,6 @@ function MyTabs() {
         "Error fetching profile:",
         error.response ? error.response.data : error.message
       );
-    } finally {
-      setLoading(false); // Set loading to false after data fetching is completed
     }
   };
 
@@ -109,13 +107,13 @@ function MyTabs() {
 
   const iconSize = SF(30);
 
-  if (loading) {
-    return (
-      <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color={Colors.theme_color} />
-      </View>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <View style={styles.loaderContainer}>
+  //       <ActivityIndicator size="large" color={Colors.theme_color} />
+  //     </View>
+  //   );
+  // }
 
   return (
     <Tab.Navigator
@@ -231,6 +229,7 @@ const AppStack = () => (
   <AppStackNavigator.Navigator screenOptions={{ headerShown: false }} initialRouteName='MainApp'>
     <AppStackNavigator.Screen name="MainApp" component={MyDrawer} />
     <AppStackNavigator.Screen name="BioData" component={BioData} />
+    <AppStackNavigator.Screen name="IntrestedProfile" component={IntrestedProfile} />
     <AppStackNavigator.Screen name="Notification" component={Notification} />
     <AppStackNavigator.Screen name="DharamsalaDetail" component={DharamsalaDetail} />
     <AppStackNavigator.Screen name="RoleRegisterForm" component={RoleRegisterForm} />

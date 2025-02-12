@@ -44,6 +44,7 @@ const Login = ({ navigation }) => {
 
             const response = await axios.post(LOGIN_ENDPOINT, payload);
             const LoginData = response.data;
+            console.log("LoginData",LoginData);
             const token = LoginData.user.token;
 
             console.log("Token from response:", token);
@@ -62,7 +63,7 @@ const Login = ({ navigation }) => {
                     text1: "Login Successful",
                     text2: "You have logged in!",
                     position: "top",
-                    visibilityTime: 2000,
+                    visibilityTime: 1000,
                     textStyle: { fontSize: 14, color: "white" },
                     backgroundColor: "green",
                     onHide: () => navigation.reset({

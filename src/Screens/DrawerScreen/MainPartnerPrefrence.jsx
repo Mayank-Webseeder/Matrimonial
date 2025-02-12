@@ -1,30 +1,92 @@
 import { Text, View, Image, ScrollView, SafeAreaView, StatusBar } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/ProfileStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-
 import { useSelector } from 'react-redux';
 import moment from "moment";
 import Globalstyles from '../../utils/GlobalCss';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { REPOST } from '../../utils/BaseUrl';
+import axios from 'axios';
+import Toast from 'react-native-toast-message';
 import DetailedProfile from '../StackScreens/DetailedProfile';
 import PartnersPreference from '../StackScreens/PartnersPreference';
 import PhotoGallery from '../StackScreens/PhotoGallery';
-
 const MainPartnerPrefrence = ({ navigation }) => {
     const [activeComponent, setActiveComponent] = useState("PartnersPreference");
-
     const profileData = useSelector((state) => state.profile);
+    console.log("profileData in myprofile", profileData);
     const image = profileData?.profiledata?.photoUrl?.[0];
+    console.log("image", image);
     const formattedDate = moment(profileData?.profiledata?.dob).format("DD/MM/YYYY");
-
+    const MyprofileData = useSelector((state) => state.getBiodata);
+    const [biodataAvailable, setBiodataAvailable] = useState(false);
+    
     const handlePress = (componentName) => {
         setActiveComponent(componentName);
     };
+
+    useEffect(() => {
+        if (MyprofileData?.Biodata) {
+            setBiodataAvailable(true);
+        }
+    }, [MyprofileData]);
+
+    const Repost = async () => {
+        const token = await AsyncStorage.getItem('userToken');
+        if (!token) {
+            Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: 'No token found!',
+            });
+            return;
+        }
+
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        };
+
+        try {
+            const response = await axios.post(REPOST, {}, { headers });
+
+            console.log("repost data ", response.data);
+
+            if (response.data.status === "success") {
+                Toast.show({
+                    type: 'success',
+                    text1: 'Repost successfully!',
+                    text2: response.data.message,
+                });
+            } else if (response.data.status === "failed") {
+                Toast.show({
+                    type: 'error',
+                    text1: 'Cooldown Active!',
+                    text2: response.data.message || 'You can repost after some time.',
+                });
+            }
+        } catch (error) {
+            console.error("Error fetching profile:", error);
+            let errorMessage = "Something went wrong. Please try again later.";
+
+            if (error.response && error.response.data && error.response.data.message) {
+                errorMessage = error.response.data.message;
+            }
+
+            Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: errorMessage,
+            });
+        }
+    };
+
+
 
     const capitalizeFirstLetter = (text) => {
         return text ? text.charAt(0).toUpperCase() + text.slice(1) : "Unknown";
@@ -55,6 +117,7 @@ const MainPartnerPrefrence = ({ navigation }) => {
                 </View>
             </View>
             <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+
                 <View style={styles.topContainer}>
 
                     <Image source={image ? { uri: image } : require('../../Images/Profile.png')} style={styles.image} />
@@ -72,7 +135,11 @@ const MainPartnerPrefrence = ({ navigation }) => {
                     </View>
 
                 </View>
-                <Text style={styles.RepostText}>Repost</Text>
+                {biodataAvailable && (
+                    <Text style={styles.RepostText} onPress={() => Repost()}>
+                        Repost
+                    </Text>
+                )}
                 {/* Tab Buttons */}
                 <View style={styles.IconFlex}>
                     <TouchableOpacity
@@ -142,4 +209,3 @@ const MainPartnerPrefrence = ({ navigation }) => {
 };
 
 export default MainPartnerPrefrence;
-

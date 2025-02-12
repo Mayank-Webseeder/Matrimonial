@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, TouchableOpacity, FlatList, Image, SafeAreaView, Text, StatusBar, ActivityIndicator } from 'react-native';
+import { View, TouchableOpacity, FlatList, Image, SafeAreaView, Text, StatusBar } from 'react-native';
 import { DrawerActions } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from '../StyleScreens/HomeStyle';
@@ -16,17 +16,19 @@ import { useDispatch } from 'react-redux';
 import { setAllBiodata } from '../../ReduxStore/Slices/GetAllBiodataSlice';
 import { setBioData } from '../../ReduxStore/Slices/BiodataSlice';
 import { useFocusEffect } from '@react-navigation/native';
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import { SH, SW } from '../../utils/Dimensions';
+
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [biodata, setBiodata] = useState("");
-  const [allbiodata, setallBiodata] = useState("");
-  const [mybiodata, setMybiodata] = useState("");
-  const [isLoading, setIsLoading] = useState("");
+  const [allbiodata, setallBiodata] = useState(null);
+  const [mybiodata, setMybiodata] = useState(null);
+  const [loading, setLoading] = useState(false);
   const GetAll_Biodata = async () => {
-
     try {
+      setLoading(true)
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
 
@@ -34,47 +36,33 @@ const Home = ({ navigation }) => {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
       };
-
-      console.log("headers in profile", headers);
       const res = await axios.get(GET_ALL_BIODATA_PROFILES, { headers });
-      const biodata = res.data.data;
-      console.log("biodata",biodata);
+      const biodata = res.data.feedUsers;
+      console.log("biodata", biodata);
       dispatch(setAllBiodata(biodata));
       setallBiodata(biodata);
     } catch (error) {
-      console.error(
-        "Error fetching profile:",
-        error.response ? error.response.data : error.message
-      );
+      setLoading(false)
+      console.error("Error fetching profile:", error);
     }
-  }
+    finally {
+      setLoading(false)
+    }
+  };
 
   const getBiodata = async () => {
     try {
-      setIsLoading(true)
       const token = await AsyncStorage.getItem('userToken');
       if (!token) throw new Error('No token found');
-
-      const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      };
-
+      const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
       const response = await axios.get(GET_BIODATA, { headers });
-      if (response.data && response.data.data && response.data.data.personalDetails) {
+      if (response.data && response.data.data) {
         const fetchedData = response.data.data;
-        console.log("fetchedData", fetchedData);
         dispatch(setBioData(fetchedData));
         setMybiodata(fetchedData);
-        setIsLoading(false)
-      } else {
-        setBiodata({});
       }
     } catch (error) {
       console.error("Error fetching biodata:", error);
-    }
-    finally {
-      setIsLoading(false)
     }
   };
 
@@ -95,24 +83,12 @@ const Home = ({ navigation }) => {
         sliderRef.current?.goToSlide(0);
       }
     }, 2000);
-
     return () => clearInterval(interval);
   }, [currentIndex]);
 
-
-  if (isLoading) {
-    return <View style={styles.loading}>
-      <ActivityIndicator size={'large'} color={Colors.theme_color} />
-    </View>;
-  }
-
   return (
     <SafeAreaView style={Globalstyles.container}>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor="transparent"
-        translucent
-      />
+      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
         <View style={styles.headerContainer}>
           <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
@@ -121,8 +97,7 @@ const Home = ({ navigation }) => {
           <Text style={Globalstyles.headerText}>Home</Text>
         </View>
         <View style={styles.righticons}>
-          {/* <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} /> */}
-          <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />
+          <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => navigation.navigate('Notification')} />
         </View>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -142,41 +117,43 @@ const Home = ({ navigation }) => {
           />
         </View>
 
-
-        <View>
-          <HeadingWithViewAll
+        <HeadingWithViewAll
             heading="MATRIMONY"
             showViewAll={true}
             onViewAllPress={() => navigation.navigate('Matrimonial')}
           />
 
+        {loading ? (
+          <SkeletonPlaceholder>
+            <View style={{ flexDirection: "row", margin: SH(20) }}>
+              {[1, 2, 3, 4].map((_, index) => (
+                <View key={index} style={{ margin: 10 }}>
+                  <View style={{ width: SW(100), height: SH(100), borderRadius: 50 }} />
+                </View>
+              ))}
+            </View>
+          </SkeletonPlaceholder>
+        ) : allbiodata?.length > 0 ? (
           <FlatList
             data={allbiodata}
-            keyExtractor={(item) => item.user._id}
+            keyExtractor={(item) => item._id}
             renderItem={({ item }) => (
               <View style={styles.imageWrapper}>
                 <TouchableOpacity
-                  onPress={() => {
-                    navigation.navigate("MatrimonyPeopleProfile", { userDetails: item, userId: item.user._id });
-                  }}
+                  onPress={() => navigation.navigate("MatrimonyPeopleProfile", { userDetails: item, userId: item.userId })}
                 >
-                  <Image
-                    source={{ uri: item.personalDetails.closeUpPhoto }}
-                    style={styles.ProfileImages}
-                  />
+                  <Image source={{ uri: item.personalDetails.closeUpPhoto }} style={styles.ProfileImages} />
                 </TouchableOpacity>
               </View>
             )}
             horizontal={true}
             showsHorizontalScrollIndicator={false}
-            ListEmptyComponent={
-              <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>No Matrimonial Profile Created Yet</Text>
-              </View>
-            }
           />
-
-        </View>
+        ) : (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>No profiles available </Text>
+          </View>
+        )}
 
         <View>
           <HeadingWithViewAll

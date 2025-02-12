@@ -1,4 +1,4 @@
-import {Text, View, TextInput, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, FlatList } from 'react-native'
+import { Text, View, TextInput, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, FlatList } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/PartnerPreferenceStyle';
@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Globalstyles from '../../utils/GlobalCss';
 import { useSelector } from 'react-redux';
 import Toast from 'react-native-toast-message';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 import {
     OccupationData, QualificationData, FamilyTypeData,
@@ -18,9 +19,7 @@ import {
 } from '../../DummyData/DropdownData';
 
 const PartnersPreference = ({ navigation }) => {
-    const [selectedButton, setSelectedButton] = useState('PartnersPreference');
     const [isEditing, setIsEditing] = useState(true);
-    const [showTimePicker, setShowTimePicker] = useState(false);
     const [stateInput, setStateInput] = useState('');
     const [subCasteInput, setSubCasteInput] = useState('');
     const [filteredStates, setFilteredStates] = useState([]);
@@ -31,39 +30,47 @@ const PartnersPreference = ({ navigation }) => {
     const [selectedCity, setSelectedCity] = useState('');
     const [originalBiodata, setOriginalBiodata] = useState({});
     const [selectedSubCaste, setSelectedSubCaste] = useState('');
-    const profileData = useSelector((state) => state.profile);
+    const [loading, setLoading] = useState(false);
+
     // console.log("profileData", profileData);
 
     const MyprofileData = useSelector((state) => state.getBiodata);
     const myPartnerPreferences = MyprofileData?.Biodata?.partnerPreferences;
-    console.log("myBiodata", myPartnerPreferences);
 
     const [biodata, setBiodata] = useState({
-        partnerSubCaste: myPartnerPreferences?.partnerSubCaste || '',
-        partnerMinAge: myPartnerPreferences?.partnerMinAge || '',
-        partnerMaxAge: myPartnerPreferences?.partnerMaxAge || '',
-        partnerMinHeightFeet: myPartnerPreferences?.partnerMinHeightFeet || '',
-        partnerMaxHeightFeet: myPartnerPreferences?.partnerMaxHeightFeet || '',
-        partnerMaritalStatus: myPartnerPreferences?.partnerMaritalStatus || '',
-        partnerIncome: myPartnerPreferences?.partnerIncome || '',
-        partnerOccupation: myPartnerPreferences?.partnerOccupation || '',
-        partnerQualification: myPartnerPreferences?.partnerQualification || '',
-        partnerDisabilities: myPartnerPreferences?.partnerDisabilities || '',
-        partnerManglikStatus: myPartnerPreferences?.partnerManglikStatus || '',
-        partnersLivingStatus: myPartnerPreferences?.partnersLivingStatus || '',
-        partnerState: myPartnerPreferences?.partnerState || '',
-        partnerCity: myPartnerPreferences?.partnerCity || '',
-        partnerBodyStructure: myPartnerPreferences?.partnerBodyStructure || '',
-        partnerComplexion: myPartnerPreferences?.partnerComplexion || '',
-        partnerDietaryHabits: myPartnerPreferences?.partnerDietaryHabits || '',
-        partnerSmokingHabits: myPartnerPreferences?.partnerSmokingHabits || '',
-        partnerDrinkingHabits: myPartnerPreferences?.partnerDrinkingHabits || '',
-        partnerExpectations: myPartnerPreferences?.partnerExpectations || '',
-        partnerFamilyType: myPartnerPreferences?.partnerFamilyType || '',
-        partnerFamilyFinancialStatus: myPartnerPreferences?.partnerFamilyFinancialStatus || '',
-        partnerFamilyIncome: myPartnerPreferences?.partnerFamilyIncome || '',
+        partnerSubCaste: '',
+        partnerMinAge: '',
+        partnerMaxAge: '',
+        partnerMinHeightFeet: '',
+        partnerMaxHeightFeet: '',
+        partnerMaritalStatus: '',
+        partnerIncome: '',
+        partnerOccupation: '',
+        partnerQualification: '',
+        partnerDisabilities: '',
+        partnerManglikStatus: '',
+        partnersLivingStatus: '',
+        partnerState: '',
+        partnerCity: '',
+        partnerBodyStructure: '',
+        partnerComplexion: '',
+        partnerDietaryHabits: '',
+        partnerSmokingHabits: '',
+        partnerDrinkingHabits: '',
+        partnerExpectations: '',
+        partnerFamilyType: '',
+        partnerFamilyFinancialStatus: '',
+        partnerFamilyIncome: '',
     });
 
+    useEffect(() => {
+        if (myPartnerPreferences) {
+            setBiodata((prev) => ({
+                ...prev,
+                ...myPartnerPreferences, // Spread new data from Redux
+            }));
+        }
+    }, [myPartnerPreferences]); // Runs when `myPartnerPreferences` changes
     const handleStateInputChange = (text) => {
         setStateInput(text);
         if (text) {
@@ -161,6 +168,8 @@ const PartnersPreference = ({ navigation }) => {
 
     const handleSave = async () => {
         try {
+            setLoading(true); // Start loader
+
             const token = await AsyncStorage.getItem('userToken');
             if (!token) throw new Error('No token found');
 
@@ -184,9 +193,9 @@ const PartnersPreference = ({ navigation }) => {
                         text1: "No changes detected.",
                         text2: "You haven't made any modifications.",
                         position: "top",
-                        visibilityTime: 1000,
                         textStyle: { fontSize: 10, color: "blue" },
                     });
+                    setLoading(false); // Stop loader
                     return;
                 }
             } else {
@@ -222,32 +231,25 @@ const PartnersPreference = ({ navigation }) => {
             const apiCall = biodata?._id ? axios.put : axios.post;
             const endpoint = biodata?._id ? UPDATE_PARTNER_PERFRENCES : CREATE_PARTNER_PERFRENCES;
             const response = await apiCall(endpoint, payload, { headers });
+
             console.log("Save response:", response.data);
 
-            const message = response.data?.data?.message;
-
-            if (message === "Partner preferences updated successfully.") {
+            if (response.status === 200 && response.data.status === "success") {
                 Toast.show({
                     type: "success",
-                    text1: "Partner preferences updated successfully.",
+                    text1: biodata?._id ? "Partner preferences updated successfully." : "Partner preferences added successfully.",
                     text2: "Your changes have been saved!",
                     position: "top",
-                    visibilityTime: 1000,
-                    textStyle: { fontSize: 10, color: "green" },
                 });
-            } else if (message === "Partner preferences added successfully.") {
-                Toast.show({
-                    type: "success",
-                    text1: "Partner preferences added successfully.",
-                    text2: "Your preferences have been saved!",
-                    position: "top",
-                    visibilityTime: 1000,
-                    textStyle: { fontSize: 10, color: "green" },
-                });
-            }
 
+                setIsEditing(false);
+                setTimeout(() => {
+                    navigation.navigate("MainApp");
+                }, 1000);
+            } else {
+                throw new Error(response.data.message || "Something went wrong");
+            }
             setIsEditing(false);
-            navigation.navigate("MainApp");
 
         } catch (error) {
             console.error("Error saving biodata:", error);
@@ -257,10 +259,14 @@ const PartnersPreference = ({ navigation }) => {
                 text2: error.response?.data?.message || error.message || "Something went wrong",
                 position: "top",
                 visibilityTime: 1000,
-                textStyle: { fontSize: 10, color: "red" },
+                textStyle: { fontSize: 14, color: "red" },
             });
+        } finally {
+            setLoading(false); // Stop loader in all cases
         }
     };
+
+
 
     return (
         <SafeAreaView style={Globalstyles.container}>
@@ -275,11 +281,11 @@ const PartnersPreference = ({ navigation }) => {
                 <View style={Globalstyles.form}>
                     <View style={styles.detail}>
                         <Text style={styles.Formtitle}>Preferences</Text>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={() => setIsEditing(true)}>
                             <Text style={styles.detailText}>Edit</Text>
                         </TouchableOpacity>
                     </View>
-                    <Text style={Globalstyles.title}>Sub-Caste</Text>
+                    <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /> </Text>
                     <TextInput
                         style={Globalstyles.input}
                         value={biodata?.partnerSubCaste}
@@ -301,7 +307,7 @@ const PartnersPreference = ({ navigation }) => {
                         />
                     ) : null}
 
-                    <Text style={Globalstyles.title}>Age Criteria</Text>
+                    <Text style={Globalstyles.title}>Age Criteria <Entypo name={'star'} color={'red'} size={12} /> </Text>
                     <View style={styles.row}>
                         <Dropdown
                             style={[styles.dropdown, !isEditing && styles.readOnly]}
@@ -327,7 +333,7 @@ const PartnersPreference = ({ navigation }) => {
                             placeholderStyle={{ color: '#E7E7E7' }}
                         />
                     </View>
-                    <Text style={Globalstyles.title}>Height Criteria</Text>
+                    <Text style={Globalstyles.title}>Height Criteria <Entypo name={'star'} color={'red'} size={12} /> </Text>
                     <View style={styles.row}>
                         <Dropdown
                             style={[styles.dropdown, !isEditing && styles.readOnly]}
@@ -363,7 +369,7 @@ const PartnersPreference = ({ navigation }) => {
                         />
                     </View>
                     <View>
-                        <Text style={Globalstyles.title}>Partners Marital Status</Text>
+                        <Text style={Globalstyles.title}>Partners Marital Status <Entypo name={'star'} color={'red'} size={12} /> </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={PartnermaritalStatusData}
@@ -375,7 +381,7 @@ const PartnersPreference = ({ navigation }) => {
                             placeholder="Select status"
                             placeholderStyle={{ color: '#E7E7E7' }}
                         />
-                        <Text style={Globalstyles.title}>Income Range (in INR)</Text>
+                        <Text style={Globalstyles.title}>Income Range (in INR) <Entypo name={'star'} color={'red'} size={12} /> </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={Income}
@@ -387,7 +393,7 @@ const PartnersPreference = ({ navigation }) => {
                             placeholder="Income"
                             placeholderStyle={{ color: '#E7E7E7' }}
                         />
-                        <Text style={Globalstyles.title}>Occupation</Text>
+                        <Text style={Globalstyles.title}>Occupation <Entypo name={'star'} color={'red'} size={12} /> </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={OccupationData}
@@ -400,7 +406,7 @@ const PartnersPreference = ({ navigation }) => {
                             placeholderStyle={{ color: '#E7E7E7' }}
                         />
 
-                        <Text style={styles.inputHeading}>Qualification</Text>
+                        <Text style={styles.inputHeading}>Qualification <Entypo name={'star'} color={'red'} size={12} /> </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={QualificationData}
@@ -412,7 +418,7 @@ const PartnersPreference = ({ navigation }) => {
                             placeholder="Select Qualification"
                             placeholderStyle={{ color: '#E7E7E7' }}
                         />
-                        <Text style={Globalstyles.title}>Disabilities (Physical/Mental)</Text>
+                        <Text style={Globalstyles.title}>Disabilities (Physical/Mental) <Entypo name={'star'} color={'red'} size={12} /> </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={Disabilities}
@@ -424,7 +430,7 @@ const PartnersPreference = ({ navigation }) => {
                             placeholder="Select disability"
                             placeholderStyle={{ color: '#E7E7E7' }}
                         />
-                        <Text style={Globalstyles.title}>Manglik Status</Text>
+                        <Text style={Globalstyles.title}>Manglik Status <Entypo name={'star'} color={'red'} size={12} /> </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={PartnerManglikStatusData}
@@ -436,7 +442,7 @@ const PartnersPreference = ({ navigation }) => {
                             placeholder="Select status"
                             placeholderStyle={{ color: '#E7E7E7' }}
                         />
-                        <Text style={Globalstyles.title}>Partners Livein</Text>
+                        <Text style={Globalstyles.title}>Partners Livein <Entypo name={'star'} color={'red'} size={12} /> </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={PartnersLiveinData}
@@ -449,7 +455,7 @@ const PartnersPreference = ({ navigation }) => {
                             placeholderStyle={{ color: '#E7E7E7' }}
                         />
                         <Text style={[Globalstyles.title, { color: Colors.theme_color }]}>Area</Text>
-                        <Text style={Globalstyles.title}>State</Text>
+                        <Text style={Globalstyles.title}>State <Entypo name={'star'} color={'red'} size={12} /> </Text>
                         <TextInput
                             style={Globalstyles.input}
                             value={biodata?.partnerState}
@@ -470,7 +476,7 @@ const PartnersPreference = ({ navigation }) => {
                                 style={Globalstyles.suggestions}
                             />
                         ) : null}
-                        <Text style={Globalstyles.title}>City / Village</Text>
+                        <Text style={Globalstyles.title}>City / Village  <Entypo name={'star'} color={'red'} size={12} /> </Text>
                         <TextInput
                             style={Globalstyles.input}
                             value={biodata?.partnerCity}
@@ -491,7 +497,7 @@ const PartnersPreference = ({ navigation }) => {
                                 style={Globalstyles.suggestions}
                             />
                         ) : null}
-                        <Text style={Globalstyles.title}>Partners body Structure</Text>
+                        <Text style={Globalstyles.title}>Partners body Structure <Entypo name={'star'} color={'red'} size={12} /> </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={BodyStructureData}
@@ -502,7 +508,7 @@ const PartnersPreference = ({ navigation }) => {
                             onChange={(item) => setBiodata({ ...biodata, partnerBodyStructure: item.value })}
                             placeholder="Select structure" placeholderStyle={{ color: '#E7E7E7' }}
                         />
-                        <Text style={Globalstyles.title}>Complexion</Text>
+                        <Text style={Globalstyles.title}>Complexion <Entypo name={'star'} color={'red'} size={12} /> </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={ComplexionData}
@@ -514,7 +520,7 @@ const PartnersPreference = ({ navigation }) => {
                             placeholder="Select Complexion"
                             placeholderStyle={{ color: '#E7E7E7' }}
                         />
-                        <Text style={Globalstyles.title}>Partner Dietary Habits</Text>
+                        <Text style={Globalstyles.title}>Partner Dietary Habits <Entypo name={'star'} color={'red'} size={12} /> </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={DietHabit}
@@ -526,7 +532,7 @@ const PartnersPreference = ({ navigation }) => {
                             placeholder="Select Diet"
                             placeholderStyle={{ color: '#E7E7E7' }}
                         />
-                        <Text style={Globalstyles.title}>Smoking Habits</Text>
+                        <Text style={Globalstyles.title}>Smoking Habits <Entypo name={'star'} color={'red'} size={12} /> </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={PartnersmokingStatusData}
@@ -538,7 +544,7 @@ const PartnersPreference = ({ navigation }) => {
                             placeholder="Select smoking"
                             placeholderStyle={{ color: '#E7E7E7' }}
                         />
-                        <Text style={Globalstyles.title}>Drinking Habits</Text>
+                        <Text style={Globalstyles.title}>Drinking Habits <Entypo name={'star'} color={'red'} size={12} /> </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={PartnerDrinkingHabit}
@@ -550,7 +556,7 @@ const PartnersPreference = ({ navigation }) => {
                             placeholder="Select Habit"
                             placeholderStyle={{ color: '#E7E7E7' }}
                         />
-                        <Text style={Globalstyles.title}>Family Type</Text>
+                        <Text style={Globalstyles.title}>Family Type <Entypo name={'star'} color={'red'} size={12} /> </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={FamilyTypeData}
@@ -562,7 +568,7 @@ const PartnersPreference = ({ navigation }) => {
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerFamilyType: item.value })}
                         />
-                        <Text style={Globalstyles.title}>Family Financial Status</Text>
+                        <Text style={Globalstyles.title}>Family Financial Status <Entypo name={'star'} color={'red'} size={12} /> </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={FamilyFinancialStatusData}
@@ -574,7 +580,7 @@ const PartnersPreference = ({ navigation }) => {
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerFamilyFinancialStatus: item.value })}
                         />
-                        <Text style={Globalstyles.title}>Family Income</Text>
+                        <Text style={Globalstyles.title}>Family Income <Entypo name={'star'} color={'red'} size={12} /> </Text>
                         <Dropdown
                             style={Globalstyles.input}
                             data={Income}
@@ -586,7 +592,7 @@ const PartnersPreference = ({ navigation }) => {
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerFamilyIncome: item.value })}
                         />
-                        <Text style={Globalstyles.title}>Expectations from Partner</Text>
+                        <Text style={Globalstyles.title}>Expectations from Partner <Entypo name={'star'} color={'red'} size={12} /> </Text>
                         <TextInput style={Globalstyles.textInput}
                             multiline={true} numberOfLines={6}
                             value={biodata.partnerExpectations}
@@ -597,9 +603,15 @@ const PartnersPreference = ({ navigation }) => {
                                 setBiodata({ ...biodata, partnerExpectations: text })
                             }
                             textAlignVertical='top' />
+
                         <TouchableOpacity style={styles.button} onPress={handleSave}>
-                            <Text style={styles.buttonText}>Submit</Text>
+                            {loading ? (
+                                <ActivityIndicator size={'large'} color={Colors.light} />
+                            ) : (
+                                <Text style={styles.buttonText}>Submit</Text>
+                            )}
                         </TouchableOpacity>
+
                     </View>
                 </View>
             </ScrollView>

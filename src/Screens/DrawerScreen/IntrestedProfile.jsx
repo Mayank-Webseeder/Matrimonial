@@ -1,124 +1,92 @@
-import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, Text, SafeAreaView, StatusBar, Image, FlatList, ActivityIndicator } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, TouchableOpacity, Text, SafeAreaView, StatusBar, Image, FlatList, ScrollView } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styles from '../StyleScreens/IntrestedProfileStyle';
 import Colors from '../../utils/Colors';
-import { ScrollView } from 'react-native-gesture-handler';
 import Globalstyles from '../../utils/GlobalCss';
 import axios from 'axios';
 import { RECEIVER_REQUESTS, SENDER_REQUESTS } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import profileImage from '../../Images/Profile1.png';
-import { useSelector } from 'react-redux';
-import { useFocusEffect } from '@react-navigation/native'; // Import useFocusEffect
+import { useFocusEffect } from '@react-navigation/native';
+import { SH, SW } from '../../utils/Dimensions';
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 
 const IntrestedProfile = ({ navigation }) => {
   const [activeButton, setActiveButton] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [interestSentData, setInterestSentData] = useState([]);
   const [interestReceivedData, setInterestReceivedData] = useState([]);
-  const getAllBiodata = useSelector((state) => state.getAllBiodata);
-  console.log("interestReceivedData", JSON.stringify(interestReceivedData));
 
-  const getInterestSentData = async () => {
+  const fetchData = async (url, setData) => {
     try {
       setIsLoading(true);
       const token = await AsyncStorage.getItem('userToken');
       if (!token) throw new Error('No token found');
 
-      const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      };
-
-      const response = await axios.get(SENDER_REQUESTS, { headers });
-      setInterestSentData(response.data.data || []);
+      const headers = { 'Authorization': `Bearer ${token}` };
+      const response = await axios.get(url, { headers });
+      setData(response.data.data || []);
     } catch (error) {
-      console.error("Error fetching sent interests:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const getInterestReceivedData = async () => {
-    try {
-      setIsLoading(true);
-      const token = await AsyncStorage.getItem('userToken');
-      if (!token) throw new Error('No token found');
-
-      const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      };
-
-      const response = await axios.get(RECEIVER_REQUESTS, { headers });
-      setInterestReceivedData(response.data.data || []);
-    } catch (error) {
-      console.error("Error fetching received interests:", error.message);
+      console.error("Error fetching data:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
   useFocusEffect(
-    React.useCallback(() => {
-      getInterestSentData();
-      getInterestReceivedData();
+    useCallback(() => {
+      fetchData(SENDER_REQUESTS, setInterestSentData);
+      fetchData(RECEIVER_REQUESTS, setInterestReceivedData);
     }, [])
   );
 
-  const renderInterestSentItem = ({ item }) => (
-    <View style={styles.card}>
-      <View style={styles.leftContent}>
-        <Image source={{ uri: item.toUserBioData?.personalDetails?.closeUpPhoto || profileImage }} style={styles.dpImage} />
-        <View style={styles.cardContent}>
-          <Text style={styles.userId} numberOfLines={1} ellipsizeMode="tail">
-            {item.toUserBioData?.userId || 'Unknown'}
-          </Text>
-          <Text style={styles.name}>
-            {item.toUserBioData?.personalDetails?.fullname || 'Unknown'}
-          </Text>
-        </View>
+  const renderSkeleton = () => (
+    <SkeletonPlaceholder>
+      <View style={{ margin: SH(20) }}>
+        {[...Array(4)].map((_, index) => (
+          <View key={index} style={{ flexDirection: "row", marginBottom:SH(20) }}>
+            <View style={{ width: SW(80), height: SH(80), borderRadius: 40, marginRight: SW(10) }} />
+            <View>
+              <View style={{ width: SW(150), height: SH(20), borderRadius: 4 }} />
+              <View style={{ width: SW(100), height: SH(15), borderRadius: 4, marginTop: SH(6) }} />
+              <View style={{ width: SW(80), height: SH(15), borderRadius: 4, marginTop: SH(6) }} />
+            </View>
+          </View>
+        ))}
       </View>
-      <TouchableOpacity style={styles.Statusbutton}>
-        <Text style={styles.StatusbuttonText}>
-          {item.status ? item.status.charAt(0).toUpperCase() + item.status.slice(1) : 'Unknown'}
-        </Text>
-      </TouchableOpacity>
-    </View>
+    </SkeletonPlaceholder>
   );
 
-  const renderInterestReceivedItem = ({ item }) => {
-    const matchedBiodata = getAllBiodata?.allBiodata?.find(bio => bio.user._id === item.FromUserBioData?.userId);
-
+  const renderItem = ({ item }, isSent) => {
+    const userData = isSent ? item.toUserBioData : item.FromUserBioData;
     return (
       <TouchableOpacity
         style={styles.card}
         onPress={() =>
+          !isSent &&
           navigation.navigate('IntrestReceivedProfilePage', {
-            userId: item.FromUserBioData?.userId,
-            biodata: matchedBiodata,
-            requestId: item.requestId,
+            userId: userData?.userId,
+            biodata: userData,
+            requestId: item?.requestId,
           })
         }
       >
         <View style={styles.leftContent}>
           <Image
-            source={{ uri: item.FromUserBioData?.personalDetails?.closeUpPhoto || profileImage }}
+            source={{ uri: userData?.personalDetails?.closeUpPhoto || profileImage }}
             style={styles.dpImage}
           />
           <View style={styles.cardContent}>
             <Text style={styles.userId} numberOfLines={1} ellipsizeMode="tail">
-              {item.FromUserBioData?.userId || 'Unknown'}
+              ID : {userData?.bioDataId || 'Unknown'}
             </Text>
-            <Text style={styles.name}>
-              {item.FromUserBioData?.personalDetails?.fullname || 'Unknown'}
-            </Text>
+            <Text style={styles.name}>{userData?.personalDetails?.fullname || 'Unknown'}</Text>
           </View>
         </View>
         <TouchableOpacity style={styles.Statusbutton}>
           <Text style={styles.StatusbuttonText}>
-            {item.status ? item.status.charAt(0).toUpperCase() + item.status.slice(1) : 'Unknown'}
+            {item?.status ? item.status.charAt(0).toUpperCase() + item.status.slice(1) : 'Unknown'}
           </Text>
         </TouchableOpacity>
       </TouchableOpacity>
@@ -140,51 +108,27 @@ const IntrestedProfile = ({ navigation }) => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View>
           <View style={styles.ButtonContainer}>
-            <TouchableOpacity
-              style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton]}
-              onPress={() => setActiveButton(1)}
-            >
-              <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>
-                Interest Sent
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.button, activeButton === 2 ? styles.activeButton : styles.inactiveButton]}
-              onPress={() => setActiveButton(2)}
-            >
-              <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>
-                Interest Received
-              </Text>
-            </TouchableOpacity>
+            {[['Interest Sent', 1], ['Interest Received', 2]].map(([label, id]) => (
+              <TouchableOpacity
+                key={id}
+                style={[styles.button, activeButton === id ? styles.activeButton : styles.inactiveButton]}
+                onPress={() => setActiveButton(id)}
+              >
+                <Text style={activeButton === id ? styles.activeText : styles.inactiveText}>{label}</Text>
+              </TouchableOpacity>
+            ))}
           </View>
 
           {isLoading ? (
-            <ActivityIndicator size="large" color={Colors.theme_color} style={{ marginTop: 20 }} />
+            renderSkeleton()
           ) : (
-            <>
-              {activeButton === 1 && (interestSentData.length > 0 ? (
-                <FlatList
-                  data={interestSentData}
-                  renderItem={renderInterestSentItem}
-                  keyExtractor={(item) => item.requestId}
-                  scrollEnabled={false}
-                />
-              ) : (
-                <Text style={styles.noDataText}>No interests sent</Text>
-              ))}
-
-              {activeButton === 2 && (interestReceivedData.length > 0 ? (
-                <FlatList
-                  data={interestReceivedData}
-                  renderItem={renderInterestReceivedItem}
-                  keyExtractor={(item) => item.requestId}
-                  scrollEnabled={false}
-                />
-              ) : (
-                <Text style={styles.noDataText}>No interests received</Text>
-              ))}
-            </>
+            <FlatList
+              data={activeButton === 1 ? interestSentData : interestReceivedData}
+              renderItem={(item) => renderItem(item, activeButton === 1)}
+              scrollEnabled={false}
+              keyExtractor={(item) => item.requestId}
+              ListEmptyComponent={<Text style={styles.noDataText}>No interests {activeButton === 1 ? 'sent' : 'received'}</Text>}
+            />
           )}
         </View>
       </ScrollView>

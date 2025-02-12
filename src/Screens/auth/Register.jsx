@@ -343,7 +343,7 @@ const Register = ({ navigation }) => {
                                 editable={!otpSent}
                             />
                             <TouchableOpacity style={styles.otpButton} onPress={handleSendOtp} disabled={isOtpLoading}>
-                                {isOtpLoading ? <ActivityIndicator size="small" color="#fff" /> : <Text style={styles.otpButtonText}>Send OTP</Text>}
+                                {isOtpLoading ? <ActivityIndicator size="small" color={Colors.theme_color}/> : <Text style={styles.otpButtonText}>Send OTP</Text>}
                             </TouchableOpacity>
 
                         </View>

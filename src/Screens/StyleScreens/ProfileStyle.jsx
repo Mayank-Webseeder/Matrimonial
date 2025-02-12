@@ -185,7 +185,30 @@ const styles = StyleSheet.create({
         marginRight: SW(217),
         alignItems: "center"
     },
-  
+    input: {
+        height: SH(40),
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: SH(10),
+        paddingLeft: SW(10),
+        borderRadius: 5,
+        backgroundColor: 'white',
+        color: Colors.dark,
+    },
+    DobInput: {
+        height: SH(40),
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: SH(10),
+        paddingLeft: SW(10),
+        borderRadius: 5,
+        backgroundColor: 'white',
+        color: Colors.dark,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        paddingRight: SW(10)
+    },
     imagePlaceholder: {
         color: Colors.gray,
         fontSize: SF(15),

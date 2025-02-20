@@ -25,7 +25,6 @@ const MyProfile = ({ navigation }) => {
     const ProfileData = useSelector((state) => state.profile);
     const profileData = ProfileData?.profiledata || {};
     const [isProfileModalVisible, setProfileModalVisible] = useState(false);
-
     const [selectedProfile, setSelectedProfile] = useState('');
     const image = profileData?.photoUrl?.[0];
     console.log("profileData", profileData);
@@ -72,8 +71,6 @@ const MyProfile = ({ navigation }) => {
                 }
             }
         };
-
-        // Call the async function
         requestCameraPermission();
     }, []);
 
@@ -82,9 +79,6 @@ const MyProfile = ({ navigation }) => {
         setSelectedImage(null);
         setModalVisible(false);
     };
-
-
-    // update profile image api
 
     const upload_profile_image = async (base64Data) => {
         console.log("Base64 Image Data:", base64Data);
@@ -187,7 +181,6 @@ const MyProfile = ({ navigation }) => {
                     <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
                         <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
                     </TouchableOpacity>
-                    {/* <Text style={Globalstyles.headerText}>My Profile</Text> */}
                     <TouchableOpacity onPress={openModal} style={styles.switchButton}>
                         <Text style={styles.selectedProfileText}>
                             {selectedProfile || 'Switch Profile'}
@@ -319,7 +312,7 @@ const MyProfile = ({ navigation }) => {
                 visible={modalVisible}
                 transparent={true}
                 animationType="slide"
-                onRequestClose={() => setModalVisible(false)} // Ensures proper handling of the back button.
+                onRequestClose={() => setModalVisible(false)} 
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
@@ -337,8 +330,6 @@ const MyProfile = ({ navigation }) => {
                                 <MaterialIcons name={'delete'} size={30} color={'red'} />
                             </TouchableOpacity>
                         </View>
-
-                        {/* Option to Choose from Gallery */}
                         <View style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
                             <TouchableOpacity
                                 onPress={handleImageUpload}
@@ -350,8 +341,6 @@ const MyProfile = ({ navigation }) => {
                                 </View>
 
                             </TouchableOpacity>
-
-                            {/* Option to Capture from Camera */}
                             <TouchableOpacity
                                 onPress={handleCameraCapture}
                                 style={styles.gallery}
@@ -365,8 +354,6 @@ const MyProfile = ({ navigation }) => {
                     </View>
                 </View>
             </Modal>
-
-
         </SafeAreaView>
     );
 };

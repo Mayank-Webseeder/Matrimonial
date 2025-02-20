@@ -8,9 +8,11 @@ const styles = StyleSheet.create({
     alignItems:"center"
   },
   image: {
-    width: SW(100),
+    width: SW(90),
     height: SH(90),
-    resizeMode: "contain"
+    resizeMode: "cover",
+    borderRadius:50,
+    marginTop:SH(10)
   },
   searchbar: {
     display: "flex",

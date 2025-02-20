@@ -168,14 +168,14 @@ const PartnersPreference = ({ navigation }) => {
 
     const handleSave = async () => {
         try {
-            setLoading(true); // Start loader
+            setLoading(true);
 
-            const token = await AsyncStorage.getItem('userToken');
-            if (!token) throw new Error('No token found');
+            const token = await AsyncStorage.getItem("userToken");
+            if (!token) throw new Error("No token found");
 
             const headers = {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
             };
 
             let payload = {};
@@ -193,9 +193,10 @@ const PartnersPreference = ({ navigation }) => {
                         text1: "No changes detected.",
                         text2: "You haven't made any modifications.",
                         position: "top",
-                        textStyle: { fontSize: 10, color: "blue" },
+                        visibilityTime: 3000,
+                        textStyle: { fontSize: 12, color: "blue" },
                     });
-                    setLoading(false); // Stop loader
+                    setLoading(false);
                     return;
                 }
             } else {
@@ -234,11 +235,11 @@ const PartnersPreference = ({ navigation }) => {
 
             console.log("Save response:", response.data);
 
-            if (response.status === 200 && response.data.status === "success") {
+            if (response.status === 200 && response.data.status.toLowerCase() === "success") {
                 Toast.show({
                     type: "success",
-                    text1: biodata?._id ? "Partner preferences updated successfully." : "Partner preferences added successfully.",
-                    text2: "Your changes have been saved!",
+                    text1: biodata?._id ? "Partner Preferences Updated Successfully" : "Partner Preferences Created Successfully",
+                    text2: response.data.message || "Your changes have been saved!",
                     position: "top",
                 });
 
@@ -246,23 +247,31 @@ const PartnersPreference = ({ navigation }) => {
                 setTimeout(() => {
                     navigation.navigate("MainApp");
                 }, 1000);
-            } else {
-                throw new Error(response.data.message || "Something went wrong");
+                return; // ✅ Success case handled, no need for `catch`
             }
-            setIsEditing(false);
+
+            throw new Error(response.data.message || "Something went wrong");
 
         } catch (error) {
-            console.error("Error saving biodata:", error);
-            Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: error.response?.data?.message || error.message || "Something went wrong",
-                position: "top",
-                visibilityTime: 1000,
-                textStyle: { fontSize: 14, color: "red" },
-            });
+            if (error.response) {
+                console.error("API Error:", error.response.data);
+            } else {
+                console.error("Unexpected Error:", error.message);
+            }
+
+            // ✅ Show error only if it's an actual error
+            if (error.message.toLowerCase() !== "biodata updated successfully.") {
+                Toast.show({
+                    type: "error",
+                    text1: "Error",
+                    text2: error.response?.data?.message || error.message || "Something went wrong",
+                    position: "top",
+                    visibilityTime: 2000,
+                    textStyle: { fontSize: 12, color: "red" },
+                });
+            }
         } finally {
-            setLoading(false); // Stop loader in all cases
+            setLoading(false);
         }
     };
 
@@ -281,9 +290,12 @@ const PartnersPreference = ({ navigation }) => {
                 <View style={Globalstyles.form}>
                     <View style={styles.detail}>
                         <Text style={styles.Formtitle}>Preferences</Text>
-                        <TouchableOpacity onPress={() => setIsEditing(true)}>
-                            <Text style={styles.detailText}>Edit</Text>
-                        </TouchableOpacity>
+                        {myPartnerPreferences && (
+                            <TouchableOpacity onPress={() => setIsEditing(true)}>
+                                <Text style={styles.detailText}>Edit</Text>
+                            </TouchableOpacity>
+                        )}
+
                     </View>
                     <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /> </Text>
                     <TextInput

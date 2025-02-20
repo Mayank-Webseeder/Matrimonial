@@ -9,9 +9,9 @@ const styles = StyleSheet.create({
     alignItems:"center"
   },
   image: {
-    width: SW(70),
-    height: SH(73),
-    resizeMode: "contain",
+    width: SW(60),
+    height: SH(60),
+    resizeMode: "cover",
     borderRadius: 50
   },
   searchbar: {
@@ -38,16 +38,17 @@ const styles = StyleSheet.create({
     width: '95%',
     marginHorizontal: SW(10),
     paddingHorizontal: SW(10),
-    paddingVertical:SH(10),
+    paddingVertical:SH(7),
     flexDirection: "row",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
+    alignItems:"center"
   },
   cardData: {
     flexDirection: "row"
   },
   text: {
     fontFamily: "Poppins-Bold",
-    fontSize: SF(16)
+    fontSize: SF(14)
   },
   smalltext: {
     fontFamily: "Poppins-Regular",
@@ -65,8 +66,6 @@ const styles = StyleSheet.create({
     height: SH(40),
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'black',
     marginVertical: SH(20),
     borderRadius: 8,
     marginHorizontal: SW(6),
@@ -95,6 +94,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     width: SW(470)
+  },
+  ActivistListData:{
+    marginTop:SH(70)
   },
   modalContent: {
     backgroundColor: 'white',

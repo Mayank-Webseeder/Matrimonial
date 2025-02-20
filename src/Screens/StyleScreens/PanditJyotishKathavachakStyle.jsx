@@ -117,9 +117,10 @@ const styles = StyleSheet.create({
   image: {
     width: SW(100),
     height: SH(90),
-    resizeMode: "contain",
+    resizeMode: "cover",
     marginHorizontal: SW(10),
-    marginVertical: SH(10)
+    marginVertical: SH(10),
+    borderRadius:5
   },
   card: {
     backgroundColor: '#fff',
@@ -137,6 +138,10 @@ const styles = StyleSheet.create({
     flexDirection: "row"
   },
   text: {
+    fontFamily: "Poppins-Medium",
+    fontSize: SF(13)
+  },
+  name:{
     fontFamily: "Poppins-Bold",
     fontSize: SF(13)
   },

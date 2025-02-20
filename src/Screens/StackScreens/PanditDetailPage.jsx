@@ -17,7 +17,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
     const [userRating, setUserRating] = useState(0);
     const images = pandit?.images || [];
     const { panditDetails } = route.params || {};
-    const PanditID = panditDetails?._id || 0 ;
+    const PanditID = panditDetails?._id || 0;
     console.log("panditDetails", panditDetails);
     console.log("PanditID", PanditID);
 
@@ -31,21 +31,21 @@ const PanditDetailPage = ({ navigation, item, route }) => {
         for (let i = 0; i < images.length; i += 2) {
             rows.push(
                 <TouchableOpacity
-                style={styles.imageRow}
-                key={i}
-                onPress={() =>
-                  navigation.navigate('ViewPanditImages', {
-                    post: item,
-                    images: images.filter(Boolean), // Ensure this is a valid array of images
-                    panditDetails: panditDetails,  // Pass pandit details here
-                  })
-                }
-              >
-                <Image source={images[i]} style={styles.image} />
-                {/* If there's an image next to it, show it */}
-                {images[i + 1] && <Image source={images[i + 1]} style={styles.image} />}
-              </TouchableOpacity>
-              
+                    style={styles.imageRow}
+                    key={i}
+                    onPress={() =>
+                        navigation.navigate('ViewPanditImages', {
+                            post: item,
+                            images: images.filter(Boolean), // Ensure this is a valid array of images
+                            panditDetails: panditDetails,  // Pass pandit details here
+                        })
+                    }
+                >
+                    <Image source={images[i]} style={styles.image} />
+                    {/* If there's an image next to it, show it */}
+                    {images[i + 1] && <Image source={images[i + 1]} style={styles.image} />}
+                </TouchableOpacity>
+
             );
         }
 
@@ -91,7 +91,6 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                         </View>
                     </View>
                 </View>
-
                 <View style={styles.contentContainer}>
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>Description</Text>
@@ -103,7 +102,6 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                             <FontAwesome name="bookmark-o" size={20} color={Colors.dark} />
                             <Text style={styles.iconText}>Save</Text>
                         </View>
-
                         <View style={styles.iconContainer}>
                             <Feather name="send" size={20} color={Colors.dark} />
                             <Text style={styles.iconText}>Shares</Text>
@@ -126,7 +124,6 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                             ))}
                         </View>
                     </View>
-
                     <View style={styles.section}>
                         <View style={styles.ReviewPost}>
                             <View>
@@ -141,7 +138,6 @@ const PanditDetailPage = ({ navigation, item, route }) => {
 
                         </View>
                         <Text style={styles.rating}>{pandit?.rating} (100 star Rating)</Text>
-
                         <View style={styles.ratingCount}>
                             <Rating
                                 type="star"
@@ -164,7 +160,6 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                         </View>
                     </View>
                 </View>
-
                 <View style={styles.section}>
                     <Text style={[styles.sectionTitle, { textAlign: "center" }]}>Reviews</Text>
                     {pandit.reviews.slice(0, 2).map((review, index) => (
@@ -193,7 +188,6 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                         </TouchableOpacity>
                     )}
                 </View>
-
                 <View style={styles.container}>
                     {renderImages(images)}
                 </View>
@@ -204,7 +198,6 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                     <FontAwesome5 name="facebook" size={30} color="#3b5998" />
                     <FontAwesome5 name="instagram" size={30} color="#E4405F" />
                 </View>
-
                 <Image source={require('../../Images/slider.png')} style={styles.Bottomimage} />
             </ScrollView>
         </SafeAreaView>

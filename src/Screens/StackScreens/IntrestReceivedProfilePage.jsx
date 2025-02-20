@@ -13,7 +13,7 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MATCHED_PROFILE } from '../../utils/BaseUrl';
-import { ACCEPTED_API, REJECTED_API , SAVED_MATRIMONIAL_PROFILES } from '../../utils/BaseUrl';
+import { ACCEPTED_API, REJECTED_API , SAVED_PROFILES } from '../../utils/BaseUrl';
 import Toast from 'react-native-toast-message';
 const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const { userId, biodata, requestId } = route.params;
@@ -84,7 +84,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
       };
   
       const response = await axios.post(
-        `${SAVED_MATRIMONIAL_PROFILES}/${_id}`,
+        `${SAVED_PROFILES}/${_id}`,
         {}, 
         { headers }
       );
@@ -263,7 +263,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           <View style={styles.rightContainer}>
             {personalDetails?.currentCity && <Text style={styles.text}>Location: {personalDetails?.currentCity}</Text>}
             {personalDetails?.occupation && <Text style={styles.text}>Occupation: {personalDetails?.occupation}</Text>}
-            {personalDetails?.annualIncome && <Text style={styles.text}>Income: {personalDetails?.annualIncome}</Text>}
+            {personalDetails?.annualIncome && <Text style={styles.text}>Income: {personalDetails?.annualIncome} INR </Text>}
             {personalDetails?.qualification && <Text style={styles.text}>Qualification: {personalDetails?.qualification}</Text>}
           </View>
         </View >

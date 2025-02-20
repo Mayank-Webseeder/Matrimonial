@@ -38,17 +38,21 @@ const Register = ({ navigation }) => {
             height: 250,
             cropping: true,
             includeBase64: true,
+            mediaType:"any"
         })
-            .then(image => {
-                setSelectedImage(image.path);
-                const imageName = image.path.split('/').pop();
-                setSelectedImageName(imageName);
-                setSelectedImage(image.data);
-                console.log('Selected Image:', image);
-            })
-            .catch(error => {
-                console.error('Image Picking Error:', error);
-            });
+        .then(image => {
+            console.log('Selected Image:', image); // Check the image object
+            if (!image.data) {
+                console.error("Base64 data is missing!");
+                return;
+            }
+            setSelectedImage(image.data); // Ensure this is set correctly
+            setSelectedImageName(image.path.split('/').pop());
+        })
+        .catch(error => {
+            console.error('Image Picking Error:', error);
+        });
+        
     };
 
     const handleCityInputChange = (text) => {
@@ -124,12 +128,13 @@ const Register = ({ navigation }) => {
 
             const payload = {
                 username: fullName.trim(),
-                mobileNo: mobileNumber,
-                password: password,
-                gender: gender,
                 dob: formattedDate,
                 city: selectedCity || cityInput.trim(),
-                otp: otp,  // Use manually entered OTP
+                gender: gender,
+                password: password,
+                photoUrl:selectedImage,
+                mobileNo: mobileNumber,
+                otp: otp,  
             };
 
             console.log("SignUp Payload:", payload);

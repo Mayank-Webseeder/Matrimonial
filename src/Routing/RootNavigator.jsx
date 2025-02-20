@@ -107,14 +107,6 @@ function MyTabs() {
 
   const iconSize = SF(30);
 
-  // if (loading) {
-  //   return (
-  //     <View style={styles.loaderContainer}>
-  //       <ActivityIndicator size="large" color={Colors.theme_color} />
-  //     </View>
-  //   );
-  // }
-
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -129,7 +121,6 @@ function MyTabs() {
         tabBarIcon: ({ focused }) => {
           let tabBarIcon;
 
-          //Assign icons based on the route name
           if (route.name === 'Matrimonial') {
             tabBarIcon = (
               <MaterialCommunityIcons

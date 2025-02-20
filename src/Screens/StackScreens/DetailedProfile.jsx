@@ -98,7 +98,6 @@ const DetailedProfile = ({ navigation }) => {
   const [cityOrVillageInput, setCityOrVillageInput] = useState("");
   const [filteredCitiesOrVillages, setFilteredCitiesOrVillages] = useState([]);
   const [selectedState, setSelectedState] = useState("");
-  const [selectedSubCaste, setSelectedSubCaste] = useState("");
 
   const [imageNames, setImageNames] = useState({
     closeupImageName: "Upload One Closeup Image",
@@ -106,17 +105,13 @@ const DetailedProfile = ({ navigation }) => {
     bestImageName: "Upload One Best Image",
   });
 
-  // const handleSave = () => {
-  //   navigation.navigate("MainPartnerPrefrence")
-  // };
-
   const handleTimeChange = (event, selectedDate) => {
-    setShowTimePicker(false); // Close the picker
+    setShowTimePicker(false);
     if (selectedDate) {
-      const formattedTime = moment(selectedDate).format("hh:mm A"); // Format to "HH:MM AM/PM"
+      const formattedTime = moment(selectedDate).format("hh:mm A");
       setBiodata((prevState) => ({
         ...prevState,
-        timeOfBirth: formattedTime, // Save to biodata
+        timeOfBirth: formattedTime,
       }));
     }
   };
@@ -126,8 +121,8 @@ const DetailedProfile = ({ navigation }) => {
       width: 400,
       height: 400,
       cropping: true,
-      mediaType: "photo",
-      includeBase64: true,  // Ensure base64 data
+      mediaType: "any",
+      includeBase64: true,
     })
       .then(image => {
         if (!image || !image.data) {
@@ -139,12 +134,12 @@ const DetailedProfile = ({ navigation }) => {
 
         setBiodata(prevState => ({
           ...prevState,
-          [field]: base64Image, // Store as base64
+          [field]: base64Image,
         }));
 
         setImageNames(prevNames => ({
           ...prevNames,
-          [field]: image.path.split('/').pop(),  // Show image name
+          [field]: image.path.split('/').pop(),
         }));
       })
       .catch(error => {
@@ -164,9 +159,9 @@ const DetailedProfile = ({ navigation }) => {
   }, [myBiodata]);
 
   const handleStateInputChange = (text) => {
-    setStateInput(text);
+    setStateInput(text); // Input field ko update karein
+
     if (text) {
-      // Filter the StateData based on the input
       const filtered = StateData.filter((item) =>
         item?.label?.toLowerCase().includes(text.toLowerCase())
       ).map(item => item.label);
@@ -174,6 +169,12 @@ const DetailedProfile = ({ navigation }) => {
     } else {
       setFilteredStates([]);
     }
+
+    // User jo bhi likhega, vo biodata me save hoga
+    setBiodata(prevState => ({
+      ...prevState,
+      state: text,
+    }));
   };
 
   const handleStateSelect = (item) => {
@@ -207,7 +208,7 @@ const DetailedProfile = ({ navigation }) => {
     setCityInput(item);
     setBiodata(prevState => ({
       ...prevState,
-      currentCity: item, // Save selected city
+      currentCity: item,
     }));
     setFilteredCities([]);
   };
@@ -240,32 +241,31 @@ const DetailedProfile = ({ navigation }) => {
 
   const handleSubCasteInputChange = (text) => {
     setSubCasteInput(text);
+
     if (text) {
-      const filtered = subCasteOptions.filter((item) =>
-        item?.label?.toLowerCase().includes(text.toLowerCase())
-      ).map(item => item.label);
+      const filtered = subCasteOptions
+        .filter((item) => item?.label?.toLowerCase().includes(text.toLowerCase()))
+        .map((item) => item.label);
+
       setFilteredSubCaste(filtered);
     } else {
       setFilteredSubCaste([]);
     }
-    setBiodata(prevState => ({
+    setBiodata((prevState) => ({
       ...prevState,
       subCaste: text,
     }));
   };
 
-
-  // Sub Caste input handler
-  const handleSubCasteSelect = (item) => {
-    setSubCasteInput(item);
-    setSelectedSubCaste(item);
-    setBiodata(prevState => ({
-      ...prevState,
-      subCaste: item, // Correct key
-    }));
+  const handleSubCasteSelect = (selectedItem) => {
+    setSubCasteInput(selectedItem);
     setFilteredSubCaste([]);
-  };
 
+    setBiodata((prevState) => ({
+      ...prevState,
+      subCaste: selectedItem,
+    }));
+  };
 
   const heightData = Array.from({ length: 4 }, (_, feetIndex) =>
     Array.from({ length: 12 }, (_, inchesIndex) => ({
@@ -290,15 +290,11 @@ const DetailedProfile = ({ navigation }) => {
 
     setShowDatePicker(false);
 
-    const formattedDate = selectedDate.toISOString().split("T")[0];
-
     setBiodata((prevState) => ({
       ...prevState,
-      dob: formattedDate,
+      dob: selectedDate,
     }));
   };
-
-
 
   const formatDate = (date) => {
     if (!date) return "";
@@ -387,53 +383,65 @@ const DetailedProfile = ({ navigation }) => {
       setIsLoading(true);
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
-
+  
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-
+  
       const payload = await constructPayload(biodata, !biodata?._id);
       console.log("Payload:", payload);
-
+  
       const apiCall = biodata?._id ? axios.put : axios.post;
       const endpoint = biodata?._id ? UPDATE_PERSONAL_DETAILS : CREATE_PERSONAL_DETAILS;
-
+  
       const response = await apiCall(endpoint, payload, { headers });
+  
       console.log("API Response:", response.data);
-
-      if (response.status === 200 && response.data.status === "success") {
+  
+      // ✅ Ensure response is successful
+      if (response.data?.status?.toLowerCase() === "success") {
         Toast.show({
           type: "success",
           text1: biodata?._id ? "Profile Updated Successfully" : "Detailed Profile Created Successfully",
-          text2: "Your changes have been saved!",
+          text2: response.data.message || "Your changes have been saved!",
           position: "top",
         });
-
+  
         setIsEditing(false);
-        // ✅ Navigate to MainApp after update
         setTimeout(() => {
           navigation.navigate("MainApp");
         }, 1000);
-      } else {
-        throw new Error(response.data.message || "Something went wrong");
+        return; // ✅ Exit here, no need to continue to `catch`
       }
+  
+      // ❌ If API response is NOT success, handle it properly
+      throw new Error(response.data.message || "Something went wrong");
+  
     } catch (error) {
-      console.error("Error saving biodata:", error.response?.data || error.message);
-
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: error.response?.data?.message || error.message || "Something went wrong",
-        position: "top",
-        visibilityTime: 1000,
-        textStyle: { fontSize: 10, color: "red" },
-      });
+      // ✅ Log actual errors only
+      if (error.response) {
+        console.error("API Error:", error.response.data);
+      } else {
+        console.error("Unexpected Error:", error.message);
+      }
+  
+      // ✅ Show error only if it's a real failure, not a success message
+      if (!error.message.toLowerCase().includes("success")) {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: error.response?.data?.message || error.message || "Something went wrong",
+          position: "top",
+          visibilityTime: 2000,
+          textStyle: { fontSize: 12, color: "red" },
+        });
+      }
     } finally {
       setIsLoading(false);
     }
   };
-
+  
 
 
   const handleInputChange = (field, value) => {
@@ -463,19 +471,24 @@ const DetailedProfile = ({ navigation }) => {
         <View style={Globalstyles.form}>
           <View style={styles.detail}>
             <Text style={Globalstyles.title}>Personal Details</Text>
-            <TouchableOpacity onPress={() => setIsEditing(true)}>
-              <Text style={styles.detailText}>Edit</Text>
-            </TouchableOpacity>
+            {myBiodata && (
+              <TouchableOpacity onPress={() => setIsEditing(true)}>
+                <Text style={styles.detailText}>Edit</Text>
+              </TouchableOpacity>
+            )}
+
           </View>
           <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
           <TextInput
             style={Globalstyles.input}
-            value={myBiodata?.subCaste}
+            value={biodata?.subCaste} // `myBiodata?.subCaste` ki jagah `subCasteInput` use karein
             onChangeText={handleSubCasteInputChange}
             placeholder="Type your sub caste"
             placeholderTextColor={Colors.gray}
           />
-          {filteredSubCaste.length > 0 && subCasteInput ? (
+
+          {/* Agar user type karega toh list dikhegi */}
+          {filteredSubCaste.length > 0 ? (
             <FlatList
               data={filteredSubCaste.slice(0, 5)}
               scrollEnabled={false}
@@ -511,9 +524,10 @@ const DetailedProfile = ({ navigation }) => {
               placeholderTextColor={Colors.gray}
             />
 
+
             {showDatePicker && (
               <DateTimePicker
-                value={biodata.dob || new Date()}
+                value={biodata.dob ? new Date(biodata.dob) : new Date()} // Ensure it's a Date object
                 mode="date"
                 display="default"
                 onChange={(event, selectedDate) => handleDateChange(event, selectedDate)}
@@ -954,15 +968,16 @@ const DetailedProfile = ({ navigation }) => {
           <View>
             <Text style={styles.headText}> Address</Text>
 
-            <Text style={Globalstyles.title}>State <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Text style={Globalstyles.title}>State <Entypo name={'star'} color={'red'} size={12} /></Text>
             <TextInput
               style={Globalstyles.input}
-              value={biodata?.state}
+              value={biodata?.state} // `biodata?.state` ki jagah `stateInput` use karein
               onChangeText={handleStateInputChange}
               placeholder="Type your State"
               placeholderTextColor={Colors.gray}
             />
-            {filteredStates.length > 0 && stateInput ? (
+
+            {filteredStates.length > 0 ? (
               <FlatList
                 data={filteredStates.slice(0, 5)}
                 scrollEnabled={false}

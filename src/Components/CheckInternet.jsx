@@ -1,27 +1,41 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Modal, TouchableOpacity, Platform, StyleSheet } from 'react-native';
+import { View, Text, Modal, TouchableOpacity, Platform, StyleSheet, SafeAreaView, AppState } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import { Linking } from 'react-native';
 import { SH, SW, SF } from '../utils/Dimensions';
 import Colors from '../utils/Colors';
+
 const InternetCheck = () => {
     const [isConnected, setIsConnected] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
+    const [appState, setAppState] = useState(AppState.currentState);
 
     useEffect(() => {
-        const unsubscribe = NetInfo.addEventListener(state => {
-            if (!state.isConnected) {
-                setModalVisible(true);
-            } else {
-                setModalVisible(false);
+        const handleAppStateChange = nextAppState => {
+            if (appState.match(/inactive|background/) && nextAppState === 'active') {
+                checkInternetConnection();
             }
+            setAppState(nextAppState);
+        };
+
+        const checkInternetConnection = async () => {
+            const state = await NetInfo.fetch();
             setIsConnected(state.isConnected);
+            setModalVisible(!state.isConnected);
+        };
+
+        const unsubscribe = NetInfo.addEventListener(state => {
+            setIsConnected(state.isConnected);
+            setModalVisible(!state.isConnected);
         });
+
+        const appStateListener = AppState.addEventListener("change", handleAppStateChange);
 
         return () => {
             unsubscribe();
+            appStateListener.remove();
         };
-    }, []);
+    }, [appState]);
 
     const openNetworkSettings = () => {
         if (Platform.OS === 'android') {
@@ -32,35 +46,37 @@ const InternetCheck = () => {
     };
 
     return (
-        <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => setModalVisible(false)}
-        >
-            <View style={styles.modalContainer}>
-                <View style={styles.modalContent}>
-                    <Text style={styles.modalTitle}>No Internet Connection</Text>
-                    <Text style={styles.modalMessage}>Please turn on your internet connection.</Text>
+        <SafeAreaView>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.modalTitle}>No Internet Connection</Text>
+                        <Text style={styles.modalMessage}>Please turn on your internet connection.</Text>
 
-                    <View style={styles.buttonContainer}>
-                        <TouchableOpacity
-                            style={[styles.button, styles.okButton]}
-                            onPress={() => setModalVisible(false)}
-                        >
-                            <Text style={styles.buttonText}>OK</Text>
-                        </TouchableOpacity>
+                        <View style={styles.buttonContainer}>
+                            <TouchableOpacity
+                                style={[styles.button, styles.okButton]}
+                                onPress={() => setModalVisible(false)}
+                            >
+                                <Text style={styles.buttonText}>OK</Text>
+                            </TouchableOpacity>
 
-                        <TouchableOpacity
-                            style={[styles.button, styles.turnOnButton]}
-                            onPress={openNetworkSettings}
-                        >
-                            <Text style={styles.buttonText}>Turn On</Text>
-                        </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.button, styles.turnOnButton]}
+                                onPress={openNetworkSettings}
+                            >
+                                <Text style={styles.buttonText}>Turn On</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
-            </View>
-        </Modal>
+            </Modal>
+        </SafeAreaView>
     );
 };
 

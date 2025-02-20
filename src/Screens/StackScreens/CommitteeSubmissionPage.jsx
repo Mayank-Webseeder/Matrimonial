@@ -1,86 +1,268 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, Alert, StyleSheet, ScrollView, SafeAreaView, StatusBar,FlatList } from 'react-native';
+import React, { useState,useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, SafeAreaView, StatusBar, FlatList } from 'react-native';
 import Colors from '../../utils/Colors';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Globalstyles from '../../utils/GlobalCss';
 import ImageCropPicker from 'react-native-image-crop-picker';
-import { CityData,subCasteOptions } from '../../DummyData/DropdownData';
+import { CityData, subCasteOptions } from '../../DummyData/DropdownData';
+import Entypo from 'react-native-vector-icons/Entypo';
+import { CREATE_COMMITTEE, UPDATE_COMMITTEE, GET_COMMIITEE } from '../../utils/BaseUrl';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import Toast from 'react-native-toast-message';
 const CommitteeSubmissionPage = ({ navigation }) => {
-    const [dharamsalaName, setDharamsalaName] = useState('');
-    const [area, setArea] = useState('');
-    const [image, setImage] = useState(null);
-    const [contact, setContact] = useState(null);
-    const [selectedImage, setSelectedImage] = useState(null);
-    const [selectedImageName, setSelectedImageName] = useState("Upload Image");
+    const [subCasteInput, setSubCasteInput] = useState('');
+    const [cityInput, setCityInput] = useState('');
+    const [filteredCities, setFilteredCities] = useState([]);
+    const [filteredSubCaste, setFilteredSubCaste] = useState([]);
+    const [isLoading, setIsLoading] = useState('');
+    const [isEditing,setIsEditing]=useState(true);
+    const [CommitteeData, setCommitteeData] = useState({
+        committeeTitle: '',
+        presidentName: '',
+        subCaste: '',
+        city: '',
+        area: ' ',
+        photoUrl: '',
+        mobileNo: ' '
+    });
 
-     const [subCasteInput, setSubCasteInput] = useState('');
-        const [cityInput, setCityInput] = useState('');
-        const [filteredCities, setFilteredCities] = useState([]);
-        const [filteredSubCaste, setFilteredSubCaste] = useState([]);
-        const [selectedCity, setSelectedCity] = useState('');
-        const [selectedSubCaste, setSelectedSubCaste] = useState('');
-
-
-         const handleCityInputChange = (text) => {
-                setCityInput(text);
-                if (text) {
-                    const filtered = CityData.filter((item) =>
-                        item?.label?.toLowerCase().includes(text.toLowerCase())
-                    ).map(item => item.label);
-                    setFilteredCities(filtered);
-                } else {
-                    setFilteredCities([]);
+    useEffect(() => {
+        const fetchCommitteeData = async () => {
+            try {
+                setIsLoading(true);
+                const token = await AsyncStorage.getItem("userToken");
+                if (!token) {
+                    Toast.show({
+                        type: "error",
+                        text1: "Error",
+                        text2: "Authorization token is missing.",
+                    });
+                    return;
                 }
-            };
-        
-            // Sub Caste input handler
-            const handleSubCasteInputChange = (text) => {
-                setSubCasteInput(text);
-                if (text) {
-                    const filtered = subCasteOptions.filter((item) =>
-                        item?.label?.toLowerCase().includes(text.toLowerCase())
-                    ).map(item => item.label);
-                    setFilteredSubCaste(filtered);
-                } else {
-                    setFilteredSubCaste([]);
+    
+                const headers = {
+                    Authorization: `Bearer ${token}`,
+                };
+    
+                const response = await axios.get(GET_COMMIITEE, { headers });
+    
+                if (response.status === 200 && response.data?.data) {
+                    setCommitteeData(response.data.data);
                 }
-            };
-        
+            } catch (error) {
+                console.error("Error fetching committee data:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+    
+        fetchCommitteeData();
+    }, []);
+    
 
-    const handleImageUpload = () => {
+    const handleCityInputChange = (text) => {
+        setCityInput(text);
+        if (text) {
+            const filtered = CityData.filter((item) =>
+                item?.label?.toLowerCase().includes(text.toLowerCase())
+            ).map(item => item.label);
+            setFilteredCities(filtered);
+        } else {
+            setFilteredCities([]);
+        }
+
+        setCommitteeData(prevActivistData => ({
+            ...prevActivistData,
+            city: text,
+        }));
+    };
+
+    const handleCitySelect = (item) => {
+        setCityInput(item);
+        setCommitteeData(prevCommitteeData => ({
+            ...prevCommitteeData,
+            city: item,
+        }));
+        setFilteredCities([]);
+    };
+
+    const handleSubCasteInputChange = (text) => {
+        setSubCasteInput(text);
+
+        if (text) {
+            const filtered = subCasteOptions
+                .filter((item) => item?.label?.toLowerCase().includes(text.toLowerCase()))
+                .map((item) => item.label);
+
+            setFilteredSubCaste(filtered);
+        } else {
+            setFilteredSubCaste([]);
+        }
+        setCommitteeData((prevCommitteeData) => ({
+            ...prevCommitteeData,
+            subCaste: text,
+        }));
+    };
+
+    const handleSubCasteSelect = (selectedItem) => {
+        setSubCasteInput(selectedItem);
+        setFilteredSubCaste([]);
+        setCommitteeData((prevCommitteeData) => ({
+            ...prevCommitteeData,
+            subCaste: selectedItem,
+        }));
+    };
+
+    const handleImagePick = () => {
         ImageCropPicker.openPicker({
             width: 300,
             height: 250,
             cropping: true,
+            includeBase64: true,
+            mediaType: "photo"
         })
             .then(image => {
-                setSelectedImage(image.path);
-                const imageName = image.path.split('/').pop();
-                setSelectedImageName(imageName);
-                console.log('Selected Image:', image);
+                setCommitteeData(prev => ({
+                    ...prev,
+                    photoUrl: `data:${image.mime};base64,${image.data}`,
+                }));
             })
             .catch(error => {
-                console.error('Image Picking Error:', error);
+                if (error.code !== "E_PICKER_CANCELLED") {
+                    console.error("Image Picking Error:", error);
+                }
             });
     };
 
-    const handleSubmit = () => {
-        if (!dharamsalaName || !subCasteName || !city || !area || !image) {
-            Alert.alert('Error', 'All mandatory fields must be filled.');
-            return;
+
+   const convertToBase64 = async (imageUri) => {
+      try {
+        if (!imageUri) return null;
+        if (imageUri.startsWith("data:image")) {
+          return imageUri;
         }
+    
+        const response = await fetch(imageUri);
+        const blob = await response.blob();
+  
+        const mimeType = blob.type || "image/jpeg"; 
+    
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            if (reader.result) {
+              resolve(`data:${mimeType};base64,${reader.result.split(",")[1]}`);
+            } else {
+              reject("Error reading Base64 data.");
+            }
+          };
+          reader.readAsDataURL(blob);
+        });
+      } catch (error) {
+        console.error("Error converting image to Base64:", error);
+        return null;
+      }
+    };
+    
+    const constructActivistPayload = async (ActivistData, isNew = false) => {
+      const keys = [
+        "fullname", "subCaste", "dob", "state", "city",
+        "mobileNo", "knownActivistIds", "engagedWithCommittee", "profilePhoto"
+      ];
+    
+      const payload = {};
+      for (const key of keys) {
+        if (CommitteeData[key] !== undefined && CommitteeData[key] !== "") {
+          payload[key] = CommitteeData[key];
+        } else if (isNew) {
+          payload[key] = "";
+        }
+      }
+  
+      if (payload.dob) {
+        const parsedDate = moment(payload.dob.split("T")[0], "YYYY-MM-DD", true);
+        if (parsedDate.isValid()) {
+          payload.dob = parsedDate.format("DD/MM/YYYY");
+        } else {
+          console.error("Invalid DOB format received:", payload.dob);
+          throw new Error("Invalid DOB format. Expected format is DD/MM/YYYY.");
+        }
+      }
+    
+      if (CommitteeData.photoUrl) {
+        try {
+          payload.photoUrl = await convertToBase64(CommitteeData.photoUrl);
+          
+          console.log("Converted Base64 Image:", payload.photoUrl);
+        } catch (error) {
+          console.error("Base64 Conversion Error:", error);
+        }
+      }    
+    
+      return payload;
+    };
 
-        const formData = {
-            dharamsalaName,
-            subCasteName,
-            city,
-            area,
-            image,
-        };
 
-        console.log('Submitted Data:', formData);
-        Alert.alert('Success', 'Committee details submitted successfully!');
+    const handleActivistSave = async () => {
+        try {
+            setIsLoading(true);
+            const token = await AsyncStorage.getItem("userToken");
+            if (!token) {
+                Toast.show({
+                    type: "error",
+                    text1: "Error",
+                    text2: "Authorization token is missing.",
+                });
+                return;
+            }
+
+            const headers = {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            };
+
+            const payload = await constructActivistPayload(CommitteeData, !CommitteeData?._id);
+            console.log("Payload:", payload);
+            const apiCall = CommitteeData?._id ? axios.patch : axios.post;
+            const endpoint = CommitteeData?._id ? `${UPDATE_COMMITTEE}` : CREATE_COMMITTEE;
+
+            const response = await apiCall(endpoint, payload, { headers });
+            console.log("API Response:", response.data);
+            if (response.status === 200 || response.status === 201) {
+                Toast.show({
+                    type: "success",
+                    text1: CommitteeData?._id ? "Profile Updated Successfully" : "Activist Profile Created Successfully",
+                    text2: response.data.message || "Your changes have been saved!",
+                });
+
+                setIsEditing(false);
+                if (!CommitteeData?._id && response.data?.data?._id) {
+                    setCommitteeData((prev) => ({
+                        ...prev,
+                        _id: response.data.data._id,
+                    }));
+                }
+                return; 
+            }
+            throw new Error(response.data.message || "Something went wrong");
+
+        } catch (error) {
+            if (error.response) {
+                console.error("API Error:", error.response.data);
+            } else {
+                console.error("Unexpected Error:", error.message);
+            }
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: error.response?.data?.message || "Failed to save activist data.",
+            });
+
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -102,40 +284,44 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     <Text style={Globalstyles.headerText}>Committee</Text>
                 </View>
             </View>
-            <View style={Globalstyles.form}>
+            <ScrollView style={Globalstyles.form}>
                 <Text style={styles.title}>Upload Committee Details</Text>
 
+                <Text style={Globalstyles.title}>Committee title <Entypo name={'star'} color={'red'} size={12} /></Text>
+                <TextInput
+                    style={Globalstyles.input}
+                    placeholder="Enter title"
+                    value={CommitteeData.committeeTitle}
+                    onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, committeeTitle: text }))} placeholderTextColor={Colors.gray}
+                />
+
                 {/* Dharamsala Name */}
-                <Text style={Globalstyles.title}>Committee President Name *</Text>
+                <Text style={Globalstyles.title}>Committee President Name <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
                     style={Globalstyles.input}
                     placeholder="Enter President Name"
-                    value={dharamsalaName}
-                    onChangeText={setDharamsalaName}
+                    value={CommitteeData.presidentName}
+                    onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, presidentName: text }))}
                     placeholderTextColor={Colors.gray}
                 />
 
-                <Text style={Globalstyles.title}>Sub-Caste Name *</Text>
+                <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
                     style={Globalstyles.input}
-                    value={subCasteInput}
+                    value={CommitteeData?.subCaste} // `myBiodata?.subCaste` ki jagah `subCasteInput` use karein
                     onChangeText={handleSubCasteInputChange}
-                    placeholder="Enter your sub caste"
+                    placeholder="Type your sub caste"
                     placeholderTextColor={Colors.gray}
                 />
-                {filteredSubCaste.length > 0 && subCasteInput ? (
+
+                {/* Agar user type karega toh list dikhegi */}
+                {filteredSubCaste.length > 0 ? (
                     <FlatList
                         data={filteredSubCaste.slice(0, 5)}
                         scrollEnabled={false}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({ item }) => (
-                            <TouchableOpacity
-                                onPress={() => {
-                                    setSubCasteInput(item);
-                                    setSelectedSubCaste(item);
-                                    setFilteredSubCaste([]);
-                                }}
-                            >
+                            <TouchableOpacity onPress={() => handleSubCasteSelect(item)}>
                                 <Text style={Globalstyles.listItem}>{item}</Text>
                             </TouchableOpacity>
                         )}
@@ -144,28 +330,21 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                 ) : null}
 
 
-
-                <Text style={Globalstyles.title}>City *</Text>
+                <Text style={Globalstyles.title}>City <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
                     style={Globalstyles.input}
-                    value={cityInput}
+                    value={CommitteeData?.city}
                     onChangeText={handleCityInputChange}
                     placeholder="Enter your city"
                     placeholderTextColor={Colors.gray}
                 />
                 {filteredCities.length > 0 && cityInput ? (
                     <FlatList
-                        data={filteredCities}
+                        data={filteredCities.slice(0, 5)}
                         scrollEnabled={false}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({ item }) => (
-                            <TouchableOpacity
-                                onPress={() => {
-                                    setCityInput(item);
-                                    setSelectedCity(item);
-                                    setFilteredCities([]);
-                                }}
-                            >
+                            <TouchableOpacity onPress={() => handleCitySelect(item)}>
                                 <Text style={Globalstyles.listItem}>{item}</Text>
                             </TouchableOpacity>
                         )}
@@ -173,46 +352,42 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     />
                 ) : null}
 
-                <Text style={Globalstyles.title}>Area *</Text>
+                <Text style={Globalstyles.title}>Area <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
                     style={Globalstyles.input}
                     placeholder="Enter Your Area"
-                    value={area}
-                    onChangeText={setArea}
+                    value={CommitteeData.area} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, area: text }))}
                     placeholderTextColor={Colors.gray}
                 />
 
-                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                    <Text style={Globalstyles.title}>Upload President Image *</Text>
-                    <TouchableOpacity style={styles.uploadButton} onPress={handleImageUpload}>
-                        <Text style={styles.uploadButtonText}>
-                            {selectedImage ? 'Change Image' : 'Upload Image'}
-                        </Text>
+                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginVertical: SH(10) }}>
+                    <Text style={Globalstyles.title}>Upload President Image <Entypo name={'star'} color={'red'} size={12} /></Text>
+                    <TouchableOpacity style={styles.uploadButton} onPress={handleImagePick}>
+                        <Text style={styles.uploadButtonText}>{CommitteeData.profilePhoto ? "Change Image" : "Upload Image"}</Text>
                     </TouchableOpacity>
                 </View>
+                {CommitteeData.photoUrl ? (
+                        <Image
+                            source={{ uri: CommitteeData.photoUrl }}
+                            style={styles.imagePreviewContainer}
+                        />
+                    ) : null}
 
-                {/* Image Preview */}
-                {selectedImage && (
-                    <View style={styles.imagePreviewContainer}>
-                        <Text style={Globalstyles.title}>Uploaded Image</Text>
-                        <Text style={styles.imageName}>{selectedImageName}</Text>
-                    </View>
-                )}
-
-
-                <Text style={Globalstyles.title}>Contact Number Of President *</Text>
+                <Text style={Globalstyles.title}>Contact Number Of President <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
                     style={Globalstyles.input}
-                    placeholder="Enter Contact No."
-                    value={contact}
-                    onChangeText={setContact}
+                    placeholder="Enter contact number"
+                    keyboardType="numeric"
+                    maxLength={10}
                     placeholderTextColor={Colors.gray}
+                    value={CommitteeData.mobileNo} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, mobileNo: text }))}
                 />
 
-                <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+                <TouchableOpacity style={styles.submitButton} onPress={handleActivistSave}>
                     <Text style={styles.submitButtonText}>Submit</Text>
                 </TouchableOpacity>
-            </View>
+            </ScrollView>
+            <Toast/>
         </SafeAreaView>
     );
 };
@@ -238,8 +413,8 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins-Regular",
     },
     title: {
-        fontSize: SF(13),
-        fontWeight: 'bold',
+        fontSize: SF(15),
+        fontFamily: "Poppins-Medium",
         color: Colors.theme_color,
         marginBottom: SH(20),
     },
@@ -250,7 +425,10 @@ const styles = StyleSheet.create({
         marginBottom: SH(5),
     },
     imagePreviewContainer: {
-        marginVertical: SH(15)
+        marginVertical: SH(10),
+        width: SW(70),
+        height: SH(70),
+        borderRadius: 10
     },
     imageName: {
         color: Colors.dark,
@@ -259,11 +437,10 @@ const styles = StyleSheet.create({
     },
     uploadButton: {
         backgroundColor: Colors.theme_color,
-        padding: SW(5),
+        paddingVertical: SW(5),
         borderRadius: 5,
         alignItems: 'center',
-        marginBottom: SH(15),
-        width: SW(100),
+        paddingHorizontal: SW(7)
     },
     uploadButtonText: {
         color: Colors.light,

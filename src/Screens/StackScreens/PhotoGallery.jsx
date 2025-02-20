@@ -5,7 +5,7 @@ import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/PhotoGallleryStyle';
 import { useSelector } from 'react-redux';
 const PhotoGallery = () => {
-   const MyprofileData = useSelector((state) => state.getBiodata);
+   const MyprofileData = useSelector((state) => state.biodata);
    const myBiodata = MyprofileData?.Biodata?.personalDetails;
 
     // console.log("MyprofileData", MyprofileData);

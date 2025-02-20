@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable } from 'react-native';
-import { PanditData, slider } from '../../DummyData/DummyData';
+import { slider } from '../../DummyData/DummyData';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -18,20 +18,19 @@ import { GET_ALL_PANDIT_DATA } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { SH, SW } from '../../utils/Dimensions';
-
+import { useFocusEffect } from '@react-navigation/native';
 const Pandit = ({ navigation }) => {
   const sliderRef = useRef(null);
-  const [activeButton, setActiveButton] = useState(null);
+  const [activeButton, setActiveButton] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [services, setServices] = useState('');
   const [locality, setLocality] = useState('');
-  const [rating, setRating] = useState(null);
-  const [experience, setExperience] = useState(null);
-  const [panditData, setPanditData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const AllPanditProfiles = panditData || {};
+  const [rating, setRating] = useState(' ');
+  const [experience, setExperience] = useState(' ');
+  const [panditData, setPanditData] = useState([]);
+  const [isLoading, setLoading] = useState(false);
+  const [modalLocality, setModalLocality] = useState('');
 
   const handleOpenFilter = () => {
     setModalVisible(true);
@@ -40,6 +39,7 @@ const Pandit = ({ navigation }) => {
 
   const handleCloseFilter = () => {
     setModalVisible(false);
+    fetchPanditData("modal");
   };
 
   useEffect(() => {
@@ -56,50 +56,70 @@ const Pandit = ({ navigation }) => {
     return () => clearInterval(interval);
   }, [currentIndex]);
 
-  const PanditDataAPI = async () => {
+  const fetchPanditData = async (filterType = "search") => {
     try {
-      setIsLoading(true);
+      setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("Authorization token is missing.");
+      if (!token) throw new Error("No token found");
 
       const headers = {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       };
-      const response = await axios.get(GET_ALL_PANDIT_DATA, { headers });
-      setPanditData(response.data.data);
+
+      let queryParams = [];
+
+      if (filterType === "search") {
+        if (locality.trim()) queryParams.push(`locality=${encodeURIComponent(locality.toLowerCase())}`);
+      } else if (filterType === "modal") {
+        if (modalLocality.trim()) queryParams.push(`locality=${encodeURIComponent(modalLocality.toLowerCase())}`);
+        if (services) queryParams.push(`services=${encodeURIComponent(services)}`);
+        if (rating) queryParams.push(`rating=${encodeURIComponent(rating)}`);
+        if (experience) queryParams.push(`experience=${encodeURIComponent(experience)}`);
+      }
+
+      const url = filterType === "all" ? GET_ALL_PANDIT_DATA : `${GET_ALL_PANDIT_DATA}?${queryParams.join("&")}`;
+      console.log("Fetching Data from:", url);
+
+      const response = await axios.get(url, { headers });
+      setPanditData(response.data?.data || []);
     } catch (error) {
-      console.log("Error fetching Pandit data:", error);
+      console.error("Error fetching Pandit data:", error);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-
-  useEffect(() => {
-    PanditDataAPI();
-    console.log("AllPanditProfiles", AllPanditProfiles);
-  }, [])
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocality('');
+      setModalLocality('')
+      setRating(' ')
+      setExperience(' ')
+      setPanditData([]);
+      fetchPanditData("all");
+    }, [])
+  );
 
   const renderSkeleton = () => (
     <SkeletonPlaceholder>
-      <View style={{ margin:SH(20) }}>
+      <View style={{ margin: SH(20) }}>
         {[1, 2, 3, 4].map((_, index) => (
           <View key={index} style={{ flexDirection: "row", marginBottom: 20 }}>
-            <View style={{ width:SW(80), height:SH(80), borderRadius: 40, marginRight:SW(10) }} />
+            <View style={{ width: SW(80), height: SH(80), borderRadius: 40, marginRight: SW(10) }} />
             <View>
-              <View style={{ width:SW(150), height:SH(20), borderRadius: 4 }} />
-              <View style={{ width:SW(100), height:SH(15), borderRadius: 4, marginTop:SH(6) }} />
-              <View style={{ width:SW(80), height:SH(15), borderRadius: 4, marginTop:SH(6) }} />
+              <View style={{ width: SW(150), height: SH(20), borderRadius: 4 }} />
+              <View style={{ width: SW(100), height: SH(15), borderRadius: 4, marginTop: SH(6) }} />
+              <View style={{ width: SW(80), height: SH(15), borderRadius: 4, marginTop: SH(6) }} />
             </View>
           </View>
         ))}
       </View>
     </SkeletonPlaceholder>
   );
-  
+
   const renderItem = ({ item }) => {
-    const rating = item.ratings?.length ? item.ratings[0] : 0;
+    const rating = item.averageRating || 0;
 
     return (
       <View style={styles.card}>
@@ -110,15 +130,16 @@ const Pandit = ({ navigation }) => {
             style={styles.image}
           />
           <View style={styles.leftContainer}>
-            <Text style={styles.text}>{item?.fullName}</Text>
+            <Text style={styles.name}>{item?.fullName}</Text>
             <View style={styles.rating}>
               <Rating type="star" ratingCount={5} imageSize={15} startingValue={rating} readonly />
               <Text style={[styles.text, { fontFamily: 'Poppins-Regular' }]}> {rating} Star Rating</Text>
             </View>
             <View style={styles.CityArea}>
               <Text style={styles.text}>{item?.city}</Text>
-              <Text style={styles.text}>{item?.residentialAddress}</Text>
+              <Text style={styles.text}>    {item?.state}</Text>
             </View>
+            <Text style={styles.text}>{item?.residentialAddress}</Text>
           </View>
         </Pressable>
         <View style={styles.sharecontainer}>
@@ -157,8 +178,14 @@ const Pandit = ({ navigation }) => {
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.searchbar}>
-          <TextInput placeholder="Search in Your city" placeholderTextColor={'gray'} />
-          <AntDesign name={'search1'} size={20} color={'gray'} />
+        <TextInput 
+          placeholder="Search in Your city" 
+          value={locality} 
+          onChangeText={(text) => setLocality(text)}
+          onSubmitEditing={() => fetchPanditData("search")}
+          placeholderTextColor={"gray"}
+        />
+          <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchPanditData("search")} />
         </View>
 
         <View style={Globalstyles.sliderContainer}>
@@ -195,7 +222,7 @@ const Pandit = ({ navigation }) => {
 
         {isLoading ? renderSkeleton() : (
           <FlatList
-            data={AllPanditProfiles}
+            data={panditData}
             renderItem={renderItem}
             keyExtractor={(item) => item._id}
             scrollEnabled={false}
@@ -231,8 +258,8 @@ const Pandit = ({ navigation }) => {
               <View>
                 <TextInput
                   style={Globalstyles.input}
-                  value={locality}
-                  onChangeText={(text) => setLocality(text)}
+                  value={modalLocality}
+                  onChangeText={(text) => setModalLocality(text)}
                   placeholder="Enter Locality"
                   placeholderTextColor={Colors.gray}
                 />

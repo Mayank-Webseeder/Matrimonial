@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const BiodataSlice = createSlice({
   name: "getBiodata",
   initialState: {
-    Biodata: null, 
+    Biodata: {}, 
   },
   reducers: {
     setBioData: (state, action) => {

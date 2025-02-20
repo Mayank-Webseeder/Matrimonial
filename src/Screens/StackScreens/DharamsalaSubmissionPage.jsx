@@ -6,6 +6,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Globalstyles from '../../utils/GlobalCss';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { CityData, subCasteOptions } from '../../DummyData/DropdownData';
+import Entypo from 'react-native-vector-icons/Entypo';
+
 const DharamsalaSubmissionPage = ({ navigation }) => {
     const [dharamsalaName, setDharamsalaName] = useState('');
     const [contact, setContact] = useState('');
@@ -105,7 +107,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
             <View style={Globalstyles.form}>
                 <Text style={styles.title}>Upload Your Dharamsala Details</Text>
 
-                <Text style={Globalstyles.title}>Dharamsala Name *</Text>
+                <Text style={Globalstyles.title}>Dharamsala Name <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
                     style={Globalstyles.input}
                     placeholder="Enter Dharamsala Name"
@@ -114,7 +116,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     placeholderTextColor={Colors.gray}
                 />
 
-                <Text style={Globalstyles.title}>Sub-Caste Name *</Text>
+                <Text style={Globalstyles.title}>Sub-Caste Name <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
                     style={Globalstyles.input}
                     value={subCasteInput}
@@ -143,7 +145,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                 ) : null}
 
 
-                <Text style={Globalstyles.title}>City *</Text>
+                <Text style={Globalstyles.title}>City <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
                     style={Globalstyles.input}
                     value={cityInput}
@@ -171,7 +173,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     />
                 ) : null}
 
-                <Text style={Globalstyles.title}>Contact *</Text>
+                <Text style={Globalstyles.title}>Contact <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
                     style={Globalstyles.input}
                     placeholder="Enter Person's Contact No."
@@ -190,7 +192,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     multiline={true}
                 />
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                    <Text style={Globalstyles.title}>Upload Images *(Max Limit 3)</Text>
+                    <Text style={Globalstyles.title}>Upload Images (Max Limit 3) <Entypo name={'star'} color={'red'} size={12} /> </Text>
                     <TouchableOpacity style={styles.uploadButton} onPress={handleImageUpload}>
                         <Text style={styles.uploadButtonText}>
                             {photos ? 'add Image' : 'Upload Image'}
@@ -219,10 +221,9 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
 const styles = StyleSheet.create({
 
     title: {
-        fontSize: SF(13),
-        fontWeight: 'bold',
+        fontSize: SF(15),
+        fontFamily: "Poppins-Medium",
         color: Colors.theme_color,
-        // textAlign: 'center',
         marginBottom: SH(20),
 
     },
@@ -233,11 +234,10 @@ const styles = StyleSheet.create({
     },
     uploadButton: {
         backgroundColor: Colors.theme_color,
-        padding: SW(5),
+        paddingVertical: SW(5),
         borderRadius: 5,
         alignItems: 'center',
-        marginBottom: SH(15),
-        width: SW(100)
+        paddingHorizontal: SW(7)
     },
     uploadButtonText: {
         color: Colors.light,
@@ -262,8 +262,7 @@ const styles = StyleSheet.create({
         padding: SW(10),
         borderRadius: 5,
         alignItems: 'center',
-        margin: SH(50),
-        marginTop: SH(10),
+        marginTop: SH(30),
         marginHorizontal: SW(50)
     },
     submitButtonText: {

@@ -9,7 +9,7 @@ import Colors from "../../utils/Colors";
 import HeadingWithViewAll from "../../Components/HeadingWithViewAll";
 import Globalstyles from "../../utils/GlobalCss";
 import { SavedProfileData } from "../../DummyData/DummyData";
-import { GET_SAVED_MATRIMONIAL_PROFILES } from "../../utils/BaseUrl";
+import { GET_SAVED__PROFILES } from "../../utils/BaseUrl";
 import { useFocusEffect } from '@react-navigation/native';
 
 const SavedProfile = ({ navigation }) => {
@@ -31,7 +31,7 @@ const SavedProfile = ({ navigation }) => {
       }
 
       const headers = { Authorization: `Bearer ${token}` };
-      const response = await axios.get(GET_SAVED_MATRIMONIAL_PROFILES, { headers });
+      const response = await axios.get(GET_SAVED__PROFILES, { headers });
       console.log("response.data?.savedProfiles", response.data?.savedProfiles)
       setSavedProfiles(response.data?.savedProfiles || []);
       setTimeout(() => {

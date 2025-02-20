@@ -9,40 +9,42 @@ import Globalstyles from '../../utils/GlobalCss';
 import { subCasteOptions, StateData, CityData, panditServices, jyotishServices, kathavachakServices, ExperienceData } from '../../DummyData/DropdownData';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { CREATE_PANDIT } from '../../utils/BaseUrl';
+import { CREATE_JYOTISH, CREATE_KATHAVACHAK, CREATE_PANDIT } from '../../utils/BaseUrl';
 import { Dropdown } from 'react-native-element-dropdown';
 import ImageCropPicker from 'react-native-image-crop-picker';
 
 const RoleRegisterForm = ({ navigation }) => {
-    const [name, setName] = useState('');
-    const [mobile, setMobile] = useState('');
     const [stateInput, setStateInput] = useState('');
     const [cityInput, setCityInput] = useState('');
-    const [aadhar, setAadhar] = useState('');
-    const [subCaste, setSubCaste] = useState('');
     const [selectedRoles, setSelectedRoles] = useState([]);
     const [checked, setChecked] = useState({});
     const [photos, setPhotos] = useState([]);
-    const [description, setDescription] = useState('');
-    const [profilePhoto, setProfilePhoto] = useState('');
-    const [website, setWebsite] = useState('');
-    const [youtube, setYoutube] = useState('');
-    const [whatsapp, setWhatsapp] = useState('');
-    const [facebook, setFacebook] = useState('');
-    const [instagram, setInstagram] = useState('');
     const [subCasteInput, setSubCasteInput] = useState('');
     const [filteredStates, setFilteredStates] = useState([]);
     const [filteredCities, setFilteredCities] = useState([]);
     const [filteredSubCaste, setFilteredSubCaste] = useState([]);
     const [selectedState, setSelectedState] = useState('');
-    const [selectedCity, setSelectedCity] = useState('');
-    const [selectedSubCaste, setSelectedSubCaste] = useState('');
-    const [area, setArea] = useState('');
-    const [experience, setExperience] = useState(null);
-    const [selectedImageName, setSelectedImageName] = useState("Upload Image");
-    const [selectedImage, setSelectedImage] = useState(null);
 
-    console.log("selectedImageName", selectedImageName);
+     const [RoleRegisterData, setRoleRegisterData] = useState({
+        mobileNo:'',
+        fullName:'',
+        residentialAddress:'',
+        area:'',
+        state:'',
+        city:'',
+        aadharNo:'',
+        subCaste:'',
+        profilePhoto:'',
+        additionalPhotos:[],
+        experience:'',
+        description:'',
+        websiteUrl:'',
+        facebookUrl:'',
+        youtubeUrl:'',
+        instagramUrl:'',
+        whatsapp:''
+      });
+
     const roleOptions = [
         { label: 'Pandit', value: 'Pandit' },
         { label: 'Jyotish', value: 'Jyotish' },
@@ -71,94 +73,126 @@ const RoleRegisterForm = ({ navigation }) => {
             [serviceValue]: !prevChecked[serviceValue],
         }));
     };
-
-    const handleCropPick = () => {
-        ImageCropPicker.openPicker({
-            multiple: false,
-            cropping: true,
-            width: 400,
-            height: 400,
-        }).then(image => {
-            const newPhoto = {
-                uri: image.path,
-            };
-            addPhotos([newPhoto]);
-        }).catch(err => console.log('Crop Picker Error:', err));
-    };
-
-    const addPhotos = (newPhotos) => {
-        if (photos.length + newPhotos.length <= 4) {
-            setPhotos(prevPhotos => [...prevPhotos, ...newPhotos]);
-        } else {
-            alert('You can only upload up to 5 photos.');
+    
+    const handleProfilePhotoPick = async () => {
+        try {
+            const image = await ImageCropPicker.openPicker({
+                multiple: false,
+                cropping: true,
+                width: 400,
+                height: 400,
+                includeBase64: true,
+            });
+    
+            if (!image.data) {
+                console.error("Base64 data missing!");
+                return;
+            }
+    
+            const base64Image = `data:${image.mime};base64,${image.data}`;
+    
+            setRoleRegisterData(prevData => ({
+                ...prevData,
+                profilePhoto: base64Image, // ✅ Base64 photo set
+            }));
+    
+        } catch (err) {
+            console.log("Profile Photo Picker Error:", err);
         }
     };
-
+    
+    
+    // Additional Photos Picker
+    const handleAdditionalPhotosPick = async () => {
+        try {
+            const images = await ImageCropPicker.openPicker({
+                multiple: true, 
+                cropping: false,
+                includeBase64: true,
+            });
+    
+            if (!images || images.length === 0) {
+                console.error("No images selected!");
+                return;
+            }
+    
+            setRoleRegisterData(prevData => {
+                const newPhotos = images.map(img => `data:${img.mime};base64,${img.data}`);
+                const updatedPhotos = [...prevData.additionalPhotos, ...newPhotos];
+    
+                if (updatedPhotos.length <= 5) {
+                    return { ...prevData, additionalPhotos: updatedPhotos };
+                } else {
+                    alert('You can only upload up to 5 additional photos.');
+                    return prevData;
+                }
+            });
+    
+        } catch (err) {
+            console.log("Additional Photos Picker Error:", err);
+        }
+    };
+    
 
     const handleSubmit = async () => {
         const roleApiMapping = {
             Pandit: CREATE_PANDIT,
+            Jyotish: CREATE_JYOTISH,
+            Kathavachak: CREATE_KATHAVACHAK
         };
-
-        if (!name || !mobile || !area || !selectedState || !selectedCity || !aadhar || !selectedSubCaste || !profilePhoto || !photos.length) {
-            Toast.show({
-                type: 'error',
-                text1: 'Error',
-                text2: 'All required fields must be filled.',
-            });
-            return;
-        }
-
+    
         const commonPayload = {
-            fullName: name,
-            mobileNo: mobile,
-            residentialAddress: area,
-            state: selectedState,
-            city: selectedCity,
-            aadharNo: aadhar,
-            subCaste: selectedSubCaste,
-            profilePhoto: profilePhoto,
-            additionalPhotos: photos.map(photo => photo.uri),
+            mobileNo: RoleRegisterData.mobileNo,
+            fullName: RoleRegisterData.fullName,
+            residentialAddress: RoleRegisterData.residentialAddress,
+            state: RoleRegisterData.state,
+            city: RoleRegisterData.city,
+            subCaste: RoleRegisterData.subCaste,
+            profilePhoto: RoleRegisterData.profilePhoto, // ✅ Base64 format
+            additionalPhotos: RoleRegisterData.additionalPhotos, // ✅ Base64 format array
+            experience: RoleRegisterData.experience,
+            description: RoleRegisterData.description,
+            websiteUrl:RoleRegisterData.websiteUrl,
+            facebookUrl:RoleRegisterData.facebookUrl,
+            youtubeUrl:RoleRegisterData.youtubeUrl,
+            instagramUrl:RoleRegisterData.instagramUrl,
+            whatsapp:RoleRegisterData.whatsapp,
+            status: "pending"
         };
-
+    
+        console.log("Payload to be sent:", commonPayload);
+    
         try {
             const token = await AsyncStorage.getItem("userToken");
             if (!token) throw new Error("Authorization token is missing.");
-
+    
             const headers = {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`,
             };
-
+    
             for (const role of selectedRoles) {
                 const url = roleApiMapping[role];
+    
+                // ✅ Sahi role ke liye sirf uski services bhejni hai
                 const payload = {
                     ...commonPayload,
                     [`${role.toLowerCase()}Services`]: Object.keys(checked).filter(service => checked[service]),
                 };
-
-                try {
-                    const response = await axios.post(url, payload, { headers });
-                    Toast.show({
-                        type: 'success',
-                        text1: 'Success!',
-                        text2: `Successfully registered for ${role}.`,
-                    });
-                } catch (apiError) {
-                    // Log detailed error to a logging service like Sentry
-                    console.error(`API Error for ${role}:`, apiError.response?.data || apiError.message);
-
-                    Toast.show({
-                        type: 'error',
-                        text1: 'Registration Failed',
-                        text2: apiError.response?.data?.message || `Failed to register for ${role}.`,
-                    });
-                }
+    
+                console.log(`Sending Payload for ${role}:`, payload); // ✅ Debugging ke liye
+    
+                const response = await axios.post(url, payload, { headers });
+    
+                Toast.show({
+                    type: 'success',
+                    text1: 'Success!',
+                    text2: `Successfully registered for ${role}.`,
+                });
             }
         } catch (error) {
-            // Log unexpected errors to a logging service
-            console.error('Unexpected error:', error.message);
-
+            console.error('Error:', error.message);
+    
             Toast.show({
                 type: 'error',
                 text1: 'Error',
@@ -166,11 +200,11 @@ const RoleRegisterForm = ({ navigation }) => {
             });
         }
     };
-
-
+    
 
     const handleStateInputChange = (text) => {
         setStateInput(text);
+
         if (text) {
             const filtered = StateData.filter((item) =>
                 item?.label?.toLowerCase().includes(text.toLowerCase())
@@ -179,6 +213,21 @@ const RoleRegisterForm = ({ navigation }) => {
         } else {
             setFilteredStates([]);
         }
+
+        setRoleRegisterData(PrevRoleRegisterData => ({
+            ...PrevRoleRegisterData,
+            state: text,
+        }));
+    };
+
+    const handleStateSelect = (item) => {
+        setStateInput(item);
+        setSelectedState(item);
+         setRoleRegisterData((PrevRoleRegisterData) => ({
+            ...PrevRoleRegisterData,
+            state: item,
+        }));
+        setFilteredStates([]);
     };
 
     const handleCityInputChange = (text) => {
@@ -191,38 +240,56 @@ const RoleRegisterForm = ({ navigation }) => {
         } else {
             setFilteredCities([]);
         }
+
+        setRoleRegisterData(PrevRoleRegisterData => ({
+            ...PrevRoleRegisterData,
+            city: text,
+        }));
     };
 
-    // Sub Caste input handler
+    const handleCitySelect = (item) => {
+        setCityInput(item);
+        setRoleRegisterData(PrevRoleRegisterData => ({
+            ...PrevRoleRegisterData,
+            city: item,
+        }));
+        setFilteredCities([]);
+    };
+
     const handleSubCasteInputChange = (text) => {
         setSubCasteInput(text);
+
         if (text) {
-            const filtered = subCasteOptions.filter((item) =>
-                item?.label?.toLowerCase().includes(text.toLowerCase())
-            ).map(item => item.label);
+            const filtered = subCasteOptions
+                .filter((item) => item?.label?.toLowerCase().includes(text.toLowerCase()))
+                .map((item) => item.label);
+
             setFilteredSubCaste(filtered);
         } else {
             setFilteredSubCaste([]);
         }
+        setRoleRegisterData((PrevRoleRegisterData) => ({
+            ...PrevRoleRegisterData,
+            subCaste: text,
+        }));
     };
 
-    const handleImageUpload = () => {
-        ImageCropPicker.openPicker({
-            width: 300,
-            height: 250,
-            cropping: true,
-        })
-            .then(image => {
-                setSelectedImage(image.path);
-                const imageName = image.path.split('/').pop();
-                setSelectedImageName(imageName);
-                console.log('Selected Image:', image);
-            })
-            .catch(error => {
-                console.error('Image Picking Error:', error);
-            });
+    const handleSubCasteSelect = (selectedItem) => {
+        setSubCasteInput(selectedItem);
+        setFilteredSubCaste([]);
+
+        setRoleRegisterData((PrevRoleRegisterData) => ({
+            ...PrevRoleRegisterData,
+            subCaste: selectedItem,
+        }));
     };
 
+    const handleInputChange = (field, value) => {
+        setRoleRegisterData((prev) => ({
+          ...prev,
+          [field]: value,
+        }));
+      };
 
     return (
         <SafeAreaView style={Globalstyles.container}>
@@ -241,38 +308,36 @@ const RoleRegisterForm = ({ navigation }) => {
                     <Text style={styles.editText}>Edit Details</Text>
                     <Text style={Globalstyles.title}>Name</Text>
                     <TextInput style={Globalstyles.input}
-                        value={name}
-                        onChangeText={setName}
+                        value={RoleRegisterData.fullName}
+                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, fullName: text }))}
                         placeholder='Enter Your Full Name'
-                       placeholderTextColor={Colors.gray}
+                        placeholderTextColor={Colors.gray}
                     />
 
                     <Text style={Globalstyles.title}>Mobile No.</Text>
-                    <TextInput style={Globalstyles.input} value={mobile} onChangeText={setMobile} keyboardType="phone-pad"
-                        placeholder="Enter Your Mobile No."
-                       placeholderTextColor={Colors.gray} />
+                    <TextInput style={Globalstyles.input} 
+                    value={RoleRegisterData?.mobileNo} 
+                    onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, mobileNo: text }))}
+                    keyboardType="phone-pad"
+                        placeholder="Enter Your Mobile No." maxLength={10}
+                        placeholderTextColor={Colors.gray} />
 
                     <Text style={Globalstyles.title}>State</Text>
                     <TextInput
                         style={Globalstyles.input}
-                        value={stateInput}
+                        value={RoleRegisterData?.state} // `biodata?.state` ki jagah `stateInput` use karein
                         onChangeText={handleStateInputChange}
-                        placeholder="Enter your state"
-                       placeholderTextColor={Colors.gray}
+                        placeholder="Type your State"
+                        placeholderTextColor={Colors.gray}
                     />
-                    {filteredStates.length > 0 && stateInput ? (
+
+                    {filteredStates.length > 0 ? (
                         <FlatList
-                            data={filteredStates}
-                            keyExtractor={(item, index) => index.toString()}
+                            data={filteredStates.slice(0, 5)}
                             scrollEnabled={false}
+                            keyExtractor={(item, index) => index.toString()}
                             renderItem={({ item }) => (
-                                <TouchableOpacity
-                                    onPress={() => {
-                                        setStateInput(item);
-                                        setSelectedState(item);
-                                        setFilteredStates([]);
-                                    }}
-                                >
+                                <TouchableOpacity onPress={() => handleStateSelect(item)}>
                                     <Text style={Globalstyles.listItem}>{item}</Text>
                                 </TouchableOpacity>
                             )}
@@ -283,24 +348,18 @@ const RoleRegisterForm = ({ navigation }) => {
                     <Text style={Globalstyles.title}>Village / City</Text>
                     <TextInput
                         style={Globalstyles.input}
-                        value={cityInput}
+                        value={RoleRegisterData?.city}
                         onChangeText={handleCityInputChange}
                         placeholder="Enter your city"
-                       placeholderTextColor={Colors.gray}
+                        placeholderTextColor={Colors.gray}
                     />
                     {filteredCities.length > 0 && cityInput ? (
                         <FlatList
-                            data={filteredCities}
+                            data={filteredCities.slice(0, 5)}
                             scrollEnabled={false}
                             keyExtractor={(item, index) => index.toString()}
                             renderItem={({ item }) => (
-                                <TouchableOpacity
-                                    onPress={() => {
-                                        setCityInput(item);
-                                        setSelectedCity(item);
-                                        setFilteredCities([]);
-                                    }}
-                                >
+                                <TouchableOpacity onPress={() => handleCitySelect(item)}>
                                     <Text style={Globalstyles.listItem}>{item}</Text>
                                 </TouchableOpacity>
                             )}
@@ -308,47 +367,47 @@ const RoleRegisterForm = ({ navigation }) => {
                         />
                     ) : null}
 
+
                     <Text style={Globalstyles.title}>Area (optional)</Text>
                     <TextInput style={Globalstyles.input}
-                        value={area} onChangeText={setArea}
+                       value={RoleRegisterData?.residentialAddress} 
+                       onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, residentialAddress: text }))}
                         placeholder='Enter Your Area'
-                       placeholderTextColor={Colors.gray} multiline={true}
+                        placeholderTextColor={Colors.gray}
                     />
 
                     <Text style={Globalstyles.title}>Aadhar No. (Optional)</Text>
                     <TextInput style={Globalstyles.input}
-                        value={aadhar} onChangeText={setAadhar}
+                        value={RoleRegisterData?.aadharNo} 
+                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, aadharNo: text }))}
                         placeholder='Enter Your Aadhar No.'
-                       placeholderTextColor={Colors.gray}
+                        placeholderTextColor={Colors.gray}
                     />
 
                     <Text style={Globalstyles.title}>Sub Caste</Text>
                     <TextInput
                         style={Globalstyles.input}
-                        value={subCasteInput}
+                        value={RoleRegisterData?.subCaste} // `myBiodata?.subCaste` ki jagah `subCasteInput` use karein
                         onChangeText={handleSubCasteInputChange}
-                        placeholder="Enter your sub caste"
-                       placeholderTextColor={Colors.gray}
+                        placeholder="Type your sub caste"
+                        placeholderTextColor={Colors.gray}
                     />
-                    {filteredSubCaste.length > 0 && subCasteInput ? (
+
+                    {/* Agar user type karega toh list dikhegi */}
+                    {filteredSubCaste.length > 0 ? (
                         <FlatList
                             data={filteredSubCaste.slice(0, 5)}
                             scrollEnabled={false}
                             keyExtractor={(item, index) => index.toString()}
                             renderItem={({ item }) => (
-                                <TouchableOpacity
-                                    onPress={() => {
-                                        setSubCasteInput(item);
-                                        setSelectedSubCaste(item);
-                                        setFilteredSubCaste([]);
-                                    }}
-                                >
+                                <TouchableOpacity onPress={() => handleSubCasteSelect(item)}>
                                     <Text style={Globalstyles.listItem}>{item}</Text>
                                 </TouchableOpacity>
                             )}
                             style={Globalstyles.suggestions}
                         />
                     ) : null}
+
 
                     {/* Role Selection with Checkboxes */}
                     <Text style={Globalstyles.title}>You are Registering for</Text>
@@ -389,8 +448,8 @@ const RoleRegisterForm = ({ navigation }) => {
                             data={ExperienceData}
                             labelField="label"
                             valueField="value"
-                            value={experience}
-                            onChange={(item) => setExperience(item.value)}
+                            value={RoleRegisterData?.experience}
+                            onChange={(text) => handleInputChange("experience", text.value)}
                             placeholder="Select Experience"
                             placeholderStyle={{ color: '#E7E7E7' }}
                         />
@@ -398,15 +457,16 @@ const RoleRegisterForm = ({ navigation }) => {
 
                     <Text style={Globalstyles.title}>Profile Photo</Text>
                     <View style={Globalstyles.input}>
-                        <TouchableOpacity onPress={handleImageUpload}>
-                            <Text style={styles.imagePlaceholder}>{selectedImageName}</Text>
+                        <TouchableOpacity onPress={handleProfilePhotoPick}>
+                            <Text style={styles.imagePlaceholder}>upload photo</Text>
                         </TouchableOpacity>
                     </View>
 
                     <Text style={Globalstyles.title}>Add Description</Text>
-                    <TextInput style={Globalstyles.textInput} value={description} onChangeText={setDescription}
+                    <TextInput style={Globalstyles.textInput} value={RoleRegisterData.description}
+                    onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, description: text }))}
                         textAlignVertical='top' placeholder="Add Your Description"
-                       placeholderTextColor={Colors.gray} multiline={true}
+                        placeholderTextColor={Colors.gray} multiline={true}
                     />
 
 
@@ -414,7 +474,7 @@ const RoleRegisterForm = ({ navigation }) => {
                         <Text style={styles.title}>Photos (Up to 5)</Text>
 
                         {/* Crop Picker Button */}
-                        <TouchableOpacity style={styles.PickPhotoButton} onPress={handleCropPick}>
+                        <TouchableOpacity style={styles.PickPhotoButton} onPress={handleAdditionalPhotosPick}>
                             <Text style={styles.PickPhotoText}>Pick & Crop Photo</Text>
                         </TouchableOpacity>
                     </View>
@@ -431,25 +491,35 @@ const RoleRegisterForm = ({ navigation }) => {
                         </View>
                     )}
                     <Text style={Globalstyles.title}>Website Link</Text>
-                    <TextInput style={Globalstyles.input} value={website} onChangeText={setWebsite}
+                    <TextInput style={Globalstyles.input} 
+                    value={RoleRegisterData.websiteUrl}
+                    onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, websiteUrl: text }))}
                         placeholder="give Your Website Link"
-                       placeholderTextColor={Colors.gray} />
+                        placeholderTextColor={Colors.gray} />
                     <Text style={Globalstyles.title}>Youtube Link</Text>
-                    <TextInput style={Globalstyles.input} value={youtube} onChangeText={setYoutube}
+                    <TextInput style={Globalstyles.input} 
+                     value={RoleRegisterData.youtubeUrl}
+                     onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, youtubeUrl: text }))}
                         placeholder="give Your Youtube Link"
-                       placeholderTextColor={Colors.gray} />
+                        placeholderTextColor={Colors.gray} />
                     <Text style={Globalstyles.title}>Whatsapp Link</Text>
-                    <TextInput style={Globalstyles.input} value={whatsapp} onChangeText={setWhatsapp}
+                    <TextInput style={Globalstyles.input} 
+                     value={RoleRegisterData.whatsapp}
+                     onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, whatsapp: text }))}
                         placeholder="give Your Whatsapp Link"
-                       placeholderTextColor={Colors.gray} />
+                        placeholderTextColor={Colors.gray} />
                     <Text style={Globalstyles.title}>Facebook Link</Text>
-                    <TextInput style={Globalstyles.input} value={facebook} onChangeText={setFacebook}
+                    <TextInput style={Globalstyles.input} 
+                    value={RoleRegisterData.facebookUrl}
+                    onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, facebookUrl: text }))}
                         placeholder="give Your Facebook Link"
-                       placeholderTextColor={Colors.gray} />
+                        placeholderTextColor={Colors.gray} />
                     <Text style={Globalstyles.title}>Instagram Link</Text>
-                    <TextInput style={Globalstyles.input} value={instagram} onChangeText={setInstagram}
+                    <TextInput style={Globalstyles.input} 
+                    value={RoleRegisterData.instagramUrl}
+                    onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, instagramUrl: text }))}
                         placeholder="give Your Instagram Link"
-                       placeholderTextColor={Colors.gray} />
+                        placeholderTextColor={Colors.gray} />
 
                     <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                         <Text style={styles.buttonText}>Save</Text>

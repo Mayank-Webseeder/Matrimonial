@@ -41,11 +41,11 @@ const Globalstyles = StyleSheet.create({
     padding: SW(5)
   },
   input: {
-    // height: SH(40),
     borderColor: '#ccc',
     borderWidth: 1,
     marginBottom: SH(15),
-    padding: SW(10),
+    paddingHorizontal: SW(10),
+    paddingVertical:SH(10),
     borderRadius: 5,
     color: Colors.dark
   },
@@ -126,7 +126,8 @@ const Globalstyles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-  }
+  },
+  
 })
 
 export default Globalstyles;

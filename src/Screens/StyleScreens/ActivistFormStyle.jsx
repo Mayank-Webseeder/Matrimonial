@@ -10,8 +10,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 5,
-        paddingHorizontal: SW(10),
-        paddingVertical: SH(10),
+        paddingHorizontal: SW(20),
+        paddingVertical: SH(5),
         marginRight: SW(10),
     },
     radioSelected: {
@@ -34,7 +34,10 @@ const styles = StyleSheet.create({
         textAlign: "center"
     },
     imagePreviewContainer: {
-        marginVertical: SH(10)
+        marginVertical: SH(10),
+        width: SW(70),
+        height: SH(70),
+        borderRadius: 10
     },
     submitButton: {
         backgroundColor: Colors.theme_color,
@@ -68,6 +71,10 @@ const styles = StyleSheet.create({
     arrow: {
         marginLeft: SW(10),
     },
+    errorText: {
+        color: "red",
+        fontFamily: "Poppins-Regular"
+    }
 });
 
 export default styles;

@@ -1,8 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import {
-  View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView,
-  StatusBar, FlatList, Pressable, TextInput, Keyboard
-} from 'react-native';
+import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar, FlatList, Pressable, TextInput } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -12,7 +9,6 @@ import Globalstyles from '../../utils/GlobalCss';
 import { FEMALE_FILTER_API, MALE_FILTER_API, SET_PREFRENCE_FILTER_API } from '../../utils/BaseUrl';
 import { slider } from '../../DummyData/DummyData';
 import AppIntroSlider from 'react-native-app-intro-slider';
-import { SW } from '../../utils/Dimensions';
 import { useFocusEffect } from '@react-navigation/native';
 
 const Matrimonial = ({ navigation }) => {
@@ -45,60 +41,32 @@ const Matrimonial = ({ navigation }) => {
   const fetchProfiles = async (query) => {
     const token = await AsyncStorage.getItem('userToken');
     if (!token) {
-        Toast.show({ type: 'error', text1: 'Error', text2: 'No token found!' });
-        return;
+      Toast.show({ type: 'error', text1: 'Error', text2: 'No token found!' });
+      return;
     }
 
     setLoading(true);
 
     const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
     };
 
-    let filter = {};
-
     try {
-        const sampleResponse = await axios.get('https://api-matrimonial.webseeder.tech/api/v1/user/feed', { headers });
-        const users = sampleResponse.data.feedUsers || [];
+      const queryString = new URLSearchParams({ searchTerm: query }).toString();
+      const finalURL = `https://api-matrimonial.webseeder.tech/api/v1/user/feed?${queryString}`;
 
-        let keyType = "name"; // Default to 'name'
-        const cities = [...new Set(users.map(user => user.personalDetails?.currentCity?.toLowerCase()))];
-        const occupations = [...new Set(users.map(user => user.personalDetails?.occupation?.toLowerCase()))];
+      console.log("🛠 Final API URL:", finalURL);
+      const finalResponse = await axios.get(finalURL, { headers });
+      console.log("📥 Filtered Data:", JSON.stringify(finalResponse.data));
 
-        console.log("🔍 Cities List:", cities);
-        console.log("🔍 Occupations List:", occupations);
-
-        // **Step 3: Detect Query Type**
-        const lowerQuery = query.toLowerCase();
-
-        if (!isNaN(query)) {
-            keyType = "bioDataId"; // If it's a number, treat as `bioDataId`
-        } else if (cities.some(city => city.includes(lowerQuery))) {
-            keyType = "city"; // ✅ Check for partial match in cities
-        } else if (occupations.some(occ => occ.includes(lowerQuery))) {
-            keyType = "occupation"; // ✅ Check for partial match in occupations
-        }
-
-        // ✅ **Step 4: Set the Correct Key**
-        filter = { [keyType]: query };
-
-        console.log("🚀 Sending Request with Params:", filter);
-        const queryString = new URLSearchParams(filter).toString();
-        const finalURL = `https://api-matrimonial.webseeder.tech/api/v1/user/feed?${queryString}`;
-
-        console.log("🛠 Final API URL:", finalURL);
-        const finalResponse = await axios.get(finalURL, { headers });
-        console.log("📥 Filtered Data:", JSON.stringify(finalResponse.data));
-
-        setProfiles(finalResponse.data.feedUsers || []);
+      setProfiles(finalResponse.data.feedUsers || []);
     } catch (error) {
-        console.error("❌ Error fetching profiles:", error.response?.data || error);
+      console.error("❌ Error fetching profiles:", error.response?.data || error);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
-
+  };
 
   const renderItem = ({ item }) => (
     <View>
@@ -167,7 +135,12 @@ const Matrimonial = ({ navigation }) => {
 
   const renderProfileCard = ({ item }) => (
     <Pressable style={styles.card} onPress={() => navigation.navigate('MatrimonyPeopleProfile', { details: item, details_userId: item?.userId })}>
-      <Image source={item.personalDetails.bestPhoto ? { uri: item.personalDetails.bestPhoto } : require('../../Images/Committee.png')} style={styles.ProfileImage} />
+
+      <Image
+        source={item.personalDetails.bestPhoto ? { uri: item.personalDetails.bestPhoto } : require('../../Images/NoImage.png')}
+        style={styles.ProfileImage}
+      />
+
 
       <View style={styles.profileData}>
         {/* Full Name at the Top */}
@@ -192,7 +165,7 @@ const Matrimonial = ({ navigation }) => {
           <View style={styles.rightColumn}>
             <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.currentCity}</Text>
             <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.occupation}</Text>
-            <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.annualIncome}</Text>
+            <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.annualIncome} INR </Text>
             <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.qualification}</Text>
           </View>
         </View>
@@ -264,11 +237,11 @@ const Matrimonial = ({ navigation }) => {
         )}
 
         <FlatList data={dataToDisplay} renderItem={renderProfileCard} keyExtractor={(item) => item._id} scrollEnabled={false}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>No Profiles Available</Text>
-          </View>
-        }/>
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>No Profiles Available</Text>
+            </View>
+          } />
       </ScrollView>
     </SafeAreaView>
   );

@@ -1,76 +1,85 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { View, TouchableOpacity, FlatList, Image, SafeAreaView, Text, StatusBar } from 'react-native';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
+import { View, TouchableOpacity, FlatList, Image, SafeAreaView, Text, StatusBar ,ActivityIndicator} from 'react-native';
 import { DrawerActions } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from '../StyleScreens/HomeStyle';
 import Colors from '../../utils/Colors';
 import HeadingWithViewAll from '../../Components/HeadingWithViewAll';
-import { profileImages, Category, communityData, slider } from '../../DummyData/DummyData';
+import { Category, communityData, slider } from '../../DummyData/DummyData';
 import { ScrollView } from 'react-native-gesture-handler';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import Globalstyles from '../../utils/GlobalCss';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { GET_ALL_BIODATA_PROFILES, GET_BIODATA } from '../../utils/BaseUrl';
+import { GET_ALL_BIODATA_PROFILES, GET_BIODATA, GET_ACTIVIST } from '../../utils/BaseUrl';
 import { useDispatch } from 'react-redux';
 import { setAllBiodata } from '../../ReduxStore/Slices/GetAllBiodataSlice';
+import { setActivistdata } from '../../ReduxStore/Slices/ActivistSlice';
 import { setBioData } from '../../ReduxStore/Slices/BiodataSlice';
 import { useFocusEffect } from '@react-navigation/native';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { SH, SW } from '../../utils/Dimensions';
+import { useSelector } from 'react-redux';
 
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [allbiodata, setallBiodata] = useState(null);
-  const [mybiodata, setMybiodata] = useState(null);
+  const [allbiodata, setallbiodata] = useState([]);
+  const [isMounted, setIsMounted] = useState(true);
   const [loading, setLoading] = useState(false);
-  const GetAll_Biodata = async () => {
-    try {
-      setLoading(true)
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
-
-      const headers = {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      };
-      const res = await axios.get(GET_ALL_BIODATA_PROFILES, { headers });
-      const biodata = res.data.feedUsers;
-      console.log("biodata", biodata);
-      dispatch(setAllBiodata(biodata));
-      setallBiodata(biodata);
-    } catch (error) {
-      setLoading(false)
-      console.error("Error fetching profile:", error);
-    }
-    finally {
-      setLoading(false)
-    }
-  };
-
-  const getBiodata = async () => {
-    try {
-      const token = await AsyncStorage.getItem('userToken');
-      if (!token) throw new Error('No token found');
-      const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
-      const response = await axios.get(GET_BIODATA, { headers });
-      if (response.data && response.data.data) {
-        const fetchedData = response.data.data;
-        dispatch(setBioData(fetchedData));
-        setMybiodata(fetchedData);
-      }
-    } catch (error) {
-      console.error("Error fetching biodata:", error);
-    }
-  };
-
+  // const allBiodata = useSelector((state) => state.getAllBiodata.allBiodata) || [];
+  // console.log("allbiodata", allBiodata);
+ 
+ 
   useFocusEffect(
-    React.useCallback(() => {
-      GetAll_Biodata();
-      getBiodata();
-    }, [])
+    useCallback(() => {
+      let isActive = true;
+      setIsMounted(true);
+
+      const fetchAllData = async () => {
+        try {
+          setLoading(true);
+          const token = await AsyncStorage.getItem("userToken");
+          if (!token) throw new Error("No token found");
+
+          const headers = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          };
+
+          // Fetch Biodata Profiles
+          const biodataRes = await axios.get(GET_ALL_BIODATA_PROFILES, { headers });
+          if (biodataRes.data && isActive) {
+            setallbiodata(biodataRes.data.feedUsers || []);
+          }
+
+          // Fetch User Biodata (Redux State Update)
+          const userBiodataRes = await axios.get(GET_BIODATA, { headers });
+          if (userBiodataRes.data && isActive) {
+            dispatch(setBioData(userBiodataRes.data.data));
+          }
+
+          // Fetch Activist Data (Redux State Update)
+          const activistRes = await axios.get(GET_ACTIVIST, { headers });
+          if (activistRes.data && isActive) {
+            dispatch(setActivistdata(activistRes.data.data));
+          }
+
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        } finally {
+          if (isActive) setLoading(false);
+        }
+      };
+
+      fetchAllData();
+
+      return () => {
+        isActive = false;
+        setIsMounted(false);
+      };
+    }, [dispatch])
   );
 
   useEffect(() => {
@@ -118,42 +127,45 @@ const Home = ({ navigation }) => {
         </View>
 
         <HeadingWithViewAll
-            heading="MATRIMONY"
-            showViewAll={true}
-            onViewAllPress={() => navigation.navigate('Matrimonial')}
-          />
-
-        {loading ? (
-          <SkeletonPlaceholder>
-            <View style={{ flexDirection: "row", margin: SH(20) }}>
-              {[1, 2, 3, 4].map((_, index) => (
-                <View key={index} style={{ margin: 10 }}>
-                  <View style={{ width: SW(100), height: SH(100), borderRadius: 50 }} />
-                </View>
-              ))}
+          heading="MATRIMONY"
+          showViewAll={true}
+          onViewAllPress={() => navigation.navigate('Matrimonial')}
+        />
+        <View>
+      {loading ? (
+        <ActivityIndicator size="large" color="blue" />
+      ) : (
+        <FlatList
+          data={allbiodata}
+          keyExtractor={(item) => item._id}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <View style={styles.imageWrapper}>
+              <TouchableOpacity
+                onPress={() => {
+                  if (isMounted) {
+                    navigation.navigate("MatrimonyPeopleProfile", {
+                      userDetails: item,
+                      userId: item.userId,
+                    });
+                  }
+                }}
+              >
+                <Image
+                  source={
+                    item.personalDetails?.closeUpPhoto
+                      ? { uri: item.personalDetails.closeUpPhoto }
+                      : require("../../Images/profile3.png")
+                  }
+                  style={styles.ProfileImages}
+                />
+              </TouchableOpacity>
             </View>
-          </SkeletonPlaceholder>
-        ) : allbiodata?.length > 0 ? (
-          <FlatList
-            data={allbiodata}
-            keyExtractor={(item) => item._id}
-            renderItem={({ item }) => (
-              <View style={styles.imageWrapper}>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("MatrimonyPeopleProfile", { userDetails: item, userId: item.userId })}
-                >
-                  <Image source={{ uri: item.personalDetails.closeUpPhoto }} style={styles.ProfileImages} />
-                </TouchableOpacity>
-              </View>
-            )}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-          />
-        ) : (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>No profiles available </Text>
-          </View>
-        )}
+          )}
+        />
+      )}
+    </View>
 
         <View>
           <HeadingWithViewAll

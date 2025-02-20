@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator, Share } from 'react-native';
 import Swiper from 'react-native-swiper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -11,182 +11,249 @@ import Globalstyles from '../../utils/GlobalCss';
 import { useRoute } from "@react-navigation/native";
 import moment from "moment";
 import axios from 'axios';
-import { MATCHED_PROFILE,SAVED_MATRIMONIAL_PROFILES,SEND_REQUEST } from '../../utils/BaseUrl';
+import { MATCHED_PROFILE, SAVED_PROFILES, SEND_REQUEST, SHARED_PROFILES } from '../../utils/BaseUrl';
 import { useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 const MatrimonyPeopleProfile = ({ navigation }) => {
   const route = useRoute();
-  const { userDetails, userId ,details,details_userId } = route.params || {};
-  console.log("userDetails",userDetails);
-  console.log("userId",userId);
-  const User_Id=userId || details_userId || null;
-  const savedDetials=userDetails?.saveProfile;
-  console.log("user", savedDetials)
-  const _id=userDetails?._id;
-  console.log("_id",_id);
-  const personalDetails = details?.personalDetails || userDetails?.personalDetails  || {};
-  const partnerPreferences = details?.partnerPreferences || userDetails?.partnerPreferences  || {};
-  const [loading, setLoading] = useState(true);
-  const [profileData, setProfileData] = useState(null);
+  const { userDetails, userId, details, details_userId } = route.params || {};
+  console.log("userDetails", userDetails);
+  const User_Id = userId || details_userId;
+  console.log("userId", User_Id);
+  const _id = userDetails?._id;
+  console.log("_id", _id);
+  const personalDetails = details?.personalDetails || userDetails?.personalDetails || {};
+  const partnerPreferences = details?.partnerPreferences || userDetails?.partnerPreferences || {};
+  const [profileData, setProfileData] = useState([]);
   const MyprofileData = useSelector((state) => state.getBiodata);
 
   // console.log("MyprofileData", MyprofileData);
 
   useEffect(() => {
-    if (User_Id) {
-      fetchUserProfile(User_Id);
-    }
-  }, [User_Id]);
+    fetchUserProfile();
+  }, []);
 
   // Function to fetch profile details
 
-const fetchUserProfile = async (userId) => {
-    setLoading(true);
+  const fetchUserProfile = async () => {
+    if (!User_Id) {
+        Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: "User ID not found!",
+        });
+        return;
+    }
+
     const token = await AsyncStorage.getItem('userToken');
-    if (!token) throw new Error('No token found');
+    if (!token) {
+        Toast.show({
+            type: "error",
+            text1: "Authentication Error",
+            text2: "No token found. Please log in again.",
+        });
+        return;
+    }
 
     const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
     };
 
     try {
-      const response = await axios.get(`${MATCHED_PROFILE}/${userId}`, { headers });
-      if (response.data.status === "success") {
-        setProfileData(response.data);
+        const response = await axios.get(`${MATCHED_PROFILE}/${User_Id}`, { headers });
+
+        if (response.data.status === "success") {
+            setProfileData(response.data);
+        } else {
+            Toast.show({
+                type: "error",
+                text1: "No Profile Found",
+                text2: response.data.message || "Something went wrong!",
+            });
+        }
+    } catch (error) {
+        // console.error("Error fetching profile:", error);
+
+        if (error.response && error.response.status === 404) {
+            Toast.show({
+                type: "error",
+                text1: "Please set your biodata first.",
+                text2: "If You want to Match Your Profile",
+            });
+        } else {
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: error.response?.data?.message || "Something went wrong!",
+            });
+        }
+    }
+};
+
+  const sendInterestRequest = async () => {
+    if (!User_Id) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "User ID not found!",
+      });
+      return;
+    }
+
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        throw new Error("No token found");
+      }
+
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+
+      const response = await axios.post(`${SEND_REQUEST}/${User_Id}`, {}, { headers });
+
+      console.log("Response Data:", JSON.stringify(response?.data));
+
+      if (response?.data?.message) {
+        Toast.show({
+          type: "success",
+          text1: "Interest Sent",
+          text2: response.data.message,
+          position: "top",
+          visibilityTime: 3000,
+          textStyle: { fontSize: 14, color: "green" },
+        });
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: response.data.message || "Something went wrong!",
+        });
       }
     } catch (error) {
-      console.error("Error fetching profile:", error);
-    } finally {
-      setLoading(false);
-    }
-};
-
-const sendInterestRequest = async () => {
-  if (!userId) {
-    Toast.show({
-      type: "error",
-      text1: "Error",
-      text2: "User ID not found!",
-    });
-    return;
-  }
-
-  try {
-    const token = await AsyncStorage.getItem("userToken");
-    if (!token) {
-      throw new Error("No token found");
-    }
-
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    };
-
-    const response = await axios.post(`${SEND_REQUEST}/${userId}`, {}, { headers });
-
-    console.log("Response Data:", JSON.stringify(response?.data));
-
-    if (response?.data?.message) {
-      Toast.show({
-        type: "success",
-        text1: "Interest Sent",
-        text2: response.data.message,
-        position: "top",
-        visibilityTime: 3000,
-        textStyle: { fontSize: 14, color: "green" },
-      });
-    } else {
+      console.error(
+        "API Error:",
+        error?.response ? JSON.stringify(error.response.data) : error.message
+      );
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: response.data.message || "Something went wrong!",
+        text2: error.response?.data?.message || "Failed to send interest!",
       });
     }
-  } catch (error) {
-    console.error(
-      "API Error:",
-      error?.response ? JSON.stringify(error.response.data) : error.message
-    );
-    Toast.show({
-      type: "error",
-      text1: "Error",
-      text2: error.response?.data?.message || "Failed to send interest!",
-    });
-  }
-};
+  };
 
-const savedProfiles = async () => {
-  if (!_id) {
-    Toast.show({
-      type: "error",
-      text1: "Error",
-      text2: "User ID not found!",
-    });
-    return;
-  }
-
-  try {
-    const token = await AsyncStorage.getItem("userToken");
-    if (!token) {
-      throw new Error("No token found");
-    }
-
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    };
-
-    const response = await axios.post(
-      `${SAVED_MATRIMONIAL_PROFILES}/${_id}`,
-      {}, 
-      { headers }
-    );
-
-    console.log("Response Data:", JSON.stringify(response?.data));
-
-    if (response?.data?.message) {
-      Toast.show({
-        type: "success",
-        text2: response.data.message,
-        position: "top",
-        visibilityTime: 3000,
-        textStyle: { fontSize: 14, color: "green" },
-      });
-    } else {
+  const savedProfiles = async () => {
+    if (!_id) {
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: response.data.message || "Something went wrong!",
+        text2: "User ID not found!",
+      });
+      return;
+    }
+
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        throw new Error("No token found");
+      }
+
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+
+      const response = await axios.post(
+        `${SAVED_PROFILES}/${_id}`,
+        {},
+        { headers }
+      );
+
+      console.log("Response Data:", JSON.stringify(response?.data));
+
+      if (response?.data?.message) {
+        Toast.show({
+          type: "success",
+          text2: response.data.message,
+          position: "top",
+          visibilityTime: 3000,
+          textStyle: { fontSize: 14, color: "green" },
+        });
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: response.data.message || "Something went wrong!",
+        });
+      }
+    } catch (error) {
+      console.error(
+        "API Error:",
+        error?.response ? JSON.stringify(error.response.data) : error.message
+      );
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error.response?.data?.message || "Failed to send interest!",
       });
     }
-  } catch (error) {
-    console.error(
-      "API Error:",
-      error?.response ? JSON.stringify(error.response.data) : error.message
-    );
-    Toast.show({
-      type: "error",
-      text1: "Error",
-      text2: error.response?.data?.message || "Failed to send interest!",
-    });
-  }
-};
+  };
 
+  const shareProfiles = async () => {
+    if (!userId) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "User ID not found!",
+      });
+      return;
+    }
 
-if (loading) {
-  return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <ActivityIndicator size="large" color={Colors.theme_color} />
-    </View>
-  );
-}
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        throw new Error("No token found");
+      }
 
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+      console.log("headers", headers)
 
-  if (!profileData) {
-    return <Text>No data found!</Text>;
-  }
+      const response = await axios.get(`${SHARED_PROFILES}/${userId}`, { headers });
+
+      console.log("Response Data:", JSON.stringify(response?.data));
+
+      const shareableUrl = response?.data?.shareableLink;
+
+      if (shareableUrl) {
+        await Share.share({
+          message: `Check out this profile: ${shareableUrl}`,
+        });
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "No shareable link found!",
+        });
+      }
+    } catch (error) {
+      console.error(
+        "API Error:",
+        error?.response ? JSON.stringify(error.response.data) : error.message
+      );
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error.response?.data?.message || "Failed to share profile!",
+      });
+    }
+  };
 
   // Map API comparisonResults to UI labels
   const comparisonResults = profileData?.comparisonResults || {};
@@ -229,8 +296,8 @@ if (loading) {
             prevButton={<MaterialIcons name="chevron-left" size={50} color={'gray'} />}
             nextButton={<MaterialIcons name="chevron-right" size={50} color={'gray'} />}
           >
-             <View style={styles.slide}>
-              <Image source={{ uri:personalDetails?.closeUpPhoto }} style={styles.image} />
+            <View style={styles.slide}>
+              <Image source={{ uri: personalDetails?.closeUpPhoto }} style={styles.image} />
             </View>
             <View style={styles.slide}>
               <Image source={{ uri: personalDetails?.fullPhoto }} style={styles.image} />
@@ -253,10 +320,11 @@ if (loading) {
               <FontAwesome name="bookmark-o" size={24} color={Colors.dark} />
               <Text style={styles.iconText}>Save</Text>
             </TouchableOpacity>
-            <View style={styles.iconContainer}>
+            <TouchableOpacity style={styles.iconContainer} onPress={shareProfiles}>
               <Feather name="send" size={24} color={Colors.dark} />
-              <Text style={styles.iconText}>Shares</Text>
-            </View>
+              <Text style={styles.iconText}>Share</Text>
+            </TouchableOpacity>
+
 
             <TouchableOpacity style={styles.interestedButton} onPress={sendInterestRequest}>
               <Text style={styles.buttonText}>Interested</Text>
@@ -295,12 +363,10 @@ if (loading) {
             {/* Right-side details */}
             {personalDetails?.currentCity && <Text style={styles.text}>{personalDetails?.currentCity}</Text>}
             {personalDetails?.occupation && <Text style={styles.text}>{personalDetails?.occupation}</Text>}
-            {personalDetails?.annualIncome && <Text style={styles.text}>Income: {personalDetails?.annualIncome}</Text>}
+            {personalDetails?.annualIncome && <Text style={styles.text}>Income: {personalDetails?.annualIncome} INR </Text>}
             {personalDetails?.qualification && <Text style={styles.text}>{personalDetails?.qualification}</Text>}
           </View>
         </View>
-
-
 
         {/* Horoscope Section */}
         {personalDetails?.dob && (
@@ -391,32 +457,32 @@ if (loading) {
         }
 
 
-{MyprofileData?.Biodata && (
-  <View style={styles.flexContainer3}>
-    <Text style={styles.HeadingText}>Matches</Text>
-    <View style={styles.flex}>
-      <Image source={{ uri: MyprofileData?.Biodata?.personalDetails?.closeUpPhoto }} style={styles.smallImage} />
-      <Text style={styles.text}>{matchedCount}/{totalCriteria}</Text>
-      <Image source={{ uri: profileData?.data?.photoUrl?.[0] }} style={styles.smallImage} />
-    </View>
+        {MyprofileData?.Biodata && (
+          <View style={styles.flexContainer3}>
+            <Text style={styles.HeadingText}>Matches</Text>
+            <View style={styles.flex}>
+              <Image source={{ uri: MyprofileData?.Biodata?.personalDetails?.closeUpPhoto }} style={styles.smallImage} />
+              <Text style={styles.text}>{matchedCount}/{totalCriteria}</Text>
+              <Image source={{ uri: profileData?.data?.photoUrl?.[0] }} style={styles.smallImage} />
+            </View>
 
-    {/* Comparison List */}
-    {Object.keys(profileData?.comparisonResults || {}).map((key, index) => (
-      <View key={index} style={styles.flexContainer5}>
-        <Text style={styles.label}>{key.replace(/([A-Z])/g, " $1").trim()}</Text>
-        {profileData.comparisonResults[key] ? (
-          <MaterialIcons name="check" style={[styles.icon, styles.checkIcon]} />
-        ) : (
-          <MaterialIcons name="close" style={[styles.icon, styles.crossIcon]} />
+            {/* Comparison List */}
+            {Object.keys(profileData?.comparisonResults || {}).map((key, index) => (
+              <View key={index} style={styles.flexContainer5}>
+                <Text style={styles.label}>{key.replace(/([A-Z])/g, " $1").trim()}</Text>
+                {profileData.comparisonResults[key] ? (
+                  <MaterialIcons name="check" style={[styles.icon, styles.checkIcon]} />
+                ) : (
+                  <MaterialIcons name="close" style={[styles.icon, styles.crossIcon]} />
+                )}
+              </View>
+            ))}
+          </View>
         )}
-      </View>
-    ))}
-  </View>
-)}
 
         <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
       </ScrollView>
-      <Toast/>
+      <Toast />
     </SafeAreaView>
   );
 };

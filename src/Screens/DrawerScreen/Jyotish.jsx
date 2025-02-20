@@ -1,17 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import {
-  Text,
-  View,
-  FlatList,
-  TouchableOpacity,
-  TextInput,
-  Image,
-  Modal,
-  ScrollView,
-  SafeAreaView,
-  StatusBar,Linking,Pressable
-} from 'react-native';
-import { PanditData, slider } from '../../DummyData/DummyData';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -21,9 +9,16 @@ import AppIntroSlider from 'react-native-app-intro-slider';
 import { Dropdown } from 'react-native-element-dropdown';
 import styles from '../StyleScreens/PanditJyotishKathavachakStyle';
 import Colors from '../../utils/Colors';
-import {ExperienceData,RatingData, jyotishServices } from '../../DummyData/DropdownData';
+import { ExperienceData, RatingData, jyotishServices } from '../../DummyData/DropdownData';
 import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
+import axios from 'axios';
+import { slider } from '../../DummyData/DummyData';
+import { GET_ALL_JYOTISH } from '../../utils/BaseUrl';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import { SH, SW } from '../../utils/Dimensions';
+import { useFocusEffect } from '@react-navigation/native';
 const Jyotish = ({ navigation }) => {
   const sliderRef = useRef(null);
   const [activeButton, setActiveButton] = useState(null);
@@ -32,7 +27,9 @@ const Jyotish = ({ navigation }) => {
   const [services, setServices] = useState('');
   const [locality, setLocality] = useState('');
   const [rating, setRating] = useState(null);
-  const [experience, setExperience] = useState(null); 
+  const [experience, setExperience] = useState(null);
+  const [JyotishData, setJyotishData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleOpenFilter = () => {
     setModalVisible(true);
@@ -57,43 +54,93 @@ const Jyotish = ({ navigation }) => {
     return () => clearInterval(interval);
   }, [currentIndex]);
 
+  const JyotishDataAPI = async () => {
+    try {
+      setIsLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) throw new Error("Authorization token is missing.");
+
+      const headers = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      };
+      const response = await axios.get(GET_ALL_JYOTISH, { headers });
+      console.log("response",JSON.stringify(response.data))
+      setJyotishData(response.data.data);
+    } catch (error) {
+      console.log("Error fetching Jyotish data:", error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
+  useFocusEffect(
+    React.useCallback(() => {
+      JyotishDataAPI();
+    }, [])
+  );
+
+  const renderSkeleton = () => (
+    <SkeletonPlaceholder>
+      <View style={{ margin:SH(20) }}>
+        {[1, 2, 3, 4].map((_, index) => (
+          <View key={index} style={{ flexDirection: "row", marginBottom: 20 }}>
+            <View style={{ width:SW(80), height:SH(80), borderRadius: 40, marginRight:SW(10) }} />
+            <View>
+              <View style={{ width:SW(150), height:SH(20), borderRadius: 4 }} />
+              <View style={{ width:SW(100), height:SH(15), borderRadius: 4, marginTop:SH(6) }} />
+              <View style={{ width:SW(80), height:SH(15), borderRadius: 4, marginTop:SH(6) }} />
+            </View>
+          </View>
+        ))}
+      </View>
+    </SkeletonPlaceholder>
+  );
+  
   const renderItem = ({ item }) => {
+    const rating = item.averageRating || 0;
+
     return (
       <View style={styles.card}>
-        <Pressable style={styles.cardData} onPress={() => navigation.navigate('JyotishDetailsPage')}>
-          <Image source={item.image} style={styles.image} />
+        <Pressable style={styles.cardData}
+          onPress={() => navigation.navigate('JyotishDetailsPage', { JyotishDetails: item })}>
+          <Image
+            source={item.profilePhoto ? { uri: item.profilePhoto } : require('../../Images/NoImage.png')}
+            style={styles.image}
+          />
           <View style={styles.leftContainer}>
-            <Text style={styles.text}>{item.name}</Text>
+            <Text style={styles.name}>{item?.fullName}</Text>
             <View style={styles.rating}>
-              <Rating type="star" ratingCount={5} imageSize={15} startingValue={item.rating} readonly />
-              <Text style={[styles.text, { fontFamily: 'Poppins-Regular' }]}> {item.rating} star Rating</Text>
+              <Rating type="star" ratingCount={5} imageSize={15} startingValue={rating} readonly />
+              <Text style={[styles.text, { fontFamily: 'Poppins-Regular' }]}> {rating} Star Rating</Text>
             </View>
             <View style={styles.CityArea}>
-              <Text style={styles.text}>{item.city}</Text>
-              <Text style={styles.text}>{item.area}</Text>
+              <Text style={styles.text}>{item?.city}</Text>
+              <Text style={styles.text}>    {item?.state}</Text>
             </View>
+            <Text style={styles.text}>{item?.residentialAddress}</Text>
           </View>
         </Pressable>
         <View style={styles.sharecontainer}>
-        <View style={styles.iconContainer}>
-          <FontAwesome name="bookmark-o" size={20} color={Colors.dark} />
-          <Text style={styles.iconText}>Save</Text>
-        </View>
+          <View style={styles.iconContainer}>
+            <FontAwesome name="bookmark-o" size={20} color={Colors.dark} />
+            <Text style={styles.iconText}>Save</Text>
+          </View>
 
-        <View style={styles.iconContainer}>
-          <Feather name="send" size={20} color={Colors.dark} />
-          <Text style={styles.iconText}>Shares</Text>
-        </View>
+          <View style={styles.iconContainer}>
+            <Feather name="send" size={20} color={Colors.dark} />
+            <Text style={styles.iconText}>Shares</Text>
+          </View>
 
-        <TouchableOpacity 
-          style={styles.Button} 
-          onPress={() => Linking.openURL('tel:9893458940')}>
-          <MaterialIcons name="call" size={20} color={Colors.light} />
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
+            <MaterialIcons name="call" size={20} color={Colors.light} />
+          </TouchableOpacity>
+        </View>
       </View>
     );
   };
+
 
   return (
     <SafeAreaView style={Globalstyles.container}>
@@ -105,7 +152,7 @@ const Jyotish = ({ navigation }) => {
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>Jyotish</Text>
         </View>
-        <View style={styles.righticons}>
+        <View style={styles.headerContainer}>
           <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => navigation.navigate('Notification')} />
         </View>
       </View>
@@ -147,14 +194,22 @@ const Jyotish = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        <FlatList
-          data={PanditData}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id.toString()}
-          scrollEnabled={false}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.panditListData}
-        />
+        {isLoading ? renderSkeleton() : (
+          <FlatList
+            data={JyotishData}
+            renderItem={renderItem}
+            keyExtractor={(item) => item._id}
+            scrollEnabled={false}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.panditListData}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>No Pandit Data Available</Text>
+              </View>
+            }
+          />
+        )}
+
       </ScrollView>
 
       <Modal

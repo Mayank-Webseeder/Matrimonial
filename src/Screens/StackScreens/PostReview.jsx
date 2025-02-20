@@ -15,53 +15,53 @@ import Toast from 'react-native-toast-message';
 const PostReview = ({ navigation, route }) => {
     const [description, setDescription] = useState('');
     const [rating, setRating] = useState(0);
-    const { panditId } = route.params;
+    // const { panditId } = route.params;
 
-    const handleSubmit = async () => {
-        try {
-            const token = await AsyncStorage.getItem("userToken");
-            if (!token) throw new Error("Authorization token is missing.");
+    // const handleSubmit = async () => {
+    //     try {
+    //         const token = await AsyncStorage.getItem("userToken");
+    //         if (!token) throw new Error("Authorization token is missing.");
 
-            const headers = {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
-            };
+    //         const headers = {
+    //             "Content-Type": "application/json",
+    //             "Authorization": `Bearer ${token}`,
+    //         };
 
-            const payload = {
-                panditId: panditId,
-                rating: rating,
-                review: description,
-            };
+    //         const payload = {
+    //             panditId: panditId,
+    //             rating: rating,
+    //             review: description,
+    //         };
 
-            const response = await axios.post(PANDIT_REVIEW, payload, { headers });
+    //         const response = await axios.post(PANDIT_REVIEW, payload, { headers });
 
-            if (response.status === 200) {
-                Toast.show({
-                    type: 'success',
-                    text1: 'Success',
-                    text2: 'Your review has been posted successfully!',
-                    position: 'top',
-                });
-                navigation.goBack();
-            } else {
-                Toast.show({
-                    type: 'error',
-                    text1: 'Error',
-                    text2: 'Failed to post the review. Please try again.',
-                    position: 'top',
-                });
-            }
-        } catch (error) {
-            console.error('Error posting review:', error);
-            const errorMessage = error.response?.data?.message || 'An error occurred while posting the review.';
-            Toast.show({
-                type: 'error',
-                text1: 'Error',
-                text2: errorMessage,
-                position: 'top',
-            });
-        }
-    };
+    //         if (response.status === 200) {
+    //             Toast.show({
+    //                 type: 'success',
+    //                 text1: 'Success',
+    //                 text2: 'Your review has been posted successfully!',
+    //                 position: 'top',
+    //             });
+    //             navigation.goBack();
+    //         } else {
+    //             Toast.show({
+    //                 type: 'error',
+    //                 text1: 'Error',
+    //                 text2: 'Failed to post the review. Please try again.',
+    //                 position: 'top',
+    //             });
+    //         }
+    //     } catch (error) {
+    //         console.error('Error posting review:', error);
+    //         const errorMessage = error.response?.data?.message || 'An error occurred while posting the review.';
+    //         Toast.show({
+    //             type: 'error',
+    //             text1: 'Error',
+    //             text2: errorMessage,
+    //             position: 'top',
+    //         });
+    //     }
+    // };
 
     const renderStars = () => {
         return Array.from({ length: 5 }, (_, index) => (
@@ -115,7 +115,7 @@ const PostReview = ({ navigation, route }) => {
                     textAlignVertical='top'
                 />
 
-                <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+                <TouchableOpacity style={styles.submitButton}>
                     <Text style={styles.submitButtonText}>Submit Review</Text>
                 </TouchableOpacity>
             </View>

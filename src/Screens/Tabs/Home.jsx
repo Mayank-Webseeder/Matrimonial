@@ -31,6 +31,8 @@ const Home = ({ navigation }) => {
   const allBiodata = useSelector((state) => state.getAllBiodata.allBiodata) || [];
   // console.log("allbiodata", allBiodata);
 
+
+
   useFocusEffect(
     useCallback(() => {
       let isActive = true;
@@ -81,6 +83,23 @@ const Home = ({ navigation }) => {
     }, [dispatch])
   );
 
+
+
+  useEffect(() => {
+    let isActive = true;
+    setIsMounted(true);
+
+    return () => {
+      isActive = false;
+      setIsMounted(false);
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => setallbiodata([]); // Clear FlatList data
+  }, []);
+
+
   useEffect(() => {
     const interval = setInterval(() => {
       if (isMounted) {
@@ -94,8 +113,32 @@ const Home = ({ navigation }) => {
       }
     }, 2000);
     return () => clearInterval(interval);
-  }, [currentIndex, isMounted]);
+  }, [currentIndex]);
 
+
+  const handleNavigateToProfile = (item) => {
+    if (!navigation.isFocused()) return;
+    navigation.navigate("MatrimonyPeopleProfile", {
+      userDetails: item,
+      userId: item.userId,
+    });
+  };
+
+
+  const renderItem = useCallback(({ item }) => (
+    <View style={styles.imageWrapper}>
+      <TouchableOpacity onPress={() => handleNavigateToProfile(item)}>
+        <Image
+          source={
+            item.personalDetails?.closeUpPhoto
+              ? { uri: item.personalDetails.closeUpPhoto }
+              : require("../../Images/profile3.png")
+          }
+          style={styles.ProfileImages}
+        />
+      </TouchableOpacity>
+    </View>
+  ), [isMounted, navigation]);
 
   return (
     <SafeAreaView style={Globalstyles.container}>
@@ -135,71 +178,102 @@ const Home = ({ navigation }) => {
           showViewAll={true}
           onViewAllPress={() => navigation.navigate('Matrimonial')}
         />
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-          <FlatList
-            data={allBiodata}
-            keyExtractor={(item) => item?._id?.toString()}
-            scrollEnabled={false}
-            renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => isMounted && navigation.navigate("MatrimonyPeopleProfile", { userDetails: item, userId: item.userId })}>
-                <Image source={item?.personalDetails?.closeUpPhoto ? { uri: item.personalDetails.closeUpPhoto } : require("../../Images/profile3.png")} style={styles.ProfileImages} />
-              </TouchableOpacity>
-            )}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          />
-        </ScrollView>
-
+        <View>
+          {loading ? (
+            <ActivityIndicator size="large" color="blue" />
+          ) : (
+            <View style={{ flex: 1 }}>
+              <FlatList
+                data={allbiodata.length > 0 ? allbiodata : []} // ✅ Ensuring it never gets `undefined`
+                keyExtractor={(item) => item?._id?.toString() || Math.random().toString()} // ✅ Prevents duplicate key errors
+                // data={allbiodata}
+                // keyExtractor={(item) => item._id}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                renderItem={renderItem}
+                removeClippedSubviews={false}
+              // renderItem={({ item }) => (
+              //   <View style={styles.imageWrapper}>
+              //     <TouchableOpacity
+              //       onPress={() => handleNavigateToProfile(item)}
+              //     // onPress={() => {
+              //     //   if (isMounted) {
+              //     //     navigation.navigate("MatrimonyPeopleProfile", {
+              //     //       userDetails: item,
+              //     //       userId: item.userId,
+              //     //     });
+              //     //   }
+              //     // }}
+              //     >
+              //       <Image
+              //         source={
+              //           item.personalDetails?.closeUpPhoto
+              //             ? { uri: item.personalDetails.closeUpPhoto }
+              //             : require("../../Images/profile3.png")
+              //         }
+              //         style={styles.ProfileImages}
+              //       />
+              //     </TouchableOpacity>
+              //   </View>
+              // )}
+              />
+            </View>
+          )}
+        </View>
 
         <View>
           <HeadingWithViewAll
             heading="PANDIT / JOYTISH / KATHAVACHAK"
             showViewAll={false}
           />
-          <FlatList
-            data={Category}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <TouchableOpacity style={styles.CategoryContainer} onPress={() => {
-                if (item.screen) {
-                  navigation.navigate(item.screen);
-                } else {
-                  console.warn("Screen not specified for this category.");
-                }
-              }}
-              >
-                <Image source={item.image} style={styles.images} />
-                <Text style={styles.text}>{item.text}</Text>
-              </TouchableOpacity>
-            )}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-          />
+          <View style={{ flex: 1 }}>
+            <FlatList
+              data={Category}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <TouchableOpacity style={styles.CategoryContainer} onPress={() => {
+                  if (item.screen) {
+                    navigation.navigate(item.screen);
+                  } else {
+                    console.warn("Screen not specified for this category.");
+                  }
+                }}
+                >
+                  <Image source={item.image} style={styles.images} />
+                  <Text style={styles.text}>{item.text}</Text>
+                </TouchableOpacity>
+              )}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+            />
+          </View>
         </View>
         <View>
           <HeadingWithViewAll
             heading="BRAHMIN COMMUNITY"
             showViewAll={false}
           />
-          <FlatList
-            data={communityData}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <TouchableOpacity style={styles.CategoryContainer} onPress={() => {
-                if (item.screen) {
-                  navigation.navigate(item.screen)
-                }
-                else {
-                  console.warn("Screen not specified")
-                }
-              }}>
-                <Image source={item.image} style={styles.images} />
-                <Text style={styles.text}>{item.text}</Text>
-              </TouchableOpacity>
-            )}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-          />
+          <View style={{ flex: 1 }}>
+            <FlatList
+              data={communityData}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <TouchableOpacity style={styles.CategoryContainer} onPress={() => {
+                  if (item.screen) {
+                    navigation.navigate(item.screen)
+                  }
+                  else {
+                    console.warn("Screen not specified")
+                  }
+                }}>
+                  <Image source={item.image} style={styles.images} />
+                  <Text style={styles.text}>{item.text}</Text>
+                </TouchableOpacity>
+              )}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+            />
+          </View>
         </View>
         <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
       </ScrollView>

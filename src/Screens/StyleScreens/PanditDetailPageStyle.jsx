@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
   profileImage: {
     width: SW(120),
     height: SH(120),
-    resizeMode: "contain",
+    resizeMode: "cover",
     marginRight: SW(10)
   },
   name: {
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
     width: '50%',
     height: SH(100),
     marginBottom: SH(1),
-    marginRight: SW(2),
+    marginRight: SW(10),
     borderRadius: 3
   },
 

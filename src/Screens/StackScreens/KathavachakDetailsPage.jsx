@@ -12,33 +12,28 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Globalstyles from '../../utils/GlobalCss';
 
-const KathavachakDetailsPage = ({ navigation, item }) => {
+const KathavachakDetailsPage = ({ navigation, item,route }) => {
+    const { kathavachakDetails } = route.params || {};
     const pandit = PanditDetailData[0];
     const [userRating, setUserRating] = useState(0);
-    const images = pandit.images || [];
-
+    const images = kathavachakDetails.additionalPhotos || [];
 
     const renderImages = (images) => {
         if (images.length === 0) {
             return <Text style={styles.noImageText}>No images available for this post</Text>;
         }
 
-        // Create rows of images
         const rows = [];
         for (let i = 0; i < images.length; i += 2) {
             rows.push(
                 <View style={styles.imageRow} key={i}>
-                    <Image source={images[i]} style={styles.image} />
-                    {/* If there's an image next to it, show it */}
-                    {images[i + 1] && <Image source={images[i + 1]} style={styles.image} />}
+                    <Image source={{ uri: images[i] }} style={styles.image} />
+                    {images[i + 1] && <Image source={{ uri: images[i + 1] }} style={styles.image} />}
                 </View>
             );
         }
-
         return <View style={styles.imageContainer}>{rows}</View>;
     };
-
-
 
     return (
         <SafeAreaView style={Globalstyles.container}>
@@ -52,7 +47,7 @@ const KathavachakDetailsPage = ({ navigation, item }) => {
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
-                    <Text style={Globalstyles.headerText}>{pandit.name}</Text>
+                    <Text style={Globalstyles.headerText}>{kathavachakDetails?.fullName}</Text>
                 </View>
                 <View style={styles.righticons}>
                     {/* <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} /> */}
@@ -61,22 +56,22 @@ const KathavachakDetailsPage = ({ navigation, item }) => {
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.profileSection}>
-                    <Image source={pandit.image} style={styles.profileImage} />
+                    <Image source={{ uri: kathavachakDetails.profilePhoto }} style={styles.profileImage} />
                     <View>
-                        <Text style={styles.name}>{pandit.name}</Text>
+                        <Text style={styles.name}>{kathavachakDetails?.fullName}</Text>
                         <View style={styles.FlexContainer}>
-                            <Text style={styles.city}>{pandit.city}</Text>
-                            <Text style={styles.surname}>{pandit.surname}</Text>
+                        <Text style={styles.city}>{kathavachakDetails.city}</Text>
+                            <Text style={styles.surname}>{kathavachakDetails?.subCaste}</Text>
                         </View>
                         <View style={styles.FlexContainer}>
                             <Rating
                                 type="star"
                                 ratingCount={5}
                                 imageSize={15}
-                                startingValue={pandit.rating}
+                                startingValue={kathavachakDetails.averageRating}
                                 readonly
                             />
-                            <Text style={styles.rating}>{pandit.rating} star Rating ( 100)</Text>
+                            <Text style={styles.rating}>{kathavachakDetails.averageRating} star Rating ({kathavachakDetails.totalReviews})</Text>
                         </View>
                     </View>
                 </View>
@@ -84,7 +79,7 @@ const KathavachakDetailsPage = ({ navigation, item }) => {
                 <View style={styles.contentContainer}>
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>Description</Text>
-                        <Text style={styles.text}>{pandit.description}</Text>
+                        <Text style={styles.text}>{kathavachakDetails.description}</Text>
                     </View>
 
                     <View style={styles.sharecontainer}>
@@ -97,7 +92,7 @@ const KathavachakDetailsPage = ({ navigation, item }) => {
                             <Feather name="send" size={20} color={Colors.dark} />
                             <Text style={styles.iconText}>Shares</Text>
                         </View>
-                        <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL('tel:9893458940')}>
+                        <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${kathavachakDetails.mobileNo}`)}>
                             <MaterialIcons name="call" size={20} color={Colors.light} />
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ReportPage')} >
@@ -108,7 +103,7 @@ const KathavachakDetailsPage = ({ navigation, item }) => {
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>Services List</Text>
                         <View style={styles.servicesGrid}>
-                            {pandit.servicesList.map((service, index) => (
+                            {kathavachakDetails.kathavachakServices.map((service, index) => (
                                 <View key={index} style={styles.serviceContainer}>
                                     <Text style={styles.serviceText}>{service}</Text>
                                 </View>
@@ -181,9 +176,7 @@ const KathavachakDetailsPage = ({ navigation, item }) => {
                     )}
                 </View>
 
-                <View style={styles.container}>
-                    {renderImages(images)}
-                </View>
+                <View style={styles.container}>{renderImages(images)}</View>
                 <View style={styles.socialIcons}>
                     <Image source={require('../../Images/website.png')} style={styles.websiteIcon} />
                     <MaterialCommunityIcons name="youtube" size={30} color="#FF0000" />

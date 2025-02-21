@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { View, TouchableOpacity, FlatList, Image, SafeAreaView, Text, StatusBar ,ActivityIndicator} from 'react-native';
+import { View, TouchableOpacity, FlatList, Image, SafeAreaView, Text, StatusBar, ActivityIndicator } from 'react-native';
 import { DrawerActions } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from '../StyleScreens/HomeStyle';
@@ -25,13 +25,12 @@ const Home = ({ navigation }) => {
   const dispatch = useDispatch();
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [allbiodata, setallbiodata] = useState([]);
+  // const [allbiodata, setallbiodata] = useState([]);
   const [isMounted, setIsMounted] = useState(true);
   const [loading, setLoading] = useState(false);
-  // const allBiodata = useSelector((state) => state.getAllBiodata.allBiodata) || [];
+  const allBiodata = useSelector((state) => state.getAllBiodata.allBiodata) || [];
   // console.log("allbiodata", allBiodata);
- 
- 
+
   useFocusEffect(
     useCallback(() => {
       let isActive = true;
@@ -51,7 +50,7 @@ const Home = ({ navigation }) => {
           // Fetch Biodata Profiles
           const biodataRes = await axios.get(GET_ALL_BIODATA_PROFILES, { headers });
           if (biodataRes.data && isActive) {
-            setallbiodata(biodataRes.data.feedUsers || []);
+            dispatch(setAllBiodata(biodataRes.data.feedUsers));
           }
 
           // Fetch User Biodata (Redux State Update)
@@ -84,16 +83,19 @@ const Home = ({ navigation }) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (currentIndex < slider.length - 1) {
-        setCurrentIndex((prevIndex) => prevIndex + 1);
-        sliderRef.current?.goToSlide(currentIndex + 1);
-      } else {
-        setCurrentIndex(0);
-        sliderRef.current?.goToSlide(0);
+      if (isMounted) {
+        if (currentIndex < slider.length - 1) {
+          setCurrentIndex((prevIndex) => prevIndex + 1);
+          sliderRef.current?.goToSlide(currentIndex + 1);
+        } else {
+          setCurrentIndex(0);
+          sliderRef.current?.goToSlide(0);
+        }
       }
     }, 2000);
     return () => clearInterval(interval);
-  }, [currentIndex]);
+  }, [currentIndex, isMounted]);
+
 
   return (
     <SafeAreaView style={Globalstyles.container}>
@@ -114,6 +116,7 @@ const Home = ({ navigation }) => {
           <AppIntroSlider
             ref={sliderRef}
             data={slider}
+            keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => (
               <View>
                 <Image source={item.image} style={styles.sliderImage} />
@@ -124,6 +127,7 @@ const Home = ({ navigation }) => {
             dotStyle={styles.dot}
             activeDotStyle={styles.activeDot}
           />
+
         </View>
 
         <HeadingWithViewAll
@@ -131,41 +135,21 @@ const Home = ({ navigation }) => {
           showViewAll={true}
           onViewAllPress={() => navigation.navigate('Matrimonial')}
         />
-        <View>
-      {loading ? (
-        <ActivityIndicator size="large" color="blue" />
-      ) : (
-        <FlatList
-          data={allbiodata}
-          keyExtractor={(item) => item._id}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <View style={styles.imageWrapper}>
-              <TouchableOpacity
-                onPress={() => {
-                  if (isMounted) {
-                    navigation.navigate("MatrimonyPeopleProfile", {
-                      userDetails: item,
-                      userId: item.userId,
-                    });
-                  }
-                }}
-              >
-                <Image
-                  source={
-                    item.personalDetails?.closeUpPhoto
-                      ? { uri: item.personalDetails.closeUpPhoto }
-                      : require("../../Images/profile3.png")
-                  }
-                  style={styles.ProfileImages}
-                />
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+          <FlatList
+            data={allBiodata}
+            keyExtractor={(item) => item?._id?.toString()}
+            scrollEnabled={false}
+            renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => isMounted && navigation.navigate("MatrimonyPeopleProfile", { userDetails: item, userId: item.userId })}>
+                <Image source={item?.personalDetails?.closeUpPhoto ? { uri: item.personalDetails.closeUpPhoto } : require("../../Images/profile3.png")} style={styles.ProfileImages} />
               </TouchableOpacity>
-            </View>
-          )}
-        />
-      )}
-    </View>
+            )}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          />
+        </ScrollView>
+
 
         <View>
           <HeadingWithViewAll

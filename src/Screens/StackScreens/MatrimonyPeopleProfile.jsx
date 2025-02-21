@@ -38,59 +38,59 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
   const fetchUserProfile = async () => {
     if (!User_Id) {
-        Toast.show({
-            type: "error",
-            text1: "Error",
-            text2: "User ID not found!",
-        });
-        return;
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "User ID not found!",
+      });
+      return;
     }
 
     const token = await AsyncStorage.getItem('userToken');
     if (!token) {
-        Toast.show({
-            type: "error",
-            text1: "Authentication Error",
-            text2: "No token found. Please log in again.",
-        });
-        return;
+      Toast.show({
+        type: "error",
+        text1: "Authentication Error",
+        text2: "No token found. Please log in again.",
+      });
+      return;
     }
 
     const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
     };
 
     try {
-        const response = await axios.get(`${MATCHED_PROFILE}/${User_Id}`, { headers });
+      const response = await axios.get(`${MATCHED_PROFILE}/${User_Id}`, { headers });
 
-        if (response.data.status === "success") {
-            setProfileData(response.data);
-        } else {
-            Toast.show({
-                type: "error",
-                text1: "No Profile Found",
-                text2: response.data.message || "Something went wrong!",
-            });
-        }
+      if (response.data.status === "success") {
+        setProfileData(response.data);
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "No Profile Found",
+          text2: response.data.message || "Something went wrong!",
+        });
+      }
     } catch (error) {
-        // console.error("Error fetching profile:", error);
+      // console.error("Error fetching profile:", error);
 
-        if (error.response && error.response.status === 404) {
-            Toast.show({
-                type: "error",
-                text1: "Please set your biodata first.",
-                text2: "If You want to Match Your Profile",
-            });
-        } else {
-            Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: error.response?.data?.message || "Something went wrong!",
-            });
-        }
+      if (error.response && error.response.status === 404) {
+        Toast.show({
+          type: "error",
+          text1: "Please set your biodata first.",
+          text2: "If You want to Match Your Profile",
+        });
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: error.response?.data?.message || "Something went wrong!",
+        });
+      }
     }
-};
+  };
 
   const sendInterestRequest = async () => {
     if (!User_Id) {

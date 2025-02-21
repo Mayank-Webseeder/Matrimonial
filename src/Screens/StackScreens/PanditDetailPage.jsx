@@ -25,8 +25,6 @@ const PanditDetailPage = ({ navigation, item, route }) => {
         if (images.length === 0) {
             return <Text style={styles.noImageText}>No images available for this post</Text>;
         }
-
-        // Create rows of images
         const rows = [];
         for (let i = 0; i < images.length; i += 2) {
             rows.push(

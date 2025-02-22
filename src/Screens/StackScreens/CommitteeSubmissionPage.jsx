@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, SafeAreaView, StatusBar, FlatList } from 'react-native';
 import Colors from '../../utils/Colors';
 import { SH, SW, SF } from '../../utils/Dimensions';
@@ -17,15 +17,15 @@ const CommitteeSubmissionPage = ({ navigation }) => {
     const [filteredCities, setFilteredCities] = useState([]);
     const [filteredSubCaste, setFilteredSubCaste] = useState([]);
     const [isLoading, setIsLoading] = useState('');
-    const [isEditing,setIsEditing]=useState(true);
+    const [isEditing, setIsEditing] = useState(true);
     const [CommitteeData, setCommitteeData] = useState({
-        committeeTitle:'',
-        presidentName:'',
-        subCaste:'',
-        city:'',
-        area:'',
-        photoUrl:'',
-        mobileNo:''
+        committeeTitle: '',
+        presidentName: '',
+        subCaste: '',
+        city: '',
+        area: '',
+        photoUrl: '',
+        mobileNo: ''
     });
 
     useEffect(() => {
@@ -41,13 +41,13 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     });
                     return;
                 }
-    
+
                 const headers = {
                     Authorization: `Bearer ${token}`,
                 };
-    
+
                 const response = await axios.get(GET_COMMIITEE, { headers });
-    
+
                 if (response.status === 200 && response.data?.data) {
                     setCommitteeData(response.data.data);
                 }
@@ -57,10 +57,10 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                 setIsLoading(false);
             }
         };
-    
+
         fetchCommitteeData();
     }, []);
-    
+
 
     const handleCityInputChange = (text) => {
         setCityInput(text);
@@ -137,71 +137,71 @@ const CommitteeSubmissionPage = ({ navigation }) => {
     };
 
 
-   const convertToBase64 = async (imageUri) => {
-      try {
-        if (!imageUri) return null;
-        if (imageUri.startsWith("data:image")) {
-          return imageUri;
-        }
-    
-        const response = await fetch(imageUri);
-        const blob = await response.blob();
-  
-        const mimeType = blob.type || "image/jpeg"; 
-    
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            if (reader.result) {
-              resolve(`data:${mimeType};base64,${reader.result.split(",")[1]}`);
-            } else {
-              reject("Error reading Base64 data.");
-            }
-          };
-          reader.readAsDataURL(blob);
-        });
-      } catch (error) {
-        console.error("Error converting image to Base64:", error);
-        return null;
-      }
-    };
-    
-    const constructActivistPayload = async (ActivistData, isNew = false) => {
-      const keys = [
-        "fullname", "subCaste", "dob", "state", "city",
-        "mobileNo", "knownActivistIds", "engagedWithCommittee", "profilePhoto"
-      ];
-    
-      const payload = {};
-      for (const key of keys) {
-        if (CommitteeData[key] !== undefined && CommitteeData[key] !== "") {
-          payload[key] = CommitteeData[key];
-        } else if (isNew) {
-          payload[key] = "";
-        }
-      }
-  
-      if (payload.dob) {
-        const parsedDate = moment(payload.dob.split("T")[0], "YYYY-MM-DD", true);
-        if (parsedDate.isValid()) {
-          payload.dob = parsedDate.format("DD/MM/YYYY");
-        } else {
-          console.error("Invalid DOB format received:", payload.dob);
-          throw new Error("Invalid DOB format. Expected format is DD/MM/YYYY.");
-        }
-      }
-    
-      if (CommitteeData.photoUrl) {
+    const convertToBase64 = async (imageUri) => {
         try {
-          payload.photoUrl = await convertToBase64(CommitteeData.photoUrl);
-          
-          console.log("Converted Base64 Image:", payload.photoUrl);
+            if (!imageUri) return null;
+            if (imageUri.startsWith("data:image")) {
+                return imageUri;
+            }
+
+            const response = await fetch(imageUri);
+            const blob = await response.blob();
+
+            const mimeType = blob.type || "image/jpeg";
+
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    if (reader.result) {
+                        resolve(`data:${mimeType};base64,${reader.result.split(",")[1]}`);
+                    } else {
+                        reject("Error reading Base64 data.");
+                    }
+                };
+                reader.readAsDataURL(blob);
+            });
         } catch (error) {
-          console.error("Base64 Conversion Error:", error);
+            console.error("Error converting image to Base64:", error);
+            return null;
         }
-      }    
-    
-      return payload;
+    };
+
+    const constructActivistPayload = async (ActivistData, isNew = false) => {
+        const keys = [
+            "fullname", "subCaste", "dob", "state", "city",
+            "mobileNo", "knownActivistIds", "engagedWithCommittee", "profilePhoto"
+        ];
+
+        const payload = {};
+        for (const key of keys) {
+            if (CommitteeData[key] !== undefined && CommitteeData[key] !== "") {
+                payload[key] = CommitteeData[key];
+            } else if (isNew) {
+                payload[key] = "";
+            }
+        }
+
+        if (payload.dob) {
+            const parsedDate = moment(payload.dob.split("T")[0], "YYYY-MM-DD", true);
+            if (parsedDate.isValid()) {
+                payload.dob = parsedDate.format("DD/MM/YYYY");
+            } else {
+                console.error("Invalid DOB format received:", payload.dob);
+                throw new Error("Invalid DOB format. Expected format is DD/MM/YYYY.");
+            }
+        }
+
+        if (CommitteeData.photoUrl) {
+            try {
+                payload.photoUrl = await convertToBase64(CommitteeData.photoUrl);
+
+                console.log("Converted Base64 Image:", payload.photoUrl);
+            } catch (error) {
+                console.error("Base64 Conversion Error:", error);
+            }
+        }
+
+        return payload;
     };
 
 
@@ -244,7 +244,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                         _id: response.data.data._id,
                     }));
                 }
-                return; 
+                return;
             }
             throw new Error(response.data.message || "Something went wrong");
 
@@ -367,11 +367,11 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
                 {CommitteeData.photoUrl ? (
-                        <Image
-                            source={{ uri: CommitteeData.photoUrl }}
-                            style={styles.imagePreviewContainer}
-                        />
-                    ) : null}
+                    <Image
+                        source={{ uri: CommitteeData.photoUrl }}
+                        style={styles.imagePreviewContainer}
+                    />
+                ) : null}
 
                 <Text style={Globalstyles.title}>Contact Number Of President <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
@@ -387,7 +387,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     <Text style={styles.submitButtonText}>Submit</Text>
                 </TouchableOpacity>
             </ScrollView>
-            <Toast/>
+            <Toast />
         </SafeAreaView>
     );
 };
@@ -445,7 +445,7 @@ const styles = StyleSheet.create({
     uploadButtonText: {
         color: Colors.light,
         fontFamily: "Poppins-Medium",
-        fontSize: SF(11),
+        fontSize: SF(13),
     },
     imagePreview: {
         width: '100%',
@@ -454,18 +454,18 @@ const styles = StyleSheet.create({
         marginBottom: SH(15),
     },
     submitButton: {
-        backgroundColor: Colors.theme_color,
-        paddingHorizontal: SW(10),
-        paddingVertical: SH(7),
+        backgroundColor:Colors.theme_color,
+        paddingVertical: SH(5),
         borderRadius: 5,
         alignItems: 'center',
-        marginVertical: SH(50),
-        marginHorizontal: SW(50),
+        marginTop: SH(20),
+        marginBottom: SH(80)
     },
     submitButtonText: {
         color: Colors.light,
-        fontFamily: "Poppins-Medium",
-        fontSize: SF(13),
+        fontSize: SF(15),
+        fontWeight: 'Poppins-Bold',
+        textTransform: "capitalize"
     },
     contentContainer: {
         margin: SW(15),

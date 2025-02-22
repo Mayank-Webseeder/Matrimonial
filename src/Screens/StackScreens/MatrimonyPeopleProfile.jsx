@@ -320,11 +320,11 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           </View>
           <View style={styles.sharecontainer}>
             <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
-              <FontAwesome name="bookmark-o" size={24} color={Colors.dark} />
+              <FontAwesome name="bookmark-o" size={19} color={Colors.dark} />
               <Text style={styles.iconText}>Save</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.iconContainer} onPress={shareProfiles}>
-              <Feather name="send" size={24} color={Colors.dark} />
+              <Feather name="send" size={19} color={Colors.dark} />
               <Text style={styles.iconText}>Share</Text>
             </TouchableOpacity>
 
@@ -334,12 +334,12 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.iconContainer} onPress={() => Linking.openURL('tel:9893458940')}>
-              <MaterialIcons name="call" size={24} color={Colors.dark} />
+              <MaterialIcons name="call" size={19} color={Colors.dark} />
               <Text style={styles.iconText}>Call</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ReportPage')}>
-              <MaterialIcons name="error-outline" size={24} color={Colors.dark} />
+              <MaterialIcons name="error-outline" size={20} color={Colors.dark} />
               <Text style={styles.iconText}>Report</Text>
             </TouchableOpacity>
           </View>
@@ -353,12 +353,12 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             <Text style={styles.HeadingText}>{personalDetails?.fullname}</Text>
 
             {/* Other details */}
-            <Text style={styles.text}>Age: {calculateAge(personalDetails.dob)} / Height: {personalDetails?.heightFeet} feet</Text>
-            {personalDetails?.subCaste && <Text style={styles.text}>SubCaste: {personalDetails?.subCaste}</Text>}
-            {personalDetails?.maritalStatus && <Text style={styles.text}>Marital Status: {personalDetails?.maritalStatus}</Text>}
-            {personalDetails?.manglikStatus && <Text style={styles.text}>Manglik Status: {personalDetails?.manglikStatus}</Text>}
+            <Text style={styles.text}>{calculateAge(personalDetails.dob)} Yrs, {personalDetails?.heightFeet} </Text>
+            {personalDetails?.subCaste && <Text style={styles.text}>{personalDetails?.subCaste}</Text>}
+            {personalDetails?.maritalStatus && <Text style={styles.text}>{personalDetails?.maritalStatus}</Text>}
+            {personalDetails?.manglikStatus && <Text style={styles.text}>{personalDetails?.manglikStatus}</Text>}
             {personalDetails?.disabilities && <Text style={styles.text}>Disability: {personalDetails?.disabilities}</Text>}
-            {personalDetails?.profileCreatedBy && <Text style={styles.text}>Profile Created By: {personalDetails?.profileCreatedBy}</Text>}
+            {/* {personalDetails?.profileCreatedBy && <Text style={styles.text}>Profile Created By: {personalDetails?.profileCreatedBy}</Text>} */}
           </View>
 
           {/* Right Container */}
@@ -366,7 +366,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             {/* Right-side details */}
             {personalDetails?.currentCity && <Text style={styles.text}>{personalDetails?.currentCity}</Text>}
             {personalDetails?.occupation && <Text style={styles.text}>{personalDetails?.occupation}</Text>}
-            {personalDetails?.annualIncome && <Text style={styles.text}>Income: {personalDetails?.annualIncome} INR </Text>}
+            {personalDetails?.annualIncome && <Text style={styles.text}>{personalDetails?.annualIncome} INR </Text>}
             {personalDetails?.qualification && <Text style={styles.text}>{personalDetails?.qualification}</Text>}
           </View>
         </View>
@@ -376,7 +376,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           <View style={styles.flexContainer1}>
             <View>
               <Text style={styles.HeadingText}>Horoscope</Text>
-              <Text style={styles.text}>Date of Birth: {moment(personalDetails.dob).format("DD-MM-YYYY")} / Time: {personalDetails?.timeOfBirth}</Text>
+              <Text style={styles.text}>DOB {moment(personalDetails.dob).format("DD-MM-YYYY")} / Time: {personalDetails?.timeOfBirth}</Text>
               {personalDetails?.placeofbirth && <Text style={styles.text}>Place of Birth: {personalDetails?.placeofbirth}</Text>}
 
               <View style={styles.flexContainer2}>
@@ -385,7 +385,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               </View>
 
               <View style={styles.flexContainer2}>
-                {personalDetails?.manglikStatus && <Text style={styles.text}>Manglik Status: {personalDetails?.manglikStatus}</Text>}
+                {personalDetails?.manglikStatus && <Text style={styles.text}>{personalDetails?.manglikStatus}</Text>}
                 {personalDetails?.gotraMother && <Text style={styles.text}>Gotra (Mother): {personalDetails?.gotraMother}</Text>}
               </View>
             </View>

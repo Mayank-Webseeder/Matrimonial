@@ -28,24 +28,24 @@ const SENDER_REQUESTS = "https://api-matrimonial.webseeder.tech/api/v1/connectio
 const SEND_REQUEST = "https://api-matrimonial.webseeder.tech/api/v1/connectionRequest/send/interested" // ID PASS KRNA H
 
 // pandit api's
-const CREATE_PANDIT = "https://api-matrimonial.webseeder.tech/api/v1/pandit/createPandit";
-const GET_ALL_PANDIT_DATA = "https://api-matrimonial.webseeder.tech/api/v1/pandit/getAllPandit";
-const PANDIT_REVIEW = "https://api-matrimonial.webseeder.tech/api/v1/pandit/addReviewRating ";
-const PANDIT_DESCRIPTION = "https://api-matrimonial.webseeder.tech/api/v1/pandit/panditProfileData";
+const CREATE_PANDIT ="https://api-matrimonial.webseeder.tech/api/v1/pandit/createPandit";
+const GET_ALL_PANDIT_DATA ="https://api-matrimonial.webseeder.tech/api/v1/pandit/getAllPandit";
+const PANDIT_REVIEW ="https://api-matrimonial.webseeder.tech/api/v1/pandit/addReviewRating ";
+const PANDIT_DESCRIPTION ="https://api-matrimonial.webseeder.tech/api/v1/pandit/panditProfileData";
 const VIEW_PANDIT="https://api-matrimonial.webseeder.tech/api/v1/pandit/viewPandit"
 
 // jyotish api's
-const CREATE_JYOTISH = "https://api-matrimonial.webseeder.tech/api/v1/jyotish/createJyotish";
-const GET_ALL_JYOTISH= "https://api-matrimonial.webseeder.tech/api/v1/jyotish/getAllJyotish";
-const JYOTISH_REVIEW = "https://api-matrimonial.webseeder.tech/api/v1/jyotish/addReviewRating";
-const JYOTISH_DESCRIPTION = "https://api-matrimonial.webseeder.tech/api/v1/pandit/panditProfileData";
+const CREATE_JYOTISH ="https://api-matrimonial.webseeder.tech/api/v1/jyotish/createJyotish";
+const GET_ALL_JYOTISH="https://api-matrimonial.webseeder.tech/api/v1/jyotish/getAllJyotish";
+const JYOTISH_REVIEW ="https://api-matrimonial.webseeder.tech/api/v1/jyotish/addReviewRating";
+const JYOTISH_DESCRIPTION="https://api-matrimonial.webseeder.tech/api/v1/jyotish/jyotishProfileData";
 const VIEW_JYOTISH="https://api-matrimonial.webseeder.tech/api/v1/jyotish/viewJyotish";
 
 // pandit api's
-const CREATE_KATHAVACHAK = "https://api-matrimonial.webseeder.tech/api/v1/kathavachak/createKathavachak";
-const GET_ALL_KATHAVACHAK = "https://api-matrimonial.webseeder.tech/api/v1/kathavachak/getAllKathavachak";
-const KATHAVACHAK_REVIEW = "https://api-matrimonial.webseeder.tech/api/v1/kathavachak/addReviewRating  ";
-const KATHAVACHAK_DESCRIPTION = "https://api-matrimonial.webseeder.tech/api/v1/pandit/panditProfileData";
+const CREATE_KATHAVACHAK="https://api-matrimonial.webseeder.tech/api/v1/kathavachak/createKathavachak";
+const GET_ALL_KATHAVACHAK="https://api-matrimonial.webseeder.tech/api/v1/kathavachak/getAllKathavachak";
+const KATHAVACHAK_REVIEW ="https://api-matrimonial.webseeder.tech/api/v1/kathavachak/addReviewRating";
+const KATHAVACHAK_DESCRIPTION =" https://api-matrimonial.webseeder.tech/api/v1/kathavachak/kathavachakProfileData";
 const VIEW_KATHAVACHAK="https://api-matrimonial.webseeder.tech/api/v1/kathavachak/viewKathavachak";
 
 

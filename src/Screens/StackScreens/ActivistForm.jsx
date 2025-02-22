@@ -198,7 +198,7 @@ export default function ActivistForm({ navigation }) {
   const constructActivistPayload = async (ActivistData, isNew = false) => {
     const keys = [
       "fullname", "subCaste", "dob", "state", "city",
-      "mobileNo", "knownActivistIds", "engagedWithCommittee", "profilePhoto"
+      "mobileNo", "knownActivistIds", "engagedWithCommittee", "profilePhoto",
     ];
 
     const payload = {};
@@ -243,8 +243,6 @@ export default function ActivistForm({ navigation }) {
 
     return payload;
   };
-
-
 
   const handleActivistSave = async () => {
     try {

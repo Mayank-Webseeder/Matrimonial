@@ -9,12 +9,12 @@ export const profileImages = [
 
 export const Category = [
    { id: "1", image: require('../Images/panditji.png'), text: "PANDIT", screen: "Pandit" },
-   { id: "2", image: require('../Images/astrologer.png'), text: "JOYTISH", screen: "Jyotish" },
+   { id: "2", image: require('../Images/astrologer.png'), text: "JYOTISH", screen: "Jyotish" },
    { id: "3", image: require('../Images/kathavachakLogo.png'), text: "KATHAVACHAK", screen: "Kathavachak" },
 ]
 
 export const communityData = [
-   { id: "1", image: require('../Images/DharamsalaLogo.png'), text: "Dharm Shala", screen: "Dharmshala" },
+   { id: "1", image: require('../Images/DharamsalaLogo.png'), text: "DharmShala", screen: "Dharmshala" },
    { id: "2", image: require('../Images/eventsNews.png'), text: "Event & News", screen: "EventNews" },
    { id: "3", image: require('../Images/commitee.png'), text: "Committee", screen: "Committee" },
 ]

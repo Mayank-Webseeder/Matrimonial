@@ -228,11 +228,11 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           </View>
           <View style={styles.sharecontainer}>
             <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
-              <FontAwesome name="bookmark-o" size={24} color={Colors.dark} />
+              <FontAwesome name="bookmark-o" size={19} color={Colors.dark} />
               <Text style={styles.iconText}>Save</Text>
             </TouchableOpacity>
             <View style={styles.iconContainer}>
-              <Feather name="send" size={24} color={Colors.dark} />
+              <Feather name="send" size={19} color={Colors.dark} />
               <Text style={styles.iconText}>Shares</Text>
             </View>
             {/* <TouchableOpacity style={styles.interestedButton}>
@@ -240,37 +240,37 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
             </TouchableOpacity> */}
 
             <TouchableOpacity style={styles.iconContainer} onPress={() => Linking.openURL('tel:' + personalDetails?.mobileNo)}>
-              <MaterialIcons name="call" size={24} color={Colors.dark} />
+              <MaterialIcons name="call" size={19} color={Colors.dark} />
               <Text style={styles.iconText}>Call</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ReportPage')}>
-              <MaterialIcons name="error-outline" size={24} color={Colors.dark} />
+              <MaterialIcons name="error-outline" size={19} color={Colors.dark} />
               <Text style={styles.iconText}>Report</Text>
             </TouchableOpacity>
           </View>
         </View>
         <View style={styles.flexContainer1}>
           <View style={styles.leftContainer}>
-            <Text style={styles.HeadingText}>{personalDetails.fullname || 'Raj Sharma'}</Text>
-            {personalDetails?.dob && <Text style={styles.text}>Age: {new Date().getFullYear() - new Date(personalDetails?.dob).getFullYear()} / Height: {personalDetails?.heightFeet} feet</Text>}
-            {personalDetails?.subCaste && <Text style={styles.text}>Sub-caste: {personalDetails?.subCaste}</Text>}
-            {personalDetails?.maritalStatus && <Text style={styles.text}>Marital Status: {personalDetails?.maritalStatus}</Text>}
-            {personalDetails?.manglikStatus && <Text style={styles.text}>Manglik Status: {personalDetails?.manglikStatus}</Text>}
+            <Text style={styles.HeadingText}>{personalDetails.fullname}</Text>
+            {personalDetails?.dob && <Text style={styles.text}>{new Date().getFullYear() - new Date(personalDetails?.dob).getFullYear()} Yrs, {personalDetails?.heightFeet}</Text>}
+            {personalDetails?.subCaste && <Text style={styles.text}>{personalDetails?.subCaste}</Text>}
+            {personalDetails?.maritalStatus && <Text style={styles.text}>{personalDetails?.maritalStatus}</Text>}
+            {personalDetails?.manglikStatus && <Text style={styles.text}>{personalDetails?.manglikStatus}</Text>}
             {personalDetails?.disabilities && <Text style={styles.text}>Disability: {personalDetails?.disabilities}</Text>}
-            {personalDetails?.profileCreatedBy && <Text style={styles.text}>Profile created by: {personalDetails?.profileCreatedBy}</Text>}
+            {/* {personalDetails?.profileCreatedBy && <Text style={styles.text}>Profile created by: {personalDetails?.profileCreatedBy}</Text>} */}
           </View>
           <View style={styles.rightContainer}>
-            {personalDetails?.currentCity && <Text style={styles.text}>Location: {personalDetails?.currentCity}</Text>}
-            {personalDetails?.occupation && <Text style={styles.text}>Occupation: {personalDetails?.occupation}</Text>}
-            {personalDetails?.annualIncome && <Text style={styles.text}>Income: {personalDetails?.annualIncome} INR </Text>}
-            {personalDetails?.qualification && <Text style={styles.text}>Qualification: {personalDetails?.qualification}</Text>}
+            {personalDetails?.currentCity && <Text style={styles.text}>{personalDetails?.currentCity}</Text>}
+            {personalDetails?.occupation && <Text style={styles.text}>{personalDetails?.occupation}</Text>}
+            {personalDetails?.annualIncome && <Text style={styles.text}>{personalDetails?.annualIncome} INR </Text>}
+            {personalDetails?.qualification && <Text style={styles.text}>{personalDetails?.qualification}</Text>}
           </View>
         </View >
         <View style={styles.flexContainer1}>
           <View>
             <Text style={styles.HeadingText}>Horoscope</Text>
-            {personalDetails?.dob && <Text style={styles.text}>Date of Birth: {new Date(personalDetails?.dob).toLocaleDateString()} / Time: {personalDetails?.timeOfBirth}</Text>}
+            {personalDetails?.dob && <Text style={styles.text}>DOB {new Date(personalDetails?.dob).toLocaleDateString()} / Time: {personalDetails?.timeOfBirth}</Text>}
             {personalDetails?.placeofbirth && <Text style={styles.text}>Place of Birth: {personalDetails?.placeofbirth}</Text>}
             {personalDetails?.nadi && <Text style={styles.text}>Nadi: {personalDetails?.nadi}</Text>}
             {personalDetails?.gotraSelf && <Text style={styles.text}>Gotra (self): {personalDetails?.gotraSelf}</Text>}

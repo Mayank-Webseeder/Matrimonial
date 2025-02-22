@@ -195,7 +195,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     <Text style={Globalstyles.title}>Upload Images (Max Limit 3) <Entypo name={'star'} color={'red'} size={12} /> </Text>
                     <TouchableOpacity style={styles.uploadButton} onPress={handleImageUpload}>
                         <Text style={styles.uploadButtonText}>
-                            {photos ? 'add Image' : 'Upload Image'}
+                            {photos ? 'Change Image' : 'Upload Image'}
                         </Text>
                     </TouchableOpacity>
                 </View>
@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
     uploadButtonText: {
         color: Colors.light,
         fontFamily: "poppins-Medium",
-        fontSize: SF(11)
+        fontSize: SF(13)
     },
     imagePreview: {
         width: '100%',
@@ -258,17 +258,18 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     submitButton: {
-        backgroundColor: Colors.theme_color,
-        padding: SW(10),
+        backgroundColor:Colors.theme_color,
+        paddingVertical: SH(5),
         borderRadius: 5,
         alignItems: 'center',
-        marginTop: SH(30),
-        marginHorizontal: SW(50)
+        marginTop: SH(20),
+        marginBottom: SH(80)
     },
     submitButtonText: {
         color: Colors.light,
-        fontFamily: "poppins-Medium",
-        fontSize: SF(13)
+    fontSize: SF(15),
+    fontWeight: 'Poppins-Bold',
+    textTransform:"capitalize"
     },
     contentContainer: {
         margin: SW(15),

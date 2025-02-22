@@ -26,10 +26,10 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         flex: 1
     },
-    Formtitle:{
+    Formtitle: {
         fontFamily: "Poppins-Medium",
         fontSize: SF(18),
-        color:Colors.theme_color
+        color: Colors.theme_color
     },
     editText: {
         color: Colors.theme_color,
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins-Bold",
         //  marginLeft:SW(250)
     },
-    
+
     name: {
         textAlign: "center",
         color: Colors.dark,
@@ -137,17 +137,17 @@ const styles = StyleSheet.create({
     },
     button: {
         backgroundColor: Colors.theme_color,
-        marginHorizontal: SW(90),
-        marginHorizontal: SW(20),
-        marginVertical: SH(20),
-        paddingHorizontal: SW(10),
         paddingVertical: SH(5),
-        borderRadius: 10
+        borderRadius: 5,
+        alignItems: 'center',
+        marginTop: SH(20),
+        marginBottom: SH(80)
     },
     buttonText: {
-        fontSize: SF(15),
         color: Colors.light,
-        textAlign: "center"
+        fontSize: SF(15),
+        fontWeight: 'Poppins-Bold',
+        textTransform: "capitalize"
     },
     inputHeading: {
         fontSize: SF(15),

@@ -153,11 +153,11 @@ const Matrimonial = ({ navigation }) => {
           {/* Left Column */}
           <View style={styles.leftColumn}>
             <Text style={[styles.text, styles.rowItem]}>
-              Age: {new Date().getFullYear() - new Date(item?.personalDetails?.dob).getFullYear()} / Height: {item?.personalDetails?.heightFeet}
+              {new Date().getFullYear() - new Date(item?.personalDetails?.dob).getFullYear()} Yrs. , {item?.personalDetails?.heightFeet}
             </Text>
             <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.subCaste}</Text>
-            <Text style={[styles.text, styles.rowItem]}>Marital Status: {item?.personalDetails?.maritalStatus}</Text>
-            <Text style={[styles.text, styles.rowItem]}>Manglik Status: {item?.personalDetails?.manglikStatus}</Text>
+            <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.maritalStatus}</Text>
+            <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.manglikStatus}</Text>
             <Text style={[styles.text, styles.rowItem]}>Disability: {item?.personalDetails?.disabilities}</Text>
           </View>
 

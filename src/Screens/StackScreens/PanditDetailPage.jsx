@@ -1,6 +1,5 @@
 import { Text, View, Image, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Linking } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { PanditDetailData } from '../../DummyData/DummyData';
 import styles from '../StyleScreens/PanditDetailPageStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
@@ -16,14 +15,11 @@ import axios from 'axios';
 import { PANDIT_DESCRIPTION } from '../../utils/BaseUrl';
 
 const PanditDetailPage = ({ navigation, item, route }) => {
-    const { pandit_id, panditDetails } = route.params || {};
+    const { pandit_id } = route.params || {};
     const [profileData, setProfileData] = useState(null);
-    const pandit = PanditDetailData[0];
     const [userRating, setUserRating] = useState(0);
     const images = profileData?.additionalPhotos || [];
-    const PanditID = panditDetails?._id || 0;
-    console.log("panditDetails", panditDetails);
-    console.log("PanditID", PanditID);
+    const profileType = profileData?.profileType;
 
     useEffect(() => {
         fetchPanditProfile();
@@ -78,6 +74,14 @@ const PanditDetailPage = ({ navigation, item, route }) => {
         }
     };
 
+    const openLink = (url, platform) => {
+        if (url) {
+            Linking.openURL(url);
+        } else {
+            Alert.alert("Not Available", `${platform} link is not available.`);
+        }
+    };
+
 
     const renderImages = (images) => {
         if (!images || images.length === 0) {
@@ -91,7 +95,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                     style={styles.imageRow}
                     key={i}
                     onPress={() =>
-                        navigation.navigate('ViewPanditImages', {
+                        navigation.navigate('ViewEntityImages', {
                             post: profileData, // Pass pandit details
                             images: images.filter(Boolean), // Ensure this is a valid array of images
                             panditDetails: profileData,
@@ -145,7 +149,10 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                                 startingValue={profileData?.ratings}
                                 readonly
                             />
-                            <Text style={styles.rating}>{profileData?.ratings} star Rating ( 100)</Text>
+                            <Text style={styles.rating}>
+                                {profileData?.ratings?.length > 0 ? `${profileData.ratings.length} Reviews` : "No Ratings Yet"}
+                            </Text>
+
                         </View>
                         <Text style={styles.surname}>{profileData?.subCaste}</Text>
                     </View>
@@ -190,7 +197,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                             </View>
                             <TouchableOpacity
                                 style={styles.postReviewButton}
-                                onPress={() => navigation.navigate('PostReview', { panditId: PanditID })}
+                                onPress={() => navigation.navigate('PostReview', { pandit_id: pandit_id, entityType: profileType })}
                             >
                                 <Text style={styles.postReviewText}>Post Review</Text>
                             </TouchableOpacity>
@@ -249,24 +256,45 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                                 <TouchableOpacity
                                     onPress={() => navigation.navigate('AllReviewsPage', { reviews: profileData?.ratings })}
                                     style={styles.viewMoreButton}>
-                                    <Text style={styles.viewMoreText}>View More Reviews</Text>
+                                    <Text style={styles.viewMoreText}>View More Reviews ({profileData?.ratings?.length - 2} more)</Text>
                                 </TouchableOpacity>
                             )}
                         </>
                     ) : (
                         <Text style={styles.noReviewsText}>No reviews yet</Text>
                     )}
+
                 </View>
 
                 <View style={styles.container}>
                     {renderImages(images)}
                 </View>
                 <View style={styles.socialIcons}>
-                    <Image source={require('../../Images/website.png')} style={styles.websiteIcon} />
-                    <MaterialCommunityIcons name="youtube" size={30} color="#FF0000" />
-                    <FontAwesome5 name="whatsapp" size={30} color="#25D366" />
-                    <FontAwesome5 name="facebook" size={30} color="#3b5998" />
-                    <FontAwesome5 name="instagram" size={30} color="#E4405F" />
+                    {profileData?.websiteUrl && (
+                        <TouchableOpacity onPress={() => openLink(profileData?.websiteUrl, "Website")}>
+                            <Image source={require('../../Images/website.png')} style={styles.websiteIcon} />
+                        </TouchableOpacity>
+                    )}
+                    {profileData?.youtubeUrl && (
+                        <TouchableOpacity onPress={() => openLink(profileData?.youtubeUrl, "YouTube")}>
+                            <MaterialCommunityIcons name="youtube" size={30} color="#FF0000" />
+                        </TouchableOpacity>
+                    )}
+                    {profileData?.whatsapp && (
+                        <TouchableOpacity onPress={() => openLink(profileData?.whatsapp, "WhatsApp")}>
+                            <FontAwesome5 name="whatsapp" size={30} color="#25D366" />
+                        </TouchableOpacity>
+                    )}
+                    {profileData?.facebookUrl && (
+                        <TouchableOpacity onPress={() => openLink(profileData?.facebookUrl, "Facebook")}>
+                            <FontAwesome5 name="facebook" size={30} color="#3b5998" />
+                        </TouchableOpacity>
+                    )}
+                    {profileData?.instagramUrl && (
+                        <TouchableOpacity onPress={() => openLink(profileData?.instagramUrl, "Instagram")}>
+                            <FontAwesome5 name="instagram" size={30} color="#E4405F" />
+                        </TouchableOpacity>
+                    )}
                 </View>
                 <Image source={require('../../Images/slider.png')} style={styles.Bottomimage} />
             </ScrollView>

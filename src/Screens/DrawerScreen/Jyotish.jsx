@@ -65,7 +65,7 @@ const Jyotish = ({ navigation }) => {
         "Authorization": `Bearer ${token}`,
       };
       const response = await axios.get(GET_ALL_JYOTISH, { headers });
-      console.log("response",JSON.stringify(response.data))
+      console.log("response", JSON.stringify(response.data))
       setJyotishData(response.data.data);
     } catch (error) {
       console.log("Error fetching Jyotish data:", error.message);
@@ -83,28 +83,28 @@ const Jyotish = ({ navigation }) => {
 
   const renderSkeleton = () => (
     <SkeletonPlaceholder>
-      <View style={{ margin:SH(20) }}>
+      <View style={{ margin: SH(20) }}>
         {[1, 2, 3, 4].map((_, index) => (
           <View key={index} style={{ flexDirection: "row", marginBottom: 20 }}>
-            <View style={{ width:SW(80), height:SH(80), borderRadius: 40, marginRight:SW(10) }} />
+            <View style={{ width: SW(80), height: SH(80), borderRadius: 40, marginRight: SW(10) }} />
             <View>
-              <View style={{ width:SW(150), height:SH(20), borderRadius: 4 }} />
-              <View style={{ width:SW(100), height:SH(15), borderRadius: 4, marginTop:SH(6) }} />
-              <View style={{ width:SW(80), height:SH(15), borderRadius: 4, marginTop:SH(6) }} />
+              <View style={{ width: SW(150), height: SH(20), borderRadius: 4 }} />
+              <View style={{ width: SW(100), height: SH(15), borderRadius: 4, marginTop: SH(6) }} />
+              <View style={{ width: SW(80), height: SH(15), borderRadius: 4, marginTop: SH(6) }} />
             </View>
           </View>
         ))}
       </View>
     </SkeletonPlaceholder>
   );
-  
+
   const renderItem = ({ item }) => {
     const rating = item.averageRating || 0;
 
     return (
       <View style={styles.card}>
         <Pressable style={styles.cardData}
-          onPress={() => navigation.navigate('JyotishDetailsPage', { JyotishDetails: item })}>
+          onPress={() => navigation.navigate('JyotishDetailsPage', { jyotish_id: item._id, panditDetails: item })}>
           <Image
             source={item.profilePhoto ? { uri: item.profilePhoto } : require('../../Images/NoImage.png')}
             style={styles.image}
@@ -204,7 +204,7 @@ const Jyotish = ({ navigation }) => {
             contentContainerStyle={styles.panditListData}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>No Pandit Data Available</Text>
+                <Text style={styles.emptyText}>No Jyotish Data Available</Text>
               </View>
             }
           />

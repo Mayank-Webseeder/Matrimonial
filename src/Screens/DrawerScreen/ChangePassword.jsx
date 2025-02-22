@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, TouchableOpacity, Modal, TextInput,SafeAreaView,StatusBar } from 'react-native';
+import { Text, View, TouchableOpacity, Modal, TextInput, SafeAreaView, StatusBar } from 'react-native';
 import Colors from '../../utils/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styles from '../StyleScreens/ChangePasswordStyle';
@@ -8,6 +8,7 @@ import Globalstyles from '../../utils/GlobalCss';
 const ChangePassword = ({ navigation }) => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [OldPassword, setOldPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -27,13 +28,13 @@ const ChangePassword = ({ navigation }) => {
 
   return (
     <SafeAreaView style={Globalstyles.container}>
-      <StatusBar 
-                barStyle="dark-content" 
-                backgroundColor="transparent" 
-                translucent 
-            />
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="transparent"
+        translucent
+      />
       <View style={Globalstyles.header}>
-        <View style={{ flexDirection: 'row',alignItems:"center" }}>
+        <View style={{ flexDirection: 'row', alignItems: "center" }}>
           <TouchableOpacity onPress={() => navigation.navigate('Tabs')}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
@@ -44,6 +45,14 @@ const ChangePassword = ({ navigation }) => {
       <Text style={styles.Text}>Please enter your new password and confirm it to change your old password</Text>
 
       <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Old Password"
+          secureTextEntry
+          value={OldPassword}
+          onChangeText={setOldPassword}
+          placeholderTextColor={Colors.theme_color}
+        />
         <TextInput
           style={styles.input}
           placeholder="New Password"

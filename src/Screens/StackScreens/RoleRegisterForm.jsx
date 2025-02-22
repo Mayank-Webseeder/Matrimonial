@@ -177,10 +177,10 @@ const RoleRegisterForm = ({ navigation }) => {
                 const url = roleApiMapping[role];
     
                 // ✅ Sirf us role ke services filter karke bhej rahe hain
-                const filteredServices = Object.keys(checked).filter(service => 
-                    servicesOptions[role].includes(service) && checked[service]
+                const filteredServices = Object.keys(checked).filter(service =>
+                    servicesOptions[role].some(option => option.value === service) && checked[service]
                 );
-    
+                
                 const payload = {
                     ...commonPayload,
                     [`${role.toLowerCase()}Services`]: filteredServices,
@@ -536,7 +536,7 @@ const RoleRegisterForm = ({ navigation }) => {
                     <ActivityIndicator size={'large'} color={Colors.theme_color}/>
                     :
                     <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                    <Text style={styles.buttonText}>Save</Text>
+                    <Text style={styles.buttonText}>submit</Text>
                 </TouchableOpacity>
                   }
                 </View>

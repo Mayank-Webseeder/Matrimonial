@@ -59,8 +59,8 @@ import { useDispatch } from 'react-redux';
 import { PROFILE_ENDPOINT } from '../utils/BaseUrl';
 import { setProfiledata } from '../ReduxStore/Slices/ProfileSlice';
 import axios from 'axios';
-import ViewPanditImages from '../Screens/StackScreens/ViewPanditImages';
 import IntrestReceivedProfilePage from '../Screens/StackScreens/IntrestReceivedProfilePage';
+import ViewEntityImages from '../Screens/StackScreens/ViewEntityImages';
 
 const Stack = createNativeStackNavigator();
 const AppStackNavigator = createNativeStackNavigator();
@@ -245,7 +245,7 @@ const AppStack = () => (
     <AppStackNavigator.Screen name="MatrimonyPage" component={MatrimonyPage} />
     <AppStackNavigator.Screen name="PostSuccessStories" component={PostSuccessStories} />
     <AppStackNavigator.Screen name="UpdateProfile" component={UpdateProfile} />
-    <AppStackNavigator.Screen name="ViewPanditImages" component={ViewPanditImages} />
+    <AppStackNavigator.Screen name="ViewEntityImages" component={ViewEntityImages} />
   </AppStackNavigator.Navigator>
 );
 

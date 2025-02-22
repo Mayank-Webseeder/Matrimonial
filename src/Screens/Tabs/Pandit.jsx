@@ -124,7 +124,7 @@ const Pandit = ({ navigation }) => {
     return (
       <View style={styles.card}>
         <Pressable style={styles.cardData}
-          onPress={() => navigation.navigate('PanditDetailPage', { pandit_id : item._id ,panditDetails: item })}>
+          onPress={() => navigation.navigate('PanditDetailPage', { pandit_id : item._id})}>
           <Image
             source={item.profilePhoto ? { uri: item.profilePhoto } : require('../../Images/NoImage.png')}
             style={styles.image}

@@ -9,8 +9,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Bold"
   },
   button: {
-    backgroundColor: '#800020',
-    paddingHorizontal: SW(10),
+    backgroundColor:Colors.theme_color,
     paddingVertical: SH(5),
     borderRadius: 5,
     alignItems: 'center',
@@ -21,12 +20,13 @@ const styles = StyleSheet.create({
     color: Colors.light,
     fontSize: SF(15),
     fontWeight: 'Poppins-Bold',
+    textTransform:"capitalize"
   },
   arrow: {
     marginLeft: SW(290)
   },
   PickPhotoButton: {
-    backgroundColor: '#800020',
+    backgroundColor:Colors.theme_color,
     paddingHorizontal: SW(15),
     paddingVertical: SH(5),
     borderRadius: 5,

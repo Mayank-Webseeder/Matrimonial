@@ -105,7 +105,7 @@ const Kathavachak = ({ navigation }) => {
     return (
       <View style={styles.card}>
         <Pressable style={styles.cardData}
-          onPress={() => navigation.navigate('KathavachakDetailsPage', { kathavachakDetails: item })}>
+          onPress={() => navigation.navigate('KathavachakDetailsPage', { kathavachak_id: item._id })}>
           <Image
             source={item.profilePhoto ? { uri: item.profilePhoto } : require('../../Images/NoImage.png')}
             style={styles.image}
@@ -205,7 +205,7 @@ const Kathavachak = ({ navigation }) => {
             contentContainerStyle={styles.panditListData}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>No Pandit Data Available</Text>
+                <Text style={styles.emptyText}>No Kathavachak Data Available</Text>
               </View>
             }
           />

@@ -625,7 +625,6 @@ const PartnersPreference = ({ navigation }) => {
                             </TouchableOpacity>
                         )}
 
-
                     </View>
                 </View>
             </ScrollView>

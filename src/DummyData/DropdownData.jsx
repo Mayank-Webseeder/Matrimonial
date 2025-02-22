@@ -7,7 +7,7 @@ export const OccupationData = [
   { label: 'Self Employed', value: 'Self Employed' },
   { label: 'Freelancer', value: 'Freelancer' },
   { label: 'Agriculture Professional', value: 'Agriculture Professional' },
-  { label: 'Business Owner / Entrepreneur', value: 'Business Owner / Entrepreneur' },
+  { label: 'Business / Entrepreneur', value: 'Business / Entrepreneur' },
   { label: 'Officer', value: 'Officer' },
   { label: 'Software Professional', value: 'Software Professional' },
   { label: 'Education Professional', value: 'Education Professional' },
@@ -98,7 +98,7 @@ export const ProfileCreatedData = [
   { label: 'Self', value: 'Self' },
   { label: 'Mother', value: 'Mother' },
   { label: 'Father', value: 'Father' },
-  { label: 'Cousin', value: 'Cousin' },
+  { label: 'sibling', value: 'sibling' },
   { label: 'Relative', value: 'Relative' },
   { label: 'Other', value: 'Other' },
 ];
@@ -137,12 +137,10 @@ export const CityData = [
   { label: 'Panna' },
 ];
 
-
 export const genderData = [
   { label: "Male", value: "Male" },
   { label: "Female", value: "Female" },
 ];
-
 
 export const Income = [
   { label: 'Less than ₹1 Lakh', value: '<1L' },

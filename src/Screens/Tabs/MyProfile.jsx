@@ -45,7 +45,7 @@ const MyProfile = ({ navigation }) => {
 
     const capitalizeFirstLetter = (text) => {
         return text ? text.charAt(0).toUpperCase() + text.slice(1) : "Unknown";
-      };
+    };
 
     useEffect(() => {
         const requestCameraPermission = async () => {
@@ -235,6 +235,7 @@ const MyProfile = ({ navigation }) => {
                     </View>
                     <View style={styles.userDeatil}>
                         <View style={styles.userData}>
+                            <Text style={styles.text}>User ID  {profileData.userId || 'NA'}</Text>
                             <Text style={styles.text}>{capitalizeFirstLetter(profileData.username || 'NA')}</Text>
                             <Text style={styles.text}>DOB: {formattedDate || 'NA'}</Text>
                             <Text style={styles.text}>City: {capitalizeFirstLetter(profileData.city || 'NA')}</Text>
@@ -259,7 +260,9 @@ const MyProfile = ({ navigation }) => {
                                     size={25}
                                     style={selectedButton === 'CreateBioData' ? styles.Selectedicon : styles.icon}
                                 />
-                                <Text style={styles.logotext}>Create Bio Data</Text>
+                                <Text style={styles.logotext}>
+                                    {profileData.isMatrimonial ? 'My Bio Data' : 'Create Bio Data'}
+                                </Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity
@@ -267,12 +270,14 @@ const MyProfile = ({ navigation }) => {
                                 onPress={() => handlePress('RoleRegisterForm')}
                             >
                                 <FontAwesome5
-                                    name="user-plus"
-                                    color={selectedButton === 'PanditRegister' ? 'white' : Colors.theme_color}
+                                    name={profileData.isPandit ? "user" : "user-plus"}
+                                    color={Colors.theme_color}
                                     size={25}
-                                    style={selectedButton === 'PanditRegister' ? styles.Selectedicon : styles.icon}
+                                    style={styles.icon}
                                 />
-                                <Text style={styles.logotext}>Register as Pandit</Text>
+                                <Text style={styles.logotext}>
+                                    {profileData.isPandit ? 'My Pandit Profile' : 'Register as Pandit'}
+                                </Text>
                             </TouchableOpacity>
                         </View>
 
@@ -283,12 +288,14 @@ const MyProfile = ({ navigation }) => {
                                 onPress={() => handlePress('RoleRegisterForm')}
                             >
                                 <FontAwesome5
-                                    name="user-plus"
-                                    color={selectedButton === 'JyotishRegister' ? 'white' : Colors.theme_color}
+                                    name={profileData.isAstrologer ? "user" : "user-plus"}
+                                    color={Colors.theme_color}
                                     size={25}
-                                    style={selectedButton === 'JyotishRegister' ? styles.Selectedicon : styles.icon}
+                                    style={styles.icon}
                                 />
-                                <Text style={styles.logotext}>Register as Jyotish</Text>
+                                <Text style={styles.logotext}>
+                                    {profileData.isAstrologer ? 'My Jyotish Profile' : 'Register as Jyotish'}
+                                </Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity
@@ -296,15 +303,18 @@ const MyProfile = ({ navigation }) => {
                                 onPress={() => handlePress('RoleRegisterForm')}
                             >
                                 <FontAwesome5
-                                    name="user-plus"
-                                    color={selectedButton === 'KathavachakRegister' ? 'white' : Colors.theme_color}
+                                    name={profileData.isKathavachak ? "user" : "user-plus"}
+                                    color={Colors.theme_color}
                                     size={25}
-                                    style={selectedButton === 'KathavachakRegister' ? styles.Selectedicon : styles.icon}
+                                    style={styles.icon}
                                 />
-                                <Text style={styles.logotext}>Register as Kathavachak</Text>
+                                <Text style={styles.logotext}>
+                                    {profileData.isKathavachak ? 'My Kathavachak Profile' : 'Register as Kathavachak'}
+                                </Text>
                             </TouchableOpacity>
                         </View>
                     </View>
+
 
                 </View>
             </View>
@@ -312,7 +322,7 @@ const MyProfile = ({ navigation }) => {
                 visible={modalVisible}
                 transparent={true}
                 animationType="slide"
-                onRequestClose={() => setModalVisible(false)} 
+                onRequestClose={() => setModalVisible(false)}
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>

@@ -192,7 +192,7 @@ const Home = ({ navigation }) => {
 
         <View>
           <HeadingWithViewAll
-            heading="PANDIT / JOYTISH / KATHAVACHAK"
+            heading="PANDIT / JYOTISH / KATHAVACHAK"
             showViewAll={false}
           />
           <View style={{ flex: 1 }}>

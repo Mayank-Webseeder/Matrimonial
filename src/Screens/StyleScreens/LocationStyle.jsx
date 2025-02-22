@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '50%',
     resizeMode: 'cover',
-    borderRadius:10
+    borderRadius: 10
   },
   dot: {
     backgroundColor: Colors.light,
@@ -45,32 +45,32 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: "100%",
     marginVertical: SH(5),
-},
+  },
 
-leftContainer: {
+  leftContainer: {
     width: "52%",
     marginBottom: SH(10),
-},
+  },
 
-rightContainer: {
+  rightContainer: {
     width: "48%",
     paddingTop: SH(37),
-    paddingLeft:SW(5),
+    paddingLeft: SW(5),
     alignSelf: "flex-start",
-},
+  },
 
-HeadingText: {
-    fontSize: 18,
+  HeadingText: {
+    fontSize: SF(15),
     fontFamily: "Poppins-Bold",
     marginBottom: SH(5),
-},
+  },
 
-text: {
-    fontSize: 14,
+  text: {
+    fontSize: SF(13),
     color: Colors.dark,
-    marginBottom: SH(5),
+    marginBottom: SH(2),
     fontFamily: "Poppins-Regular",
-},
+  },
 
   flexContainer: {
     paddingHorizontal: SW(10),
@@ -78,7 +78,7 @@ text: {
     borderColor: Colors.gray,
     borderWidth: 1,
     borderRadius: 10,
-    
+
   },
   flex: {
     flexDirection: "row",
@@ -86,7 +86,7 @@ text: {
     alignItems: "center"
 
   },
-  
+
   toptext: {
     fontSize: SF(10),
     fontFamily: "Poppins-Regular"
@@ -193,14 +193,14 @@ text: {
     paddingHorizontal: SH(40),
     borderRadius: 50,
     marginHorizontal: SW(10),
-    display:"flex",
-    flexDirection:"row"
+    display: "flex",
+    flexDirection: "row"
   },
   declineButtonText: {
     color: "#fff",
     fontFamily: "Poppins-Regular",
     fontSize: SF(15),
-    marginHorizontal:SW(5)
+    marginHorizontal: SW(5)
   },
   acceptButton: {
     backgroundColor: "#008236",
@@ -208,8 +208,8 @@ text: {
     paddingHorizontal: SH(40),
     borderRadius: 50,
     marginHorizontal: SW(10),
-    display:"flex",
-    flexDirection:"row"
+    display: "flex",
+    flexDirection: "row"
   },
   acceptButtonText: {
     color: "#fff", fontFamily: "Poppins-Regular",

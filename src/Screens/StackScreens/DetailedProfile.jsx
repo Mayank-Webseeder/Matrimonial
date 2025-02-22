@@ -270,7 +270,7 @@ const DetailedProfile = ({ navigation }) => {
   const heightData = Array.from({ length: 4 }, (_, feetIndex) =>
     Array.from({ length: 12 }, (_, inchesIndex) => ({
       label: `${4 + feetIndex} ' ${inchesIndex} '' `,
-      value: `${4 + feetIndex}-${inchesIndex}`,
+      value: `${4 + feetIndex} '-${inchesIndex} '' `,
     }))
   ).flat();
 
@@ -1153,16 +1153,16 @@ const DetailedProfile = ({ navigation }) => {
             </TouchableOpacity>
           </View>
 
-          {/* 
+          
           {isEditing && (
             <TouchableOpacity style={styles.button} onPress={handleSave}>
-              <Text style={styles.buttonText}>Continue</Text>
+              <Text style={styles.buttonText}>submit</Text>
             </TouchableOpacity>
-          )} */}
+          )}
 
-          <TouchableOpacity style={styles.button} onPress={handleSave}>
-            <Text style={styles.buttonText}>Continue</Text>
-          </TouchableOpacity>
+          {/* <TouchableOpacity style={styles.button} onPress={handleSave}>
+            <Text style={styles.buttonText}>submit</Text>
+          </TouchableOpacity> */}
         </View>
       </ScrollView>
     </SafeAreaView>

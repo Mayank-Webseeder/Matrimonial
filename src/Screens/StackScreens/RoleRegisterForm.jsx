@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, SafeAreaView, StatusBar, FlatList } from 'react-native';
+import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, SafeAreaView, StatusBar, FlatList,ActivityIndicator} from 'react-native';
 import styles from '../StyleScreens/RoleRegisterStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
@@ -24,6 +24,7 @@ const RoleRegisterForm = ({ navigation }) => {
     const [filteredCities, setFilteredCities] = useState([]);
     const [filteredSubCaste, setFilteredSubCaste] = useState([]);
     const [selectedState, setSelectedState] = useState('');
+    const [isLoading,setIsLoading]=useState(false);
 
      const [RoleRegisterData, setRoleRegisterData] = useState({
         mobileNo:'',
@@ -135,6 +136,7 @@ const RoleRegisterForm = ({ navigation }) => {
     
 
     const handleSubmit = async () => {
+        setIsLoading(true)
         const roleApiMapping = {
             Pandit: CREATE_PANDIT,
             Jyotish: CREATE_JYOTISH,
@@ -152,11 +154,11 @@ const RoleRegisterForm = ({ navigation }) => {
             additionalPhotos: RoleRegisterData.additionalPhotos, // ✅ Base64 format array
             experience: RoleRegisterData.experience,
             description: RoleRegisterData.description,
-            websiteUrl:RoleRegisterData.websiteUrl,
-            facebookUrl:RoleRegisterData.facebookUrl,
-            youtubeUrl:RoleRegisterData.youtubeUrl,
-            instagramUrl:RoleRegisterData.instagramUrl,
-            whatsapp:RoleRegisterData.whatsapp,
+            websiteUrl: RoleRegisterData.websiteUrl,
+            facebookUrl: RoleRegisterData.facebookUrl,
+            youtubeUrl: RoleRegisterData.youtubeUrl,
+            instagramUrl: RoleRegisterData.instagramUrl,
+            whatsapp: RoleRegisterData.whatsapp,
             status: "pending"
         };
     
@@ -174,10 +176,14 @@ const RoleRegisterForm = ({ navigation }) => {
             for (const role of selectedRoles) {
                 const url = roleApiMapping[role];
     
-                // ✅ Sahi role ke liye sirf uski services bhejni hai
+                // ✅ Sirf us role ke services filter karke bhej rahe hain
+                const filteredServices = Object.keys(checked).filter(service => 
+                    servicesOptions[role].includes(service) && checked[service]
+                );
+    
                 const payload = {
                     ...commonPayload,
-                    [`${role.toLowerCase()}Services`]: Object.keys(checked).filter(service => checked[service]),
+                    [`${role.toLowerCase()}Services`]: filteredServices,
                 };
     
                 console.log(`Sending Payload for ${role}:`, payload); // ✅ Debugging ke liye
@@ -199,7 +205,11 @@ const RoleRegisterForm = ({ navigation }) => {
                 text2: error.message,
             });
         }
+        finally{
+            setIsLoading(false)
+        }
     };
+    
     
 
     const handleStateInputChange = (text) => {
@@ -521,9 +531,14 @@ const RoleRegisterForm = ({ navigation }) => {
                         placeholder="give Your Instagram Link"
                         placeholderTextColor={Colors.gray} />
 
+                  {
+                    isLoading?
+                    <ActivityIndicator size={'large'} color={Colors.theme_color}/>
+                    :
                     <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                        <Text style={styles.buttonText}>Save</Text>
-                    </TouchableOpacity>
+                    <Text style={styles.buttonText}>Save</Text>
+                </TouchableOpacity>
+                  }
                 </View>
             </ScrollView>
             <Toast />

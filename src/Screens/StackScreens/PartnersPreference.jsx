@@ -38,29 +38,29 @@ const PartnersPreference = ({ navigation }) => {
     const myPartnerPreferences = MyprofileData?.Biodata?.partnerPreferences;
 
     const [biodata, setBiodata] = useState({
-        partnerSubCaste: '',
-        partnerMinAge: '',
-        partnerMaxAge: '',
-        partnerMinHeightFeet: '',
-        partnerMaxHeightFeet: '',
-        partnerMaritalStatus: '',
-        partnerIncome: '',
-        partnerOccupation: '',
-        partnerQualification: '',
-        partnerDisabilities: '',
-        partnerManglikStatus: '',
-        partnersLivingStatus: '',
-        partnerState: '',
-        partnerCity: '',
-        partnerBodyStructure: '',
-        partnerComplexion: '',
-        partnerDietaryHabits: '',
-        partnerSmokingHabits: '',
-        partnerDrinkingHabits: '',
-        partnerExpectations: '',
-        partnerFamilyType: '',
-        partnerFamilyFinancialStatus: '',
-        partnerFamilyIncome: '',
+        partnerSubCaste:'',
+        partnerMinAge:'',
+        partnerMaxAge:'',
+        partnerMinHeightFeet:'',
+        partnerMaxHeightFeet:'',
+        partnerMaritalStatus:'',
+        partnerIncome:'',
+        partnerOccupation:'',
+        partnerQualification:'',
+        partnerDisabilities:'',
+        partnerManglikStatus:'',
+        partnersLivingStatus:'',
+        partnerState:'',
+        partnerCity:'',
+        partnerBodyStructure:'',
+        partnerComplexion:'',
+        partnerDietaryHabits:'',
+        partnerSmokingHabits:'',
+        partnerDrinkingHabits:'',
+        partnerExpectations:'',
+        partnerFamilyType:'',
+        partnerFamilyFinancialStatus:'',
+        partnerFamilyIncome:'',
     });
 
     useEffect(() => {
@@ -235,7 +235,7 @@ const PartnersPreference = ({ navigation }) => {
 
             console.log("Save response:", response.data);
 
-            if (response.status === 200 && response.data.status.toLowerCase() === "success") {
+            if (response.data?.status?.toLowerCase() === "success") {
                 Toast.show({
                     type: "success",
                     text1: biodata?._id ? "Partner Preferences Updated Successfully" : "Partner Preferences Created Successfully",
@@ -615,14 +615,16 @@ const PartnersPreference = ({ navigation }) => {
                                 setBiodata({ ...biodata, partnerExpectations: text })
                             }
                             textAlignVertical='top' />
+                        {isEditing && (
+                            <TouchableOpacity style={styles.button} onPress={handleSave}>
+                                {loading ? (
+                                    <ActivityIndicator size={'large'} color={Colors.light} />
+                                ) : (
+                                    <Text style={styles.buttonText}>Submit</Text>
+                                )}
+                            </TouchableOpacity>
+                        )}
 
-                        <TouchableOpacity style={styles.button} onPress={handleSave}>
-                            {loading ? (
-                                <ActivityIndicator size={'large'} color={Colors.light} />
-                            ) : (
-                                <Text style={styles.buttonText}>Submit</Text>
-                            )}
-                        </TouchableOpacity>
 
                     </View>
                 </View>

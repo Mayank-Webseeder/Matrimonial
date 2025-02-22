@@ -1,5 +1,5 @@
 
-import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable,ActivityIndicator } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, ActivityIndicator } from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 import { slider } from '../../DummyData/DummyData';
 import { Image } from 'react-native';
@@ -13,7 +13,7 @@ import AppIntroSlider from 'react-native-app-intro-slider';
 import { subCasteOptions } from '../../DummyData/DropdownData';
 import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { SH,SF } from '../../utils/Dimensions';
+import { SH, SF } from '../../utils/Dimensions';
 import { useSelector } from 'react-redux';
 import Toast from 'react-native-toast-message';
 import { GET_ALL_COMITTEE } from '../../utils/BaseUrl';
@@ -33,8 +33,8 @@ const Committee = ({ navigation }) => {
   const [listHeight, setListHeight] = useState(0);
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
   const [committeeData, setCommitteeData] = useState([]);
- const [modalLocality, setModalLocality] = useState('');
- const [error, setError] = useState(null);
+  const [modalLocality, setModalLocality] = useState('');
+  const [error, setError] = useState(null);
 
   const handleInputChange = (text) => {
     setSubcaste(text);
@@ -74,21 +74,21 @@ const Committee = ({ navigation }) => {
       setCommitteeData([]);
       fetchComitteeData("all"); // Fetch full list by default when coming back
     }, [])
-  );  
+  );
 
   const fetchComitteeData = async (filterType = "search") => {
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
-  
+
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-  
+
       let queryParams = [];
-  
+
       if (filterType === "search") {
         const cleanedLocality = locality.trim();
         const cleanedSubCaste = subcaste.trim();
@@ -103,11 +103,11 @@ const Committee = ({ navigation }) => {
           queryParams.push(`subCaste=${encodeURIComponent(isCustomSubCaste ? cleanedModalSubCaste : '')}`);
         }
       }
-  
+
       const url = filterType === "all" ? GET_ALL_COMITTEE : `${GET_ALL_COMITTEE}?${queryParams.join("&")}`;
-  
+
       console.log("Fetching Data from:", url);
-  
+
       const response = await axios.get(url, { headers });
       console.log("response", response.data);
       if (response.data && response.data.data) {
@@ -122,7 +122,7 @@ const Committee = ({ navigation }) => {
       setLoading(false);
     }
   };
-  
+
   const SliderRenderItem = ({ item }) => {
     return (
       <View>
@@ -169,11 +169,11 @@ const Committee = ({ navigation }) => {
 
   const handleCloseFilter = () => {
     setModalVisible(false);
-    setLocality(''); 
+    setLocality('');
     setModalLocality('');
     setSubcaste('');
     setCommitteeData([]);
-    fetchComitteeData("modal"); 
+    fetchComitteeData("modal");
   };
   const handleUploadButton = () => {
     if (MyActivistProfile && MyActivistProfile._id) {
@@ -230,16 +230,16 @@ const Committee = ({ navigation }) => {
       {/* Scrollable Content */}
       <ScrollView showsVerticalScrollIndicator={false}>
         <View>
-        <View style={styles.searchbar}>
+          <View style={styles.searchbar}>
             <TextInput
               placeholder='Search in Your City'
               placeholderTextColor="gray"
               value={locality}
               onChangeText={(text) => {
                 setLocality(text);
-                fetchComitteeData("search");  
+                fetchComitteeData("search");
               }}
-              style={{fontSize:SF(13)}}
+              style={{ fontSize: SF(13) }}
             />
             <AntDesign name={'search1'} size={20} color={'gray'} />
           </View>
@@ -279,103 +279,104 @@ const Committee = ({ navigation }) => {
         </View>
         {loading ? (
           <ActivityIndicator size="large" color={Colors.theme_color} style={{ marginTop: 20 }} />
-        ) : error ? (
-          <Text style={{ textAlign: 'center', marginTop: 20, color: 'red' }}>{error}</Text>
         ) : committeeData.length === 0 ? (
-          <Text style={{ textAlign: 'center', marginTop: 20, color: 'gray' }}>No committee profiles yet</Text>
+          <Text style={{ textAlign: 'center', marginTop: 20, color: 'gray', fontFamily: "Poppins-Regular" }}>
+            No committee profiles yet
+          </Text>
         ) : (
           <FlatList
-          data={committeeData}
-          renderItem={renderItem}
-          keyExtractor={(item) => item._id.toString()}
-          scrollEnabled={false}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.DharamSalaList}
+            data={committeeData}
+            renderItem={renderItem}
+            keyExtractor={(item) => item._id.toString()}
+            scrollEnabled={false}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.DharamSalaList}
           />
         )}
+
       </ScrollView>
 
       <Modal
-          visible={modalVisible}
-          transparent={true}
-          animationType="slide"
-          onRequestClose={handleCloseFilter}
-        >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-              <View style={styles.Filterheader}>
-                <TouchableOpacity onPress={handleCloseFilter} style={{ flexDirection: 'row' }}>
-                  <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
-                  <Text style={Globalstyles.headerText}>Filter</Text>
-                </TouchableOpacity>
-              </View>
+        visible={modalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={handleCloseFilter}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.Filterheader}>
+              <TouchableOpacity onPress={handleCloseFilter} style={{ flexDirection: 'row' }}>
+                <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
+                <Text style={Globalstyles.headerText}>Filter</Text>
+              </TouchableOpacity>
+            </View>
 
-              <View style={Globalstyles.form}>
-                <Text style={Globalstyles.title}>Locality</Text>
+            <View style={Globalstyles.form}>
+              <Text style={Globalstyles.title}>Locality</Text>
+              <View>
+                <TextInput
+                  style={Globalstyles.input}
+                  value={modalLocality}
+                  onChangeText={(text) => setModalLocality(text)}
+                  placeholder="Enter Locality"
+                  placeholderTextColor={Colors.gray}
+                />
+
+              </View>
+              <View>
+                <Text style={Globalstyles.title}>Sub-Caste</Text>
                 <View>
                   <TextInput
-                    style={Globalstyles.input}
-                    value={modalLocality} 
-                    onChangeText={(text) => setModalLocality(text)}  
-                    placeholder="Enter Locality"
+                    value={subcaste}
+                    onChangeText={handleInputChange}
+                    placeholder="Type your caste"
                     placeholderTextColor={Colors.gray}
+                    style={Globalstyles.input}
                   />
-
-                </View>
-                <View>
-                  <Text style={Globalstyles.title}>Sub-Caste</Text>
-                  <View>
-                    <TextInput
-                      value={subcaste}
-                      onChangeText={handleInputChange}
-                      placeholder="Type your caste"
-                      placeholderTextColor={Colors.gray}
-                      style={Globalstyles.input}
+                  {filteredOptions.length > 0 && (
+                    <FlatList
+                      data={filteredOptions.slice(0, 2)}
+                      scrollEnabled={false}
+                      keyExtractor={(item) => item.value}
+                      style={[Globalstyles.suggestions, { marginBottom: 10 }]}
+                      renderItem={({ item }) => (
+                        <TouchableOpacity onPress={() => handleOptionSelect(item)}>
+                          <Text style={styles.label}>{item.label}</Text>
+                        </TouchableOpacity>
+                      )}
+                      onLayout={(event) => {
+                        const height = event.nativeEvent.layout.height;
+                        setListHeight(height);
+                      }}
                     />
-                    {filteredOptions.length > 0 && (
-                      <FlatList
-                        data={filteredOptions.slice(0, 2)} 
-                        scrollEnabled={false}
-                        keyExtractor={(item) => item.value}
-                        style={[Globalstyles.suggestions, { marginBottom: 10 }]}
-                        renderItem={({ item }) => (
-                          <TouchableOpacity onPress={() => handleOptionSelect(item)}>
-                            <Text style={styles.label}>{item.label}</Text>
-                          </TouchableOpacity>
-                        )}
-                        onLayout={(event) => {
-                          const height = event.nativeEvent.layout.height;
-                          setListHeight(height); 
-                        }}
-                      />
-                    )}
-                  </View>
+                  )}
                 </View>
-
-                <TouchableOpacity
-                  style={styles.applyButton}
-                  onPress={() => {
-                    fetchComitteeData();
-                    handleCloseFilter();
-                  }}
-                >
-                  <Text style={styles.applyButtonText}>See Results</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => setModalVisible(false)}
-                  style={[
-                    styles.crossButton,
-                    { top: SH(200) + listHeight + 100 },
-                  ]}
-                >
-                  <View style={styles.circle}>
-                    <Entypo name="cross" size={25} color={Colors.light} />
-                  </View>
-                </TouchableOpacity>
               </View>
+
+              <TouchableOpacity
+                style={styles.applyButton}
+                onPress={() => {
+                  fetchComitteeData();
+                  handleCloseFilter();
+                }}
+              >
+                <Text style={styles.applyButtonText}>See Results</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setModalVisible(false)}
+                style={[
+                  styles.crossButton,
+                  { top: SH(200) + listHeight + 100 },
+                ]}
+              >
+                <View style={styles.circle}>
+                  <Entypo name="cross" size={25} color={Colors.light} />
+                </View>
+              </TouchableOpacity>
             </View>
           </View>
-        </Modal>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };

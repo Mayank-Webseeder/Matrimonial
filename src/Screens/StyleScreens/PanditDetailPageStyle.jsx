@@ -13,7 +13,8 @@ const styles = StyleSheet.create({
     width: SW(120),
     height: SH(120),
     resizeMode: "cover",
-    marginRight: SW(10)
+    marginRight: SW(10),
+    borderRadius:5
   },
   name: {
     fontSize: SF(15),
@@ -228,6 +229,10 @@ const styles = StyleSheet.create({
     marginRight: SW(10),
     borderRadius: 3
   },
-
+  noReviewsText:{
+    textAlign:"center",
+    color:Colors.gray,
+    fontFamily:"Poppins-Regular"
+  }
 });
 export default styles;

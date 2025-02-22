@@ -11,6 +11,8 @@ import Toast from "react-native-toast-message";
 import { CityData, genderData } from "../../DummyData/DropdownData";
 import Globalstyles from "../../utils/GlobalCss";
 import ImageCropPicker from 'react-native-image-crop-picker';
+import Entypo from 'react-native-vector-icons/Entypo';
+
 const Register = ({ navigation }) => {
     const [selectedDate, setSelectedDate] = useState(null);
     const [showDatePicker, setShowDatePicker] = useState(false);
@@ -38,21 +40,21 @@ const Register = ({ navigation }) => {
             height: 250,
             cropping: true,
             includeBase64: true,
-            mediaType:"any"
+            mediaType: "any"
         })
-        .then(image => {
-            console.log('Selected Image:', image); // Check the image object
-            if (!image.data) {
-                console.error("Base64 data is missing!");
-                return;
-            }
-            setSelectedImage(image.data); // Ensure this is set correctly
-            setSelectedImageName(image.path.split('/').pop());
-        })
-        .catch(error => {
-            console.error('Image Picking Error:', error);
-        });
-        
+            .then(image => {
+                console.log('Selected Image:', image); // Check the image object
+                if (!image.data) {
+                    console.error("Base64 data is missing!");
+                    return;
+                }
+                setSelectedImage(image.data); // Ensure this is set correctly
+                setSelectedImageName(image.path.split('/').pop());
+            })
+            .catch(error => {
+                console.error('Image Picking Error:', error);
+            });
+
     };
 
     const handleCityInputChange = (text) => {
@@ -132,9 +134,9 @@ const Register = ({ navigation }) => {
                 city: selectedCity || cityInput.trim(),
                 gender: gender,
                 password: password,
-                photoUrl:selectedImage,
+                photoUrl: selectedImage,
                 mobileNo: mobileNumber,
-                otp: otp,  
+                otp: otp,
             };
 
             console.log("SignUp Payload:", payload);
@@ -190,7 +192,7 @@ const Register = ({ navigation }) => {
                     <Text style={styles.text}>Sign Up</Text>
 
                     <View style={Globalstyles.form}>
-                        <Text style={Globalstyles.title}>Full Name</Text>
+                        <Text style={Globalstyles.title}>Full Name <Entypo name={'star'} color={'red'} size={12} /></Text>
                         <TextInput
                             style={Globalstyles.input}
                             placeholder="Enter your full name"
@@ -203,7 +205,7 @@ const Register = ({ navigation }) => {
                         )}
                         {/* Date of Birth */}
                         <View>
-                            <Text style={Globalstyles.title}>Date of Birth</Text>
+                            <Text style={Globalstyles.title}>Date of Birth <Entypo name={'star'} color={'red'} size={12} /></Text>
                             <View style={Globalstyles.inputContainer}>
                                 <Text style={styles.dateText}>
                                     {selectedDate ? formatDate(selectedDate) : " "}
@@ -218,7 +220,7 @@ const Register = ({ navigation }) => {
                         </View>
 
                         {/* City */}
-                        <Text style={Globalstyles.title}>City</Text>
+                        <Text style={Globalstyles.title}>City <Entypo name={'star'} color={'red'} size={12} /></Text>
                         <TextInput
                             style={Globalstyles.input}
                             value={cityInput}
@@ -261,7 +263,7 @@ const Register = ({ navigation }) => {
 
 
                         {/* Gender */}
-                        <Text style={Globalstyles.title}>Gender</Text>
+                        <Text style={Globalstyles.title}>Gender  <Entypo name={'star'} color={'red'} size={12} /> </Text>
                         <Dropdown
                             data={genderData}
                             labelField="label"
@@ -278,7 +280,7 @@ const Register = ({ navigation }) => {
                         )}
 
                         <View>
-                            <Text style={Globalstyles.title}>Create Password</Text>
+                            <Text style={Globalstyles.title}>Create Password  <Entypo name={'star'} color={'red'} size={12} /> </Text>
                             <View style={Globalstyles.inputContainer}>
                                 <TextInput
                                     style={Globalstyles.input1}
@@ -304,7 +306,7 @@ const Register = ({ navigation }) => {
 
                         {/* Confirm Password */}
                         <View>
-                            <Text style={Globalstyles.title}>Confirm Password</Text>
+                            <Text style={Globalstyles.title}>Confirm Password <Entypo name={'star'} color={'red'} size={12} /> </Text>
                             <View style={Globalstyles.inputContainer}>
                                 <TextInput
                                     style={Globalstyles.input1}
@@ -335,7 +337,7 @@ const Register = ({ navigation }) => {
                         </View>
 
                         {/* Mobile Number */}
-                        <Text style={Globalstyles.title}>Mobile Number</Text>
+                        <Text style={Globalstyles.title}>Mobile Number <Entypo name={'star'} color={'red'} size={12} /></Text>
                         <View style={{ flexDirection: "row", alignItems: "center" }}>
                             <TextInput
                                 style={[Globalstyles.input, { flex: 1 }]}
@@ -348,12 +350,12 @@ const Register = ({ navigation }) => {
                                 editable={!otpSent}
                             />
                             <TouchableOpacity style={styles.otpButton} onPress={handleSendOtp} disabled={isOtpLoading}>
-                                {isOtpLoading ? <ActivityIndicator size="small" color={Colors.theme_color}/> : <Text style={styles.otpButtonText}>Send OTP</Text>}
+                                {isOtpLoading ? <ActivityIndicator size="small" color={Colors.theme_color} /> : <Text style={styles.otpButtonText}>Send OTP</Text>}
                             </TouchableOpacity>
 
                         </View>
                         {/* Mobile Number */}
-                        <Text style={Globalstyles.title}>Otp</Text>
+                        <Text style={Globalstyles.title}>Otp <Entypo name={'star'} color={'red'} size={12} /></Text>
 
                         <TextInput style={Globalstyles.input} keyboardType="numeric" placeholder="Enter OTP" value={otp} onChangeText={setOtp} maxLength={6} />
 

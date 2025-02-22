@@ -25,12 +25,11 @@ const Home = ({ navigation }) => {
   const dispatch = useDispatch();
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  // const [allbiodata, setallbiodata] = useState([]);
+  const [allbiodata, setallbiodata] = useState([]);
   const [isMounted, setIsMounted] = useState(true);
   const [loading, setLoading] = useState(false);
-  const allBiodata = useSelector((state) => state.getAllBiodata.allBiodata) || [];
+  // const allBiodata = useSelector((state) => state.getAllBiodata.allBiodata) || [];
   // console.log("allbiodata", allBiodata);
-
 
 
   useFocusEffect(
@@ -45,14 +44,14 @@ const Home = ({ navigation }) => {
           if (!token) throw new Error("No token found");
 
           const headers = {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
           };
 
           // Fetch Biodata Profiles
           const biodataRes = await axios.get(GET_ALL_BIODATA_PROFILES, { headers });
           if (biodataRes.data && isActive) {
-            dispatch(setAllBiodata(biodataRes.data.feedUsers));
+            setallbiodata(biodataRes.data.feedUsers || []);
           }
 
           // Fetch User Biodata (Redux State Update)
@@ -96,20 +95,18 @@ const Home = ({ navigation }) => {
   }, []);
 
   useEffect(() => {
-    return () => setallbiodata([]); // Clear FlatList data
+    return () => setallbiodata([]); 
   }, []);
 
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (isMounted) {
-        if (currentIndex < slider.length - 1) {
-          setCurrentIndex((prevIndex) => prevIndex + 1);
-          sliderRef.current?.goToSlide(currentIndex + 1);
-        } else {
-          setCurrentIndex(0);
-          sliderRef.current?.goToSlide(0);
-        }
+      if (currentIndex < slider.length - 1) {
+        setCurrentIndex((prevIndex) => prevIndex + 1);
+        sliderRef.current?.goToSlide(currentIndex + 1);
+      } else {
+        setCurrentIndex(0);
+        sliderRef.current?.goToSlide(0);
       }
     }, 2000);
     return () => clearInterval(interval);
@@ -159,7 +156,6 @@ const Home = ({ navigation }) => {
           <AppIntroSlider
             ref={sliderRef}
             data={slider}
-            keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => (
               <View>
                 <Image source={item.image} style={styles.sliderImage} />
@@ -170,7 +166,6 @@ const Home = ({ navigation }) => {
             dotStyle={styles.dot}
             activeDotStyle={styles.activeDot}
           />
-
         </View>
 
         <HeadingWithViewAll
@@ -180,42 +175,16 @@ const Home = ({ navigation }) => {
         />
         <View>
           {loading ? (
-            <ActivityIndicator size="large" color="blue" />
+            <ActivityIndicator size="large" color={Colors.theme_color} />
           ) : (
             <View style={{ flex: 1 }}>
               <FlatList
-                data={allbiodata.length > 0 ? allbiodata : []} // ✅ Ensuring it never gets `undefined`
-                keyExtractor={(item) => item?._id?.toString() || Math.random().toString()} // ✅ Prevents duplicate key errors
-                // data={allbiodata}
-                // keyExtractor={(item) => item._id}
+                data={allbiodata.length > 0 ? allbiodata : []} 
+                keyExtractor={(item) => item?._id?.toString() || Math.random().toString()} 
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 renderItem={renderItem}
                 removeClippedSubviews={false}
-              // renderItem={({ item }) => (
-              //   <View style={styles.imageWrapper}>
-              //     <TouchableOpacity
-              //       onPress={() => handleNavigateToProfile(item)}
-              //     // onPress={() => {
-              //     //   if (isMounted) {
-              //     //     navigation.navigate("MatrimonyPeopleProfile", {
-              //     //       userDetails: item,
-              //     //       userId: item.userId,
-              //     //     });
-              //     //   }
-              //     // }}
-              //     >
-              //       <Image
-              //         source={
-              //           item.personalDetails?.closeUpPhoto
-              //             ? { uri: item.personalDetails.closeUpPhoto }
-              //             : require("../../Images/profile3.png")
-              //         }
-              //         style={styles.ProfileImages}
-              //       />
-              //     </TouchableOpacity>
-              //   </View>
-              // )}
               />
             </View>
           )}

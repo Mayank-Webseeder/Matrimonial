@@ -1,7 +1,6 @@
 
 import { Text, View, Image, ImageBackground, TextInput, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, FlatList } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/ProfileStyle';
 import { TouchableOpacity } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
@@ -15,6 +14,7 @@ import moment from "moment";
 import Globalstyles from '../../utils/GlobalCss';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import Entypo from 'react-native-vector-icons/Entypo';
+import Colors from '../../utils/Colors';
 import {
   OccupationData, QualificationData, maritalStatusData, ManglikStatusData, LivingData, ProfileCreatedData, CityData, Income,
   FamilyType, CookingStatus, DietHabit, smokingStatusData, DrinkingHabit, StateData, TobacooHabit, subCasteOptions,
@@ -33,50 +33,50 @@ const DetailedProfile = ({ navigation }) => {
   const formattedDate = moment(profileData.dob).format("DD/MM/YYYY");
 
   const [biodata, setBiodata] = useState({
-    subCaste: ' ',
-    fullname: ' ',
-    dob: ' ',
-    placeofbirth: ' ',
-    maritalStatus: ' ',
-    disabilities: ' ',
-    heightFeet: ' ',
-    weight: ' ',
-    timeOfBirth: ' ',
-    complexion: ' ',
-    manglikStatus: ' ',
-    nadi: ' ',
-    gotraSelf: ' ',
-    gotraMother: ' ',
-    qualification: ' ',
-    occupation: ' ',
-    annualIncome: ' ',
-    livingStatus: ' ',
-    currentCity: ' ',
-    aboutMe: ' ',
-    mobileNo: ' ',
-    profileCreatedBy: ' ',
-    fatherName: ' ',
-    fatherOccupation: ' ',
-    motherName: ' ',
-    motherOccupation: ' ',
-    fatherIncomeAnnually: ' ',
-    motherIncomeAnnually: ' ',
-    familyType: ' ',
-    siblings: ' ',
-    otherFamilyMemberInfo: ' ',
-    contactNumber1: ' ',
-    contactNumber2: ' ',
-    state: ' ',
-    cityOrVillage: ' ',
-    knowCooking: ' ',
-    dietaryHabit: ' ',
-    smokingHabit: ' ',
-    drinkingHabit: ' ',
-    tobaccoHabits: ' ',
-    hobbies: ' ',
-    closeUpPhoto: ' ',
-    fullPhoto: ' ',
-    bestPhoto: ' ',
+    subCaste: '',
+    fullname: '',
+    dob: '',
+    placeofbirth: '',
+    maritalStatus: '',
+    disabilities: '',
+    heightFeet: '',
+    weight: '',
+    timeOfBirth: '',
+    complexion: '',
+    manglikStatus: '',
+    nadi: '',
+    gotraSelf: '',
+    gotraMother: '',
+    qualification: '',
+    occupation: '',
+    annualIncome: '',
+    livingStatus: '',
+    currentCity: '',
+    aboutMe: '',
+    mobileNo: '',
+    profileCreatedBy: '',
+    fatherName: '',
+    fatherOccupation: '',
+    motherName: '',
+    motherOccupation: '',
+    fatherIncomeAnnually: '',
+    motherIncomeAnnually: '',
+    familyType: '',
+    siblings: '',
+    otherFamilyMemberInfo: '',
+    contactNumber1: '',
+    contactNumber2: '',
+    state: '',
+    cityOrVillage: '',
+    knowCooking: '',
+    dietaryHabit: '',
+    smokingHabit: '',
+    drinkingHabit: '',
+    tobaccoHabits: '',
+    hobbies: '',
+    closeUpPhoto: '',
+    fullPhoto: '',
+    bestPhoto: '',
   });
 
   useEffect(() => {
@@ -383,22 +383,22 @@ const DetailedProfile = ({ navigation }) => {
       setIsLoading(true);
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
-  
+
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-  
+
       const payload = await constructPayload(biodata, !biodata?._id);
       console.log("Payload:", payload);
-  
+
       const apiCall = biodata?._id ? axios.put : axios.post;
       const endpoint = biodata?._id ? UPDATE_PERSONAL_DETAILS : CREATE_PERSONAL_DETAILS;
-  
+
       const response = await apiCall(endpoint, payload, { headers });
-  
+
       console.log("API Response:", response.data);
-  
+
       // ✅ Ensure response is successful
       if (response.data?.status?.toLowerCase() === "success") {
         Toast.show({
@@ -407,17 +407,17 @@ const DetailedProfile = ({ navigation }) => {
           text2: response.data.message || "Your changes have been saved!",
           position: "top",
         });
-  
+
         setIsEditing(false);
         setTimeout(() => {
           navigation.navigate("MainApp");
         }, 1000);
         return; // ✅ Exit here, no need to continue to `catch`
       }
-  
+
       // ❌ If API response is NOT success, handle it properly
       throw new Error(response.data.message || "Something went wrong");
-  
+
     } catch (error) {
       // ✅ Log actual errors only
       if (error.response) {
@@ -425,7 +425,7 @@ const DetailedProfile = ({ navigation }) => {
       } else {
         console.error("Unexpected Error:", error.message);
       }
-  
+
       // ✅ Show error only if it's a real failure, not a success message
       if (!error.message.toLowerCase().includes("success")) {
         Toast.show({
@@ -441,7 +441,7 @@ const DetailedProfile = ({ navigation }) => {
       setIsLoading(false);
     }
   };
-  
+
 
 
   const handleInputChange = (field, value) => {
@@ -1153,8 +1153,8 @@ const DetailedProfile = ({ navigation }) => {
             </TouchableOpacity>
           </View>
 
-
-          {/* {isEditing && (
+          {/* 
+          {isEditing && (
             <TouchableOpacity style={styles.button} onPress={handleSave}>
               <Text style={styles.buttonText}>Continue</Text>
             </TouchableOpacity>

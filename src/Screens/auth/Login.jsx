@@ -135,6 +135,7 @@ const Login = ({ navigation }) => {
                         value={mobileNumber}
                         onChangeText={setMobileNumber}
                         placeholderTextColor={Colors.gray}
+                        maxLength={10}
                     />
                     {errors.mobileNumber && (
                         <Text style={styles.errorText}>{errors.mobileNumber}</Text>

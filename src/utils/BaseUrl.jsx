@@ -31,20 +31,26 @@ const SEND_REQUEST = "https://api-matrimonial.webseeder.tech/api/v1/connectionRe
 const CREATE_PANDIT = "https://api-matrimonial.webseeder.tech/api/v1/pandit/createPandit";
 const GET_ALL_PANDIT_DATA = "https://api-matrimonial.webseeder.tech/api/v1/pandit/getAllPandit";
 const PANDIT_REVIEW = "https://api-matrimonial.webseeder.tech/api/v1/pandit/addReviewRating ";
+const PANDIT_DESCRIPTION = "https://api-matrimonial.webseeder.tech/api/v1/pandit/panditProfileData";
+const VIEW_PANDIT="https://api-matrimonial.webseeder.tech/api/v1/pandit/viewPandit"
 
 // jyotish api's
 const CREATE_JYOTISH = "https://api-matrimonial.webseeder.tech/api/v1/jyotish/createJyotish";
 const GET_ALL_JYOTISH= "https://api-matrimonial.webseeder.tech/api/v1/jyotish/getAllJyotish";
 const JYOTISH_REVIEW = "https://api-matrimonial.webseeder.tech/api/v1/jyotish/addReviewRating";
+const JYOTISH_DESCRIPTION = "https://api-matrimonial.webseeder.tech/api/v1/pandit/panditProfileData";
+const VIEW_JYOTISH="https://api-matrimonial.webseeder.tech/api/v1/jyotish/viewJyotish";
 
 // pandit api's
 const CREATE_KATHAVACHAK = "https://api-matrimonial.webseeder.tech/api/v1/kathavachak/createKathavachak";
 const GET_ALL_KATHAVACHAK = "https://api-matrimonial.webseeder.tech/api/v1/kathavachak/getAllKathavachak";
 const KATHAVACHAK_REVIEW = "https://api-matrimonial.webseeder.tech/api/v1/kathavachak/addReviewRating  ";
+const KATHAVACHAK_DESCRIPTION = "https://api-matrimonial.webseeder.tech/api/v1/pandit/panditProfileData";
+const VIEW_KATHAVACHAK="https://api-matrimonial.webseeder.tech/api/v1/kathavachak/viewKathavachak";
+
 
 // search api is directly integrate 
 // filters API's
-
 const SET_PREFRENCE_FILTER_API = "https://api-matrimonial.webseeder.tech/api/v1/user/getMatchProfiles";
 const MALE_FILTER_API = "https://api-matrimonial.webseeder.tech/api/v1/user/feed?gender=male";
 const FEMALE_FILTER_API = "https://api-matrimonial.webseeder.tech/api/v1/user/feed?gender=female";
@@ -52,6 +58,7 @@ const FEMALE_FILTER_API = "https://api-matrimonial.webseeder.tech/api/v1/user/fe
 // saved api's 
 const SAVED_PROFILES = "https://api-matrimonial.webseeder.tech/api/v1/saved/save-profile";
 const GET_SAVED__PROFILES = "https://api-matrimonial.webseeder.tech/api/v1/saved/getSavedProfiles";
+
 // share api's 
 const SHARED_PROFILES = "https://api-matrimonial.webseeder.tech/api/v1/user/share-bioDataprofile"
 
@@ -109,5 +116,11 @@ export {
     CREATE_COMMITTEE,
     UPDATE_COMMITTEE,
     GET_COMMIITEE,
-    GET_ALL_COMITTEE
+    GET_ALL_COMITTEE,
+    PANDIT_DESCRIPTION,
+    JYOTISH_DESCRIPTION,
+    KATHAVACHAK_DESCRIPTION,
+    VIEW_JYOTISH,
+    VIEW_PANDIT,
+    VIEW_KATHAVACHAK
 }

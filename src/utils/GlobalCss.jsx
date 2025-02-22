@@ -47,7 +47,8 @@ const Globalstyles = StyleSheet.create({
     paddingHorizontal: SW(10),
     paddingVertical:SH(10),
     borderRadius: 5,
-    color: Colors.dark
+    color: Colors.dark,
+    letterSpacing:0,textAlign:"left"
   },
   textInput: {
     height: SH(100),

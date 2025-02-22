@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, TextInput, TouchableOpacity, SafeAreaView, ScrollView, FlatList, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, SafeAreaView, ScrollView, FlatList, Image, ActivityIndicator } from 'react-native';
 
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/ActivistFormStyle';
@@ -78,24 +78,11 @@ export default function ActivistForm({ navigation }) {
 
     setActivistData((prevState) => ({
       ...prevState,
-      dob: selectedDate,
+      dob: moment(selectedDate).format("YYYY-MM-DD"), // ✅ Store correctly
     }));
   };
 
-  const formatDate = (date) => {
-    if (!date) return "";
 
-    const validDate = new Date(date);
-    if (isNaN(validDate)) {
-      return "";
-    }
-
-    const day = validDate.getDate().toString().padStart(2, "0");
-    const month = (validDate.getMonth() + 1).toString().padStart(2, "0");
-    const year = validDate.getFullYear();
-
-    return `${day}/${month}/${year}`; // UI में "DD/MM/YYYY" दिखेगा
-  };
 
   const handleStateInputChange = (text) => {
     setStateInput(text);
@@ -185,12 +172,12 @@ export default function ActivistForm({ navigation }) {
       if (imageUri.startsWith("data:image")) {
         return imageUri;
       }
-  
+
       const response = await fetch(imageUri);
       const blob = await response.blob();
 
-      const mimeType = blob.type || "image/jpeg"; 
-  
+      const mimeType = blob.type || "image/jpeg";
+
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -207,13 +194,13 @@ export default function ActivistForm({ navigation }) {
       return null;
     }
   };
-  
+
   const constructActivistPayload = async (ActivistData, isNew = false) => {
     const keys = [
       "fullname", "subCaste", "dob", "state", "city",
       "mobileNo", "knownActivistIds", "engagedWithCommittee", "profilePhoto"
     ];
-  
+
     const payload = {};
     for (const key of keys) {
       if (ActivistData[key] !== undefined && ActivistData[key] !== "") {
@@ -223,28 +210,40 @@ export default function ActivistForm({ navigation }) {
       }
     }
 
-    if (payload.dob) {
-      const parsedDate = moment(payload.dob.split("T")[0], "YYYY-MM-DD", true);
-      if (parsedDate.isValid()) {
-        payload.dob = parsedDate.format("DD/MM/YYYY");
+    // ✅ Ensure DOB is in the correct format before sending to backend
+    if (payload.dob && typeof payload.dob === "string") {
+      let parsedDate;
+
+      // 🟢 Check if dob is already in "YYYY-MM-DD" format
+      if (moment(payload.dob, "YYYY-MM-DD", true).isValid()) {
+        parsedDate = moment(payload.dob, "YYYY-MM-DD");
+      }
+      // 🔴 If dob is in "DD/MM/YYYY", convert it
+      else if (moment(payload.dob, "DD/MM/YYYY", true).isValid()) {
+        parsedDate = moment(payload.dob, "DD/MM/YYYY");
+      }
+
+      if (parsedDate && parsedDate.isValid()) {
+        payload.dob = parsedDate.format("YYYY-MM-DD"); // ✅ Convert to correct format
       } else {
         console.error("Invalid DOB format received:", payload.dob);
-        throw new Error("Invalid DOB format. Expected format is DD/MM/YYYY.");
+        throw new Error("Invalid DOB format. Expected format is DD/MM/YYYY or YYYY-MM-DD.");
       }
     }
-  
+
+    // ✅ Convert profile photo to base64 if available
     if (ActivistData.profilePhoto) {
       try {
         payload.profilePhoto = await convertToBase64(ActivistData.profilePhoto);
-        
         console.log("Converted Base64 Image:", payload.profilePhoto);
       } catch (error) {
         console.error("Base64 Conversion Error:", error);
       }
-    }    
-  
+    }
+
     return payload;
   };
+
 
 
   const handleActivistSave = async () => {
@@ -365,12 +364,14 @@ export default function ActivistForm({ navigation }) {
           <Text style={Globalstyles.title}>Date of Birth <Entypo name={'star'} color={'red'} size={12} /></Text>
           <TextInput
             style={[Globalstyles.input, !isEditing && styles.readOnly]}
-            value={ActivistData.dob ? formatDate(ActivistData.dob) : ""}
+            value={ActivistData.dob ? moment(ActivistData.dob, "YYYY-MM-DD").format("DD/MM/YYYY") : ""}
             editable={isEditing}
             onFocus={() => setShowDatePicker(true)}
             placeholder="Select your date of birth"
             placeholderTextColor={Colors.gray}
           />
+
+
 
 
           {showDatePicker && (
@@ -456,8 +457,6 @@ export default function ActivistForm({ navigation }) {
           placeholderTextColor={Colors.gray}
         />
 
-
-
         <Text style={Globalstyles.title}>Are you engaged with any Brahmin committee? </Text>
         <View style={styles.radioGroup}>
           <TouchableOpacity
@@ -506,9 +505,18 @@ export default function ActivistForm({ navigation }) {
             />
           ) : null}
         </View>
-        <TouchableOpacity style={styles.submitButton} onPress={handleActivistSave}>
-          <Text style={styles.submitText}>Submit</Text>
+        <TouchableOpacity
+          style={[styles.submitButton, isLoading && { opacity: 0.7 }]}
+          onPress={handleActivistSave}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <ActivityIndicator size="large" color="#fff" />
+          ) : (
+            <Text style={styles.submitText}>Submit</Text>
+          )}
         </TouchableOpacity>
+
       </ScrollView>
       <Toast />
     </SafeAreaView>

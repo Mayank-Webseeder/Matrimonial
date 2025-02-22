@@ -19,13 +19,13 @@ const CommitteeSubmissionPage = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState('');
     const [isEditing,setIsEditing]=useState(true);
     const [CommitteeData, setCommitteeData] = useState({
-        committeeTitle: '',
-        presidentName: '',
-        subCaste: '',
-        city: '',
-        area: ' ',
-        photoUrl: '',
-        mobileNo: ' '
+        committeeTitle:'',
+        presidentName:'',
+        subCaste:'',
+        city:'',
+        area:'',
+        photoUrl:'',
+        mobileNo:''
     });
 
     useEffect(() => {

@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
         paddingVertical: SH(7),
         marginHorizontal: SW(35),
         borderRadius: 50,
-        marginTop: SH(35),
+        marginTop: SH(20),
     },
     buttonText: {
         textAlign: "center",
@@ -82,6 +82,15 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins-Regular",
         marginHorizontal: SW(30),
     },
+    forgotPasswordButton: {
+        alignSelf: "flex-end",
+        marginRight: SW(30)
+    },
+    forgotPasswordText: {
+        color: Colors.theme_color,
+        fontFamily: "Poppins-Bold"
+    }
+
 });
 
 export default styles;

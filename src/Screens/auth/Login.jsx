@@ -114,7 +114,7 @@ const Login = ({ navigation }) => {
     return (
         <SafeAreaView style={styles.container}>
             <ImageBackground
-                source={require("../../Images/LoginBackground.png")}
+                source={require("../../Images/Login.png")}
                 style={styles.image}
             >
                 <ScrollView
@@ -166,6 +166,9 @@ const Login = ({ navigation }) => {
                         <Text style={styles.errorText}>{errors.password}</Text>
                     )}
 
+                      <TouchableOpacity style={styles.forgotPasswordButton} onPress={()=>navigation.navigate('ForgotScreen')}>
+                        <Text style={styles.forgotPasswordText}>Forgot Password</Text>
+                      </TouchableOpacity>
                     {/* Login Button */}
                     <TouchableOpacity
                         style={styles.button}

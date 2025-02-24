@@ -28,8 +28,9 @@ const Home = ({ navigation }) => {
   const [allbiodata, setallbiodata] = useState([]);
   const [isMounted, setIsMounted] = useState(true);
   const [loading, setLoading] = useState(false);
-  // const allBiodata = useSelector((state) => state.getAllBiodata.allBiodata) || [];
-  // console.log("allbiodata", allBiodata);
+  //  const ProfileData = useSelector((state) => state.profile);
+  // // const allBiodata = useSelector((state) => state.getAllBiodata.allBiodata) || [];
+  // console.log("ProfileData", ProfileData);
 
 
   useFocusEffect(

@@ -1,4 +1,4 @@
-import { Text, View, Image, SafeAreaView, StatusBar, Modal, PermissionsAndroid, Platform, FlatList } from 'react-native';
+import { Text, View, Image, SafeAreaView, StatusBar, Modal, PermissionsAndroid, Platform, FlatList ,ActivityIndicator} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Colors from '../../utils/Colors';
@@ -26,9 +26,27 @@ const MyProfile = ({ navigation }) => {
     const profileData = ProfileData?.profiledata || {};
     const [isProfileModalVisible, setProfileModalVisible] = useState(false);
     const [selectedProfile, setSelectedProfile] = useState('');
+    const [profileOptions, setProfileOptions] = useState([]);
+    const [fetchProfileData, setFetchProfileData] = useState(null);
+    const [loading,setLoading]=useState(false);
     const image = profileData?.photoUrl?.[0];
-    console.log("profileData", profileData);
+    // console.log("profileData", profileData);
     const formattedDate = moment(profileData.dob).format("DD/MM/YYYY");
+
+    useEffect(() => {
+        if (profileData) {
+            // User ke valid profiles filter karna
+            const filteredProfiles = [
+                { key: "isMatrimonial", label: "Matrimonial" },
+                { key: "isAstrologer", label: "Astrologer" },
+                { key: "isKathavachak", label: "Kathavachak" },
+                { key: "isPandit", label: "Pandit" },
+                { key: "isActivist", label: "Activist" },
+            ].filter(item => profileData[item.key]);
+
+            setProfileOptions(filteredProfiles);
+        }
+    }, [profileData]);
 
     const handlePress = (buttonName) => {
         setSelectedButton(buttonName);
@@ -38,10 +56,10 @@ const MyProfile = ({ navigation }) => {
     const openModal = () => setProfileModalVisible(true);
     const closeModal = () => setProfileModalVisible(false);
 
-    const selectProfile = (profile) => {
-        setSelectedProfile(profile);
-        closeModal();
-    };
+    // const selectProfile = (profile) => {
+    //     setSelectedProfile(profile);
+    //     closeModal();
+    // };
 
     const capitalizeFirstLetter = (text) => {
         return text ? text.charAt(0).toUpperCase() + text.slice(1) : "Unknown";
@@ -169,6 +187,28 @@ const MyProfile = ({ navigation }) => {
             });
     };
 
+    const fetchProfiles = async (profileType) => {
+        try {
+            setLoading(true);
+            setSelectedProfile(profileType);
+            const token = await AsyncStorage.getItem('userToken');
+            const formattedType = profileType.toLowerCase(); // Convert label to lowercase
+
+            const response = await axios.get(`https://api-matrimonial.webseeder.tech/api/v1/user/profiles/${formattedType}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            console.log("response.data",response.data);
+
+            setFetchProfileData(response.data); // Store API response
+            setLoading(false);
+        } catch (error) {
+            console.error("Error fetching profiles:", error);
+            setLoading(false);
+        }
+    };
+
     return (
         <SafeAreaView style={Globalstyles.container}>
             <StatusBar
@@ -183,31 +223,34 @@ const MyProfile = ({ navigation }) => {
                     </TouchableOpacity>
                     <TouchableOpacity onPress={openModal} style={styles.switchButton}>
                         <Text style={styles.selectedProfileText}>
-                            {selectedProfile || 'Switch Profile'}
+                            {selectedProfile || "Switch Profile"}
                         </Text>
-                        <AntDesign name="caretdown" color={Colors.theme_color} size={15} style={{ alignSelf: "center", marginBottom: SH(5) }} />
+                        <AntDesign name="caretdown" color={Colors.theme_color} size={15} style={styles.icon} />
                     </TouchableOpacity>
-                    <Modal
-                        transparent={true}
-                        visible={isProfileModalVisible}
-                        animationType="fade"
-                        onRequestClose={closeModal}
-                    >
+                    <Modal transparent={true} visible={isProfileModalVisible} animationType="fade" onRequestClose={closeModal}>
                         <View style={styles.profilemodalOverlay}>
                             <View style={styles.profilemodalContainer}>
                                 <Text style={styles.profilemodalTitle}>Choose Profile</Text>
-                                <FlatList
-                                    data={PeoplePosition}
-                                    keyExtractor={(item) => item.value}
-                                    renderItem={({ item }) => (
-                                        <TouchableOpacity
-                                            style={styles.profilemodalItem}
-                                            onPress={() => selectProfile(item.label)}
-                                        >
-                                            <Text style={styles.profilemodalItemText}>{item.label}</Text>
-                                        </TouchableOpacity>
-                                    )}
-                                />
+
+                                {profileOptions.length > 0 ? (
+                                    <FlatList
+                                        data={profileOptions}
+                                        keyExtractor={(item) => item.key}
+                                        renderItem={({ item }) => (
+                                            <TouchableOpacity
+                                                style={styles.profilemodalItem}
+                                                onPress={() => fetchProfiles(item.label)}
+                                            >
+                                                <Text style={styles.profilemodalItemText}>{item.label}</Text>
+                                            </TouchableOpacity>
+                                        )}
+                                    />
+                                ) : (
+                                    <Text style={styles.noProfileText}>No Profiles Available</Text>
+                                )}
+
+                                {loading && <ActivityIndicator size="large" color="blue" style={{ marginTop: 10 }} />}
+
                                 <TouchableOpacity style={styles.profilecloseButton} onPress={closeModal}>
                                     <Text style={styles.profilecloseButtonText}>Close</Text>
                                 </TouchableOpacity>

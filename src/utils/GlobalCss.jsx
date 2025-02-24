@@ -45,10 +45,10 @@ const Globalstyles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: SH(15),
     paddingHorizontal: SW(10),
-    paddingVertical:SH(10),
+    paddingVertical: SH(10),
     borderRadius: 5,
     color: Colors.dark,
-    letterSpacing:0,textAlign:"left"
+    letterSpacing: 0, textAlign: "left"
   },
   textInput: {
     height: SH(100),
@@ -117,7 +117,7 @@ const Globalstyles = StyleSheet.create({
     backgroundColor: Colors.theme_color,
     marginTop: SW(100)
   },
-  dropdown:{
+  dropdown: {
     borderColor: '#ccc',
     borderWidth: 1,
     marginBottom: SH(15),
@@ -128,7 +128,7 @@ const Globalstyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
-  
+
 })
 
 export default Globalstyles;

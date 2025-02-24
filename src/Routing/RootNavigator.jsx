@@ -61,6 +61,7 @@ import { setProfiledata } from '../ReduxStore/Slices/ProfileSlice';
 import axios from 'axios';
 import IntrestReceivedProfilePage from '../Screens/StackScreens/IntrestReceivedProfilePage';
 import ViewEntityImages from '../Screens/StackScreens/ViewEntityImages';
+import ForgotScreen from '../Screens/auth/ForgotScreen';
 
 const Stack = createNativeStackNavigator();
 const AppStackNavigator = createNativeStackNavigator();
@@ -254,6 +255,7 @@ const AuthStack = () => (
     <AuthStackNavigator.Screen name="Splash" component={Splash} />
     <AuthStackNavigator.Screen name="Register" component={Register} />
     <AuthStackNavigator.Screen name="Login" component={Login} />
+    <AuthStackNavigator.Screen name="ForgotScreen" component={ForgotScreen} />
   </AuthStackNavigator.Navigator>
 );
 

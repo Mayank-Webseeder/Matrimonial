@@ -14,13 +14,14 @@ const CustomDrawer = (props) => {
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
 
   const ProfileData = useSelector((state) => state.profile);
+  const isMatrimonial = ProfileData?.profiledata?.isMatrimonial || false;
   const image = ProfileData?.profiledata?.photoUrl?.[0];
   const name = ProfileData?.profiledata?.username || 'userName';
   const Id = ProfileData?.profiledata?.userId || 'user id';
 
   const menuItems = [
     { title: 'Partners Preference', screen: 'MainPartnerPrefrence' },
-    { title: 'Interested Profile', screen: 'Interested Profile' },
+    ...(isMatrimonial ? [{ title: 'Interested Profile', screen: 'Interested Profile' }] : []),
     { title: 'Saved Profile', screen: 'Saved Profile' },
     { title: 'Pandit/Jyotish' },
     { title: 'Event/News', screen: 'EventNews' },

@@ -6,7 +6,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-
     image: {
         width: "100%",
         height: "100%",
@@ -57,7 +56,8 @@ const styles = StyleSheet.create({
     otpButton: {
         paddingHorizontal: SW(5),
         paddingVertical: SH(5),
-        marginBottom: SH(15)
+        marginBottom: SH(15),
+        paddingRight:SW(10)
     },
     otpButtonText: {
         color: Colors.theme_color,

@@ -377,7 +377,6 @@ const DetailedProfile = ({ navigation }) => {
     return payload;
   };
 
-
   const handleSave = async () => {
     try {
       setIsLoading(true);
@@ -409,9 +408,17 @@ const DetailedProfile = ({ navigation }) => {
         });
 
         setIsEditing(false);
+
         setTimeout(() => {
-          navigation.navigate("MainApp");
+          if (biodata?._id) {
+            // ✅ If updating, refresh the **same page** (DetailedProfile)
+            navigation.replace("DetailedProfile");
+          } else {
+            // ✅ If creating, navigate to **MainPartnerPrefrence**
+            navigation.navigate("MainPartnerPrefrence");
+          }
         }, 1000);
+
         return; // ✅ Exit here, no need to continue to `catch`
       }
 
@@ -441,6 +448,7 @@ const DetailedProfile = ({ navigation }) => {
       setIsLoading(false);
     }
   };
+
 
 
 
@@ -1153,7 +1161,7 @@ const DetailedProfile = ({ navigation }) => {
             </TouchableOpacity>
           </View>
 
-          
+
           {isEditing && (
             <TouchableOpacity style={styles.button} onPress={handleSave}>
               <Text style={styles.buttonText}>submit</Text>

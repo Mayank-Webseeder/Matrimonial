@@ -148,7 +148,10 @@ const Register = ({ navigation }) => {
                     type: "success",
                     text1: "Sign Up Successful",
                     text2: "You have successfully signed up!",
-                    onHide: () => navigation.navigate("Login"),
+                    onHide: () => navigation.reset({
+                        index: 0,
+                        routes: [{ name: "AppStack" }],
+                    }),
                 });
             } else {
                 throw new Error(response.data.message || "Signup failed");
@@ -178,7 +181,7 @@ const Register = ({ navigation }) => {
     return (
         <SafeAreaView style={styles.container}>
             <ImageBackground
-                source={require("../../Images/InformationBackground.png")}
+                source={require("../../Images/Signup.png")}
                 style={styles.image}
             >
                 <AntDesign
@@ -188,7 +191,8 @@ const Register = ({ navigation }) => {
                     color={Colors.light}
                     onPress={() => navigation.navigate("Splash")}
                 />
-                <ScrollView style={styles.contentContainer} showsVerticalScrollIndicator={false}>
+                <ScrollView style={styles.contentContainer}  contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+                    showsVerticalScrollIndicator={false}>
                     <Text style={styles.text}>Sign Up</Text>
 
                     <View style={Globalstyles.form}>
@@ -357,7 +361,8 @@ const Register = ({ navigation }) => {
                         {/* Mobile Number */}
                         <Text style={Globalstyles.title}>Otp <Entypo name={'star'} color={'red'} size={12} /></Text>
 
-                        <TextInput style={Globalstyles.input} keyboardType="numeric" placeholder="Enter OTP" value={otp} onChangeText={setOtp} maxLength={6} />
+                        <TextInput style={Globalstyles.input} keyboardType="numeric" placeholder="Enter Your Otp " placeholderTextColor={Colors.gray}
+                            value={otp} onChangeText={setOtp} maxLength={6} />
 
                         {errors.Otp && (
                             <Text style={styles.errorText}>{errors.Otp}</Text>

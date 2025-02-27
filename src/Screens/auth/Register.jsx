@@ -12,6 +12,7 @@ import { CityData, genderData } from "../../DummyData/DropdownData";
 import Globalstyles from "../../utils/GlobalCss";
 import ImageCropPicker from 'react-native-image-crop-picker';
 import Entypo from 'react-native-vector-icons/Entypo';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Register = ({ navigation }) => {
     const [selectedDate, setSelectedDate] = useState(null);
@@ -115,19 +116,18 @@ const Register = ({ navigation }) => {
 
     const handleSignup = async () => {
         if (!validateFields()) return;
-
-        // Manually entered OTP
+    
         if (!otp || otp.length !== 6) {
             Toast.show({ type: "error", text1: "Invalid OTP", text2: "Please enter the correct OTP." });
             return;
         }
-
+    
         setIsLoading(true);
         try {
-            const formattedDate = selectedDate ?
-                `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, "0")}-${selectedDate.getDate().toString().padStart(2, "0")}`
+            const formattedDate = selectedDate
+                ? `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, "0")}-${selectedDate.getDate().toString().padStart(2, "0")}`
                 : null;
-
+    
             const payload = {
                 username: fullName.trim(),
                 dob: formattedDate,
@@ -138,11 +138,23 @@ const Register = ({ navigation }) => {
                 mobileNo: mobileNumber,
                 otp: otp,
             };
-
+    
             console.log("SignUp Payload:", payload);
             const response = await axios.post(SIGNUP_ENDPOINT, payload);
             console.log("Signup Response:", response.data);
-
+            const RegisterData = response.data;
+    
+            const token = RegisterData?.user?.token || null;
+    
+            if (token) {
+                await AsyncStorage.setItem("userToken", token);
+                console.log("Token saved:", token);
+                const storedToken = await AsyncStorage.getItem("userToken");
+                console.log("Retrieved token from AsyncStorage:", storedToken);
+            } else {
+                console.warn("Token is missing in response, skipping storage.");
+            }
+    
             if (response.status === 200 && response.data.message === "User account created successfully.") {
                 Toast.show({
                     type: "success",
@@ -163,6 +175,7 @@ const Register = ({ navigation }) => {
             setIsLoading(false);
         }
     };
+    
 
     const handleDateChange = (event, date) => {
         if (date && date !== selectedDate) {

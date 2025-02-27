@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Image } from 'react-native';
-
+import { SH } from '../../utils/Dimensions';
 const LoadingScreen = () => {
   return (
     <View style={styles.container}>
@@ -12,13 +12,13 @@ const LoadingScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#531e08',
     justifyContent: 'center',
     alignItems: 'center',
   },
   appLogo: {
-    width: 200,
-    height: 200,
+    width:"100%",
+    height:SH(350),
     resizeMode: 'contain',
     borderRadius:10
   },

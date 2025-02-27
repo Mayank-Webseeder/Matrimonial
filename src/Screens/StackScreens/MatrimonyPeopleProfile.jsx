@@ -273,9 +273,9 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: "center" }}>
-          <TouchableOpacity 
-          // onPress={() => navigation.goBack()}
-          onPress={() => navigation.pop()}
+          <TouchableOpacity
+            // onPress={() => navigation.goBack()}
+            onPress={() => navigation.pop()}
           >
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
@@ -460,7 +460,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         }
 
 
-        {MyprofileData?.Biodata && (
+        {(Object.keys(partnerPreferences || {}).length > 0 && MyprofileData?.Biodata) && (
           <View style={styles.flexContainer3}>
             <Text style={styles.HeadingText}>Matches</Text>
             <View style={styles.flex}>
@@ -482,6 +482,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             ))}
           </View>
         )}
+
 
         <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
       </ScrollView>

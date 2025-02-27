@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, SafeAreaView, StatusBar, FlatList, ActivityIndicator } from 'react-native';
 import styles from '../StyleScreens/RoleRegisterStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -9,48 +9,47 @@ import Globalstyles from '../../utils/GlobalCss';
 import { subCasteOptions, StateData, CityData, panditServices, jyotishServices, kathavachakServices, ExperienceData } from '../../DummyData/DropdownData';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { CREATE_JYOTISH, CREATE_KATHAVACHAK, CREATE_PANDIT } from '../../utils/BaseUrl';
+import { UPDATE_PANDIT, UPDATE_JYOTISH, UPDATE_KATHAVACHAK } from '../../utils/BaseUrl';
 import { Dropdown } from 'react-native-element-dropdown';
 import ImageCropPicker from 'react-native-image-crop-picker';
+import { SH, SW } from '../../utils/Dimensions';
 
-const RoleRegisterForm = ({ navigation }) => {
+const UpdateProfileDetails = ({ navigation, route }) => {
     const [stateInput, setStateInput] = useState('');
     const [cityInput, setCityInput] = useState('');
-    const [selectedRoles, setSelectedRoles] = useState([]);
-    const [checked, setChecked] = useState({});
-    const [photos, setPhotos] = useState([]);
     const [subCasteInput, setSubCasteInput] = useState('');
     const [filteredStates, setFilteredStates] = useState([]);
     const [filteredCities, setFilteredCities] = useState([]);
     const [filteredSubCaste, setFilteredSubCaste] = useState([]);
     const [selectedState, setSelectedState] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const { profileData, profileType } = route.params || {};
+    console.log("profileData", profileType);
+
 
     const [RoleRegisterData, setRoleRegisterData] = useState({
-        mobileNo: '',
-        fullName: '',
-        residentialAddress: '',
-        area: '',
-        state: '',
-        city: '',
-        aadharNo: '',
-        subCaste: '',
-        profilePhoto: '',
-        additionalPhotos: [],
-        experience: '',
-        description: '',
-        websiteUrl: '',
-        facebookUrl: '',
-        youtubeUrl: '',
-        instagramUrl: '',
-        whatsapp: ''
+        mobileNo: profileData?.mobileNo || '',
+        fullName: profileData?.fullName || '',
+        residentialAddress: profileData?.residentialAddress || '',
+        area: profileData?.area || '',
+        state: profileData?.state || '',
+        city: profileData?.city || '',
+        aadharNo: profileData?.aadharNo || '',
+        subCaste: profileData?.subCaste || '',
+        profilePhoto: profileData?.profilePhoto || '',
+        additionalPhotos: profileData?.additionalPhotos || [],
+        experience: profileData?.experience || '',
+        description: profileData?.description || '',
+        websiteUrl: profileData?.websiteUrl || '',
+        facebookUrl: profileData?.facebookUrl || '',
+        youtubeUrl: profileData?.youtubeUrl || '',
+        instagramUrl: profileData?.instagramUrl || '',
+        whatsapp: profileData?.whatsapp || ''
     });
 
-    const roleOptions = [
-        { label: 'Pandit', value: 'Pandit' },
-        { label: 'Jyotish', value: 'Jyotish' },
-        { label: 'Kathavachak', value: 'Kathavachak' },
-    ];
+
+    // Get the relevant services key dynamically (e.g., "panditServices", "jyotishServices", etc.)
+    const mappedProfileType = profileType === "Astrologer" ? "Jyotish" : profileType;
 
     const servicesOptions = {
         Pandit: panditServices,
@@ -58,22 +57,33 @@ const RoleRegisterForm = ({ navigation }) => {
         Kathavachak: kathavachakServices,
     };
 
-    const handleRoleChange = (roleValue) => {
-        setSelectedRoles(prevRoles => {
-            if (prevRoles.includes(roleValue)) {
-                return prevRoles.filter(role => role !== roleValue);
-            } else {
-                return [...prevRoles, roleValue];
-            }
-        });
-    };
+    // ✅ Get the correct services key (e.g., "jyotishServices" instead of "astrologerServices")
+    const profileServicesKey = `${mappedProfileType.toLowerCase()}Services`;
 
-    const handleCheckboxChange = (serviceValue) => {
-        setChecked(prevChecked => ({
-            ...prevChecked,
-            [serviceValue]: !prevChecked[serviceValue],
+    const [checked, setChecked] = useState(() => {
+        return profileData?.[profileServicesKey]?.reduce((acc, service) => {
+            acc[service] = true;
+            return acc;
+        }, {});
+    });
+
+    useEffect(() => {
+        if (profileData?.[profileServicesKey] && mappedProfileType) {
+            const updatedChecked = {};
+            servicesOptions[mappedProfileType]?.forEach(service => {
+                updatedChecked[service.value] = profileData[profileServicesKey].includes(service.value);
+            });
+            setChecked(updatedChecked);
+        }
+    }, [profileData, mappedProfileType]);
+
+    const handleCheckboxChange = (service) => {
+        setChecked((prev) => ({
+            ...prev,
+            [service]: !prev[service],
         }));
     };
+
 
     const handleProfilePhotoPick = async () => {
         try {
@@ -133,84 +143,6 @@ const RoleRegisterForm = ({ navigation }) => {
             console.log("Additional Photos Picker Error:", err);
         }
     };
-
-
-    const handleSubmit = async () => {
-        setIsLoading(true)
-        const roleApiMapping = {
-            Pandit: CREATE_PANDIT,
-            Jyotish: CREATE_JYOTISH,
-            Kathavachak: CREATE_KATHAVACHAK
-        };
-
-        const commonPayload = {
-            mobileNo: RoleRegisterData.mobileNo,
-            fullName: RoleRegisterData.fullName,
-            residentialAddress: RoleRegisterData.residentialAddress,
-            state: RoleRegisterData.state,
-            city: RoleRegisterData.city,
-            subCaste: RoleRegisterData.subCaste,
-            profilePhoto: RoleRegisterData.profilePhoto, // ✅ Base64 format
-            additionalPhotos: RoleRegisterData.additionalPhotos, // ✅ Base64 format array
-            experience: RoleRegisterData.experience,
-            description: RoleRegisterData.description,
-            websiteUrl: RoleRegisterData.websiteUrl,
-            facebookUrl: RoleRegisterData.facebookUrl,
-            youtubeUrl: RoleRegisterData.youtubeUrl,
-            instagramUrl: RoleRegisterData.instagramUrl,
-            whatsapp: RoleRegisterData.whatsapp,
-            status: "pending"
-        };
-
-        console.log("Payload to be sent:", commonPayload);
-
-        try {
-            const token = await AsyncStorage.getItem("userToken");
-            if (!token) throw new Error("Authorization token is missing.");
-
-            const headers = {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
-            };
-
-            for (const role of selectedRoles) {
-                const url = roleApiMapping[role];
-
-                // ✅ Sirf us role ke services filter karke bhej rahe hain
-                const filteredServices = Object.keys(checked).filter(service =>
-                    servicesOptions[role].some(option => option.value === service) && checked[service]
-                );
-
-                const payload = {
-                    ...commonPayload,
-                    [`${role.toLowerCase()}Services`]: filteredServices,
-                };
-
-                console.log(`Sending Payload for ${role}:`, payload); // ✅ Debugging ke liye
-
-                const response = await axios.post(url, payload, { headers });
-
-                Toast.show({
-                    type: 'success',
-                    text1: 'Success!',
-                    text2: `Successfully registered for ${role}.`,
-                });
-            }
-        } catch (error) {
-            console.error('Error:', error.message);
-
-            Toast.show({
-                type: 'error',
-                text1: 'Error',
-                text2: error.message,
-            });
-        }
-        finally {
-            setIsLoading(false)
-        }
-    };
-
-
 
     const handleStateInputChange = (text) => {
         setStateInput(text);
@@ -301,23 +233,139 @@ const RoleRegisterForm = ({ navigation }) => {
         }));
     };
 
-    const validateAndSetUrl = (text, type) => {
-        const urlPatterns = {
-            websiteUrl: /^(https?:\/\/)?([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(\/\S*)?$/,
-            youtubeUrl: /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/\S+$/,
-            whatsapp: /^(https?:\/\/)?(api\.whatsapp\.com|wa\.me)\/\S+$/,
-            facebookUrl: /^(https?:\/\/)?(www\.)?facebook\.com\/\S+$/,
-            instagramUrl: /^(https?:\/\/)?(www\.)?instagram\.com\/\S+$/,
+    const convertToBase64 = async (imageUri) => {
+        try {
+            if (!imageUri) return null;
+
+            // Agar already Base64 format me hai toh direct return kar do ✅
+            if (imageUri.startsWith("data:image")) {
+                return imageUri;
+            }
+
+            // Fetch image and convert to blob ✅
+            const response = await fetch(imageUri);
+            const blob = await response.blob();
+
+            const mimeType = blob.type || "image/jpeg"; // Default JPEG ✅
+
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    if (reader.result) {
+                        resolve(`data:${mimeType};base64,${reader.result.split(",")[1]}`);
+                    } else {
+                        reject("Error reading Base64 data.");
+                    }
+                };
+                reader.readAsDataURL(blob);
+            });
+        } catch (error) {
+            console.error("Error converting image to Base64:", error);
+            return null;
+        }
+    };
+
+    const handleSubmit = async () => {
+        setIsLoading(true);
+
+        // ✅ API Mapping based on profileType
+        const roleApiMapping = {
+            Pandit: UPDATE_PANDIT,
+            Jyotish: UPDATE_JYOTISH,
+            Kathavachak: UPDATE_KATHAVACHAK
         };
 
-        if (!text || urlPatterns[type].test(text)) {
-            setRoleRegisterData((prev) => ({ ...prev, [type]: text }));
-        } else {
+        if (!profileType || !roleApiMapping[profileType]) {
+            Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: 'Invalid profile type selected.',
+            });
+            setIsLoading(false);
+            return;
+        }
+
+        try {
+            const token = await AsyncStorage.getItem("userToken");
+            if (!token) throw new Error("Authorization token is missing.");
+
+            const headers = {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            };
+
+            const url = roleApiMapping[profileType];
+
+            // ✅ Profile ke type ke hisaab se services ka key determine karein
+            const servicesKey = `${profileType.toLowerCase()}Services`;
+
+            // ✅ ProfileData se existing services lein (agar available ho)
+            const existingServices = profileData?.[servicesKey] || [];
+
+            // ✅ Sirf selected services bhejne ke liye filter karein
+            const filteredServices = Object.keys(checked).filter(service =>
+                servicesOptions[profileType].some(option => option.value === service) && checked[service]
+            );
+
+            // ✅ Profile photo ko Base64 me convert karein
+            let profilePhotoBase64 = null;
+            if (RoleRegisterData.profilePhoto) {
+                try {
+                    profilePhotoBase64 = await convertToBase64(RoleRegisterData.profilePhoto);
+                    console.log("Converted Profile Photo:", profilePhotoBase64);
+                } catch (error) {
+                    console.error("Profile Photo Base64 Conversion Error:", error);
+                }
+            }
+
+            // ✅ Additional photos ko Base64 me convert karein (Array)
+            let additionalPhotosBase64 = [];
+            if (RoleRegisterData.additionalPhotos && Array.isArray(RoleRegisterData.additionalPhotos)) {
+                additionalPhotosBase64 = await Promise.all(
+                    RoleRegisterData.additionalPhotos.map(async (photo) => await convertToBase64(photo))
+                );
+            }
+
+            const payload = {
+                mobileNo: RoleRegisterData.mobileNo,
+                fullName: RoleRegisterData.fullName,
+                residentialAddress: RoleRegisterData.residentialAddress,
+                state: RoleRegisterData.state,
+                city: RoleRegisterData.city,
+                subCaste: RoleRegisterData.subCaste,
+                profilePhoto: profilePhotoBase64, // ✅ Converted Base64
+                additionalPhotos: additionalPhotosBase64, // ✅ Converted Array
+                experience: RoleRegisterData.experience,
+                description: RoleRegisterData.description,
+                websiteUrl: RoleRegisterData.websiteUrl,
+                facebookUrl: RoleRegisterData.facebookUrl,
+                youtubeUrl: RoleRegisterData.youtubeUrl,
+                instagramUrl: RoleRegisterData.instagramUrl,
+                whatsapp: RoleRegisterData.whatsapp,
+                [servicesKey]: filteredServices.length > 0 ? filteredServices : existingServices,
+            };
+
+            console.log("Final Payload to be Sent:", payload);
+
+            const response = await axios.patch(url, payload, { headers });
+
+            Toast.show({
+                type: "success",
+                text1: "Success!",
+                text2: `Successfully updated profile for ${profileType}.`,
+                onHide: () => navigation.navigate('MyProfile')
+            });
+
+        } catch (error) {
+            console.error("Error:", error.message);
+
             Toast.show({
                 type: "error",
-                text1: "Invalid URL",
-                text2: `Please enter a valid ${type.replace("Url", "")} link.`,
+                text1: "Error",
+                text2: error.message,
             });
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -439,38 +487,19 @@ const RoleRegisterForm = ({ navigation }) => {
                         />
                     ) : null}
 
-
-                    {/* Role Selection with Checkboxes */}
-                    <Text style={Globalstyles.title}>You are Registering for</Text>
-                    <View style={styles.checkboxContainer}>
-                        {roleOptions.map(role => (
-                            <View key={role.value} style={styles.checkboxItem}>
-                                <Checkbox
-                                    status={selectedRoles.includes(role.value) ? 'checked' : 'unchecked'}
-                                    onPress={() => handleRoleChange(role.value)}
+                    <View>
+                        <Text style={styles.servicesLabel}>{profileData.profileType} Services</Text>
+                        {servicesOptions[profileData.profileType]?.map(service => (
+                            <View key={service.value} style={styles.checkboxContainer1}>
+                                <Checkbox.Item
+                                    label={service.label}
+                                    status={checked[service.value] ? 'checked' : 'unchecked'}
+                                    onPress={() => handleCheckboxChange(service.value)}
                                     color={Colors.theme_color}
                                 />
-                                <Text>{role.label}</Text>
                             </View>
                         ))}
                     </View>
-
-                    {/* Show services for selected roles */}
-                    {selectedRoles.map(role => (
-                        <View key={role} style={styles.roleServices}>
-                            <Text style={styles.servicesLabel}>{role} Services</Text>
-                            {servicesOptions[role]?.map(service => (
-                                <View key={service.value} style={styles.checkboxContainer1}>
-                                    <Checkbox.Item
-                                        label={service.label}
-                                        status={checked[service.value] ? 'checked' : 'unchecked'}
-                                        onPress={() => handleCheckboxChange(service.value)}
-                                        color={Colors.theme_color}
-                                    />
-                                </View>
-                            ))}
-                        </View>
-                    ))}
 
                     <Text style={Globalstyles.title}>Experience</Text>
                     <View>
@@ -479,17 +508,25 @@ const RoleRegisterForm = ({ navigation }) => {
                             data={ExperienceData}
                             labelField="label"
                             valueField="value"
-                            value={RoleRegisterData?.experience}
+                            value={String(RoleRegisterData?.experience)}
                             onChange={(text) => handleInputChange("experience", text.value)}
                             placeholder="Select Experience"
                             placeholderStyle={{ color: '#E7E7E7' }}
                         />
+
                     </View>
 
                     <Text style={Globalstyles.title}>Profile Photo</Text>
                     <View style={Globalstyles.input}>
                         <TouchableOpacity onPress={handleProfilePhotoPick}>
-                            <Text style={styles.imagePlaceholder}>upload photo</Text>
+                            {RoleRegisterData.profilePhoto ? (
+                                <Image
+                                    source={{ uri: RoleRegisterData.profilePhoto }}
+                                    style={{ width: SW(100), height: SH(100), borderRadius: 10 }}
+                                />
+                            ) : (
+                                <Text style={styles.imagePlaceholder}>Upload Photo</Text>
+                            )}
                         </TouchableOpacity>
                     </View>
 
@@ -511,60 +548,47 @@ const RoleRegisterForm = ({ navigation }) => {
                     </View>
 
                     {/* Display Selected Photos */}
-                    {photos.length > 0 && (
+                    {RoleRegisterData?.additionalPhotos?.length > 0 && (
                         <View style={styles.photosContainer}>
                             <Text style={styles.label}>Uploaded Photos:</Text>
                             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                                {photos.map((photo, index) => (
-                                    <Image key={index} source={{ uri: photo.uri }} style={styles.photo} />
+                                {RoleRegisterData?.additionalPhotos.map((photo, index) => (
+                                    <Image key={index} source={{ uri: photo }} style={styles.photo} />
                                 ))}
                             </ScrollView>
                         </View>
                     )}
+
                     <Text style={Globalstyles.title}>Website Link</Text>
-                    <TextInput
-                        style={Globalstyles.input}
+                    <TextInput style={Globalstyles.input}
                         value={RoleRegisterData.websiteUrl}
-                        onChangeText={(text) => validateAndSetUrl(text, "websiteUrl")}
-                        placeholder="Give Your Website Link"
-                        placeholderTextColor={Colors.gray}
-                    />
-
+                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, websiteUrl: text }))}
+                        placeholder="give Your Website Link"
+                        placeholderTextColor={Colors.gray} />
                     <Text style={Globalstyles.title}>Youtube Link</Text>
-                    <TextInput
-                        style={Globalstyles.input}
+                    <TextInput style={Globalstyles.input}
                         value={RoleRegisterData.youtubeUrl}
-                        onChangeText={(text) => validateAndSetUrl(text, "youtubeUrl")}
-                        placeholder="Give Your Youtube Link"
-                        placeholderTextColor={Colors.gray}
-                    />
-
+                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, youtubeUrl: text }))}
+                        placeholder="give Your Youtube Link"
+                        placeholderTextColor={Colors.gray} />
                     <Text style={Globalstyles.title}>Whatsapp Link</Text>
-                    <TextInput
-                        style={Globalstyles.input}
+                    <TextInput style={Globalstyles.input}
                         value={RoleRegisterData.whatsapp}
-                        onChangeText={(text) => validateAndSetUrl(text, "whatsapp")}
-                        placeholder="Give Your Whatsapp Link"
-                        placeholderTextColor={Colors.gray}
-                    />
-
+                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, whatsapp: text }))}
+                        placeholder="give Your Whatsapp Link"
+                        placeholderTextColor={Colors.gray} />
                     <Text style={Globalstyles.title}>Facebook Link</Text>
-                    <TextInput
-                        style={Globalstyles.input}
+                    <TextInput style={Globalstyles.input}
                         value={RoleRegisterData.facebookUrl}
-                        onChangeText={(text) => validateAndSetUrl(text, "facebookUrl")}
-                        placeholder="Give Your Facebook Link"
-                        placeholderTextColor={Colors.gray}
-                    />
-
+                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, facebookUrl: text }))}
+                        placeholder="give Your Facebook Link"
+                        placeholderTextColor={Colors.gray} />
                     <Text style={Globalstyles.title}>Instagram Link</Text>
-                    <TextInput
-                        style={Globalstyles.input}
+                    <TextInput style={Globalstyles.input}
                         value={RoleRegisterData.instagramUrl}
-                        onChangeText={(text) => validateAndSetUrl(text, "instagramUrl")}
-                        placeholder="Give Your Instagram Link"
-                        placeholderTextColor={Colors.gray}
-                    />
+                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, instagramUrl: text }))}
+                        placeholder="give Your Instagram Link"
+                        placeholderTextColor={Colors.gray} />
 
                     {
                         isLoading ?
@@ -581,4 +605,4 @@ const RoleRegisterForm = ({ navigation }) => {
     );
 };
 
-export default RoleRegisterForm;
+export default UpdateProfileDetails;

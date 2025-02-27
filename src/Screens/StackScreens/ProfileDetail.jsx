@@ -1,0 +1,536 @@
+import React, { useEffect, useState } from 'react';
+import { View, Text, ActivityIndicator, ScrollView, Image, TouchableOpacity, Linking } from 'react-native';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import styles from '../StyleScreens/ProfileDetailStyle';
+import Colors from '../../utils/Colors';
+import moment from 'moment';
+import { Rating } from 'react-native-ratings';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Feather from 'react-native-vector-icons/Feather';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Globalstyles from '../../utils/GlobalCss';
+const ProfileDetail = ({ route, navigation }) => {
+    const { profileType } = route.params;
+    const [profileData, setProfileData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const images = profileData?.additionalPhotos || [];
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const token = await AsyncStorage.getItem('userToken');
+                const response = await axios.get(
+                    `https://api-matrimonial.webseeder.tech/api/v1/user/profiles/${profileType.toLowerCase()}`,
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }
+                );
+
+                if (response.data && Object.keys(response.data).length > 0) {
+                    setProfileData(response.data);
+                } else {
+                    console.warn("Empty response received.");
+                }
+            } catch (error) {
+                console.error("Error fetching details:", error.response?.data || error.message);
+            }
+            setLoading(false);
+        };
+
+        fetchData();
+    }, [profileType]);
+
+    if (loading) {
+        return <ActivityIndicator size="large" color="blue" />;
+    }
+
+    if (!profileData) {
+        return <Text style={{ padding: 20 }}>No Data Available</Text>;
+    }
+
+    const calculateAge = (dob) => {
+        if (!dob) return "N/A";
+        const birthDate = moment(dob);
+        const currentDate = moment();
+        return currentDate.diff(birthDate, "years");
+    };
+
+    const openLink = (url, platform) => {
+        if (url) {
+            Linking.openURL(url);
+        } else {
+            Alert.alert("Not Available", `${platform} link is not available.`);
+        }
+    };
+
+
+    const renderImages = (images) => {
+        if (!images || images.length === 0) {
+            return <Text style={styles.noReviewsText}>No images available for this post</Text>;
+        }
+
+        const rows = [];
+        for (let i = 0; i < images.length; i += 2) {
+            rows.push(
+                <TouchableOpacity
+                    style={styles.imageRow}
+                    key={i}
+                    onPress={() =>
+                        navigation.navigate('ViewEntityImages', {
+                            post: profileData, // Pass pandit details
+                            images: images.filter(Boolean), // Ensure this is a valid array of images
+                            panditDetails: profileData,
+                        })
+                    }
+                >
+                    {/* Ensure the image has a valid source format */}
+                    <Image source={{ uri: images[i] }} style={styles.image} />
+
+                    {/* If there's an image next to it, show it */}
+                    {images[i + 1] && <Image source={{ uri: images[i + 1] }} style={styles.image} />}
+                </TouchableOpacity>
+            );
+        }
+
+        return <View style={styles.imageContainer}>{rows}</View>;
+    };
+
+    const calculateAverageRating = (ratings) => {
+        if (!ratings || ratings.length === 0) return 0; // Agar koi rating na ho toh default 0 dikhaye
+        const total = ratings.reduce((sum, review) => sum + review.rating, 0);
+        return (total / ratings.length).toFixed(1); // Decimal me 1 place tak dikhane ke liye
+    };
+
+    const averageRating = calculateAverageRating(profileData?.ratings);
+
+    return (
+        <ScrollView style={Globalstyles.container}>
+            <View style={Globalstyles.header}>
+                <View style={{ flexDirection: 'row', alignItems: "center" }}>
+                    <TouchableOpacity
+                        // onPress={() => navigation.goBack()}
+                        onPress={() => navigation.pop()}
+                    >
+                        <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
+                    </TouchableOpacity>
+                    <Text style={styles.HeadingText}>{profileType} Details</Text>
+                </View>
+            </View>
+            {profileType === 'Matrimonial' && (
+                <>
+                    {profileData?.personalDetails?.bestPhoto && (
+                        <Image
+                            source={{ uri: profileData.personalDetails.bestPhoto }}
+                            style={styles.matrimonyImage}
+                        />
+                    )}
+
+                    <View>
+                        <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('MatrimonyPage')}>
+                            <Text style={styles.editButtonText}>Edit Biodata</Text>
+                        </TouchableOpacity>
+                        {/* Full Name at the top */}
+                        <Text style={styles.biodataname}>{profileData?.personalDetails?.fullname}</Text>
+                        {/* Two-column Layout */}
+                        <View style={styles.flexContainer2}>
+                            {/* Left Column */}
+                            <View style={styles.column}>
+                                <Text style={styles.text}>{calculateAge(profileData?.personalDetails?.dob)} Yrs, {profileData?.personalDetails?.heightFeet}</Text>
+                                {profileData?.personalDetails?.subCaste && (
+                                    <Text style={styles.text}>{profileData.personalDetails.subCaste}</Text>
+                                )}
+                                {profileData?.personalDetails?.maritalStatus && (
+                                    <Text style={styles.text}>{profileData.personalDetails.maritalStatus}</Text>
+                                )}
+                                {profileData?.personalDetails?.manglikStatus && (
+                                    <Text style={styles.text}>{profileData.personalDetails.manglikStatus}</Text>
+                                )}
+                                {profileData?.personalDetails?.disabilities && (
+                                    <Text style={styles.text}>Disability: {profileData.personalDetails.disabilities}</Text>
+                                )}
+                            </View>
+
+                            {/* Right Column */}
+                            <View style={styles.column}>
+                                {profileData?.personalDetails?.currentCity && (
+                                    <Text style={styles.text}>City: {profileData.personalDetails.currentCity}</Text>
+                                )}
+                                {profileData?.personalDetails?.occupation && (
+                                    <Text style={styles.text}>Occupation: {profileData.personalDetails.occupation}</Text>
+                                )}
+                                {profileData?.personalDetails?.annualIncome && (
+                                    <Text style={styles.text}>Income: {profileData.personalDetails.annualIncome} INR</Text>
+                                )}
+                                {profileData?.personalDetails?.qualification && (
+                                    <Text style={styles.text}>Qualification: {profileData.personalDetails.qualification}</Text>
+                                )}
+                                {profileData?.personalDetails?.profileCreatedBy && (
+                                    <Text style={styles.text}>Profile Created By: {profileData.personalDetails.profileCreatedBy}</Text>
+                                )}
+                            </View>
+                        </View>
+                    </View>
+
+                    {/* About Me Section */}
+                    {profileData?.personalDetails?.aboutMe && (
+                        <View style={styles.flexContainer1}>
+                            <View>
+                                <Text style={styles.HeadingText}>About Me</Text>
+                                <Text style={styles.text}>{profileData?.personalDetails?.aboutMe}</Text>
+                                <View style={styles.flexContainer4}>
+                                    {profileData?.personalDetails?.complexion && <Text style={styles.text}>Completion: {profileData?.personalDetails?.complexion}</Text>}
+                                    {profileData?.personalDetails?.weight && <Text style={styles.text}>Weight: {profileData?.personalDetails?.weight} kg </Text>}
+                                </View>
+                                <View style={styles.flexContainer4}>
+                                    {profileData?.personalDetails?.currentCity && <Text style={styles.text}>Currently in: {profileData?.personalDetails?.currentCity}</Text>}
+                                    {profileData?.personalDetails?.livingStatus && <Text style={styles.text}>Living with family: {profileData?.personalDetails?.livingStatus}</Text>}
+                                </View>
+                            </View>
+                        </View>
+                    )}
+
+                    {/* Family Section */}
+                    {profileData?.personalDetails?.fatherName && (
+                        <View style={styles.flexContainer1}>
+                            <View>
+                                <Text style={styles.HeadingText}>Family Section</Text>
+                                {profileData?.personalDetails?.fatherName && <Text style={styles.text}>Father’s Name: {profileData?.personalDetails.fatherName}</Text>}
+                                {profileData?.personalDetails?.fatherOccupation && <Text style={styles.text}>Father’s Occupation: {profileData?.personalDetails.fatherOccupation}</Text>}
+                                {profileData?.personalDetails?.motherName && <Text style={styles.text}>Mother’s Name: {profileData?.personalDetails.motherName}</Text>}
+                                {profileData?.personalDetails?.fatherIncomeAnnually && <Text style={styles.text}>Family Income: {profileData?.personalDetails.fatherIncomeAnnually}</Text>}
+                                {profileData?.personalDetails?.familyType && <Text style={styles.text}>Family Type: {profileData?.personalDetails.familyType}</Text>}
+                                {
+                                    profileData?.personalDetails?.otherFamilyMemberInfo &&
+                                    <View>
+                                        <Text style={styles.HeadingText}>About My family</Text>
+                                        <Text style={styles.text}>{profileData?.personalDetails.otherFamilyMemberInfo}</Text>
+                                    </View>
+
+                                }
+                            </View>
+                        </View>
+                    )}
+
+                    {/* Contact Section */}
+                    {profileData?.personalDetails?.contactNumber1 && (
+                        <View style={styles.flexContainer1}>
+                            <View>
+                                <Text style={styles.HeadingText}>Contact Details:</Text>
+                                {profileData?.personalDetails?.contactNumber1 && <Text style={styles.text}>Mobile No. 1: {profileData?.personalDetails.contactNumber1}</Text>}
+                                {profileData?.personalDetails?.contactNumber2 && <Text style={styles.text}>Mobile No. 2: {profileData?.personalDetails.contactNumber2}</Text>}
+                            </View>
+                        </View>
+                    )}
+
+                    {/* Other Details */}
+                    {profileData?.personalDetails?.knowCooking && (
+                        <View style={styles.flexContainer1}>
+                            <View>
+                                <Text style={styles.HeadingText}>Other Details:</Text>
+                                {profileData?.personalDetails?.knowCooking && <Text style={styles.text}>Cooking: {profileData?.personalDetails.knowCooking}</Text>}
+                                {profileData?.personalDetails?.dietaryHabit && <Text style={styles.text}>Diet: {profileData?.personalDetails.dietaryHabit}</Text>}
+                                {profileData?.personalDetails?.smokingHabit && <Text style={styles.text}>Smoke: {profileData?.personalDetails.smokingHabit}</Text>}
+                                {profileData?.personalDetails?.drinkingHabit && <Text style={styles.text}>Drinking: {profileData?.personalDetails.drinkingHabit}</Text>}
+                                {profileData?.personalDetails?.tobaccoHabits && <Text style={styles.text}>Tobacco: {profileData?.personalDetails.tobaccoHabits}</Text>}
+                            </View>
+                        </View>
+                    )}
+                    <View style={styles.flexContainer1}>
+                        <Text style={styles.HeadingText}>My PartnerPreferences</Text>
+                        {/* Left Column */}
+                        <View style={[styles.flexContainer1, { borderWidth: 0, paddingHorizontal: 0, paddingVertical: 0 }]}>
+                            <View style={styles.column}>
+                                {profileData?.partnerPreferences?.partnerBodyStructure && (
+                                    <Text style={styles.text}>Body Structure: {profileData.partnerPreferences.partnerBodyStructure}</Text>
+                                )}
+                                {profileData?.partnerPreferences?.partnerDietaryHabits && (
+                                    <Text style={styles.text}>Diet: {profileData.partnerPreferences.partnerDietaryHabits}</Text>
+                                )}
+                                {profileData?.partnerPreferences?.partnerSmokingHabits && (
+                                    <Text style={styles.text}>Smoke: {profileData.partnerPreferences.partnerSmokingHabits}</Text>
+                                )}
+                                {profileData?.partnerPreferences?.partnerDrinkingHabits && (
+                                    <Text style={styles.text}>Drinking: {profileData.partnerPreferences.partnerDrinkingHabits}</Text>
+                                )}
+                                {profileData?.partnerPreferences?.partnerDisabilities && (
+                                    <Text style={styles.text}>Disabilities: {profileData.partnerPreferences.partnerDisabilities}</Text>
+                                )}
+                                {profileData?.partnerPreferences?.partnerManglikStatus && (
+                                    <Text style={styles.text}>Manglik: {profileData.partnerPreferences.partnerManglikStatus}</Text>
+                                )}
+                                {profileData?.partnerPreferences?.partnerFamilyType && (
+                                    <Text style={styles.text}>Family Type: {profileData.partnerPreferences.partnerFamilyType}</Text>
+                                )}
+                            </View>
+
+                            {/* Right Column */}
+                            <View style={styles.column}>
+                                {profileData?.partnerPreferences?.partnerMinAge && profileData?.partnerPreferences?.partnerMaxAge && (
+                                    <Text style={styles.text}>Age Range: {profileData.partnerPreferences.partnerMinAge} - {profileData.partnerPreferences.partnerMaxAge} yrs</Text>
+                                )}
+                                {profileData?.partnerPreferences?.partnerMinHeightFeet && profileData?.partnerPreferences?.partnerMaxHeightFeet && (
+                                    <Text style={styles.text}>Height Range: {profileData.partnerPreferences.partnerMinHeightFeet} - {profileData.partnerPreferences.partnerMaxHeightFeet} ft</Text>
+                                )}
+                                {profileData?.partnerPreferences?.partnerIncome && (
+                                    <Text style={styles.text}>Income: {profileData.partnerPreferences.partnerIncome} INR</Text>
+                                )}
+                                {profileData?.partnerPreferences?.partnerOccupation && (
+                                    <Text style={styles.text}>Occupation: {profileData.partnerPreferences.partnerOccupation}</Text>
+                                )}
+                                {profileData?.partnerPreferences?.partnerQualification && (
+                                    <Text style={styles.text}>Qualification: {profileData.partnerPreferences.partnerQualification}</Text>
+                                )}
+                                {profileData?.partnerPreferences?.partnerState && (
+                                    <Text style={styles.text}>State: {profileData.partnerPreferences.partnerState}</Text>
+                                )}
+                                {profileData?.partnerPreferences?.partnerCity && (
+                                    <Text style={styles.text}>City: {profileData.partnerPreferences.partnerCity}</Text>
+                                )}
+                            </View>
+                        </View>
+                    </View>
+                </>
+            )}
+            {profileType === "Pandit" && (
+                <ScrollView showsVerticalScrollIndicator={false}>
+                    <View style={styles.profileSection}>
+                        <Image source={{ uri: profileData?.profilePhoto }} style={styles.profileImage} />
+                        <View>
+                            <Text style={styles.name}>{profileData?.fullName}</Text>
+                            <View style={styles.FlexContainer}>
+                                <Text style={styles.city}>{profileData?.city}</Text>
+                                <Text style={styles.surname}>{profileData?.state}</Text>
+                            </View>
+                            <View style={styles.FlexContainer}>
+                                <Rating
+                                    type="star"
+                                    ratingCount={5}
+                                    imageSize={15}
+                                    startingValue={profileData?.ratings}
+                                    readonly
+                                />
+                                <Text style={styles.rating}>
+                                    {profileData?.ratings?.length > 0 ? `${profileData.ratings.length} Reviews` : "No Ratings Yet"}
+                                </Text>
+
+                            </View>
+                            <Text style={styles.surname}>{profileData?.subCaste}</Text>
+                        </View>
+                    </View>
+                    <View style={styles.contentContainer}>
+                        <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('UpdateProfileDetails', { profileData, profileType })}>
+                            <Text style={styles.editButtonText}>Edit Profile</Text>
+                        </TouchableOpacity>
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>Description</Text>
+                            <Text style={styles.text}>{profileData?.description}</Text>
+                        </View>
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>Services List</Text>
+                            <View style={styles.servicesGrid}>
+                                {profileData?.panditServices.map((service, index) => (
+                                    <View key={index} style={styles.serviceContainer}>
+                                        <Text style={styles.serviceText}>{service}</Text>
+                                    </View>
+                                ))}
+                            </View>
+                        </View>
+                    </View>
+                    <View style={styles.container}>
+                        {renderImages(images)}
+                    </View>
+                    <View style={styles.socialIcons}>
+                        {profileData?.websiteUrl && (
+                            <TouchableOpacity onPress={() => openLink(profileData?.websiteUrl, "Website")}>
+                                <Image source={require('../../Images/website.png')} style={styles.websiteIcon} />
+                            </TouchableOpacity>
+                        )}
+                        {profileData?.youtubeUrl && (
+                            <TouchableOpacity onPress={() => openLink(profileData?.youtubeUrl, "YouTube")}>
+                                <MaterialCommunityIcons name="youtube" size={30} color="#FF0000" />
+                            </TouchableOpacity>
+                        )}
+                        {profileData?.whatsapp && (
+                            <TouchableOpacity onPress={() => openLink(profileData?.whatsapp, "WhatsApp")}>
+                                <FontAwesome5 name="whatsapp" size={30} color="#25D366" />
+                            </TouchableOpacity>
+                        )}
+                        {profileData?.facebookUrl && (
+                            <TouchableOpacity onPress={() => openLink(profileData?.facebookUrl, "Facebook")}>
+                                <FontAwesome5 name="facebook" size={30} color="#3b5998" />
+                            </TouchableOpacity>
+                        )}
+                        {profileData?.instagramUrl && (
+                            <TouchableOpacity onPress={() => openLink(profileData?.instagramUrl, "Instagram")}>
+                                <FontAwesome5 name="instagram" size={30} color="#E4405F" />
+                            </TouchableOpacity>
+                        )}
+                    </View>
+                    <Image source={require('../../Images/slider.png')} style={styles.Bottomimage} />
+                </ScrollView>
+            )}
+
+            {profileType === 'Kathavachak' && (
+                <ScrollView showsVerticalScrollIndicator={false}>
+                    <View style={styles.profileSection}>
+                        <Image source={{ uri: profileData?.profilePhoto }} style={styles.profileImage} />
+                        <View>
+                            <Text style={styles.name}>{profileData?.fullName}</Text>
+                            <View style={styles.FlexContainer}>
+                                <Text style={styles.city}>{profileData?.city}</Text>
+                                <Text style={styles.surname}>{profileData?.state}</Text>
+                            </View>
+                            <View style={styles.FlexContainer}>
+                                <Rating
+                                    type="star"
+                                    ratingCount={5}
+                                    imageSize={15}
+                                    startingValue={profileData?.ratings}
+                                    readonly
+                                />
+                                <Text style={styles.rating}>
+                                    {profileData?.ratings?.length > 0 ? `${profileData.ratings.length} Reviews` : "No Ratings Yet"}
+                                </Text>
+
+                            </View>
+                            <Text style={styles.surname}>{profileData?.subCaste}</Text>
+                        </View>
+                    </View>
+                    <View style={styles.contentContainer}>
+                        <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('UpdateProfileDetails', { profileData, profileType })}>
+                            <Text style={styles.editButtonText}>Edit Profile</Text>
+                        </TouchableOpacity>
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>Description</Text>
+                            <Text style={styles.text}>{profileData?.description}</Text>
+                        </View>
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>Services List</Text>
+                            <View style={styles.servicesGrid}>
+                                {profileData?.kathavachakServices.map((service, index) => (
+                                    <View key={index} style={styles.serviceContainer}>
+                                        <Text style={styles.serviceText}>{service}</Text>
+                                    </View>
+                                ))}
+                            </View>
+                        </View>
+                    </View>
+                    <View style={styles.container}>
+                        {renderImages(images)}
+                    </View>
+                    <View style={styles.socialIcons}>
+                        {profileData?.websiteUrl && (
+                            <TouchableOpacity onPress={() => openLink(profileData?.websiteUrl, "Website")}>
+                                <Image source={require('../../Images/website.png')} style={styles.websiteIcon} />
+                            </TouchableOpacity>
+                        )}
+                        {profileData?.youtubeUrl && (
+                            <TouchableOpacity onPress={() => openLink(profileData?.youtubeUrl, "YouTube")}>
+                                <MaterialCommunityIcons name="youtube" size={30} color="#FF0000" />
+                            </TouchableOpacity>
+                        )}
+                        {profileData?.whatsapp && (
+                            <TouchableOpacity onPress={() => openLink(profileData?.whatsapp, "WhatsApp")}>
+                                <FontAwesome5 name="whatsapp" size={30} color="#25D366" />
+                            </TouchableOpacity>
+                        )}
+                        {profileData?.facebookUrl && (
+                            <TouchableOpacity onPress={() => openLink(profileData?.facebookUrl, "Facebook")}>
+                                <FontAwesome5 name="facebook" size={30} color="#3b5998" />
+                            </TouchableOpacity>
+                        )}
+                        {profileData?.instagramUrl && (
+                            <TouchableOpacity onPress={() => openLink(profileData?.instagramUrl, "Instagram")}>
+                                <FontAwesome5 name="instagram" size={30} color="#E4405F" />
+                            </TouchableOpacity>
+                        )}
+                    </View>
+                    <Image source={require('../../Images/slider.png')} style={styles.Bottomimage} />
+                </ScrollView>
+            )}
+            {profileType === 'Astrologer' && (
+                <ScrollView showsVerticalScrollIndicator={false}>
+                    <View style={styles.profileSection}>
+                        <Image source={{ uri: profileData?.profilePhoto }} style={styles.profileImage} />
+                        <View>
+                            <Text style={styles.name}>{profileData?.fullName}</Text>
+                            <View style={styles.FlexContainer}>
+                                <Text style={styles.city}>{profileData?.city}</Text>
+                                <Text style={styles.surname}>{profileData?.state}</Text>
+                            </View>
+                            <View style={styles.FlexContainer}>
+                                <Rating
+                                    type="star"
+                                    ratingCount={5}
+                                    imageSize={15}
+                                    startingValue={profileData?.ratings}
+                                    readonly
+                                />
+                                <Text style={styles.rating}>
+                                    {profileData?.ratings?.length > 0 ? `${profileData.ratings.length} Reviews` : "No Ratings Yet"}
+                                </Text>
+
+                            </View>
+                            <Text style={styles.surname}>{profileData?.subCaste}</Text>
+                        </View>
+                    </View>
+                    <View style={styles.contentContainer}>
+                        <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('UpdateProfileDetails', { profileData, profileType })}>
+                            <Text style={styles.editButtonText}>Edit Profile</Text>
+                        </TouchableOpacity>
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>Description</Text>
+                            <Text style={styles.text}>{profileData?.description}</Text>
+                        </View>
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>Services List</Text>
+                            <View style={styles.servicesGrid}>
+                                {profileData?.jyotishServices.map((service, index) => (
+                                    <View key={index} style={styles.serviceContainer}>
+                                        <Text style={styles.serviceText}>{service}</Text>
+                                    </View>
+                                ))}
+                            </View>
+                        </View>
+                    </View>
+                    <View style={styles.container}>
+                        {renderImages(images)}
+                    </View>
+                    <View style={styles.socialIcons}>
+                        {profileData?.websiteUrl && (
+                            <TouchableOpacity onPress={() => openLink(profileData?.websiteUrl, "Website")}>
+                                <Image source={require('../../Images/website.png')} style={styles.websiteIcon} />
+                            </TouchableOpacity>
+                        )}
+                        {profileData?.youtubeUrl && (
+                            <TouchableOpacity onPress={() => openLink(profileData?.youtubeUrl, "YouTube")}>
+                                <MaterialCommunityIcons name="youtube" size={30} color="#FF0000" />
+                            </TouchableOpacity>
+                        )}
+                        {profileData?.whatsapp && (
+                            <TouchableOpacity onPress={() => openLink(profileData?.whatsapp, "WhatsApp")}>
+                                <FontAwesome5 name="whatsapp" size={30} color="#25D366" />
+                            </TouchableOpacity>
+                        )}
+                        {profileData?.facebookUrl && (
+                            <TouchableOpacity onPress={() => openLink(profileData?.facebookUrl, "Facebook")}>
+                                <FontAwesome5 name="facebook" size={30} color="#3b5998" />
+                            </TouchableOpacity>
+                        )}
+                        {profileData?.instagramUrl && (
+                            <TouchableOpacity onPress={() => openLink(profileData?.instagramUrl, "Instagram")}>
+                                <FontAwesome5 name="instagram" size={30} color="#E4405F" />
+                            </TouchableOpacity>
+                        )}
+                    </View>
+                    <Image source={require('../../Images/slider.png')} style={styles.Bottomimage} />
+                </ScrollView>
+            )}
+        </ScrollView>
+    );
+};
+
+export default ProfileDetail;

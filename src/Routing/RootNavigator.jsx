@@ -62,6 +62,8 @@ import axios from 'axios';
 import IntrestReceivedProfilePage from '../Screens/StackScreens/IntrestReceivedProfilePage';
 import ViewEntityImages from '../Screens/StackScreens/ViewEntityImages';
 import ForgotScreen from '../Screens/auth/ForgotScreen';
+import ProfileDetail from '../Screens/StackScreens/ProfileDetail';
+import UpdateProfileDetails from '../Screens/StackScreens/UpdateProfileDetails';
 
 const Stack = createNativeStackNavigator();
 const AppStackNavigator = createNativeStackNavigator();
@@ -247,6 +249,8 @@ const AppStack = () => (
     <AppStackNavigator.Screen name="PostSuccessStories" component={PostSuccessStories} />
     <AppStackNavigator.Screen name="UpdateProfile" component={UpdateProfile} />
     <AppStackNavigator.Screen name="ViewEntityImages" component={ViewEntityImages} />
+    <AppStackNavigator.Screen name="ProfileDetail" component={ProfileDetail} />
+    <AppStackNavigator.Screen name="UpdateProfileDetails" component={UpdateProfileDetails} />
   </AppStackNavigator.Navigator>
 );
 

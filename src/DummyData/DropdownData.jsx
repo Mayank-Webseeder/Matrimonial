@@ -325,7 +325,7 @@ export const subCasteOptions = [
   { label: 'Dhiman', value: 'Dhiman' },
   { label: 'Dravida', value: 'Dravida' },
   { label: 'Embrandiri', value: 'Embrandiri' },
-  { label: 'Gowda', value: 'Gowda' },
+  { label: 'Garhwali', value: 'Garhwali' },
   { label: 'Gaur', value: 'Gaur' },
   { label: 'Gurjar Gaur', value: 'Gurjar Gaur' },
   { label: 'Aadi Gaur', value: 'Aadi Gaur' },
@@ -399,10 +399,10 @@ export const subCasteOptions = [
 // export const ExperienceData = [
 //   { label: '1-3 Years', value: '1-3' },
 //   { label: '3-5 Years', value: '3-5' },
-//   { label: '5+ Years', value: '5+' },
-//   { label: '10+ Years', value: '10+' },
-//   { label: '20+ Years', value: '20+' },
-//   { label: '30+ Years', value: '30+' },
+//   { label: '5+ Years', value: '5' },
+//   { label: '10+ Years', value: '10' },
+//   { label: '20+ Years', value: '20' },
+//   { label: '30+ Years', value: '30' },
 // ];
 
 export const ExperienceData = [
@@ -424,47 +424,47 @@ export const RatingData = [
 
 export const panditServices = [
   { label: "Pujan", value: "pujan" },
-  { label: "Havan Evam Yagya", value: "havan_evam_yagya" },
+  { label: "Havan Evam Yagya", value: "havan evam yagya" },
   { label: "Rudrabhishek", value: "rudrabhishek" },
-  { label: "Mahamrityunjay Jaap", value: "mahamrityunjay_jaap" },
-  { label: "Marriage Pujan", value: "marriage_pujan" },
-  { label: "Pran Pratishtha Pujan", value: "pran_pratishtha_pujan" },
-  { label: "Yagyopavit Sanskar", value: "yagyopavit_sanskar" },
-  { label: "Mool Shanti Pujan", value: "mool_shanti_pujan" },
-  { label: "Chandi Yagya", value: "chandi_yagya" },
-  { label: "Saptashati Anushthan", value: "saptashati_anushthan" },
-  { label: "Baglamukhi Anushthan", value: "baglamukhi_anushthan" },
-  { label: "Kaal Sarp Dosh Pujan", value: "kaal_sarp_dosh_pujan" },
-  { label: "Mangaldosh Pujan", value: "mangaldosh_pujan" },
-  { label: "Pitru Dosh Pujan", value: "pitru_dosh_pujan" },
-  { label: "Rahu Ketu Dosh", value: "rahu_ketu_dosh" },
-  { label: "Navgrah Shanti", value: "navgrah_shanti" },
-  { label: "Antim Sanskar Vidhi", value: "antim_sanskar_vidhi" },
-  { label: "Asthi Visarjan Vidhi", value: "asthi_visarjan_vidhi" },
-  { label: "Pind Daan Tarpan", value: "pind_daan_tarpan" },
-  { label: "Dashakarma Vidhi", value: "dashakarma_vidhi" },
-  { label: "Garud Puram Vachan", value: "garud_puram_vachan" },
-  { label: "Shraddh Vidhi", value: "shraddh_vidhi" },
-  { label: "Tantra Sadhana", value: "tantra_sadhana" }
+  { label: "Mahamrityunjay Jaap", value: "mahamrityunjay jaap" },
+  { label: "Marriage Pujan", value: "marriage pujan" },
+  { label: "Pran Pratishtha Pujan", value: "pran pratishtha pujan" },
+  { label: "Yagyopavit Sanskar", value: "yagyopavit sanskar" },
+  { label: "Mool Shanti Pujan", value: "mool shanti pujan" },
+  { label: "Chandi Yagya", value: "chandi yagya" },
+  { label: "Saptashati Anushthan", value: "saptashati anushthan" },
+  { label: "Baglamukhi Anushthan", value: "baglamukhi anushthan" },
+  { label: "Kaal Sarp Dosh Pujan", value: "kaal sarp dosh pujan" },
+  { label: "Mangaldosh Pujan", value: "mangaldosh pujan" },
+  { label: "Pitru Dosh Pujan", value: "pitru dosh pujan" },
+  { label: "Rahu Ketu Dosh", value: "rahu ketu dosh" },
+  { label: "Navgrah Shanti", value: "navgrah shanti" },
+  { label: "Antim Sanskar Vidhi", value: "antim sanskar vidhi" },
+  { label: "Asthi Visarjan Vidhi", value: "asthi visarjan vidhi" },
+  { label: "Pind Daan Tarpan", value: "pind daan tarpan" },
+  { label: "Dashakarma Vidhi", value: "dashakarma vidhi" },
+  { label: "Garud Puram Vachan", value: "garud puram vachan" },
+  { label: "Shraddh Vidhi", value: "shraddh vidhi" },
+  { label: "Tantra Sadhana", value: "tantra sadhana" }
 ];
 
 export const jyotishServices = [
-  { label: "Janam Kundli Making", value: "janam_kundli_making" },
-  { label: "Kundli Milan", value: "kundli_milan" },
-  { label: "Astrology Consultation", value: "astrology_consultation" },
-  { label: "Palm Reading", value: "palm_reading" },
-  { label: "Face Reading", value: "face_reading" },
-  { label: "Tarot Astrology", value: "tarot_astrology" },
-  { label: "Nadi Reading", value: "nadi_reading" }
+  { label: "Janam Kundli Making", value: "janam kundli making" },
+  { label: "Kundli Milan", value: "kundli milan" },
+  { label: "Astrology Consultation", value: "astrology consultation" },
+  { label: "Palm Reading", value: "palm reading" },
+  { label: "Face Reading", value: "face reading" },
+  { label: "Tarot Astrology", value: "tarot astrology" },
+  { label: "Nadi Reading", value: "nadi reading" }
 ];
 
 export const kathavachakServices = [
-  { label: "Bhagwat Katha", value: "bhagwat_katha" },
-  { label: "Shiv Puran", value: "shiv_puran" },
-  { label: "Satsang Evam Bhajan", value: "satsang_evam_bhajan" },
-  { label: "Sundar Kand", value: "sundar_kand" },
-  { label: "Shri Ram Katha", value: "shri_ram_katha" },
-  { label: "Nani Bai Ka Mayra", value: "nani_bai_ka_mayra" }
+  { label: "Bhagwat Katha", value: "bhagwat katha" },
+  { label: "Shiv Puran", value: "shiv puran" },
+  { label: "Satsang Evam Bhajan", value: "satsang evam bhajan" },
+  { label: "Sundar Kand", value: "sundar kand" },
+  { label: "Shri Ram Katha", value: "shri ram katha" },
+  { label: "Nani Bai Ka Mayra", value: "nani bai ka mayra" }
 ];
 
 

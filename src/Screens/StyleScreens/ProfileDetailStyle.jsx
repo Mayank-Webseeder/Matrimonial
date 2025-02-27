@@ -1,0 +1,454 @@
+import { StyleSheet } from "react-native";
+import { SH, SW, SF } from "../../utils/Dimensions";
+import Colors from "../../utils/Colors";
+
+const styles = StyleSheet.create({
+    biodataname:{
+        fontSize: SF(15),
+        color: Colors.dark,
+        marginBottom: SH(2),
+        fontFamily: "Poppins-Bold",
+        paddingLeft: SW(10)
+    },
+    matrimonyImage:{
+        width: "100%",
+        height: SH(250),
+        borderRadius: 10,
+        alignSelf: 'center',
+        marginBottom: 10,
+    },
+    topContainer: {
+        marginBottom: SH(20)
+    },
+
+    sliderCotainer: {
+        height: SH(600),
+        width: "100%",
+        marginVertical: -SH(130)
+    },
+    slide: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    image: {
+        width: "100%",
+        height: SH(250),
+        borderRadius: 10,
+        alignSelf: 'center',
+        marginBottom: 10,
+    },
+    dot: {
+        backgroundColor: Colors.light,
+    },
+    activeDot: {
+        backgroundColor: Colors.light,
+    },
+    flexContainer1: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "space-between",
+        paddingHorizontal: SW(10),
+        paddingVertical: SH(10),
+        borderColor: Colors.gray,
+        borderWidth: 1,
+        borderRadius: 10,
+        width: "100%",
+        marginVertical: SH(5),
+    },
+    socialContainer:{
+        flexDirection: "row",
+        flexWrap: "wrap",
+        paddingHorizontal: SW(10),
+        paddingVertical: SH(10),
+        borderColor: Colors.gray,
+        borderWidth: 1,
+        borderRadius: 10,
+        width: "100%",
+        marginHorizontal: SW(5),
+        marginVertical:SH(5)
+    },
+
+    leftContainer: {
+        width: "52%",
+        marginBottom: SH(10),
+    },
+
+    rightContainer: {
+        width: "48%",
+        paddingTop: SH(37),
+        paddingLeft: SW(5),
+        alignSelf: "flex-start",
+    },
+
+    HeadingText: {
+        fontSize: SF(15),
+        fontFamily: "Poppins-Bold",
+        marginBottom: SH(5),
+        color: Colors.theme_color
+    },
+
+    text: {
+        fontSize: SF(13),
+        color: Colors.dark,
+        marginBottom: SH(2),
+        fontFamily: "Poppins-Regular",
+    },
+    flexContainer: {
+        paddingHorizontal: SW(10),
+        paddingVertical: SH(10),
+        borderColor: Colors.gray,
+        borderWidth: 1,
+        borderRadius: 10,
+
+    },
+    flex: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center"
+
+    },
+
+    toptext: {
+        fontSize: SF(10),
+        fontFamily: "Poppins-Regular"
+    },
+    Idtext: {
+        fontSize: SF(12),
+        fontFamily: "Poppins-Bold"
+    },
+    flexContainer2: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+        paddingHorizontal: SW(10),
+        paddingVertical: SH(10),
+        borderColor: Colors.gray,
+        borderWidth: 1,
+        borderRadius: 10,
+    },
+    column: {
+        width: "48%",
+    },
+    sharecontainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        paddingHorizontal: SW(3),
+        paddingVertical: SH(3),
+        backgroundColor: Colors.light,
+    },
+    iconContainer: {
+        alignItems: 'center',
+    },
+    iconText: {
+        fontSize: SF(12),
+        color: Colors.dark,
+        marginTop: SH(5),
+    },
+   
+    smallImage: {
+        width: SW(80),
+        height: SH(85),
+        resizeMode: "cover",
+        borderRadius: 50
+    },
+    flexContainer3: {
+        borderColor: Colors.gray,
+        borderWidth: 1,
+        borderRadius: 10,
+        marginVertical: SH(5),
+        paddingHorizontal: SW(10),
+        paddingVertical: SH(10)
+    },
+    flexContainer4: {
+        width: "100%",
+        flexDirection: "row",
+        justifyContent: "space-between",
+    },
+    label: {
+        flex: 1,
+    },
+    icon: {
+        fontSize: SF(20),
+    },
+    checkIcon: {
+        color: 'green',
+    },
+    crossIcon: {
+        color: 'red',
+    },
+    flexContainer5: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        paddingHorizontal: SW(10),
+        paddingVertical: SH(10)
+    },
+    bottomContainer: {
+        paddingVertical: SH(10),
+        paddingHorizontal: SW(10),
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "center",
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
+        borderColor: "gray",
+        borderWidth: 1
+    },
+
+    editButton:{
+     backgroundColor:Colors.theme_color,
+     alignSelf:"flex-end",
+     marginRight:SW(10),
+     paddingHorizontal:SW(10),
+     paddingVertical:SH(5),
+     borderRadius:5,
+    //  marginVertical:SH(10)
+    },
+    editButtonText:{
+        color:Colors.light,
+        fontSize:SF(13)
+    },
+    link: {
+        color: "#4948b8",
+        textDecorationLine: "underline",
+        fontSize:SF(13),
+        fontFamily:"Poppins-Bold",
+        marginHorizontal: SH(5),
+      },
+      profileSection: {
+        alignItems: 'center',
+        // marginBottom: SH(20),
+        flexDirection: "row",
+        marginHorizontal: SW(10),
+        marginTop: SH(5)
+      },
+      profileImage: {
+        width: SW(120),
+        height: SH(120),
+        resizeMode: "cover",
+        marginRight: SW(10),
+        borderRadius:5
+      },
+      name: {
+        fontSize: SF(15),
+        fontFamily: "Poppins-Bold"
+      },
+      surname: {
+        fontSize: SF(12),
+        fontFamily: "Poppins-regular"
+      },
+      city: {
+        fontSize: SF(12),
+        fontFamily: "Poppins-regular",
+        marginRight: SW(5)
+      },
+      rating: {
+        fontSize: SF(13),
+        marginVertical: SH(10),
+        marginHorizontal:SW(3)
+      },
+      FlexContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+      },
+      section: {
+        marginBottom: SH(15),
+      },
+      sectionTitle: {
+        fontSize: SF(15),
+        fontFamily: 'Poppins-Bold',
+        marginBottom: SH(8),
+      },
+      text: {
+        fontSize: SF(13),
+        fontFamily: 'Poppins-Regular',
+      },
+      servicesGrid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        marginVertical: SH(2),
+      },
+    
+      serviceContainer: {
+        backgroundColor: Colors.light,
+        borderRadius: 50,
+        elevation: 5,
+        paddingHorizontal: SW(10),
+        paddingVertical: SH(5),
+        marginHorizontal: SW(5),
+        marginVertical: SH(5),
+        width: '30%',
+        alignItems: 'center',
+        justifyContent: 'center',
+      },
+    
+      serviceText: {
+        fontSize: SF(11),
+        fontFamily: 'Poppins-Medium',
+        textAlign: 'center',
+        color: Colors.dark,
+        textAlign:"center"
+      },
+      ratingCount: {
+        marginRight: SW(260),
+        marginVertical: SH(5)
+      },
+      reviewRating: {
+        marginLeft: SW(210)
+      },
+      reviewContainer: {
+        marginBottom: SH(15),
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        overflow: 'hidden',
+        marginHorizontal: SW(10),
+        marginVertical: SH(2),
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
+        width: '95%',
+        paddingHorizontal: SW(10),
+        paddingVertical: SH(10),
+      },
+      reviewRating: {
+        marginLeft: -SW(255)
+      },
+      reviewName: {
+        fontSize: SF(16),
+        fontFamily: 'Poppins-Medium',
+      },
+      reviewStatus: {
+        fontSize: SF(13),
+        color: 'green',
+        fontFamily: "Poppins-Regular",
+      },
+      reviewDate: {
+        fontSize: SF(13),
+        color: 'gray',
+      },
+      reviewText: {
+        fontSize: SF(13),
+        marginVertical: SH(5),
+        fontFamily: "Poppins-Regular",
+      },
+      FlexContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between"
+      },
+      images: {
+        width: SW(100),
+        height: SH(100),
+        marginHorizontal: SW(5),
+        marginVertical: SH(5),
+        resizeMode: "contain"
+      },
+      socialIcons: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginHorizontal: SW(10),
+        marginVertical: SH(15)
+      },
+      sharecontainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: '#fff',
+        marginVertical: SH(10)
+      },
+      iconContainer: {
+        alignItems: 'center',
+        flexDirection: "row"
+      },
+      Button: {
+        backgroundColor: Colors.theme_color,
+        paddingHorizontal: SW(20),
+        paddingVertical: SH(3),
+        borderRadius: 8,
+        alignItems: "center",
+        width: SW(75)
+      },
+      buttonText: {
+        color: Colors.light,
+        fontFamily: "Poppins-Regular",
+        fontSize: SF(10),
+        marginLeft: SW(2)
+      },
+      iconText: {
+        fontSize: SF(13),
+        color: Colors.dark,
+        marginVertical: SH(5),
+        marginHorizontal: SW(10),
+        fontFamily: "Poppins-Regular",
+      },
+      contentContainer: {
+        marginHorizontal: SW(10),
+        marginVertical: SH(10)
+      },
+      websiteIcon: {
+        width: SW(30),
+        height: SH(30)
+      },
+      Bottomimage: {
+        width: "100%",
+        height: SH(180),
+        resizeMode: "cover",
+        marginBottom: SH(10)
+      },
+      ReviewPost: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center"
+      },
+      postReviewButton: {
+        paddingHorizontal: SW(10),
+        backgroundColor: Colors.theme_color,
+        borderRadius: 5,
+        paddingVertical: SH(4)
+      },
+      postReviewText: {
+        fontSize: SF(13),
+        color: Colors.light,
+        fontFamily: "poppins-Regular"
+    
+      },
+      viewMoreButton: {
+        paddingHorizontal: SW(4),
+        backgroundColor: Colors.theme_color,
+        borderRadius: 5,
+        marginHorizontal: SW(100),
+        paddingVertical: SW(3),
+      },
+      viewMoreText: {
+        fontSize: SF(13),
+        color: Colors.light,
+        fontFamily: "poppins-Regular",
+        textAlign: "center"
+      },
+      imageContainer: {
+        flexDirection: 'column',
+        marginTop: SH(10),
+      },
+      imageRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: SH(2),
+      },
+      image: {
+        width: '50%',
+        height: SH(100),
+        marginBottom: SH(1),
+        marginRight: SW(10),
+        borderRadius: 3
+      },
+      noReviewsText:{
+        textAlign:"center",
+        color:Colors.gray,
+        fontFamily:"Poppins-Regular"
+      }
+});
+
+export default styles;

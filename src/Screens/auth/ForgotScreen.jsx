@@ -133,8 +133,8 @@ const ForgotScreen = ({ navigation }) => {
                     color={Colors.light}
                     onPress={() => navigation.navigate("Splash")}
                 />
-                <View style={{marginTop:SH(170),marginHorizontal:SW(20)}}>
-            <Text style={[styles.text,{textAlign:"left",fontSize:SF(20)}]}>Reset Your Password</Text>
+                <View style={{marginTop:SH(190),marginHorizontal:SW(20)}}>
+            <Text style={[styles.text,{textAlign:"left",fontSize:SF(17)}]}>Reset Your Password</Text>
                     {/* Mobile Number */}
                     <View style={{marginTop:SH(20)}}>
                         <Text style={Globalstyles.title}>Mobile Number <Entypo name={'star'} color={'red'} size={12} /></Text>

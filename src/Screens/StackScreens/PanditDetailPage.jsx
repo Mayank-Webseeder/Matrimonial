@@ -17,7 +17,6 @@ import { PANDIT_DESCRIPTION } from '../../utils/BaseUrl';
 const PanditDetailPage = ({ navigation, item, route }) => {
     const { pandit_id } = route.params || {};
     const [profileData, setProfileData] = useState(null);
-    const [userRating, setUserRating] = useState(0);
     const images = profileData?.additionalPhotos || [];
     const profileType = profileData?.profileType;
 
@@ -53,7 +52,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
             });
 
             if (response.data.status === "success") {
-                console.log("response.data.data", response.data.data);
+                console.log("response.data.data", JSON.stringify(response.data.data));
                 setProfileData(response.data.data);
             } else {
                 Toast.show({
@@ -113,6 +112,13 @@ const PanditDetailPage = ({ navigation, item, route }) => {
 
         return <View style={styles.imageContainer}>{rows}</View>;
     };
+    const calculateAverageRating = (ratings) => {
+        if (!ratings || ratings.length === 0) return 0; // Agar koi rating na ho toh default 0 dikhaye
+        const total = ratings.reduce((sum, review) => sum + review.rating, 0);
+        return (total / ratings.length).toFixed(1); // Decimal me 1 place tak dikhane ke liye
+    };
+    
+    const averageRating = calculateAverageRating(profileData?.ratings);
     return (
         <SafeAreaView style={Globalstyles.container}>
             <StatusBar
@@ -203,7 +209,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                             </TouchableOpacity>
 
                         </View>
-                        <Text style={styles.rating}>{profileData?.rating} (100 star Rating)</Text>
+                        <Text style={styles.rating}>{averageRating} (⭐ Star Rating)</Text>
                         <View style={styles.ratingCount}>
                             <Rating
                                 type="star"
@@ -214,7 +220,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                             />
                         </View>
 
-                        <Text style={styles.reviewLabel}>Your Review</Text>
+                        {/* <Text style={styles.reviewLabel}>Your Review</Text>
                         <View style={styles.ratingCount}>
                             <Rating
                                 type='star'
@@ -223,7 +229,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                                 startingValue={userRating}
                                 onFinishRating={(rating) => setUserRating(rating)}
                             />
-                        </View>
+                        </View> */}
                     </View>
                 </View>
                 <View style={styles.section}>
@@ -234,7 +240,11 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                             {profileData?.ratings?.slice(0, 2).map((review, index) => (
                                 <View key={review._id || index} style={styles.reviewContainer}>
                                     <View style={styles.FlexContainer}>
-                                        <Text style={styles.reviewName}>User ID: {review.userId}</Text>
+                                        <View style={styles.FlexContainer}>
+                                            <Text style={styles.reviewName}>User: {review?.userId?.username || "Unknown"}</Text>
+
+                                        </View>
+
                                         <Text style={styles.reviewDate}>
                                             {new Date(review.createdAt).toLocaleDateString()}
                                         </Text>
@@ -256,7 +266,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                                 <TouchableOpacity
                                     onPress={() => navigation.navigate('AllReviewsPage', { reviews: profileData?.ratings })}
                                     style={styles.viewMoreButton}>
-                                    <Text style={styles.viewMoreText}>View More Reviews ({profileData?.ratings?.length - 2} more)</Text>
+                                    <Text style={styles.viewMoreText}>View More Reviews</Text>
                                 </TouchableOpacity>
                             )}
                         </>

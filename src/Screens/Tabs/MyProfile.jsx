@@ -1,4 +1,4 @@
-import { Text, View, Image, SafeAreaView, StatusBar, Modal, PermissionsAndroid, Platform, FlatList ,ActivityIndicator} from 'react-native';
+import { Text, View, Image, SafeAreaView, StatusBar, Modal, PermissionsAndroid, Platform, FlatList, ActivityIndicator } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Colors from '../../utils/Colors';
@@ -28,7 +28,8 @@ const MyProfile = ({ navigation }) => {
     const [selectedProfile, setSelectedProfile] = useState('');
     const [profileOptions, setProfileOptions] = useState([]);
     const [fetchProfileData, setFetchProfileData] = useState(null);
-    const [loading,setLoading]=useState(false);
+    const [fetchProfileDetails, setFetchProfileDetails] = useState(null);
+    const [loading, setLoading] = useState(false);
     const image = profileData?.photoUrl?.[0];
     // console.log("profileData", profileData);
     const formattedDate = moment(profileData.dob).format("DD/MM/YYYY");
@@ -48,10 +49,51 @@ const MyProfile = ({ navigation }) => {
         }
     }, [profileData]);
 
-    const handlePress = (buttonName) => {
-        setSelectedButton(buttonName);
-        navigation.navigate(buttonName);
+    const handlePress = async (profileType) => {
+        setSelectedButton(profileType);
+
+        // Profile Data se role check karna
+        const isRegistered = profileData?.[`is${profileType}`];
+
+        if (isRegistered) {
+            // Agar profile ban chuki hai, toh ProfileDetail page par le jaye
+            await fetchProfilesDetails(profileType);
+            navigation.navigate('ProfileDetail', { profileType });
+        } else {
+            // Agar profile nahi bani, toh Register page par le jaye
+            if (profileType === 'Matrimonial') {
+                navigation.navigate('MatrimonyPage');
+            } else {
+                navigation.navigate('RoleRegisterForm', { profileType });
+            }
+        }
     };
+
+
+    const fetchProfilesDetails = async (profileType) => {
+        try {
+            setLoading(true);
+            setSelectedProfile(profileType);
+            const token = await AsyncStorage.getItem('userToken');
+            const formattedType = profileType.toLowerCase(); // Convert label to lowercase
+
+            const response = await axios.get(
+                `https://api-matrimonial.webseeder.tech/api/v1/user/profiles/${formattedType}`,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+
+            console.log("Fetched Data:", response.data);
+            setFetchProfileDetails(response.data); // Store API response
+            setLoading(false);
+        } catch (error) {
+            console.error("Error fetching profiles:", error);
+            setLoading(false);
+        }
+    };
+
+
 
     const openModal = () => setProfileModalVisible(true);
     const closeModal = () => setProfileModalVisible(false);
@@ -199,7 +241,7 @@ const MyProfile = ({ navigation }) => {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            console.log("response.data",response.data);
+            console.log("response.data", response.data);
 
             setFetchProfileData(response.data); // Store API response
             setLoading(false);
@@ -221,12 +263,17 @@ const MyProfile = ({ navigation }) => {
                     <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
                         <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={openModal} style={styles.switchButton}>
-                        <Text style={styles.selectedProfileText}>
-                            {selectedProfile || "Switch Profile"}
-                        </Text>
-                        <AntDesign name="caretdown" color={Colors.theme_color} size={15} style={styles.icon} />
-                    </TouchableOpacity>
+                    {profileOptions.length > 0 ? (
+                        <TouchableOpacity onPress={openModal} style={styles.switchButton}>
+                            <Text style={styles.selectedProfileText}>
+                                {selectedProfile || "Switch Profile"}
+                            </Text>
+                            <AntDesign name="caretdown" color={Colors.theme_color} size={15} style={styles.icon} />
+                        </TouchableOpacity>
+                    ) : (
+                        <Text style={styles.headerText}>{capitalizeFirstLetter(profileData.username || 'NA')}</Text>
+                    )}
+
                     <Modal transparent={true} visible={isProfileModalVisible} animationType="fade" onRequestClose={closeModal}>
                         <View style={styles.profilemodalOverlay}>
                             <View style={styles.profilemodalContainer}>
@@ -290,74 +337,33 @@ const MyProfile = ({ navigation }) => {
                         </View>
                     </View>
 
-                    <View>
+                    <View style={{ padding: 10 }}>
                         {/* First Row */}
-                        <View style={styles.IconFlex}>
-                            <TouchableOpacity
-                                style={styles.IconsButton}
-                                onPress={() => handlePress('MatrimonyPage')}
-                            >
-                                <FontAwesome
-                                    name="id-card"
-                                    color={selectedButton === 'CreateBioData' ? 'white' : Colors.theme_color}
-                                    size={25}
-                                    style={selectedButton === 'CreateBioData' ? styles.Selectedicon : styles.icon}
-                                />
-                                <Text style={styles.logotext}>
-                                    {profileData.isMatrimonial ? 'My Bio Data' : 'Create Bio Data'}
-                                </Text>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <TouchableOpacity style={styles.IconsButton} onPress={() => handlePress('Matrimonial')}>
+                                <FontAwesome name="id-card" color={selectedButton === 'CreateBioData' ? 'white' : Colors.theme_color} size={25} style={selectedButton === 'CreateBioData' ? styles.Selectedicon : styles.icon} />
+                                <Text style={styles.logotext}>{profileData.isMatrimonial ? 'My Bio Data' : 'Create Bio Data'}</Text>
                             </TouchableOpacity>
 
-                            <TouchableOpacity
-                                style={styles.IconsButton}
-                                onPress={() => handlePress('RoleRegisterForm')}
-                            >
-                                <FontAwesome5
-                                    name={profileData.isPandit ? "user" : "user-plus"}
-                                    color={Colors.theme_color}
-                                    size={25}
-                                    style={styles.icon}
-                                />
-                                <Text style={styles.logotext}>
-                                    {profileData.isPandit ? 'My Pandit Profile' : 'Register as Pandit'}
-                                </Text>
+                            <TouchableOpacity style={styles.IconsButton} onPress={() => handlePress('Pandit')}>
+                                <FontAwesome5 name={profileData.isPandit ? "user" : "user-plus"} color={Colors.theme_color} size={25} style={styles.icon} />
+                                <Text style={styles.logotext}>{profileData.isPandit ? 'My Pandit Profile' : 'Register as Pandit'}</Text>
                             </TouchableOpacity>
                         </View>
 
                         {/* Second Row */}
-                        <View style={styles.IconFlex}>
-                            <TouchableOpacity
-                                style={styles.IconsButton}
-                                onPress={() => handlePress('RoleRegisterForm')}
-                            >
-                                <FontAwesome5
-                                    name={profileData.isAstrologer ? "user" : "user-plus"}
-                                    color={Colors.theme_color}
-                                    size={25}
-                                    style={styles.icon}
-                                />
-                                <Text style={styles.logotext}>
-                                    {profileData.isAstrologer ? 'My Jyotish Profile' : 'Register as Jyotish'}
-                                </Text>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
+                            <TouchableOpacity style={styles.IconsButton} onPress={() => handlePress('Astrologer')}>
+                                <FontAwesome5 name={profileData.isAstrologer ? "user" : "user-plus"} color={Colors.theme_color} size={25} style={styles.icon} />
+                                <Text style={styles.logotext}>{profileData.isAstrologer ? 'My Jyotish Profile' : 'Register as Jyotish'}</Text>
                             </TouchableOpacity>
 
-                            <TouchableOpacity
-                                style={styles.IconsButton}
-                                onPress={() => handlePress('RoleRegisterForm')}
-                            >
-                                <FontAwesome5
-                                    name={profileData.isKathavachak ? "user" : "user-plus"}
-                                    color={Colors.theme_color}
-                                    size={25}
-                                    style={styles.icon}
-                                />
-                                <Text style={styles.logotext}>
-                                    {profileData.isKathavachak ? 'My Kathavachak Profile' : 'Register as Kathavachak'}
-                                </Text>
+                            <TouchableOpacity style={styles.IconsButton} onPress={() => handlePress('Kathavachak')}>
+                                <FontAwesome5 name={profileData.isKathavachak ? "user" : "user-plus"} color={Colors.theme_color} size={25} style={styles.icon} />
+                                <Text style={styles.logotext}>{profileData.isKathavachak ? 'My Kathavachak Profile' : 'Register as Kathavachak'}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
-
 
                 </View>
             </View>

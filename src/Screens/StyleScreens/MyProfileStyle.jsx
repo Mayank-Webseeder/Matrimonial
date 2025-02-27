@@ -38,6 +38,12 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins-Bold",
         fontSize: SF(17)
     },
+    headerText: {
+        color: Colors.theme_color,
+        fontSize: SF(15),
+        fontFamily: "Poppins-Regular",
+        marginHorizontal: SW(10)
+    },
     userDeatil: {
         borderColor: Colors.gray,
         borderWidth: 1,

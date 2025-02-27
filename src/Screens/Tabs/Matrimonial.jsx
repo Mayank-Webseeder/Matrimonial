@@ -10,7 +10,7 @@ import { FEMALE_FILTER_API, MALE_FILTER_API, SET_PREFRENCE_FILTER_API } from '..
 import { slider } from '../../DummyData/DummyData';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import { useFocusEffect } from '@react-navigation/native';
-
+import { useSelector } from 'react-redux';
 const Matrimonial = ({ navigation }) => {
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -22,7 +22,10 @@ const Matrimonial = ({ navigation }) => {
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchMode, setSearchMode] = useState(false);
+  const MyprofileData = useSelector((state) => state.getBiodata);
+  const partnerPreferences = MyprofileData?.Biodata?.partnerPreferences || null;
 
+  // console.log("MyprofileData", MyprofileData);
   useEffect(() => {
     if (searchQuery.length > 0) {
       fetchProfiles(searchQuery);
@@ -133,47 +136,55 @@ const Matrimonial = ({ navigation }) => {
     }
   };
 
-  const renderProfileCard = ({ item }) => (
-    <Pressable style={styles.card} onPress={() => navigation.navigate('MatrimonyPeopleProfile', { details: item, details_userId: item?.userId })}>
+  const renderProfileCard = ({ item }) => {
+    const isPressable = partnerPreferences !== null && partnerPreferences !== undefined; // Only check global partnerPreferences
 
-      <Image
-        source={item.personalDetails.bestPhoto ? { uri: item.personalDetails.bestPhoto } : require('../../Images/NoImage.png')}
-        style={styles.ProfileImage}
-      />
+    return (
+        <Pressable 
+            style={styles.card} 
+            onPress={isPressable ? () => navigation.navigate('MatrimonyPeopleProfile', { details: item, details_userId: item?.userId }) : null}
+            disabled={!isPressable} // Disable press if global partnerPreferences is missing
+        >
+            <Image
+                source={item.personalDetails.closeUpPhoto ? { uri: item.personalDetails.closeUpPhoto } : require('../../Images/NoImage.png')}
+                style={styles.ProfileImage}
+            />
 
+            <View style={styles.profileData}>
+                {/* Full Name at the Top */}
+                <View style={styles.nameContainer}>
+                    <Text style={[styles.text, styles.boldText]}>{item?.personalDetails?.fullname}</Text>
+                </View>
 
-      <View style={styles.profileData}>
-        {/* Full Name at the Top */}
-        <View style={styles.nameContainer}>
-          <Text style={[styles.text, styles.boldText]}>{item?.personalDetails?.fullname}</Text>
-        </View>
+                {/* Two Column Layout */}
+                <View style={styles.columnsContainer}>
+                    {/* Left Column */}
+                    <View style={styles.leftColumn}>
+                        <Text style={[styles.text, styles.rowItem]}>
+                            {new Date().getFullYear() - new Date(item?.personalDetails?.dob).getFullYear()} Yrs. , {item?.personalDetails?.heightFeet}
+                        </Text>
+                        <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.subCaste}</Text>
+                        <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.maritalStatus}</Text>
+                        <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.manglikStatus}</Text>
+                        <Text style={[styles.text, styles.rowItem]}>Disability: {item?.personalDetails?.disabilities}</Text>
+                    </View>
 
-        {/* Two Column Layout */}
-        <View style={styles.columnsContainer}>
-          {/* Left Column */}
-          <View style={styles.leftColumn}>
-            <Text style={[styles.text, styles.rowItem]}>
-              {new Date().getFullYear() - new Date(item?.personalDetails?.dob).getFullYear()} Yrs. , {item?.personalDetails?.heightFeet}
-            </Text>
-            <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.subCaste}</Text>
-            <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.maritalStatus}</Text>
-            <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.manglikStatus}</Text>
-            <Text style={[styles.text, styles.rowItem]}>Disability: {item?.personalDetails?.disabilities}</Text>
-          </View>
-
-          {/* Right Column */}
-          <View style={styles.rightColumn}>
-            <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.currentCity}</Text>
-            <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.occupation}</Text>
-            <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.annualIncome} INR </Text>
-            <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.qualification}</Text>
-          </View>
-        </View>
-      </View>
-    </Pressable>
-  );
-
+                    {/* Right Column */}
+                    <View style={styles.rightColumn}>
+                        <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.currentCity}</Text>
+                        <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.occupation}</Text>
+                        <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.annualIncome} INR </Text>
+                        <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.qualification}</Text>
+                    </View>
+                </View>
+            </View>
+        </Pressable>
+    );
+};
   const dataToDisplay = searchMode ? profiles : (activeButton === 1 ? girlsProfiles : activeButton === 2 ? boysProfiles : preferenceProfiles);
+ useEffect(()=>{
+  console.log("dataToDisplay",dataToDisplay);
+ },[])
 
   return (
     <SafeAreaView style={Globalstyles.container}>

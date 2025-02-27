@@ -116,6 +116,13 @@ const KathavachakDetailsPage = ({ navigation, item, route }) => {
 
         return <View style={styles.imageContainer}>{rows}</View>;
     };
+    const calculateAverageRating = (ratings) => {
+        if (!ratings || ratings.length === 0) return 0; // Agar koi rating na ho toh default 0 dikhaye
+        const total = ratings.reduce((sum, review) => sum + review.rating, 0);
+        return (total / ratings.length).toFixed(1); // Decimal me 1 place tak dikhane ke liye
+    };
+    
+    const averageRating = calculateAverageRating(profileData?.ratings);
     return (
         <SafeAreaView style={Globalstyles.container}>
             <StatusBar
@@ -206,7 +213,7 @@ const KathavachakDetailsPage = ({ navigation, item, route }) => {
                             </TouchableOpacity>
 
                         </View>
-                        <Text style={styles.rating}>{profileData?.rating} (100 star Rating)</Text>
+                        <Text style={styles.rating}>{averageRating} (⭐ Star Rating)</Text>
                         <View style={styles.ratingCount}>
                             <Rating
                                 type="star"
@@ -217,7 +224,7 @@ const KathavachakDetailsPage = ({ navigation, item, route }) => {
                             />
                         </View>
 
-                        <Text style={styles.reviewLabel}>Your Review</Text>
+                        {/* <Text style={styles.reviewLabel}>Your Review</Text>
                         <View style={styles.ratingCount}>
                             <Rating
                                 type='star'
@@ -226,7 +233,7 @@ const KathavachakDetailsPage = ({ navigation, item, route }) => {
                                 startingValue={userRating}
                                 onFinishRating={(rating) => setUserRating(rating)}
                             />
-                        </View>
+                        </View> */}
                     </View>
                 </View>
                 <View style={styles.section}>
@@ -237,7 +244,7 @@ const KathavachakDetailsPage = ({ navigation, item, route }) => {
                             {profileData?.ratings?.slice(0, 2).map((review, index) => (
                                 <View key={review._id || index} style={styles.reviewContainer}>
                                     <View style={styles.FlexContainer}>
-                                        <Text style={styles.reviewName}>User ID: {review.userId}</Text>
+                                        <Text style={styles.reviewName}>User ID: {review?.userId?.username}</Text>
                                         <Text style={styles.reviewDate}>
                                             {new Date(review.createdAt).toLocaleDateString()}
                                         </Text>
@@ -259,7 +266,7 @@ const KathavachakDetailsPage = ({ navigation, item, route }) => {
                                 <TouchableOpacity
                                     onPress={() => navigation.navigate('AllReviewsPage', { reviews: profileData?.ratings })}
                                     style={styles.viewMoreButton}>
-                                    <Text style={styles.viewMoreText}>View More Reviews ({profileData?.ratings?.length - 2} more)</Text>
+                                    <Text style={styles.viewMoreText}>View More Reviews</Text>
                                 </TouchableOpacity>
                             )}
                         </>

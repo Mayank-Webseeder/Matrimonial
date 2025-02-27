@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: 'black',
-    marginVertical: SH(20),
+    marginTop: SH(20),
     borderRadius: 8,
     marginHorizontal: SW(6)
   },
@@ -147,12 +147,12 @@ const styles = StyleSheet.create({
   },
   panditListData: {
     marginVertical: SH(10),
-    marginBottom: SH(20),
+    marginBottom: SH(10),
     marginTop: 0
   },
   leftContainer: {
     marginHorizontal: SW(10),
-    marginVertical: SH(15)
+    marginTop: SH(10),
   },
   searchContainer: {
     flexDirection: "row",

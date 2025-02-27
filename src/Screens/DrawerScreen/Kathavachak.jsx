@@ -14,7 +14,7 @@ import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import axios from 'axios';
 import { slider } from '../../DummyData/DummyData';
-import { GET_ALL_JYOTISH, GET_ALL_KATHAVACHAK } from '../../utils/BaseUrl';
+import { GET_ALL_KATHAVACHAK } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { SH, SW } from '../../utils/Dimensions';
@@ -29,17 +29,20 @@ const Kathavachak = ({ navigation }) => {
   const [locality, setLocality] = useState('');
   const [rating, setRating] = useState(null);
   const [experience, setExperience] = useState(null);
-  const [JyotishData, setJyotishData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [kathavachakData, setKathavachakData] = useState(null);
+  const [isLoading, setLoading] = useState(false);
+  const [modalLocality, setModalLocality] = useState('');
+ 
+   const handleOpenFilter = () => {
+     setModalVisible(true);
+     setActiveButton(1);
+   };
+ 
+   const handleCloseFilter = () => {
+     setModalVisible(false);
+     KathavachakDataAPI("modal");
+   };
 
-  const handleOpenFilter = () => {
-    setModalVisible(true);
-    setActiveButton(1);
-  };
-
-  const handleCloseFilter = () => {
-    setModalVisible(false);
-  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -55,33 +58,56 @@ const Kathavachak = ({ navigation }) => {
     return () => clearInterval(interval);
   }, [currentIndex]);
 
-  const KathavachakDataAPI = async () => {
+  const KathavachakDataAPI = async (filterType = "search") => {
     try {
-      setIsLoading(true);
+      setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("Authorization token is missing.");
+      if (!token) throw new Error("No token found");
 
       const headers = {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
       };
-      const response = await axios.get(GET_ALL_KATHAVACHAK, { headers });
-      console.log("response",JSON.stringify(response.data))
-      setJyotishData(response.data.data);
-    } catch (error) {
-      console.log("Error fetching kathavachak data:", error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
+      let queryParams = [];
 
-  useFocusEffect(
-    React.useCallback(() => {
-      KathavachakDataAPI();
-    }, [])
-  );
+      if (filterType === "search") {
+          if (locality.trim()) queryParams.push(`locality=${encodeURIComponent(locality.toLowerCase())}`);
+      } else if (filterType === "modal") {
+          if (modalLocality.trim()) queryParams.push(`locality=${encodeURIComponent(modalLocality.toLowerCase())}`);
+          if (services) queryParams.push(`services=${encodeURIComponent(services)}`);
+          if (rating && rating.trim()) queryParams.push(`rating=${encodeURIComponent(rating)}`);
+          if (experience && experience.trim()) queryParams.push(`experience=${encodeURIComponent(experience)}`);
+      }
 
+      // ⚡️ Construct URL only with valid params
+      const url = queryParams.length > 0 
+          ? `${GET_ALL_KATHAVACHAK}?${queryParams.join("&")}` 
+          : GET_ALL_KATHAVACHAK;
+          
+      console.log("Fetching Data from:", url);
+
+      const response = await axios.get(url, { headers });
+      console.log("response.data?.data",response.data?.data);
+      setKathavachakData(response.data?.data || []);
+  } catch (error) {
+      console.error("Error fetching Pandit data:", error);
+  } finally {
+      setLoading(false);
+  }
+};
+
+useFocusEffect(
+     React.useCallback(() => {
+       setLocality('');
+       setModalLocality('')
+       setRating(' ')
+       setExperience(' ')
+       setServices('')
+       setKathavachakData([]);
+       KathavachakDataAPI("all");
+     }, [])
+   );
   const renderSkeleton = () => (
     <SkeletonPlaceholder>
       <View style={{ margin:SH(20) }}>
@@ -159,7 +185,13 @@ const Kathavachak = ({ navigation }) => {
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.searchbar}>
-          <TextInput placeholder="Search in Your city" placeholderTextColor={'gray'} />
+         <TextInput 
+                   placeholder="Search in Your city" 
+                   value={locality} 
+                   onChangeText={(text) => setLocality(text)}
+                   onSubmitEditing={() => fetchPanditData("search")}
+                   placeholderTextColor={"gray"}
+                 />
           <AntDesign name={'search1'} size={20} color={'gray'} />
         </View>
 
@@ -197,7 +229,7 @@ const Kathavachak = ({ navigation }) => {
 
         {isLoading ? renderSkeleton() : (
           <FlatList
-            data={JyotishData}
+            data={kathavachakData}
             renderItem={renderItem}
             keyExtractor={(item) => item._id}
             scrollEnabled={false}
@@ -233,8 +265,8 @@ const Kathavachak = ({ navigation }) => {
               <View>
                 <TextInput
                   style={Globalstyles.input}
-                  value={locality}
-                  onChangeText={(text) => setLocality(text)}
+                  value={modalLocality}
+                  onChangeText={(text) => setModalLocality(text)}
                   placeholder="Enter Locality"
                   placeholderTextColor={Colors.gray}
                 />

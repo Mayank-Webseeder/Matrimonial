@@ -43,9 +43,9 @@ const Globalstyles = StyleSheet.create({
   input: {
     borderColor: '#ccc',
     borderWidth: 1,
-    marginBottom: SH(15),
+    marginBottom: SH(5),
     paddingHorizontal: SW(10),
-    paddingVertical: SH(10),
+    paddingVertical: SH(7),
     borderRadius: 5,
     color: Colors.dark,
     letterSpacing: 0, textAlign: "left"
@@ -54,8 +54,8 @@ const Globalstyles = StyleSheet.create({
     height: SH(100),
     borderColor: '#ccc',
     borderWidth: 1,
-    marginBottom: SH(15),
-    padding: SW(10),
+    marginBottom: SH(5),
+    paddingHorizontal: SW(10),
     borderRadius: 5,
     color: Colors.dark
   },
@@ -82,7 +82,7 @@ const Globalstyles = StyleSheet.create({
     justifyContent: "space-between",
     borderColor: '#ccc',
     borderWidth: 1,
-    marginBottom: SH(15),
+    marginBottom: SH(5),
     paddingHorizontal: SW(10),
     borderRadius: 5,
   },
@@ -120,8 +120,8 @@ const Globalstyles = StyleSheet.create({
   dropdown: {
     borderColor: '#ccc',
     borderWidth: 1,
-    marginBottom: SH(15),
-    padding: SW(10),
+    marginBottom: SH(5),
+    paddingHorizontal: SW(10),
     borderRadius: 5,
     color: Colors.dark,
     flexDirection: "row",

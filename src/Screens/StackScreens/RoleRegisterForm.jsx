@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, SafeAreaView, StatusBar, FlatList, ActivityIndicator } from 'react-native';
 import styles from '../StyleScreens/RoleRegisterStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -45,6 +45,20 @@ const RoleRegisterForm = ({ navigation }) => {
         instagramUrl: '',
         whatsapp: ''
     });
+
+    useEffect(() => {
+        const loadFormData = async () => {
+            const savedData = await AsyncStorage.getItem('RoleRegisterData');
+            if (savedData) {
+                setRoleRegisterData(JSON.parse(savedData)); // ✅ Restore saved data
+            }
+        };
+        loadFormData();
+    }, []);
+
+    useEffect(() => {
+        AsyncStorage.setItem('RoleRegisterData', JSON.stringify(RoleRegisterData));
+    }, [RoleRegisterData]);
 
     const roleOptions = [
         { label: 'Pandit', value: 'Pandit' },
@@ -136,7 +150,7 @@ const RoleRegisterForm = ({ navigation }) => {
 
 
     const handleSubmit = async () => {
-        setIsLoading(true)
+        setIsLoading(true);
         const roleApiMapping = {
             Pandit: CREATE_PANDIT,
             Jyotish: CREATE_JYOTISH,
@@ -150,9 +164,9 @@ const RoleRegisterForm = ({ navigation }) => {
             state: RoleRegisterData.state,
             city: RoleRegisterData.city,
             subCaste: RoleRegisterData.subCaste,
-            profilePhoto: RoleRegisterData.profilePhoto, // ✅ Base64 format
-            additionalPhotos: RoleRegisterData.additionalPhotos, // ✅ Base64 format array
-            experience: RoleRegisterData.experience,
+            profilePhoto: RoleRegisterData.profilePhoto,
+            additionalPhotos: RoleRegisterData.additionalPhotos,
+            experience: String(RoleRegisterData.experience),
             description: RoleRegisterData.description,
             websiteUrl: RoleRegisterData.websiteUrl,
             facebookUrl: RoleRegisterData.facebookUrl,
@@ -176,7 +190,7 @@ const RoleRegisterForm = ({ navigation }) => {
             for (const role of selectedRoles) {
                 const url = roleApiMapping[role];
 
-                // ✅ Sirf us role ke services filter karke bhej rahe hain
+                // ✅ Filter only the selected services for the specific role
                 const filteredServices = Object.keys(checked).filter(service =>
                     servicesOptions[role].some(option => option.value === service) && checked[service]
                 );
@@ -186,7 +200,7 @@ const RoleRegisterForm = ({ navigation }) => {
                     [`${role.toLowerCase()}Services`]: filteredServices,
                 };
 
-                console.log(`Sending Payload for ${role}:`, payload); // ✅ Debugging ke liye
+                console.log(`Sending Payload for ${role}:`, payload); // ✅ Debugging
 
                 const response = await axios.post(url, payload, { headers });
 
@@ -196,21 +210,23 @@ const RoleRegisterForm = ({ navigation }) => {
                     text2: `Successfully registered for ${role}.`,
                 });
             }
+
+            // ✅ Clear saved form data after successful registration
+            await AsyncStorage.removeItem('RoleRegisterData');
+
         } catch (error) {
-            console.error('Error:', error.message);
+            console.error('Error:', error.response?.data);
 
             Toast.show({
                 type: 'error',
                 text1: 'Error',
-                text2: error.message,
+                text2: error.response?.data?.message || 'Something went wrong!',
             });
-        }
-        finally {
-            setIsLoading(false)
+
+        } finally {
+            setIsLoading(false);
         }
     };
-
-
 
     const handleStateInputChange = (text) => {
         setStateInput(text);
@@ -301,7 +317,13 @@ const RoleRegisterForm = ({ navigation }) => {
         }));
     };
 
+    const [tempUrlData, setTempUrlData] = useState({}); // Temporarily store input
+
     const validateAndSetUrl = (text, type) => {
+        setTempUrlData((prev) => ({ ...prev, [type]: text })); // Update temp state
+    };
+
+    const handleBlur = (type) => {
         const urlPatterns = {
             websiteUrl: /^(https?:\/\/)?([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(\/\S*)?$/,
             youtubeUrl: /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/\S+$/,
@@ -310,8 +332,8 @@ const RoleRegisterForm = ({ navigation }) => {
             instagramUrl: /^(https?:\/\/)?(www\.)?instagram\.com\/\S+$/,
         };
 
-        if (!text || urlPatterns[type].test(text)) {
-            setRoleRegisterData((prev) => ({ ...prev, [type]: text }));
+        if (!tempUrlData[type] || urlPatterns[type].test(tempUrlData[type])) {
+            setRoleRegisterData((prev) => ({ ...prev, [type]: tempUrlData[type] }));
         } else {
             Toast.show({
                 type: "error",
@@ -336,7 +358,7 @@ const RoleRegisterForm = ({ navigation }) => {
 
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={Globalstyles.form}>
-                    <Text style={styles.editText}>Edit Details</Text>
+                    {/* <Text style={styles.editText}>Edit Details</Text> */}
                     <Text style={Globalstyles.title}>Name</Text>
                     <TextInput style={Globalstyles.input}
                         value={RoleRegisterData.fullName}
@@ -489,7 +511,7 @@ const RoleRegisterForm = ({ navigation }) => {
                     <Text style={Globalstyles.title}>Profile Photo</Text>
                     <View style={Globalstyles.input}>
                         <TouchableOpacity onPress={handleProfilePhotoPick}>
-                            <Text style={styles.imagePlaceholder}>upload photo</Text>
+                            <Text style={styles.imagePlaceholder}>Upload Profile Photo</Text>
                         </TouchableOpacity>
                     </View>
 
@@ -524,8 +546,9 @@ const RoleRegisterForm = ({ navigation }) => {
                     <Text style={Globalstyles.title}>Website Link</Text>
                     <TextInput
                         style={Globalstyles.input}
-                        value={RoleRegisterData.websiteUrl}
+                        value={tempUrlData.websiteUrl || RoleRegisterData.websiteUrl}
                         onChangeText={(text) => validateAndSetUrl(text, "websiteUrl")}
+                        onBlur={() => handleBlur("websiteUrl")}
                         placeholder="Give Your Website Link"
                         placeholderTextColor={Colors.gray}
                     />
@@ -533,8 +556,9 @@ const RoleRegisterForm = ({ navigation }) => {
                     <Text style={Globalstyles.title}>Youtube Link</Text>
                     <TextInput
                         style={Globalstyles.input}
-                        value={RoleRegisterData.youtubeUrl}
+                        value={tempUrlData.youtubeUrl || RoleRegisterData.youtubeUrl}
                         onChangeText={(text) => validateAndSetUrl(text, "youtubeUrl")}
+                        onBlur={() => handleBlur("youtubeUrl")}
                         placeholder="Give Your Youtube Link"
                         placeholderTextColor={Colors.gray}
                     />
@@ -542,8 +566,9 @@ const RoleRegisterForm = ({ navigation }) => {
                     <Text style={Globalstyles.title}>Whatsapp Link</Text>
                     <TextInput
                         style={Globalstyles.input}
-                        value={RoleRegisterData.whatsapp}
+                        value={tempUrlData.whatsapp || RoleRegisterData.whatsapp}
                         onChangeText={(text) => validateAndSetUrl(text, "whatsapp")}
+                        onBlur={() => handleBlur("whatsapp")}
                         placeholder="Give Your Whatsapp Link"
                         placeholderTextColor={Colors.gray}
                     />
@@ -551,8 +576,9 @@ const RoleRegisterForm = ({ navigation }) => {
                     <Text style={Globalstyles.title}>Facebook Link</Text>
                     <TextInput
                         style={Globalstyles.input}
-                        value={RoleRegisterData.facebookUrl}
+                        value={tempUrlData.facebookUrl || RoleRegisterData.facebookUrl}
                         onChangeText={(text) => validateAndSetUrl(text, "facebookUrl")}
+                        onBlur={() => handleBlur("facebookUrl")}
                         placeholder="Give Your Facebook Link"
                         placeholderTextColor={Colors.gray}
                     />
@@ -560,8 +586,9 @@ const RoleRegisterForm = ({ navigation }) => {
                     <Text style={Globalstyles.title}>Instagram Link</Text>
                     <TextInput
                         style={Globalstyles.input}
-                        value={RoleRegisterData.instagramUrl}
+                        value={tempUrlData.instagramUrl || RoleRegisterData.instagramUrl}
                         onChangeText={(text) => validateAndSetUrl(text, "instagramUrl")}
+                        onBlur={() => handleBlur("instagramUrl")}
                         placeholder="Give Your Instagram Link"
                         placeholderTextColor={Colors.gray}
                     />

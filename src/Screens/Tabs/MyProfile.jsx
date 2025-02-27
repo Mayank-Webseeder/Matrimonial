@@ -26,82 +26,57 @@ const MyProfile = ({ navigation }) => {
     const profileData = ProfileData?.profiledata || {};
     const [isProfileModalVisible, setProfileModalVisible] = useState(false);
     const [selectedProfile, setSelectedProfile] = useState('');
-    const [profileOptions, setProfileOptions] = useState([]);
-    const [fetchProfileData, setFetchProfileData] = useState(null);
     const [fetchProfileDetails, setFetchProfileDetails] = useState(null);
     const [loading, setLoading] = useState(false);
     const image = profileData?.photoUrl?.[0];
     // console.log("profileData", profileData);
     const formattedDate = moment(profileData.dob).format("DD/MM/YYYY");
 
-    useEffect(() => {
-        if (profileData) {
-            // User ke valid profiles filter karna
-            const filteredProfiles = [
-                { key: "isMatrimonial", label: "Matrimonial" },
-                { key: "isAstrologer", label: "Astrologer" },
-                { key: "isKathavachak", label: "Kathavachak" },
-                { key: "isPandit", label: "Pandit" },
-                { key: "isActivist", label: "Activist" },
-            ].filter(item => profileData[item.key]);
-
-            setProfileOptions(filteredProfiles);
-        }
-    }, [profileData]);
-
     const handlePress = async (profileType) => {
         setSelectedButton(profileType);
 
-        // Profile Data se role check karna
-        const isRegistered = profileData?.[`is${profileType}`];
-
+        const keyMap = {
+            Biodata: "isMatrimonial",
+            Jyotish: "isJyotish",
+            Kathavachak: "isKathavachak",
+            Pandit: "isPandit",
+            Activist: "isActivist",
+        };
+    
+        const isRegistered = profileData?.[keyMap[profileType]];
+        console.log("isRegistered:", isRegistered); 
+    
         if (isRegistered) {
-            // Agar profile ban chuki hai, toh ProfileDetail page par le jaye
             await fetchProfilesDetails(profileType);
             navigation.navigate('ProfileDetail', { profileType });
         } else {
-            // Agar profile nahi bani, toh Register page par le jaye
-            if (profileType === 'Matrimonial') {
-                navigation.navigate('MatrimonyPage');
-            } else {
-                navigation.navigate('RoleRegisterForm', { profileType });
-            }
+            navigation.navigate('RoleRegisterForm', { profileType });
         }
     };
-
+    
 
     const fetchProfilesDetails = async (profileType) => {
         try {
             setLoading(true);
             setSelectedProfile(profileType);
             const token = await AsyncStorage.getItem('userToken');
-            const formattedType = profileType.toLowerCase(); // Convert label to lowercase
+            // const formattedType = profileType.toLowerCase(); // Convert label to lowercase
 
             const response = await axios.get(
-                `https://api-matrimonial.webseeder.tech/api/v1/user/profiles/${formattedType}`,
+                `https://api-matrimonial.webseeder.tech/api/v1/user/profiles/${profileType}`,
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 }
             );
 
-            console.log("Fetched Data:", response.data);
-            setFetchProfileDetails(response.data); // Store API response
+            console.log("Fetched Data:", response.data.data);
+            setFetchProfileDetails(response.data.data); // Store API response
             setLoading(false);
         } catch (error) {
             console.error("Error fetching profiles:", error);
             setLoading(false);
         }
     };
-
-
-
-    const openModal = () => setProfileModalVisible(true);
-    const closeModal = () => setProfileModalVisible(false);
-
-    // const selectProfile = (profile) => {
-    //     setSelectedProfile(profile);
-    //     closeModal();
-    // };
 
     const capitalizeFirstLetter = (text) => {
         return text ? text.charAt(0).toUpperCase() + text.slice(1) : "Unknown";
@@ -229,28 +204,6 @@ const MyProfile = ({ navigation }) => {
             });
     };
 
-    const fetchProfiles = async (profileType) => {
-        try {
-            setLoading(true);
-            setSelectedProfile(profileType);
-            const token = await AsyncStorage.getItem('userToken');
-            const formattedType = profileType.toLowerCase(); // Convert label to lowercase
-
-            const response = await axios.get(`https://api-matrimonial.webseeder.tech/api/v1/user/profiles/${formattedType}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            console.log("response.data", response.data);
-
-            setFetchProfileData(response.data); // Store API response
-            setLoading(false);
-        } catch (error) {
-            console.error("Error fetching profiles:", error);
-            setLoading(false);
-        }
-    };
-
     return (
         <SafeAreaView style={Globalstyles.container}>
             <StatusBar
@@ -263,47 +216,7 @@ const MyProfile = ({ navigation }) => {
                     <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
                         <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
                     </TouchableOpacity>
-                    {profileOptions.length > 0 ? (
-                        <TouchableOpacity onPress={openModal} style={styles.switchButton}>
-                            <Text style={styles.selectedProfileText}>
-                                {selectedProfile || "Switch Profile"}
-                            </Text>
-                            <AntDesign name="caretdown" color={Colors.theme_color} size={15} style={styles.icon} />
-                        </TouchableOpacity>
-                    ) : (
-                        <Text style={styles.headerText}>{capitalizeFirstLetter(profileData.username || 'NA')}</Text>
-                    )}
-
-                    <Modal transparent={true} visible={isProfileModalVisible} animationType="fade" onRequestClose={closeModal}>
-                        <View style={styles.profilemodalOverlay}>
-                            <View style={styles.profilemodalContainer}>
-                                <Text style={styles.profilemodalTitle}>Choose Profile</Text>
-
-                                {profileOptions.length > 0 ? (
-                                    <FlatList
-                                        data={profileOptions}
-                                        keyExtractor={(item) => item.key}
-                                        renderItem={({ item }) => (
-                                            <TouchableOpacity
-                                                style={styles.profilemodalItem}
-                                                onPress={() => fetchProfiles(item.label)}
-                                            >
-                                                <Text style={styles.profilemodalItemText}>{item.label}</Text>
-                                            </TouchableOpacity>
-                                        )}
-                                    />
-                                ) : (
-                                    <Text style={styles.noProfileText}>No Profiles Available</Text>
-                                )}
-
-                                {loading && <ActivityIndicator size="large" color="blue" style={{ marginTop: 10 }} />}
-
-                                <TouchableOpacity style={styles.profilecloseButton} onPress={closeModal}>
-                                    <Text style={styles.profilecloseButtonText}>Close</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </Modal>
+                    <Text style={styles.headerText}>{capitalizeFirstLetter(profileData.username || 'NA')}</Text>
                 </View>
             </View>
 
@@ -321,7 +234,7 @@ const MyProfile = ({ navigation }) => {
                     />
                     <View style={styles.profileButtons}>
                         <Text style={styles.editText} onPress={() => setModalVisible(true)}>Upload Photo</Text>
-                        <Text style={styles.editText} onPress={() => navigation.navigate('UpdateProfile')}>Change Profile</Text>
+                        <Text style={styles.editText} onPress={() => navigation.navigate('UpdateProfile')}>Update Profile</Text>
                     </View>
                     <View style={styles.userDeatil}>
                         <View style={styles.userData}>
@@ -340,7 +253,7 @@ const MyProfile = ({ navigation }) => {
                     <View style={{ padding: 10 }}>
                         {/* First Row */}
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <TouchableOpacity style={styles.IconsButton} onPress={() => handlePress('Matrimonial')}>
+                            <TouchableOpacity style={styles.IconsButton} onPress={() => handlePress('Biodata')}>
                                 <FontAwesome name="id-card" color={selectedButton === 'CreateBioData' ? 'white' : Colors.theme_color} size={25} style={selectedButton === 'CreateBioData' ? styles.Selectedicon : styles.icon} />
                                 <Text style={styles.logotext}>{profileData.isMatrimonial ? 'My Bio Data' : 'Create Bio Data'}</Text>
                             </TouchableOpacity>
@@ -353,9 +266,9 @@ const MyProfile = ({ navigation }) => {
 
                         {/* Second Row */}
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
-                            <TouchableOpacity style={styles.IconsButton} onPress={() => handlePress('Astrologer')}>
-                                <FontAwesome5 name={profileData.isAstrologer ? "user" : "user-plus"} color={Colors.theme_color} size={25} style={styles.icon} />
-                                <Text style={styles.logotext}>{profileData.isAstrologer ? 'My Jyotish Profile' : 'Register as Jyotish'}</Text>
+                            <TouchableOpacity style={styles.IconsButton} onPress={() => handlePress('Jyotish')}>
+                                <FontAwesome5 name={profileData.isJyotish ? "user" : "user-plus"} color={Colors.theme_color} size={25} style={styles.icon} />
+                                <Text style={styles.logotext}>{profileData.isJyotish ? 'My Jyotish Profile' : 'Register as Jyotish'}</Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity style={styles.IconsButton} onPress={() => handlePress('Kathavachak')}>

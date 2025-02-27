@@ -19,6 +19,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { SH, SW } from '../../utils/Dimensions';
 import { useFocusEffect } from '@react-navigation/native';
+
 const Jyotish = ({ navigation }) => {
   const sliderRef = useRef(null);
   const [activeButton, setActiveButton] = useState(null);
@@ -29,7 +30,8 @@ const Jyotish = ({ navigation }) => {
   const [rating, setRating] = useState(null);
   const [experience, setExperience] = useState(null);
   const [JyotishData, setJyotishData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+   const [isLoading, setLoading] = useState(false);
+ const [modalLocality, setModalLocality] = useState('');
 
   const handleOpenFilter = () => {
     setModalVisible(true);
@@ -38,6 +40,7 @@ const Jyotish = ({ navigation }) => {
 
   const handleCloseFilter = () => {
     setModalVisible(false);
+    JyotishDataAPI("modal");
   };
 
   useEffect(() => {
@@ -54,32 +57,78 @@ const Jyotish = ({ navigation }) => {
     return () => clearInterval(interval);
   }, [currentIndex]);
 
-  const JyotishDataAPI = async () => {
-    try {
-      setIsLoading(true);
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("Authorization token is missing.");
+  // const JyotishDataAPI = async () => {
+  //   try {
+  //     setIsLoading(true);
+  //     const token = await AsyncStorage.getItem("userToken");
+  //     if (!token) throw new Error("Authorization token is missing.");
 
-      const headers = {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      };
-      const response = await axios.get(GET_ALL_JYOTISH, { headers });
-      console.log("response", JSON.stringify(response.data))
-      setJyotishData(response.data.data);
+  //     const headers = {
+  //       "Content-Type": "application/json",
+  //       "Authorization": `Bearer ${token}`,
+  //     };
+  //     const response = await axios.get(GET_ALL_JYOTISH, { headers });
+  //     console.log("response", JSON.stringify(response.data))
+  //     setJyotishData(response.data.data);
+  //   } catch (error) {
+  //     console.log("Error fetching Jyotish data:", error.message);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  const JyotishDataAPI = async (filterType = "search") => {
+    try {
+        setLoading(true);
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) throw new Error("No token found");
+
+        const headers = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        };
+
+        let queryParams = [];
+
+        if (filterType === "search") {
+            if (locality.trim()) queryParams.push(`locality=${encodeURIComponent(locality.toLowerCase())}`);
+        } else if (filterType === "modal") {
+            if (modalLocality.trim()) queryParams.push(`locality=${encodeURIComponent(modalLocality.toLowerCase())}`);
+            if (services) queryParams.push(`services=${encodeURIComponent(services)}`);
+            if (rating && rating.trim()) queryParams.push(`rating=${encodeURIComponent(rating)}`);
+            if (experience && experience.trim()) queryParams.push(`experience=${encodeURIComponent(experience)}`);
+        }
+
+        // ⚡️ Construct URL only with valid params
+        const url = queryParams.length > 0 
+            ? `${GET_ALL_JYOTISH}?${queryParams.join("&")}` 
+            : GET_ALL_JYOTISH;
+            
+        console.log("Fetching Data from:", url);
+
+        const response = await axios.get(url, { headers });
+        console.log("response.data?.data",response.data?.data);
+        setJyotishData(response.data?.data || []);
     } catch (error) {
-      console.log("Error fetching Jyotish data:", error.message);
+        console.error("Error fetching Pandit data:", error);
     } finally {
-      setIsLoading(false);
+        setLoading(false);
     }
-  };
+};
 
 
   useFocusEffect(
-    React.useCallback(() => {
-      JyotishDataAPI();
-    }, [])
-  );
+     React.useCallback(() => {
+       setLocality('');
+       setModalLocality('')
+       setRating(' ')
+       setExperience(' ')
+       setServices('')
+       setJyotishData([]);
+       JyotishDataAPI("all");
+     }, [])
+   );
+ 
 
   const renderSkeleton = () => (
     <SkeletonPlaceholder>
@@ -158,7 +207,14 @@ const Jyotish = ({ navigation }) => {
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.searchbar}>
-          <TextInput placeholder="Search in Your city" placeholderTextColor={'gray'} />
+           <TextInput 
+                    placeholder="Search in Your city" 
+                    value={locality} 
+                    onChangeText={(text) => setLocality(text)}
+                    onSubmitEditing={() => JyotishDataAPI("search")}
+                    placeholderTextColor={"gray"}
+                  />
+          {/* <TextInput placeholder="Search in Your city" placeholderTextColor={'gray'} /> */}
           <AntDesign name={'search1'} size={20} color={'gray'} />
         </View>
 
@@ -232,8 +288,8 @@ const Jyotish = ({ navigation }) => {
               <View>
                 <TextInput
                   style={Globalstyles.input}
-                  value={locality}
-                  onChangeText={(text) => setLocality(text)}
+                  value={modalLocality}
+                  onChangeText={(text) => setModalLocality(text)}
                   placeholder="Enter Locality"
                   placeholderTextColor={Colors.gray}
                 />

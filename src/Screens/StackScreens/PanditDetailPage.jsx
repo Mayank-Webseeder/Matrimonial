@@ -1,4 +1,4 @@
-import { Text, View, Image, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Linking } from 'react-native';
+import { Text, View, Image, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Linking, ToastAndroid } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import styles from '../StyleScreens/PanditDetailPageStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -81,6 +81,9 @@ const PanditDetailPage = ({ navigation, item, route }) => {
         }
     };
 
+    const showToast = (message) => {
+        ToastAndroid.show(message, ToastAndroid.SHORT);
+    };
 
     const renderImages = (images) => {
         if (!images || images.length === 0) {
@@ -117,8 +120,9 @@ const PanditDetailPage = ({ navigation, item, route }) => {
         const total = ratings.reduce((sum, review) => sum + review.rating, 0);
         return (total / ratings.length).toFixed(1); // Decimal me 1 place tak dikhane ke liye
     };
-    
+
     const averageRating = calculateAverageRating(profileData?.ratings);
+
     return (
         <SafeAreaView style={Globalstyles.container}>
             <StatusBar
@@ -181,10 +185,14 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                         <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${profileData?.mobileNo}`)}>
                             <MaterialIcons name="call" size={20} color={Colors.light} />
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ReportPage')} >
+                        <TouchableOpacity
+                            style={styles.iconContainer}
+                            onPress={() => navigation.navigate('ReportPage', { profileId: profileData?._id })}
+                        >
                             <MaterialIcons name="error-outline" size={20} color={Colors.dark} />
                             <Text style={styles.iconText}>Report</Text>
                         </TouchableOpacity>
+
                     </View>
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>Services List</Text>
@@ -280,31 +288,25 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                     {renderImages(images)}
                 </View>
                 <View style={styles.socialIcons}>
-                    {profileData?.websiteUrl && (
-                        <TouchableOpacity onPress={() => openLink(profileData?.websiteUrl, "Website")}>
-                            <Image source={require('../../Images/website.png')} style={styles.websiteIcon} />
-                        </TouchableOpacity>
-                    )}
-                    {profileData?.youtubeUrl && (
-                        <TouchableOpacity onPress={() => openLink(profileData?.youtubeUrl, "YouTube")}>
-                            <MaterialCommunityIcons name="youtube" size={30} color="#FF0000" />
-                        </TouchableOpacity>
-                    )}
-                    {profileData?.whatsapp && (
-                        <TouchableOpacity onPress={() => openLink(profileData?.whatsapp, "WhatsApp")}>
-                            <FontAwesome5 name="whatsapp" size={30} color="#25D366" />
-                        </TouchableOpacity>
-                    )}
-                    {profileData?.facebookUrl && (
-                        <TouchableOpacity onPress={() => openLink(profileData?.facebookUrl, "Facebook")}>
-                            <FontAwesome5 name="facebook" size={30} color="#3b5998" />
-                        </TouchableOpacity>
-                    )}
-                    {profileData?.instagramUrl && (
-                        <TouchableOpacity onPress={() => openLink(profileData?.instagramUrl, "Instagram")}>
-                            <FontAwesome5 name="instagram" size={30} color="#E4405F" />
-                        </TouchableOpacity>
-                    )}
+                    <TouchableOpacity onPress={() => profileData?.websiteUrl ? openLink(profileData.websiteUrl, "Website") : showToast("Website link not available")}>
+                        <Image source={require('../../Images/website.png')} style={styles.websiteIcon} />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={() => profileData?.youtubeUrl ? openLink(profileData.youtubeUrl, "YouTube") : showToast("YouTube link not available")}>
+                        <MaterialCommunityIcons name="youtube" size={30} color="#FF0000" />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={() => profileData?.whatsapp ? openLink(profileData.whatsapp, "WhatsApp") : showToast("WhatsApp link not available")}>
+                        <FontAwesome5 name="whatsapp" size={30} color="#25D366" />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={() => profileData?.facebookUrl ? openLink(profileData.facebookUrl, "Facebook") : showToast("Facebook link not available")}>
+                        <FontAwesome5 name="facebook" size={30} color="#3b5998" />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={() => profileData?.instagramUrl ? openLink(profileData.instagramUrl, "Instagram") : showToast("Instagram link not available")}>
+                        <FontAwesome5 name="instagram" size={30} color="#E4405F" />
+                    </TouchableOpacity>
                 </View>
                 <Image source={require('../../Images/slider.png')} style={styles.Bottomimage} />
             </ScrollView>

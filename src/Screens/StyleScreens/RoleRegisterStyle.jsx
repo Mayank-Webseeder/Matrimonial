@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   checkboxContainer: {
     borderColor: '#ccc',
     borderWidth: 1,
-    marginBottom: SH(15),
+    marginBottom: SH(5),
     paddingHorizontal: SW(10),
     borderRadius: 5,
     flexDirection: "row",
@@ -80,6 +80,10 @@ const styles = StyleSheet.create({
     fontSize: SF(15),
     marginBottom: SH(5),
     fontFamily: "Poppins-Bold"
+  },
+  imagePlaceholder:{
+    fontFamily:"Poppins-Regular",
+    color:Colors.gray
   }
 
 });

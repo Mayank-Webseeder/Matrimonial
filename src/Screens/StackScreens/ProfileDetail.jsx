@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, ScrollView, Image, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, ActivityIndicator, ScrollView, Image, TouchableOpacity, Linking, ToastAndroid } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from '../StyleScreens/ProfileDetailStyle';
@@ -8,13 +8,13 @@ import moment from 'moment';
 import { Rating } from 'react-native-ratings';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Globalstyles from '../../utils/GlobalCss';
+
 const ProfileDetail = ({ route, navigation }) => {
     const { profileType } = route.params;
     const [profileData, setProfileData] = useState(null);
+    console.log("profileData", profileData);
     const [loading, setLoading] = useState(true);
     const images = profileData?.additionalPhotos || [];
 
@@ -23,14 +23,14 @@ const ProfileDetail = ({ route, navigation }) => {
             try {
                 const token = await AsyncStorage.getItem('userToken');
                 const response = await axios.get(
-                    `https://api-matrimonial.webseeder.tech/api/v1/user/profiles/${profileType.toLowerCase()}`,
+                    `https://api-matrimonial.webseeder.tech/api/v1/user/profiles/${profileType}`,
                     {
                         headers: { Authorization: `Bearer ${token}` },
                     }
                 );
 
                 if (response.data && Object.keys(response.data).length > 0) {
-                    setProfileData(response.data);
+                    setProfileData(response.data.data);
                 } else {
                     console.warn("Empty response received.");
                 }
@@ -66,6 +66,9 @@ const ProfileDetail = ({ route, navigation }) => {
         }
     };
 
+    const showToast = (message) => {
+        ToastAndroid.show(message, ToastAndroid.SHORT);
+    };
 
     const renderImages = (images) => {
         if (!images || images.length === 0) {
@@ -104,8 +107,6 @@ const ProfileDetail = ({ route, navigation }) => {
         return (total / ratings.length).toFixed(1); // Decimal me 1 place tak dikhane ke liye
     };
 
-    const averageRating = calculateAverageRating(profileData?.ratings);
-
     return (
         <ScrollView style={Globalstyles.container}>
             <View style={Globalstyles.header}>
@@ -119,7 +120,7 @@ const ProfileDetail = ({ route, navigation }) => {
                     <Text style={styles.HeadingText}>{profileType} Details</Text>
                 </View>
             </View>
-            {profileType === 'Matrimonial' && (
+            {profileType === 'Biodata' && (
                 <>
                     {profileData?.personalDetails?.bestPhoto && (
                         <Image
@@ -309,11 +310,11 @@ const ProfileDetail = ({ route, navigation }) => {
                                     type="star"
                                     ratingCount={5}
                                     imageSize={15}
-                                    startingValue={profileData?.ratings}
+                                    startingValue={profileData?.averageRating}
                                     readonly
                                 />
                                 <Text style={styles.rating}>
-                                    {profileData?.ratings?.length > 0 ? `${profileData.ratings.length} Reviews` : "No Ratings Yet"}
+                                    {profileData?.totalReviews > 0 ? `${profileData.totalReviews} Reviews` : "No Ratings Yet"}
                                 </Text>
 
                             </View>
@@ -343,33 +344,27 @@ const ProfileDetail = ({ route, navigation }) => {
                         {renderImages(images)}
                     </View>
                     <View style={styles.socialIcons}>
-                        {profileData?.websiteUrl && (
-                            <TouchableOpacity onPress={() => openLink(profileData?.websiteUrl, "Website")}>
-                                <Image source={require('../../Images/website.png')} style={styles.websiteIcon} />
-                            </TouchableOpacity>
-                        )}
-                        {profileData?.youtubeUrl && (
-                            <TouchableOpacity onPress={() => openLink(profileData?.youtubeUrl, "YouTube")}>
-                                <MaterialCommunityIcons name="youtube" size={30} color="#FF0000" />
-                            </TouchableOpacity>
-                        )}
-                        {profileData?.whatsapp && (
-                            <TouchableOpacity onPress={() => openLink(profileData?.whatsapp, "WhatsApp")}>
-                                <FontAwesome5 name="whatsapp" size={30} color="#25D366" />
-                            </TouchableOpacity>
-                        )}
-                        {profileData?.facebookUrl && (
-                            <TouchableOpacity onPress={() => openLink(profileData?.facebookUrl, "Facebook")}>
-                                <FontAwesome5 name="facebook" size={30} color="#3b5998" />
-                            </TouchableOpacity>
-                        )}
-                        {profileData?.instagramUrl && (
-                            <TouchableOpacity onPress={() => openLink(profileData?.instagramUrl, "Instagram")}>
-                                <FontAwesome5 name="instagram" size={30} color="#E4405F" />
-                            </TouchableOpacity>
-                        )}
+                        <TouchableOpacity onPress={() => profileData?.websiteUrl ? openLink(profileData.websiteUrl, "Website") : showToast("Website link not available")}>
+                            <Image source={require('../../Images/website.png')} style={styles.websiteIcon} />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity onPress={() => profileData?.youtubeUrl ? openLink(profileData.youtubeUrl, "YouTube") : showToast("YouTube link not available")}>
+                            <MaterialCommunityIcons name="youtube" size={30} color="#FF0000" />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity onPress={() => profileData?.whatsapp ? openLink(profileData.whatsapp, "WhatsApp") : showToast("WhatsApp link not available")}>
+                            <FontAwesome5 name="whatsapp" size={30} color="#25D366" />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity onPress={() => profileData?.facebookUrl ? openLink(profileData.facebookUrl, "Facebook") : showToast("Facebook link not available")}>
+                            <FontAwesome5 name="facebook" size={30} color="#3b5998" />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity onPress={() => profileData?.instagramUrl ? openLink(profileData.instagramUrl, "Instagram") : showToast("Instagram link not available")}>
+                            <FontAwesome5 name="instagram" size={30} color="#E4405F" />
+                        </TouchableOpacity>
                     </View>
-                    <Image source={require('../../Images/slider.png')} style={styles.Bottomimage} />
+                    {/* <Image source={require('../../Images/slider.png')} style={styles.Bottomimage} /> */}
                 </ScrollView>
             )}
 
@@ -388,15 +383,14 @@ const ProfileDetail = ({ route, navigation }) => {
                                     type="star"
                                     ratingCount={5}
                                     imageSize={15}
-                                    startingValue={profileData?.ratings}
+                                    startingValue={profileData?.averageRating}
                                     readonly
                                 />
                                 <Text style={styles.rating}>
-                                    {profileData?.ratings?.length > 0 ? `${profileData.ratings.length} Reviews` : "No Ratings Yet"}
+                                    {profileData?.totalReviews > 0 ? `${profileData.totalReviews} Reviews` : "No Ratings Yet"}
                                 </Text>
 
                             </View>
-                            <Text style={styles.surname}>{profileData?.subCaste}</Text>
                         </View>
                     </View>
                     <View style={styles.contentContainer}>
@@ -422,36 +416,30 @@ const ProfileDetail = ({ route, navigation }) => {
                         {renderImages(images)}
                     </View>
                     <View style={styles.socialIcons}>
-                        {profileData?.websiteUrl && (
-                            <TouchableOpacity onPress={() => openLink(profileData?.websiteUrl, "Website")}>
-                                <Image source={require('../../Images/website.png')} style={styles.websiteIcon} />
-                            </TouchableOpacity>
-                        )}
-                        {profileData?.youtubeUrl && (
-                            <TouchableOpacity onPress={() => openLink(profileData?.youtubeUrl, "YouTube")}>
-                                <MaterialCommunityIcons name="youtube" size={30} color="#FF0000" />
-                            </TouchableOpacity>
-                        )}
-                        {profileData?.whatsapp && (
-                            <TouchableOpacity onPress={() => openLink(profileData?.whatsapp, "WhatsApp")}>
-                                <FontAwesome5 name="whatsapp" size={30} color="#25D366" />
-                            </TouchableOpacity>
-                        )}
-                        {profileData?.facebookUrl && (
-                            <TouchableOpacity onPress={() => openLink(profileData?.facebookUrl, "Facebook")}>
-                                <FontAwesome5 name="facebook" size={30} color="#3b5998" />
-                            </TouchableOpacity>
-                        )}
-                        {profileData?.instagramUrl && (
-                            <TouchableOpacity onPress={() => openLink(profileData?.instagramUrl, "Instagram")}>
-                                <FontAwesome5 name="instagram" size={30} color="#E4405F" />
-                            </TouchableOpacity>
-                        )}
+                        <TouchableOpacity onPress={() => profileData?.websiteUrl ? openLink(profileData.websiteUrl, "Website") : showToast("Website link not available")}>
+                            <Image source={require('../../Images/website.png')} style={styles.websiteIcon} />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity onPress={() => profileData?.youtubeUrl ? openLink(profileData.youtubeUrl, "YouTube") : showToast("YouTube link not available")}>
+                            <MaterialCommunityIcons name="youtube" size={30} color="#FF0000" />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity onPress={() => profileData?.whatsapp ? openLink(profileData.whatsapp, "WhatsApp") : showToast("WhatsApp link not available")}>
+                            <FontAwesome5 name="whatsapp" size={30} color="#25D366" />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity onPress={() => profileData?.facebookUrl ? openLink(profileData.facebookUrl, "Facebook") : showToast("Facebook link not available")}>
+                            <FontAwesome5 name="facebook" size={30} color="#3b5998" />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity onPress={() => profileData?.instagramUrl ? openLink(profileData.instagramUrl, "Instagram") : showToast("Instagram link not available")}>
+                            <FontAwesome5 name="instagram" size={30} color="#E4405F" />
+                        </TouchableOpacity>
                     </View>
-                    <Image source={require('../../Images/slider.png')} style={styles.Bottomimage} />
+                    {/* <Image source={require('../../Images/slider.png')} style={styles.Bottomimage} /> */}
                 </ScrollView>
             )}
-            {profileType === 'Astrologer' && (
+            {profileType === 'Jyotish' && (
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View style={styles.profileSection}>
                         <Image source={{ uri: profileData?.profilePhoto }} style={styles.profileImage} />
@@ -466,11 +454,11 @@ const ProfileDetail = ({ route, navigation }) => {
                                     type="star"
                                     ratingCount={5}
                                     imageSize={15}
-                                    startingValue={profileData?.ratings}
+                                    startingValue={profileData?.averageRating}
                                     readonly
                                 />
                                 <Text style={styles.rating}>
-                                    {profileData?.ratings?.length > 0 ? `${profileData.ratings.length} Reviews` : "No Ratings Yet"}
+                                    {profileData?.totalReviews > 0 ? `${profileData.totalReviews} Reviews` : "No Ratings Yet"}
                                 </Text>
 
                             </View>
@@ -500,33 +488,27 @@ const ProfileDetail = ({ route, navigation }) => {
                         {renderImages(images)}
                     </View>
                     <View style={styles.socialIcons}>
-                        {profileData?.websiteUrl && (
-                            <TouchableOpacity onPress={() => openLink(profileData?.websiteUrl, "Website")}>
-                                <Image source={require('../../Images/website.png')} style={styles.websiteIcon} />
-                            </TouchableOpacity>
-                        )}
-                        {profileData?.youtubeUrl && (
-                            <TouchableOpacity onPress={() => openLink(profileData?.youtubeUrl, "YouTube")}>
-                                <MaterialCommunityIcons name="youtube" size={30} color="#FF0000" />
-                            </TouchableOpacity>
-                        )}
-                        {profileData?.whatsapp && (
-                            <TouchableOpacity onPress={() => openLink(profileData?.whatsapp, "WhatsApp")}>
-                                <FontAwesome5 name="whatsapp" size={30} color="#25D366" />
-                            </TouchableOpacity>
-                        )}
-                        {profileData?.facebookUrl && (
-                            <TouchableOpacity onPress={() => openLink(profileData?.facebookUrl, "Facebook")}>
-                                <FontAwesome5 name="facebook" size={30} color="#3b5998" />
-                            </TouchableOpacity>
-                        )}
-                        {profileData?.instagramUrl && (
-                            <TouchableOpacity onPress={() => openLink(profileData?.instagramUrl, "Instagram")}>
-                                <FontAwesome5 name="instagram" size={30} color="#E4405F" />
-                            </TouchableOpacity>
-                        )}
+                        <TouchableOpacity onPress={() => profileData?.websiteUrl ? openLink(profileData.websiteUrl, "Website") : showToast("Website link not available")}>
+                            <Image source={require('../../Images/website.png')} style={styles.websiteIcon} />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity onPress={() => profileData?.youtubeUrl ? openLink(profileData.youtubeUrl, "YouTube") : showToast("YouTube link not available")}>
+                            <MaterialCommunityIcons name="youtube" size={30} color="#FF0000" />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity onPress={() => profileData?.whatsapp ? openLink(profileData.whatsapp, "WhatsApp") : showToast("WhatsApp link not available")}>
+                            <FontAwesome5 name="whatsapp" size={30} color="#25D366" />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity onPress={() => profileData?.facebookUrl ? openLink(profileData.facebookUrl, "Facebook") : showToast("Facebook link not available")}>
+                            <FontAwesome5 name="facebook" size={30} color="#3b5998" />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity onPress={() => profileData?.instagramUrl ? openLink(profileData.instagramUrl, "Instagram") : showToast("Instagram link not available")}>
+                            <FontAwesome5 name="instagram" size={30} color="#E4405F" />
+                        </TouchableOpacity>
                     </View>
-                    <Image source={require('../../Images/slider.png')} style={styles.Bottomimage} />
+                    {/* <Image source={require('../../Images/slider.png')} style={styles.Bottomimage} /> */}
                 </ScrollView>
             )}
         </ScrollView>

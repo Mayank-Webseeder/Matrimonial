@@ -185,17 +185,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: SW(10),
         paddingVertical: SH(10)
     },
-    bottomContainer: {
-        paddingVertical: SH(10),
-        paddingHorizontal: SW(10),
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "center",
-        borderTopLeftRadius: 10,
-        borderTopRightRadius: 10,
-        borderColor: "gray",
-        borderWidth: 1
-    },
 
     editButton:{
      backgroundColor:Colors.theme_color,
@@ -254,7 +243,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
       },
       section: {
-        marginBottom: SH(15),
+        marginBottom: SH(5),
       },
       sectionTitle: {
         fontSize: SF(15),
@@ -392,45 +381,10 @@ const styles = StyleSheet.create({
         width: SW(30),
         height: SH(30)
       },
-      Bottomimage: {
-        width: "100%",
-        height: SH(180),
-        resizeMode: "cover",
-        marginBottom: SH(10)
-      },
-      ReviewPost: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center"
-      },
-      postReviewButton: {
-        paddingHorizontal: SW(10),
-        backgroundColor: Colors.theme_color,
-        borderRadius: 5,
-        paddingVertical: SH(4)
-      },
-      postReviewText: {
-        fontSize: SF(13),
-        color: Colors.light,
-        fontFamily: "poppins-Regular"
     
-      },
-      viewMoreButton: {
-        paddingHorizontal: SW(4),
-        backgroundColor: Colors.theme_color,
-        borderRadius: 5,
-        marginHorizontal: SW(100),
-        paddingVertical: SW(3),
-      },
-      viewMoreText: {
-        fontSize: SF(13),
-        color: Colors.light,
-        fontFamily: "poppins-Regular",
-        textAlign: "center"
-      },
       imageContainer: {
         flexDirection: 'column',
-        marginTop: SH(10),
+        marginTop:0,
       },
       imageRow: {
         flexDirection: 'row',

@@ -58,37 +58,42 @@ const Pandit = ({ navigation }) => {
 
   const fetchPanditData = async (filterType = "search") => {
     try {
-      setLoading(true);
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+        setLoading(true);
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) throw new Error("No token found");
 
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      };
+        const headers = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        };
 
-      let queryParams = [];
+        let queryParams = [];
 
-      if (filterType === "search") {
-        if (locality.trim()) queryParams.push(`locality=${encodeURIComponent(locality.toLowerCase())}`);
-      } else if (filterType === "modal") {
-        if (modalLocality.trim()) queryParams.push(`locality=${encodeURIComponent(modalLocality.toLowerCase())}`);
-        if (services) queryParams.push(`services=${encodeURIComponent(services)}`);
-        if (rating) queryParams.push(`rating=${encodeURIComponent(rating)}`);
-        if (experience) queryParams.push(`experience=${encodeURIComponent(experience)}`);
-      }
+        if (filterType === "search") {
+            if (locality.trim()) queryParams.push(`locality=${encodeURIComponent(locality.toLowerCase())}`);
+        } else if (filterType === "modal") {
+            if (modalLocality.trim()) queryParams.push(`locality=${encodeURIComponent(modalLocality.toLowerCase())}`);
+            if (services) queryParams.push(`services=${encodeURIComponent(services)}`);
+            if (rating && rating.trim()) queryParams.push(`rating=${encodeURIComponent(rating)}`);
+            if (experience && experience.trim()) queryParams.push(`experience=${encodeURIComponent(experience)}`);
+        }
 
-      const url = filterType === "all" ? GET_ALL_PANDIT_DATA : `${GET_ALL_PANDIT_DATA}?${queryParams.join("&")}`;
-      console.log("Fetching Data from:", url);
+        // ⚡️ Construct URL only with valid params
+        const url = queryParams.length > 0 
+            ? `${GET_ALL_PANDIT_DATA}?${queryParams.join("&")}` 
+            : GET_ALL_PANDIT_DATA;
+            
+        console.log("Fetching Data from:", url);
 
-      const response = await axios.get(url, { headers });
-      setPanditData(response.data?.data || []);
+        const response = await axios.get(url, { headers });
+        console.log("response.data?.data",response.data?.data);
+        setPanditData(response.data?.data || []);
     } catch (error) {
-      console.error("Error fetching Pandit data:", error);
+        console.error("Error fetching Pandit data:", error);
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
 
   useFocusEffect(
     React.useCallback(() => {
@@ -96,6 +101,7 @@ const Pandit = ({ navigation }) => {
       setModalLocality('')
       setRating(' ')
       setExperience(' ')
+      setServices('')
       setPanditData([]);
       fetchPanditData("all");
     }, [])

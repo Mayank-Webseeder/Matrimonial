@@ -48,42 +48,33 @@ const UpdateProfileDetails = ({ navigation, route }) => {
     });
 
 
-    // Get the relevant services key dynamically (e.g., "panditServices", "jyotishServices", etc.)
-    const mappedProfileType = profileType === "Astrologer" ? "Jyotish" : profileType;
-
     const servicesOptions = {
         Pandit: panditServices,
         Jyotish: jyotishServices,
         Kathavachak: kathavachakServices,
     };
-
-    // ✅ Get the correct services key (e.g., "jyotishServices" instead of "astrologerServices")
-    const profileServicesKey = `${mappedProfileType.toLowerCase()}Services`;
-
-    const [checked, setChecked] = useState(() => {
-        return profileData?.[profileServicesKey]?.reduce((acc, service) => {
-            acc[service] = true;
-            return acc;
-        }, {});
-    });
-
+    
+    // ✅ Correct profile key dynamically
+    const profileServicesKey = `${profileType.toLowerCase()}Services`;
+    
+    const [checked, setChecked] = useState({});
+    
     useEffect(() => {
-        if (profileData?.[profileServicesKey] && mappedProfileType) {
-            const updatedChecked = {};
-            servicesOptions[mappedProfileType]?.forEach(service => {
-                updatedChecked[service.value] = profileData[profileServicesKey].includes(service.value);
-            });
-            setChecked(updatedChecked);
-        }
-    }, [profileData, mappedProfileType]);
-
-    const handleCheckboxChange = (service) => {
-        setChecked((prev) => ({
-            ...prev,
-            [service]: !prev[service],
-        }));
-    };
-
+        if (!profileData || !profileType || !servicesOptions[profileType]) return;
+    
+        console.log("✅ Updating checked services...");
+    
+        const updatedChecked = {};
+        servicesOptions[profileType].forEach(service => {
+            const normalizedServiceValue = service.value.replace(/\s+/g, "_");
+            
+            updatedChecked[service.value] = profileData[profileServicesKey]?.includes(normalizedServiceValue);
+        });
+    
+        console.log("✅ New checked state:", updatedChecked);
+        setChecked(updatedChecked);
+    }, [profileData]);
+    
 
     const handleProfilePhotoPick = async () => {
         try {

@@ -47,7 +47,8 @@ const styles = StyleSheet.create({
     userDeatil: {
         borderColor: Colors.gray,
         borderWidth: 1,
-        padding: SW(10),
+        paddingHorizontal: SW(10),
+        paddingVertical: SH(5),
         borderRadius: 10,
         marginHorizontal: SW(10),
         marginVertical: SH(10),

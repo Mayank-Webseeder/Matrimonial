@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   },
   imageWrapper: {
     marginHorizontal: SW(2),
-    marginVertical: SH(15),
+    marginVertical: SH(7),
   },
   CategoryContainer: {
     marginHorizontal: SW(10),
@@ -49,6 +49,28 @@ const styles = StyleSheet.create({
     height: SH(115),
     resizeMode: "cover",
     borderRadius: 10,
+  },
+  verifiedContainer: {
+    position: "absolute",
+    top: SH(99),
+    left: SW(69),
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "white",
+    paddingHorizontal:SW(5),
+    paddingVertical:SW(2),
+    borderRadius: 5,
+  },
+  verifiedBadge: {
+    width: SW(10),
+    height: SH(10),
+    marginRight:SW(1),
+    resizeMode:"contain"
+  },
+  verifiedText: {
+    color: "green",
+    fontWeight: "bold",
+    fontSize:SF(7),
   },
   text: {
     paddingVertical: SH(4),

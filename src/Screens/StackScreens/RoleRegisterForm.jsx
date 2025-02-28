@@ -510,9 +510,17 @@ const RoleRegisterForm = ({ navigation }) => {
 
                     <Text style={Globalstyles.title}>Profile Photo</Text>
                     <View style={Globalstyles.input}>
-                        <TouchableOpacity onPress={handleProfilePhotoPick}>
-                            <Text style={styles.imagePlaceholder}>Upload Profile Photo</Text>
-                        </TouchableOpacity>
+                    <TouchableOpacity onPress={handleProfilePhotoPick}>
+  {RoleRegisterData.profilePhoto ? (
+    <Image 
+      source={{ uri: RoleRegisterData.profilePhoto }} 
+      style={styles.profileImage} 
+    />
+  ) : (
+    <Text style={styles.imagePlaceholder}>Upload Profile Photo</Text>
+  )}
+</TouchableOpacity>
+
                     </View>
 
                     <Text style={Globalstyles.title}>Add Description</Text>
@@ -533,16 +541,17 @@ const RoleRegisterForm = ({ navigation }) => {
                     </View>
 
                     {/* Display Selected Photos */}
-                    {photos.length > 0 && (
+                    {RoleRegisterData?.additionalPhotos?.length > 0 && (
                         <View style={styles.photosContainer}>
                             <Text style={styles.label}>Uploaded Photos:</Text>
                             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                                {photos.map((photo, index) => (
-                                    <Image key={index} source={{ uri: photo.uri }} style={styles.photo} />
+                                {RoleRegisterData?.additionalPhotos.map((photo, index) => (
+                                    <Image key={index} source={{ uri: photo }} style={styles.photo} />
                                 ))}
                             </ScrollView>
                         </View>
                     )}
+                    
                     <Text style={Globalstyles.title}>Website Link</Text>
                     <TextInput
                         style={Globalstyles.input}

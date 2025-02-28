@@ -8,6 +8,9 @@ const styles = StyleSheet.create({
     marginLeft: SW(250),
     fontFamily: "Poppins-Bold"
   },
+  profileImage:{
+    width: SW(100), height: SH(100), borderRadius: 10 
+  },
   button: {
     backgroundColor:Colors.theme_color,
     paddingVertical: SH(5),

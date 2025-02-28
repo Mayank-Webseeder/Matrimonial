@@ -28,6 +28,28 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     borderRadius: 10
   },
+  verifiedContainer: {
+    position: "absolute",
+    top: SH(290),
+    left: SW(280),
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "white",
+    paddingHorizontal:SW(5),
+    paddingVertical:SW(2),
+    borderRadius: 5,
+  },
+  verifiedBadge: {
+    width: SW(20),
+    height: SH(20),
+    marginRight:SW(1),
+    resizeMode:"contain"
+  },
+  verifiedText: {
+    color: "green",
+    fontWeight: "bold",
+    fontSize:SF(12),
+  },
   dot: {
     backgroundColor: Colors.light,
   },

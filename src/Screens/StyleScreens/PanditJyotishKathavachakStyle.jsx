@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
   },
   button: {
     width: SW(130),
-    height: SH(35),
+    height: SH(30),
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
@@ -75,8 +75,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: '#fff',
     marginHorizontal: SW(15),
-    paddingVertical: SH(10),
-    paddingTop: 0
+    marginTop:-SH(10)
   },
   iconContainer: {
     alignItems: 'center',
@@ -99,7 +98,7 @@ const styles = StyleSheet.create({
   Button: {
     backgroundColor: Colors.theme_color,
     paddingHorizontal: SH(15),
-    paddingVertical: SH(5),
+    paddingVertical: SH(3),
     borderRadius: 8,
     alignItems: "center",
     width: SW(80)
@@ -116,7 +115,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: SW(100),
-    height: SH(90),
+    height: SH(75),
     resizeMode: "cover",
     marginHorizontal: SW(10),
     marginVertical: SH(10),
@@ -131,15 +130,16 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 3,
     marginHorizontal: SW(10),
-    marginVertical: SH(10),
-    marginBottom: SH(3)
+    marginVertical: SH(7),
+    marginBottom: SH(3),
+    paddingVertical:SH(3)
   },
   cardData: {
     flexDirection: "row"
   },
   text: {
     fontFamily: "Poppins-Medium",
-    fontSize: SF(13)
+    fontSize: SF(11)
   },
   name:{
     fontFamily: "Poppins-Bold",

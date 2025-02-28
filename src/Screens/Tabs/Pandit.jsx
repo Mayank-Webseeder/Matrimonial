@@ -14,11 +14,13 @@ import { ExperienceData, RatingData, panditServices } from '../../DummyData/Drop
 import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import axios from 'axios';
-import { GET_ALL_PANDIT_DATA } from '../../utils/BaseUrl';
+import { GET_ALL_PANDIT_DATA ,SAVED_PROFILES } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { SH, SW } from '../../utils/Dimensions';
 import { useFocusEffect } from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
+
 const Pandit = ({ navigation }) => {
   const sliderRef = useRef(null);
   const [activeButton, setActiveButton] = useState(false);
@@ -31,7 +33,7 @@ const Pandit = ({ navigation }) => {
   const [panditData, setPanditData] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [modalLocality, setModalLocality] = useState('');
-
+  
   const handleOpenFilter = () => {
     setModalVisible(true);
     setActiveButton(1);
@@ -95,6 +97,63 @@ const Pandit = ({ navigation }) => {
     }
 };
 
+const savedProfiles = async (_id) => {
+  if (!_id) {
+    Toast.show({
+      type: "error",
+      text1: "Error",
+      text2: "User ID not found!",
+    });
+    return;
+  }
+
+  try {
+    const token = await AsyncStorage.getItem("userToken");
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+
+    const response = await axios.post(
+      `${SAVED_PROFILES}/${_id}`, 
+      {}, 
+      { headers }
+    );
+
+    console.log("Response Data:", JSON.stringify(response?.data));
+
+    if (response?.data?.message) {
+      Toast.show({
+        type: "success",
+        text2: response.data.message,
+        position: "top",
+        visibilityTime: 3000,
+        textStyle: { fontSize: 14, color: "green" },
+      });
+    } else {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: response.data.message || "Something went wrong!",
+      });
+    }
+  } catch (error) {
+    console.error(
+      "API Error:",
+      error?.response ? JSON.stringify(error.response.data) : error.message
+    );
+    Toast.show({
+      type: "error",
+      text1: "Error",
+      text2: error.response?.data?.message || "Failed to save profile!",
+    });
+  }
+};
+
   useFocusEffect(
     React.useCallback(() => {
       setLocality('');
@@ -125,12 +184,13 @@ const Pandit = ({ navigation }) => {
   );
 
   const renderItem = ({ item }) => {
+    const isSaved=item.isSaved || null;
     const rating = item.averageRating || 0;
 
     return (
       <View style={styles.card}>
         <Pressable style={styles.cardData}
-          onPress={() => navigation.navigate('PanditDetailPage', { pandit_id : item._id})}>
+          onPress={() => navigation.navigate('PanditDetailPage', { pandit_id : item._id ,isSaved:isSaved})}>
           <Image
             source={item.profilePhoto ? { uri: item.profilePhoto } : require('../../Images/NoImage.png')}
             style={styles.image}
@@ -149,18 +209,21 @@ const Pandit = ({ navigation }) => {
           </View>
         </Pressable>
         <View style={styles.sharecontainer}>
+        <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
+              <FontAwesome
+                name={isSaved ? "bookmark" : "bookmark-o"}
+                size={19}
+                color={Colors.dark}
+              />
+              <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text>
+            </TouchableOpacity>
           <View style={styles.iconContainer}>
-            <FontAwesome name="bookmark-o" size={20} color={Colors.dark} />
-            <Text style={styles.iconText}>Save</Text>
-          </View>
-
-          <View style={styles.iconContainer}>
-            <Feather name="send" size={20} color={Colors.dark} />
+            <Feather name="send" size={18} color={Colors.dark} />
             <Text style={styles.iconText}>Shares</Text>
           </View>
 
           <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
-            <MaterialIcons name="call" size={20} color={Colors.light} />
+            <MaterialIcons name="call" size={17} color={Colors.light} />
           </TouchableOpacity>
         </View>
       </View>

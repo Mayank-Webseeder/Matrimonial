@@ -14,11 +14,12 @@ import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import axios from 'axios';
 import { slider } from '../../DummyData/DummyData';
-import { GET_ALL_JYOTISH } from '../../utils/BaseUrl';
+import { GET_ALL_JYOTISH, SAVED_PROFILES } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { SH, SW } from '../../utils/Dimensions';
 import { useFocusEffect } from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 
 const Jyotish = ({ navigation }) => {
   const sliderRef = useRef(null);
@@ -30,8 +31,8 @@ const Jyotish = ({ navigation }) => {
   const [rating, setRating] = useState(null);
   const [experience, setExperience] = useState(null);
   const [JyotishData, setJyotishData] = useState(null);
-   const [isLoading, setLoading] = useState(false);
- const [modalLocality, setModalLocality] = useState('');
+  const [isLoading, setLoading] = useState(false);
+  const [modalLocality, setModalLocality] = useState('');
 
   const handleOpenFilter = () => {
     setModalVisible(true);
@@ -57,78 +58,114 @@ const Jyotish = ({ navigation }) => {
     return () => clearInterval(interval);
   }, [currentIndex]);
 
-  // const JyotishDataAPI = async () => {
-  //   try {
-  //     setIsLoading(true);
-  //     const token = await AsyncStorage.getItem("userToken");
-  //     if (!token) throw new Error("Authorization token is missing.");
-
-  //     const headers = {
-  //       "Content-Type": "application/json",
-  //       "Authorization": `Bearer ${token}`,
-  //     };
-  //     const response = await axios.get(GET_ALL_JYOTISH, { headers });
-  //     console.log("response", JSON.stringify(response.data))
-  //     setJyotishData(response.data.data);
-  //   } catch (error) {
-  //     console.log("Error fetching Jyotish data:", error.message);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
   const JyotishDataAPI = async (filterType = "search") => {
     try {
-        setLoading(true);
-        const token = await AsyncStorage.getItem("userToken");
-        if (!token) throw new Error("No token found");
+      setLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) throw new Error("No token found");
 
-        const headers = {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-        };
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
 
-        let queryParams = [];
+      let queryParams = [];
 
-        if (filterType === "search") {
-            if (locality.trim()) queryParams.push(`locality=${encodeURIComponent(locality.toLowerCase())}`);
-        } else if (filterType === "modal") {
-            if (modalLocality.trim()) queryParams.push(`locality=${encodeURIComponent(modalLocality.toLowerCase())}`);
-            if (services) queryParams.push(`services=${encodeURIComponent(services)}`);
-            if (rating && rating.trim()) queryParams.push(`rating=${encodeURIComponent(rating)}`);
-            if (experience && experience.trim()) queryParams.push(`experience=${encodeURIComponent(experience)}`);
-        }
+      if (filterType === "search") {
+        if (locality.trim()) queryParams.push(`locality=${encodeURIComponent(locality.toLowerCase())}`);
+      } else if (filterType === "modal") {
+        if (modalLocality.trim()) queryParams.push(`locality=${encodeURIComponent(modalLocality.toLowerCase())}`);
+        if (services) queryParams.push(`services=${encodeURIComponent(services)}`);
+        if (rating && rating.trim()) queryParams.push(`rating=${encodeURIComponent(rating)}`);
+        if (experience && experience.trim()) queryParams.push(`experience=${encodeURIComponent(experience)}`);
+      }
 
-        // ⚡️ Construct URL only with valid params
-        const url = queryParams.length > 0 
-            ? `${GET_ALL_JYOTISH}?${queryParams.join("&")}` 
-            : GET_ALL_JYOTISH;
-            
-        console.log("Fetching Data from:", url);
+      // ⚡️ Construct URL only with valid params
+      const url = queryParams.length > 0
+        ? `${GET_ALL_JYOTISH}?${queryParams.join("&")}`
+        : GET_ALL_JYOTISH;
 
-        const response = await axios.get(url, { headers });
-        console.log("response.data?.data",response.data?.data);
-        setJyotishData(response.data?.data || []);
+      console.log("Fetching Data from:", url);
+
+      const response = await axios.get(url, { headers });
+      console.log("response.data?.data", response.data?.data);
+      setJyotishData(response.data?.data || []);
     } catch (error) {
-        console.error("Error fetching Pandit data:", error);
+      console.error("Error fetching Pandit data:", error);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
 
+  const savedProfiles = async (_id) => {
+    if (!_id) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "User ID not found!",
+      });
+      return;
+    }
+
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        throw new Error("No token found");
+      }
+
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+
+      const response = await axios.post(
+        `${SAVED_PROFILES}/${_id}`,
+        {},
+        { headers }
+      );
+
+      console.log("Response Data:", JSON.stringify(response?.data));
+
+      if (response?.data?.message) {
+        Toast.show({
+          type: "success",
+          text2: response.data.message,
+          position: "top",
+          visibilityTime: 3000,
+          textStyle: { fontSize: 14, color: "green" },
+        });
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: response.data.message || "Something went wrong!",
+        });
+      }
+    } catch (error) {
+      console.error(
+        "API Error:",
+        error?.response ? JSON.stringify(error.response.data) : error.message
+      );
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error.response?.data?.message || "Failed to save profile!",
+      });
+    }
+  };
 
   useFocusEffect(
-     React.useCallback(() => {
-       setLocality('');
-       setModalLocality('')
-       setRating(' ')
-       setExperience(' ')
-       setServices('')
-       setJyotishData([]);
-       JyotishDataAPI("all");
-     }, [])
-   );
- 
+    React.useCallback(() => {
+      setLocality('');
+      setModalLocality('')
+      setRating(' ')
+      setExperience(' ')
+      setServices('')
+      setJyotishData([]);
+      JyotishDataAPI("all");
+    }, [])
+  );
+
 
   const renderSkeleton = () => (
     <SkeletonPlaceholder>
@@ -149,11 +186,11 @@ const Jyotish = ({ navigation }) => {
 
   const renderItem = ({ item }) => {
     const rating = item.averageRating || 0;
-
+    const isSaved=item.isSaved || null;
     return (
       <View style={styles.card}>
         <Pressable style={styles.cardData}
-          onPress={() => navigation.navigate('JyotishDetailsPage', { jyotish_id: item._id, panditDetails: item })}>
+          onPress={() => navigation.navigate('JyotishDetailsPage', { jyotish_id: item._id,isSaved:isSaved })}>
           <Image
             source={item.profilePhoto ? { uri: item.profilePhoto } : require('../../Images/NoImage.png')}
             style={styles.image}
@@ -172,18 +209,21 @@ const Jyotish = ({ navigation }) => {
           </View>
         </Pressable>
         <View style={styles.sharecontainer}>
+        <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
+              <FontAwesome
+                name={isSaved ? "bookmark" : "bookmark-o"}
+                size={19}
+                color={Colors.dark}
+              />
+              <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text>
+            </TouchableOpacity>
           <View style={styles.iconContainer}>
-            <FontAwesome name="bookmark-o" size={20} color={Colors.dark} />
-            <Text style={styles.iconText}>Save</Text>
-          </View>
-
-          <View style={styles.iconContainer}>
-            <Feather name="send" size={20} color={Colors.dark} />
+            <Feather name="send" size={18} color={Colors.dark} />
             <Text style={styles.iconText}>Shares</Text>
           </View>
 
           <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
-            <MaterialIcons name="call" size={20} color={Colors.light} />
+            <MaterialIcons name="call" size={17} color={Colors.light} />
           </TouchableOpacity>
         </View>
       </View>
@@ -207,13 +247,13 @@ const Jyotish = ({ navigation }) => {
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.searchbar}>
-           <TextInput 
-                    placeholder="Search in Your city" 
-                    value={locality} 
-                    onChangeText={(text) => setLocality(text)}
-                    onSubmitEditing={() => JyotishDataAPI("search")}
-                    placeholderTextColor={"gray"}
-                  />
+          <TextInput
+            placeholder="Search in Your city"
+            value={locality}
+            onChangeText={(text) => setLocality(text)}
+            onSubmitEditing={() => JyotishDataAPI("search")}
+            placeholderTextColor={"gray"}
+          />
           {/* <TextInput placeholder="Search in Your city" placeholderTextColor={'gray'} /> */}
           <AntDesign name={'search1'} size={20} color={'gray'} />
         </View>

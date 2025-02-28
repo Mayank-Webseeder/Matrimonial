@@ -85,6 +85,7 @@ const Globalstyles = StyleSheet.create({
     marginBottom: SH(5),
     paddingHorizontal: SW(10),
     borderRadius: 5,
+    // paddingVertical: SH(7),
   },
   bottomImage: {
     width: "98%",

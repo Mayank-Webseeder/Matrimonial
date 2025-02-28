@@ -43,10 +43,10 @@ const Home = ({ navigation }) => {
         navigation.navigate("MatrimonyPeopleProfile", {
             userDetails: item,
             userId: item._id,
+            isSaved:item.isSaved
         });
     }
 };
-
 
   const GetAll_Biodata = async () => {
     try {
@@ -61,6 +61,7 @@ const Home = ({ navigation }) => {
       console.log("headers in profile", headers);
       const res = await axios.get(GET_ALL_BIODATA_PROFILES, { headers });
       const biodata = res.data.feedUsers;
+      console.log("res.data.feedUsers",JSON.stringify(res.data.feedUsers))
       setallBiodata(biodata);
       console.log("biodata",biodata);
       dispatch(setAllBiodata(biodata));
@@ -202,29 +203,38 @@ const Home = ({ navigation }) => {
             onViewAllPress={() => navigation.navigate('Matrimonial')}
           />
 
-          <FlatList
-            data={allbiodata}
-            keyExtractor={(item) => item._id}
-            renderItem={({ item }) => (
-              <View style={styles.imageWrapper}>
-                <TouchableOpacity
-                 onPress={() => handleNavigateToProfile(item)}
-                >
-                  <Image
-                    source={{ uri: item.personalDetails.closeUpPhoto }}
-                    style={styles.ProfileImages}
-                  />
-                </TouchableOpacity>
-              </View>
-            )}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            ListEmptyComponent={
-              <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>No Matrimonial Profile Created Yet</Text>
-              </View>
-            }
-          />
+<FlatList
+  data={allbiodata}
+  keyExtractor={(item) => item._id}
+  renderItem={({ item }) => (
+    <View style={styles.imageWrapper}>
+      <TouchableOpacity onPress={() => handleNavigateToProfile(item)}>
+        <Image
+          source={{ uri: item.personalDetails.closeUpPhoto }}
+          style={styles.ProfileImages}
+        />
+        {/* ✅ Show Verified Badge Only for Verified Users */}
+        {item.verified && (
+  <View style={styles.verifiedContainer}>
+    <Image
+      source={require("../../Images/verified.png")}
+      style={styles.verifiedBadge}
+    />
+    <Text style={styles.verifiedText}>Verified</Text>
+  </View>
+)}
+      </TouchableOpacity>
+    </View>
+  )}
+  horizontal={true}
+  showsHorizontalScrollIndicator={false}
+  ListEmptyComponent={
+    <View style={styles.emptyContainer}>
+      <Text style={styles.emptyText}>No Matrimonial Profile Created Yet</Text>
+    </View>
+  }
+/>
+
 
         </View>
 

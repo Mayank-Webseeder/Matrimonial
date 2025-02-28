@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: SW(10),
     borderRadius: 5,
     backgroundColor: Colors.light,
-    width: SW(100),
+    width: SW(120),
     height: SH(40),
     borderWidth: 1,
     borderColor: Colors.theme_color,
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     marginBottom: SH(5),
   },
   name: {
-    fontSize: SF(14),
+    fontSize: SF(15),
     fontFamily: 'Poppins-Bold',
     color: Colors.dark,
   },

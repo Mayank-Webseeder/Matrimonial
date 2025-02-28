@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     button: {
         backgroundColor: Colors.theme_color,
         paddingHorizontal: SW(7),
-        paddingVertical: SH(7),
+        paddingVertical: SH(3),
         marginHorizontal: SW(35),
         borderRadius: 50,
         marginTop: SH(20),
@@ -44,9 +44,9 @@ const styles = StyleSheet.create({
     inputText: {
         borderColor: Colors.theme_color,
         paddingHorizontal: SW(10),
-        paddingVertical: SH(15),
+        paddingVertical: SH(10),
         borderWidth: 1,
-        borderRadius: 15,
+        borderRadius: 10,
         marginHorizontal: SW(25),
         color: Colors.dark,
         marginBottom: SH(20),
@@ -63,9 +63,9 @@ const styles = StyleSheet.create({
     passwordContainer: {
         borderColor: Colors.theme_color,
         paddingHorizontal: SW(10),
-        paddingVertical: SH(5),
+        // paddingVertical: SH(5),
         borderWidth: 1,
-        borderRadius: 15,
+        borderRadius:10,
         marginHorizontal: SW(25),
         color: Colors.dark,
         marginBottom: SH(20),

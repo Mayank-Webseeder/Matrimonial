@@ -16,7 +16,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import { SH, SF } from '../../utils/Dimensions';
 import { useSelector } from 'react-redux';
 import Toast from 'react-native-toast-message';
-import { GET_ALL_COMITTEE } from '../../utils/BaseUrl';
+import { GET_ALL_COMITTEE ,SAVED_PROFILES } from '../../utils/BaseUrl';
 import axios from 'axios';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -131,6 +131,65 @@ const Committee = ({ navigation }) => {
     );
   };
 
+  
+// const savedProfiles = async (_id) => {
+//   console.log("_id",_id);
+//   if (!_id) {
+//     Toast.show({
+//       type: "error",
+//       text1: "Error",
+//       text2: "User ID not found!",
+//     });
+//     return;
+//   }
+
+//   try {
+//     const token = await AsyncStorage.getItem("userToken");
+//     if (!token) {
+//       throw new Error("No token found");
+//     }
+
+//     const headers = {
+//       "Content-Type": "application/json",
+//       Authorization: `Bearer ${token}`,
+//     };
+
+//     const response = await axios.post(
+//       `${SAVED_PROFILES}/${_id}`, 
+//       {}, 
+//       { headers }
+//     );
+
+//     console.log("Response Data:", JSON.stringify(response?.data));
+
+//     if (response?.data?.message) {
+//       Toast.show({
+//         type: "success",
+//         text2: response.data.message,
+//         position: "top",
+//         visibilityTime: 3000,
+//         textStyle: { fontSize: 14, color: "green" },
+//       });
+//     } else {
+//       Toast.show({
+//         type: "error",
+//         text1: "Error",
+//         text2: response.data.message || "Something went wrong!",
+//       });
+//     }
+//   } catch (error) {
+//     console.error(
+//       "API Error:",
+//       error?.response ? JSON.stringify(error.response.data) : error.message
+//     );
+//     Toast.show({
+//       type: "error",
+//       text1: "Error",
+//       text2: error.response?.data?.message || "Failed to save profile!",
+//     });
+//   }
+// };
+
   const renderItem = ({ item }) => (
     <View style={styles.card}>
       <Pressable style={styles.cardData}>
@@ -146,16 +205,17 @@ const Committee = ({ navigation }) => {
         </View>
       </Pressable>
       <View style={styles.sharecontainer}>
+      {/* onPress={() => savedProfiles(item._id)} */}
+      <TouchableOpacity style={styles.iconContainer}>
+            <FontAwesome name="bookmark-o" size={18} color={Colors.dark} />
+            <Text style={styles.iconText}>Save</Text>
+          </TouchableOpacity>
         <View style={styles.iconContainer}>
-          <FontAwesome name="bookmark-o" size={20} color={Colors.dark} />
-          <Text style={styles.iconText}>Save</Text>
-        </View>
-        <View style={styles.iconContainer}>
-          <Feather name="send" size={20} color={Colors.dark} />
+          <Feather name="send" size={18} color={Colors.dark} />
           <Text style={styles.iconText}>Shares</Text>
         </View>
         <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
-          <MaterialIcons name="call" size={15} color={Colors.light} />
+          <MaterialIcons name="call" size={17} color={Colors.light} />
           <Text style={styles.RequestText}>Request for call</Text>
         </TouchableOpacity>
       </View>
@@ -279,9 +339,21 @@ const Committee = ({ navigation }) => {
         </View>
         {loading ? (
           <ActivityIndicator size="large" color={Colors.theme_color} style={{ marginTop: 20 }} />
+        ) : error ? (
+          <Text style={{
+            textAlign: 'center', fontSize: SF(15),
+            color: Colors.gray,
+            fontFamily: 'Poppins-Regular', marginTop: SH(20)
+          }}>
+            {error}
+          </Text>
         ) : committeeData.length === 0 ? (
-          <Text style={{ textAlign: 'center', marginTop: 20, color: 'gray', fontFamily: "Poppins-Regular" }}>
-            No committee profiles yet
+          <Text style={{
+            textAlign: 'center', fontSize: SF(15),
+            color: Colors.gray, marginTop: SH(20),
+            fontFamily: 'Poppins-Regular',
+          }}>
+            No Committee data found.
           </Text>
         ) : (
           <FlatList

@@ -12,7 +12,6 @@ const styles = StyleSheet.create({
     height: SH(90),
     resizeMode: "cover",
     borderRadius:50,
-    marginTop:SH(10)
   },
   searchbar: {
     display: "flex",
@@ -33,9 +32,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
-    marginBottom: SH(3),
     marginHorizontal: SW(10),
-    marginVertical: SH(10)
+    marginVertical: SH(7),
+    marginBottom: SH(3),
+    paddingVertical:SH(3)
   },
   cardData: {
     flexDirection: 'row',
@@ -46,16 +46,16 @@ const styles = StyleSheet.create({
 
   CityArea: {
     flexDirection: 'row',
-    marginTop: SH(5),
+    alignItems:"center"
   },
 
   sharecontainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-start',
-    marginHorizontal:SW(25),
-    paddingVertical:SH(10),
-    paddingTop:0
+    justifyContent: 'space-between',
+    backgroundColor: '#fff',
+    marginHorizontal: SW(15),
+    marginTop:-SH(10)
   },
 
   iconContainer: {
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: "Poppins-Regular",
     fontSize: SF(12),
-    marginRight:SW(10)
+    marginRight:SW(11)
   },
   title: {
     fontFamily: "Poppins-Bold",
@@ -158,15 +158,16 @@ const styles = StyleSheet.create({
   Button: {
     backgroundColor: Colors.theme_color,
     paddingHorizontal: SW(20),
-    paddingVertical: SH(5),
+    paddingVertical: SH(3),
     borderRadius: 8,
     flexDirection: "row",
     alignItems: "center"
   },
   RequestText: {
     color: Colors.light,
-    fontSize: SF(9),
+    fontSize: SF(10),
     fontFamily: "Poppins-Regular",
+    paddingHorizontal:SW(2)
 },
   buttonText: {
     color: Colors.light,
@@ -176,7 +177,7 @@ const styles = StyleSheet.create({
   },
 
   leftContainer: {
-    marginLeft: SW(10), flex: 1, marginTop: SH(7)
+    marginLeft: SW(10), flex: 1,
   },
   searchContainer: {
     flexDirection: "row",

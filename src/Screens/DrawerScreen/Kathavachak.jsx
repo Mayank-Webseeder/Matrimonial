@@ -14,11 +14,12 @@ import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import axios from 'axios';
 import { slider } from '../../DummyData/DummyData';
-import { GET_ALL_KATHAVACHAK } from '../../utils/BaseUrl';
+import { GET_ALL_KATHAVACHAK, SAVED_PROFILES } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { SH, SW } from '../../utils/Dimensions';
 import { useFocusEffect } from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 
 const Kathavachak = ({ navigation }) => {
   const sliderRef = useRef(null);
@@ -32,16 +33,16 @@ const Kathavachak = ({ navigation }) => {
   const [kathavachakData, setKathavachakData] = useState(null);
   const [isLoading, setLoading] = useState(false);
   const [modalLocality, setModalLocality] = useState('');
- 
-   const handleOpenFilter = () => {
-     setModalVisible(true);
-     setActiveButton(1);
-   };
- 
-   const handleCloseFilter = () => {
-     setModalVisible(false);
-     KathavachakDataAPI("modal");
-   };
+
+  const handleOpenFilter = () => {
+    setModalVisible(true);
+    setActiveButton(1);
+  };
+
+  const handleCloseFilter = () => {
+    setModalVisible(false);
+    KathavachakDataAPI("modal");
+  };
 
 
   useEffect(() => {
@@ -65,73 +66,130 @@ const Kathavachak = ({ navigation }) => {
       if (!token) throw new Error("No token found");
 
       const headers = {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       };
 
       let queryParams = [];
 
       if (filterType === "search") {
-          if (locality.trim()) queryParams.push(`locality=${encodeURIComponent(locality.toLowerCase())}`);
+        if (locality.trim()) queryParams.push(`locality=${encodeURIComponent(locality.toLowerCase())}`);
       } else if (filterType === "modal") {
-          if (modalLocality.trim()) queryParams.push(`locality=${encodeURIComponent(modalLocality.toLowerCase())}`);
-          if (services) queryParams.push(`services=${encodeURIComponent(services)}`);
-          if (rating && rating.trim()) queryParams.push(`rating=${encodeURIComponent(rating)}`);
-          if (experience && experience.trim()) queryParams.push(`experience=${encodeURIComponent(experience)}`);
+        if (modalLocality.trim()) queryParams.push(`locality=${encodeURIComponent(modalLocality.toLowerCase())}`);
+        if (services) queryParams.push(`services=${encodeURIComponent(services)}`);
+        if (rating && rating.trim()) queryParams.push(`rating=${encodeURIComponent(rating)}`);
+        if (experience && experience.trim()) queryParams.push(`experience=${encodeURIComponent(experience)}`);
       }
 
       // ⚡️ Construct URL only with valid params
-      const url = queryParams.length > 0 
-          ? `${GET_ALL_KATHAVACHAK}?${queryParams.join("&")}` 
-          : GET_ALL_KATHAVACHAK;
-          
+      const url = queryParams.length > 0
+        ? `${GET_ALL_KATHAVACHAK}?${queryParams.join("&")}`
+        : GET_ALL_KATHAVACHAK;
+
       console.log("Fetching Data from:", url);
 
       const response = await axios.get(url, { headers });
-      console.log("response.data?.data",response.data?.data);
+      console.log("response.data?.data", response.data?.data);
       setKathavachakData(response.data?.data || []);
-  } catch (error) {
+    } catch (error) {
       console.error("Error fetching Pandit data:", error);
-  } finally {
+    } finally {
       setLoading(false);
-  }
-};
+    }
+  };
 
-useFocusEffect(
-     React.useCallback(() => {
-       setLocality('');
-       setModalLocality('')
-       setRating(' ')
-       setExperience(' ')
-       setServices('')
-       setKathavachakData([]);
-       KathavachakDataAPI("all");
-     }, [])
-   );
+  const savedProfiles = async (_id) => {
+    if (!_id) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "User ID not found!",
+      });
+      return;
+    }
+
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        throw new Error("No token found");
+      }
+
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+
+      const response = await axios.post(
+        `${SAVED_PROFILES}/${_id}`,
+        {},
+        { headers }
+      );
+
+      console.log("Response Data:", JSON.stringify(response?.data));
+
+      if (response?.data?.message) {
+        Toast.show({
+          type: "success",
+          text2: response.data.message,
+          position: "top",
+          visibilityTime: 3000,
+          textStyle: { fontSize: 14, color: "green" },
+        });
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: response.data.message || "Something went wrong!",
+        });
+      }
+    } catch (error) {
+      console.error(
+        "API Error:",
+        error?.response ? JSON.stringify(error.response.data) : error.message
+      );
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error.response?.data?.message || "Failed to save profile!",
+      });
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocality('');
+      setModalLocality('')
+      setRating(' ')
+      setExperience(' ')
+      setServices('')
+      setKathavachakData([]);
+      KathavachakDataAPI("all");
+    }, [])
+  );
   const renderSkeleton = () => (
     <SkeletonPlaceholder>
-      <View style={{ margin:SH(20) }}>
+      <View style={{ margin: SH(20) }}>
         {[1, 2, 3, 4].map((_, index) => (
           <View key={index} style={{ flexDirection: "row", marginBottom: 20 }}>
-            <View style={{ width:SW(80), height:SH(80), borderRadius: 40, marginRight:SW(10) }} />
+            <View style={{ width: SW(80), height: SH(80), borderRadius: 40, marginRight: SW(10) }} />
             <View>
-              <View style={{ width:SW(150), height:SH(20), borderRadius: 4 }} />
-              <View style={{ width:SW(100), height:SH(15), borderRadius: 4, marginTop:SH(6) }} />
-              <View style={{ width:SW(80), height:SH(15), borderRadius: 4, marginTop:SH(6) }} />
+              <View style={{ width: SW(150), height: SH(20), borderRadius: 4 }} />
+              <View style={{ width: SW(100), height: SH(15), borderRadius: 4, marginTop: SH(6) }} />
+              <View style={{ width: SW(80), height: SH(15), borderRadius: 4, marginTop: SH(6) }} />
             </View>
           </View>
         ))}
       </View>
     </SkeletonPlaceholder>
   );
-  
+
   const renderItem = ({ item }) => {
     const rating = item.averageRating || 0;
-
+    const isSaved=item.isSaved || null;
     return (
       <View style={styles.card}>
         <Pressable style={styles.cardData}
-          onPress={() => navigation.navigate('KathavachakDetailsPage', { kathavachak_id: item._id })}>
+          onPress={() => navigation.navigate('KathavachakDetailsPage', { kathavachak_id: item._id ,isSaved:isSaved })}>
           <Image
             source={item.profilePhoto ? { uri: item.profilePhoto } : require('../../Images/NoImage.png')}
             style={styles.image}
@@ -150,18 +208,21 @@ useFocusEffect(
           </View>
         </Pressable>
         <View style={styles.sharecontainer}>
+        <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
+              <FontAwesome
+                name={isSaved ? "bookmark" : "bookmark-o"}
+                size={19}
+                color={Colors.dark}
+              />
+              <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text>
+            </TouchableOpacity>
           <View style={styles.iconContainer}>
-            <FontAwesome name="bookmark-o" size={20} color={Colors.dark} />
-            <Text style={styles.iconText}>Save</Text>
-          </View>
-
-          <View style={styles.iconContainer}>
-            <Feather name="send" size={20} color={Colors.dark} />
+            <Feather name="send" size={18} color={Colors.dark} />
             <Text style={styles.iconText}>Shares</Text>
           </View>
 
           <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
-            <MaterialIcons name="call" size={20} color={Colors.light} />
+            <MaterialIcons name="call" size={17} color={Colors.light} />
           </TouchableOpacity>
         </View>
       </View>
@@ -185,13 +246,13 @@ useFocusEffect(
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.searchbar}>
-         <TextInput 
-                   placeholder="Search in Your city" 
-                   value={locality} 
-                   onChangeText={(text) => setLocality(text)}
-                   onSubmitEditing={() => fetchPanditData("search")}
-                   placeholderTextColor={"gray"}
-                 />
+          <TextInput
+            placeholder="Search in Your city"
+            value={locality}
+            onChangeText={(text) => setLocality(text)}
+            onSubmitEditing={() => fetchPanditData("search")}
+            placeholderTextColor={"gray"}
+          />
           <AntDesign name={'search1'} size={20} color={'gray'} />
         </View>
 

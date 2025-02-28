@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: SF(16),
         color: Colors.dark,
-        paddingVertical: SH(10)
+        paddingVertical: SH(7)
     },
     arrow: {
         marginLeft: SW(10),

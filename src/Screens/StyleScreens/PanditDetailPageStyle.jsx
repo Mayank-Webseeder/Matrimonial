@@ -4,7 +4,6 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 const styles = StyleSheet.create({
   profileSection: {
     alignItems: 'center',
-    marginBottom: SH(20),
     flexDirection: "row",
     marginHorizontal: SW(10),
     marginVertical: SH(5)
@@ -38,9 +37,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  section: {
-    marginBottom: SH(15),
-  },
+  // section: {
+  //   marginBottom: SH(10),
+  // },
   sectionTitle: {
     fontSize: SF(15),
     fontFamily: 'Poppins-Bold',
@@ -70,7 +69,7 @@ const styles = StyleSheet.create({
   },
 
   serviceText: {
-    fontSize: SF(11),
+    fontSize: SF(10),
     fontFamily: 'Poppins-Medium',
     textAlign: 'center',
     color: Colors.dark,

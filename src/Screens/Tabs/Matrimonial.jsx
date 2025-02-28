@@ -140,51 +140,58 @@ const Matrimonial = ({ navigation }) => {
     const isPressable = partnerPreferences !== null && partnerPreferences !== undefined; // Only check global partnerPreferences
 
     return (
-        <Pressable 
-            style={styles.card} 
-            onPress={isPressable ? () => navigation.navigate('MatrimonyPeopleProfile', { details: item, details_userId: item?.userId }) : null}
-            disabled={!isPressable} // Disable press if global partnerPreferences is missing
-        >
+      <Pressable
+        style={styles.card}
+        onPress={isPressable ? () => navigation.navigate('MatrimonyPeopleProfile', { details: item, details_userId: item?.userId }) : null}
+        disabled={!isPressable} // Disable press if global partnerPreferences is missing
+      >
+        <Image
+          source={item.personalDetails.closeUpPhoto ? { uri: item.personalDetails.closeUpPhoto } : require('../../Images/NoImage.png')}
+          style={styles.ProfileImage}
+        />
+        {item.verified && (
+          <View style={styles.verifiedContainer}>
             <Image
-                source={item.personalDetails.closeUpPhoto ? { uri: item.personalDetails.closeUpPhoto } : require('../../Images/NoImage.png')}
-                style={styles.ProfileImage}
+              source={require("../../Images/verified.png")}
+              style={styles.verifiedBadge}
             />
+            <Text style={styles.verifiedText}>Verified</Text>
+          </View>
+        )}
 
-            <View style={styles.profileData}>
-                {/* Full Name at the Top */}
-                <View style={styles.nameContainer}>
-                    <Text style={[styles.text, styles.boldText]}>{item?.personalDetails?.fullname}</Text>
-                </View>
+        <View style={styles.profileData}>
+          {/* Full Name at the Top */}
+          <Text style={[styles.text, styles.boldText]}>{item?.personalDetails?.fullname}</Text>
 
-                {/* Two Column Layout */}
-                <View style={styles.columnsContainer}>
-                    {/* Left Column */}
-                    <View style={styles.leftColumn}>
-                        <Text style={[styles.text, styles.rowItem]}>
-                            {new Date().getFullYear() - new Date(item?.personalDetails?.dob).getFullYear()} Yrs. , {item?.personalDetails?.heightFeet}
-                        </Text>
-                        <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.subCaste}</Text>
-                        <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.maritalStatus}</Text>
-                        <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.manglikStatus}</Text>
-                        <Text style={[styles.text, styles.rowItem]}>Disability: {item?.personalDetails?.disabilities}</Text>
-                    </View>
-
-                    {/* Right Column */}
-                    <View style={styles.rightColumn}>
-                        <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.currentCity}</Text>
-                        <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.occupation}</Text>
-                        <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.annualIncome} INR </Text>
-                        <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.qualification}</Text>
-                    </View>
-                </View>
+          {/* Two Column Layout */}
+          <View style={styles.columnsContainer}>
+            {/* Left Column */}
+            <View style={styles.leftColumn}>
+              <Text style={[styles.text, styles.rowItem]}>
+                {new Date().getFullYear() - new Date(item?.personalDetails?.dob).getFullYear()} Yrs. , {item?.personalDetails?.heightFeet}
+              </Text>
+              <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.subCaste}</Text>
+              <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.maritalStatus}</Text>
+              <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.manglikStatus}</Text>
+              <Text style={[styles.text, styles.rowItem]}>Disability: {item?.personalDetails?.disabilities}</Text>
             </View>
-        </Pressable>
+
+            {/* Right Column */}
+            <View style={styles.rightColumn}>
+              <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.currentCity}</Text>
+              <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.occupation}</Text>
+              <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.annualIncome} INR </Text>
+              <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.qualification}</Text>
+            </View>
+          </View>
+        </View>
+      </Pressable>
     );
-};
+  };
   const dataToDisplay = searchMode ? profiles : (activeButton === 1 ? girlsProfiles : activeButton === 2 ? boysProfiles : preferenceProfiles);
- useEffect(()=>{
-  console.log("dataToDisplay",dataToDisplay);
- },[])
+  useEffect(() => {
+    console.log("dataToDisplay", dataToDisplay);
+  }, [])
 
   return (
     <SafeAreaView style={Globalstyles.container}>
@@ -234,16 +241,30 @@ const Matrimonial = ({ navigation }) => {
               />
             </View>
             <View style={styles.ButtonContainer}>
-              <TouchableOpacity style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton, { width: "25%" }]} onPress={() => setActiveButton(1)}>
-                <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Girls</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.button, activeButton === 2 ? styles.activeButton : styles.inactiveButton, { width: "25%" }]} onPress={() => setActiveButton(2)}>
-                <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>Boys</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.button, activeButton === 3 ? styles.activeButton : styles.inactiveButton]} onPress={() => setActiveButton(3)}>
+              <View style={styles.leftButtons}>
+                <TouchableOpacity
+                  style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton, { width: "30%" }]}
+                  onPress={() => setActiveButton(1)}
+                >
+                  <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Girls</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.button, activeButton === 2 ? styles.activeButton : styles.inactiveButton, { width: "30%" }]}
+                  onPress={() => setActiveButton(2)}
+                >
+                  <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>Boys</Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Right Side: Set Preferences */}
+              <TouchableOpacity
+                style={[styles.button, activeButton === 3 ? styles.activeButton : styles.inactiveButton]}
+                onPress={() => setActiveButton(3)}
+              >
                 <Text style={activeButton === 3 ? styles.activeText : styles.inactiveText}>Set Preferences</Text>
               </TouchableOpacity>
             </View>
+
           </>
         )}
 

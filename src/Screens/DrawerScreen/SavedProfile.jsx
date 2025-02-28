@@ -1,5 +1,5 @@
-import { StyleSheet, View, Text, TouchableOpacity, FlatList, ScrollView, Image, SafeAreaView, StatusBar, ActivityIndicator } from "react-native";
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import {View, Text, TouchableOpacity, FlatList, ScrollView, Image, SafeAreaView, StatusBar, ActivityIndicator } from "react-native";
+import React, { useState, useRef, useCallback } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import axios from "axios";
@@ -32,7 +32,7 @@ const SavedProfile = ({ navigation }) => {
 
       const headers = { Authorization: `Bearer ${token}` };
       const response = await axios.get(GET_SAVED__PROFILES, { headers });
-      console.log("response.data?.savedProfiles", response.data?.savedProfiles)
+      console.log("response.data?.savedProfiles", JSON.stringify(response.data?.savedProfiles))
       setSavedProfiles(response.data?.savedProfiles || []);
       setTimeout(() => {
         flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
@@ -46,53 +46,53 @@ const SavedProfile = ({ navigation }) => {
   };
 
   const getFilteredData = () => {
-    if (activeCategory === "Biodata") {
-      return savedProfiles.filter((item) => item.profileType === "Biodata");
+    if (["Biodata", "Pandit", "Jyotish", "Kathavachak", "Dharmshala", "Committee"].includes(activeCategory)) {
+      const filteredProfiles = savedProfiles.filter((item) => item.profileType === activeCategory);
+      return filteredProfiles.length > 0 ? filteredProfiles : null; // Return null if no profiles found
     } else {
-      return SavedProfileData.filter((item) => item.category === activeCategory);
+      const filteredProfiles = SavedProfileData.filter((item) => item.category === activeCategory);
+      return filteredProfiles.length > 0 ? filteredProfiles : null; // Return null if no profiles found
     }
   };
 
   const renderItem = ({ item }) => {
+    const { saveProfile, profileType } = item;
+
     return (
-      <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("MatrimonyPeopleProfile", { userDetails: item.saveProfile, userId: item.saveProfile.userId })}>
+      <TouchableOpacity
+        style={styles.card}
+        onPress={() => navigation.navigate("MatrimonyPeopleProfile", { userDetails: saveProfile, userId: saveProfile.userId })}
+      >
         <View style={styles.detailsContainer}>
-          <Image
-            style={styles.image}
-            source={
-              activeCategory === "Biodata"
-                ? { uri: item.saveProfile?.personalDetails?.bestPhoto || "https://via.placeholder.com/150" }
-                : item.image
-            }
-          />
-          <Text style={styles.name}>
-            {activeCategory === "Biodata" ? item.saveProfile.personalDetails.fullname : item.name || "N/A"}
-          </Text>
-
-          <Text style={styles.text}>
-            City: {activeCategory === "Biodata" ? item.saveProfile.personalDetails.currentCity : item.city || "N/A"}
-          </Text>
-
-          {activeCategory === "Biodata" ? (
+          {profileType === "Biodata" && (
             <>
-              <View style={styles.row2}>
-                <Text style={styles.text}>
-                  Age: {new Date().getFullYear() - new Date(item.saveProfile.personalDetails.dob).getFullYear()} /
-                </Text>
-                <Text style={styles.text}>Height: {item.saveProfile.personalDetails.heightFeet}'</Text>
-              </View>
-              <Text style={styles.text}>{item.saveProfile.personalDetails.subCaste}</Text>
+              <Image source={{ uri: saveProfile.personalDetails?.closeUpPhoto || "https://via.placeholder.com/150" }} style={styles.image} />
+              <Text style={styles.name}>{saveProfile.personalDetails?.fullname || "N/A"}</Text>
+              <Text style={styles.text}>City: {saveProfile.personalDetails?.cityOrVillage || "N/A"}</Text>
+              <Text style={styles.text}>Age: {saveProfile.personalDetails?.dob ? new Date().getFullYear() - new Date(saveProfile.personalDetails.dob).getFullYear() : "N/A"} Years</Text>
+              <Text style={styles.text}>Marital Status: {saveProfile.personalDetails?.maritalStatus || "N/A"}</Text>
+              <Text style={styles.text}>Sub Caste: {saveProfile.personalDetails?.subCaste || "N/A"}</Text>
             </>
-          ) : (
+          )}
+
+          {["Pandit", "Jyotish", "Kathavachak"].includes(profileType) && (
             <>
-              {item.area && <Text style={styles.text}>Area: {item.area}</Text>}
-              {item.contact && <Text style={styles.text}>Contact: {item.contact}</Text>}
+              <Image
+                source={saveProfile.profilePhoto ? { uri: saveProfile.profilePhoto } : require('../../Images/NoImage.png')}
+                style={styles.image}
+              />
+              <Text style={styles.name}>{saveProfile.fullName || "N/A"}</Text>
+              <Text style={styles.text}>City: {saveProfile.city || "N/A"}</Text>
+              <Text style={styles.text}>Experience: {saveProfile.experience || "N/A"} years</Text>
+              <Text style={styles.text}>Sub Caste: {saveProfile.subCaste || "N/A"}</Text>
+              <Text style={styles.text}>Area: {saveProfile.area || "N/A"}</Text>
             </>
           )}
         </View>
       </TouchableOpacity>
     );
   };
+
 
   return (
     <SafeAreaView style={Globalstyles.container}>
@@ -112,7 +112,7 @@ const SavedProfile = ({ navigation }) => {
         </View>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           <View style={styles.tabContainer}>
-            {["Biodata", "Pandit", "Dharmshala", "Committee"].map((category, index) => (
+            {["Biodata", "Pandit", "Jyotish", "Kathavachak", "Dharmshala", "Committee"].map((category, index) => (
               <TouchableOpacity
                 key={index}
                 style={[styles.tabButton, activeCategory === category && styles.activeTab]}
@@ -130,12 +130,12 @@ const SavedProfile = ({ navigation }) => {
         </ScrollView>
         <HeadingWithViewAll heading={`${activeCategory} SAVED PROFILES`} />
 
-        {loading && activeCategory === "Biodata" ? (
+        {loading && ["Biodata", "Pandit", "Jyotish", "Kathavachak", "Dharmshala", "Committee"].includes(activeCategory) ? (
           <ActivityIndicator size="large" color={Colors.theme_color} style={{ marginTop: 20 }} />
-        ) : getFilteredData().length === 0 ? (
+        ) : getFilteredData() === null ? (
           <View style={styles.noDataContainer}>
             <Text style={styles.noDataText}>
-              {activeCategory === "Biodata" ? "No Biodata profiles saved yet" : "No profiles found"}
+              {`No ${activeCategory} profiles saved yet`}
             </Text>
           </View>
         ) : (

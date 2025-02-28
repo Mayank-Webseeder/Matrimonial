@@ -12,10 +12,12 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Globalstyles from '../../utils/GlobalCss';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { PANDIT_DESCRIPTION } from '../../utils/BaseUrl';
+import { PANDIT_DESCRIPTION, SAVED_PROFILES } from '../../utils/BaseUrl';
+import Toast from 'react-native-toast-message';
+import moment from "moment";
 
 const PanditDetailPage = ({ navigation, item, route }) => {
-    const { pandit_id } = route.params || {};
+    const { pandit_id, isSaved } = route.params || {};
     const [profileData, setProfileData] = useState(null);
     const images = profileData?.additionalPhotos || [];
     const profileType = profileData?.profileType;
@@ -70,6 +72,62 @@ const PanditDetailPage = ({ navigation, item, route }) => {
             });
         } finally {
             setLoading(false);
+        }
+    };
+    const savedProfiles = async (pandit_id) => {
+        if (!pandit_id) {
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: "User ID not found!",
+            });
+            return;
+        }
+
+        try {
+            const token = await AsyncStorage.getItem("userToken");
+            if (!token) {
+                throw new Error("No token found");
+            }
+
+            const headers = {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            };
+
+            const response = await axios.post(
+                `${SAVED_PROFILES}/${pandit_id}`,
+                {},
+                { headers }
+            );
+
+            console.log("Response Data:", JSON.stringify(response?.data));
+
+            if (response?.data?.message) {
+                Toast.show({
+                    type: "success",
+                    text2: response.data.message,
+                    position: "top",
+                    visibilityTime: 3000,
+                    textStyle: { fontSize: 14, color: "green" },
+                });
+            } else {
+                Toast.show({
+                    type: "error",
+                    text1: "Error",
+                    text2: response.data.message || "Something went wrong!",
+                });
+            }
+        } catch (error) {
+            console.error(
+                "API Error:",
+                error?.response ? JSON.stringify(error.response.data) : error.message
+            );
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: error.response?.data?.message || "Failed to save profile!",
+            });
         }
     };
 
@@ -168,16 +226,17 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                     </View>
                 </View>
                 <View style={styles.contentContainer}>
-                    <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Description</Text>
-                        <Text style={styles.text}>{profileData?.description}</Text>
-                    </View>
-
+                    <Text style={styles.sectionTitle}>Description</Text>
+                    <Text style={styles.text}>{profileData?.description}</Text>
                     <View style={styles.sharecontainer}>
-                        <View style={styles.iconContainer}>
-                            <FontAwesome name="bookmark-o" size={20} color={Colors.dark} />
-                            <Text style={styles.iconText}>Save</Text>
-                        </View>
+                        <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
+                            <FontAwesome
+                                name={isSaved ? "bookmark" : "bookmark-o"}
+                                size={19}
+                                color={Colors.dark}
+                            />
+                            <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text>
+                        </TouchableOpacity>
                         <View style={styles.iconContainer}>
                             <Feather name="send" size={20} color={Colors.dark} />
                             <Text style={styles.iconText}>Shares</Text>
@@ -194,7 +253,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                         </TouchableOpacity>
 
                     </View>
-                    <View style={styles.section}>
+                    <View>
                         <Text style={styles.sectionTitle}>Services List</Text>
                         <View style={styles.servicesGrid}>
                             {profileData?.panditServices.map((service, index) => (
@@ -204,7 +263,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                             ))}
                         </View>
                     </View>
-                    <View style={styles.section}>
+                    <View>
                         <View style={styles.ReviewPost}>
                             <View>
                                 <Text style={styles.sectionTitle}>Reviews & Rating</Text>
@@ -240,7 +299,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                         </View> */}
                     </View>
                 </View>
-                <View style={styles.section}>
+                <View>
                     <Text style={[styles.sectionTitle, { textAlign: "center" }]}>Reviews</Text>
 
                     {profileData?.ratings?.length > 0 ? (
@@ -249,12 +308,12 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                                 <View key={review._id || index} style={styles.reviewContainer}>
                                     <View style={styles.FlexContainer}>
                                         <View style={styles.FlexContainer}>
-                                            <Text style={styles.reviewName}>User: {review?.userId?.username || "Unknown"}</Text>
+                                            <Text style={styles.reviewName}>{review?.userId?.username || "Unknown"}</Text>
 
                                         </View>
 
                                         <Text style={styles.reviewDate}>
-                                            {new Date(review.createdAt).toLocaleDateString()}
+                                            {moment(review.createdAt).format("DD/MM/YYYY")}
                                         </Text>
                                     </View>
                                     <View style={styles.reviewRating}>

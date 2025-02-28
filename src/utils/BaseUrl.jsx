@@ -78,6 +78,12 @@ const UPDATE_COMMITTEE = "https://api-matrimonial.webseeder.tech/api/v1/committe
 const GET_COMMIITEE = "https://api-matrimonial.webseeder.tech/api/v1/committee/viewCommittee";
 const GET_ALL_COMITTEE = "https://api-matrimonial.webseeder.tech/api/v1/committee/getAllCommittee"
 
+// dharamsala 
+const CREATE_DHARAMSALA = "https://api-matrimonial.webseeder.tech/api/v1/dharmshala/createDharmshala";
+const UPDATE_DHARAMSALA = " https://api-matrimonial.webseeder.tech/api/v1/dharmshala/updateDharmshala";
+const GET_DHARAMSALA = " https://api-matrimonial.webseeder.tech/api/v1/dharmshala/viewDharmshala";
+const GET_ALL_DHARAMSALA = "https://api-matrimonial.webseeder.tech/api/v1/dharmshala/getAllDharmshala"
+
 export {
     SIGNUP_ENDPOINT,
     LOGIN_ENDPOINT,
@@ -130,5 +136,9 @@ export {
     VIEW_KATHAVACHAK,
     UPDATE_PANDIT,
     UPDATE_JYOTISH,
-    UPDATE_KATHAVACHAK
+    UPDATE_KATHAVACHAK,
+    CREATE_DHARAMSALA,
+    UPDATE_DHARAMSALA,
+    GET_DHARAMSALA,
+    GET_ALL_DHARAMSALA
 }

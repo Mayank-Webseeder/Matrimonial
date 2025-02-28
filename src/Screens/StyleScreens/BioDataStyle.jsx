@@ -14,47 +14,46 @@ const styles = StyleSheet.create({
     },
     sliderContainer: {
         marginBottom: SH(30),
-        height: SH(230),
-    },
-    sliderImage: {
+        marginTop: SH(10)
+      },
+      sliderImage: {
         width: "100%",
-        height: SH(220),
-        resizeMode: 'contain',
-    },
-    dot: {
+        height: SH(180),
+        resizeMode: 'cover',
+      },
+      dot: {
         width: SW(25),
         height: SH(5),
         borderRadius: 4,
         backgroundColor: '#ccc',
         marginHorizontal: SW(2),
-        marginTop: SW(100)
-    },
-    activeDot: {
+        marginTop: SH(105)
+      },
+      activeDot: {
         width: SW(25),
         height: SH(5),
         borderRadius: 4,
         backgroundColor: Colors.theme_color,
-        marginTop: SH(100)
-    },
+        marginTop: SH(105)
+      },
     EditPerference: {
         flexDirection: "row", justifyContent: "space-between",
         marginHorizontal: SW(15), alignItems: "center",
-        marginVertical:SH(15)
+        marginVertical:SH(7),marginTop:0
     },
     editText: {
-        borderColor: Colors.dark,
+        borderColor: Colors.theme_color,
         borderWidth: 1,
         paddingHorizontal: SW(5),
         paddingVertical:SH(5),
-        borderRadius: 5
+        borderRadius: 5,
+        color:Colors.theme_color
     },
     viewAll: {
         marginHorizontal: SW(10),
         marginVertical: SH(10),
         paddingHorizontal: SW(15),
         backgroundColor: Colors.gray,
-        paddingVertical: SH(7),
-
     },
     ViewAllText: {
         fontSize: SF(14),
@@ -71,14 +70,15 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 5,
         elevation: 3,
-        marginHorizontal: SW(10),
+        marginHorizontal: SW(3),
         marginVertical:SH(10),
         paddingHorizontal: SW(10),
-        paddingVertical:SH(10)
+        paddingVertical:SH(10),
     },
     image: {
-        width: '100%',
+        width:SW(160),
         height: SH(150),
+        resizeMode:"cover"
     },
     detailsContainer: {
         paddingHorizontal: SW(10),
@@ -118,7 +118,8 @@ const styles = StyleSheet.create({
     },
     Sliderimage: {
         width: '100%',
-        height: SH(250),
+        height: SH(180),
+        marginBottom:SH(10)
     },
     icon: {
         backgroundColor: Colors.gray,

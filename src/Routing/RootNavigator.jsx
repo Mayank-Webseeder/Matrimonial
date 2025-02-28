@@ -10,7 +10,6 @@ import Home from '../Screens/Tabs/Home';
 import IntrestedProfile from '../Screens/DrawerScreen/IntrestedProfile';
 import SavedProfile from '../Screens/DrawerScreen/SavedProfile';
 import CustomDrawer from '../Screens/DrawerScreen/CustomDrawer';
-import BioData from '../Screens/DrawerScreen/BioData';
 import { SH, SF, SW } from '../utils/Dimensions';
 import Colors from '../utils/Colors';
 import Dharmshala from '../Screens/DrawerScreen/Dharmshala';
@@ -64,6 +63,8 @@ import ViewEntityImages from '../Screens/StackScreens/ViewEntityImages';
 import ForgotScreen from '../Screens/auth/ForgotScreen';
 import ProfileDetail from '../Screens/StackScreens/ProfileDetail';
 import UpdateProfileDetails from '../Screens/StackScreens/UpdateProfileDetails';
+import { useSelector } from 'react-redux';
+import BioData from '../Screens/Tabs/BioData';
 
 const Stack = createNativeStackNavigator();
 const AppStackNavigator = createNativeStackNavigator();
@@ -75,6 +76,8 @@ function MyTabs() {
   const dispatch = useDispatch();
   const [profiledata, setProfile] = useState('');
   const image = profiledata?.photoUrl?.[0];
+  const MyprofileData = useSelector((state) => state.getBiodata);
+  const partnerPreferences = MyprofileData?.Biodata?.partnerPreferences || null;
   // const [loading, setLoading] = useState(true); 
 
   const fetchProfile = async () => {
@@ -106,6 +109,7 @@ function MyTabs() {
 
   useEffect(() => {
     fetchProfile();
+    console.log("myBiodata in root file", partnerPreferences);
   }, []);
 
   const iconSize = SF(30);
@@ -124,7 +128,7 @@ function MyTabs() {
         tabBarIcon: ({ focused }) => {
           let tabBarIcon;
 
-          if (route.name === 'Matrimonial') {
+          if (route.name === 'Matrimonial' || route.name === 'BioData') {
             tabBarIcon = (
               <MaterialCommunityIcons
                 name={focused ? 'heart-multiple' : 'heart-multiple-outline'}
@@ -178,7 +182,12 @@ function MyTabs() {
     >
       <Tab.Screen name="Home" component={Home} options={{ tabBarLabel: 'Home' }} />
       <Tab.Screen name="Pandit" component={Pandit} options={{ tabBarLabel: 'Pandit' }} />
-      <Tab.Screen name="Matrimonial" component={Matrimonial} options={{ tabBarLabel: 'Matrimonial' }} />
+      <Tab.Screen
+        name={partnerPreferences ? "BioData" : "Matrimonial"}
+        component={partnerPreferences ? BioData : Matrimonial}
+        options={{ tabBarLabel: "Matrimonial" }}
+      />
+
       <Tab.Screen name="EventNews" component={EventNews} options={{ tabBarLabel: 'EventNews' }} />
       <Tab.Screen name="MyProfile" component={MyProfile} options={{ tabBarLabel: 'You' }} />
     </Tab.Navigator>
@@ -204,7 +213,6 @@ function MyDrawer() {
       <Drawer.Screen name="Pandit" component={Pandit} />
       <Drawer.Screen name="EventNews" component={EventNews} />
       <Drawer.Screen name="Dharmshala" component={Dharmshala} />
-      <Drawer.Screen name="BioData" component={BioData} />
       <Drawer.Screen name="Committee" component={Committee} />
       <Drawer.Screen name="Activist" component={Activist} />
       <Drawer.Screen name="FeedBack" component={FeedBack} />
@@ -222,7 +230,6 @@ function MyDrawer() {
 const AppStack = () => (
   <AppStackNavigator.Navigator screenOptions={{ headerShown: false }} initialRouteName='MainApp'>
     <AppStackNavigator.Screen name="MainApp" component={MyDrawer} />
-    <AppStackNavigator.Screen name="BioData" component={BioData} />
     <AppStackNavigator.Screen name="IntrestedProfile" component={IntrestedProfile} />
     <AppStackNavigator.Screen name="Notification" component={Notification} />
     <AppStackNavigator.Screen name="DharamsalaDetail" component={DharamsalaDetail} />

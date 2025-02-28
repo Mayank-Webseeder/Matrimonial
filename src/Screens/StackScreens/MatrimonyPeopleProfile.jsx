@@ -17,10 +17,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 const MatrimonyPeopleProfile = ({ navigation }) => {
   const route = useRoute();
-  const { userDetails, userId, details, details_userId } = route.params || {};
+  const { userDetails, details, details_userId, userId, isSaved } = route.params || {};
   console.log("userDetails", userDetails);
-  const User_Id = userId || details_userId;
-  console.log("userId", User_Id);
+  const User_Id = userDetails?.userId || details_userId;
+  console.log("userId", isSaved);
   const _id = userDetails?._id;
   console.log("_id", _id);
   const personalDetails = details?.personalDetails || userDetails?.personalDetails || {};
@@ -63,7 +63,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
     try {
       const response = await axios.get(`${MATCHED_PROFILE}/${User_Id}`, { headers });
-
+      console.log("matched profile data ", JSON.stringify(response.data))
       if (response.data.status === "success") {
         setProfileData(response.data);
       } else {
@@ -310,19 +310,33 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             </View>
           </Swiper>
         </View>
+        {(userDetails?.verified || details?.verified) && (
+          <View style={styles.verifiedContainer}>
+            <Image
+              source={require("../../Images/verified.png")}
+              style={styles.verifiedBadge}
+            />
+            <Text style={styles.verifiedText}>Verified</Text>
+          </View>
+        )}
 
         {/* Profile Info Section */}
         <View style={styles.flexContainer}>
           <View style={styles.flex}>
             {/* <Text style={styles.Idtext}>ID NO. :- {user?._id}</Text> */}
-            <Text style={styles.Idtext}>ID NO. :- {userDetails?.bioDataId}</Text>
+            <Text style={styles.Idtext}>ID NO. :- {userDetails?.bioDataId || details?.bioDataId}</Text>
             <Text style={styles.toptext}>{matchPercentage}% Compatible according to your preference</Text>
           </View>
           <View style={styles.sharecontainer}>
             <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
-              <FontAwesome name="bookmark-o" size={19} color={Colors.dark} />
-              <Text style={styles.iconText}>Save</Text>
+              <FontAwesome
+                name={isSaved ? "bookmark" : "bookmark-o"}
+                size={19}
+                color={Colors.dark}
+              />
+              <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text>
             </TouchableOpacity>
+
             <TouchableOpacity style={styles.iconContainer} onPress={shareProfiles}>
               <Feather name="send" size={19} color={Colors.dark} />
               <Text style={styles.iconText}>Share</Text>
@@ -460,30 +474,26 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         }
 
 
-        {(Object.keys(partnerPreferences || {}).length > 0 && MyprofileData?.Biodata) && (
-          <View style={styles.flexContainer3}>
-            <Text style={styles.HeadingText}>Matches</Text>
-            <View style={styles.flex}>
-              <Image source={{ uri: MyprofileData?.Biodata?.personalDetails?.closeUpPhoto }} style={styles.smallImage} />
-              <Text style={styles.text}>{matchedCount}/{totalCriteria}</Text>
-              <Image source={{ uri: profileData?.data?.photoUrl?.[0] }} style={styles.smallImage} />
-            </View>
-
-            {/* Comparison List */}
-            {Object.keys(profileData?.comparisonResults || {}).map((key, index) => (
-              <View key={index} style={styles.flexContainer5}>
-                <Text style={styles.label}>{key.replace(/([A-Z])/g, " $1").trim()}</Text>
-                {profileData.comparisonResults[key] ? (
-                  <MaterialIcons name="check" style={[styles.icon, styles.checkIcon]} />
-                ) : (
-                  <MaterialIcons name="close" style={[styles.icon, styles.crossIcon]} />
-                )}
-              </View>
-            ))}
+        <View style={styles.flexContainer3}>
+          <Text style={styles.HeadingText}>Matches</Text>
+          <View style={styles.flex}>
+            <Image source={{ uri: MyprofileData?.Biodata?.personalDetails?.closeUpPhoto }} style={styles.smallImage} />
+            <Text style={styles.text}>{matchedCount}/{totalCriteria}</Text>
+            <Image source={{ uri: profileData?.data?.photoUrl?.[0] }} style={styles.smallImage} />
           </View>
-        )}
 
-
+          {/* Comparison List */}
+          {Object.keys(profileData?.comparisonResults || {}).map((key, index) => (
+            <View key={index} style={styles.flexContainer5}>
+              <Text style={styles.label}>{key.replace(/([A-Z])/g, " $1").trim()}</Text>
+              {profileData.comparisonResults[key] ? (
+                <MaterialIcons name="check" style={[styles.icon, styles.checkIcon]} />
+              ) : (
+                <MaterialIcons name="close" style={[styles.icon, styles.crossIcon]} />
+              )}
+            </View>
+          ))}
+        </View>
         <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
       </ScrollView>
       <Toast />

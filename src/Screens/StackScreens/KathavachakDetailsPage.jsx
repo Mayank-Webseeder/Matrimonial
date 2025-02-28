@@ -1,4 +1,4 @@
-import { Text, View, Image, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Linking,ToastAndroid } from 'react-native';
+import { Text, View, Image, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Linking, ToastAndroid } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import styles from '../StyleScreens/PanditDetailPageStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -12,10 +12,10 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Globalstyles from '../../utils/GlobalCss';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { KATHAVACHAK_DESCRIPTION } from '../../utils/BaseUrl';
-
+import { KATHAVACHAK_DESCRIPTION, SAVED_PROFILES } from '../../utils/BaseUrl';
+import moment from 'moment';
 const KathavachakDetailsPage = ({ navigation, item, route }) => {
-    const { kathavachak_id } = route.params || {};
+    const { kathavachak_id, isSaved } = route.params || {};
     const [profileData, setProfileData] = useState(null);
     const [userRating, setUserRating] = useState(0);
     const images = profileData?.additionalPhotos || [];
@@ -77,6 +77,64 @@ const KathavachakDetailsPage = ({ navigation, item, route }) => {
         }
     };
 
+    const savedProfiles = async (kathavachak_id) => {
+        if (!kathavachak_id) {
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: "User ID not found!",
+            });
+            return;
+        }
+
+        try {
+            const token = await AsyncStorage.getItem("userToken");
+            if (!token) {
+                throw new Error("No token found");
+            }
+
+            const headers = {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            };
+
+            const response = await axios.post(
+                `${SAVED_PROFILES}/${kathavachak_id}`,
+                {},
+                { headers }
+            );
+
+            console.log("Response Data:", JSON.stringify(response?.data));
+
+            if (response?.data?.message) {
+                Toast.show({
+                    type: "success",
+                    text2: response.data.message,
+                    position: "top",
+                    visibilityTime: 3000,
+                    textStyle: { fontSize: 14, color: "green" },
+                });
+            } else {
+                Toast.show({
+                    type: "error",
+                    text1: "Error",
+                    text2: response.data.message || "Something went wrong!",
+                });
+            }
+        } catch (error) {
+            console.error(
+                "API Error:",
+                error?.response ? JSON.stringify(error.response.data) : error.message
+            );
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: error.response?.data?.message || "Failed to save profile!",
+            });
+        }
+    };
+
+
     const openLink = (url, platform) => {
         if (url) {
             Linking.openURL(url);
@@ -85,9 +143,9 @@ const KathavachakDetailsPage = ({ navigation, item, route }) => {
         }
     };
 
- const showToast = (message) => {
-            ToastAndroid.show(message, ToastAndroid.SHORT);
-        };
+    const showToast = (message) => {
+        ToastAndroid.show(message, ToastAndroid.SHORT);
+    };
 
     const renderImages = (images) => {
         if (!images || images.length === 0) {
@@ -124,7 +182,7 @@ const KathavachakDetailsPage = ({ navigation, item, route }) => {
         const total = ratings.reduce((sum, review) => sum + review.rating, 0);
         return (total / ratings.length).toFixed(1); // Decimal me 1 place tak dikhane ke liye
     };
-    
+
     const averageRating = calculateAverageRating(profileData?.ratings);
     return (
         <SafeAreaView style={Globalstyles.container}>
@@ -177,10 +235,14 @@ const KathavachakDetailsPage = ({ navigation, item, route }) => {
                     </View>
 
                     <View style={styles.sharecontainer}>
-                        <View style={styles.iconContainer}>
-                            <FontAwesome name="bookmark-o" size={20} color={Colors.dark} />
-                            <Text style={styles.iconText}>Save</Text>
-                        </View>
+                        <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
+                            <FontAwesome
+                                name={isSaved ? "bookmark" : "bookmark-o"}
+                                size={19}
+                                color={Colors.dark}
+                            />
+                            <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text>
+                        </TouchableOpacity>
                         <View style={styles.iconContainer}>
                             <Feather name="send" size={20} color={Colors.dark} />
                             <Text style={styles.iconText}>Shares</Text>
@@ -250,9 +312,9 @@ const KathavachakDetailsPage = ({ navigation, item, route }) => {
                             {profileData?.ratings?.slice(0, 2).map((review, index) => (
                                 <View key={review._id || index} style={styles.reviewContainer}>
                                     <View style={styles.FlexContainer}>
-                                        <Text style={styles.reviewName}>User ID: {review?.userId?.username}</Text>
+                                        <Text style={styles.reviewName}> {review?.userId?.username}</Text>
                                         <Text style={styles.reviewDate}>
-                                            {new Date(review.createdAt).toLocaleDateString()}
+                                            {moment(review.createdAt).format("DD/MM/YYYY")}
                                         </Text>
                                     </View>
                                     <View style={styles.reviewRating}>
@@ -286,26 +348,26 @@ const KathavachakDetailsPage = ({ navigation, item, route }) => {
                     {renderImages(images)}
                 </View>
                 <View style={styles.socialIcons}>
-                        <TouchableOpacity onPress={() => profileData?.websiteUrl ? openLink(profileData.websiteUrl, "Website") : showToast("Website link not available")}>
-                            <Image source={require('../../Images/website.png')} style={styles.websiteIcon} />
-                        </TouchableOpacity>
+                    <TouchableOpacity onPress={() => profileData?.websiteUrl ? openLink(profileData.websiteUrl, "Website") : showToast("Website link not available")}>
+                        <Image source={require('../../Images/website.png')} style={styles.websiteIcon} />
+                    </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => profileData?.youtubeUrl ? openLink(profileData.youtubeUrl, "YouTube") : showToast("YouTube link not available")}>
-                            <MaterialCommunityIcons name="youtube" size={30} color="#FF0000" />
-                        </TouchableOpacity>
+                    <TouchableOpacity onPress={() => profileData?.youtubeUrl ? openLink(profileData.youtubeUrl, "YouTube") : showToast("YouTube link not available")}>
+                        <MaterialCommunityIcons name="youtube" size={30} color="#FF0000" />
+                    </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => profileData?.whatsapp ? openLink(profileData.whatsapp, "WhatsApp") : showToast("WhatsApp link not available")}>
-                            <FontAwesome5 name="whatsapp" size={30} color="#25D366" />
-                        </TouchableOpacity>
+                    <TouchableOpacity onPress={() => profileData?.whatsapp ? openLink(profileData.whatsapp, "WhatsApp") : showToast("WhatsApp link not available")}>
+                        <FontAwesome5 name="whatsapp" size={30} color="#25D366" />
+                    </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => profileData?.facebookUrl ? openLink(profileData.facebookUrl, "Facebook") : showToast("Facebook link not available")}>
-                            <FontAwesome5 name="facebook" size={30} color="#3b5998" />
-                        </TouchableOpacity>
+                    <TouchableOpacity onPress={() => profileData?.facebookUrl ? openLink(profileData.facebookUrl, "Facebook") : showToast("Facebook link not available")}>
+                        <FontAwesome5 name="facebook" size={30} color="#3b5998" />
+                    </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => profileData?.instagramUrl ? openLink(profileData.instagramUrl, "Instagram") : showToast("Instagram link not available")}>
-                            <FontAwesome5 name="instagram" size={30} color="#E4405F" />
-                        </TouchableOpacity>
-                    </View>
+                    <TouchableOpacity onPress={() => profileData?.instagramUrl ? openLink(profileData.instagramUrl, "Instagram") : showToast("Instagram link not available")}>
+                        <FontAwesome5 name="instagram" size={30} color="#E4405F" />
+                    </TouchableOpacity>
+                </View>
                 <Image source={require('../../Images/slider.png')} style={styles.Bottomimage} />
             </ScrollView>
         </SafeAreaView>

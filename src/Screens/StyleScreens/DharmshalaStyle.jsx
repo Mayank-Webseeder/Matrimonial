@@ -8,11 +8,11 @@ const styles = StyleSheet.create({
   },
   image: {
     width: SW(100),
-    height: SH(90),
-    resizeMode: "contain",
+    height: SH(75),
+    resizeMode: "cover",
     marginHorizontal: SW(10),
     marginVertical: SH(10),
-    marginRight: 0
+    borderRadius:5
   },
   searchbar: {
     display: "flex",
@@ -34,8 +34,9 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 3,
     marginHorizontal: SW(10),
-    marginVertical: SH(10),
-    marginBottom: SH(3)
+    marginVertical: SH(7),
+    marginBottom: SH(3),
+    paddingVertical:SH(3)
   },
   cardData: {
     flexDirection: "row"
@@ -79,10 +80,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: '#fff',
-    marginHorizontal: SW(10),
-    marginVertical: 0,
-    paddingVertical: SH(10),
-    paddingTop:0
+    marginHorizontal: SW(15),
+    marginTop:-SH(10)
   },
   iconContainer: {
     alignItems: 'center',
@@ -102,11 +101,11 @@ const styles = StyleSheet.create({
   },
   Button: {
     backgroundColor: Colors.theme_color,
-    paddingHorizontal: SW(15),
-    paddingVertical: SH(5),
+    paddingHorizontal: SH(15),
+    paddingVertical: SH(3),
     borderRadius: 8,
     alignItems: "center",
-    width: SW(100)
+    width: SW(80)
   },
   buttonText: {
     color: Colors.light,

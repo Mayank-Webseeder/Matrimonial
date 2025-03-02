@@ -18,6 +18,8 @@ import { GET_ALL_DHARAMSALA } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import Toast from 'react-native-toast-message';
 
 const Dharmshala = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -32,6 +34,8 @@ const Dharmshala = ({ navigation }) => {
   const [modalLocality, setModalLocality] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
+
   const handleInputChange = (text) => {
     setSubcaste(text);
     if (text.trim() === '') {
@@ -75,6 +79,9 @@ const Dharmshala = ({ navigation }) => {
   const fetchDharamsalaData = async (filterType = "search") => {
     try {
       setLoading(true);
+      setDharamsalaData([]); // Clear old data before fetching new data
+      setError(null); // Reset error
+
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
 
@@ -110,10 +117,9 @@ const Dharmshala = ({ navigation }) => {
 
       if (response.data && response.data.data.length > 0) {
         setDharamsalaData(response.data.data);
-        setError(null); // Reset error when data is available
       } else {
         setDharamsalaData([]);
-        setError("No Dharamsala profiles found.");
+        setError("No Dharamsala profiles found."); // Set the error message when no data is found
       }
     } catch (error) {
       console.error("Error fetching Dharamsala data:", error);
@@ -123,6 +129,7 @@ const Dharmshala = ({ navigation }) => {
     }
   };
 
+
   useFocusEffect(
     React.useCallback(() => {
       setLocality('');
@@ -131,6 +138,28 @@ const Dharmshala = ({ navigation }) => {
       fetchDharamsalaData("all"); // Fetch full list by default
     }, [])
   );
+
+
+   const handleUploadButton = () => {
+      if (MyActivistProfile && MyActivistProfile._id) {
+        Toast.show(
+          {
+            type: "success",
+            text1: "You have an activist account",
+            text2: "You can upload your dharamsala details"
+          }
+        )
+        setActiveButton(2);
+        navigation.navigate('DharamsalaSubmissionPage');
+      } else {
+        Toast.show(
+          {
+            type: "error",
+            text1: "Please create an activist profile first!"
+          }
+        )
+      }
+    };
 
   const renderItem = ({ item }) => {
     return (
@@ -180,10 +209,10 @@ const Dharmshala = ({ navigation }) => {
     fetchDharamsalaData("modal");
   };
 
-  const handleUploadButton = () => {
-    setActiveButton(2)
-    navigation.navigate('DharamsalaSubmissionPage')
-  }
+  // const handleUploadButton = () => {
+  //   setActiveButton(2)
+  //   navigation.navigate('DharamsalaSubmissionPage')
+  // }
 
   return (
     <SafeAreaView style={Globalstyles.container}>
@@ -277,7 +306,7 @@ const Dharmshala = ({ navigation }) => {
             color: Colors.gray,
             fontFamily: 'Poppins-Regular', marginTop: SH(20)
           }}>
-            {error}
+            {error} {/* This will show error messages */}
           </Text>
         ) : daramsalaData.length === 0 ? (
           <Text style={{
@@ -297,6 +326,7 @@ const Dharmshala = ({ navigation }) => {
             contentContainerStyle={styles.DharamSalaList}
           />
         )}
+
       </ScrollView>
 
       <Modal

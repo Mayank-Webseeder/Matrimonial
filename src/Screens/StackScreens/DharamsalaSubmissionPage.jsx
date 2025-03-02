@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, Alert, StyleSheet, ScrollView, StatusBar, SafeAreaView, FlatList } from 'react-native';
+import React, { useState,useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, StatusBar, SafeAreaView, FlatList,ActivityIndicator } from 'react-native';
 import Colors from '../../utils/Colors';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -7,18 +7,69 @@ import Globalstyles from '../../utils/GlobalCss';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { CityData, subCasteOptions } from '../../DummyData/DropdownData';
 import Entypo from 'react-native-vector-icons/Entypo';
+import { CREATE_DHARAMSALA, UPDATE_DHARAMSALA, GET_DHARAMSALA } from '../../utils/BaseUrl';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import Toast from 'react-native-toast-message';
 
 const DharamsalaSubmissionPage = ({ navigation }) => {
-    const [dharamsalaName, setDharamsalaName] = useState('');
-    const [contact, setContact] = useState('');
-    const [description, setDescription] = useState('');
-    const [photos, setPhotos] = useState([]);
+    // const [dharamsalaName, setDharamsalaName] = useState('');
+    // const [contact, setContact] = useState('');
+    // const [description, setDescription] = useState('');
+    // const [photos, setPhotos] = useState([]);
     const [subCasteInput, setSubCasteInput] = useState('');
     const [cityInput, setCityInput] = useState('');
     const [filteredCities, setFilteredCities] = useState([]);
     const [filteredSubCaste, setFilteredSubCaste] = useState([]);
     const [selectedCity, setSelectedCity] = useState('');
     const [selectedSubCaste, setSelectedSubCaste] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
+    const [DharamsalaData, setDharamsalaData] = useState({
+        dharmshalaName: '',
+        subCaste: '',
+        city: '',
+        description: '',
+        images: [],  // ✅ Ensure images is an array
+        mobileNo: ''
+    });
+    
+
+    useEffect(() => {
+        const fetchDharamsalaData = async () => {
+            try {
+                setIsLoading(true);
+                const token = await AsyncStorage.getItem("userToken");
+                if (!token) {
+                    Toast.show({
+                        type: "error",
+                        text1: "Error",
+                        text2: "Authorization token is missing.",
+                    });
+                    return;
+                }
+
+                const headers = {
+                    Authorization: `Bearer ${token}`,
+                };
+
+                const response = await axios.get(GET_DHARAMSALA, { headers });
+      
+                if (response.status === 200 && response.data?.data) {
+                    console.log("dharamsala view data",JSON.stringify(response.data?.data))
+                    setDharamsalaData(response.data.data);
+                }
+            } catch (error) {
+                console.error("Error fetching committee data:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchDharamsalaData();
+    }, []);
+
+
     const handleCityInputChange = (text) => {
         setCityInput(text);
         if (text) {
@@ -29,60 +80,181 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
         } else {
             setFilteredCities([]);
         }
+
+        setDharamsalaData(prevDharamsalaData => ({
+            ...prevDharamsalaData,
+            city: text,
+        }));
     };
 
-    // Sub Caste input handler
+    const handleCitySelect = (item) => {
+        setCityInput(item);
+        setDharamsalaData(prevDharamsalaData => ({
+            ...prevDharamsalaData,
+            city: item,
+        }));
+        setFilteredCities([]);
+    };
+
     const handleSubCasteInputChange = (text) => {
         setSubCasteInput(text);
+
         if (text) {
-            const filtered = subCasteOptions.filter((item) =>
-                item?.label?.toLowerCase().includes(text.toLowerCase())
-            ).map(item => item.label);
+            const filtered = subCasteOptions
+                .filter((item) => item?.label?.toLowerCase().includes(text.toLowerCase()))
+                .map((item) => item.label);
+
             setFilteredSubCaste(filtered);
         } else {
             setFilteredSubCaste([]);
         }
+        setDharamsalaData((prevDharamsalaData) => ({
+            ...prevDharamsalaData,
+            subCaste: text,
+        }));
+    };
+
+    const handleSubCasteSelect = (selectedItem) => {
+        setSubCasteInput(selectedItem);
+        setFilteredSubCaste([]);
+        setDharamsalaData((prevDharamsalaData) => ({
+            ...prevDharamsalaData,
+            subCaste: selectedItem,
+        }));
     };
 
     const handleImageUpload = () => {
         ImageCropPicker.openPicker({
-            multiple: false,
-            cropping: true,
-            width: 400,
-            height: 400,
-        }).then(image => {
-            const newPhoto = {
-                uri: image.path,
+          multiple: false,
+          cropping: true,
+          width: 400,
+          height: 400,
+        })
+          .then((image) => {
+            setDharamsalaData((prev) => {
+              // Ensure images is always an array
+              const updatedImages = prev?.images?.length ? [...prev.images] : [];
+      
+              if (updatedImages.length < 3) {
+                return {
+                  ...prev,
+                  images: [...updatedImages, { uri: image.path }],
+                };
+              } else {
+                alert("You can only upload up to 3 photos.");
+                return prev; // Return unchanged state
+              }
+            });
+          })
+          .catch((err) => console.log("Crop Picker Error:", err));
+      };
+
+    const convertToBase64 = async (images) => {
+        try {
+          const base64Images = await Promise.all(
+            images.map(async (image) => {
+              if (!image.uri) return null;
+      
+              const response = await fetch(image.uri);
+              const blob = await response.blob();
+      
+              return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.readAsDataURL(blob);
+              });
+            })
+          );
+      
+          return base64Images.filter(Boolean); // Remove any null values
+        } catch (error) {
+          console.error("Error converting image to Base64:", error);
+          return [];
+        }
+      };
+      
+      const constructDharamsalaPayload = async (DharamsalaData, isNew = false) => {
+        const keys = ["dharmshalaName", "subCaste", "city", "description", "images", "mobileNo"];
+        const payload = {};
+      
+        for (const key of keys) {
+          if (DharamsalaData[key] !== undefined && DharamsalaData[key] !== "") {
+            payload[key] = DharamsalaData[key];
+          } else if (isNew) {
+            payload[key] = "";
+          }
+        }
+      
+        if (DharamsalaData.images.length > 0) {
+          payload.images = await convertToBase64(DharamsalaData.images);
+          console.log("Converted Base64 Images:", payload.images);
+        }
+      
+        return payload;
+      };
+      
+    
+      const handleDharamSalaSave = async () => {
+        try {
+            setIsLoading(true);
+            const token = await AsyncStorage.getItem("userToken");
+            if (!token) {
+                Toast.show({
+                    type: "error",
+                    text1: "Error",
+                    text2: "Authorization token is missing.",
+                });
+                return;
+            }
+    
+            const headers = {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
             };
-            addPhotos([newPhoto]);
-        }).catch(err => console.log('Crop Picker Error:', err));
-    };
+    
+            const payload = await constructDharamsalaPayload(DharamsalaData, !DharamsalaData?._id);
+            console.log("Payload:", payload);
+    
+            const isUpdating = !!DharamsalaData?._id;
+            const apiCall = isUpdating ? axios.patch : axios.post;
+            const endpoint = isUpdating ? `${UPDATE_DHARAMSALA}` : CREATE_DHARAMSALA;
+    
+            const response = await apiCall(endpoint, payload, { headers });
+            console.log("dharamsala create , update data", JSON.stringify(response.data));
+    
+            if (response.status === 200 || response.status === 201) {
+                console.log("Updated Data:", JSON.stringify(response.data.data));
+    
+                // ✅ Show Toast First
+                Toast.show({
+                    type: "success",
+                    text1: response.data.message || (isUpdating ? "Profile Updated Successfully" : "Profile Created Successfully"),
+                    text2: "Your changes have been saved!",
+                });
+    
+                if (!DharamsalaData?._id && response.data?.data?._id) {
+                    setDharamsalaData((prev) => ({
+                        ...prev,
+                        _id: response.data.data._id,
+                    }));
+                }
+                
 
-    const addPhotos = (newPhotos) => {
-        if (photos.length + newPhotos.length <= 3) {
-            setPhotos(prevPhotos => [...prevPhotos, ...newPhotos]);
-        } else {
-            alert('You can only upload up to 3 photos.');
+            } else {
+                throw new Error(response.data.message || "Something went wrong");
+            }
+        } catch (error) {
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: error.response?.data?.message || "Failed to save data.",
+            });
+        } finally {
+            setIsLoading(false);
         }
     };
-
-    const handleSubmit = () => {
-        if (!dharamsalaName || !subCasteInput || !cityInput || !photos) {
-            Alert.alert('Error', 'All mandatory fields must be filled.');
-            return;
-        }
-
-        const formData = {
-            dharamsalaName,
-            subCasteInput,
-            cityInput,
-            description,
-            photos,
-        };
-
-        console.log('Submitted Data:', formData);
-        Alert.alert('Success', 'Dharamsala details submitted successfully!');
-    };
+      
+  
 
     return (
         <SafeAreaView style={Globalstyles.container}>
@@ -111,32 +283,28 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                 <TextInput
                     style={Globalstyles.input}
                     placeholder="Enter Dharamsala Name"
-                    value={dharamsalaName}
-                    onChangeText={setDharamsalaName}
+                    value={DharamsalaData.dharmshalaName}
+                    onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, dharmshalaName: text }))} 
                     placeholderTextColor={Colors.gray}
                 />
 
                 <Text style={Globalstyles.title}>Sub-Caste Name <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
                     style={Globalstyles.input}
-                    value={subCasteInput}
+                    value={DharamsalaData?.subCaste} // `myBiodata?.subCaste` ki jagah `subCasteInput` use karein
                     onChangeText={handleSubCasteInputChange}
-                    placeholder="Enter your sub caste"
+                    placeholder="Type your sub caste"
                     placeholderTextColor={Colors.gray}
                 />
-                {filteredSubCaste.length > 0 && subCasteInput ? (
+
+                {/* Agar user type karega toh list dikhegi */}
+                {filteredSubCaste.length > 0 ? (
                     <FlatList
                         data={filteredSubCaste.slice(0, 5)}
                         scrollEnabled={false}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({ item }) => (
-                            <TouchableOpacity
-                                onPress={() => {
-                                    setSubCasteInput(item);
-                                    setSelectedSubCaste(item);
-                                    setFilteredSubCaste([]);
-                                }}
-                            >
+                            <TouchableOpacity onPress={() => handleSubCasteSelect(item)}>
                                 <Text style={Globalstyles.listItem}>{item}</Text>
                             </TouchableOpacity>
                         )}
@@ -144,28 +312,21 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     />
                 ) : null}
 
-
                 <Text style={Globalstyles.title}>City <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
                     style={Globalstyles.input}
-                    value={cityInput}
+                    value={DharamsalaData?.city}
                     onChangeText={handleCityInputChange}
                     placeholder="Enter your city"
                     placeholderTextColor={Colors.gray}
                 />
                 {filteredCities.length > 0 && cityInput ? (
                     <FlatList
-                        data={filteredCities}
+                        data={filteredCities.slice(0, 5)}
                         scrollEnabled={false}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({ item }) => (
-                            <TouchableOpacity
-                                onPress={() => {
-                                    setCityInput(item);
-                                    setSelectedCity(item);
-                                    setFilteredCities([]);
-                                }}
-                            >
+                            <TouchableOpacity onPress={() => handleCitySelect(item)}>
                                 <Text style={Globalstyles.listItem}>{item}</Text>
                             </TouchableOpacity>
                         )}
@@ -177,40 +338,42 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                 <TextInput
                     style={Globalstyles.input}
                     placeholder="Enter Person's Contact No."
-                    value={contact}
-                    onChangeText={setContact}
+                    keyboardType="numeric"
+                    maxLength={10}
                     placeholderTextColor={Colors.gray}
+                    value={DharamsalaData.mobileNo} onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, mobileNo: text }))}
                 />
 
                 <Text style={Globalstyles.title}>Description (Optional)</Text>
                 <TextInput
                     style={[Globalstyles.input, styles.textArea]}
                     placeholder="Enter Description"
-                    value={description}
-                    onChangeText={setDescription}
                     placeholderTextColor={Colors.gray}
+                    value={DharamsalaData.description} onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, description: text }))}
                     multiline={true}
                 />
-                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                    <Text style={Globalstyles.title}>Upload Images (Max Limit 3) <Entypo name={'star'} color={'red'} size={12} /> </Text>
-                    <TouchableOpacity style={styles.uploadButton} onPress={handleImageUpload}>
-                        <Text style={styles.uploadButtonText}>
-                            {photos ? 'Change Image' : 'Upload Image'}
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-                {photos.length > 0 && (
-                    <View style={styles.imagePreview}>
-                        {/* <Text style={styles.label}>Uploaded Photos:</Text> */}
-                        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                            {photos.map((photo, index) => (
-                                <Image key={index} source={{ uri: photo.uri }} style={styles.photo} />
-                            ))}
-                        </ScrollView>
-                    </View>
-                )}
+             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+  <Text style={Globalstyles.title}>
+    Upload Images (Max Limit 3) <Entypo name={"star"} color={"red"} size={12} />
+  </Text>
+  <TouchableOpacity style={styles.uploadButton} onPress={handleImageUpload}>
+    <Text style={styles.uploadButtonText}>
+      {DharamsalaData.images?.length > 0 ? "Change Image" : "Upload Image"}
+    </Text>
+  </TouchableOpacity>
+</View>
 
-                <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+{DharamsalaData.images?.length > 0 && (
+  <View style={styles.imagePreview}>
+    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+      {DharamsalaData.images.map((photo, index) => (
+        <Image key={index} source={{ uri: photo?.uri || photo }} style={styles.photo} />
+      ))}
+    </ScrollView>
+  </View>
+)}
+
+                <TouchableOpacity style={styles.submitButton} onPress={handleDharamSalaSave}>
                     <Text style={styles.submitButtonText}>Submit</Text>
                 </TouchableOpacity>
             </View>
@@ -258,7 +421,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     submitButton: {
-        backgroundColor:Colors.theme_color,
+        backgroundColor: Colors.theme_color,
         paddingVertical: SH(5),
         borderRadius: 5,
         alignItems: 'center',
@@ -267,9 +430,9 @@ const styles = StyleSheet.create({
     },
     submitButtonText: {
         color: Colors.light,
-    fontSize: SF(15),
-    fontWeight: 'Poppins-Bold',
-    textTransform:"capitalize"
+        fontSize: SF(15),
+        fontWeight: 'Poppins-Bold',
+        textTransform: "capitalize"
     },
     contentContainer: {
         margin: SW(15),

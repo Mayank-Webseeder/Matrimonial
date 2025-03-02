@@ -166,10 +166,9 @@ const CommitteeSubmissionPage = ({ navigation }) => {
         }
     };
 
-    const constructActivistPayload = async (ActivistData, isNew = false) => {
+    const constructCommitteePayload = async (CommitteeData, isNew = false) => {
         const keys = [
-            "fullname", "subCaste", "dob", "state", "city",
-            "mobileNo", "knownActivistIds", "engagedWithCommittee", "profilePhoto"
+           'committeeTitle','presidentName','subCaste','city','area','photoUrl','mobileNo'
         ];
 
         const payload = {};
@@ -205,7 +204,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
     };
 
 
-    const handleActivistSave = async () => {
+    const handleCommitteeSave = async () => {
         try {
             setIsLoading(true);
             const token = await AsyncStorage.getItem("userToken");
@@ -223,7 +222,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                 Authorization: `Bearer ${token}`,
             };
 
-            const payload = await constructActivistPayload(CommitteeData, !CommitteeData?._id);
+            const payload = await constructCommitteePayload(CommitteeData, !CommitteeData?._id);
             console.log("Payload:", payload);
             const apiCall = CommitteeData?._id ? axios.patch : axios.post;
             const endpoint = CommitteeData?._id ? `${UPDATE_COMMITTEE}` : CREATE_COMMITTEE;
@@ -233,7 +232,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
             if (response.status === 200 || response.status === 201) {
                 Toast.show({
                     type: "success",
-                    text1: CommitteeData?._id ? "Profile Updated Successfully" : "Activist Profile Created Successfully",
+                    text1: CommitteeData?._id ? "Profile Updated Successfully" : "Committee Profile Created Successfully",
                     text2: response.data.message || "Your changes have been saved!",
                 });
 
@@ -363,7 +362,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginVertical: SH(10) }}>
                     <Text style={Globalstyles.title}>Upload President Image <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TouchableOpacity style={styles.uploadButton} onPress={handleImagePick}>
-                        <Text style={styles.uploadButtonText}>{CommitteeData.profilePhoto ? "Change Image" : "Upload Image"}</Text>
+                        <Text style={styles.uploadButtonText}>{CommitteeData.photoUrl ? "Change Image" : "Upload Image"}</Text>
                     </TouchableOpacity>
                 </View>
                 {CommitteeData.photoUrl ? (
@@ -383,7 +382,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     value={CommitteeData.mobileNo} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, mobileNo: text }))}
                 />
 
-                <TouchableOpacity style={styles.submitButton} onPress={handleActivistSave}>
+                <TouchableOpacity style={styles.submitButton} onPress={handleCommitteeSave}>
                     <Text style={styles.submitButtonText}>Submit</Text>
                 </TouchableOpacity>
             </ScrollView>

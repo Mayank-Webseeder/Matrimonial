@@ -100,7 +100,7 @@ const SavedProfile = ({ navigation }) => {
       <View>
         <View style={Globalstyles.header}>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <TouchableOpacity onPress={() => navigation.navigate("Tabs")}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
               <MaterialIcons name={"arrow-back-ios-new"} size={25} color={Colors.theme_color} />
             </TouchableOpacity>
             <Text style={Globalstyles.headerText}>Saved</Text>

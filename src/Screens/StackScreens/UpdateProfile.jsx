@@ -33,72 +33,73 @@ const UpdateProfile = ({ navigation }) => {
 
   const update_profile = async () => {
     try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("Authorization token is missing.");
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) throw new Error("Authorization token is missing.");
 
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      };
+        const headers = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        };
 
-      const payload = {
-        mobileNo,
-        username,
-        dob,
-        city,
-        gender,
-      };
+        const payload = {
+            username,
+            dob,
+            city,
+            gender,
+        };
 
-      const response = await axios.put(UPDATE_PROFILE, payload, { headers });
-      const message = response?.data?.message;
-      console.log("message", message);
-      if (message === `${username}, your profile has been updated successfully.`) {
-        Toast.show({
-          type: "success",
-          text1: "Profile Updated Successfully",
-          text2: "Your profile changes have been saved.",
-          position: "top",
-          visibilityTime: 3000,
-          textStyle: { fontSize: 10, color: "green" },
-        });
-        navigation.navigate("MainApp");
-      } else {
-        Toast.show({
-          type: "info",
-          text1: "Profile Updated",
-          text2: message || "Your profile has been updated.",
-          position: "top",
-          visibilityTime: 3000,
-          textStyle: { fontSize: 10, color: "red" },
-        });
-      }
+        const response = await axios.put(UPDATE_PROFILE, payload, { headers });
+        const message = response?.data?.message;
+        console.log("message", response.data);
 
-      console.log("Profile updated successfully:", response.data);
+        if (message && message.includes("profile has been updated successfully")) {
+            Toast.show({
+                type: "success",
+                text1: "Profile Updated Successfully",
+                text2: "Your profile changes have been saved.",
+                position: "top",
+                visibilityTime: 3000,
+                textStyle: { fontSize: 10, color: "green" },
+            });
+
+            // ✅ Use replace instead of navigate
+            navigation.replace("MainApp");
+        } else {
+            Toast.show({
+                type: "info",
+                text1: "Profile Updated",
+                text2: message || "Your profile has been updated.",
+                position: "top",
+                visibilityTime: 3000,
+                textStyle: { fontSize: 10, color: "red" },
+            });
+        }
+
+        console.log("Profile updated successfully:", response.data);
     } catch (error) {
-      if (error.response) {
-        console.error("API Error:", error.response.data);
-        Toast.show({
-          type: "error",
-          text1: "Update Failed",
-          text2: error.response.data.message || "Unable to update profile. Please try again.",
-          position: "top",
-          visibilityTime: 3000,
-          textStyle: { fontSize: 10, color: "red" },
-        });
-      } else {
-        console.error("Error updating profile:", error.message);
-        Toast.show({
-          type: "error",
-          text1: "Update Failed",
-          text2: "Something went wrong. Please try again later.",
-          position: "top",
-          visibilityTime: 3000,
-          textStyle: { fontSize: 10, color: "red" },
-        });
-      }
+        if (error.response) {
+            console.error("API Error:", error.response.data);
+            Toast.show({
+                type: "error",
+                text1: "Update Failed",
+                text2: error.response.data.message || "Unable to update profile. Please try again.",
+                position: "top",
+                visibilityTime: 3000,
+                textStyle: { fontSize: 10, color: "red" },
+            });
+        } else {
+            console.error("Error updating profile:", error.message);
+            Toast.show({
+                type: "error",
+                text1: "Update Failed",
+                text2: "Something went wrong. Please try again later.",
+                position: "top",
+                visibilityTime: 3000,
+                textStyle: { fontSize: 10, color: "red" },
+            });
+        }
     }
-  };
-
+};
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || dob;
     setShowDatePicker(false);
@@ -126,7 +127,7 @@ const UpdateProfile = ({ navigation }) => {
           placeholderTextColor={Colors.gray}
         />
 
-        <Text style={Globalstyles.title}>Mobile Number</Text>
+        {/* <Text style={Globalstyles.title}>Mobile Number</Text>
         <TextInput
           style={Globalstyles.input}
           placeholder="Enter your mobile number"
@@ -134,7 +135,7 @@ const UpdateProfile = ({ navigation }) => {
           value={mobileNo}
           onChangeText={setMobileNo}
           placeholderTextColor={Colors.gray}
-        />
+        /> */}
 
         <Text style={Globalstyles.title}>Date of Birth</Text>
         <TouchableOpacity onPress={() => setShowDatePicker(true)} style={Globalstyles.input}>
@@ -231,15 +232,17 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   updateButton: {
-    backgroundColor: Colors.theme_color,
-    paddingVertical: SH(5),
-    marginVertical: SH(30),
-    borderRadius: 5,
-    alignItems: 'center',
+    backgroundColor:Colors.theme_color,
+        paddingVertical: SH(5),
+        borderRadius: 5,
+        alignItems: 'center',
+        marginTop: SH(20),
+        marginBottom: SH(80)
   },
   updateButtonText: {
-    color: 'white',
-    fontSize: SF(16),
-    fontFamily: "Poppins-Medium"
+    color: Colors.light,
+    fontSize: SF(15),
+    fontWeight: 'Poppins-Bold',
+    textTransform:"capitalize"
   },
 });

@@ -66,23 +66,25 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderRadius: 10,
         overflow: 'hidden',
+        marginHorizontal: SW(2),
+        paddingVertical: SH(6),
         shadowColor: '#000',
         shadowOpacity: 0.1,
         shadowRadius: 5,
         elevation: 3,
-        marginHorizontal: SW(3),
-        marginVertical:SH(10),
-        paddingHorizontal: SW(10),
-        paddingVertical:SH(10),
+        marginVertical: SH(5),
+        gap:10,
+        width:SW(180)
     },
+    
     image: {
-        width:SW(160),
-        height: SH(150),
-        resizeMode:"cover"
+    width: '100%',
+    height: SH(150),
+    borderRadius: 10
     },
     detailsContainer: {
         paddingHorizontal: SW(10),
-        marginVertical:SH(10)
+    paddingVertical: SH(10)
     },
     row: {
         flexDirection: 'row',
@@ -92,8 +94,8 @@ const styles = StyleSheet.create({
     },
     row2: {
         flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 5,
     },
     name: {
         fontSize: SF(14),

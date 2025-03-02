@@ -80,9 +80,12 @@ const GET_ALL_COMITTEE = "https://api-matrimonial.webseeder.tech/api/v1/committe
 
 // dharamsala 
 const CREATE_DHARAMSALA = "https://api-matrimonial.webseeder.tech/api/v1/dharmshala/createDharmshala";
-const UPDATE_DHARAMSALA = " https://api-matrimonial.webseeder.tech/api/v1/dharmshala/updateDharmshala";
-const GET_DHARAMSALA = " https://api-matrimonial.webseeder.tech/api/v1/dharmshala/viewDharmshala";
+const UPDATE_DHARAMSALA = "https://api-matrimonial.webseeder.tech/api/v1/dharmshala/updateDharmshala";
+const GET_DHARAMSALA = "https://api-matrimonial.webseeder.tech/api/v1/dharmshala/viewDharmshala";
 const GET_ALL_DHARAMSALA = "https://api-matrimonial.webseeder.tech/api/v1/dharmshala/getAllDharmshala"
+
+// get common api for all matrimony profiles for biodata page 
+const MATRIMONY_SUMMRARY="https://api-matrimonial.webseeder.tech/api/v1/user/getMetrimonial-Summary";
 
 export {
     SIGNUP_ENDPOINT,
@@ -140,5 +143,6 @@ export {
     CREATE_DHARAMSALA,
     UPDATE_DHARAMSALA,
     GET_DHARAMSALA,
-    GET_ALL_DHARAMSALA
+    GET_ALL_DHARAMSALA,
+    MATRIMONY_SUMMRARY
 }

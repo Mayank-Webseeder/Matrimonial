@@ -78,34 +78,42 @@ function MyTabs() {
   const image = profiledata?.photoUrl?.[0];
   const MyprofileData = useSelector((state) => state.getBiodata);
   const partnerPreferences = MyprofileData?.Biodata?.partnerPreferences || null;
-  // const [loading, setLoading] = useState(true); 
+   const [loading, setLoading] = useState(true); 
 
-  const fetchProfile = async () => {
-    // setLoading(true); 
+   const fetchProfile = async () => {
+    setLoading(true); 
     try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) throw new Error("No token found");
 
-      const headers = {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      };
+        const headers = {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+        };
 
-      console.log("headers in profile", headers);
-      const res = await axios.get(PROFILE_ENDPOINT, { headers });
-      const ProfileData = res.data.data;
+        console.log("headers in profile", headers);
+        const res = await axios.get(PROFILE_ENDPOINT, { headers });
+        const ProfileData = res.data.data;
 
-      setProfile(ProfileData);
-      dispatch(setProfiledata(ProfileData));
+        setProfile(ProfileData);
+        dispatch(setProfiledata(ProfileData));
 
-      console.log("ProfileData", ProfileData);
+        console.log("ProfileData", ProfileData);
+
+        // ✅ Check if the response message is correct, then navigate
+        if (res.data.message === "User profile updated successfully.") {
+            navigation.replace("MainApp"); // ✅ Navigate to MainApp
+        }
     } catch (error) {
-      console.error(
-        "Error fetching profile:",
-        error.response ? error.response.data : error.message
-      );
+        console.error(
+            "Error fetching profile:",
+            error.response ? error.response.data : error.message
+        );
+    } finally {
+        setLoading(false);
     }
-  };
+};
+
 
   useEffect(() => {
     fetchProfile();

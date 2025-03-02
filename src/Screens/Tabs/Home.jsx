@@ -25,28 +25,28 @@ const Home = ({ navigation }) => {
   const [biodata, setBiodata] = useState("");
   const [allbiodata, setallBiodata] = useState("");
   const [mybiodata, setMybiodata] = useState("");
-  const partnerPreferences=mybiodata?.partnerPreferences;
+  const partnerPreferences = mybiodata?.partnerPreferences;
   const [isLoading, setIsLoading] = useState("");
- 
+
   const handleNavigateToProfile = (item) => {
     if (!navigation.isFocused()) return;
 
     console.log("Current Partner Preferences:", mybiodata?.partnerPreferences);
 
     if (!mybiodata || !mybiodata.partnerPreferences) {
-        // Partner preferences nahi hai, toh "Matrimonial" screen par bhejo
-        console.log("Navigating to Matrimonial because Partner Preferences are missing");
-        navigation.navigate("Matrimonial");
+      // Partner preferences nahi hai, toh "Matrimonial" screen par bhejo
+      console.log("Navigating to Matrimonial because Partner Preferences are missing");
+      navigation.navigate("Matrimonial");
     } else {
-        // Partner preferences hai, toh "MatrimonyPeopleProfile" screen par bhejo
-        console.log("Navigating to MatrimonyPeopleProfile");
-        navigation.navigate("MatrimonyPeopleProfile", {
-            userDetails: item,
-            userId: item._id,
-            isSaved:item.isSaved
-        });
+      // Partner preferences hai, toh "MatrimonyPeopleProfile" screen par bhejo
+      console.log("Navigating to MatrimonyPeopleProfile");
+      navigation.navigate("MatrimonyPeopleProfile", {
+        userDetails: item,
+        userId: item._id,
+        isSaved: item.isSaved
+      });
     }
-};
+  };
 
   const GetAll_Biodata = async () => {
     try {
@@ -61,9 +61,9 @@ const Home = ({ navigation }) => {
       console.log("headers in profile", headers);
       const res = await axios.get(GET_ALL_BIODATA_PROFILES, { headers });
       const biodata = res.data.feedUsers;
-      console.log("res.data.feedUsers",JSON.stringify(res.data.feedUsers))
+      console.log("res.data.feedUsers", JSON.stringify(res.data.feedUsers))
       setallBiodata(biodata);
-      console.log("biodata",biodata);
+      console.log("biodata", biodata);
       dispatch(setAllBiodata(biodata));
     } catch (error) {
       console.error(
@@ -113,7 +113,7 @@ const Home = ({ navigation }) => {
       };
 
       const response = await axios.get(GET_ACTIVIST, { headers });
-      console.log("Activist data",response.data)
+      console.log("Activist data", response.data)
       if (response.data && response.data.data && response.data.data) {
         const fetchedData = response.data.data;
         dispatch(setActivistdata(fetchedData));
@@ -134,7 +134,7 @@ const Home = ({ navigation }) => {
       GetAll_Biodata();
       getBiodata();
       getActivistProfile();
-      console.log("mybiodata",mybiodata);
+      console.log("mybiodata", mybiodata);
     }, [])
   );
 
@@ -203,37 +203,37 @@ const Home = ({ navigation }) => {
             onViewAllPress={() => navigation.navigate('Matrimonial')}
           />
 
-<FlatList
-  data={allbiodata}
-  keyExtractor={(item) => item._id}
-  renderItem={({ item }) => (
-    <View style={styles.imageWrapper}>
-      <TouchableOpacity onPress={() => handleNavigateToProfile(item)}>
-        <Image
-          source={{ uri: item.personalDetails.closeUpPhoto }}
-          style={styles.ProfileImages}
-        />
-        {/* ✅ Show Verified Badge Only for Verified Users */}
-        {item.verified && (
-  <View style={styles.verifiedContainer}>
-    <Image
-      source={require("../../Images/verified.png")}
-      style={styles.verifiedBadge}
-    />
-    <Text style={styles.verifiedText}>Verified</Text>
-  </View>
-)}
-      </TouchableOpacity>
-    </View>
-  )}
-  horizontal={true}
-  showsHorizontalScrollIndicator={false}
-  ListEmptyComponent={
-    <View style={styles.emptyContainer}>
-      <Text style={styles.emptyText}>No Matrimonial Profile Created Yet</Text>
-    </View>
-  }
-/>
+          <FlatList
+            data={allbiodata}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => (
+              <View style={styles.imageWrapper}>
+                <TouchableOpacity onPress={() => handleNavigateToProfile(item)}>
+                  <Image
+                    source={{ uri: item.personalDetails.closeUpPhoto }}
+                    style={styles.ProfileImages}
+                  />
+                  {/* ✅ Show Verified Badge Only for Verified Users */}
+                  {item.verified && (
+                    <View style={styles.verifiedContainer}>
+                      <Image
+                        source={require("../../Images/verified.png")}
+                        style={styles.verifiedBadge}
+                      />
+                      <Text style={styles.verifiedText}>Verified</Text>
+                    </View>
+                  )}
+                </TouchableOpacity>
+              </View>
+            )}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>No Matrimonial Profile Created Yet</Text>
+              </View>
+            }
+          />
 
 
         </View>

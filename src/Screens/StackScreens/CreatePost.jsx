@@ -82,7 +82,7 @@ const CreatePost = ({navigation}) => {
                             </ScrollView>
                         </View>
                     )}
-                     <TouchableOpacity style={styles.PostButton}>
+                     <TouchableOpacity style={styles.PostButton} onPress={()=>navigation.goBack()}>
                        <Text style={styles.PostText}>Submit Post</Text>
                     </TouchableOpacity>
         </SafeAreaView>

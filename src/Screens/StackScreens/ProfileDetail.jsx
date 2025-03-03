@@ -107,6 +107,10 @@ const ProfileDetail = ({ route, navigation }) => {
         return (total / ratings.length).toFixed(1); // Decimal me 1 place tak dikhane ke liye
     };
 
+    const formattedHeight = profileData?.personalDetails?.heightFeet
+        ?.replace(/\s*-\s*/, "") // Remove space and dash (-) between feet and inches
+        ?.replace(/\s+/g, "");
+
     return (
         <ScrollView style={Globalstyles.container}>
             <View style={Globalstyles.header}>
@@ -139,7 +143,7 @@ const ProfileDetail = ({ route, navigation }) => {
                         <View style={styles.flexContainer2}>
                             {/* Left Column */}
                             <View style={styles.column}>
-                                <Text style={styles.text}>{calculateAge(profileData?.personalDetails?.dob)} Yrs, {profileData?.personalDetails?.heightFeet}</Text>
+                                <Text style={styles.text}>{calculateAge(profileData?.personalDetails?.dob)} Yrs, {formattedHeight}</Text>
                                 {profileData?.personalDetails?.subCaste && (
                                     <Text style={styles.text}>{profileData.personalDetails.subCaste}</Text>
                                 )}

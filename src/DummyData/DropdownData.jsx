@@ -2,8 +2,8 @@
 export const OccupationData = [
   { label: 'Defence', value: 'Defence' },
   { label: 'Artist', value: 'Artist' },
-  { label: 'Private Job / Employee', value: 'Private Job / Employee' },
-  { label: 'Government Job / Employee', value: 'Government Job / Employee' },
+  { label: 'Private Job', value: 'Private Job' },
+  { label: 'Government Job', value: 'Government Job' },
   { label: 'Self Employed', value: 'Self Employed' },
   { label: 'Freelancer', value: 'Freelancer' },
   { label: 'Agriculture Professional', value: 'Agriculture Professional' },
@@ -11,21 +11,22 @@ export const OccupationData = [
   { label: 'Officer', value: 'Officer' },
   { label: 'Software Professional', value: 'Software Professional' },
   { label: 'Education Professional', value: 'Education Professional' },
-  { label: 'Medical & Healthcare Professional', value: 'Medical & Healthcare Professional' },
+  { label: 'Medical & Healthcare', value: 'Medical & Healthcare' },
   { label: 'Doctor / Surgeon', value: 'Doctor / Surgeon' },
   { label: 'Marketing Professional', value: 'Marketing Professional' },
   { label: 'Politician', value: 'Politician' },
   { label: 'Research Scholar', value: 'Research Scholar' },
   { label: 'Retired', value: 'Retired' },
   { label: 'Not Working', value: 'Not Working' },
+  { label: 'Expired', value: 'Expired' },
   { label: 'Other', value: 'Other' }
 ];
 
 export const MotherOccupationData = [
   { label: 'Defence', value: 'Defence' },
   { label: 'Artist', value: 'Artist' },
-  { label: 'Private Job / Employee', value: 'Private Job / Employee' },
-  { label: 'Government Job / Employee', value: 'Government Job / Employee' },
+  { label: 'Private Job', value: 'Private Job' },
+  { label: 'Government Job', value: 'Government Job' },
   { label: 'Self Employed', value: 'Self Employed' },
   { label: 'Freelancer', value: 'Freelancer' },
   { label: 'Agriculture Professional', value: 'Agriculture Professional' },
@@ -33,7 +34,7 @@ export const MotherOccupationData = [
   { label: 'Officer', value: 'Officer' },
   { label: 'Software Professional', value: 'Software Professional' },
   { label: 'Education Professional', value: 'Education Professional' },
-  { label: 'Medical & Healthcare Professional', value: 'Medical & Healthcare Professional' },
+  { label: 'Medical & Healthcare ', value: 'Medical & Healthcare ' },
   { label: 'Doctor / Surgeon', value: 'Doctor / Surgeon' },
   { label: 'Marketing Professional', value: 'Marketing Professional' },
   { label: 'Politician', value: 'Politician' },
@@ -41,7 +42,32 @@ export const MotherOccupationData = [
   { label: 'Retired', value: 'Retired' },
   { label: 'Not Working', value: 'Not Working' },
   { label: 'Home Maker', value: 'Home Maker' },
+  { label: 'Expired', value: 'Expired' },
   { label: 'Other', value: 'Other' }
+];
+
+export const PartnerOccupationData = [
+  { label: 'Defence', value: 'Defence' },
+  { label: 'Artist', value: 'Artist' },
+  { label: 'Private Job', value: 'Private Job' },
+  { label: 'Government Job', value: 'Government Job' },
+  { label: 'Self Employed', value: 'Self Employed' },
+  { label: 'Freelancer', value: 'Freelancer' },
+  { label: 'Agriculture Professional', value: 'Agriculture Professional' },
+  { label: 'Business / Entrepreneur', value: 'Business / Entrepreneur' },
+  { label: 'Officer', value: 'Officer' },
+  { label: 'Software Professional', value: 'Software Professional' },
+  { label: 'Education Professional', value: 'Education Professional' },
+  { label: 'Medical & Healthcare', value: 'Medical & Healthcare' },
+  { label: 'Doctor / Surgeon', value: 'Doctor / Surgeon' },
+  { label: 'Marketing Professional', value: 'Marketing Professional' },
+  { label: 'Politician', value: 'Politician' },
+  { label: 'Research Scholar', value: 'Research Scholar' },
+  { label: 'Retired', value: 'Retired' },
+  { label: 'Not Working', value: 'Not Working' },
+  { label: 'Expired', value: 'Expired' },
+  { label: 'Other', value: 'Other' },
+  { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
 ];
 
 export const QualificationData = [
@@ -57,6 +83,22 @@ export const QualificationData = [
   { label: 'Law', value: 'Law' },
   { label: 'Management', value: 'Management' },
   { label: 'Other', value: 'Other' },
+];
+
+export const PartnerQualificationData = [
+  { label: 'High School', value: 'High School' },
+  { label: 'Higher Secondary', value: 'Higher Secondary' },
+  { label: 'Diploma', value: 'Diploma' },
+  { label: 'Bachelor\'s Degree', value: 'Bachelor\'s Degree' },
+  { label: 'Master\'s Degree', value: 'Master\'s Degree' },
+  { label: 'Doctorates', value: 'Doctorates' },
+  { label: 'Engineering', value: 'Engineering' },
+  { label: 'CA/CS', value: 'CA/CS' },
+  { label: 'MBBS', value: 'MBBS' },
+  { label: 'Law', value: 'Law' },
+  { label: 'Management', value: 'Management' },
+  { label: 'Other', value: 'Other' },
+  { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
 ];
 
 
@@ -151,6 +193,16 @@ export const Income = [
   { label: 'No Income', value: 'No Income' },
 ]
 
+export const PartnerFamliyIncome = [
+  { label: 'Less than ₹1 Lakh', value: '<1L' },
+  { label: '₹1 Lakh - ₹5 Lakh', value: '1L-5L' },
+  { label: '₹5 Lakh - ₹10 Lakh', value: '5L-10L' },
+  { label: '₹10 Lakh - ₹20 Lakh', value: '10L-20L' },
+  { label: 'Above ₹20 Lakh', value: '>20L' },
+  { label: 'No Income', value: 'No Income' },
+  { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
+]
+
 export const FamilyType = [
   { label: 'Nuclear Family', value: 'Nuclear Family' },
   { label: 'Joint Family', value: 'Joint Family' },
@@ -166,6 +218,14 @@ export const DietHabit = [
   { label: 'Vegetarian', value: 'Vegetarian' },
   { label: 'Non-Vegetarian', value: 'Non-Vegetarian' },
   { label: 'Eggetarian', value: 'Eggetarian' },
+]
+
+export const PartnerDietHabit = [
+  { label: 'Vegetarian', value: 'Vegetarian' },
+  { label: 'Non-Vegetarian', value: 'Non-Vegetarian' },
+  { label: 'Eggetarian', value: 'Eggetarian' },
+  { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
+
 ]
 
 export const smokingStatusData = [

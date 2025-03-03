@@ -392,6 +392,8 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                         placeholder="Enter Your Mobile No." maxLength={10}
                         placeholderTextColor={Colors.gray} />
 
+<Text style={[Globalstyles.title,{color:Colors.theme_color}]}>Address</Text>
+
                     <Text style={Globalstyles.title}>State</Text>
                     <TextInput
                         style={Globalstyles.input}
@@ -438,7 +440,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                     ) : null}
 
 
-                    <Text style={Globalstyles.title}>Area (optional)</Text>
+                    <Text style={Globalstyles.title}>Area </Text>
                     <TextInput style={Globalstyles.input}
                         value={RoleRegisterData?.residentialAddress}
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, residentialAddress: text }))}
@@ -446,7 +448,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                         placeholderTextColor={Colors.gray}
                     />
 
-                    <Text style={Globalstyles.title}>Aadhar No. (Optional)</Text>
+                    <Text style={Globalstyles.title}>Aadhar No. </Text>
                     <TextInput style={Globalstyles.input}
                         value={RoleRegisterData?.aadharNo}
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, aadharNo: text }))}

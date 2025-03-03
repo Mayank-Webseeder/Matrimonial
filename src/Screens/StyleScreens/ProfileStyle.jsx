@@ -210,10 +210,8 @@ const styles = StyleSheet.create({
         paddingRight: SW(10)
     },
     imagePlaceholder: {
-        color: Colors.gray,
-        fontSize: SF(15),
-        textAlign: 'center',
-        paddingVertical: SH(20),
+        fontFamily:"Poppins-Regular",
+        color:Colors.gray
     },
     selectedImage: {
         width: SW(100),

@@ -13,9 +13,9 @@ import Toast from 'react-native-toast-message';
 import Entypo from 'react-native-vector-icons/Entypo';
 
 import {
-    OccupationData, QualificationData, FamilyTypeData,
-    FamilyFinancialStatusData, PartnersLiveinData, BodyStructureData, ComplexionData, DietHabit, Disabilities, subCasteOptions,
-    PartnermaritalStatusData, PartnersmokingStatusData, PartnerDrinkingHabit, PartnerManglikStatusData, Income, CityData, StateData
+    PartnerOccupationData, FamilyTypeData,
+    FamilyFinancialStatusData, PartnersLiveinData, BodyStructureData, ComplexionData,PartnerQualificationData, partnerDietaryHabits, Disabilities, subCasteOptions,
+    PartnermaritalStatusData, PartnersmokingStatusData, PartnerDrinkingHabit, PartnerManglikStatusData, PartnerFamliyIncome,Income, CityData, StateData
 } from '../../DummyData/DropdownData';
 
 const PartnersPreference = ({ navigation }) => {
@@ -27,7 +27,6 @@ const PartnersPreference = ({ navigation }) => {
     const [filteredSubCaste, setFilteredSubCaste] = useState([]);
     const [cityInput, setCityInput] = useState('');
     const [selectedState, setSelectedState] = useState('');
-    const [selectedCity, setSelectedCity] = useState('');
     const [originalBiodata, setOriginalBiodata] = useState({});
     const [selectedSubCaste, setSelectedSubCaste] = useState('');
     const [loading, setLoading] = useState(false);
@@ -67,10 +66,14 @@ const PartnersPreference = ({ navigation }) => {
         if (myPartnerPreferences) {
             setBiodata((prev) => ({
                 ...prev,
-                ...myPartnerPreferences, // Spread new data from Redux
+                ...myPartnerPreferences, // Update biodata
             }));
+    
+            setOriginalBiodata(myPartnerPreferences); // Store the original biodata for comparison
         }
-    }, [myPartnerPreferences]); // Runs when `myPartnerPreferences` changes
+    }, [myPartnerPreferences]);
+     // Runs when `myPartnerPreferences` changes
+
     const handleStateInputChange = (text) => {
         setStateInput(text);
         if (text) {
@@ -201,29 +204,29 @@ const PartnersPreference = ({ navigation }) => {
                 }
             } else {
                 payload = {
-                    partnerSubCaste: biodata.partnerSubCaste || "",
-                    partnerMinAge: biodata.partnerMinAge || "",
-                    partnerMaxAge: biodata.partnerMaxAge || "",
-                    partnerMinHeightFeet: biodata.partnerMinHeightFeet || "",
-                    partnerMaxHeightFeet: biodata.partnerMaxHeightFeet || "",
+                    partnerSubCaste: biodata?.partnerSubCaste || "",
+                    partnerMinAge: biodata?.partnerMinAge || "",
+                    partnerMaxAge: biodata?.partnerMaxAge || "",
+                    partnerMinHeightFeet: biodata?.partnerMinHeightFeet || "",
+                    partnerMaxHeightFeet: biodata?.partnerMaxHeightFeet || "",
                     partnerMaritalStatus: biodata.partnerMaritalStatus || "",
-                    partnerIncome: biodata.partnerIncome || "",
-                    partnerOccupation: biodata.partnerOccupation || "",
-                    partnerQualification: biodata.partnerQualification || "",
-                    partnerDisabilities: biodata.partnerDisabilities || "",
-                    partnerManglikStatus: biodata.partnerManglikStatus || "",
-                    partnersLivingStatus: biodata.partnersLivingStatus || "",
-                    partnerState: biodata.partnerState || "",
-                    partnerCity: biodata.partnerCity || "",
-                    partnerBodyStructure: biodata.partnerBodyStructure || "",
-                    partnerComplexion: biodata.partnerComplexion || "",
-                    partnerDietaryHabits: biodata.partnerDietaryHabits || "",
-                    partnerSmokingHabits: biodata.partnerSmokingHabits || "",
-                    partnerDrinkingHabits: biodata.partnerDrinkingHabits || "",
-                    partnerFamilyType: biodata.partnerFamilyType || "",
-                    partnerFamilyFinancialStatus: biodata.partnerFamilyFinancialStatus || "",
-                    partnerFamilyIncome: biodata.partnerFamilyIncome || "",
-                    partnerExpectations: biodata.partnerExpectations || "",
+                    partnerIncome: biodata?.partnerIncome || "",
+                    partnerOccupation: biodata?.partnerOccupation || "",
+                    partnerQualification: biodata?.partnerQualification || "",
+                    partnerDisabilities: biodata?.partnerDisabilities || "",
+                    partnerManglikStatus: biodata?.partnerManglikStatus || "",
+                    partnersLivingStatus: biodata?.partnersLivingStatus || "",
+                    partnerState: biodata?.partnerState || "",
+                    partnerCity: biodata?.partnerCity || "",
+                    partnerBodyStructure: biodata?.partnerBodyStructure || "",
+                    partnerComplexion: biodata?.partnerComplexion || "",
+                    partnerDietaryHabits: biodata?.partnerDietaryHabits || "",
+                    partnerSmokingHabits: biodata?.partnerSmokingHabits || "",
+                    partnerDrinkingHabits: biodata?.partnerDrinkingHabits || "",
+                    partnerFamilyType: biodata?.partnerFamilyType || "",
+                    partnerFamilyFinancialStatus: biodata?.partnerFamilyFinancialStatus || "",
+                    partnerFamilyIncome: biodata?.partnerFamilyIncome || "",
+                    partnerExpectations: biodata?.partnerExpectations || "",
                 };
             }
 
@@ -297,7 +300,7 @@ const PartnersPreference = ({ navigation }) => {
                         )}
 
                     </View>
-                    <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                    <Text style={Globalstyles.title}>Sub-Caste  </Text>
                     <TextInput
                         style={Globalstyles.input}
                         value={biodata?.partnerSubCaste}
@@ -319,14 +322,14 @@ const PartnersPreference = ({ navigation }) => {
                         />
                     ) : null}
 
-                    <Text style={Globalstyles.title}>Age Criteria <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                    <Text style={Globalstyles.title}>Age Criteria  </Text>
                     <View style={styles.row}>
                         <Dropdown
                             style={[styles.dropdown, !isEditing && styles.readOnly]}
                             data={ageData}
                             labelField="label"
                             valueField="value"
-                            value={biodata.partnerMinAge}
+                            value={biodata?.partnerMinAge}
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerMinAge: item.value })}
                             placeholder="Min Age"
@@ -338,21 +341,21 @@ const PartnersPreference = ({ navigation }) => {
                             data={ageData}
                             labelField="label"
                             valueField="value"
-                            value={biodata.partnerMaxAge}
+                            value={biodata?.partnerMaxAge}
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerMaxAge: item.value })}
                             placeholder="Max Age"
                             placeholderStyle={{ color: '#E7E7E7' }}
                         />
                     </View>
-                    <Text style={Globalstyles.title}>Height Criteria <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                    <Text style={Globalstyles.title}>Height Criteria  </Text>
                     <View style={styles.row}>
                         <Dropdown
                             style={[styles.dropdown, !isEditing && styles.readOnly]}
                             data={heightData}
                             labelField="label"
                             valueField="value"
-                            value={biodata.partnerMinHeightFeet}
+                            value={biodata?.partnerMinHeightFeet}
                             editable={isEditing}
                             onChange={(item) => {
                                 setBiodata({
@@ -368,7 +371,7 @@ const PartnersPreference = ({ navigation }) => {
                             data={heightData}
                             labelField="label"
                             valueField="value"
-                            value={biodata.partnerMaxHeightFeet}
+                            value={biodata?.partnerMaxHeightFeet}
                             editable={isEditing}
                             onChange={(item) => {
                                 setBiodata({
@@ -381,93 +384,93 @@ const PartnersPreference = ({ navigation }) => {
                         />
                     </View>
                     <View>
-                        <Text style={Globalstyles.title}>Partners Marital Status <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                        <Text style={Globalstyles.title}>Partners Marital Status  </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={PartnermaritalStatusData}
                             labelField="label"
                             valueField="value"
-                            value={biodata.partnerMaritalStatus}
+                            value={biodata?.partnerMaritalStatus}
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerMaritalStatus: item.value })}
                             placeholder="Select status"
                             placeholderStyle={{ color: '#E7E7E7' }}
                         />
-                        <Text style={Globalstyles.title}>Income Range (in INR) <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                        <Text style={Globalstyles.title}>Income Range (in INR)  </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={Income}
                             labelField="label"
                             valueField="value"
-                            value={biodata.partnerIncome}
+                            value={biodata?.partnerIncome}
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerIncome: item.value })}
                             placeholder="Income"
                             placeholderStyle={{ color: '#E7E7E7' }}
                         />
-                        <Text style={Globalstyles.title}>Occupation <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                        <Text style={Globalstyles.title}>Occupation  </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                            data={OccupationData}
+                            data={PartnerOccupationData}
                             labelField="label"
                             valueField="value"
-                            value={biodata.partnerOccupation}
+                            value={biodata?.partnerOccupation}
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerOccupation: item.value })}
                             placeholder="Select occupdation"
                             placeholderStyle={{ color: '#E7E7E7' }}
                         />
 
-                        <Text style={styles.inputHeading}>Qualification <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                        <Text style={styles.inputHeading}>Qualification  </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                            data={QualificationData}
+                            data={PartnerQualificationData}
                             labelField="label"
                             valueField="value"
-                            value={biodata.partnerQualification}
+                            value={biodata?.partnerQualification}
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerQualification: item.value })}
                             placeholder="Select Qualification"
                             placeholderStyle={{ color: '#E7E7E7' }}
                         />
-                        <Text style={Globalstyles.title}>Disabilities (Physical/Mental) <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                        <Text style={Globalstyles.title}>Disabilities (Physical/Mental)  </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={Disabilities}
                             labelField="label"
                             valueField="value"
-                            value={biodata.partnerDisabilities}
+                            value={biodata?.partnerDisabilities}
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerDisabilities: item.value })}
                             placeholder="Select disability"
                             placeholderStyle={{ color: '#E7E7E7' }}
                         />
-                        <Text style={Globalstyles.title}>Manglik Status <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                        <Text style={Globalstyles.title}>Manglik Status  </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={PartnerManglikStatusData}
                             labelField="label"
                             valueField="value"
-                            value={biodata.partnerManglikStatus}
+                            value={biodata?.partnerManglikStatus}
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerManglikStatus: item.value })}
                             placeholder="Select status"
                             placeholderStyle={{ color: '#E7E7E7' }}
                         />
-                        <Text style={Globalstyles.title}>Partners Livein <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                        <Text style={Globalstyles.title}>Partners Livein  </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={PartnersLiveinData}
                             labelField="label"
                             valueField="value"
-                            value={biodata.partnersLivingStatus}
+                            value={biodata?.partnersLivingStatus}
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnersLivingStatus: item.value })}
                             placeholder="Select Livein"
                             placeholderStyle={{ color: '#E7E7E7' }}
                         />
-                        <Text style={[Globalstyles.title, { color: Colors.theme_color }]}>Area</Text>
-                        <Text style={Globalstyles.title}>State <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                        <Text style={[Globalstyles.title, { color: Colors.theme_color }]}>Locality</Text>
+                        <Text style={Globalstyles.title}>State  </Text>
                         <TextInput
                             style={Globalstyles.input}
                             value={biodata?.partnerState}
@@ -488,7 +491,7 @@ const PartnersPreference = ({ navigation }) => {
                                 style={Globalstyles.suggestions}
                             />
                         ) : null}
-                        <Text style={Globalstyles.title}>City / Village  <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                        <Text style={Globalstyles.title}>City / Village   </Text>
                         <TextInput
                             style={Globalstyles.input}
                             value={biodata?.partnerCity}
@@ -509,66 +512,66 @@ const PartnersPreference = ({ navigation }) => {
                                 style={Globalstyles.suggestions}
                             />
                         ) : null}
-                        <Text style={Globalstyles.title}>Partners body Structure <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                        <Text style={Globalstyles.title}>Partners body Structure  </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={BodyStructureData}
                             labelField="label"
                             valueField="value"
-                            value={biodata.partnerBodyStructure}
+                            value={biodata?.partnerBodyStructure}
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerBodyStructure: item.value })}
                             placeholder="Select structure" placeholderStyle={{ color: '#E7E7E7' }}
                         />
-                        <Text style={Globalstyles.title}>Complexion <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                        <Text style={Globalstyles.title}>Complexion  </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={ComplexionData}
                             labelField="label"
                             valueField="value"
-                            value={biodata.partnerComplexion}
+                            value={biodata?.partnerComplexion}
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerComplexion: item.value })}
                             placeholder="Select Complexion"
                             placeholderStyle={{ color: '#E7E7E7' }}
                         />
-                        <Text style={Globalstyles.title}>Partner Dietary Habits <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                        <Text style={Globalstyles.title}>Partner Dietary Habits  </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                            data={DietHabit}
+                            data={partnerDietaryHabits}
                             labelField="label"
                             valueField="value"
-                            value={biodata.partnerDietaryHabits}
+                            value={biodata?.partnerDietaryHabits}
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerDietaryHabits: item.value })}
                             placeholder="Select Diet"
                             placeholderStyle={{ color: '#E7E7E7' }}
                         />
-                        <Text style={Globalstyles.title}>Smoking Habits <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                        <Text style={Globalstyles.title}>Smoking Habits  </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={PartnersmokingStatusData}
                             labelField="label"
                             valueField="value"
-                            value={biodata.partnerSmokingHabits}
+                            value={biodata?.partnerSmokingHabits}
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerSmokingHabits: item.value })}
                             placeholder="Select smoking"
                             placeholderStyle={{ color: '#E7E7E7' }}
                         />
-                        <Text style={Globalstyles.title}>Drinking Habits <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                        <Text style={Globalstyles.title}>Drinking Habits  </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={PartnerDrinkingHabit}
                             labelField="label"
                             valueField="value"
-                            value={biodata.partnerDrinkingHabits}
+                            value={biodata?.partnerDrinkingHabits}
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerDrinkingHabits: item.value })}
                             placeholder="Select Habit"
                             placeholderStyle={{ color: '#E7E7E7' }}
                         />
-                        <Text style={Globalstyles.title}>Family Type <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                        <Text style={Globalstyles.title}>Family Type  </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={FamilyTypeData}
@@ -580,7 +583,7 @@ const PartnersPreference = ({ navigation }) => {
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerFamilyType: item.value })}
                         />
-                        <Text style={Globalstyles.title}>Family Financial Status <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                        <Text style={Globalstyles.title}>Family Financial Status  </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={FamilyFinancialStatusData}
@@ -588,26 +591,26 @@ const PartnersPreference = ({ navigation }) => {
                             valueField="value"
                             placeholder="Select Family Financial Status"
                             placeholderStyle={{ color: '#E7E7E7' }}
-                            value={biodata.partnerFamilyFinancialStatus}
+                            value={biodata?.partnerFamilyFinancialStatus}
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerFamilyFinancialStatus: item.value })}
                         />
-                        <Text style={Globalstyles.title}>Family Income <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                        <Text style={Globalstyles.title}>Family Income  </Text>
                         <Dropdown
                             style={Globalstyles.input}
-                            data={Income}
+                            data={PartnerFamliyIncome}
                             labelField="label"
                             valueField="value"
                             placeholder="Select Family Income"
                             placeholderStyle={{ color: '#E7E7E7' }}
-                            value={biodata.partnerFamilyIncome}
+                            value={biodata?.partnerFamilyIncome}
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerFamilyIncome: item.value })}
                         />
-                        <Text style={Globalstyles.title}>Expectations from Partner <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                        <Text style={Globalstyles.title}>Expectations from Partner  </Text>
                         <TextInput style={Globalstyles.textInput}
                             multiline={true} numberOfLines={6}
-                            value={biodata.partnerExpectations}
+                            value={biodata?.partnerExpectations}
                             editable={isEditing}
                             placeholder='Type Your Expectations'
                             placeholderTextColor={Colors.gray}

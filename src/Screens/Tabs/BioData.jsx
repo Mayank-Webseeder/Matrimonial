@@ -18,9 +18,16 @@ const BioData = ({ navigation }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [all_profiles, setAllprofiles] = useState({});
   const [isLoading, setIsLoading] = useState("");
-  const MatrimonialData=all_profiles?.metrimony || null;
-  const savedProfiles=all_profiles?.savedProfiles || null;
-  const interestedProfiles=all_profiles?.interestedProfiles || null;
+  const MatrimonialData=all_profiles?.metrimony || [];
+  const savedProfiles=all_profiles?.savedProfiles || [];
+  const interestedProfiles=all_profiles?.interestedProfiles || [];
+
+// Merge all arrays and remove duplicates based on a unique `id`
+const allProfiles = [...MatrimonialData, ...savedProfiles, ...interestedProfiles];
+
+// Remove duplicates using a Set (assuming each profile has a unique `id`)
+const uniqueProfiles = Array.from(new Map(allProfiles.map(item => [item._id, item])).values());
+
   const [numColumns, setNumColumns] = useState(2); 
 
   const get_all_mixed_matrimony_profiles = async () => {
@@ -35,7 +42,7 @@ const BioData = ({ navigation }) => {
       };
 
       const response = await axios.get(MATRIMONY_SUMMRARY, { headers });
-      console.log("Activist data", response.data)
+      console.log("MATRIMONY_SUMMRARY", response.data)
       if (response.data) {
         const fetchedData = response.data;
         console.log("fetchedData", JSON.stringify(response.data))
@@ -54,7 +61,7 @@ const BioData = ({ navigation }) => {
 
   useEffect(() => {
     get_all_mixed_matrimony_profiles();
-    console.log("MatrimonialData", MatrimonialData)
+    console.log("uniqueProfiles",JSON.stringify(uniqueProfiles))
   }, [])
 
   useEffect(() => {
@@ -128,6 +135,22 @@ const BioData = ({ navigation }) => {
       </View>
     </TouchableOpacity>
   );
+  const renderSavedProfileData = ({ item }) => (
+    <TouchableOpacity style={styles.card} onPress={() => handleNavigateToIntrestedProfile(item)}>
+      <Image style={styles.image} source={{ uri: item?.saveProfile?.personalDetails?.closeUpPhoto }} />
+  
+      <View style={styles.detailsContainer}>
+        <Text style={styles.name}>{item?.saveProfile?.personalDetails?.fullname}</Text>
+  
+        <View style={styles.row2}>
+          <Text style={styles.city}>{item?.saveProfile?.personalDetails?.cityOrVillage}</Text>
+          <Text style={styles.text}>{item?.saveProfile?.personalDetails?.subCaste}</Text>
+        </View>
+  
+        <Text style={styles.text}>Height: {item?.saveProfile?.personalDetails?.heightFeet} ft</Text>
+      </View>
+    </TouchableOpacity>
+  );
   
   return (
     <SafeAreaView style={Globalstyles.container}>
@@ -161,11 +184,6 @@ const BioData = ({ navigation }) => {
           />
         </View>
 
-        {/* <View style={styles.EditPerference}>
-          <Text style={styles.editText}>Edit Preferences</Text>
-          <AntDesign name={'search1'} size={20} color={Colors.theme_color} style={styles.icon}/>
-        </View> */}
-
         <View>
           <View>
             <HeadingWithViewAll
@@ -186,7 +204,7 @@ const BioData = ({ navigation }) => {
             <Text style={styles.ViewAllText}>View All</Text>
           </View>
         </View>
-        {/* <View>
+        <View>
           <View>
             <HeadingWithViewAll
               heading={'Saved Profile'}
@@ -194,7 +212,8 @@ const BioData = ({ navigation }) => {
             />
             <FlatList
               data={savedProfiles}
-              renderItem={renderProfileData}
+              renderItem={renderSavedProfileData}
+              key={numColumns} 
               keyExtractor={(item) => item._id}
               contentContainerStyle={styles.ProfileContainer}
               horizontal={true}
@@ -204,7 +223,7 @@ const BioData = ({ navigation }) => {
           <View style={styles.viewAll}>
             <Text style={styles.ViewAllText}>View All</Text>
           </View>
-        </View> */}
+        </View>
         <View>
           <View>
             <HeadingWithViewAll
@@ -214,6 +233,7 @@ const BioData = ({ navigation }) => {
             <FlatList
               data={interestedProfiles}
               renderItem={renderIntrestedProfileData}
+              key={numColumns} 
               keyExtractor={(item) => item._id}
               contentContainerStyle={styles.ProfileContainer}
               horizontal={true}
@@ -231,12 +251,13 @@ const BioData = ({ navigation }) => {
               headingStyle={{ color: Colors.theme_color }}
             />
             <FlatList
-              data={SavedProfileData}
-              renderItem={renderProfileData}
-              keyExtractor={(item) => item.id.toString()}
-              contentContainerStyle={styles.ProfileContainer}
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
+             data={uniqueProfiles}
+             renderItem={renderIntrestedProfileData}
+             key={numColumns} 
+             keyExtractor={(item) => item._id}
+             contentContainerStyle={styles.ProfileContainer}
+             horizontal={true}
+             showsHorizontalScrollIndicator={false}
             />
           </View>
           <View style={styles.viewAll}>

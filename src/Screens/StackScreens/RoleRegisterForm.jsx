@@ -12,7 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CREATE_JYOTISH, CREATE_KATHAVACHAK, CREATE_PANDIT } from '../../utils/BaseUrl';
 import { Dropdown } from 'react-native-element-dropdown';
 import ImageCropPicker from 'react-native-image-crop-picker';
-
+import Entypo from 'react-native-vector-icons/Entypo';
 const RoleRegisterForm = ({ navigation }) => {
     const [stateInput, setStateInput] = useState('');
     const [cityInput, setCityInput] = useState('');
@@ -359,7 +359,7 @@ const RoleRegisterForm = ({ navigation }) => {
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={Globalstyles.form}>
                     {/* <Text style={styles.editText}>Edit Details</Text> */}
-                    <Text style={Globalstyles.title}>Name</Text>
+                    <Text style={Globalstyles.title}>Name <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput style={Globalstyles.input}
                         value={RoleRegisterData.fullName}
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, fullName: text }))}
@@ -367,7 +367,7 @@ const RoleRegisterForm = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                     />
 
-                    <Text style={Globalstyles.title}>Mobile No.</Text>
+                    <Text style={Globalstyles.title}>Mobile No. <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput style={Globalstyles.input}
                         value={RoleRegisterData?.mobileNo}
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, mobileNo: text }))}
@@ -375,7 +375,9 @@ const RoleRegisterForm = ({ navigation }) => {
                         placeholder="Enter Your Mobile No." maxLength={10}
                         placeholderTextColor={Colors.gray} />
 
-                    <Text style={Globalstyles.title}>State</Text>
+                    <Text style={[Globalstyles.title, { color: Colors.theme_color }]}>Address</Text>
+
+                    <Text style={Globalstyles.title}>State <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput
                         style={Globalstyles.input}
                         value={RoleRegisterData?.state} // `biodata?.state` ki jagah `stateInput` use karein
@@ -398,7 +400,7 @@ const RoleRegisterForm = ({ navigation }) => {
                         />
                     ) : null}
 
-                    <Text style={Globalstyles.title}>Village / City</Text>
+                    <Text style={Globalstyles.title}>Village / City <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput
                         style={Globalstyles.input}
                         value={RoleRegisterData?.city}
@@ -421,7 +423,7 @@ const RoleRegisterForm = ({ navigation }) => {
                     ) : null}
 
 
-                    <Text style={Globalstyles.title}>Area (optional)</Text>
+                    <Text style={Globalstyles.title}>Area</Text>
                     <TextInput style={Globalstyles.input}
                         value={RoleRegisterData?.residentialAddress}
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, residentialAddress: text }))}
@@ -429,7 +431,7 @@ const RoleRegisterForm = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                     />
 
-                    <Text style={Globalstyles.title}>Aadhar No. (Optional)</Text>
+                    <Text style={Globalstyles.title}>Aadhar No. </Text>
                     <TextInput style={Globalstyles.input}
                         value={RoleRegisterData?.aadharNo}
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, aadharNo: text }))}
@@ -437,7 +439,7 @@ const RoleRegisterForm = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                     />
 
-                    <Text style={Globalstyles.title}>Sub Caste</Text>
+                    <Text style={Globalstyles.title}>Sub Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput
                         style={Globalstyles.input}
                         value={RoleRegisterData?.subCaste} // `myBiodata?.subCaste` ki jagah `subCasteInput` use karein
@@ -463,7 +465,7 @@ const RoleRegisterForm = ({ navigation }) => {
 
 
                     {/* Role Selection with Checkboxes */}
-                    <Text style={Globalstyles.title}>You are Registering for</Text>
+                    <Text style={Globalstyles.title}>You are Registering for <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <View style={styles.checkboxContainer}>
                         {roleOptions.map(role => (
                             <View key={role.value} style={styles.checkboxItem}>
@@ -508,31 +510,30 @@ const RoleRegisterForm = ({ navigation }) => {
                         />
                     </View>
 
-                    <Text style={Globalstyles.title}>Profile Photo</Text>
+                    <Text style={Globalstyles.title}>Profile Photo <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <View style={Globalstyles.input}>
-                    <TouchableOpacity onPress={handleProfilePhotoPick}>
-  {RoleRegisterData.profilePhoto ? (
-    <Image 
-      source={{ uri: RoleRegisterData.profilePhoto }} 
-      style={styles.profileImage} 
-    />
-  ) : (
-    <Text style={styles.imagePlaceholder}>Upload Profile Photo</Text>
-  )}
-</TouchableOpacity>
+                        <TouchableOpacity onPress={handleProfilePhotoPick}>
+                            {RoleRegisterData.profilePhoto ? (
+                                <Image
+                                    source={{ uri: RoleRegisterData.profilePhoto }}
+                                    style={styles.profileImage}
+                                />
+                            ) : (
+                                <Text style={styles.imagePlaceholder}>Upload Profile Photo</Text>
+                            )}
+                        </TouchableOpacity>
 
                     </View>
 
-                    <Text style={Globalstyles.title}>Add Description</Text>
+                    <Text style={Globalstyles.title}>Add Description <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput style={Globalstyles.textInput} value={RoleRegisterData.description}
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, description: text }))}
                         textAlignVertical='top' placeholder="Add Your Description"
                         placeholderTextColor={Colors.gray} multiline={true}
                     />
 
-
                     <View style={styles.photopickContainer}>
-                        <Text style={styles.title}>Photos (Up to 5)</Text>
+                        <Text style={styles.title}>Upload Photos For You </Text>
 
                         {/* Crop Picker Button */}
                         <TouchableOpacity style={styles.PickPhotoButton} onPress={handleAdditionalPhotosPick}>
@@ -551,7 +552,7 @@ const RoleRegisterForm = ({ navigation }) => {
                             </ScrollView>
                         </View>
                     )}
-                    
+
                     <Text style={Globalstyles.title}>Website Link</Text>
                     <TextInput
                         style={Globalstyles.input}

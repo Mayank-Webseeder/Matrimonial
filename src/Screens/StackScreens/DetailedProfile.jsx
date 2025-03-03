@@ -15,6 +15,7 @@ import Globalstyles from '../../utils/GlobalCss';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Colors from '../../utils/Colors';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {
   OccupationData, QualificationData, maritalStatusData, ManglikStatusData, LivingData, ProfileCreatedData, CityData, Income,
   FamilyType, CookingStatus, DietHabit, smokingStatusData, DrinkingHabit, StateData, TobacooHabit, subCasteOptions,
@@ -53,7 +54,6 @@ const DetailedProfile = ({ navigation }) => {
     livingStatus: '',
     currentCity: '',
     aboutMe: '',
-    mobileNo: '',
     profileCreatedBy: '',
     fatherName: '',
     fatherOccupation: '',
@@ -340,7 +340,7 @@ const DetailedProfile = ({ navigation }) => {
       "disabilities", "heightFeet", "weight", "timeOfBirth", "complexion",
       "manglikStatus", "nadi", "gotraSelf", "gotraMother", "qualification",
       "occupation", "annualIncome", "livingStatus", "currentCity", "aboutMe",
-      "mobileNo", "profileCreatedBy", "fatherName", "fatherOccupation",
+      "profileCreatedBy", "fatherName", "fatherOccupation",
       "motherName", "motherOccupation", "fatherIncomeAnnually",
       "motherIncomeAnnually", "familyType", "siblings", "otherFamilyMemberInfo",
       "contactNumber1", "contactNumber2", "state", "cityOrVillage",
@@ -609,7 +609,7 @@ const DetailedProfile = ({ navigation }) => {
               data={heightData}
               labelField="label"
               valueField="value"
-              value={biodata.heightFeet}
+              value={biodata?.heightFeet}
               editable={isEditing}
               onChange={(text) => handleInputChange("heightFeet", text.value)}
               placeholder="Height"
@@ -617,13 +617,13 @@ const DetailedProfile = ({ navigation }) => {
             />
           </View>
           <View>
-            <Text style={Globalstyles.title}>Weight (in kg) <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Text style={Globalstyles.title}>Weight (in kg) </Text>
             <Dropdown
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               data={weightData}
               labelField="label"
               valueField="value"
-              value={biodata.weight}
+              value={biodata?.weight}
               editable={isEditing}
               onChange={(text) => handleInputChange("weight", text.value)}
               placeholder="Weight"
@@ -631,7 +631,7 @@ const DetailedProfile = ({ navigation }) => {
             />
           </View>
           <View>
-            <Text style={Globalstyles.title}>Complexion <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Text style={Globalstyles.title}>Complexion</Text>
             <Dropdown
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               data={MyComplexionData}
@@ -659,7 +659,7 @@ const DetailedProfile = ({ navigation }) => {
             />
           </View>
           <View>
-            <Text style={Globalstyles.title}>Nadi (Optional)</Text>
+            <Text style={Globalstyles.title}>Nadi</Text>
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata.nadi}
@@ -670,7 +670,7 @@ const DetailedProfile = ({ navigation }) => {
             />
           </View>
           <View>
-            <Text style={Globalstyles.title}>Self Gotra   (Optional)</Text>
+            <Text style={Globalstyles.title}>Self Gotra</Text>
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata.gotraSelf}
@@ -681,7 +681,7 @@ const DetailedProfile = ({ navigation }) => {
             />
           </View>
           <View>
-            <Text style={Globalstyles.title}>Mother Gotra   (Optional)</Text>
+            <Text style={Globalstyles.title}>Mother Gotra</Text>
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata.gotraMother}
@@ -713,7 +713,7 @@ const DetailedProfile = ({ navigation }) => {
               data={OccupationData}
               labelField="label"
               valueField="value"
-              value={biodata.occupation}
+              value={biodata?.occupation}
               editable={isEditing}
               onChange={(text) => handleInputChange("occupation", text.value)}
               placeholder="Select occupation"
@@ -776,7 +776,7 @@ const DetailedProfile = ({ navigation }) => {
             ) : null}
           </View>
           <View>
-            <Text style={Globalstyles.title}>About Me <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Text style={Globalstyles.title}>About Me </Text>
             <TextInput
               style={[Globalstyles.textInput, !isEditing && styles.readOnly]}
               multiline={true}
@@ -790,19 +790,6 @@ const DetailedProfile = ({ navigation }) => {
             />
           </View>
 
-          <View>
-            <Text style={Globalstyles.title}>Mobile no. <Entypo name={'star'} color={'red'} size={12} /> </Text>
-            <TextInput
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
-              value={biodata.mobileNo}
-              onChangeText={(text) => handleInputChange("mobileNo", text)}
-              keyboardType="phone-pad"
-              maxLength={10}
-              editable={isEditing}
-              placeholderTextColor={Colors.gray}
-              placeholder='Enter Your Mobile no.'
-            />
-          </View>
           <View>
             <Text style={Globalstyles.title}>Profile created by <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
@@ -873,7 +860,7 @@ const DetailedProfile = ({ navigation }) => {
 
           </View>
           <View>
-            <Text style={Globalstyles.title}>Mother Occupation (If any) <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Text style={Globalstyles.title}>Mother Occupation <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               data={OccupationData}
@@ -934,7 +921,7 @@ const DetailedProfile = ({ navigation }) => {
             />
           </View>
           <View>
-            <Text style={Globalstyles.title}>Any family member info. (optinal)</Text>
+            <Text style={Globalstyles.title}>Any family member info. </Text>
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata.otherFamilyMemberInfo}
@@ -947,7 +934,7 @@ const DetailedProfile = ({ navigation }) => {
             />
           </View>
           <View>
-            <Text style={Globalstyles.title}>Contact No. 1 <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Text style={Globalstyles.title}>Contact No. 1 <MaterialIcons name={'call'} color={'#000'} size={15} />  <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata.contactNumber1}
@@ -1025,7 +1012,7 @@ const DetailedProfile = ({ navigation }) => {
           </View>
           <Text style={styles.headText}>Other Personal Detail</Text>
           <View>
-            <Text style={Globalstyles.title}>Do you know cooking <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Text style={Globalstyles.title}>Do you know cooking</Text>
             <Dropdown
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               data={CookingStatus}
@@ -1040,7 +1027,7 @@ const DetailedProfile = ({ navigation }) => {
             />
           </View>
           <View>
-            <Text style={Globalstyles.title}> Dietary Habits <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Text style={Globalstyles.title}> Dietary Habits  </Text>
             <Dropdown
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               data={DietHabit}
@@ -1055,7 +1042,7 @@ const DetailedProfile = ({ navigation }) => {
             />
           </View>
           <View>
-            <Text style={Globalstyles.title}>Smoking Habits <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Text style={Globalstyles.title}>Smoking Habits  </Text>
             <Dropdown
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               data={smokingStatusData}
@@ -1070,7 +1057,7 @@ const DetailedProfile = ({ navigation }) => {
             />
           </View>
           <View>
-            <Text style={Globalstyles.title}>Drinking Habits <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Text style={Globalstyles.title}>Drinking Habits </Text>
             <Dropdown
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               data={DrinkingHabit}
@@ -1085,7 +1072,7 @@ const DetailedProfile = ({ navigation }) => {
             />
           </View>
           <View>
-            <Text style={Globalstyles.title}>Tabacoo Habits <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Text style={Globalstyles.title}>Tabacoo Habits </Text>
             <Dropdown
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               data={TobacooHabit}
@@ -1101,7 +1088,7 @@ const DetailedProfile = ({ navigation }) => {
 
           </View>
           <View>
-            <Text style={Globalstyles.title}>Your Hobbies <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Text style={Globalstyles.title}>Your Hobbies  </Text>
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata.hobbies}
@@ -1115,50 +1102,56 @@ const DetailedProfile = ({ navigation }) => {
           </View>
           <View>
             <Text style={Globalstyles.title}>Upload Your One Closeup Image <Entypo name={'star'} color={'red'} size={12} /> </Text>
-            <TouchableOpacity onPress={() => handleImageSelection('closeUpPhoto')} style={Globalstyles.input}>
-              {biodata.closeUpPhoto ? (
-                <Image
-                  source={{ uri: biodata.closeUpPhoto }}
-                  style={styles.selectedImage}
-                />
-              ) : (
-                <Text style={styles.imagePlaceholder}>
-                  {imageNames.closeUpPhoto ? imageNames.closeUpPhoto : "Upload One Closeup Image"}
-                </Text>
-              )}
-            </TouchableOpacity>
+
+            <View style={Globalstyles.input}>
+              <TouchableOpacity onPress={() => handleImageSelection('closeUpPhoto')}>
+                {biodata.closeUpPhoto ? (
+                  <Image
+                    source={{ uri: biodata.closeUpPhoto }}
+                    style={styles.selectedImage}
+                  />
+                ) : (
+                  <Text style={styles.imagePlaceholder}>Upload One Closeup Image</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+
           </View>
 
           <View>
             <Text style={Globalstyles.title}>Upload Your One Full Image <Entypo name={'star'} color={'red'} size={12} /> </Text>
-            <TouchableOpacity onPress={() => handleImageSelection('fullPhoto')} style={Globalstyles.input}>
-              {biodata.fullPhoto ? (
-                <Image
-                  source={{ uri: biodata.fullPhoto }}
-                  style={styles.selectedImage}
-                />
-              ) : (
-                <Text style={styles.imagePlaceholder}>
-                  {imageNames.fullPhoto || "Upload One Full Image"}
-                </Text>
-              )}
-            </TouchableOpacity>
+
+            <View style={Globalstyles.input}>
+              <TouchableOpacity onPress={() => handleImageSelection('fullPhoto')}>
+                {biodata.fullPhoto ? (
+                  <Image
+                    source={{ uri: biodata.fullPhoto }}
+                    style={styles.selectedImage}
+                  />
+                ) : (
+                  <Text style={styles.imagePlaceholder}>Upload One Full Image</Text>
+                )}
+              </TouchableOpacity>
+
+            </View>
           </View>
 
           <View>
             <Text style={Globalstyles.title}>Upload Your One Best Image <Entypo name={'star'} color={'red'} size={12} /> </Text>
-            <TouchableOpacity onPress={() => handleImageSelection('bestPhoto')} style={Globalstyles.input}>
-              {biodata.bestPhoto ? (
-                <Image
-                  source={{ uri: biodata.bestPhoto }}
-                  style={styles.selectedImage}
-                />
-              ) : (
-                <Text style={styles.imagePlaceholder}>
-                  {imageNames.bestPhoto || "Upload One Best Image"}
-                </Text>
-              )}
-            </TouchableOpacity>
+
+            <View style={Globalstyles.input}>
+              <TouchableOpacity onPress={() => handleImageSelection('bestPhoto')}>
+                {biodata.bestPhoto ? (
+                  <Image
+                    source={{ uri: biodata.bestPhoto }}
+                    style={styles.selectedImage}
+                  />
+                ) : (
+                  <Text style={styles.imagePlaceholder}>Upload One Full Image</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+
           </View>
 
 

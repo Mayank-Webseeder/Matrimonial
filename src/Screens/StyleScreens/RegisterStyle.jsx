@@ -56,7 +56,6 @@ const styles = StyleSheet.create({
     otpButton: {
         paddingHorizontal: SW(5),
         paddingVertical: SH(5),
-        marginBottom: SH(15),
         paddingRight:SW(10)
     },
     otpButtonText: {

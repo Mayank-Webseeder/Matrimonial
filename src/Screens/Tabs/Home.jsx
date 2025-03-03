@@ -49,6 +49,7 @@ const Home = ({ navigation }) => {
   };
 
   const GetAll_Biodata = async () => {
+    setIsLoading(true)
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
@@ -70,6 +71,10 @@ const Home = ({ navigation }) => {
         "Error fetching profile:",
         error.response ? error.response.data : error.message
       );
+      setIsLoading(false)
+    }
+    finally{
+      setIsLoading(false)
     }
   }
 

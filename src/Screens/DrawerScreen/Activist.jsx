@@ -165,7 +165,7 @@ const Activist = ({ navigation }) => {
           </View>
 
           <View style={styles.ButtonContainer}>
-            <TouchableOpacity style={styles.button} onPress={handleOpenFilter}>
+            <TouchableOpacity style={[styles.button,{paddingHorizontal:SW(20)}]} onPress={handleOpenFilter}>
               <Text style={styles.buttonText}>Filter</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ActivistForm')}>
@@ -175,7 +175,7 @@ const Activist = ({ navigation }) => {
         </View>
 
         {loading ? (
-          <ActivityIndicator size="large" color={Colors.theme_color} style={{ marginTop: 20 }} />
+          <ActivityIndicator size="large" color={Colors.theme_color} style={{ marginTop:SH(20) }} />
         ) : error ? (
           <Text style={{ textAlign: 'center', marginTop: 20, color: 'red' }}>{error}</Text>
         ) : activistData.length === 0 ? (

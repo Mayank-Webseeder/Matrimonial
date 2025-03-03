@@ -1,49 +1,59 @@
 import { StyleSheet } from "react-native";
-import { SH,SW,SF } from "../../utils/Dimensions";
+import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
-    Text: {
-      fontSize: SF(16),
-      color: Colors.theme_color,
-      marginVertical: SH(20),
-      marginHorizontal:SW(20),
-      marginTop:SW(50),
-    },
-    inputContainer: {
-      marginTop: SH(50),
-      marginHorizontal:SW(20),
-      marginVertical:SH(20)
-    },
-    input: {
-      backgroundColor: Colors.light_theme,
-      borderRadius: 5,
-      marginBottom: SH(15),
-      paddingHorizontal:SW(15),
-      height:SH(45),
-      borderColor: Colors.gray,
-      borderWidth: 1,
-      color:Colors.theme_color
-    },
-    errorText: {
-      color: 'red',
-      fontSize:SF(13),
-      textAlign: 'center',
-      marginBottom:SH(10),
-    },
-    optionButton: {
-      backgroundColor: Colors.theme_color,
-      paddingVertical:SH(5),
-      paddingHorizontal:SW(20),
-      marginBottom:SH(15),
-      borderRadius: 5,
-    },
-    optionText: {
-      color: Colors.light,
-      fontSize: SF(15),
-      fontFamily:"Poppins-Regular",
-      textAlign:"center"
-    },
+  Text: {
+    fontSize: SF(17),
+    color: Colors.theme_color,
+    marginHorizontal: SW(20),
+    marginTop: SW(30),
+    fontFamily: "Poppins-Regular"
+  },
+  inputContainer: {
+    marginHorizontal: SW(20),
+    marginVertical: SH(20)
+  },
+  passwordField: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 5,
+    marginBottom: SH(15),
+    paddingHorizontal: SW(15),
+    borderColor: Colors.gray,
+    borderWidth: 1,
+    color: Colors.theme_color,
+  },
+
+  input: {
+    flex: 1,
+    color: Colors.theme_color,
+    fontSize: SF(13),
+  },
+
+  eyeIcon: {
+    position: "absolute",
+    right: SW(15),
+  },
+  errorText: {
+    color: 'red',
+    fontSize: SF(13),
+    textAlign: 'center',
+    marginBottom: SH(10),
+  },
+  optionButton: {
+    backgroundColor: Colors.theme_color,
+    paddingVertical: SH(5),
+    paddingHorizontal: SW(20),
+    marginBottom: SH(15),
+    borderRadius: 5,
+  },
+  optionText: {
+    color: Colors.light,
+    fontSize: SF(15),
+    fontFamily: "Poppins-Regular",
+    textAlign: "center"
+  },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -54,12 +64,12 @@ const styles = StyleSheet.create({
     width: '80%',
     backgroundColor: '#fff',
     borderRadius: 10,
-    paddingHorizontal:SW(20),
-    paddingVertical:SH(20),
+    paddingHorizontal: SW(20),
+    paddingVertical: SH(20),
     alignItems: 'center',
   },
   modalText: {
-    fontSize:SF(18),
+    fontSize: SF(18),
     color: Colors.darkGrey,
     marginBottom: SH(20),
     textAlign: 'center',
@@ -67,15 +77,15 @@ const styles = StyleSheet.create({
   modalButton: {
     backgroundColor: Colors.theme_color,
     paddingHorizontal: SW(3),
-    paddingVertical:SH(3),
+    paddingVertical: SH(3),
     borderRadius: 8,
     width: '50%',
     alignItems: 'center',
   },
   modalButtonText: {
-    color:Colors.light,
-    fontSize:SF(15),
-    fontFamily:"Poppins-Bold"
+    color: Colors.light,
+    fontSize: SF(15),
+    fontFamily: "Poppins-Bold"
   },
 });
 

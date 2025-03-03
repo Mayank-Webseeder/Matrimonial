@@ -123,7 +123,7 @@ const ForgotScreen = ({ navigation }) => {
     return (
         <SafeAreaView style={styles.container}>
             <ImageBackground
-                source={require("../../Images/Signup.png")}
+                source={require("../../Images/LoginBackground.png")}
                 style={styles.image}
             >
                 <AntDesign
@@ -133,7 +133,7 @@ const ForgotScreen = ({ navigation }) => {
                     color={Colors.light}
                     onPress={() => navigation.navigate("Splash")}
                 />
-                <View style={{marginTop:SH(190),marginHorizontal:SW(20)}}>
+                <View style={{marginTop:SH(320),marginHorizontal:SW(20)}}>
             <Text style={[styles.text,{textAlign:"left",fontSize:SF(17)}]}>Reset Your Password</Text>
                     {/* Mobile Number */}
                     <View style={{marginTop:SH(20)}}>

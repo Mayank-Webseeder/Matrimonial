@@ -114,7 +114,7 @@ const Login = ({ navigation }) => {
     return (
         <SafeAreaView style={styles.container}>
             <ImageBackground
-                source={require("../../Images/Login.png")}
+                source={require("../../Images/LoginBackground.png")}
                 style={styles.image}
             >
                 <ScrollView

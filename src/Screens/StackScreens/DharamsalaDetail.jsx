@@ -1,121 +1,131 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { View, TouchableOpacity, Image, Text, ScrollView,SafeAreaView,StatusBar,Linking } from 'react-native';
-import styles from '../StyleScreens/DharamsalaDetailStyle';
+import React, { useState } from 'react';
+import { Text, View, TouchableOpacity, Modal, TextInput, SafeAreaView, StatusBar, ToastAndroid } from 'react-native';
 import Colors from '../../utils/Colors';
-import { DharamsalaSlider } from '../../DummyData/DummyData';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Feather from 'react-native-vector-icons/Feather';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import AppIntroSlider from 'react-native-app-intro-slider';
+import styles from '../StyleScreens/ChangePasswordStyle';
 import Globalstyles from '../../utils/GlobalCss';
+import { CHANGE_PASSWORD } from '../../utils/BaseUrl';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
-const DharamsalaDetail = ({ navigation }) => {
+const ChangePassword = ({ navigation }) => {
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [oldPassword, setOldPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const sliderRef = useRef(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const handleChangePassword = async () => {
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      setPasswordError("All fields are required!");
+      return;
+    }
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (currentIndex < DharamsalaSlider.length - 1) {
-        setCurrentIndex((prevIndex) => prevIndex + 1);
-        sliderRef.current?.goToSlide(currentIndex + 1);
+    if (newPassword !== confirmPassword) {
+      setPasswordError("Passwords do not match!");
+      return;
+    }
+
+    setPasswordError('');
+    setLoading(true);
+
+    try {
+      const response = await fetch(CHANGE_PASSWORD, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer yourAuthToken`, 
+        },
+        body: JSON.stringify({
+          oldPassword,
+          newPassword,
+        }),
+      });
+
+      const result = await response.json();
+      setLoading(false);
+
+      if (response.ok) {
+        ToastAndroid.show("Password changed successfully!", ToastAndroid.SHORT);
+        setIsModalVisible(true);
       } else {
-        setCurrentIndex(0);
-        sliderRef.current?.goToSlide(0);
+        ToastAndroid.show(result.message || "Something went wrong!", ToastAndroid.SHORT);
       }
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, [currentIndex]);
-
-  const SliderrenderItem = ({ item }) => {
-    return (
-      <View>
-        <Image source={item.image} style={styles.sliderImage} />
-      </View>
-    );
-  };
-  const [showFullText, setShowFullText] = useState(false);
-
-  const handleToggleText = () => {
-    setShowFullText(!showFullText);
+    } catch (error) {
+      setLoading(false);
+      ToastAndroid.show("Network error! Please try again.", ToastAndroid.SHORT);
+    }
   };
 
-  const fullDescription = `This hotel has a terrace and a small rooftop pool, open all year round. Located opposite the Valencia Botanical Garden and the Nuevo Centro shopping centre, the property also has a gym and sauna. In addition, NH Valencia Center is a 5-minute walk from Túria Metro Station, offering easy access to the center of Valencia. Guests enjoy a 20% discount on a public car park that can be accessed directly from the hotel.`;
-  
-  const truncatedDescription = `This hotel has a terrace and a small rooftop pool, open all year round. Located opposite the Valencia Botanical Garden and the Nuevo Centro shopping centre, the property also has a gym and sauna.`;
+  const closeModalAndNavigate = () => {
+    setIsModalVisible(false);
+    navigation.navigate('Tabs');
+  };
 
   return (
     <SafeAreaView style={Globalstyles.container}>
-      <StatusBar 
-                barStyle="dark-content" 
-                backgroundColor="transparent" 
-                translucent 
-            />
+      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
-        <View style={{ flexDirection: 'row',alignItems:"center" }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+        <View style={{ flexDirection: 'row', alignItems: "center" }}>
+          <TouchableOpacity onPress={() => navigation.navigate('Tabs')}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
-          <Text style={Globalstyles.headerText}>Hotel NH Valencia Center</Text>
-        </View>
-        <View style={styles.righticons}>
-          {/* <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} /> */}
-          <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />
+          <Text style={Globalstyles.headerText}>Change Password</Text>
         </View>
       </View>
-     <ScrollView showsVerticalScrollIndicator={false}>
-     <View style={styles.sliderContainer}>
-        <AppIntroSlider
-          ref={sliderRef}
-          data={DharamsalaSlider}
-          renderItem={SliderrenderItem}
-          showNextButton={false}
-          showDoneButton={false}
-          dotStyle={styles.dot}
-          activeDotStyle={styles.activeDot}
-          onSlideChange={(index) => setCurrentIndex(index)}
+
+      <Text style={styles.Text}>Please enter your new password and confirm it to change your old password</Text>
+
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Old Password"
+          secureTextEntry
+          value={oldPassword}
+          onChangeText={setOldPassword}
+          placeholderTextColor={Colors.theme_color}
         />
-      </View>
+        <TextInput
+          style={styles.input}
+          placeholder="New Password"
+          secureTextEntry
+          value={newPassword}
+          onChangeText={setNewPassword}
+          placeholderTextColor={Colors.theme_color}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Confirm Password"
+          secureTextEntry
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          placeholderTextColor={Colors.theme_color}
+        />
+        {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
 
-      <View style={styles.textContainer}>
-        <View style={styles.TextView}>
-          <Text style={styles.Text}>Hotel NH Valencia Center</Text>
-          <Text style={styles.Text}>Sub-Caste Name</Text>
-          <Text style={styles.smalltext}>Indore</Text>
-        </View>
-         <View style={styles.TextView}>
-      <Text style={styles.Text}>Description</Text>
-      <Text style={styles.smallText}>
-        {showFullText ? fullDescription : truncatedDescription}
-      </Text>
-      <TouchableOpacity onPress={handleToggleText}>
-        <Text style={styles.viewMore}>
-          {showFullText ? 'View Less' : 'View More'}
-        </Text>
-      </TouchableOpacity>
-    </View>
-      </View>
-      <View style={styles.sharecontainer}>
-        <View style={styles.iconContainer}>
-          <FontAwesome name="bookmark-o" size={20} color={Colors.dark} />
-          <Text style={styles.iconText}>Save</Text>
-        </View>
-
-        <View style={styles.iconContainer}>
-          <Feather name="send" size={20} color={Colors.dark} />
-          <Text style={styles.iconText}>Shares</Text>
-        </View>
-        <TouchableOpacity style={styles.Button} onPress={()=>Linking.openURL('tel:9893458940')}>
-          <MaterialIcons name="call" size={20} color={Colors.light} />
-          <Text style={styles.RequestText}>Request for call</Text>
+        <TouchableOpacity style={styles.optionButton} onPress={handleChangePassword} disabled={loading}>
+          <Text style={styles.optionText}>{loading ? "Updating..." : "Change Password"}</Text>
         </TouchableOpacity>
       </View>
-      <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage}/>
-     </ScrollView>
+
+      <Modal
+        visible={isModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setIsModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>Password changed successfully!</Text>
+            <TouchableOpacity style={styles.modalButton} onPress={closeModalAndNavigate}>
+              <Text style={styles.modalButtonText}>OK</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
 
-export default DharamsalaDetail;
+export default ChangePassword;

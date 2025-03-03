@@ -6,6 +6,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: "row",
     marginHorizontal: SW(10),
+    marginRight: SW(15),
     marginVertical: SH(5)
   },
   profileImage: {
@@ -13,33 +14,27 @@ const styles = StyleSheet.create({
     height: SH(120),
     resizeMode: "cover",
     marginRight: SW(10),
-    borderRadius:5
+    borderRadius: 5
   },
   name: {
-    fontSize: SF(15),
-    fontFamily: "Poppins-Bold"
-  },
-  surname: {
-    fontSize: SF(12),
-    fontFamily: "Poppins-regular"
+    fontSize: SF(14),
+    fontFamily: "Poppins-Bold",
+    flexWrap: "wrap",
+    maxWidth: SW(200),
   },
   city: {
     fontSize: SF(12),
     fontFamily: "Poppins-regular",
-    marginRight: SW(5)
   },
   rating: {
     fontSize: SF(13),
     marginVertical: SH(10),
-    marginHorizontal:SW(3)
+    marginHorizontal: SW(3)
   },
   FlexContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
-  // section: {
-  //   marginBottom: SH(10),
-  // },
   sectionTitle: {
     fontSize: SF(15),
     fontFamily: 'Poppins-Bold',
@@ -73,7 +68,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
     textAlign: 'center',
     color: Colors.dark,
-    textAlign:"center"
+    textAlign: "center"
   },
   ratingCount: {
     marginRight: SW(260),
@@ -228,10 +223,10 @@ const styles = StyleSheet.create({
     marginRight: SW(10),
     borderRadius: 3
   },
-  noReviewsText:{
-    textAlign:"center",
-    color:Colors.gray,
-    fontFamily:"Poppins-Regular"
+  noReviewsText: {
+    textAlign: "center",
+    color: Colors.gray,
+    fontFamily: "Poppins-Regular"
   }
 });
 export default styles;

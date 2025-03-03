@@ -34,7 +34,7 @@ const MyProfile = ({ navigation }) => {
 
     const handlePress = async (profileType) => {
         setSelectedButton(profileType);
-
+    
         const keyMap = {
             Biodata: "isMatrimonial",
             Jyotish: "isJyotish",
@@ -44,15 +44,25 @@ const MyProfile = ({ navigation }) => {
         };
     
         const isRegistered = profileData?.[keyMap[profileType]];
-        console.log("isRegistered:", isRegistered); 
+        console.log("isRegistered:", isRegistered);
     
-        if (isRegistered) {
-            await fetchProfilesDetails(profileType);
-            navigation.navigate('ProfileDetail', { profileType });
-        } else {
-            navigation.navigate('RoleRegisterForm', { profileType });
+        if (profileType === "Biodata") {
+            if (!isRegistered) {
+                navigation.navigate("MatrimonyPage");
+            } else {
+                navigation.navigate("ProfileDetail", { profileType });
+            }
+            return;
         }
+        if (!isRegistered) {
+            navigation.navigate("RoleRegisterForm", { profileType });
+            return;
+        }
+        await fetchProfilesDetails(profileType);
+        navigation.navigate("ProfileDetail", { profileType });
     };
+    
+    
     
 
     const fetchProfilesDetails = async (profileType) => {

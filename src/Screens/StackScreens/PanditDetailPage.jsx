@@ -201,30 +201,33 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 </View>
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>
-                <View style={styles.profileSection}>
-                    <Image source={{ uri: profileData?.profilePhoto }} style={styles.profileImage} />
-                    <View>
-                        <Text style={styles.name}>{profileData?.fullName}</Text>
-                        <View style={styles.FlexContainer}>
-                            <Text style={styles.city}>{profileData?.city}</Text>
-                            <Text style={styles.surname}>{profileData?.state}</Text>
-                        </View>
-                        <View style={styles.FlexContainer}>
-                            <Rating
-                                type="star"
-                                ratingCount={5}
-                                imageSize={15}
-                                startingValue={profileData?.ratings}
-                                readonly
-                            />
-                            <Text style={styles.rating}>
-                                {profileData?.ratings?.length > 0 ? `${profileData.ratings.length} Reviews` : "No Ratings Yet"}
-                            </Text>
+            <View style={styles.profileSection}>
+    <Image source={{ uri: profileData?.profilePhoto }} style={styles.profileImage} />
+    <View style={{ flex: 1 }}>  
+        <Text style={styles.name} numberOfLines={2}>{profileData?.fullName}</Text>  
 
-                        </View>
-                        <Text style={styles.surname}>{profileData?.subCaste}</Text>
-                    </View>
-                </View>
+        <View style={styles.FlexContainer}>
+            <Text style={styles.city}>{profileData?.city}, </Text>
+            <Text style={styles.city}>{profileData?.state}</Text>
+        </View>
+
+        <View style={styles.FlexContainer}>
+            <Rating
+                type="star"
+                ratingCount={5}
+                imageSize={15}
+                startingValue={profileData?.ratings}
+                readonly
+            />
+            <Text style={styles.rating}>
+                {profileData?.ratings?.length > 0 ? `${profileData.ratings.length} Reviews` : "No Ratings Yet"}
+            </Text>
+        </View>
+
+        <Text style={styles.city}>{profileData?.subCaste}</Text>
+    </View>
+</View>
+
                 <View style={styles.contentContainer}>
                     <Text style={styles.sectionTitle}>Description</Text>
                     <Text style={styles.text}>{profileData?.description}</Text>

@@ -28,12 +28,12 @@ const CustomDrawer = (props) => {
     { title: 'Dharmshala', screen: 'Dharmshala' },
     { title: 'Committees', screen: 'Committee' },
     { title: 'Activist', screen: 'Activist' },
-    // { title: 'Advertise with Us'},
+    { title: 'Advertise with Us'},
     { title: 'Success Stories', screen: 'SuccessStories' },
     { title: 'Account & Settings' },
-    // { title: 'About Us' },
+    { title: 'About Us' },
     { title: 'Feedback/Suggestion', screen: 'FeedBack' },
-    // { title: 'Share App' },
+    { title: 'Share App' },
   ];
 
   const panditOptions = [

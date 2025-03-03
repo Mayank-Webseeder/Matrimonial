@@ -135,6 +135,7 @@ const uniqueProfiles = Array.from(new Map(allProfiles.map(item => [item._id, ite
       </View>
     </TouchableOpacity>
   );
+  
   const renderSavedProfileData = ({ item }) => (
     <TouchableOpacity style={styles.card} onPress={() => handleNavigateToIntrestedProfile(item)}>
       <Image style={styles.image} source={{ uri: item?.saveProfile?.personalDetails?.closeUpPhoto }} />

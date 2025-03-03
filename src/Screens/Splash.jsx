@@ -16,7 +16,7 @@ const Splash = ({ navigation }) => {
             />
             <View>
                 <ImageBackground
-                    source={require('../Images/SplashBackground.png')}
+                    source={require('../Images/Splash.png')}
                     style={styles.image}
                 >
                     <Text style={styles.text}>

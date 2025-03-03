@@ -77,12 +77,12 @@ const styles = StyleSheet.create({
   },
   Button: {
     backgroundColor: Colors.theme_color,
-    paddingHorizontal: SW(20),
+    justifyContent:"center",
     paddingVertical: SH(5),
     borderRadius: 8,
     alignItems: "center",
     marginLeft: SW(10),
-    width: SW(120),
+    paddingHorizontal:SW(10),
     flexDirection: "row",
   },
   buttonText: {
@@ -112,7 +112,12 @@ const styles = StyleSheet.create({
   Text: {
     fontSize: SF(13),
     color: Colors.dark,
-    marginVertical: SH(5),
+    fontFamily: 'Poppins-Medium',
+  },
+  name: {
+    fontSize: SF(13),
+    marginBottom:SH(3),
+    color: Colors.dark,
     fontFamily: 'Poppins-Bold',
   },
   smallText: {

@@ -2,11 +2,13 @@
 const SIGNUP_ENDPOINT = "https://api-matrimonial.webseeder.tech/api/v1/user/signUp";
 const LOGIN_ENDPOINT = "https://api-matrimonial.webseeder.tech/api/v1/user/signIn";
 const OTP_ENDPOINT = "https://api-matrimonial.webseeder.tech/api/v1/user/sendOTP";
-const FORGOT_PASSWORD="https://api-matrimonial.webseeder.tech/api/v1/user/forgotPassword"
+const FORGOT_PASSWORD="https://api-matrimonial.webseeder.tech/api/v1/user/forgotPassword";
+const CHANGE_PASSWORD="https://api-matrimonial.webseeder.tech/api/v1/user/changePassword";
+const FEEDBACK="https://api-matrimonial.webseeder.tech/api/v1/user/create-feedback";
 
 // profile's apis
 const PROFILE_ENDPOINT = "https://api-matrimonial.webseeder.tech/api/v1/user/view";
-const UPLOAD_PROFILE_PHOTO = " https://api-matrimonial.webseeder.tech/api/v1/user/updateProfileImage";
+const UPLOAD_PROFILE_PHOTO = "https://api-matrimonial.webseeder.tech/api/v1/user/updateProfileImage";
 const UPDATE_PROFILE = "https://api-matrimonial.webseeder.tech/api/v1/user/updateProfile";
 
 // biodata api's
@@ -92,6 +94,8 @@ export {
     LOGIN_ENDPOINT,
     OTP_ENDPOINT,
     FORGOT_PASSWORD,
+    CHANGE_PASSWORD,
+    FEEDBACK,
     PROFILE_ENDPOINT,
     CREATE_PERSONAL_DETAILS,
     UPDATE_PERSONAL_DETAILS,

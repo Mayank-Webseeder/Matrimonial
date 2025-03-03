@@ -165,7 +165,7 @@ const Dharmshala = ({ navigation }) => {
     return (
       <View style={styles.card}
       >
-        <Pressable style={styles.cardData} onPress={() => navigation.navigate('DharamsalaDetail')}>
+        <Pressable style={styles.cardData} onPress={() => navigation.navigate('DharamsalaDetail', { DharamsalaData: item })}        >
           <Image source={{ uri: item.images?.[0] }} style={styles.image} />
           <View style={styles.leftContainer}>
             <Text style={styles.text}>{item.dharmshalaName}</Text>

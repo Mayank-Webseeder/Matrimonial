@@ -20,6 +20,7 @@ import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { SH, SW } from '../../utils/Dimensions';
 import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
+import ImageViewing from 'react-native-image-viewing';
 
 const Kathavachak = ({ navigation }) => {
   const sliderRef = useRef(null);
@@ -33,7 +34,14 @@ const Kathavachak = ({ navigation }) => {
   const [kathavachakData, setKathavachakData] = useState(null);
   const [isLoading, setLoading] = useState(false);
   const [modalLocality, setModalLocality] = useState('');
-const scrollY = useRef(new Animated.Value(0)).current;
+   const [isImageVisible, setImageVisible] = useState(false);
+      const [selectedImage, setSelectedImage] = useState(null);
+    
+      const openImageViewer = (imageUri) => {
+        setSelectedImage(imageUri);
+        setImageVisible(true);
+      };
+ const scrollY = useRef(new Animated.Value(0)).current;
 
   const headerHeight = scrollY.interpolate({
     inputRange: [0, 200], 
@@ -195,10 +203,20 @@ const scrollY = useRef(new Animated.Value(0)).current;
     return (
       <View style={styles.card}>
          <View style={styles.cardData}>
-          <Image
-            source={item.profilePhoto ? { uri: item.profilePhoto } : require('../../Images/NoImage.png')}
-            style={styles.image}
-          />
+         <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
+            <Image
+              source={item.profilePhoto ? { uri: item.profilePhoto } : require('../../Images/NoImage.png')}
+              style={styles.image}
+            />
+          </TouchableOpacity>
+          {selectedImage && (
+            <ImageViewing
+              images={[{ uri: selectedImage }]} 
+              imageIndex={0}
+              visible={isImageVisible}
+              onRequestClose={() => setImageVisible(false)}
+            />
+          )}
           <View>
           <Pressable style={styles.leftContainer}  
            onPress={() => navigation.navigate('KathavachakDetailsPage', { kathavachak_id: item._id ,isSaved:isSaved })}>

@@ -68,6 +68,7 @@ import BioData from '../Screens/Tabs/BioData';
 import ViewMyEventPost from '../Screens/StackScreens/ViewMyEventPost';
 import UpdateEventPost from '../Screens/StackScreens/UpdateEventPost';
 import AdvertiseWithUs from '../Screens/StackScreens/AdvertiseWithUs';
+import ShortMatrimonialProfile from '../Screens/StackScreens/ShortMatrimonialProfile';
 
 const Stack = createNativeStackNavigator();
 const AppStackNavigator = createNativeStackNavigator();
@@ -277,6 +278,7 @@ const AppStack = () => (
     <AppStackNavigator.Screen name="ProfileDetail" component={ProfileDetail} />
     <AppStackNavigator.Screen name="UpdateProfileDetails" component={UpdateProfileDetails} />
     <AppStackNavigator.Screen name="AdvertiseWithUs" component={AdvertiseWithUs} />
+    <AppStackNavigator.Screen name="ShortMatrimonialProfile" component={ShortMatrimonialProfile} />
   </AppStackNavigator.Navigator>
 );
 

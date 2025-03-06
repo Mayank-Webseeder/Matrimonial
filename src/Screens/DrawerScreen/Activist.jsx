@@ -13,6 +13,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { GET_ACTIVIST_PROFILES } from '../../utils/BaseUrl';
 import { useFocusEffect } from '@react-navigation/native';
+import ImageViewing from 'react-native-image-viewing';
+
 
 const Activist = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -24,6 +26,13 @@ const Activist = ({ navigation }) => {
   const [filteredOptions, setFilteredOptions] = useState([]);
   const [listHeight, setListHeight] = useState(0);
   const [modalLocality, setModalLocality] = useState('');
+ const [isImageVisible, setImageVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  const openImageViewer = (imageUri) => {
+    setSelectedImage(imageUri);
+    setImageVisible(true);
+  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -119,7 +128,20 @@ const Activist = ({ navigation }) => {
     return (
       <View style={styles.card}>
         <View style={styles.cardData}>
-          <Image source={{ uri: item.profilePhoto }} style={styles.image} />
+        <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto )}>
+            <Image
+              source={item.profilePhoto  ? { uri: item.profilePhoto  } : require('../../Images/NoImage.png')}
+              style={styles.image}
+            />
+          </TouchableOpacity>
+          {selectedImage && (
+            <ImageViewing
+              images={[{ uri: selectedImage }]} 
+              imageIndex={0}
+              visible={isImageVisible}
+              onRequestClose={() => setImageVisible(false)}
+            />
+          )}
           <View style={{ marginLeft: SW(10) }}>
             <Text style={styles.text}>{item.fullname}</Text>
             <Text style={styles.smalltext}>{item.subCaste}</Text>
@@ -138,7 +160,8 @@ const Activist = ({ navigation }) => {
   return (
     <SafeAreaView style={Globalstyles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
-      <View style={Globalstyles.header}>
+     <View>
+     <View style={Globalstyles.header}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <TouchableOpacity onPress={() => navigation.navigate('Tabs')}>
             <MaterialIcons name={'arrow-back-ios-new'} size={25} color={Colors.theme_color} />
@@ -147,8 +170,7 @@ const Activist = ({ navigation }) => {
         </View>
         <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => navigation.navigate('Notification')} />
       </View>
-      <ScrollView>
-        <View>
+      <View>
           <View style={styles.searchbar}>
             <TextInput
               placeholder='Search in Your City'
@@ -173,6 +195,8 @@ const Activist = ({ navigation }) => {
             </TouchableOpacity>
           </View>
         </View>
+     </View>
+      <ScrollView>
 
         {loading ? (
           <ActivityIndicator size="large" color={Colors.theme_color} style={{ marginTop:SH(20) }} />

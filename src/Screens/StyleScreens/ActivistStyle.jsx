@@ -3,7 +3,9 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
-
+  ActivistDataList:{
+    
+  },
   righticons: {
     flexDirection: 'row',
     alignItems:"center"
@@ -56,7 +58,6 @@ const styles = StyleSheet.create({
   },
 
   ButtonContainer: {
-    flex: 1,
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between"
@@ -66,7 +67,7 @@ const styles = StyleSheet.create({
     paddingVertical:SH(5),
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: SH(20),
+    marginVertical: SH(10),
     borderRadius: 8,
     marginHorizontal: SW(6),
     backgroundColor: Colors.theme_color

@@ -98,6 +98,8 @@ const CREATE_EVENT_NEWS="https://api-matrimonial.webseeder.tech/api/v1/event/cre
 const UPDATE_EVENT_NEWS="https://api-matrimonial.webseeder.tech/api/v1/event/updateEventPost";
 const LIKEPOST="https://api-matrimonial.webseeder.tech/api/v1/event/like";
 const COMMENTPOST="https://api-matrimonial.webseeder.tech/api/v1/event/comment";
+const DELETE_EVENT="https://api-matrimonial.webseeder.tech/api/v1/event/delete-eventPost";
+// delete comments also done 
 
 // advertise with us 
 
@@ -170,5 +172,6 @@ export {
     CREATE_EVENT_NEWS,
     LIKEPOST,
     COMMENTPOST,
-    ADVERTISE_WITH_US
+    ADVERTISE_WITH_US,
+    DELETE_EVENT
 }

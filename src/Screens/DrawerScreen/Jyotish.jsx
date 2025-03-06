@@ -20,6 +20,7 @@ import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { SH, SW } from '../../utils/Dimensions';
 import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
+import ImageViewing from 'react-native-image-viewing';
 
 const Jyotish = ({ navigation }) => {
   const sliderRef = useRef(null);
@@ -33,6 +34,13 @@ const Jyotish = ({ navigation }) => {
   const [JyotishData, setJyotishData] = useState(null);
   const [isLoading, setLoading] = useState(false);
   const [modalLocality, setModalLocality] = useState('');
+   const [isImageVisible, setImageVisible] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
+  
+    const openImageViewer = (imageUri) => {
+      setSelectedImage(imageUri);
+      setImageVisible(true);
+    };
   const scrollY = useRef(new Animated.Value(0)).current;
 
   const headerHeight = scrollY.interpolate({
@@ -197,10 +205,22 @@ const Jyotish = ({ navigation }) => {
     return (
       <View style={styles.card}>
          <View style={styles.cardData}>
-          <Image
-            source={item.profilePhoto ? { uri: item.profilePhoto } : require('../../Images/NoImage.png')}
-            style={styles.image}
-          />
+         <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
+            <Image
+              source={item.profilePhoto ? { uri: item.profilePhoto } : require('../../Images/NoImage.png')}
+              style={styles.image}
+            />
+          </TouchableOpacity>
+
+          {/* Image Viewer Modal */}
+          {selectedImage && (
+            <ImageViewing
+              images={[{ uri: selectedImage }]} // Now, it correctly updates per click
+              imageIndex={0}
+              visible={isImageVisible}
+              onRequestClose={() => setImageVisible(false)}
+            />
+          )}
           <View>
           <Pressable style={styles.leftContainer}  
           onPress={() => navigation.navigate('JyotishDetailsPage', { jyotish_id: item._id,isSaved:isSaved })}>

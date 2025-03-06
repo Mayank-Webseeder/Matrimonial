@@ -20,8 +20,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import Toast from 'react-native-toast-message';
+import { useNavigation } from "@react-navigation/native";
+import ImageViewing from 'react-native-image-viewing';
 
-const Dharmshala = ({ navigation }) => {
+const Dharmshala = () => {
+  const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [locality, setLocality] = useState('');
   const [activeButton, setActiveButton] = useState(null);
@@ -35,7 +38,14 @@ const Dharmshala = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
    const MyActivistProfile = useSelector((state) => state.activist.activist_data);
-
+   const [isImageVisible, setImageVisible] = useState(false);
+   const [selectedImage, setSelectedImage] = useState(null);
+ 
+   const openImageViewer = (imageUri) => {
+     setSelectedImage(imageUri);
+     setImageVisible(true);
+   };
+ 
   const handleInputChange = (text) => {
     setSubcaste(text);
     if (text.trim() === '') {
@@ -165,8 +175,23 @@ const Dharmshala = ({ navigation }) => {
     return (
       <View style={styles.card}
       >
-        <Pressable style={styles.cardData} onPress={() => navigation.navigate('DharamsalaDetail', { DharamsalaData: item })}        >
-          <Image source={{ uri: item.images?.[0] }} style={styles.image} />
+        <Pressable style={styles.cardData} onPress={() => navigation.navigate("DharamsalaDetail", { DharamsalaData: item })} >
+        <TouchableOpacity onPress={() => openImageViewer(item.images?.[0])}>
+            <Image
+              source={item.images?.[0] ? { uri: item.images?.[0] } : require('../../Images/NoImage.png')}
+              style={styles.image}
+            />
+          </TouchableOpacity>
+
+          {/* Image Viewer Modal */}
+          {selectedImage && (
+            <ImageViewing
+              images={[{ uri: selectedImage }]} // Now, it correctly updates per click
+              imageIndex={0}
+              visible={isImageVisible}
+              onRequestClose={() => setImageVisible(false)}
+            />
+          )}
           <View style={styles.leftContainer}>
             <Text style={styles.text}>{item.dharmshalaName}</Text>
             <Text style={[styles.smalltext, { fontFamily: 'Poppins-Medium' }]}>
@@ -209,10 +234,6 @@ const Dharmshala = ({ navigation }) => {
     fetchDharamsalaData("modal");
   };
 
-  // const handleUploadButton = () => {
-  //   setActiveButton(2)
-  //   navigation.navigate('DharamsalaSubmissionPage')
-  // }
 
   return (
     <SafeAreaView style={Globalstyles.container}>

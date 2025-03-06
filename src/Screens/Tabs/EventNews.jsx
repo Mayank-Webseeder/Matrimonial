@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, BackHandler, SafeAreaView, StatusBar, TextInput } from 'react-native';
+import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, TextInput,ToastAndroid } from 'react-native';
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import styles from '../StyleScreens/EventNewsStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -30,6 +30,13 @@ const EventNews = ({ navigation }) => {
   const postsPerPage = 3;
   const [selectedPostId, setSelectedPostId] = useState(null)
   const [myeventpost, setMyeventpost] = useState([]);
+  const ProfileData = useSelector((state) => state.profile);
+  const profileData = ProfileData?.profiledata || {};
+  const myprofile_id = profileData?._id || null;
+
+  useEffect(() => {
+    console.log("myprofile_id", myprofile_id);
+  }, [])
 
   const handlePress = () => {
     if (MyActivistProfile && MyActivistProfile._id) {
@@ -136,28 +143,30 @@ const EventNews = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
-    const fetchPostData = async () => {
-      try {
-        const token = await AsyncStorage.getItem('userToken');
-        if (!token) throw new Error('No token found');
-
-        const headers = { Authorization: `Bearer ${token}` };
-        const response = await axios.get(VIEW_EVENT, { headers });
-
-        if (response.status === 200) {
-          const postData = response.data.data;
-          console.log("myeventpost", myeventpost);
-          setMyeventpost(postData)
+  useFocusEffect(
+    useCallback(() => {
+      const fetchPostData = async () => {
+        try {
+          const token = await AsyncStorage.getItem('userToken');
+          if (!token) throw new Error('No token found');
+  
+          const headers = { Authorization: `Bearer ${token}` };
+          const response = await axios.get(VIEW_EVENT, { headers });
+  
+          if (response.status === 200) {
+            const postData = response.data.data;
+            console.log("myeventpost", postData);
+            setMyeventpost(postData);
+          }
+        } catch (error) {
+          console.error('Error fetching post data:', error);
         }
-      } catch (error) {
-        console.error('Error fetching post data:', error);
-      }
-    };
-
-    fetchPostData();
-  }, []);
-
+      };
+  
+      fetchPostData();
+    }, []) // Empty dependency array to prevent multiple re-renders
+  );
+  
 
   const COMMENT = async (postId) => {
     try {
@@ -205,8 +214,47 @@ const EventNews = ({ navigation }) => {
     }
   };
 
-
-
+  const DELETE_COMMENT = async (postId, commentId) => {
+    console.log("postId", postId, "commentId", commentId);
+    try {
+      setIsLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
+  
+      if (!token) throw new Error("No token found");
+  
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+  
+      console.log("headers", headers);
+  
+      const response = await axios.delete(
+        `https://api-matrimonial.webseeder.tech/api/v1/event/${postId}/delete-comment/${commentId}`,
+        { headers }
+      );
+  
+      if (response.data) {
+        console.log("Updated comments:", JSON.stringify(response.data.comments));
+  
+        setCommentData((prevComments) =>
+          prevComments.filter((comment) => comment._id !== commentId)
+        );
+  
+        ToastAndroid.show("Comment deleted successfully!", ToastAndroid.SHORT);
+      }
+    } catch (error) {
+      console.error("Error deleting comment:", error?.response?.data || error.message);
+  
+      ToastAndroid.show(
+        error?.response?.data?.message || "Failed to delete comment. Please try again!",
+        ToastAndroid.LONG
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
   const GetEventNews = async () => {
     try {
       setIsLoading(true)
@@ -293,30 +341,6 @@ const EventNews = ({ navigation }) => {
     fetchPostData();
   }, []);
 
-  const handleBackPress = () => {
-    const state = navigation.getState();
-    const activeRoute = state.routes[state.index];
-
-    if (activeRoute.name === 'EventNews') {
-
-      if (state.history && state.history.some((h) => h.type === 'drawer')) {
-        navigation.toggleDrawer();
-      } else if (state.history && state.history.some((h) => h.type === 'tab')) {
-        navigation.navigate('HomeTab');
-      } else {
-        navigation.goBack();
-      }
-      return true;
-    }
-    return false;
-  };
-
-  useFocusEffect(
-    React.useCallback(() => {
-      BackHandler.addEventListener('hardwareBackPress', handleBackPress);
-      return () => BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
-    }, [navigation])
-  );
 
   const openBottomSheet = (postId, comments) => {
     console.log("commentData", commentData);
@@ -456,20 +480,30 @@ const EventNews = ({ navigation }) => {
           }}
         >
           <View style={styles.bottomSheetContent}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginRight: SW(10) }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: SH(10) }}>
               <Text style={styles.sheetHeader}>Comments</Text>
               <TouchableOpacity onPress={closeBottomSheet}>
-                <Entypo name={'cross'} color={Colors.dark} size={25} />
+                <Entypo name={'cross'} color={Colors.dark} size={30} />
               </TouchableOpacity>
             </View>
             {/* List of Comments */}
             <FlatList
               data={Array.isArray(commentData) ? commentData : []}
               keyExtractor={(item, index) => item?._id || index.toString()}
+              ListEmptyComponent={
+                <View style={styles.emptyContainer}>
+                  <Text style={styles.emptyText}>No Comments Posted Yet</Text>
+                </View>
+              }
               renderItem={({ item }) => (
                 <View style={styles.commentContainer}>
                   <Text style={styles.commentText}>{item?.comment}</Text>
                   <Text style={styles.hour}>{GetTimeAgo(item?.date)}</Text>
+                  {item?.user === myprofile_id && (
+                    <TouchableOpacity onPress={() => DELETE_COMMENT(selectedPostId, item?._id)}>
+                      <Entypo name={'cross'} color={Colors.theme_color} size={12} />
+                    </TouchableOpacity>
+                  )}
                 </View>
               )}
             />
@@ -532,7 +566,7 @@ const EventNews = ({ navigation }) => {
       </View>
       {myeventpost.length > 0 && (
         <TouchableOpacity
-          style={[styles.button, { alignSelf: "flex-end" }]}
+          style={[styles.button, { alignSelf: "flex-end",marginBottom:SH(2) }]}
           onPress={() => navigation.navigate('ViewMyEventPost', { events: myeventpost })}>
           <Text style={[styles.buttonText]}>Uploaded Events</Text>
         </TouchableOpacity>

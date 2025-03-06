@@ -15,6 +15,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MATCHED_PROFILE } from '../../utils/BaseUrl';
 import { ACCEPTED_API, REJECTED_API , SAVED_PROFILES } from '../../utils/BaseUrl';
 import Toast from 'react-native-toast-message';
+import ImageViewing from 'react-native-image-viewing';
+import { SH,SW } from '../../utils/Dimensions';
+
 const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const { userId, biodata, requestId } = route.params;
   const _id=biodata?._id;
@@ -25,6 +28,22 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
 
   const MyprofileData = useSelector((state) => state.getBiodata);
   console.log("MyprofileData", biodata);
+
+   const [isImageVisible, setImageVisible] = useState(false);
+    const [imageIndex, setImageIndex] = useState(0);
+  
+    // Available images ko filter karo jo null na ho
+    const images = [
+      personalDetails?.closeUpPhoto,
+      personalDetails?.fullPhoto,
+      personalDetails?.bestPhoto,
+    ].filter(Boolean); // Null values hata do
+  
+    const openImageViewer = (index) => {
+      setImageIndex(index);
+      setImageVisible(true);
+    };
+
   useEffect(() => {
     if (userId) {
       fetchUserProfile(userId);
@@ -197,29 +216,39 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         </View>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.sliderCotainer}>
-          <Swiper
-            style={styles.wrapper}
-            showsButtons={true}
-            autoplay={true}
-            autoplayTimeout={2.5}
-            loop={true}
-            dot={<View style={styles.dot} />}
-            activeDot={<View style={styles.activeDot} />}
-            prevButton={<MaterialIcons name="chevron-left" size={50} color={'gray'} />}
-            nextButton={<MaterialIcons name="chevron-right" size={50} color={'gray'} />}
-          >
-            <View style={styles.slide}>
-              <Image source={{ uri: personalDetails?.closeUpPhoto }} style={styles.image} />
-            </View>
-            <View style={styles.slide}>
-              <Image source={{ uri: personalDetails?.fullPhoto }} style={styles.image} />
-            </View>
-            <View style={styles.slide}>
-              <Image source={{ uri: personalDetails?.bestPhoto }} style={styles.image} />
-            </View>
-          </Swiper>
-        </View>
+       <View style={{ alignItems: "center" }}>
+      {/* First Image Display */}
+      {images.length > 0 && (
+        <TouchableOpacity onPress={() => openImageViewer(0)}>
+          <Image source={{ uri: images[0] }} style={styles.image} />
+        </TouchableOpacity>
+      )}
+
+      {/* Image Viewer Modal */}
+      <ImageViewing
+        images={images.map((img) => ({ uri: img }))}
+        imageIndex={imageIndex}
+        visible={isImageVisible}
+        onRequestClose={() => setImageVisible(false)}
+        onImageIndexChange={(index) => setImageIndex(index)}
+        FooterComponent={() => (
+          <View style={{ position: "absolute", bottom:SH(20), alignSelf: "center", flexDirection: "row" }}>
+            {images.map((_, index) => (
+              <View
+                key={index}
+                style={{
+                  width:SH(8),
+                  height:SH(8),
+                  borderRadius: 4,
+                  marginHorizontal:SW(5),
+                  backgroundColor: imageIndex === index ? "white" : "gray",
+                }}
+              />
+            ))}
+          </View>
+        )}
+      />
+    </View>
         <View style={styles.flexContainer}>
           <View style={styles.flex}>
             {/* <Text style={styles.Idtext}>ID NO. :- {userId}</Text> */}

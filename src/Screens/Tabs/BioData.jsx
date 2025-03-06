@@ -12,6 +12,7 @@ import Globalstyles from '../../utils/GlobalCss';
 import { MATRIMONY_SUMMRARY } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import moment from 'moment';
 
 const BioData = ({ navigation }) => {
   const sliderRef = useRef(null);
@@ -102,6 +103,15 @@ const BioData = ({ navigation }) => {
     });
   };
 
+  
+    const calculateAge = (dob) => {
+      if (!dob) return "N/A";
+      const birthDate = moment(dob);
+      const currentDate = moment();
+      return currentDate.diff(birthDate, "years");
+    };
+  
+
   const renderProfileData = ({ item }) => (
     <TouchableOpacity style={styles.card} onPress={() => handleNavigateToProfile(item)}>
       <Image style={styles.image} source={{ uri: item?.personalDetails?.closeUpPhoto }} />
@@ -114,7 +124,10 @@ const BioData = ({ navigation }) => {
           <Text style={styles.text}>{item?.personalDetails?.subCaste}</Text>
         </View>
 
+        <View style={styles.row2}>
         <Text style={styles.text}>Height: {item?.personalDetails?.heightFeet} ft</Text>
+        <Text style={styles.text}>{calculateAge(item?.personalDetails?.dob)} Years</Text>
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -130,8 +143,11 @@ const BioData = ({ navigation }) => {
           <Text style={styles.city}>{item?.fromUserBioData?.personalDetails?.cityOrVillage}</Text>
           <Text style={styles.text}>{item?.fromUserBioData?.personalDetails?.subCaste}</Text>
         </View>
-
+        <View style={styles.row2}>
         <Text style={styles.text}>Height: {item?.fromUserBioData?.personalDetails?.heightFeet} ft</Text>
+          <Text style={styles.text}>{calculateAge(item?.fromUserBioData?.personalDetails?.dob)} Years</Text>
+        </View>
+
       </View>
     </TouchableOpacity>
   );
@@ -148,7 +164,10 @@ const BioData = ({ navigation }) => {
           <Text style={styles.text}>{item?.saveProfile?.personalDetails?.subCaste}</Text>
         </View>
 
+        <View style={styles.row2}>
         <Text style={styles.text}>Height: {item?.saveProfile?.personalDetails?.heightFeet} ft</Text>
+          <Text style={styles.text}>{calculateAge(item?.saveProfile?.personalDetails?.dob)} Years </Text>
+        </View>
       </View>
     </TouchableOpacity>
   );

@@ -16,10 +16,12 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import { SH, SF } from '../../utils/Dimensions';
 import { useSelector } from 'react-redux';
 import Toast from 'react-native-toast-message';
-import { GET_ALL_COMITTEE ,SAVED_PROFILES } from '../../utils/BaseUrl';
+import { GET_ALL_COMITTEE, SAVED_PROFILES } from '../../utils/BaseUrl';
 import axios from 'axios';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ImageViewing from 'react-native-image-viewing';
+
 
 const Committee = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -35,6 +37,14 @@ const Committee = ({ navigation }) => {
   const [committeeData, setCommitteeData] = useState([]);
   const [modalLocality, setModalLocality] = useState('');
   const [error, setError] = useState(null);
+
+  const [isImageVisible, setImageVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  const openImageViewer = (imageUri) => {
+    setSelectedImage(imageUri);
+    setImageVisible(true);
+  };
 
   const handleInputChange = (text) => {
     setSubcaste(text);
@@ -75,23 +85,23 @@ const Committee = ({ navigation }) => {
       fetchComitteeData("all"); // Fetch full list when coming back
     }, [])
   );
-  
+
   const fetchComitteeData = async (filterType = "search") => {
     try {
       setLoading(true);
       setCommitteeData([]); // Clear old data before fetching new data
       setError(null); // Reset error
-  
+
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
-  
+
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-  
+
       let queryParams = [];
-  
+
       if (filterType === "search") {
         const cleanedLocality = locality.trim();
         const cleanedSubCaste = subcaste.trim();
@@ -106,14 +116,14 @@ const Committee = ({ navigation }) => {
           queryParams.push(`subCaste=${encodeURIComponent(isCustomSubCaste ? cleanedModalSubCaste : '')}`);
         }
       }
-  
+
       const url = filterType === "all" ? GET_ALL_COMITTEE : `${GET_ALL_COMITTEE}?${queryParams.join("&")}`;
-  
+
       console.log("Fetching Data from:", url);
-  
+
       const response = await axios.get(url, { headers });
       console.log("response", response.data);
-  
+
       if (response.data && response.data.data.length > 0) {
         setCommitteeData(response.data.data);
       } else {
@@ -127,7 +137,7 @@ const Committee = ({ navigation }) => {
       setLoading(false);
     }
   };
-  
+
   const SliderRenderItem = ({ item }) => {
     return (
       <View>
@@ -136,69 +146,84 @@ const Committee = ({ navigation }) => {
     );
   };
 
-  
-// const savedProfiles = async (_id) => {
-//   console.log("_id",_id);
-//   if (!_id) {
-//     Toast.show({
-//       type: "error",
-//       text1: "Error",
-//       text2: "User ID not found!",
-//     });
-//     return;
-//   }
 
-//   try {
-//     const token = await AsyncStorage.getItem("userToken");
-//     if (!token) {
-//       throw new Error("No token found");
-//     }
+  // const savedProfiles = async (_id) => {
+  //   console.log("_id",_id);
+  //   if (!_id) {
+  //     Toast.show({
+  //       type: "error",
+  //       text1: "Error",
+  //       text2: "User ID not found!",
+  //     });
+  //     return;
+  //   }
 
-//     const headers = {
-//       "Content-Type": "application/json",
-//       Authorization: `Bearer ${token}`,
-//     };
+  //   try {
+  //     const token = await AsyncStorage.getItem("userToken");
+  //     if (!token) {
+  //       throw new Error("No token found");
+  //     }
 
-//     const response = await axios.post(
-//       `${SAVED_PROFILES}/${_id}`, 
-//       {}, 
-//       { headers }
-//     );
+  //     const headers = {
+  //       "Content-Type": "application/json",
+  //       Authorization: `Bearer ${token}`,
+  //     };
 
-//     console.log("Response Data:", JSON.stringify(response?.data));
+  //     const response = await axios.post(
+  //       `${SAVED_PROFILES}/${_id}`, 
+  //       {}, 
+  //       { headers }
+  //     );
 
-//     if (response?.data?.message) {
-//       Toast.show({
-//         type: "success",
-//         text2: response.data.message,
-//         position: "top",
-//         visibilityTime: 3000,
-//         textStyle: { fontSize: 14, color: "green" },
-//       });
-//     } else {
-//       Toast.show({
-//         type: "error",
-//         text1: "Error",
-//         text2: response.data.message || "Something went wrong!",
-//       });
-//     }
-//   } catch (error) {
-//     console.error(
-//       "API Error:",
-//       error?.response ? JSON.stringify(error.response.data) : error.message
-//     );
-//     Toast.show({
-//       type: "error",
-//       text1: "Error",
-//       text2: error.response?.data?.message || "Failed to save profile!",
-//     });
-//   }
-// };
+  //     console.log("Response Data:", JSON.stringify(response?.data));
+
+  //     if (response?.data?.message) {
+  //       Toast.show({
+  //         type: "success",
+  //         text2: response.data.message,
+  //         position: "top",
+  //         visibilityTime: 3000,
+  //         textStyle: { fontSize: 14, color: "green" },
+  //       });
+  //     } else {
+  //       Toast.show({
+  //         type: "error",
+  //         text1: "Error",
+  //         text2: response.data.message || "Something went wrong!",
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error(
+  //       "API Error:",
+  //       error?.response ? JSON.stringify(error.response.data) : error.message
+  //     );
+  //     Toast.show({
+  //       type: "error",
+  //       text1: "Error",
+  //       text2: error.response?.data?.message || "Failed to save profile!",
+  //     });
+  //   }
+  // };
 
   const renderItem = ({ item }) => (
     <View style={styles.card}>
       <Pressable style={styles.cardData}>
-        <Image source={{ uri: item.photoUrl }} style={styles.image} />
+        <TouchableOpacity onPress={() => openImageViewer(item.photoUrl)}>
+          <Image
+            source={item.photoUrl ? { uri: item.photoUrl } : require('../../Images/NoImage.png')}
+            style={styles.image}
+          />
+        </TouchableOpacity>
+
+        {/* Image Viewer Modal */}
+        {selectedImage && (
+          <ImageViewing
+            images={[{ uri: selectedImage }]} // Now, it correctly updates per click
+            imageIndex={0}
+            visible={isImageVisible}
+            onRequestClose={() => setImageVisible(false)}
+          />
+        )}
         <View style={styles.leftContainer}>
           <Text style={styles.title}>{item.committeeTitle}</Text>
           <Text style={styles.Nametext}>{item.presidentName}</Text>
@@ -210,11 +235,11 @@ const Committee = ({ navigation }) => {
         </View>
       </Pressable>
       <View style={styles.sharecontainer}>
-      {/* onPress={() => savedProfiles(item._id)} */}
-      <TouchableOpacity style={styles.iconContainer}>
-            <FontAwesome name="bookmark-o" size={18} color={Colors.dark} />
-            <Text style={styles.iconText}>Save</Text>
-          </TouchableOpacity>
+        {/* onPress={() => savedProfiles(item._id)} */}
+        <TouchableOpacity style={styles.iconContainer}>
+          <FontAwesome name="bookmark-o" size={18} color={Colors.dark} />
+          <Text style={styles.iconText}>Save</Text>
+        </TouchableOpacity>
         <View style={styles.iconContainer}>
           <Feather name="send" size={18} color={Colors.dark} />
           <Text style={styles.iconText}>Shares</Text>
@@ -343,37 +368,36 @@ const Committee = ({ navigation }) => {
 
         </View>
         {loading ? (
-  <ActivityIndicator size="large" color={Colors.theme_color} style={{ marginTop: 20 }} />
-) : error ? (
-  <Text style={{
-    textAlign: 'center', fontSize: SF(15),
-    color: Colors.gray,
-    fontFamily: 'Poppins-Regular', marginTop: SH(20)
-  }}>
-    {error} {/* This will show error messages */}
-  </Text>
-) : committeeData.length === 0 ? (
-  <Text style={{
-    textAlign: 'center', fontSize: SF(15),
-    color: Colors.gray, marginTop: SH(20),
-    fontFamily: 'Poppins-Regular',
-  }}>
-    No Committee data found.
-  </Text>
-) : (
-  <FlatList
-    data={committeeData}
-    renderItem={renderItem}
-    keyExtractor={(item) => item._id.toString()}
-    scrollEnabled={false}
-    showsVerticalScrollIndicator={false}
-    contentContainerStyle={styles.DharamSalaList}
-  />
-)}
+          <ActivityIndicator size="large" color={Colors.theme_color} style={{ marginTop: 20 }} />
+        ) : error ? (
+          <Text style={{
+            textAlign: 'center', fontSize: SF(15),
+            color: Colors.gray,
+            fontFamily: 'Poppins-Regular', marginTop: SH(20)
+          }}>
+            {error} {/* This will show error messages */}
+          </Text>
+        ) : committeeData.length === 0 ? (
+          <Text style={{
+            textAlign: 'center', fontSize: SF(15),
+            color: Colors.gray, marginTop: SH(20),
+            fontFamily: 'Poppins-Regular',
+          }}>
+            No Committee data found.
+          </Text>
+        ) : (
+          <FlatList
+            data={committeeData}
+            renderItem={renderItem}
+            keyExtractor={(item) => item._id.toString()}
+            scrollEnabled={false}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.DharamSalaList}
+          />
+        )}
 
 
       </ScrollView>
-
       <Modal
         visible={modalVisible}
         transparent={true}

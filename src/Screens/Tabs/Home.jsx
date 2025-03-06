@@ -27,7 +27,7 @@ const Home = ({ navigation }) => {
   const [mybiodata, setMybiodata] = useState("");
   const partnerPreferences = mybiodata?.partnerPreferences;
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const handleNavigateToProfile = (item) => {
     if (!navigation.isFocused()) return;
 
@@ -36,7 +36,9 @@ const Home = ({ navigation }) => {
     if (!mybiodata || !mybiodata.partnerPreferences) {
       // Partner preferences nahi hai, toh "Matrimonial" screen par bhejo
       console.log("Navigating to Matrimonial because Partner Preferences are missing");
-      navigation.navigate("Matrimonial");
+      navigation.navigate("ShortMatrimonialProfile", {
+        userDetails: item,
+      });
     } else {
       // Partner preferences hai, toh "MatrimonyPeopleProfile" screen par bhejo
       console.log("Navigating to MatrimonyPeopleProfile");
@@ -73,7 +75,7 @@ const Home = ({ navigation }) => {
       );
       setIsLoading(false)
     }
-    finally{
+    finally {
       setIsLoading(false)
     }
   }
@@ -216,10 +218,15 @@ const Home = ({ navigation }) => {
               <View style={styles.imageWrapper}>
                 <TouchableOpacity onPress={() => handleNavigateToProfile(item)}>
                   <Image
-                    source={{ uri: item.personalDetails.closeUpPhoto }}
+                    source={
+                      item?.personalDetails?.closeUpPhoto
+                        ? { uri: item.personalDetails.closeUpPhoto }
+                        : require("../../Images/NoImage.png")
+                    }
                     style={styles.ProfileImages}
                   />
-                  {/* ✅ Show Verified Badge Only for Verified Users */}
+
+
                   {item.verified && (
                     <View style={styles.verifiedContainer}>
                       <Image

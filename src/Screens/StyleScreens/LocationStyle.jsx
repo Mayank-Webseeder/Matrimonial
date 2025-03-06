@@ -12,21 +12,8 @@ const styles = StyleSheet.create({
     marginBottom: SH(20)
   },
 
-  sliderCotainer: {
-    height: SH(600),
-    width: "100%",
-    marginVertical: -SH(130)
-  },
-  slide: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   image: {
-    width: '100%',
-    height: '50%',
-    resizeMode: 'cover',
-    borderRadius: 10
+    width: SW(350), height: SH(270), borderRadius: 10, resizeMode: "cover"
   },
   verifiedContainer: {
     position: "absolute",
@@ -35,20 +22,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "white",
-    paddingHorizontal:SW(5),
-    paddingVertical:SW(2),
+    paddingHorizontal: SW(5),
+    paddingVertical: SW(2),
     borderRadius: 5,
   },
   verifiedBadge: {
     width: SW(20),
     height: SH(20),
-    marginRight:SW(1),
-    resizeMode:"contain"
+    marginRight: SW(1),
+    resizeMode: "contain"
   },
   verifiedText: {
     color: "green",
     fontWeight: "bold",
-    fontSize:SF(12),
+    fontSize: SF(12),
   },
   dot: {
     backgroundColor: Colors.light,

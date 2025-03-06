@@ -1,131 +1,124 @@
-import React, { useState } from 'react';
-import { Text, View, TouchableOpacity, Modal, TextInput, SafeAreaView, StatusBar, ToastAndroid } from 'react-native';
+import React, { useRef, useEffect, useState } from 'react';
+import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar, Linking } from 'react-native';
+import styles from '../StyleScreens/DharamsalaDetailStyle';
 import Colors from '../../utils/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import styles from '../StyleScreens/ChangePasswordStyle';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Feather from 'react-native-vector-icons/Feather';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import AppIntroSlider from 'react-native-app-intro-slider';
 import Globalstyles from '../../utils/GlobalCss';
-import { CHANGE_PASSWORD } from '../../utils/BaseUrl';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
 
-const ChangePassword = ({ navigation }) => {
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [oldPassword, setOldPassword] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
+const DharamsalaDetail = ({ navigation, route }) => {
+  const { DharamsalaData } = route.params;
+  const sliderRef = useRef(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [showFullText, setShowFullText] = useState(false);
 
-  const handleChangePassword = async () => {
-    if (!oldPassword || !newPassword || !confirmPassword) {
-      setPasswordError("All fields are required!");
-      return;
-    }
+  const description = DharamsalaData.description || "No description available.";
+  const truncatedDescription = description.slice(0, 100) + "..."; // First 100 characters
 
-    if (newPassword !== confirmPassword) {
-      setPasswordError("Passwords do not match!");
-      return;
-    }
-
-    setPasswordError('');
-    setLoading(true);
-
-    try {
-      const response = await fetch(CHANGE_PASSWORD, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer yourAuthToken`, 
-        },
-        body: JSON.stringify({
-          oldPassword,
-          newPassword,
-        }),
-      });
-
-      const result = await response.json();
-      setLoading(false);
-
-      if (response.ok) {
-        ToastAndroid.show("Password changed successfully!", ToastAndroid.SHORT);
-        setIsModalVisible(true);
+  // Automatically slide images every 2 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (currentIndex < DharamsalaData.images.length - 1) {
+        setCurrentIndex((prevIndex) => prevIndex + 1);
+        sliderRef.current?.goToSlide(currentIndex + 1);
       } else {
-        ToastAndroid.show(result.message || "Something went wrong!", ToastAndroid.SHORT);
+        setCurrentIndex(0);
+        sliderRef.current?.goToSlide(0);
       }
-    } catch (error) {
-      setLoading(false);
-      ToastAndroid.show("Network error! Please try again.", ToastAndroid.SHORT);
-    }
-  };
+    }, 2000);
 
-  const closeModalAndNavigate = () => {
-    setIsModalVisible(false);
-    navigation.navigate('Tabs');
-  };
+    return () => clearInterval(interval);
+  }, [currentIndex]);
+
+  const SliderrenderItem = ({ item }) => (
+    <View>
+      <Image source={{ uri: item }} style={styles.sliderImage} />
+    </View>
+  );
 
   return (
     <SafeAreaView style={Globalstyles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
+      
+      {/* Header */}
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: "center" }}>
-          <TouchableOpacity onPress={() => navigation.navigate('Tabs')}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
-          <Text style={Globalstyles.headerText}>Change Password</Text>
+          <Text style={Globalstyles.headerText}>{DharamsalaData.dharmshalaName}</Text>
+        </View>
+        <View style={styles.righticons}>
+          <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => navigation.navigate('Notification')} />
         </View>
       </View>
 
-      <Text style={styles.Text}>Please enter your new password and confirm it to change your old password</Text>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        
+        {/* Image Slider */}
+        <View style={styles.sliderContainer}>
+          <AppIntroSlider
+            ref={sliderRef}
+            data={DharamsalaData.images}
+            renderItem={SliderrenderItem}
+            showNextButton={false}
+            showDoneButton={false}
+            dotStyle={styles.dot}
+            activeDotStyle={styles.activeDot}
+            onSlideChange={(index) => setCurrentIndex(index)}
+          />
+        </View>
 
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Old Password"
-          secureTextEntry
-          value={oldPassword}
-          onChangeText={setOldPassword}
-          placeholderTextColor={Colors.theme_color}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="New Password"
-          secureTextEntry
-          value={newPassword}
-          onChangeText={setNewPassword}
-          placeholderTextColor={Colors.theme_color}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Confirm Password"
-          secureTextEntry
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          placeholderTextColor={Colors.theme_color}
-        />
-        {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
+        {/* Dharamsala Details */}
+        <View style={styles.textContainer}>
+          <View style={styles.TextView}>
+            <Text style={[Globalstyles.title,{fontFamily:"Poppins-Bold"}]}>{DharamsalaData.dharmshalaName}</Text>
+            <Text style={styles.Text}>{DharamsalaData.subCaste || "N/A"}</Text>
+            <Text style={styles.smalltext}>{DharamsalaData.city}</Text>
+          </View>
 
-        <TouchableOpacity style={styles.optionButton} onPress={handleChangePassword} disabled={loading}>
-          <Text style={styles.optionText}>{loading ? "Updating..." : "Change Password"}</Text>
-        </TouchableOpacity>
-      </View>
-
-      <Modal
-        visible={isModalVisible}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setIsModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalText}>Password changed successfully!</Text>
-            <TouchableOpacity style={styles.modalButton} onPress={closeModalAndNavigate}>
-              <Text style={styles.modalButtonText}>OK</Text>
-            </TouchableOpacity>
+          {/* Description with Read More / Read Less */}
+          <View style={styles.TextView}>
+            <Text style={Globalstyles.title}>Description</Text>
+            <Text style={styles.smallText}>
+              {showFullText ? description : truncatedDescription}
+            </Text>
+            {description.length > 100 && (
+              <TouchableOpacity onPress={() => setShowFullText(!showFullText)}>
+                <Text style={styles.viewMore}>
+                  {showFullText ? 'Read Less' : 'Read More'}
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
-      </Modal>
+
+        {/* Share & Call Section */}
+        <View style={styles.sharecontainer}>
+          <View style={styles.iconContainer}>
+            <FontAwesome name="bookmark-o" size={20} color={Colors.dark} />
+            <Text style={styles.iconText}>Save</Text>
+          </View>
+
+          <View style={styles.iconContainer}>
+            <Feather name="send" size={20} color={Colors.dark} />
+            <Text style={styles.iconText}>Share</Text>
+          </View>
+
+          <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${DharamsalaData.mobileNo}`)}>
+            <MaterialIcons name="call" size={20} color={Colors.light} />
+            <Text style={styles.RequestText}>Request for call</Text>
+          </TouchableOpacity>
+        </View>
+
+        <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
+
+      </ScrollView>
     </SafeAreaView>
   );
 };
 
-export default ChangePassword;
+export default DharamsalaDetail;

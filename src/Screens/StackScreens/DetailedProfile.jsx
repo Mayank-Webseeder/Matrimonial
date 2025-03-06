@@ -19,7 +19,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {
   OccupationData, QualificationData, maritalStatusData, ManglikStatusData, LivingData, ProfileCreatedData, CityData, Income,
   FamilyType, CookingStatus, DietHabit, smokingStatusData, DrinkingHabit, StateData, TobacooHabit, subCasteOptions,
-  MyDisabilities, MyComplexionData
+  MyDisabilities, MyComplexionData,
+  MotherOccupationData
 } from '../../DummyData/DropdownData';
 
 const DetailedProfile = ({ navigation }) => {
@@ -412,7 +413,7 @@ const DetailedProfile = ({ navigation }) => {
         setTimeout(() => {
           if (biodata?._id) {
             // ✅ If updating, refresh the **same page** (DetailedProfile)
-            navigation.replace("DetailedProfile");
+            navigation.navigate("MainApp");
           } else {
             // ✅ If creating, navigate to **MainPartnerPrefrence**
             navigation.navigate("MainPartnerPrefrence");
@@ -832,7 +833,7 @@ const DetailedProfile = ({ navigation }) => {
             <Text style={Globalstyles.title}>Father Occupation <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
-              data={OccupationData}
+              data={MotherOccupationData}
               labelField="label"
               valueField="value"
               value={biodata.fatherOccupation}
@@ -863,7 +864,7 @@ const DetailedProfile = ({ navigation }) => {
             <Text style={Globalstyles.title}>Mother Occupation <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
-              data={OccupationData}
+              data={MotherOccupationData}
               labelField="label"
               valueField="value"
               value={biodata.motherOccupation}
@@ -1119,7 +1120,7 @@ const DetailedProfile = ({ navigation }) => {
           </View>
 
           <View>
-            <Text style={Globalstyles.title}>Upload Your One Full Image <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Text style={Globalstyles.title}>Upload Your One Full Image</Text>
 
             <View style={Globalstyles.input}>
               <TouchableOpacity onPress={() => handleImageSelection('fullPhoto')}>
@@ -1137,7 +1138,7 @@ const DetailedProfile = ({ navigation }) => {
           </View>
 
           <View>
-            <Text style={Globalstyles.title}>Upload Your One Best Image <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Text style={Globalstyles.title}>Upload Your One Best Image </Text>
 
             <View style={Globalstyles.input}>
               <TouchableOpacity onPress={() => handleImageSelection('bestPhoto')}>

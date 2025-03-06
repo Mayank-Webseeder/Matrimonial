@@ -6,6 +6,8 @@ const FORGOT_PASSWORD="https://api-matrimonial.webseeder.tech/api/v1/user/forgot
 const CHANGE_PASSWORD="https://api-matrimonial.webseeder.tech/api/v1/user/changePassword";
 const FEEDBACK="https://api-matrimonial.webseeder.tech/api/v1/user/create-feedback";
 
+// report 
+const REPORT="https://api-matrimonial.webseeder.tech/api/v1/report/createReport";
 // profile's apis
 const PROFILE_ENDPOINT = "https://api-matrimonial.webseeder.tech/api/v1/user/view";
 const UPLOAD_PROFILE_PHOTO = "https://api-matrimonial.webseeder.tech/api/v1/user/updateProfileImage";
@@ -89,6 +91,18 @@ const GET_ALL_DHARAMSALA = "https://api-matrimonial.webseeder.tech/api/v1/dharms
 // get common api for all matrimony profiles for biodata page 
 const MATRIMONY_SUMMRARY="https://api-matrimonial.webseeder.tech/api/v1/user/getMetrimonial-Summary";
 
+// event & news 
+const GET_ALL_EVENT_NEWS="https://api-matrimonial.webseeder.tech/api/v1/event/getAllEventsPost";
+const VIEW_EVENT="https://api-matrimonial.webseeder.tech/api/v1/event/viewPost";
+const CREATE_EVENT_NEWS="https://api-matrimonial.webseeder.tech/api/v1/event/createEventPost";
+const UPDATE_EVENT_NEWS="https://api-matrimonial.webseeder.tech/api/v1/event/updateEventPost";
+const LIKEPOST="https://api-matrimonial.webseeder.tech/api/v1/event/like";
+const COMMENTPOST="https://api-matrimonial.webseeder.tech/api/v1/event/comment";
+
+// advertise with us 
+
+const ADVERTISE_WITH_US="https://api-matrimonial.webseeder.tech/api/v1/user/advertise-WithUs";
+
 export {
     SIGNUP_ENDPOINT,
     LOGIN_ENDPOINT,
@@ -148,5 +162,13 @@ export {
     UPDATE_DHARAMSALA,
     GET_DHARAMSALA,
     GET_ALL_DHARAMSALA,
-    MATRIMONY_SUMMRARY
+    MATRIMONY_SUMMRARY,
+    REPORT,
+    GET_ALL_EVENT_NEWS,
+    VIEW_EVENT,
+    UPDATE_EVENT_NEWS,
+    CREATE_EVENT_NEWS,
+    LIKEPOST,
+    COMMENTPOST,
+    ADVERTISE_WITH_US
 }

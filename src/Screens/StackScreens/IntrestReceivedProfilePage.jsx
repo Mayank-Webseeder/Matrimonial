@@ -244,7 +244,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
               <Text style={styles.iconText}>Call</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ReportPage')}>
+            <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ReportPage', { profileId: _id })}>
               <MaterialIcons name="error-outline" size={19} color={Colors.dark} />
               <Text style={styles.iconText}>Report</Text>
             </TouchableOpacity>

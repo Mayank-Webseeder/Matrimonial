@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: SW(15),
         marginRight: SW(10),
         justifyContent: 'center',
-        height: SH(30)
+        paddingVertical: SH(1)
     },
     buttonText: {
         color: Colors.light,
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
         marginVertical: SH(10),
         marginBottom: SH(3),
         paddingHorizontal: SW(5),
-        paddingVertical: SH(5)
+        paddingVertical: SH(5),
     },
     EventheaderImage: {
         width: SW(50),
@@ -44,9 +44,10 @@ const styles = StyleSheet.create({
         borderRadius: 30,
     },
     cardheader: {
-        display:"flex",
+        display: "flex",
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent:"space-between"
     },
     image1: {
         width: SW(160),
@@ -64,6 +65,7 @@ const styles = StyleSheet.create({
         color: '#777',
         fontSize: SF(13),
         marginTop: SH(10),
+        marginLeft:SW(14)
     },
     captionText: {
         marginHorizontal: SW(7),
@@ -123,6 +125,87 @@ const styles = StyleSheet.create({
         fontSize: SF(13),
         fontFamily: 'Poppins-Regular',
     },
+    bottomSheetContent: {
+        backgroundColor: "#fff",
+        paddingVertical: SH(20),
+        paddingHorizontal: SW(20),
+        height: SH(400),
+    },
+    sheetHeader: {
+        fontSize: SF(18),
+        fontWeight: "bold",
+        marginBottom: SH(10),
+    },
+    commentContainer: {
+        paddingVertical: SH(5),
+        paddingHorizontal: SW(5),
+        borderBottomWidth: 0.5,
+        borderBottomColor: "#ccc",
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between"
+    },
+    commentText: {
+        fontSize: SF(13),
+        color: Colors.dark
+    },
+    commentInputContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        borderTopWidth: 1,
+        borderTopColor: "#ddd",
+        paddingVertical: SH(10),
+    },
+    input: {
+        flex: 1,
+        borderWidth: 1,
+        borderColor: "#ddd",
+        borderRadius: 20,
+        paddingVertical: SH(10),
+        paddingHorizontal: SW(10),
+        marginRight: SW(10),
+    },
+    postButton: {
+        backgroundColor: "#007bff",
+        paddingVertical: SH(8),
+        paddingHorizontal: SW(15),
+        borderRadius: 20,
+    },
+    postButtonText: {
+        color: "#fff",
+        fontWeight: "bold",
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: "rgba(0,0,0,0.3)", // Dim background
+      },
+      modalContent: {
+        position: "absolute",
+        backgroundColor: "white",
+        paddingHorizontal:SW(15),
+        paddingVertical:SH(10),
+        borderRadius:10,
+        width:SW(150),
+        elevation: 5,
+      },
+      modalOption: {
+        paddingHorizontal:SW(10),
+        paddingVertical:SH(2),
+      },
+      optionText: {
+        fontSize:SF(15),
+        fontFamily:"Poppins-Regular"
+      },
+      emptyContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: SH(200),
+      },
+      emptyText: {
+        fontSize: SF(15),
+        color: Colors.gray,
+        fontFamily: 'Poppins-Regular',
+      },
 });
 
 export default styles;

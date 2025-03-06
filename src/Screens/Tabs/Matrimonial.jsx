@@ -1,16 +1,21 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar, FlatList, Pressable, TextInput } from 'react-native';
+import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar, FlatList, Pressable, TextInput,Linking } from 'react-native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Feather from 'react-native-vector-icons/Feather';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from '../StyleScreens/ExploreStyle';
 import Colors from '../../utils/Colors';
 import Globalstyles from '../../utils/GlobalCss';
-import { FEMALE_FILTER_API, MALE_FILTER_API, SET_PREFRENCE_FILTER_API } from '../../utils/BaseUrl';
+import { FEMALE_FILTER_API, MALE_FILTER_API, SET_PREFRENCE_FILTER_API,SAVED_PROFILES } from '../../utils/BaseUrl';
 import { slider } from '../../DummyData/DummyData';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import { useFocusEffect } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
+import Toast from 'react-native-toast-message';
+
 const Matrimonial = ({ navigation }) => {
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -136,6 +141,64 @@ const Matrimonial = ({ navigation }) => {
     }
   };
 
+  
+  const savedProfiles = async (_id) => {
+    if (!_id) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "User ID not found!",
+      });
+      return;
+    }
+
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        throw new Error("No token found");
+      }
+
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+
+      const response = await axios.post(
+        `${SAVED_PROFILES}/${_id}`,
+        {},
+        { headers }
+      );
+
+      console.log("Response Data:", JSON.stringify(response?.data));
+
+      if (response?.data?.message) {
+        Toast.show({
+          type: "success",
+          text2: response.data.message,
+          position: "top",
+          visibilityTime: 3000,
+          textStyle: { fontSize: 14, color: "green" },
+        });
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: response.data.message || "Something went wrong!",
+        });
+      }
+    } catch (error) {
+      console.error(
+        "API Error:",
+        error?.response ? JSON.stringify(error.response.data) : error.message
+      );
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error.response?.data?.message || "Failed to send interest!",
+      });
+    }
+  };
+
   const renderProfileCard = ({ item }) => {
     const isPressable = partnerPreferences !== null && partnerPreferences !== undefined; // Only check global partnerPreferences
 
@@ -183,6 +246,31 @@ const Matrimonial = ({ navigation }) => {
               <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.annualIncome} INR </Text>
               <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.qualification}</Text>
             </View>
+          </View>
+          <View style={styles.sharecontainer}>
+            <TouchableOpacity style={styles.iconContainer} onPress={() =>savedProfiles(item._id)}>
+              <FontAwesome
+                name={"bookmark-o"}
+                size={19}
+                color={Colors.dark}
+              />
+              <Text style={styles.iconText}>Save</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.iconContainer} onPress={""}>
+              <Feather name="send" size={19} color={Colors.dark} />
+              <Text style={styles.iconText}>Share</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.iconContainer} onPress={() => Linking.openURL('tel:' + item?.personalDetails?.mobileNo)}>
+              <MaterialIcons name="call" size={19} color={Colors.dark} />
+              <Text style={styles.iconText}>Call</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ReportPage', { profileId: item?._id })}>
+              <MaterialIcons name="error-outline" size={20} color={Colors.dark} />
+              <Text style={styles.iconText}>Report</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Pressable>
@@ -275,6 +363,7 @@ const Matrimonial = ({ navigation }) => {
             </View>
           } />
       </ScrollView>
+      <Toast/>
     </SafeAreaView>
   );
 };

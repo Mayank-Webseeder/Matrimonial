@@ -65,6 +65,9 @@ import ProfileDetail from '../Screens/StackScreens/ProfileDetail';
 import UpdateProfileDetails from '../Screens/StackScreens/UpdateProfileDetails';
 import { useSelector } from 'react-redux';
 import BioData from '../Screens/Tabs/BioData';
+import ViewMyEventPost from '../Screens/StackScreens/ViewMyEventPost';
+import UpdateEventPost from '../Screens/StackScreens/UpdateEventPost';
+import AdvertiseWithUs from '../Screens/StackScreens/AdvertiseWithUs';
 
 const Stack = createNativeStackNavigator();
 const AppStackNavigator = createNativeStackNavigator();
@@ -121,6 +124,10 @@ function MyTabs() {
   }, []);
 
   const iconSize = SF(30);
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <Tab.Navigator
@@ -246,6 +253,9 @@ const AppStack = () => (
     <AppStackNavigator.Screen name="KathavachakDetailsPage" component={KathavachakDetailsPage} />
     <AppStackNavigator.Screen name="JyotishDetailsPage" component={JyotishDetailsPage} />
     <AppStackNavigator.Screen name="CreatePost" component={CreatePost} />
+    <AppStackNavigator.Screen name="EventNews" component={EventNews} />
+    <AppStackNavigator.Screen name="ViewMyEventPost" component={ViewMyEventPost} />
+    <AppStackNavigator.Screen name="UpdateEventPost" component={UpdateEventPost} />
     <AppStackNavigator.Screen name="MyProfile" component={MyProfile} />
     <AppStackNavigator.Screen name="ViewPost" component={ViewPost} />
     <AppStackNavigator.Screen name="PostReview" component={PostReview} />
@@ -266,6 +276,7 @@ const AppStack = () => (
     <AppStackNavigator.Screen name="ViewEntityImages" component={ViewEntityImages} />
     <AppStackNavigator.Screen name="ProfileDetail" component={ProfileDetail} />
     <AppStackNavigator.Screen name="UpdateProfileDetails" component={UpdateProfileDetails} />
+    <AppStackNavigator.Screen name="AdvertiseWithUs" component={AdvertiseWithUs} />
   </AppStackNavigator.Navigator>
 );
 

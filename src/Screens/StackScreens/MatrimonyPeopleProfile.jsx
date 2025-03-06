@@ -347,12 +347,12 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               <Text style={styles.buttonText}>Interested</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.iconContainer} onPress={() => Linking.openURL('tel:9893458940')}>
+            <TouchableOpacity style={styles.iconContainer} onPress={() => Linking.openURL('tel:' + personalDetails?.mobileNo)}>
               <MaterialIcons name="call" size={19} color={Colors.dark} />
               <Text style={styles.iconText}>Call</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ReportPage')}>
+            <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ReportPage', { profileId: _id })}>
               <MaterialIcons name="error-outline" size={20} color={Colors.dark} />
               <Text style={styles.iconText}>Report</Text>
             </TouchableOpacity>

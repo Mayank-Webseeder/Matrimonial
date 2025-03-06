@@ -533,7 +533,7 @@ const RoleRegisterForm = ({ navigation }) => {
                     />
 
                     <View style={styles.photopickContainer}>
-                        <Text style={styles.title}>Upload Photos For You </Text>
+                        <Text style={styles.title}>Upload Photos For Your Page </Text>
 
                         {/* Crop Picker Button */}
                         <TouchableOpacity style={styles.PickPhotoButton} onPress={handleAdditionalPhotosPick}>

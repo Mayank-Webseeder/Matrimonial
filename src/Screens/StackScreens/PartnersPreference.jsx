@@ -14,7 +14,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 
 import {
     PartnerOccupationData, FamilyTypeData,
-    FamilyFinancialStatusData, PartnersLiveinData, BodyStructureData, ComplexionData,PartnerQualificationData, partnerDietaryHabits, Disabilities, subCasteOptions,
+    FamilyFinancialStatusData, PartnersLiveinData, BodyStructureData, ComplexionData,PartnerQualificationData, PartnerDietHabit, Disabilities, subCasteOptions,
     PartnermaritalStatusData, PartnersmokingStatusData, PartnerDrinkingHabit, PartnerManglikStatusData, PartnerFamliyIncome,Income, CityData, StateData
 } from '../../DummyData/DropdownData';
 
@@ -399,7 +399,7 @@ const PartnersPreference = ({ navigation }) => {
                         <Text style={Globalstyles.title}>Income Range (in INR)  </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                            data={Income}
+                            data={PartnerFamliyIncome}
                             labelField="label"
                             valueField="value"
                             value={biodata?.partnerIncome}
@@ -538,7 +538,7 @@ const PartnersPreference = ({ navigation }) => {
                         <Text style={Globalstyles.title}>Partner Dietary Habits  </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                            data={partnerDietaryHabits}
+                            data={PartnerDietHabit}
                             labelField="label"
                             valueField="value"
                             value={biodata?.partnerDietaryHabits}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useCallback } from 'react';
 import { Text, View, TouchableOpacity, Modal, TextInput, SafeAreaView, StatusBar } from 'react-native';
 import Colors from '../../utils/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { useFocusEffect } from '@react-navigation/native';
 
 const ChangePassword = ({ navigation }) => {
   const [oldPassword, setOldPassword] = useState('');
@@ -20,6 +21,14 @@ const ChangePassword = ({ navigation }) => {
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      setOldPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    }, [])
+  );
 
   const togglePasswordVisibility = (field) => {
     if (field === "old") setShowOldPassword(!showOldPassword);
@@ -107,7 +116,7 @@ const ChangePassword = ({ navigation }) => {
             secureTextEntry={!showOldPassword}
             value={oldPassword}
             onChangeText={setOldPassword}
-            placeholderTextColor={Colors.theme_color}
+            placeholderTextColor={Colors.gray}
           />
           <TouchableOpacity onPress={() => togglePasswordVisibility("old")} style={styles.eyeIcon}>
             <AntDesign name={showOldPassword ? "eye" : "eyeo"} size={24} color={Colors.theme_color} />
@@ -122,7 +131,7 @@ const ChangePassword = ({ navigation }) => {
             secureTextEntry={!showNewPassword}
             value={newPassword}
             onChangeText={setNewPassword}
-            placeholderTextColor={Colors.theme_color}
+            placeholderTextColor={Colors.gray}
           />
           <TouchableOpacity onPress={() => togglePasswordVisibility("new")} style={styles.eyeIcon}>
             <AntDesign name={showNewPassword ? "eye" : "eyeo"} size={24} color={Colors.theme_color} />
@@ -137,7 +146,7 @@ const ChangePassword = ({ navigation }) => {
             secureTextEntry={!showConfirmPassword}
             value={confirmPassword}
             onChangeText={setConfirmPassword}
-            placeholderTextColor={Colors.theme_color}
+            placeholderTextColor={Colors.gray}
           />
           <TouchableOpacity onPress={() => togglePasswordVisibility("confirm")} style={styles.eyeIcon}>
             <AntDesign name={showConfirmPassword ? "eye" : "eyeo"} size={24} color={Colors.theme_color} />

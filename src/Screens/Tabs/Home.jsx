@@ -26,8 +26,8 @@ const Home = ({ navigation }) => {
   const [allbiodata, setallBiodata] = useState("");
   const [mybiodata, setMybiodata] = useState("");
   const partnerPreferences = mybiodata?.partnerPreferences;
-  const [isLoading, setIsLoading] = useState("");
-
+  const [isLoading, setIsLoading] = useState(false);
+  
   const handleNavigateToProfile = (item) => {
     if (!navigation.isFocused()) return;
 
@@ -106,6 +106,7 @@ const Home = ({ navigation }) => {
       setIsLoading(false)
     }
   };
+
   const getActivistProfile = async () => {
     try {
       setIsLoading(true)

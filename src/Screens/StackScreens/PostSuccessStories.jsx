@@ -7,7 +7,6 @@ import { SH, SW, SF } from '../../utils/Dimensions';
 import Globalstyles from '../../utils/GlobalCss';
 import ImageCropPicker from 'react-native-image-crop-picker';
 
-
 const PostSuccessStories = ({ navigation }) => {
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
@@ -82,15 +81,33 @@ const PostSuccessStories = ({ navigation }) => {
                 <View style={styles.ratingContainer}>
                     {renderStars()}
                 </View>
+                <Text style={Globalstyles.title}>Groom name</Text>
                 <TextInput
-                    style={styles.textInput}
-                    placeholder="Add your thoughts..."
+                    style={Globalstyles.input}
+                    placeholder="Enter groom name"
                     multiline={true}
                     value={comment}
                     onChangeText={setComment}
                     placeholderTextColor={Colors.gray}
                 />
-                <Text style={styles.description}>Upload your one couple picture</Text>
+                 <Text style={Globalstyles.title}>Bride name</Text>
+                <TextInput
+                    style={Globalstyles.input}
+                    placeholder="Enter Bride name"
+                    multiline={true}
+                    value={comment}
+                    onChangeText={setComment}
+                    placeholderTextColor={Colors.gray}
+                />
+                <TextInput
+                    style={Globalstyles.textInput}
+                    placeholder="Add your thoughts..."
+                    multiline={true}
+                    value={comment}
+                    onChangeText={setComment}
+                    placeholderTextColor={Colors.gray}  textAlignVertical='top'
+                />
+                <Text style={Globalstyles.title}>Upload your one couple picture</Text>
                 <TouchableOpacity style={styles.uploadButton} onPress={handleImagePick}>
                     <Text style={styles.uploadText}>{selectedImage ? 'Change Image' : 'Upload Image'}</Text>
                 </TouchableOpacity>
@@ -111,25 +128,7 @@ const PostSuccessStories = ({ navigation }) => {
 export default PostSuccessStories;
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: Colors.light,
-        paddingTop: SH(25),
-        paddingHorizontal: SW(6)
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: SW(10),
-        paddingVertical: SH(10),
-        paddingLeft: 0
-    },
-    headerText: {
-        color: Colors.theme_color,
-        fontSize: SF(15),
-        fontFamily: "Poppins-Regular"
-    },
+   
     Text: {
         fontSize: SF(24),
         fontFamily: "Poppins-Bold",
@@ -141,13 +140,6 @@ const styles = StyleSheet.create({
         color: Colors.theme_color,
         marginBottom: SH(10),
         fontFamily: "Poppins-Bold"
-    },
-    textInput: {
-        borderColor: Colors.gray,
-        borderWidth: 1,
-        paddingBottom: SH(60),
-        borderRadius: 10,
-        marginBottom: SH(50)
     },
     submitButton: {
         backgroundColor: Colors.theme_color,

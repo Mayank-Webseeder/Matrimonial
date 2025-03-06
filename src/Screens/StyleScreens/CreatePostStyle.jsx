@@ -3,10 +3,12 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
-
+    profileImage: {
+        width: SW(50), height: SH(50), borderRadius: 50
+    },
     righticons: {
         flexDirection: 'row',
-        alignItems:"center"
+        alignItems: "center"
     },
     postHeader: {
         flexDirection: "row",
@@ -70,17 +72,17 @@ const styles = StyleSheet.create({
     },
     PostButton: {
         backgroundColor: Colors.theme_color,
-        borderRadius:5,
+        borderRadius: 5,
         paddingVertical: SH(7),
         paddingHorizontal: SW(6),
-        marginVertical:SH(60),
-        marginHorizontal:SW(40)
+        marginVertical: SH(60),
+        marginHorizontal: SW(40)
     },
     PostText: {
         color: Colors.light,
         fontSize: SF(13),
-        textAlign:"center",
-        fontFamily:"Poppins-Bold"
+        textAlign: "center",
+        fontFamily: "Poppins-Bold"
     }
 })
 

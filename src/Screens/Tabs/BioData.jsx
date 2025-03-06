@@ -18,18 +18,19 @@ const BioData = ({ navigation }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [all_profiles, setAllprofiles] = useState({});
   const [isLoading, setIsLoading] = useState("");
-  const MatrimonialData=all_profiles?.metrimony || [];
-  const savedProfiles=all_profiles?.savedProfiles || [];
-  const interestedProfiles=all_profiles?.interestedProfiles || [];
+  const MatrimonialData = all_profiles?.metrimony || [];
+  const savedProfiles = all_profiles?.savedProfiles || [];
+  const interestedProfiles = all_profiles?.interestedProfiles || [];
+  const allProfiles = all_profiles?.allProfiles || [];
+  const [showAllSaved, setShowAllSaved] = useState(false);
+  const [showAllMatrimony, setShowAllMatrimony] = useState(false);
+  const [showAllInterested, setShowAllInterested] = useState(false);
+  const [showAllProfiles, setShowAllProfiles] = useState(false);
 
-// Merge all arrays and remove duplicates based on a unique `id`
-const allProfiles = [...MatrimonialData, ...savedProfiles, ...interestedProfiles];
 
-// Remove duplicates using a Set (assuming each profile has a unique `id`)
-const uniqueProfiles = Array.from(new Map(allProfiles.map(item => [item._id, item])).values());
-
-  const [numColumns, setNumColumns] = useState(2); 
-
+  useEffect(() => {
+    console.log("savedProfiles", savedProfiles);
+  }, [])
   const get_all_mixed_matrimony_profiles = async () => {
     try {
       setIsLoading(true)
@@ -61,7 +62,6 @@ const uniqueProfiles = Array.from(new Map(allProfiles.map(item => [item._id, ite
 
   useEffect(() => {
     get_all_mixed_matrimony_profiles();
-    console.log("uniqueProfiles",JSON.stringify(uniqueProfiles))
   }, [])
 
   useEffect(() => {
@@ -105,15 +105,15 @@ const uniqueProfiles = Array.from(new Map(allProfiles.map(item => [item._id, ite
   const renderProfileData = ({ item }) => (
     <TouchableOpacity style={styles.card} onPress={() => handleNavigateToProfile(item)}>
       <Image style={styles.image} source={{ uri: item?.personalDetails?.closeUpPhoto }} />
-  
+
       <View style={styles.detailsContainer}>
         <Text style={styles.name}>{item?.personalDetails?.fullname}</Text>
-  
+
         <View style={styles.row2}>
           <Text style={styles.city}>{item?.personalDetails?.cityOrVillage}</Text>
           <Text style={styles.text}>{item?.personalDetails?.subCaste}</Text>
         </View>
-  
+
         <Text style={styles.text}>Height: {item?.personalDetails?.heightFeet} ft</Text>
       </View>
     </TouchableOpacity>
@@ -122,37 +122,37 @@ const uniqueProfiles = Array.from(new Map(allProfiles.map(item => [item._id, ite
   const renderIntrestedProfileData = ({ item }) => (
     <TouchableOpacity style={styles.card} onPress={() => handleNavigateToIntrestedProfile(item)}>
       <Image style={styles.image} source={{ uri: item?.fromUserBioData?.personalDetails?.closeUpPhoto }} />
-  
+
       <View style={styles.detailsContainer}>
         <Text style={styles.name}>{item?.fromUserBioData?.personalDetails?.fullname}</Text>
-  
+
         <View style={styles.row2}>
           <Text style={styles.city}>{item?.fromUserBioData?.personalDetails?.cityOrVillage}</Text>
           <Text style={styles.text}>{item?.fromUserBioData?.personalDetails?.subCaste}</Text>
         </View>
-  
+
         <Text style={styles.text}>Height: {item?.fromUserBioData?.personalDetails?.heightFeet} ft</Text>
       </View>
     </TouchableOpacity>
   );
-  
+
   const renderSavedProfileData = ({ item }) => (
     <TouchableOpacity style={styles.card} onPress={() => handleNavigateToIntrestedProfile(item)}>
       <Image style={styles.image} source={{ uri: item?.saveProfile?.personalDetails?.closeUpPhoto }} />
-  
+
       <View style={styles.detailsContainer}>
         <Text style={styles.name}>{item?.saveProfile?.personalDetails?.fullname}</Text>
-  
+
         <View style={styles.row2}>
           <Text style={styles.city}>{item?.saveProfile?.personalDetails?.cityOrVillage}</Text>
           <Text style={styles.text}>{item?.saveProfile?.personalDetails?.subCaste}</Text>
         </View>
-  
+
         <Text style={styles.text}>Height: {item?.saveProfile?.personalDetails?.heightFeet} ft</Text>
       </View>
     </TouchableOpacity>
   );
-  
+
   return (
     <SafeAreaView style={Globalstyles.container}>
       <StatusBar
@@ -186,105 +186,74 @@ const uniqueProfiles = Array.from(new Map(allProfiles.map(item => [item._id, ite
         </View>
 
         <View>
-          <View>
-            <HeadingWithViewAll
-              heading={'MATRIMONY'}
-              headingStyle={{ color: Colors.theme_color }}
-            />
-            <FlatList
-              data={MatrimonialData}
-              renderItem={renderProfileData}
-              key={numColumns} 
-              keyExtractor={(item) => item._id}
-              contentContainerStyle={styles.ProfileContainer}
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-            />
-          </View>
-          <View style={styles.viewAll}>
-            <Text style={styles.ViewAllText}>View All</Text>
-          </View>
+          <HeadingWithViewAll heading={'MATRIMONY'} headingStyle={{ color: Colors.theme_color }} />
+
+          <FlatList
+            data={showAllMatrimony ? MatrimonialData : MatrimonialData.slice(0, 2)} // Show only 2 initially
+            renderItem={renderProfileData}
+            keyExtractor={(item) => item._id}
+            contentContainerStyle={styles.ProfileContainer}
+            numColumns={2}
+            columnWrapperStyle={{ justifyContent: 'space-between' }}
+            showsVerticalScrollIndicator={false}
+          />
+
+          <TouchableOpacity style={styles.viewAll} onPress={() => setShowAllMatrimony(!showAllMatrimony)}>
+            <Text style={styles.ViewAllText}>{showAllMatrimony ? 'Show Less' : 'View All'}</Text>
+          </TouchableOpacity>
         </View>
         <View>
-          <View>
-            <HeadingWithViewAll
-              heading={'Saved Profile'}
-              headingStyle={{ color: Colors.theme_color }}
-            />
-            <FlatList
-              data={savedProfiles}
-              renderItem={renderSavedProfileData}
-              key={numColumns} 
-              keyExtractor={(item) => item._id}
-              contentContainerStyle={styles.ProfileContainer}
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-            />
-          </View>
-          <View style={styles.viewAll}>
-            <Text style={styles.ViewAllText}>View All</Text>
-          </View>
+          <HeadingWithViewAll heading={'Saved Profile'} headingStyle={{ color: Colors.theme_color }} />
+
+          <FlatList
+            data={showAllSaved ? savedProfiles : savedProfiles.slice(0, 2)} // Show only 2 initially
+            renderItem={renderSavedProfileData}
+            keyExtractor={(item) => item._id}
+            contentContainerStyle={styles.ProfileContainer}
+            numColumns={2}
+            columnWrapperStyle={{ justifyContent: 'space-between' }}
+            showsVerticalScrollIndicator={false}
+          />
+
+          <TouchableOpacity style={styles.viewAll} onPress={() => setShowAllSaved(!showAllSaved)}>
+            <Text style={styles.ViewAllText}>{showAllSaved ? 'Show Less' : 'View All'}</Text>
+          </TouchableOpacity>
         </View>
         <View>
-          <View>
-            <HeadingWithViewAll
-              heading={'Interested Profile'}
-              headingStyle={{ color: Colors.theme_color }}
-            />
-            <FlatList
-              data={interestedProfiles}
-              renderItem={renderIntrestedProfileData}
-              key={numColumns} 
-              keyExtractor={(item) => item._id}
-              contentContainerStyle={styles.ProfileContainer}
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-            />
-          </View>
-          <View style={styles.viewAll}>
-            <Text style={styles.ViewAllText}>View All</Text>
-          </View>
+          <HeadingWithViewAll heading={'Interested Profile'} headingStyle={{ color: Colors.theme_color }} />
+
+          <FlatList
+            data={showAllInterested ? interestedProfiles : interestedProfiles.slice(0, 2)}
+            renderItem={renderIntrestedProfileData}
+            keyExtractor={(item) => item._id}
+            contentContainerStyle={styles.ProfileContainer}
+            numColumns={2}
+            columnWrapperStyle={{ justifyContent: 'space-between' }}
+            showsVerticalScrollIndicator={false}
+          />
+
+          <TouchableOpacity style={styles.viewAll} onPress={() => setShowAllInterested(!showAllInterested)}>
+            <Text style={styles.ViewAllText}>{showAllInterested ? 'Show Less' : 'View All'}</Text>
+          </TouchableOpacity>
         </View>
-        {/* <View>
-          <View>
-            <HeadingWithViewAll
-              heading={'All Girls / Boys'}
-              headingStyle={{ color: Colors.theme_color }}
-            />
-            <FlatList
-             data={uniqueProfiles}
-             renderItem={renderIntrestedProfileData}
-             key={numColumns} 
-             keyExtractor={(item) => item._id}
-             contentContainerStyle={styles.ProfileContainer}
-             horizontal={true}
-             showsHorizontalScrollIndicator={false}
-            />
-          </View>
-          <View style={styles.viewAll}>
-            <Text style={styles.ViewAllText}>View All</Text>
-          </View>
-        </View> */}
         <Image source={require('../../Images/slider.png')} style={styles.Sliderimage} />
-        {/* <View>
-          <View>
-            <HeadingWithViewAll
-              heading={'All'}
-              headingStyle={{ color: Colors.theme_color }}
-            />
-            <FlatList
-              data={SavedProfileData}
-              renderItem={renderProfileData}
-              keyExtractor={(item) => item.id.toString()}
-              contentContainerStyle={styles.ProfileContainer}
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-            />
-          </View>
-          <View style={styles.viewAll}>
-            <Text style={styles.ViewAllText}>View All</Text>
-          </View>
-        </View> */}
+        <View>
+          <HeadingWithViewAll heading={'All'} headingStyle={{ color: Colors.theme_color }} />
+
+          <FlatList
+            data={showAllProfiles ? allProfiles : allProfiles.slice(0, 2)}
+            renderItem={renderProfileData}
+            keyExtractor={(item) => item._id}
+            contentContainerStyle={styles.ProfileContainer}
+            numColumns={2}
+            columnWrapperStyle={{ justifyContent: 'space-between' }}
+            showsVerticalScrollIndicator={false}
+          />
+
+          <TouchableOpacity style={styles.viewAll} onPress={() => setShowAllProfiles(!showAllProfiles)}>
+            <Text style={styles.ViewAllText}>{showAllProfiles ? 'Show Less' : 'View All'}</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

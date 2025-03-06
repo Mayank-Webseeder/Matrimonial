@@ -52,7 +52,7 @@ const UpdateProfile = ({ navigation }) => {
         const message = response?.data?.message;
         console.log("message", response.data);
 
-        if (message && message.includes("profile has been updated successfully")) {
+        if (message && message.includes("User profile updated successfully.")) {
             Toast.show({
                 type: "success",
                 text1: "Profile Updated Successfully",
@@ -61,9 +61,7 @@ const UpdateProfile = ({ navigation }) => {
                 visibilityTime: 3000,
                 textStyle: { fontSize: 10, color: "green" },
             });
-
-            // ✅ Use replace instead of navigate
-            navigation.replace("MainApp");
+            navigation.navigate("MainApp");
         } else {
             Toast.show({
                 type: "info",
@@ -100,6 +98,7 @@ const UpdateProfile = ({ navigation }) => {
         }
     }
 };
+
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || dob;
     setShowDatePicker(false);

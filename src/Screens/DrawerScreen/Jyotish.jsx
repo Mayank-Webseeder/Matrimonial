@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable,Animated } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -33,6 +33,13 @@ const Jyotish = ({ navigation }) => {
   const [JyotishData, setJyotishData] = useState(null);
   const [isLoading, setLoading] = useState(false);
   const [modalLocality, setModalLocality] = useState('');
+  const scrollY = useRef(new Animated.Value(0)).current;
+
+  const headerHeight = scrollY.interpolate({
+    inputRange: [0, 200], 
+    outputRange: [SH(200), 0], 
+    extrapolate: "clamp",
+  });
 
   const handleOpenFilter = () => {
     setModalVisible(true);
@@ -189,13 +196,14 @@ const Jyotish = ({ navigation }) => {
     const isSaved=item.isSaved || null;
     return (
       <View style={styles.card}>
-        <Pressable style={styles.cardData}
-          onPress={() => navigation.navigate('JyotishDetailsPage', { jyotish_id: item._id,isSaved:isSaved })}>
+         <View style={styles.cardData}>
           <Image
             source={item.profilePhoto ? { uri: item.profilePhoto } : require('../../Images/NoImage.png')}
             style={styles.image}
           />
-          <View style={styles.leftContainer}>
+          <View>
+          <Pressable style={styles.leftContainer}  
+          onPress={() => navigation.navigate('JyotishDetailsPage', { jyotish_id: item._id,isSaved:isSaved })}>
             <Text style={styles.name}>{item?.fullName}</Text>
             <View style={styles.rating}>
               <Rating type="star" ratingCount={5} imageSize={15} startingValue={rating} readonly />
@@ -206,25 +214,26 @@ const Jyotish = ({ navigation }) => {
               <Text style={styles.text}>    {item?.state}</Text>
             </View>
             <Text style={styles.text}>{item?.residentialAddress}</Text>
-          </View>
-        </Pressable>
-        <View style={styles.sharecontainer}>
-        <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
-              <FontAwesome
-                name={isSaved ? "bookmark" : "bookmark-o"}
-                size={19}
-                color={Colors.dark}
-              />
-              <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text>
-            </TouchableOpacity>
+          </Pressable>
+          <View style={styles.sharecontainer}>
+          <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
+            <FontAwesome
+              name={isSaved ? "bookmark" : "bookmark-o"}
+              size={19}
+              color={Colors.dark}
+            />
+            {/* <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text> */}
+          </TouchableOpacity>
           <View style={styles.iconContainer}>
             <Feather name="send" size={18} color={Colors.dark} />
-            <Text style={styles.iconText}>Shares</Text>
+            {/* <Text style={styles.iconText}>Shares</Text> */}
           </View>
 
           <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
             <MaterialIcons name="call" size={17} color={Colors.light} />
           </TouchableOpacity>
+        </View>
+          </View>
         </View>
       </View>
     );
@@ -245,35 +254,25 @@ const Jyotish = ({ navigation }) => {
           <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => navigation.navigate('Notification')} />
         </View>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.searchbar}>
-          <TextInput
-            placeholder="Search in Your city"
-            value={locality}
-            onChangeText={(text) => setLocality(text)}
-            onSubmitEditing={() => JyotishDataAPI("search")}
-            placeholderTextColor={"gray"}
-          />
-          {/* <TextInput placeholder="Search in Your city" placeholderTextColor={'gray'} /> */}
-          <AntDesign name={'search1'} size={20} color={'gray'} />
-        </View>
+      <View style={{ flex: 1 }}>
+      {/* Animated Advertise Window */}
+      <Animated.View style={[styles.animatedAdvertise, { height: headerHeight }]}>
+        <AppIntroSlider
+          data={slider}
+          renderItem={({ item }) => (
+            <View>
+              <Image source={item.image} style={Globalstyles.sliderImage} />
+            </View>
+          )}
+          showNextButton={false}
+          showDoneButton={false}
+          dotStyle={Globalstyles.dot}
+          activeDotStyle={Globalstyles.activeDot}
+        />
+      </Animated.View>
 
-        <View style={Globalstyles.sliderContainer}>
-          <AppIntroSlider
-            ref={sliderRef}
-            data={slider}
-            renderItem={({ item }) => (
-              <View>
-                <Image source={item.image} style={Globalstyles.sliderImage} />
-              </View>
-            )}
-            showNextButton={false}
-            showDoneButton={false}
-            dotStyle={Globalstyles.dot}
-            activeDotStyle={Globalstyles.activeDot}
-          />
-        </View>
-
+      {/* Fixed Header - Filter & Search Bar */}
+      <View style={styles.fixedHeader}>
         <View style={styles.ButtonContainer}>
           <TouchableOpacity
             style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton]}
@@ -282,14 +281,31 @@ const Jyotish = ({ navigation }) => {
             <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Filter</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[styles.button, activeButton === 2 ? styles.activeButton : styles.inactiveButton]}
-            onPress={() => navigation.navigate('RoleRegisterForm')}
-          >
-            <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>Register</Text>
-          </TouchableOpacity>
+          <View style={styles.searchbar}>
+            <TextInput 
+              placeholder="Search in Your city" 
+              value={locality}
+              onChangeText={(text) => setLocality(text)} 
+              onSubmitEditing={() => JyotishDataAPI("search")} 
+              placeholderTextColor={"gray"} 
+              style={{ flex: 1 }} 
+            />
+            {locality.length > 0 ? (
+              <AntDesign name={'close'} size={20} color={'gray'} onPress={() => setLocality('')} />
+            ) : (
+              <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => JyotishDataAPI("search")} />
+            )}
+          </View>
         </View>
-
+      </View>
+      <Animated.ScrollView
+        showsVerticalScrollIndicator={false}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: false }
+        )}
+        scrollEventThrottle={16}
+      >
         {isLoading ? renderSkeleton() : (
           <FlatList
             data={JyotishData}
@@ -304,10 +320,10 @@ const Jyotish = ({ navigation }) => {
               </View>
             }
           />
+          
         )}
-
-      </ScrollView>
-
+      </Animated.ScrollView>
+    </View>
       <Modal
         visible={modalVisible}
         transparent={true}

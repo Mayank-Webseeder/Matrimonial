@@ -7,10 +7,20 @@ import Feather from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styles from '../StyleScreens/ViewPostStyle';
 import Globalstyles from '../../utils/GlobalCss';
+import moment from 'moment';
 
 const ViewPost = ({ navigation, route }) => {
   const { post } = route.params;
-  const images = [post.image1, post.image2, post.image3, post.image4].filter(Boolean);
+  const isLiked=post.isLiked;
+  console.log("post", post);
+
+  // ✅ Get images from API response correctly
+  const images = post.images || [];
+
+
+   const formatDateTime = (createdAt) => {
+      return moment(createdAt).format('MMM D [at] hh:mm A');
+    };
 
   const [imageAspectRatios, setImageAspectRatios] = useState([]);
 
@@ -21,7 +31,7 @@ const ViewPost = ({ navigation, route }) => {
           return new Promise((resolve) => {
             Image.getSize(image, (width, height) => {
               resolve(width / height);
-            });
+            }, () => resolve(1)); // Handle errors gracefully
           });
         })
       );
@@ -45,7 +55,7 @@ const ViewPost = ({ navigation, route }) => {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
-          <Text style={Globalstyles.headerText}>{post.name}'s Post</Text>
+          <Text style={Globalstyles.headerText}>{post.activistName}'s Post</Text>
         </View>
         <View style={styles.righticons}>
           <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} />
@@ -58,17 +68,17 @@ const ViewPost = ({ navigation, route }) => {
         </View>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false}  >
+      <ScrollView showsVerticalScrollIndicator={false} >
         <View style={styles.postHeader}>
           <Image source={require('../../Images/user.png')} />
           <View style={styles.postTextContainer}>
-            <Text style={styles.Text}>{post.name}</Text>
-            <Text style={styles.Text}>{post.date_time}</Text>
+            <Text style={styles.Text}>{post.activistName}</Text>
+            <Text style={styles.date_time}>{formatDateTime(post.createdAt)}</Text>
           </View>
         </View>
 
         <Text style={styles.postDescriptionText}>
-          {post.text}
+          {post.description}
         </Text>
 
         {images.length > 0 && (
@@ -77,19 +87,19 @@ const ViewPost = ({ navigation, route }) => {
               <View key={index} style={styles.card}>
                 <View>
                   <Image
-                    source={image}
+                    source={{ uri: image }}
                     style={[styles.image, { aspectRatio: imageAspectRatios[index] || 1 }]}
                     resizeMode="cover"
                   />
                 </View>
                 <View style={styles.likeShareComment}>
                   <View style={styles.likeShare}>
-                    <AntDesign name="hearto" size={20} color={Colors.dark} />
-                    <Text style={styles.shareText}>25k Likes</Text>
+                  <AntDesign name={isLiked ? "heart" : "hearto"} size={20} color={isLiked ? "red" : Colors.dark} />
+                  <Text style={styles.shareText}>{post.likes.length} Likes</Text>
                   </View>
                   <View style={styles.likeShare}>
                     <EvilIcons name="comment" size={20} color={Colors.dark} />
-                    <Text style={styles.shareText}>90 Comments</Text>
+                    <Text style={styles.shareText}>{post.comments.length} Comments</Text>
                   </View>
                   <View style={styles.likeShare}>
                     <Feather name="send" size={20} color={Colors.dark} />

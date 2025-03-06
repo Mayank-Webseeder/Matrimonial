@@ -18,7 +18,6 @@ export const OccupationData = [
   { label: 'Research Scholar', value: 'Research Scholar' },
   { label: 'Retired', value: 'Retired' },
   { label: 'Not Working', value: 'Not Working' },
-  { label: 'Expired', value: 'Expired' },
   { label: 'Other', value: 'Other' }
 ];
 
@@ -65,7 +64,6 @@ export const PartnerOccupationData = [
   { label: 'Research Scholar', value: 'Research Scholar' },
   { label: 'Retired', value: 'Retired' },
   { label: 'Not Working', value: 'Not Working' },
-  { label: 'Expired', value: 'Expired' },
   { label: 'Other', value: 'Other' },
   { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
 ];

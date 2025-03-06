@@ -9,6 +9,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from '../StyleScreens/ReportPageStyle';
 import Globalstyles from '../../utils/GlobalCss';
 import Toast from 'react-native-toast-message';
+import { REPORT } from '../../utils/BaseUrl';
 
 const ReportPage = ({ navigation, route }) => {
   const { profileId} = route.params || {};
@@ -46,7 +47,7 @@ const ReportPage = ({ navigation, route }) => {
       const token = await AsyncStorage.getItem('userToken'); // ✅ Fetch Token
       if (!token) throw new Error('No token found');
   
-      const reportData = {
+      const payload = {
         reportReason: selectedReason,
         additionalDetails: additionalDetails,
       };
@@ -56,12 +57,13 @@ const ReportPage = ({ navigation, route }) => {
         Authorization: `Bearer ${token}`,
       };
   
-      const API_URL = `https://api-matrimonial.webseeder.tech/api/v1/report/createReport/${profileId}`; // ✅ Append profileId
+      const API_URL = `${REPORT}/${profileId}`; // ✅ Append profileId
   
       console.log('Submitting Report to:', API_URL);
-      console.log('Payload:', reportData);
+      console.log('Payload:',payload);
   
-      const response = await axios.post(API_URL, reportData, { headers });
+      const response = await axios.post(API_URL, payload, { headers });
+      console.log('response:',JSON.stringify(response.data));
   
       if (response.status === 200 || response.status === 201) {
         Toast.show({

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView,Animated, SafeAreaView, StatusBar, Linking, Pressable } from 'react-native';
 import { slider } from '../../DummyData/DummyData';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -14,7 +14,7 @@ import { ExperienceData, RatingData, panditServices } from '../../DummyData/Drop
 import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import axios from 'axios';
-import { GET_ALL_PANDIT_DATA ,SAVED_PROFILES } from '../../utils/BaseUrl';
+import { GET_ALL_PANDIT_DATA, SAVED_PROFILES } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { SH, SW } from '../../utils/Dimensions';
@@ -33,7 +33,15 @@ const Pandit = ({ navigation }) => {
   const [panditData, setPanditData] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [modalLocality, setModalLocality] = useState('');
-  
+
+  const scrollY = useRef(new Animated.Value(0)).current;
+
+  const headerHeight = scrollY.interpolate({
+    inputRange: [0, 200], 
+    outputRange: [SH(200), 0], 
+    extrapolate: "clamp",
+  });
+
   const handleOpenFilter = () => {
     setModalVisible(true);
     setActiveButton(1);
@@ -60,99 +68,99 @@ const Pandit = ({ navigation }) => {
 
   const fetchPanditData = async (filterType = "search") => {
     try {
-        setLoading(true);
-        const token = await AsyncStorage.getItem("userToken");
-        if (!token) throw new Error("No token found");
+      setLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) throw new Error("No token found");
 
-        const headers = {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-        };
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
 
-        let queryParams = [];
+      let queryParams = [];
 
-        if (filterType === "search") {
-            if (locality.trim()) queryParams.push(`locality=${encodeURIComponent(locality.toLowerCase())}`);
-        } else if (filterType === "modal") {
-            if (modalLocality.trim()) queryParams.push(`locality=${encodeURIComponent(modalLocality.toLowerCase())}`);
-            if (services) queryParams.push(`services=${encodeURIComponent(services)}`);
-            if (rating && rating.trim()) queryParams.push(`rating=${encodeURIComponent(rating)}`);
-            if (experience && experience.trim()) queryParams.push(`experience=${encodeURIComponent(experience)}`);
-        }
+      if (filterType === "search") {
+        if (locality.trim()) queryParams.push(`locality=${encodeURIComponent(locality.toLowerCase())}`);
+      } else if (filterType === "modal") {
+        if (modalLocality.trim()) queryParams.push(`locality=${encodeURIComponent(modalLocality.toLowerCase())}`);
+        if (services) queryParams.push(`services=${encodeURIComponent(services)}`);
+        if (rating && rating.trim()) queryParams.push(`rating=${encodeURIComponent(rating)}`);
+        if (experience && experience.trim()) queryParams.push(`experience=${encodeURIComponent(experience)}`);
+      }
 
-        // ⚡️ Construct URL only with valid params
-        const url = queryParams.length > 0 
-            ? `${GET_ALL_PANDIT_DATA}?${queryParams.join("&")}` 
-            : GET_ALL_PANDIT_DATA;
-            
-        console.log("Fetching Data from:", url);
+      // ⚡️ Construct URL only with valid params
+      const url = queryParams.length > 0
+        ? `${GET_ALL_PANDIT_DATA}?${queryParams.join("&")}`
+        : GET_ALL_PANDIT_DATA;
 
-        const response = await axios.get(url, { headers });
-        console.log("response.data?.data",response.data?.data);
-        setPanditData(response.data?.data || []);
+      console.log("Fetching Data from:", url);
+
+      const response = await axios.get(url, { headers });
+      console.log("response.data?.data", response.data?.data);
+      setPanditData(response.data?.data || []);
     } catch (error) {
-        console.error("Error fetching Pandit data:", error);
+      console.error("Error fetching Pandit data:", error);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
 
-const savedProfiles = async (_id) => {
-  if (!_id) {
-    Toast.show({
-      type: "error",
-      text1: "Error",
-      text2: "User ID not found!",
-    });
-    return;
-  }
-
-  try {
-    const token = await AsyncStorage.getItem("userToken");
-    if (!token) {
-      throw new Error("No token found");
-    }
-
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    };
-
-    const response = await axios.post(
-      `${SAVED_PROFILES}/${_id}`, 
-      {}, 
-      { headers }
-    );
-
-    console.log("Response Data:", JSON.stringify(response?.data));
-
-    if (response?.data?.message) {
-      Toast.show({
-        type: "success",
-        text2: response.data.message,
-        position: "top",
-        visibilityTime: 3000,
-        textStyle: { fontSize: 14, color: "green" },
-      });
-    } else {
+  const savedProfiles = async (_id) => {
+    if (!_id) {
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: response.data.message || "Something went wrong!",
+        text2: "User ID not found!",
+      });
+      return;
+    }
+
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        throw new Error("No token found");
+      }
+
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+
+      const response = await axios.post(
+        `${SAVED_PROFILES}/${_id}`,
+        {},
+        { headers }
+      );
+
+      console.log("Response Data:", JSON.stringify(response?.data));
+
+      if (response?.data?.message) {
+        Toast.show({
+          type: "success",
+          text2: response.data.message,
+          position: "top",
+          visibilityTime: 3000,
+          textStyle: { fontSize: 14, color: "green" },
+        });
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: response.data.message || "Something went wrong!",
+        });
+      }
+    } catch (error) {
+      console.error(
+        "API Error:",
+        error?.response ? JSON.stringify(error.response.data) : error.message
+      );
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error.response?.data?.message || "Failed to save profile!",
       });
     }
-  } catch (error) {
-    console.error(
-      "API Error:",
-      error?.response ? JSON.stringify(error.response.data) : error.message
-    );
-    Toast.show({
-      type: "error",
-      text1: "Error",
-      text2: error.response?.data?.message || "Failed to save profile!",
-    });
-  }
-};
+  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -184,18 +192,19 @@ const savedProfiles = async (_id) => {
   );
 
   const renderItem = ({ item }) => {
-    const isSaved=item.isSaved || null;
+    const isSaved = item.isSaved || null;
     const rating = item.averageRating || 0;
 
     return (
       <View style={styles.card}>
-        <Pressable style={styles.cardData}
-          onPress={() => navigation.navigate('PanditDetailPage', { pandit_id : item._id ,isSaved:isSaved})}>
+        <View style={styles.cardData}>
           <Image
             source={item.profilePhoto ? { uri: item.profilePhoto } : require('../../Images/NoImage.png')}
             style={styles.image}
           />
-          <View style={styles.leftContainer}>
+          <View>
+          <Pressable style={styles.leftContainer}  
+          onPress={() => navigation.navigate('PanditDetailPage', { pandit_id: item._id, isSaved: isSaved })}>
             <Text style={styles.name}>{item?.fullName}</Text>
             <View style={styles.rating}>
               <Rating type="star" ratingCount={5} imageSize={15} startingValue={rating} readonly />
@@ -206,25 +215,26 @@ const savedProfiles = async (_id) => {
               <Text style={styles.text}>    {item?.state}</Text>
             </View>
             <Text style={styles.text}>{item?.residentialAddress}</Text>
-          </View>
-        </Pressable>
-        <View style={styles.sharecontainer}>
-        <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
-              <FontAwesome
-                name={isSaved ? "bookmark" : "bookmark-o"}
-                size={19}
-                color={Colors.dark}
-              />
-              <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text>
-            </TouchableOpacity>
+          </Pressable>
+          <View style={styles.sharecontainer}>
+          <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
+            <FontAwesome
+              name={isSaved ? "bookmark" : "bookmark-o"}
+              size={19}
+              color={Colors.dark}
+            />
+            {/* <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text> */}
+          </TouchableOpacity>
           <View style={styles.iconContainer}>
             <Feather name="send" size={18} color={Colors.dark} />
-            <Text style={styles.iconText}>Shares</Text>
+            {/* <Text style={styles.iconText}>Shares</Text> */}
           </View>
 
           <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
             <MaterialIcons name="call" size={17} color={Colors.light} />
           </TouchableOpacity>
+        </View>
+          </View>
         </View>
       </View>
     );
@@ -245,34 +255,25 @@ const savedProfiles = async (_id) => {
           <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => navigation.navigate('Notification')} />
         </View>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.searchbar}>
-        <TextInput 
-          placeholder="Search in Your city" 
-          value={locality} 
-          onChangeText={(text) => setLocality(text)}
-          onSubmitEditing={() => fetchPanditData("search")}
-          placeholderTextColor={"gray"}
+      <View style={{ flex: 1 }}>
+      {/* Animated Advertise Window */}
+      <Animated.View style={[styles.animatedAdvertise, { height: headerHeight }]}>
+        <AppIntroSlider
+          data={slider}
+          renderItem={({ item }) => (
+            <View>
+              <Image source={item.image} style={Globalstyles.sliderImage} />
+            </View>
+          )}
+          showNextButton={false}
+          showDoneButton={false}
+          dotStyle={Globalstyles.dot}
+          activeDotStyle={Globalstyles.activeDot}
         />
-          <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchPanditData("search")} />
-        </View>
+      </Animated.View>
 
-        <View style={Globalstyles.sliderContainer}>
-          <AppIntroSlider
-            ref={sliderRef}
-            data={slider}
-            renderItem={({ item }) => (
-              <View>
-                <Image source={item.image} style={Globalstyles.sliderImage} />
-              </View>
-            )}
-            showNextButton={false}
-            showDoneButton={false}
-            dotStyle={Globalstyles.dot}
-            activeDotStyle={Globalstyles.activeDot}
-          />
-        </View>
-
+      {/* Fixed Header - Filter & Search Bar */}
+      <View style={styles.fixedHeader}>
         <View style={styles.ButtonContainer}>
           <TouchableOpacity
             style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton]}
@@ -281,14 +282,31 @@ const savedProfiles = async (_id) => {
             <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Filter</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[styles.button, activeButton === 2 ? styles.activeButton : styles.inactiveButton]}
-            onPress={() => navigation.navigate('RoleRegisterForm')}
-          >
-            <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>Register</Text>
-          </TouchableOpacity>
+          <View style={styles.searchbar}>
+            <TextInput 
+              placeholder="Search in Your city" 
+              value={locality}
+              onChangeText={(text) => setLocality(text)} 
+              onSubmitEditing={() => fetchPanditData("search")} 
+              placeholderTextColor={"gray"} 
+              style={{ flex: 1 }} 
+            />
+            {locality.length > 0 ? (
+              <AntDesign name={'close'} size={20} color={'gray'} onPress={() => setLocality('')} />
+            ) : (
+              <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchPanditData("search")} />
+            )}
+          </View>
         </View>
-
+      </View>
+      <Animated.ScrollView
+        showsVerticalScrollIndicator={false}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: false }
+        )}
+        scrollEventThrottle={16}
+      >
         {isLoading ? renderSkeleton() : (
           <FlatList
             data={panditData}
@@ -303,9 +321,10 @@ const savedProfiles = async (_id) => {
               </View>
             }
           />
+          
         )}
-
-      </ScrollView>
+      </Animated.ScrollView>
+    </View>
 
       <Modal
         visible={modalVisible}

@@ -164,19 +164,21 @@ const styles = StyleSheet.create({
   sharecontainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-around',
-    paddingHorizontal: SW(10),
+    justifyContent: 'space-between',
+    // paddingHorizontal: SW(10),
     paddingVertical: SH(7),
     backgroundColor: Colors.light,
-    marginHorizontal: SW(20)
+    // marginHorizontal: SW(20)
   },
   iconContainer: {
     alignItems: 'center',
+    display:"flex",flexDirection:"row"
   },
   iconText: {
     fontSize: SF(12),
     color: Colors.dark,
     marginTop: SH(5),
+    paddingHorizontal:SW(5),
     fontFamily: "Poppins-Regular",
   },
   card: {

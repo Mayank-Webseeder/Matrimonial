@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
 
   input: {
     flex: 1,
-    color: Colors.theme_color,
+    color: Colors.dark,
     fontSize: SF(13),
   },
 

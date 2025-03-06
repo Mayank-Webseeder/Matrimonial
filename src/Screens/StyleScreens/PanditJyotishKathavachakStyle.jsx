@@ -15,17 +15,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  searchbar: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: Colors.gray,
-    marginHorizontal: SW(10),
-    borderRadius: 50,
-    paddingHorizontal: SW(10),
-    width: SW(350),
-    justifyContent: "space-between"
-  },
   images: {
     width: SW(80),
     height: SH(80)
@@ -37,28 +26,44 @@ const styles = StyleSheet.create({
     marginHorizontal: SW(15),
     borderRadius: 10
   },
-  ButtonContainer: {
-    flex: 1,
-    display: "flex",
-    flexDirection: "row",
-    marginHorizontal: SW(50),
+  fixedHeader: {
+    marginVertical: SH(10)
   },
+  ButtonContainer: {
+    flexDirection: "row", // Row layout for Filter & Search Bar
+    alignItems: "center",
+    justifyContent: "space-between", // Spread out elements
+    marginHorizontal: SW(10),
+    marginTop: SW(10),
+  },
+
   button: {
-    width: SW(130),
+    width: SW(70),
     height: SH(30),
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: 'black',
-    marginTop: SH(20),
     borderRadius: 8,
-    marginHorizontal: SW(6)
+    backgroundColor: 'white',
   },
+
   activeButton: {
     backgroundColor: Colors.theme_color,
   },
+
   inactiveButton: {
     backgroundColor: 'white',
+  },
+
+  searchbar: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: Colors.gray,
+    borderRadius: 50,
+    paddingHorizontal: SW(10),
+    width: SW(250),
+    justifyContent: "space-between"
   },
   activeText: {
     color: 'white',
@@ -67,15 +72,15 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   icon: {
-    marginHorizontal: SW(10),
+    marginBottom: SW(10),
   },
   sharecontainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: '#fff',
-    marginHorizontal: SW(15),
-    marginTop:-SH(10)
+    // marginHorizontal: SW(15),
+    // marginTop:SH(5)
   },
   iconContainer: {
     alignItems: 'center',
@@ -101,7 +106,7 @@ const styles = StyleSheet.create({
     paddingVertical: SH(3),
     borderRadius: 8,
     alignItems: "center",
-    width: SW(80)
+    width: SW(50)
   },
   buttonText: {
     color: Colors.light,
@@ -114,12 +119,12 @@ const styles = StyleSheet.create({
     flex: 1
   },
   image: {
-    width: SW(100),
-    height: SH(75),
+    width: SW(110),
+    height: SH(120),
     resizeMode: "cover",
     marginHorizontal: SW(10),
     marginVertical: SH(10),
-    borderRadius:5
+    borderRadius: 5
   },
   card: {
     backgroundColor: '#fff',
@@ -132,7 +137,7 @@ const styles = StyleSheet.create({
     marginHorizontal: SW(10),
     marginVertical: SH(7),
     marginBottom: SH(3),
-    paddingVertical:SH(3)
+    paddingVertical: SH(3)
   },
   cardData: {
     flexDirection: "row"
@@ -141,18 +146,19 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Medium",
     fontSize: SF(11)
   },
-  name:{
+  name: {
     fontFamily: "Poppins-Bold",
     fontSize: SF(13)
   },
   panditListData: {
     marginVertical: SH(10),
-    marginBottom: SH(10),
+    marginBottom: SH(20),
     marginTop: 0
   },
   leftContainer: {
     marginHorizontal: SW(10),
-    marginTop: SH(10),
+    marginVertical: SH(10),
+    width: "55%"
   },
   searchContainer: {
     flexDirection: "row",
@@ -222,7 +228,6 @@ const styles = StyleSheet.create({
     marginVertical: SH(5),
     marginHorizontal: SW(10)
   },
-
   circle: {
     width: SW(50),
     height: SH(50),
@@ -241,15 +246,13 @@ const styles = StyleSheet.create({
   emptyContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    height:SH(200),
+    height: SH(200),
   },
   emptyText: {
-    fontSize:SF(15),
+    fontSize: SF(15),
     color: Colors.gray,
     fontFamily: 'Poppins-Regular',
   },
-  
-
 });
 
 export default styles;

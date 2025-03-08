@@ -125,7 +125,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                             <Text style={styles.iconText}>Save</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.iconContainer} onPress={""}>
+                        <TouchableOpacity style={styles.iconContainer}>
                             <Feather name="send" size={19} color={Colors.dark} />
                             <Text style={styles.iconText}>Share</Text>
                         </TouchableOpacity>

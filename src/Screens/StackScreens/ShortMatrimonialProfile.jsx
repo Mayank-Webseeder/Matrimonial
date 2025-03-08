@@ -130,11 +130,6 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                             <Text style={styles.iconText}>Share</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.iconContainer} onPress={() => Linking.openURL('tel:' + item?.personalDetails?.mobileNo)}>
-                            <MaterialIcons name="call" size={19} color={Colors.dark} />
-                            <Text style={styles.iconText}>Call</Text>
-                        </TouchableOpacity>
-
                         <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ReportPage', { profileId: item?._id })}>
                             <MaterialIcons name="error-outline" size={20} color={Colors.dark} />
                             <Text style={styles.iconText}>Report</Text>
@@ -149,7 +144,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
             <View style={Globalstyles.header}>
                 <View style={styles.headerContainer}>
-                    <TouchableOpacity onPress={() => navigation.openDrawer()}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
                         <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
                     </TouchableOpacity>
                     <Text style={Globalstyles.headerText}>Matrimony</Text>

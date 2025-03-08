@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.white,
         borderRadius: 10,
         alignItems: 'center',
+        marginTop:SH(50)
     },
     modalText: {
         fontSize: SF(16),

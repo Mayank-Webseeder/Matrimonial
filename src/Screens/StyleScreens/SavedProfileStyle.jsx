@@ -65,6 +65,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: SW(10),
     paddingVertical: SH(10)
   },
+  detailscontent:{
+    paddingVertical: SH(10)
+  },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',

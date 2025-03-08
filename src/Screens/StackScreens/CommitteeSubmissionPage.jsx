@@ -121,7 +121,8 @@ const CommitteeSubmissionPage = ({ navigation }) => {
             height: 250,
             cropping: true,
             includeBase64: true,
-            mediaType: "photo"
+            mediaType: "photo",
+            compressImageQuality :1
         })
             .then(image => {
                 setCommitteeData(prev => ({

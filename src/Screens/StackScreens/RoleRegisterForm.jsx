@@ -97,6 +97,7 @@ const RoleRegisterForm = ({ navigation }) => {
                 width: 400,
                 height: 400,
                 includeBase64: true,
+                compressImageQuality :1
             });
 
             if (!image.data) {

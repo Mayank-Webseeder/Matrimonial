@@ -1,5 +1,5 @@
-import React, { useState,useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, StatusBar, SafeAreaView, FlatList,ActivityIndicator } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, StatusBar, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
 import Colors from '../../utils/Colors';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -13,10 +13,6 @@ import axios from 'axios';
 import Toast from 'react-native-toast-message';
 
 const DharamsalaSubmissionPage = ({ navigation }) => {
-    // const [dharamsalaName, setDharamsalaName] = useState('');
-    // const [contact, setContact] = useState('');
-    // const [description, setDescription] = useState('');
-    // const [photos, setPhotos] = useState([]);
     const [subCasteInput, setSubCasteInput] = useState('');
     const [cityInput, setCityInput] = useState('');
     const [filteredCities, setFilteredCities] = useState([]);
@@ -33,7 +29,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
         images: [],  // ✅ Ensure images is an array
         mobileNo: ''
     });
-    
+
 
     useEffect(() => {
         const fetchDharamsalaData = async () => {
@@ -54,9 +50,9 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                 };
 
                 const response = await axios.get(GET_DHARAMSALA, { headers });
-      
+
                 if (response.status === 200 && response.data?.data) {
-                    console.log("dharamsala view data",JSON.stringify(response.data?.data))
+                    console.log("dharamsala view data", JSON.stringify(response.data?.data))
                     setDharamsalaData(response.data.data);
                 }
             } catch (error) {
@@ -125,76 +121,77 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
 
     const handleImageUpload = () => {
         ImageCropPicker.openPicker({
-          multiple: false,
-          cropping: true,
-          width: 400,
-          height: 400,
+            multiple: false,
+            cropping: true,
+            width: 400,
+            height: 400,
+            compressImageQuality: 1
         })
-          .then((image) => {
-            setDharamsalaData((prev) => {
-              // Ensure images is always an array
-              const updatedImages = prev?.images?.length ? [...prev.images] : [];
-      
-              if (updatedImages.length < 3) {
-                return {
-                  ...prev,
-                  images: [...updatedImages, { uri: image.path }],
-                };
-              } else {
-                alert("You can only upload up to 3 photos.");
-                return prev; // Return unchanged state
-              }
-            });
-          })
-          .catch((err) => console.log("Crop Picker Error:", err));
-      };
+            .then((image) => {
+                setDharamsalaData((prev) => {
+                    // Ensure images is always an array
+                    const updatedImages = prev?.images?.length ? [...prev.images] : [];
+
+                    if (updatedImages.length < 3) {
+                        return {
+                            ...prev,
+                            images: [...updatedImages, { uri: image.path }],
+                        };
+                    } else {
+                        alert("You can only upload up to 3 photos.");
+                        return prev; // Return unchanged state
+                    }
+                });
+            })
+            .catch((err) => console.log("Crop Picker Error:", err));
+    };
 
     const convertToBase64 = async (images) => {
         try {
-          const base64Images = await Promise.all(
-            images.map(async (image) => {
-              if (!image.uri) return null;
-      
-              const response = await fetch(image.uri);
-              const blob = await response.blob();
-      
-              return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result);
-                reader.readAsDataURL(blob);
-              });
-            })
-          );
-      
-          return base64Images.filter(Boolean); // Remove any null values
+            const base64Images = await Promise.all(
+                images.map(async (image) => {
+                    if (!image.uri) return null;
+
+                    const response = await fetch(image.uri);
+                    const blob = await response.blob();
+
+                    return new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(reader.result);
+                        reader.readAsDataURL(blob);
+                    });
+                })
+            );
+
+            return base64Images.filter(Boolean); // Remove any null values
         } catch (error) {
-          console.error("Error converting image to Base64:", error);
-          return [];
+            console.error("Error converting image to Base64:", error);
+            return [];
         }
-      };
-      
-      const constructDharamsalaPayload = async (DharamsalaData, isNew = false) => {
+    };
+
+    const constructDharamsalaPayload = async (DharamsalaData, isNew = false) => {
         const keys = ["dharmshalaName", "subCaste", "city", "description", "images", "mobileNo"];
         const payload = {};
-      
+
         for (const key of keys) {
-          if (DharamsalaData[key] !== undefined && DharamsalaData[key] !== "") {
-            payload[key] = DharamsalaData[key];
-          } else if (isNew) {
-            payload[key] = "";
-          }
+            if (DharamsalaData[key] !== undefined && DharamsalaData[key] !== "") {
+                payload[key] = DharamsalaData[key];
+            } else if (isNew) {
+                payload[key] = "";
+            }
         }
-      
+
         if (DharamsalaData.images.length > 0) {
-          payload.images = await convertToBase64(DharamsalaData.images);
-          console.log("Converted Base64 Images:", payload.images);
+            payload.images = await convertToBase64(DharamsalaData.images);
+            console.log("Converted Base64 Images:", payload.images);
         }
-      
+
         return payload;
-      };
-      
-    
-      const handleDharamSalaSave = async () => {
+    };
+
+
+    const handleDharamSalaSave = async () => {
         try {
             setIsLoading(true);
             const token = await AsyncStorage.getItem("userToken");
@@ -206,39 +203,39 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                 });
                 return;
             }
-    
+
             const headers = {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             };
-    
+
             const payload = await constructDharamsalaPayload(DharamsalaData, !DharamsalaData?._id);
             console.log("Payload:", payload);
-    
+
             const isUpdating = !!DharamsalaData?._id;
             const apiCall = isUpdating ? axios.patch : axios.post;
             const endpoint = isUpdating ? `${UPDATE_DHARAMSALA}` : CREATE_DHARAMSALA;
-    
+
             const response = await apiCall(endpoint, payload, { headers });
             console.log("dharamsala create , update data", JSON.stringify(response.data));
-    
+
             if (response.status === 200 || response.status === 201) {
                 console.log("Updated Data:", JSON.stringify(response.data.data));
-    
+
                 // ✅ Show Toast First
                 Toast.show({
                     type: "success",
                     text1: response.data.message || (isUpdating ? "Profile Updated Successfully" : "Profile Created Successfully"),
                     text2: "Your changes have been saved!",
                 });
-    
+
                 if (!DharamsalaData?._id && response.data?.data?._id) {
                     setDharamsalaData((prev) => ({
                         ...prev,
                         _id: response.data.data._id,
                     }));
                 }
-                
+
 
             } else {
                 throw new Error(response.data.message || "Something went wrong");
@@ -253,8 +250,8 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
             setIsLoading(false);
         }
     };
-      
-  
+
+
 
     return (
         <SafeAreaView style={Globalstyles.container}>
@@ -284,7 +281,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     style={Globalstyles.input}
                     placeholder="Enter Dharamsala Name"
                     value={DharamsalaData.dharmshalaName}
-                    onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, dharmshalaName: text }))} 
+                    onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, dharmshalaName: text }))}
                     placeholderTextColor={Colors.gray}
                 />
 
@@ -352,26 +349,26 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     value={DharamsalaData.description} onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, description: text }))}
                     multiline={true}
                 />
-             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-  <Text style={Globalstyles.title}>
-    Upload Images (Max Limit 3) <Entypo name={"star"} color={"red"} size={12} />
-  </Text>
-  <TouchableOpacity style={styles.uploadButton} onPress={handleImageUpload}>
-    <Text style={styles.uploadButtonText}>
-      {DharamsalaData.images?.length > 0 ? "Change Image" : "Upload Image"}
-    </Text>
-  </TouchableOpacity>
-</View>
+                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                    <Text style={Globalstyles.title}>
+                        Upload Images (Max Limit 3) <Entypo name={"star"} color={"red"} size={12} />
+                    </Text>
+                    <TouchableOpacity style={styles.uploadButton} onPress={handleImageUpload}>
+                        <Text style={styles.uploadButtonText}>
+                            {DharamsalaData.images?.length > 0 ? "Change Image" : "Upload Image"}
+                        </Text>
+                    </TouchableOpacity>
+                </View>
 
-{DharamsalaData.images?.length > 0 && (
-  <View style={styles.imagePreview}>
-    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-      {DharamsalaData.images.map((photo, index) => (
-        <Image key={index} source={{ uri: photo?.uri || photo }} style={styles.photo} />
-      ))}
-    </ScrollView>
-  </View>
-)}
+                {DharamsalaData.images?.length > 0 && (
+                    <View style={styles.imagePreview}>
+                        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                            {DharamsalaData.images.map((photo, index) => (
+                                <Image key={index} source={{ uri: photo?.uri || photo }} style={styles.photo} />
+                            ))}
+                        </ScrollView>
+                    </View>
+                )}
 
                 <TouchableOpacity style={styles.submitButton} onPress={handleDharamSalaSave}>
                     <Text style={styles.submitButtonText}>Submit</Text>

@@ -3,6 +3,25 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
+   panditListData: {
+      marginVertical: SH(10),
+      marginBottom: SH(20),
+      marginTop: 0
+    },
+    emptyContainer: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: SH(200),
+    },
+    emptyText: {
+      fontSize: SF(15),
+      color: Colors.gray,
+      fontFamily: 'Poppins-Regular',
+    },
+    fixedHeader: {
+      marginVertical: SH(10),
+      paddingBottom:SH(20)
+    },
   righticons: {
     flexDirection: 'row',
     alignItems:"center"
@@ -107,15 +126,12 @@ const styles = StyleSheet.create({
     marginTop: SH(105)
   },
 
-  panditListData: {
-
-    marginBottom: SH(200)
-  },
   ButtonContainer: {
     flex: 1,
     display: "flex",
     flexDirection: "row",
-    justifyContent: "center"
+    justifyContent: "center",
+    marginVertical:SH(15)
   },
   button: {
     width: SW(100),
@@ -127,7 +143,6 @@ const styles = StyleSheet.create({
     // marginVertical: SH(20),
     borderRadius: 8,
     marginHorizontal: SW(6),
-
   },
   activeButton: {
     backgroundColor: Colors.theme_color,

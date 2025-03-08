@@ -4,13 +4,16 @@ import profileSlice from '../ReduxStore/Slices/ProfileSlice';
 import GetAllBiodataSlice from '../ReduxStore/Slices/GetAllBiodataSlice';
 import BioDataSlice from '../ReduxStore/Slices/BiodataSlice';
 import ActivistSlice from '../ReduxStore/Slices/ActivistSlice';
+import privacyReducer from '../ReduxStore/Slices/privacySlice';
+
 const store = configureStore({
   reducer: {
     auth: authSlice,
     profile: profileSlice,
     getAllBiodata:GetAllBiodataSlice,
     getBiodata:BioDataSlice,
-    activist:ActivistSlice
+    activist:ActivistSlice,
+    privacy: privacyReducer,
   },
 });
 

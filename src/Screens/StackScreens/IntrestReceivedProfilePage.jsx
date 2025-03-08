@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator } from 'react-native';
-import Swiper from 'react-native-swiper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
@@ -13,14 +12,17 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MATCHED_PROFILE } from '../../utils/BaseUrl';
-import { ACCEPTED_API, REJECTED_API , SAVED_PROFILES } from '../../utils/BaseUrl';
+import { ACCEPTED_API, REJECTED_API, SAVED_PROFILES } from '../../utils/BaseUrl';
 import Toast from 'react-native-toast-message';
 import ImageViewing from 'react-native-image-viewing';
-import { SH,SW } from '../../utils/Dimensions';
+import { SH, SW } from '../../utils/Dimensions';
+import moment from 'moment';
 
 const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const { userId, biodata, requestId } = route.params;
-  const _id=biodata?._id;
+  const hideContact = !!(biodata?.hideContact || biodata?.hideContact);
+  const hideOptionalDetails = !!(biodata?.hideOptionalDetails || biodata?.hideOptionalDetails)
+  const _id = biodata?._id;
   const personalDetails = biodata?.personalDetails;
   console.log(userId, biodata, requestId)
   const [loading, setLoading] = useState(true);
@@ -29,20 +31,20 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const MyprofileData = useSelector((state) => state.getBiodata);
   console.log("MyprofileData", biodata);
 
-   const [isImageVisible, setImageVisible] = useState(false);
-    const [imageIndex, setImageIndex] = useState(0);
-  
-    // Available images ko filter karo jo null na ho
-    const images = [
-      personalDetails?.closeUpPhoto,
-      personalDetails?.fullPhoto,
-      personalDetails?.bestPhoto,
-    ].filter(Boolean); // Null values hata do
-  
-    const openImageViewer = (index) => {
-      setImageIndex(index);
-      setImageVisible(true);
-    };
+  const [isImageVisible, setImageVisible] = useState(false);
+  const [imageIndex, setImageIndex] = useState(0);
+
+  // Available images ko filter karo jo null na ho
+  const images = [
+    personalDetails?.closeUpPhoto,
+    !hideOptionalDetails && personalDetails?.fullPhoto,
+    !hideOptionalDetails && personalDetails?.bestPhoto
+  ].filter(Boolean); // Null values hata do
+
+  const openImageViewer = (index) => {
+    setImageIndex(index);
+    setImageVisible(true);
+  };
 
   useEffect(() => {
     if (userId) {
@@ -90,26 +92,26 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
       });
       return;
     }
-  
+
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         throw new Error("No token found");
       }
-  
+
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-  
+
       const response = await axios.post(
         `${SAVED_PROFILES}/${_id}`,
-        {}, 
+        {},
         { headers }
       );
-  
+
       console.log("Response Data:", JSON.stringify(response?.data));
-  
+
       if (response?.data?.message) {
         Toast.show({
           type: "success",
@@ -216,39 +218,39 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         </View>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
-       <View style={{ alignItems: "center" }}>
-      {/* First Image Display */}
-      {images.length > 0 && (
-        <TouchableOpacity onPress={() => openImageViewer(0)}>
-          <Image source={{ uri: images[0] }} style={styles.image} />
-        </TouchableOpacity>
-      )}
+        <View style={{ alignItems: "center" }}>
+          {/* First Image Display */}
+          {images.length > 0 && (
+            <TouchableOpacity onPress={() => openImageViewer(0)}>
+              <Image source={{ uri: images[0] }} style={styles.image} />
+            </TouchableOpacity>
+          )}
 
-      {/* Image Viewer Modal */}
-      <ImageViewing
-        images={images.map((img) => ({ uri: img }))}
-        imageIndex={imageIndex}
-        visible={isImageVisible}
-        onRequestClose={() => setImageVisible(false)}
-        onImageIndexChange={(index) => setImageIndex(index)}
-        FooterComponent={() => (
-          <View style={{ position: "absolute", bottom:SH(20), alignSelf: "center", flexDirection: "row" }}>
-            {images.map((_, index) => (
-              <View
-                key={index}
-                style={{
-                  width:SH(8),
-                  height:SH(8),
-                  borderRadius: 4,
-                  marginHorizontal:SW(5),
-                  backgroundColor: imageIndex === index ? "white" : "gray",
-                }}
-              />
-            ))}
-          </View>
-        )}
-      />
-    </View>
+          {/* Image Viewer Modal */}
+          <ImageViewing
+            images={images.map((img) => ({ uri: img }))}
+            imageIndex={imageIndex}
+            visible={isImageVisible}
+            onRequestClose={() => setImageVisible(false)}
+            onImageIndexChange={(index) => setImageIndex(index)}
+            FooterComponent={() => (
+              <View style={{ position: "absolute", bottom: SH(20), alignSelf: "center", flexDirection: "row" }}>
+                {images.map((_, index) => (
+                  <View
+                    key={index}
+                    style={{
+                      width: SH(8),
+                      height: SH(8),
+                      borderRadius: 4,
+                      marginHorizontal: SW(5),
+                      backgroundColor: imageIndex === index ? "white" : "gray",
+                    }}
+                  />
+                ))}
+              </View>
+            )}
+          />
+        </View>
         <View style={styles.flexContainer}>
           <View style={styles.flex}>
             {/* <Text style={styles.Idtext}>ID NO. :- {userId}</Text> */}
@@ -268,7 +270,15 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
               <Text style={styles.buttonText}>Confirm</Text>
             </TouchableOpacity> */}
 
-            <TouchableOpacity style={styles.iconContainer} onPress={() => Linking.openURL('tel:' + personalDetails?.mobileNo)}>
+            <TouchableOpacity
+              style={[styles.iconContainer, hideContact && { opacity: 0.5 }]} // Reduce opacity when hidden
+              onPress={() => {
+                if (!hideContact && personalDetails?.contactNumber1) {
+                  Linking.openURL('tel:' + personalDetails?.contactNumber1);
+                }
+              }}
+              disabled={hideContact} // Disable press functionality when hidden
+            >
               <MaterialIcons name="call" size={19} color={Colors.dark} />
               <Text style={styles.iconText}>Call</Text>
             </TouchableOpacity>
@@ -299,17 +309,36 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         <View style={styles.flexContainer1}>
           <View>
             <Text style={styles.HeadingText}>Horoscope</Text>
-            {personalDetails?.dob && <Text style={styles.text}>DOB {new Date(personalDetails?.dob).toLocaleDateString()} / Time: {personalDetails?.timeOfBirth}</Text>}
+            <Text style={styles.text}>DOB {moment(personalDetails.dob).format("DD-MM-YYYY")} / Time: {personalDetails?.timeOfBirth}</Text>
             {personalDetails?.placeofbirth && <Text style={styles.text}>Place of Birth: {personalDetails?.placeofbirth}</Text>}
-            {personalDetails?.nadi && <Text style={styles.text}>Nadi: {personalDetails?.nadi}</Text>}
-            {personalDetails?.gotraSelf && <Text style={styles.text}>Gotra (self): {personalDetails?.gotraSelf}</Text>}
-            {personalDetails?.gotraMother && <Text style={styles.text}>Gotra (Mother): {personalDetails?.gotraMother}</Text>}
+
+            <View style={styles.flexContainer2}>
+              {!hideOptionalDetails && (
+                <>
+                  {personalDetails?.nadi && <Text style={styles.text}>Nadi: {personalDetails?.nadi}</Text>}
+                  {personalDetails?.gotraSelf && <Text style={styles.text}>Gotra (Self): {personalDetails?.gotraSelf}</Text>}
+                </>
+              )}
+            </View>
+
+            <View style={styles.flexContainer2}>
+              {personalDetails?.manglikStatus && <Text style={styles.text}>{personalDetails?.manglikStatus}</Text>}
+              {!hideOptionalDetails && (
+                <>
+                  {personalDetails?.gotraMother && <Text style={styles.text}>Gotra (Mother): {personalDetails?.gotraMother}</Text>}
+                </>
+              )}
+            </View>
           </View>
         </View>
         <View style={styles.flexContainer1}>
           <View>
             <Text style={styles.HeadingText}>About Me</Text>
-            {personalDetails?.aboutMe && <Text style={styles.text}>{personalDetails?.aboutMe}</Text>}
+            {!hideOptionalDetails && (
+              <>
+                {personalDetails?.aboutMe && <Text style={styles.text}>{personalDetails?.aboutMe}</Text>}
+              </>
+            )}
             {personalDetails?.complexion && <Text style={styles.text}>Complexion: {personalDetails?.complexion}</Text>}
             {personalDetails?.weight && <Text style={styles.text}>Weight: {personalDetails?.weight}</Text>}
             {personalDetails?.livingStatus && <Text style={styles.text}>Currently Living city: {personalDetails?.livingStatus}</Text>}
@@ -326,27 +355,35 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
             {personalDetails?.familyIncome && <Text style={styles.text}>Family Income (Annually): {personalDetails?.familyIncome}</Text>}
             {personalDetails?.familyType && <Text style={styles.text}>Family Type: {personalDetails?.familyType}</Text>}
             {personalDetails?.siblings && <Text style={styles.text}>Siblings: {personalDetails?.siblings}</Text>}
-            {personalDetails?.otherFamilyMemberInfo && <Text style={styles.text}>Other Family Members: {personalDetails?.otherFamilyMemberInfo}</Text>}
+            {!hideOptionalDetails && (
+              <>
+                <Text style={styles.HeadingText}>About My family</Text>
+                {personalDetails?.otherFamilyMemberInfo && <Text style={styles.text}>Other Family Members: {personalDetails.otherFamilyMemberInfo}</Text>}
+              </>
+            )}
           </View>
         </View>
-        <View style={styles.flexContainer1}>
-          <View>
-            <Text style={styles.HeadingText}>Contact Details:</Text>
-            {personalDetails?.contactNumber1 && <Text style={styles.text}>Mobile No. 1: {personalDetails?.contactNumber1}</Text>}
-            {personalDetails?.contactNumber2 && <Text style={styles.text}>Mobile No. 2: {personalDetails?.contactNumber2}</Text>}
-            {personalDetails?.emailId && <Text style={styles.text}>Email ID: {personalDetails?.emailId}</Text>}
-            {personalDetails?.permanentAddress && <Text style={styles.text}>Permanent Address: {personalDetails?.permanentAddress}</Text>}
+        {!hideContact && personalDetails?.contactNumber1 && (
+          <View style={styles.flexContainer1}>
+            <View>
+              <Text style={styles.HeadingText}>Contact Details:</Text>
+              {personalDetails?.contactNumber1 && <Text style={styles.text}>Mobile No. 1: {personalDetails.contactNumber1}</Text>}
+              {personalDetails?.contactNumber2 && <Text style={styles.text}>Mobile No. 2: {personalDetails.contactNumber2}</Text>}
+            </View>
           </View>
-        </View>
-        <View style={styles.flexContainer1}>
-          <View>
-            <Text style={styles.HeadingText}>Other Details:</Text>
-            {personalDetails?.knowCooking && <Text style={styles.text}>Cooking: {personalDetails?.knowCooking ? 'Yes' : 'No'}</Text>}
-            {personalDetails?.dietaryHabit && <Text style={styles.text}>Diet: {personalDetails?.dietaryHabit}</Text>}
-            {personalDetails?.smokingHabit && <Text style={styles.text}>Smoke: {personalDetails?.smokingHabit}</Text>}
-            {personalDetails?.drinkingHabit && <Text style={styles.text}>Drink: {personalDetails?.drinkingHabit}</Text>}
+        )}
+        {!hideOptionalDetails && personalDetails?.knowCooking && (
+          <View style={styles.flexContainer1}>
+            <View>
+              <Text style={styles.HeadingText}>Other Details:</Text>
+              {personalDetails?.knowCooking && <Text style={styles.text}>Cooking: {personalDetails.knowCooking}</Text>}
+              {personalDetails?.dietaryHabit && <Text style={styles.text}>Diet: {personalDetails.dietaryHabit}</Text>}
+              {personalDetails?.smokingHabit && <Text style={styles.text}>Smoke: {personalDetails.smokingHabit}</Text>}
+              {personalDetails?.drinkingHabit && <Text style={styles.text}>Drinking: {personalDetails.drinkingHabit}</Text>}
+              {personalDetails?.tobaccoHabits && <Text style={styles.text}>Tobacco: {personalDetails.tobaccoHabits}</Text>}
+            </View>
           </View>
-        </View>
+        )}
         <View style={styles.flexContainer3}>
           <Text style={styles.HeadingText}>Expectation with partner</Text>
           {biodata?.partnerPreferences?.partnerExpectations && <Text style={styles.text}>{biodata?.partnerPreferences?.partnerExpectations}</Text>}

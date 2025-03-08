@@ -30,6 +30,7 @@ const UpdateEventPost = ({ navigation, route }) => {
             width: 400,
             height: 400,
             includeBase64: true,
+            compressImageQuality :1
         }).then(images => {
             const newPhotos = images.map(image => `data:image/jpeg;base64,${image.data}`);
             setPhotos(newPhotos); // Purani images hata kar sirf naye images set ho rahi hain

@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, TextInput,ToastAndroid } from 'react-native';
+import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, TextInput, ToastAndroid } from 'react-native';
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import styles from '../StyleScreens/EventNewsStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -39,6 +39,7 @@ const EventNews = ({ navigation }) => {
   }, [])
 
   const handlePress = () => {
+    console.log("MyActivistProfile", MyActivistProfile);
     if (MyActivistProfile && MyActivistProfile._id) {
       Toast.show(
         {
@@ -149,10 +150,10 @@ const EventNews = ({ navigation }) => {
         try {
           const token = await AsyncStorage.getItem('userToken');
           if (!token) throw new Error('No token found');
-  
+
           const headers = { Authorization: `Bearer ${token}` };
           const response = await axios.get(VIEW_EVENT, { headers });
-  
+
           if (response.status === 200) {
             const postData = response.data.data;
             console.log("myeventpost", postData);
@@ -162,11 +163,11 @@ const EventNews = ({ navigation }) => {
           console.error('Error fetching post data:', error);
         }
       };
-  
+
       fetchPostData();
     }, []) // Empty dependency array to prevent multiple re-renders
   );
-  
+
 
   const COMMENT = async (postId) => {
     try {
@@ -219,33 +220,33 @@ const EventNews = ({ navigation }) => {
     try {
       setIsLoading(true);
       const token = await AsyncStorage.getItem("userToken");
-  
+
       if (!token) throw new Error("No token found");
-  
+
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-  
+
       console.log("headers", headers);
-  
+
       const response = await axios.delete(
         `https://api-matrimonial.webseeder.tech/api/v1/event/${postId}/delete-comment/${commentId}`,
         { headers }
       );
-  
+
       if (response.data) {
         console.log("Updated comments:", JSON.stringify(response.data.comments));
-  
+
         setCommentData((prevComments) =>
           prevComments.filter((comment) => comment._id !== commentId)
         );
-  
+
         ToastAndroid.show("Comment deleted successfully!", ToastAndroid.SHORT);
       }
     } catch (error) {
       console.error("Error deleting comment:", error?.response?.data || error.message);
-  
+
       ToastAndroid.show(
         error?.response?.data?.message || "Failed to delete comment. Please try again!",
         ToastAndroid.LONG
@@ -254,7 +255,7 @@ const EventNews = ({ navigation }) => {
       setIsLoading(false);
     }
   };
-  
+
   const GetEventNews = async () => {
     try {
       setIsLoading(true)
@@ -268,7 +269,7 @@ const EventNews = ({ navigation }) => {
 
       const response = await axios.get(GET_ALL_EVENT_NEWS, { headers });
       if (response.data.data) {
-        const fetchedData = response.data.data;
+        const fetchedData = response.data?.data;
         console.log("My event news data", JSON.stringify(fetchedData));
         setEventData(fetchedData);
         setIsLoading(false)
@@ -551,9 +552,14 @@ const EventNews = ({ navigation }) => {
           <Text style={Globalstyles.headerText}>News & Events</Text>
         </View>
         <View style={styles.righticons}>
-          <TouchableOpacity style={styles.button} onPress={handlePress}>
+          <TouchableOpacity
+            style={[styles.button, !MyActivistProfile ? styles.disabledButton : null]}
+            onPress={handlePress}
+            disabled={!MyActivistProfile}
+          >
             <Text style={styles.buttonText}>Post</Text>
           </TouchableOpacity>
+
           <AntDesign
             name={'bells'}
             size={25}
@@ -566,7 +572,7 @@ const EventNews = ({ navigation }) => {
       </View>
       {myeventpost.length > 0 && (
         <TouchableOpacity
-          style={[styles.button, { alignSelf: "flex-end",marginBottom:SH(2) }]}
+          style={[styles.button, { alignSelf: "flex-end", marginBottom: SH(2) }]}
           onPress={() => navigation.navigate('ViewMyEventPost', { events: myeventpost })}>
           <Text style={[styles.buttonText]}>Uploaded Events</Text>
         </TouchableOpacity>
@@ -587,11 +593,14 @@ const EventNews = ({ navigation }) => {
           }
         />
 
-        <TouchableOpacity style={styles.loadMoreButton} onPress={loadNextPage}>
-          <Text style={styles.loadMoreText}>Load More Posts</Text>
-        </TouchableOpacity>
+        {getPostsForPage().length > 3 && (
+          <TouchableOpacity style={styles.loadMoreButton} onPress={loadNextPage}>
+            <Text style={styles.loadMoreText}>Load More Posts</Text>
+          </TouchableOpacity>
+        )}
 
-        <Image source={require('../../Images/EventImage.png')} style={styles.bannerImage} />
+
+        {/* <Image source={require('../../Images/EventImage.png')} style={styles.bannerImage} /> */}
       </ScrollView>
       <Toast />
     </SafeAreaView>

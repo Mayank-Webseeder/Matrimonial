@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator, Share } from 'react-native';
-import Swiper from 'react-native-swiper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
@@ -22,9 +21,11 @@ import { SH, SW } from '../../utils/Dimensions';
 const MatrimonyPeopleProfile = ({ navigation }) => {
   const route = useRoute();
   const { userDetails, details, details_userId, userId, isSaved } = route.params || {};
+  const hideContact = !!(userDetails?.hideContact || details?.hideContact);
+  const hideOptionalDetails = !!(userDetails?.hideOptionalDetails || details?.hideOptionalDetails)
   console.log("userDetails", userDetails);
   const User_Id = userDetails?.userId || details_userId;
-  console.log("userId", isSaved);
+  console.log("userId", hideOptionalDetails);
   const _id = userDetails?._id;
   console.log("_id", _id);
   const personalDetails = details?.personalDetails || userDetails?.personalDetails || {};
@@ -36,10 +37,11 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
   // Available images ko filter karo jo null na ho
   const images = [
-    personalDetails?.closeUpPhoto,
-    personalDetails?.fullPhoto,
-    personalDetails?.bestPhoto,
-  ].filter(Boolean); // Null values hata do
+    personalDetails?.closeUpPhoto, 
+    !hideOptionalDetails && personalDetails?.fullPhoto, 
+    !hideOptionalDetails && personalDetails?.bestPhoto
+  ].filter(Boolean); // Removes null/undefined values
+  
 
   const openImageViewer = (index) => {
     setImageIndex(index);
@@ -305,39 +307,39 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-      <View style={{ alignItems: "center" }}>
-      {/* First Image Display */}
-      {images.length > 0 && (
-        <TouchableOpacity onPress={() => openImageViewer(0)}>
-          <Image source={{ uri: images[0] }} style={styles.image} />
-        </TouchableOpacity>
-      )}
+        <View style={{ alignItems: "center" }}>
+          {/* First Image Display */}
+          {images.length > 0 && (
+            <TouchableOpacity onPress={() => openImageViewer(0)}>
+              <Image source={{ uri: images[0] }} style={styles.image} />
+            </TouchableOpacity>
+          )}
 
-      {/* Image Viewer Modal */}
-      <ImageViewing
-        images={images.map((img) => ({ uri: img }))}
-        imageIndex={imageIndex}
-        visible={isImageVisible}
-        onRequestClose={() => setImageVisible(false)}
-        onImageIndexChange={(index) => setImageIndex(index)}
-        FooterComponent={() => (
-          <View style={{ position: "absolute", bottom:SH(20), alignSelf: "center", flexDirection: "row" }}>
-            {images.map((_, index) => (
-              <View
-                key={index}
-                style={{
-                  width:SH(8),
-                  height:SH(8),
-                  borderRadius: 4,
-                  marginHorizontal:SW(5),
-                  backgroundColor: imageIndex === index ? "white" : "gray",
-                }}
-              />
-            ))}
-          </View>
-        )}
-      />
-    </View>
+          {/* Image Viewer Modal */}
+          <ImageViewing
+            images={images.map((img) => ({ uri: img }))}
+            imageIndex={imageIndex}
+            visible={isImageVisible}
+            onRequestClose={() => setImageVisible(false)}
+            onImageIndexChange={(index) => setImageIndex(index)}
+            FooterComponent={() => (
+              <View style={{ position: "absolute", bottom: SH(20), alignSelf: "center", flexDirection: "row" }}>
+                {images.map((_, index) => (
+                  <View
+                    key={index}
+                    style={{
+                      width: SH(8),
+                      height: SH(8),
+                      borderRadius: 4,
+                      marginHorizontal: SW(5),
+                      backgroundColor: imageIndex === index ? "white" : "gray",
+                    }}
+                  />
+                ))}
+              </View>
+            )}
+          />
+        </View>
         {(userDetails?.verified || details?.verified) && (
           <View style={styles.verifiedContainer}>
             <Image
@@ -375,11 +377,18 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               <Text style={styles.buttonText}>Interested</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.iconContainer} onPress={() => Linking.openURL('tel:' + personalDetails?.mobileNo)}>
+            <TouchableOpacity
+              style={[styles.iconContainer, hideContact && { opacity: 0.5 }]} // Reduce opacity when hidden
+              onPress={() => {
+                if (!hideContact && personalDetails?.contactNumber1) {
+                  Linking.openURL('tel:' + personalDetails?.contactNumber1);
+                }
+              }}
+              disabled={hideContact} // Disable press functionality when hidden
+            >
               <MaterialIcons name="call" size={19} color={Colors.dark} />
               <Text style={styles.iconText}>Call</Text>
             </TouchableOpacity>
-
             <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ReportPage', { profileId: _id })}>
               <MaterialIcons name="error-outline" size={20} color={Colors.dark} />
               <Text style={styles.iconText}>Report</Text>
@@ -403,7 +412,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             {/* {personalDetails?.profileCreatedBy && <Text style={styles.text}>Profile Created By: {personalDetails?.profileCreatedBy}</Text>} */}
           </View>
 
-          {/* Right Container */}
+          {/** Right Container */}
           <View style={styles.rightContainer}>
             {/* Right-side details */}
             {personalDetails?.currentCity && <Text style={styles.text}>{personalDetails?.currentCity}</Text>}
@@ -422,13 +431,21 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               {personalDetails?.placeofbirth && <Text style={styles.text}>Place of Birth: {personalDetails?.placeofbirth}</Text>}
 
               <View style={styles.flexContainer2}>
-                {personalDetails?.nadi && <Text style={styles.text}>Nadi: {personalDetails?.nadi}</Text>}
-                {personalDetails?.gotraSelf && <Text style={styles.text}>Gotra (Self): {personalDetails?.gotraSelf}</Text>}
+                {!hideOptionalDetails && (
+                  <>
+                    {personalDetails?.nadi && <Text style={styles.text}>Nadi: {personalDetails?.nadi}</Text>}
+                    {personalDetails?.gotraSelf && <Text style={styles.text}>Gotra (Self): {personalDetails?.gotraSelf}</Text>}
+                  </>
+                )}
               </View>
 
               <View style={styles.flexContainer2}>
                 {personalDetails?.manglikStatus && <Text style={styles.text}>{personalDetails?.manglikStatus}</Text>}
-                {personalDetails?.gotraMother && <Text style={styles.text}>Gotra (Mother): {personalDetails?.gotraMother}</Text>}
+                {!hideOptionalDetails && (
+                  <>
+                    {personalDetails?.gotraMother && <Text style={styles.text}>Gotra (Mother): {personalDetails?.gotraMother}</Text>}
+                  </>
+                )}
               </View>
             </View>
           </View>
@@ -439,7 +456,11 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           <View style={styles.flexContainer1}>
             <View>
               <Text style={styles.HeadingText}>About Me</Text>
-              <Text style={styles.text}>{personalDetails?.aboutMe}</Text>
+              {!hideOptionalDetails && (
+                  <>
+                    {personalDetails?.aboutMe && <Text style={styles.text}>{personalDetails?.aboutMe}</Text>}
+                  </>
+                )}
               <View style={styles.flexContainer2}>
                 {personalDetails?.complexion && <Text style={styles.text}>Completion: {personalDetails?.complexion}</Text>}
                 {personalDetails?.weight && <Text style={styles.text}>Weight: {personalDetails?.weight} kg </Text>}
@@ -462,14 +483,18 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               {personalDetails?.motherName && <Text style={styles.text}>Mother’s Name: {personalDetails.motherName}</Text>}
               {personalDetails?.fatherIncomeAnnually && <Text style={styles.text}>Family Income: {personalDetails.fatherIncomeAnnually}</Text>}
               {personalDetails?.familyType && <Text style={styles.text}>Family Type: {personalDetails.familyType}</Text>}
-              <Text style={styles.HeadingText}>About My family</Text>
-              {personalDetails?.otherFamilyMemberInfo && <Text style={styles.text}>{personalDetails.otherFamilyMemberInfo}</Text>}
+              {!hideOptionalDetails && (
+                <>
+                  <Text style={styles.HeadingText}>About My family</Text>
+                  {personalDetails?.otherFamilyMemberInfo && <Text style={styles.text}>Other Family Members: {personalDetails.otherFamilyMemberInfo}</Text>}
+                </>
+              )}
             </View>
           </View>
         )}
 
         {/* Contact Section */}
-        {personalDetails?.contactNumber1 && (
+        {!hideContact && personalDetails?.contactNumber1 && (
           <View style={styles.flexContainer1}>
             <View>
               <Text style={styles.HeadingText}>Contact Details:</Text>
@@ -480,7 +505,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         )}
 
         {/* Other Details */}
-        {personalDetails?.knowCooking && (
+        {!hideOptionalDetails && personalDetails?.knowCooking && (
           <View style={styles.flexContainer1}>
             <View>
               <Text style={styles.HeadingText}>Other Details:</Text>
@@ -492,6 +517,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             </View>
           </View>
         )}
+
 
         {partnerPreferences?.partnerExpectations &&
           <View style={styles.flexContainer3}>

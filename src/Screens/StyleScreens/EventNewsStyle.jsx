@@ -3,6 +3,10 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
+    disabledButton: {
+        backgroundColor: '#ccc',
+        opacity: 0.6,
+      },
     righticons: {
         flexDirection: 'row',
         alignItems: "center"

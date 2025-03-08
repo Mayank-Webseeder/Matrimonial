@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Image, ActivityIndicator, View, StyleSheet } from 'react-native';
+import { Image,StyleSheet } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -69,6 +69,8 @@ import ViewMyEventPost from '../Screens/StackScreens/ViewMyEventPost';
 import UpdateEventPost from '../Screens/StackScreens/UpdateEventPost';
 import AdvertiseWithUs from '../Screens/StackScreens/AdvertiseWithUs';
 import ShortMatrimonialProfile from '../Screens/StackScreens/ShortMatrimonialProfile';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 const Stack = createNativeStackNavigator();
 const AppStackNavigator = createNativeStackNavigator();
@@ -82,47 +84,38 @@ function MyTabs() {
   const image = profiledata?.photoUrl?.[0];
   const MyprofileData = useSelector((state) => state.getBiodata);
   const partnerPreferences = MyprofileData?.Biodata?.partnerPreferences || null;
-   const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
 
-   const fetchProfile = async () => {
-    setLoading(true); 
+  const fetchProfile = async () => {
+    setLoading(true);
     try {
-        const token = await AsyncStorage.getItem("userToken");
-        if (!token) throw new Error("No token found");
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) throw new Error("No token found");
 
-        const headers = {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-        };
+      const headers = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      };
 
-        console.log("headers in profile", headers);
-        const res = await axios.get(PROFILE_ENDPOINT, { headers });
-        const ProfileData = res.data.data;
+      console.log("headers in profile", headers);
+      const res = await axios.get(PROFILE_ENDPOINT, { headers });
+      console.log("API Response:", res.data);
 
-        setProfile(ProfileData);
-        dispatch(setProfiledata(ProfileData));
+      setProfileData(res.data.data); // ✅ State update karo
+      dispatch(setProfiledata(res.data.data)); // Redux update karo
 
-        console.log("ProfileData", ProfileData);
-
-        // ✅ Check if the response message is correct, then navigate
-        if (res.data.message === "User profile updated successfully.") {
-            navigation.replace("MainApp"); // ✅ Navigate to MainApp
-        }
     } catch (error) {
-        console.error(
-            "Error fetching profile:",
-            error.response ? error.response.data : error.message
-        );
+      console.error("Error fetching profile:", error.response ? error.response.data : error.message);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
 
-
-  useEffect(() => {
-    fetchProfile();
-    console.log("myBiodata in root file", partnerPreferences);
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchProfile();
+    }, [])
+  );
 
   const iconSize = SF(30);
 

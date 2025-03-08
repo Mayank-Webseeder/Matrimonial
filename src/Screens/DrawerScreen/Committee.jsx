@@ -1,5 +1,6 @@
 
-import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, ActivityIndicator } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, 
+  StatusBar, Linking, Pressable, ActivityIndicator,Animated } from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 import { slider } from '../../DummyData/DummyData';
 import { Image } from 'react-native';
@@ -21,13 +22,13 @@ import axios from 'axios';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImageViewing from 'react-native-image-viewing';
-
-
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import { SW } from '../../utils/Dimensions';
 const Committee = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [locality, setLocality] = useState('');
   const [activeButton, setActiveButton] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(true);
   const [subcaste, setSubcaste] = useState("");
   const [filteredOptions, setFilteredOptions] = useState([]);
   const sliderRef = useRef(null);
@@ -40,6 +41,15 @@ const Committee = ({ navigation }) => {
 
   const [isImageVisible, setImageVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+
+     const scrollY = useRef(new Animated.Value(0)).current;
+     
+       const headerHeight = scrollY.interpolate({
+         inputRange: [0, 200],
+         outputRange: [SH(200), 0],
+         extrapolate: "clamp",
+       });
+       
 
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
@@ -138,72 +148,81 @@ const Committee = ({ navigation }) => {
     }
   };
 
-  const SliderRenderItem = ({ item }) => {
-    return (
-      <View>
-        <Image source={item.image} style={styles.sliderImage} />
+  const renderSkeleton = () => (
+    <SkeletonPlaceholder>
+      <View style={{ margin: SH(20) }}>
+        {[1, 2, 3, 4].map((_, index) => (
+          <View key={index} style={{ flexDirection: "row", marginBottom: 20 }}>
+            <View style={{ width: SW(80), height: SH(80), borderRadius: 40, marginRight: SW(10) }} />
+            <View>
+              <View style={{ width: SW(150), height: SH(20), borderRadius: 4 }} />
+              <View style={{ width: SW(100), height: SH(15), borderRadius: 4, marginTop: SH(6) }} />
+              <View style={{ width: SW(80), height: SH(15), borderRadius: 4, marginTop: SH(6) }} />
+            </View>
+          </View>
+        ))}
       </View>
-    );
+    </SkeletonPlaceholder>
+  );
+
+
+  const savedProfiles = async (_id) => {
+    console.log("_id",_id);
+    if (!_id) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "User ID not found!",
+      });
+      return;
+    }
+
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        throw new Error("No token found");
+      }
+
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+
+      const response = await axios.post(
+        `${SAVED_PROFILES}/${_id}`, 
+        {}, 
+        { headers }
+      );
+
+      console.log("Response Data:", JSON.stringify(response?.data));
+
+      if (response?.data?.message) {
+        Toast.show({
+          type: "success",
+          text2: response.data.message,
+          position: "top",
+          visibilityTime: 3000,
+          textStyle: { fontSize: 14, color: "green" },
+        });
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: response.data.message || "Something went wrong!",
+        });
+      }
+    } catch (error) {
+      console.error(
+        "API Error:",
+        error?.response ? JSON.stringify(error.response.data) : error.message
+      );
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error.response?.data?.message || "Failed to save profile!",
+      });
+    }
   };
-
-
-  // const savedProfiles = async (_id) => {
-  //   console.log("_id",_id);
-  //   if (!_id) {
-  //     Toast.show({
-  //       type: "error",
-  //       text1: "Error",
-  //       text2: "User ID not found!",
-  //     });
-  //     return;
-  //   }
-
-  //   try {
-  //     const token = await AsyncStorage.getItem("userToken");
-  //     if (!token) {
-  //       throw new Error("No token found");
-  //     }
-
-  //     const headers = {
-  //       "Content-Type": "application/json",
-  //       Authorization: `Bearer ${token}`,
-  //     };
-
-  //     const response = await axios.post(
-  //       `${SAVED_PROFILES}/${_id}`, 
-  //       {}, 
-  //       { headers }
-  //     );
-
-  //     console.log("Response Data:", JSON.stringify(response?.data));
-
-  //     if (response?.data?.message) {
-  //       Toast.show({
-  //         type: "success",
-  //         text2: response.data.message,
-  //         position: "top",
-  //         visibilityTime: 3000,
-  //         textStyle: { fontSize: 14, color: "green" },
-  //       });
-  //     } else {
-  //       Toast.show({
-  //         type: "error",
-  //         text1: "Error",
-  //         text2: response.data.message || "Something went wrong!",
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.error(
-  //       "API Error:",
-  //       error?.response ? JSON.stringify(error.response.data) : error.message
-  //     );
-  //     Toast.show({
-  //       type: "error",
-  //       text1: "Error",
-  //       text2: error.response?.data?.message || "Failed to save profile!",
-  //     });
-  //   }
-  // };
 
   const renderItem = ({ item }) => (
     <View style={styles.card}>
@@ -235,8 +254,7 @@ const Committee = ({ navigation }) => {
         </View>
       </Pressable>
       <View style={styles.sharecontainer}>
-        {/* onPress={() => savedProfiles(item._id)} */}
-        <TouchableOpacity style={styles.iconContainer}>
+        <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
           <FontAwesome name="bookmark-o" size={18} color={Colors.dark} />
           <Text style={styles.iconText}>Save</Text>
         </TouchableOpacity>
@@ -265,26 +283,27 @@ const Committee = ({ navigation }) => {
     setCommitteeData([]);
     fetchComitteeData("modal");
   };
-  const handleUploadButton = () => {
-    if (MyActivistProfile && MyActivistProfile._id) {
-      Toast.show(
-        {
-          type: "success",
-          text1: "You have an activist account",
-          text2: "You can upload your committee details"
+
+    const handleUploadButton = () => {
+        if (MyActivistProfile && MyActivistProfile._id) {
+          Toast.show(
+            {
+              type: "success",
+              text1: "You have an activist account",
+              text2: "You can upload your dharamsala details"
+            }
+          )
+          setActiveButton(2);
+          navigation.navigate('CommitteeSubmissionPage');
+        } else {
+          Toast.show(
+            {
+              type: "error",
+              text1: "Please create an activist profile first!"
+            }
+          )
         }
-      )
-      setActiveButton(2);
-      navigation.navigate('CommitteeSubmissionPage');
-    } else {
-      Toast.show(
-        {
-          type: "error",
-          text1: "Please create an activist profile first!"
-        }
-      )
-    }
-  };
+      };
 
   return (
     <SafeAreaView style={Globalstyles.container} showsVerticalScrollIndicator={false}>
@@ -318,86 +337,79 @@ const Committee = ({ navigation }) => {
       </View>
 
       {/* Scrollable Content */}
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View>
-          <View style={styles.searchbar}>
-            <TextInput
-              placeholder='Search in Your City'
-              placeholderTextColor="gray"
-              value={locality}
-              onChangeText={(text) => {
-                setLocality(text);
-                fetchComitteeData("search");
-              }}
-              style={{ fontSize: SF(13) }}
+     <View style={{ flex: 1 }}>
+           <Animated.View style={[styles.animatedAdvertise, { height: headerHeight }]}>
+             <AppIntroSlider
+               data={slider}
+               renderItem={({ item }) => (
+                 <View>
+                   <Image source={item.image} style={Globalstyles.sliderImage} />
+                 </View>
+               )}
+               showNextButton={false}
+               showDoneButton={false}
+               dotStyle={Globalstyles.dot}
+               activeDotStyle={Globalstyles.activeDot}
+             />
+           </Animated.View>
+           <View style={styles.fixedHeader}>
+               <View style={styles.searchbar}>
+                 <TextInput
+                   placeholder="Search in Your city"
+                   value={locality}
+                   onChangeText={(text) => setLocality(text)}
+                   onSubmitEditing={() => fetchComitteeData("search")}
+                   placeholderTextColor={"gray"}
+                   style={{ flex: 1 }}
+                 />
+                 {locality.length > 0 ? (
+                   <AntDesign name={'close'} size={20} color={'gray'} onPress={() => setLocality('')} />
+                 ) : (
+                   <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchComitteeData("search")} />
+                 )}
+               </View>
+               <View style={styles.ButtonContainer}>
+             <TouchableOpacity
+               style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton]}
+               onPress={handleOpenFilter}
+             >
+               <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Filter</Text>
+             </TouchableOpacity>
+   
+             <TouchableOpacity
+               style={[styles.button, activeButton === 2 ? styles.activeButton : styles.inactiveButton]}
+               onPress={handleUploadButton}
+             >
+               <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>Upload</Text>
+             </TouchableOpacity>
+           </View>
+   
+           </View>
+           <Animated.ScrollView
+             showsVerticalScrollIndicator={false}
+             onScroll={Animated.event(
+               [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+               { useNativeDriver: false }
+             )}
+             scrollEventThrottle={16}
+           >
+             {isLoading ? renderSkeleton() : (
+              <FlatList
+              data={committeeData}
+              renderItem={renderItem}
+              keyExtractor={(item) => item._id}
+              scrollEnabled={false}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.panditListData}
+              ListEmptyComponent={
+                <View style={styles.emptyContainer}>
+                  <Text style={styles.emptyText}>No committeeData Available</Text>
+                </View>
+              }
             />
-            <AntDesign name={'search1'} size={20} color={'gray'} />
-          </View>
-          {/* Image Slider */}
-          <View style={styles.sliderContainer}>
-            <AppIntroSlider
-              ref={sliderRef}
-              data={slider}
-              renderItem={SliderRenderItem}
-              showNextButton={false}
-              showDoneButton={false}
-              dotStyle={styles.dot}
-              activeDotStyle={styles.activeDot}
-              onSlideChange={(index) => setCurrentIndex(index)}
-            />
-          </View>
-        </View>
-
-        <View style={styles.ButtonContainer}>
-          <TouchableOpacity
-            style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton]}
-            onPress={handleOpenFilter}
-          >
-            <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Filter</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.button, MyActivistProfile?._id ? styles.activeButton : styles.inactiveButton]}
-            onPress={handleUploadButton}
-            disabled={!MyActivistProfile?._id}
-          >
-            <Text style={MyActivistProfile?._id ? styles.activeText : styles.inactiveText}>
-              Upload
-            </Text>
-          </TouchableOpacity>
-
-        </View>
-        {loading ? (
-          <ActivityIndicator size="large" color={Colors.theme_color} style={{ marginTop: 20 }} />
-        ) : error ? (
-          <Text style={{
-            textAlign: 'center', fontSize: SF(15),
-            color: Colors.gray,
-            fontFamily: 'Poppins-Regular', marginTop: SH(20)
-          }}>
-            {error} {/* This will show error messages */}
-          </Text>
-        ) : committeeData.length === 0 ? (
-          <Text style={{
-            textAlign: 'center', fontSize: SF(15),
-            color: Colors.gray, marginTop: SH(20),
-            fontFamily: 'Poppins-Regular',
-          }}>
-            No Committee data found.
-          </Text>
-        ) : (
-          <FlatList
-            data={committeeData}
-            renderItem={renderItem}
-            keyExtractor={(item) => item._id.toString()}
-            scrollEnabled={false}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.DharamSalaList}
-          />
-        )}
-
-
-      </ScrollView>
+             )}
+           </Animated.ScrollView>
+         </View>
       <Modal
         visible={modalVisible}
         transparent={true}
@@ -479,6 +491,7 @@ const Committee = ({ navigation }) => {
           </View>
         </View>
       </Modal>
+      <Toast/>
     </SafeAreaView>
   );
 };

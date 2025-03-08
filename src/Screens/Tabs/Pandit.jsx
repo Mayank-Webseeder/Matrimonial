@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, Animated, SafeAreaView, StatusBar, Linking, Pressable } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, Animated, SafeAreaView, StatusBar, Linking, Pressable } from 'react-native';
 import { slider } from '../../DummyData/DummyData';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';

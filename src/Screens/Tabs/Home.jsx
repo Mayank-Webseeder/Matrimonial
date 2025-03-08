@@ -17,6 +17,7 @@ import { setAllBiodata } from '../../ReduxStore/Slices/GetAllBiodataSlice';
 import { setBioData } from '../../ReduxStore/Slices/BiodataSlice';
 import { useFocusEffect } from '@react-navigation/native';
 import { setActivistdata } from '../../ReduxStore/Slices/ActivistSlice';
+import { useSelector } from 'react-redux';
 
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -27,7 +28,8 @@ const Home = ({ navigation }) => {
   const [mybiodata, setMybiodata] = useState("");
   const partnerPreferences = mybiodata?.partnerPreferences;
   const [isLoading, setIsLoading] = useState(false);
-
+  const blurPhotos = useSelector((state) => state.privacy.blurPhotos);
+ 
   const handleNavigateToProfile = (item) => {
     if (!navigation.isFocused()) return;
 
@@ -142,7 +144,6 @@ const Home = ({ navigation }) => {
       GetAll_Biodata();
       getBiodata();
       getActivistProfile();
-      console.log("mybiodata", mybiodata);
     }, [])
   );
 
@@ -224,8 +225,8 @@ const Home = ({ navigation }) => {
                         : require("../../Images/NoImage.png")
                     }
                     style={styles.ProfileImages}
+                    blurRadius={blurPhotos ? 10 : 0}
                   />
-
 
                   {item.verified && (
                     <View style={styles.verifiedContainer}>
@@ -247,7 +248,6 @@ const Home = ({ navigation }) => {
               </View>
             }
           />
-
 
         </View>
 

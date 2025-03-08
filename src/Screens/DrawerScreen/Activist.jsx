@@ -201,9 +201,9 @@ const Activist = ({ navigation }) => {
         {loading ? (
           <ActivityIndicator size="large" color={Colors.theme_color} style={{ marginTop:SH(20) }} />
         ) : error ? (
-          <Text style={{ textAlign: 'center', marginTop: 20, color: 'red' }}>{error}</Text>
+          <Text style={{ textAlign: 'center', marginTop:SH(20), color: 'red' }}>{error}</Text>
         ) : activistData.length === 0 ? (
-          <Text style={{ textAlign: 'center', marginTop: 20, color: 'gray' }}>No activist profiles yet</Text>
+          <Text style={{ textAlign: 'center', marginTop:SH(20), color: 'gray' }}>No activist profiles yet</Text>
         ) : (
           <FlatList
             data={activistData}

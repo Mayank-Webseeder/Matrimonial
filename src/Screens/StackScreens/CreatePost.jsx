@@ -29,6 +29,7 @@ const CreatePost = ({ navigation, route }) => {
             width: 400,
             height: 400,
             includeBase64: true, // Get base64 directly
+            compressImageQuality :1
         }).then(images => {
             const newPhotos = images.map(image => image.data); // Only store base64
             addPhotos(newPhotos);

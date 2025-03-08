@@ -16,6 +16,8 @@ import ImageCropPicker from 'react-native-image-crop-picker';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Colors from '../../utils/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { SW } from '../../utils/Dimensions';
+
 import {
   OccupationData, QualificationData, maritalStatusData, ManglikStatusData, LivingData, ProfileCreatedData, CityData, Income,
   FamilyType, CookingStatus, DietHabit, smokingStatusData, DrinkingHabit, StateData, TobacooHabit, subCasteOptions,
@@ -124,6 +126,7 @@ const DetailedProfile = ({ navigation }) => {
       cropping: true,
       mediaType: "any",
       includeBase64: true,
+      compressImageQuality :1
     })
       .then(image => {
         if (!image || !image.data) {
@@ -935,7 +938,12 @@ const DetailedProfile = ({ navigation }) => {
             />
           </View>
           <View>
-            <Text style={Globalstyles.title}>Contact No. 1 <MaterialIcons name={'call'} color={'#000'} size={15} />  <Entypo name={'star'} color={'red'} size={12} /> </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+  <Text style={Globalstyles.title}>Contact No. 1 </Text>
+  <MaterialIcons name="call" color="#000" size={15} style={{paddingVertical:SW(5)}} />
+  <Entypo name="star" color="red" size={12} />
+</View>
+
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata.contactNumber1}

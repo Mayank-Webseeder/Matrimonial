@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   },
   verifiedContainer: {
     position: "absolute",
-    top: SH(290),
+    top: SH(243),
     left: SW(280),
     flexDirection: "row",
     alignItems: "center",

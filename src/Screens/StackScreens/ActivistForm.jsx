@@ -56,7 +56,8 @@ export default function ActivistForm({ navigation }) {
       height: 250,
       cropping: true,
       includeBase64: true,
-      mediaType: "photo"
+      mediaType: "photo",
+      compressImageQuality :1
     })
       .then(image => {
         setActivistData(prev => ({

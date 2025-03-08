@@ -21,7 +21,7 @@ const UPDATE_PARTNER_PERFRENCES = "https://api-matrimonial.webseeder.tech/api/v1
 const GET_BIODATA = "https://api-matrimonial.webseeder.tech/api/v1/biodata/getBiodata";
 const GET_ALL_BIODATA_PROFILES = "https://api-matrimonial.webseeder.tech/api/v1/user/feed";
 const REPOST = "https://api-matrimonial.webseeder.tech/api/v1/biodata/repostBiodata"
-
+const DELETE_BIODATA="https://api-matrimonial.webseeder.tech/api/v1/biodata/deleteBioData"
 // send & received profiles api's 
 // matched profile
 const MATCHED_PROFILE = "https://api-matrimonial.webseeder.tech/api/v1/user/profile";
@@ -105,6 +105,11 @@ const DELETE_EVENT="https://api-matrimonial.webseeder.tech/api/v1/event/delete-e
 
 const ADVERTISE_WITH_US="https://api-matrimonial.webseeder.tech/api/v1/user/advertise-WithUs";
 
+// privacy settings api
+const HIDE_CONTACT="https://api-matrimonial.webseeder.tech/api/v1/settings/hide-contact";
+const HIDE_OPTIONAL_DETAILS="https://api-matrimonial.webseeder.tech/api/v1/settings/hide-optionalDetails";
+const INACTIVE_ID="https://api-matrimonial.webseeder.tech/api/v1/settings/set-activityStatus";
+
 export {
     SIGNUP_ENDPOINT,
     LOGIN_ENDPOINT,
@@ -173,5 +178,9 @@ export {
     LIKEPOST,
     COMMENTPOST,
     ADVERTISE_WITH_US,
-    DELETE_EVENT
+    DELETE_EVENT,
+    DELETE_BIODATA,
+    HIDE_CONTACT,
+    HIDE_OPTIONAL_DETAILS,
+    INACTIVE_ID
 }

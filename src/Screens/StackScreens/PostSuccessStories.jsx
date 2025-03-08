@@ -30,6 +30,7 @@ const PostSuccessStories = ({ navigation }) => {
             width: 300,
             height: 250,
             cropping: true,
+            compressImageQuality :1
         })
             .then(image => {
                 setSelectedImage(image.path);

@@ -1,31 +1,86 @@
 import React, { useState } from 'react';
-import { Text, View, TouchableOpacity, Modal, SafeAreaView, StatusBar } from 'react-native';
+import { Text, View, TouchableOpacity, Modal, SafeAreaView, StatusBar, ToastAndroid } from 'react-native';
 import Colors from '../../utils/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styles from '../StyleScreens/InactiveDeleteStyle';
 import Globalstyles from '../../utils/GlobalCss';
+import { DELETE_BIODATA } from '../../utils/BaseUrl';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const InActiveDelete = ({ navigation }) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [actionType, setActionType] = useState('');
     const [successModalVisible, setSuccessModalVisible] = useState(false);
+    const [IsLoading, setIsLoading] = useState('');
+    const [biodataExists, setBiodataExists] = useState('');
+
+    const DELETE_BIODATA_API = async () => {
+        try {
+            setIsLoading(true);
+            const token = await AsyncStorage.getItem("userToken");
+
+            if (!token) throw new Error("No token found");
+
+            const headers = {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            };
+
+            console.log("Headers:", headers);
+
+            const response = await axios.delete(DELETE_BIODATA, { headers });
+
+            if (response.status === 200 || response.status === 204) {
+                console.log("response", response.data)
+                ToastAndroid.show("Your Biodata has been deleted successfully!", ToastAndroid.SHORT);
+
+                // Show success modal only if API succeeds
+                setSuccessModalVisible(true);
+            } else {
+                throw new Error("Unexpected response from server");
+            }
+        } catch (error) {
+            console.error("Error deleting Biodata:", error?.response?.data || error.message);
+
+            ToastAndroid.show(
+                error?.response?.data?.message || "Failed to delete Biodata. Please try again!",
+                ToastAndroid.LONG
+            );
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+
 
     const handleAction = (type) => {
         setActionType(type);
         setIsModalVisible(true);
     };
 
-    const handleConfirm = () => {
-        if (actionType === 'inactivate') {
-            console.log('Biodata Inactivated');
-        } else if (actionType === 'deleteBiodata') {
-            console.log('Biodata Deleted');
-        } else if (actionType === 'deleteAccount') {
-            console.log('Account Deleted');
+    const handleConfirm = async () => {
+        setIsModalVisible(false); // Close confirmation modal
+
+        if (actionType === 'deleteBiodata') {
+            const response = await DELETE_BIODATA_API(); // Call API
+
+            if (response.status === "failure") {
+                Toast.show({
+                    type: "error",
+                    text1: "Biodata Not Found!",
+                });
+            } else {
+                setBiodataExists(false); // Hide delete button
+                Toast.show({
+                    type: "success",
+                    text1: "Biodata Deleted Successfully!",
+                });
+            }
         }
-        setIsModalVisible(false);
-        setSuccessModalVisible(true);
     };
+
+
 
     const closeSuccessModal = () => {
         setSuccessModalVisible(false);
@@ -51,9 +106,15 @@ const InActiveDelete = ({ navigation }) => {
                     <Text style={styles.optionText}>Inactivate My Biodata</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.optionButton} onPress={() => handleAction('deleteBiodata')}>
-                    <Text style={styles.optionText}>Delete My Biodata</Text>
-                </TouchableOpacity>
+                {biodataExists && ( // Only show button if biodata exists
+                    <TouchableOpacity
+                        style={styles.optionButton}
+                        onPress={() => handleAction('deleteBiodata')}
+                    >
+                        <Text style={styles.optionText}>Delete My Biodata</Text>
+                    </TouchableOpacity>
+                )}
+
 
                 <TouchableOpacity style={styles.optionButton} onPress={() => handleAction('deleteAccount')}>
                     <Text style={styles.optionText}>Delete My Account</Text>

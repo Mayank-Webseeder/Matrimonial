@@ -1,4 +1,4 @@
-import {View, Text, TouchableOpacity, FlatList, ScrollView, Image, SafeAreaView, StatusBar, ActivityIndicator } from "react-native";
+import { View, Text, TouchableOpacity, FlatList, ScrollView, Image, SafeAreaView, StatusBar, ActivityIndicator } from "react-native";
 import React, { useState, useRef, useCallback } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -61,17 +61,19 @@ const SavedProfile = ({ navigation }) => {
     return (
       <TouchableOpacity
         style={styles.card}
-        onPress={() => navigation.navigate("MatrimonyPeopleProfile", { userDetails: saveProfile, userId: saveProfile.userId })}
+      // onPress={() => navigation.navigate("MatrimonyPeopleProfile", { userDetails: saveProfile, userId: saveProfile.userId })}
       >
         <View style={styles.detailsContainer}>
           {profileType === "Biodata" && (
             <>
               <Image source={{ uri: saveProfile.personalDetails?.closeUpPhoto || "https://via.placeholder.com/150" }} style={styles.image} />
-              <Text style={styles.name}>{saveProfile.personalDetails?.fullname || "N/A"}</Text>
+             <View style={styles.detailscontent}>
+             <Text style={styles.name}>{saveProfile.personalDetails?.fullname || "N/A"}</Text>
               <Text style={styles.text}>City: {saveProfile.personalDetails?.cityOrVillage || "N/A"}</Text>
               <Text style={styles.text}>Age: {saveProfile.personalDetails?.dob ? new Date().getFullYear() - new Date(saveProfile.personalDetails.dob).getFullYear() : "N/A"} Years</Text>
               <Text style={styles.text}>Marital Status: {saveProfile.personalDetails?.maritalStatus || "N/A"}</Text>
               <Text style={styles.text}>Sub Caste: {saveProfile.personalDetails?.subCaste || "N/A"}</Text>
+             </View>
             </>
           )}
 
@@ -81,11 +83,41 @@ const SavedProfile = ({ navigation }) => {
                 source={saveProfile.profilePhoto ? { uri: saveProfile.profilePhoto } : require('../../Images/NoImage.png')}
                 style={styles.image}
               />
+              <View style={styles.detailscontent}>
               <Text style={styles.name}>{saveProfile.fullName || "N/A"}</Text>
               <Text style={styles.text}>City: {saveProfile.city || "N/A"}</Text>
               <Text style={styles.text}>Experience: {saveProfile.experience || "N/A"} years</Text>
               <Text style={styles.text}>Sub Caste: {saveProfile.subCaste || "N/A"}</Text>
               <Text style={styles.text}>Area: {saveProfile.area || "N/A"}</Text>
+              </View>
+            </>
+          )}
+
+          {profileType === "Dharmshala" && (
+            <>
+              <Image
+                source={{ uri: saveProfile?.images?.[0] || "https://via.placeholder.com/150" }}
+                style={styles.image}
+              />
+             <View style={styles.detailscontent}>
+             <Text style={styles.name}>{saveProfile?.dharmshalaName || "N/A"}</Text>
+              <Text style={styles.text}>City: {saveProfile?.city || "N/A"}</Text>
+              <Text style={styles.text}>Sub Caste: {saveProfile?.subCaste || "N/A"}</Text>
+             </View>
+            </>
+          )}
+
+          {profileType === "Committee" && (
+            <>
+              <Image
+                source={{ uri: saveProfile?.photoUrl || "https://via.placeholder.com/150" }}
+                style={styles.image}
+              />
+              <View style={styles.detailscontent}>
+              <Text style={styles.name}>{saveProfile?.committeeTitle || "N/A"}</Text>
+              <Text style={styles.text}>City: {saveProfile?.city || "N/A"}</Text>
+              <Text style={styles.text}>Sub Caste: {saveProfile?.subCaste || "N/A"}</Text>
+              </View>
             </>
           )}
         </View>
@@ -106,7 +138,7 @@ const SavedProfile = ({ navigation }) => {
             <Text style={Globalstyles.headerText}>Saved</Text>
           </View>
           <View style={styles.righticons}>
-            <AntDesign name={"search1"} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} />
+            {/* <AntDesign name={"search1"} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} /> */}
             <AntDesign name={"bells"} size={25} color={Colors.theme_color} onPress={() => navigation.navigate("Notification")} />
           </View>
         </View>

@@ -188,6 +188,10 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
     const averageRating = calculateAverageRating(profileData?.ratings);
 
 
+    const handleShare = async () => {
+        ToastAndroid.show("Under development", ToastAndroid.SHORT);
+    };
+
     return (
         <SafeAreaView style={Globalstyles.container}>
             <StatusBar
@@ -247,10 +251,10 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                             />
                             <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text>
                         </TouchableOpacity>
-                        <View style={styles.iconContainer}>
+                        <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
                             <Feather name="send" size={20} color={Colors.dark} />
                             <Text style={styles.iconText}>Shares</Text>
-                        </View>
+                        </TouchableOpacity>
                         <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${profileData?.mobileNo}`)}>
                             <MaterialIcons name="call" size={20} color={Colors.light} />
                         </TouchableOpacity>

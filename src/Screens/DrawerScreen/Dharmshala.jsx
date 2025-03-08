@@ -1,6 +1,7 @@
 import {
   Text, View, FlatList, TouchableOpacity, TextInput, Modal, SafeAreaView, StatusBar, Linking,
-  Pressable, Animated
+  Pressable, Animated,
+  ToastAndroid
 } from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 import { slider } from '../../DummyData/DummyData';
@@ -248,12 +249,17 @@ const Dharmshala = () => {
     }
   };
 
+   const handleShare = async () => {
+          ToastAndroid.show("Under development", ToastAndroid.SHORT);
+        };
+  
+
   const renderItem = ({ item }) => {
     const isSaved = item.isSaved || null;
     return (
       <View style={styles.card}
       >
-        <Pressable style={styles.cardData} onPress={() => navigation.navigate("DharamsalaDetail", { DharamsalaData: item })} >
+        <Pressable style={styles.cardData} onPress={() => navigation.navigate("DharamsalaDetail", { DharamsalaData: item ,_id:item._id })} >
           <TouchableOpacity onPress={() => openImageViewer(item.images?.[0])}>
             <Image
               source={item.images?.[0] ? { uri: item.images?.[0] } : require('../../Images/NoImage.png')}
@@ -287,10 +293,10 @@ const Dharmshala = () => {
             />
           </TouchableOpacity>
 
-          <View style={styles.iconContainer}>
+          <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
             <Feather name="send" size={18} color={Colors.dark} />
             <Text style={styles.iconText}>Shares</Text>
-          </View>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
             <MaterialIcons name="call" size={17} color={Colors.light} />
           </TouchableOpacity>

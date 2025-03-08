@@ -342,6 +342,9 @@ const EventNews = ({ navigation }) => {
     fetchPostData();
   }, []);
 
+  const handleShare = async () => {
+    ToastAndroid.show("Under development", ToastAndroid.SHORT);
+  };
 
   const openBottomSheet = (postId, comments) => {
     console.log("commentData", commentData);
@@ -464,10 +467,10 @@ const EventNews = ({ navigation }) => {
             <Text style={styles.shareText}>{item.comments.length} Comments</Text>
           </TouchableOpacity>
 
-          <View style={styles.likeShare}>
+          <TouchableOpacity style={styles.likeShare} onPress={handleShare}>
             <Feather name="send" size={20} color={Colors.dark} />
             <Text style={styles.shareText}>250 Shares</Text>
-          </View>
+          </TouchableOpacity>
         </View>
         <RBSheet
           ref={sheetRef}

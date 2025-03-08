@@ -80,7 +80,7 @@ const Drawer = createDrawerNavigator();
 
 function MyTabs() {
   const dispatch = useDispatch();
-  const [profiledata, setProfile] = useState('');
+  const [profiledata, setProfileData] = useState('');
   const image = profiledata?.photoUrl?.[0];
   const MyprofileData = useSelector((state) => state.getBiodata);
   const partnerPreferences = MyprofileData?.Biodata?.partnerPreferences || null;

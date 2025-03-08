@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, Animated, SafeAreaView, StatusBar, Linking, Pressable } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, Animated, SafeAreaView, StatusBar, Linking, Pressable, ToastAndroid } from 'react-native';
 import { slider } from '../../DummyData/DummyData';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -199,6 +199,10 @@ const Pandit = ({ navigation }) => {
     </SkeletonPlaceholder>
   );
 
+  const handleShare = async () => {
+          ToastAndroid.show("Under development", ToastAndroid.SHORT);
+      };
+
   const renderItem = ({ item }) => {
     const isSaved = item.isSaved || null;
     const rating = item.averageRating || 0;
@@ -246,10 +250,10 @@ const Pandit = ({ navigation }) => {
                 />
                 {/* <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text> */}
               </TouchableOpacity>
-              <View style={styles.iconContainer}>
+              <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
                 <Feather name="send" size={18} color={Colors.dark} />
                 {/* <Text style={styles.iconText}>Shares</Text> */}
-              </View>
+              </TouchableOpacity>
 
               <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
                 <MaterialIcons name="call" size={17} color={Colors.light} />

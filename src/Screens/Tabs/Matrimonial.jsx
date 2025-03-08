@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar, FlatList, Pressable, TextInput,Linking } from 'react-native';
+import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar, FlatList, Pressable, TextInput, Linking, ToastAndroid } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from '../StyleScreens/ExploreStyle';
 import Colors from '../../utils/Colors';
 import Globalstyles from '../../utils/GlobalCss';
-import { FEMALE_FILTER_API, MALE_FILTER_API, SET_PREFRENCE_FILTER_API,SAVED_PROFILES } from '../../utils/BaseUrl';
+import { FEMALE_FILTER_API, MALE_FILTER_API, SET_PREFRENCE_FILTER_API, SAVED_PROFILES } from '../../utils/BaseUrl';
 import { slider } from '../../DummyData/DummyData';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import { useFocusEffect } from '@react-navigation/native';
@@ -141,7 +141,11 @@ const Matrimonial = ({ navigation }) => {
     }
   };
 
-  
+  const handleShare = async () => {
+    ToastAndroid.show("Under development", ToastAndroid.SHORT);
+  };
+
+
   const savedProfiles = async (_id) => {
     if (!_id) {
       Toast.show({
@@ -248,7 +252,7 @@ const Matrimonial = ({ navigation }) => {
             </View>
           </View>
           <View style={styles.sharecontainer}>
-            <TouchableOpacity style={styles.iconContainer} onPress={() =>savedProfiles(item._id)}>
+            <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
               <FontAwesome
                 name={"bookmark-o"}
                 size={19}
@@ -257,7 +261,7 @@ const Matrimonial = ({ navigation }) => {
               <Text style={styles.iconText}>Save</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.iconContainer}>
+            <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
               <Feather name="send" size={19} color={Colors.dark} />
               <Text style={styles.iconText}>Share</Text>
             </TouchableOpacity>
@@ -271,6 +275,7 @@ const Matrimonial = ({ navigation }) => {
       </Pressable>
     );
   };
+
   const dataToDisplay = searchMode ? profiles : (activeButton === 1 ? girlsProfiles : activeButton === 2 ? boysProfiles : preferenceProfiles);
   useEffect(() => {
     console.log("dataToDisplay", dataToDisplay);
@@ -358,7 +363,7 @@ const Matrimonial = ({ navigation }) => {
             </View>
           } />
       </ScrollView>
-      <Toast/>
+      <Toast />
     </SafeAreaView>
   );
 };

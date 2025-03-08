@@ -1,6 +1,7 @@
 
 import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, 
-  StatusBar, Linking, Pressable, ActivityIndicator,Animated } from 'react-native';
+  StatusBar, Linking, Pressable, ActivityIndicator,Animated, 
+  ToastAndroid} from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 import { slider } from '../../DummyData/DummyData';
 import { Image } from 'react-native';
@@ -258,10 +259,10 @@ const Committee = ({ navigation }) => {
           <FontAwesome name="bookmark-o" size={18} color={Colors.dark} />
           <Text style={styles.iconText}>Save</Text>
         </TouchableOpacity>
-        <View style={styles.iconContainer}>
+        <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
           <Feather name="send" size={18} color={Colors.dark} />
           <Text style={styles.iconText}>Shares</Text>
-        </View>
+        </TouchableOpacity>
         <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
           <MaterialIcons name="call" size={17} color={Colors.light} />
           <Text style={styles.RequestText}>Request for call</Text>
@@ -305,6 +306,9 @@ const Committee = ({ navigation }) => {
         }
       };
 
+       const handleShare = async () => {
+                ToastAndroid.show("Under development", ToastAndroid.SHORT);
+              };
   return (
     <SafeAreaView style={Globalstyles.container} showsVerticalScrollIndicator={false}>
       <StatusBar

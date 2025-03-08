@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
     },
     emptyText: {
       fontSize: SF(15),
-      color: Colors.gray,
+      color:"gray",
       fontFamily: 'Poppins-Regular',
     },
     fixedHeader: {

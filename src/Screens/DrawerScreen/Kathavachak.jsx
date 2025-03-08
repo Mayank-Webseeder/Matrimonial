@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable,Animated } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable,Animated, ToastAndroid } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -197,6 +197,9 @@ const Kathavachak = ({ navigation }) => {
     </SkeletonPlaceholder>
   );
 
+  const handleShare = async () => {
+    ToastAndroid.show("Under development", ToastAndroid.SHORT);
+};
   const renderItem = ({ item }) => {
     const rating = item.averageRating || 0;
     const isSaved=item.isSaved || null;
@@ -240,10 +243,10 @@ const Kathavachak = ({ navigation }) => {
             />
             {/* <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text> */}
           </TouchableOpacity>
-          <View style={styles.iconContainer}>
+          <TouchableOpacity style={styles.iconContainer}  onPress={handleShare}>
             <Feather name="send" size={18} color={Colors.dark} />
             {/* <Text style={styles.iconText}>Shares</Text> */}
-          </View>
+          </TouchableOpacity>
 
           <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
             <MaterialIcons name="call" size={17} color={Colors.light} />

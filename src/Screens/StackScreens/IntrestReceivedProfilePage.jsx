@@ -196,6 +196,10 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
     }
   };
 
+   const handleShare = async () => {
+                  ToastAndroid.show("Under development", ToastAndroid.SHORT);
+                };
+
 
   // Map API comparisonResults to UI labels
   const comparisonResults = profileData?.comparisonResults || {};
@@ -262,10 +266,10 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
               <FontAwesome name="bookmark-o" size={19} color={Colors.dark} />
               <Text style={styles.iconText}>Save</Text>
             </TouchableOpacity>
-            <View style={styles.iconContainer}>
+            <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
               <Feather name="send" size={19} color={Colors.dark} />
               <Text style={styles.iconText}>Shares</Text>
-            </View>
+            </TouchableOpacity>
             {/* <TouchableOpacity style={styles.interestedButton}>
               <Text style={styles.buttonText}>Confirm</Text>
             </TouchableOpacity> */}

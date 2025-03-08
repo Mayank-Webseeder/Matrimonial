@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar, FlatList, Pressable, TextInput, Linking } from 'react-native';
+import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar, FlatList, Pressable, TextInput, Linking, ToastAndroid } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -11,11 +11,14 @@ import Colors from '../../utils/Colors';
 import Globalstyles from '../../utils/GlobalCss';
 import Toast from 'react-native-toast-message';
 import { SAVED_PROFILES } from '../../utils/BaseUrl';
+
 const ShortMatrimonialProfile = ({ navigation, route }) => {
     const { userDetails } = route.params;
+    
     useEffect(() => {
         console.log("userDetails", userDetails);
     }, [])
+
     const savedProfiles = async (_id) => {
         if (!_id) {
             Toast.show({
@@ -72,6 +75,10 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
             });
         }
     };
+      
+    const handleShare = async () => {
+        ToastAndroid.show("Under development", ToastAndroid.SHORT);
+    };
 
     const renderProfileCard = ({ item }) => {
         return (
@@ -125,7 +132,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                             <Text style={styles.iconText}>Save</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.iconContainer}>
+                        <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
                             <Feather name="send" size={19} color={Colors.dark} />
                             <Text style={styles.iconText}>Share</Text>
                         </TouchableOpacity>
@@ -165,7 +172,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                 />
 
             </ScrollView>
-            <Toast />
+            <Toast/>
         </SafeAreaView>
     );
 };

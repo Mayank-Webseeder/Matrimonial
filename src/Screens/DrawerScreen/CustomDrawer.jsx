@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Modal } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Modal, ToastAndroid } from 'react-native';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -28,7 +28,7 @@ const CustomDrawer = (props) => {
     { title: 'Dharmshala', screen: 'Dharmshala' },
     { title: 'Committees', screen: 'Committee' },
     { title: 'Activist', screen: 'Activist' },
-    { title: 'Advertise with Us',screen:'AdvertiseWithUs'},
+    { title: 'Advertise with Us', screen: 'AdvertiseWithUs' },
     { title: 'Success Stories', screen: 'SuccessStories' },
     { title: 'Account & Settings' },
     { title: 'About Us' },
@@ -73,6 +73,11 @@ const CustomDrawer = (props) => {
     } else {
       console.log('Screen not available');
     }
+  };
+
+
+  const handleShare = async () => {
+    ToastAndroid.show("Under development", ToastAndroid.SHORT);
   };
 
   return (
@@ -164,6 +169,28 @@ const CustomDrawer = (props) => {
                     </TouchableOpacity>
                   ))}
               </View>
+            );
+          }
+          else if (item.title === 'About Us') {
+            return (
+              <TouchableOpacity
+                key={index}
+                style={styles.drawerButton}
+                onPress={handleShare}
+              >
+                <Text style={styles.buttonText}>{item.title}</Text>
+              </TouchableOpacity>
+            );
+          }
+          else if (item.title === 'Share App') {
+            return (
+              <TouchableOpacity
+                key={index}
+                style={styles.drawerButton}
+                onPress={handleShare}
+              >
+                <Text style={styles.buttonText}>{item.title}</Text>
+              </TouchableOpacity>
             );
           }
           return (

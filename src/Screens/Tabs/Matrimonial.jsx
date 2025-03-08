@@ -203,6 +203,14 @@ const Matrimonial = ({ navigation }) => {
     }
   };
 
+  const handleSearch = () => {
+    if (searchQuery.trim().length > 0) {
+      console.log("Searching for:", searchQuery);
+      // 🔍 Yaha API call ya search filter apply kar sakte ho
+    }
+  };
+  
+
   const renderProfileCard = ({ item }) => {
     const isPressable = partnerPreferences !== null && partnerPreferences !== undefined; // Only check global partnerPreferences
 
@@ -308,8 +316,13 @@ const Matrimonial = ({ navigation }) => {
             onChangeText={setSearchQuery}
             autoFocus
             placeholderTextColor={Colors.gray}
+            onSubmitEditing={handleSearch}
           />
-          <AntDesign name={'search1'} size={20} color={Colors.gray} />
+          {searchQuery.length > 0 ? (
+            <AntDesign name={'close'} size={20} color={'gray'} onPress={() => setSearchQuery('')} />
+          ) : (
+            <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => setSearchMode(!searchMode)}/>
+          )}
         </View>
       )}
 

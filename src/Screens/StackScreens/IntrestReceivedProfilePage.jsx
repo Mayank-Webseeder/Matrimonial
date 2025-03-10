@@ -196,9 +196,9 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
     }
   };
 
-   const handleShare = async () => {
-                  ToastAndroid.show("Under development", ToastAndroid.SHORT);
-                };
+  const handleShare = async () => {
+    ToastAndroid.show("Under development", ToastAndroid.SHORT);
+  };
 
 
   // Map API comparisonResults to UI labels
@@ -392,26 +392,29 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           <Text style={styles.HeadingText}>Expectation with partner</Text>
           {biodata?.partnerPreferences?.partnerExpectations && <Text style={styles.text}>{biodata?.partnerPreferences?.partnerExpectations}</Text>}
         </View>
-        <View style={styles.flexContainer3}>
-          <Text style={styles.HeadingText}>Matches</Text>
-          <View style={styles.flex}>
-            <Image source={{ uri: MyprofileData?.Biodata?.personalDetails?.closeUpPhoto }} style={styles.smallImage} />
-            <Text style={styles.text}>{matchedCount}/{totalCriteria}</Text>
-            <Image source={{ uri: profileData?.data?.photoUrl?.[0] }} style={styles.smallImage} />
-          </View>
-
-          {/* Comparison List */}
-          {Object.keys(profileData?.comparisonResults || {}).map((key, index) => (
-            <View key={index} style={styles.flexContainer5}>
-              <Text style={styles.label}>{key.replace(/([A-Z])/g, " $1").trim()}</Text>
-              {profileData.comparisonResults[key] ? (
-                <MaterialIcons name="check" style={[styles.icon, styles.checkIcon]} />
-              ) : (
-                <MaterialIcons name="close" style={[styles.icon, styles.crossIcon]} />
-              )}
+        {matchedCount > 0 && totalCriteria > 0 && profileData?.data ? (
+          <View style={styles.flexContainer3}>
+            <Text style={styles.HeadingText}>Matches</Text>
+            <View style={styles.flex}>
+              <Image source={{ uri: MyprofileData?.Biodata?.personalDetails?.closeUpPhoto }} style={styles.smallImage} />
+              <Text style={styles.text}>{matchedCount}/{totalCriteria}</Text>
+              <Image source={{ uri: profileData?.data?.photoUrl?.[0] }} style={styles.smallImage} />
             </View>
-          ))}
-        </View>
+
+            {/* Comparison List */}
+            {Object.keys(profileData?.comparisonResults || {}).map((key, index) => (
+              <View key={index} style={styles.flexContainer5}>
+                <Text style={styles.label}>{key.replace(/([A-Z])/g, " $1").trim()}</Text>
+                {profileData.comparisonResults[key] ? (
+                  <MaterialIcons name="check" style={[styles.icon, styles.checkIcon]} />
+                ) : (
+                  <MaterialIcons name="close" style={[styles.icon, styles.crossIcon]} />
+                )}
+              </View>
+            ))}
+          </View>
+        ) : null}
+
         <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
       </ScrollView>
       <View style={styles.bottomContainer}>

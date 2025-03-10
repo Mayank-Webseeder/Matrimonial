@@ -1,8 +1,4 @@
-import {
-  Text, View, FlatList, TouchableOpacity, TextInput, Modal, SafeAreaView, StatusBar, Linking,
-  Pressable, Animated,
-  ToastAndroid
-} from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, ActivityIndicator } from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 import { slider } from '../../DummyData/DummyData';
 import { Image } from 'react-native';
@@ -12,12 +8,13 @@ import styles from '../StyleScreens/DharmshalaStyle';
 import Colors from '../../utils/Colors';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
+import { Dropdown } from 'react-native-element-dropdown';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import { subCasteOptions } from '../../DummyData/DropdownData';
 import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { SH, SF, SW } from '../../utils/Dimensions';
-import { GET_ALL_DHARAMSALA, SAVED_PROFILES } from '../../utils/BaseUrl';
+import { GET_ALL_DHARAMSALA } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
@@ -25,7 +22,6 @@ import { useSelector } from 'react-redux';
 import Toast from 'react-native-toast-message';
 import { useNavigation } from "@react-navigation/native";
 import ImageViewing from 'react-native-image-viewing';
-import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 
 const Dharmshala = () => {
   const navigation = useNavigation();
@@ -39,20 +35,11 @@ const Dharmshala = () => {
   const [listHeight, setListHeight] = useState(0);
   const [daramsalaData, setDharamsalaData] = useState([]);
   const [modalLocality, setModalLocality] = useState('');
-  const [isLoading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
   const [isImageVisible, setImageVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
-
-  const scrollY = useRef(new Animated.Value(0)).current;
-
-  const headerHeight = scrollY.interpolate({
-    inputRange: [0, 200],
-    outputRange: [SH(200), 0],
-    extrapolate: "clamp",
-  });
-
 
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
@@ -62,7 +49,7 @@ const Dharmshala = () => {
   const handleInputChange = (text) => {
     setSubcaste(text);
     if (text.trim() === '') {
-      setFilteredOptions([]); 
+      setFilteredOptions([]); // Clear suggestions if input is empty
     } else {
       const filtered = subCasteOptions.filter((option) =>
         option.label.toLowerCase().includes(text.toLowerCase())
@@ -73,7 +60,7 @@ const Dharmshala = () => {
 
   const handleOptionSelect = (value) => {
     setSubcaste(value.label);
-    setFilteredOptions([]); 
+    setFilteredOptions([]); // Clear suggestions after selection
   };
 
   useEffect(() => {
@@ -90,79 +77,14 @@ const Dharmshala = () => {
     return () => clearInterval(interval);
   }, [currentIndex]);
 
-  const renderSkeleton = () => (
-    <SkeletonPlaceholder>
-      <View style={{ margin: SH(20) }}>
-        {[1, 2, 3, 4].map((_, index) => (
-          <View key={index} style={{ flexDirection: "row", marginBottom: 20 }}>
-            <View style={{ width: SW(80), height: SH(80), borderRadius: 40, marginRight: SW(10) }} />
-            <View>
-              <View style={{ width: SW(150), height: SH(20), borderRadius: 4 }} />
-              <View style={{ width: SW(100), height: SH(15), borderRadius: 4, marginTop: SH(6) }} />
-              <View style={{ width: SW(80), height: SH(15), borderRadius: 4, marginTop: SH(6) }} />
-            </View>
-          </View>
-        ))}
+  const SliderRenderItem = ({ item }) => {
+    return (
+      <View>
+        <Image source={item.image} style={styles.sliderImage} />
       </View>
-    </SkeletonPlaceholder>
-  );
-
-  const savedProfiles = async (_id) => {
-    if (!_id) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "User ID not found!",
-      });
-      return;
-    }
-
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) {
-        throw new Error("No token found");
-      }
-
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      };
-
-      const response = await axios.post(
-        `${SAVED_PROFILES}/${_id}`,
-        {},
-        { headers }
-      );
-
-      console.log("Response Data:", JSON.stringify(response?.data));
-
-      if (response?.data?.message) {
-        Toast.show({
-          type: "success",
-          text2: response.data.message,
-          position: "top",
-          visibilityTime: 3000,
-          textStyle: { fontSize: 14, color: "green" },
-        });
-      } else {
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: response.data.message || "Something went wrong!",
-        });
-      }
-    } catch (error) {
-      console.error(
-        "API Error:",
-        error?.response ? JSON.stringify(error.response.data) : error.message
-      );
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: error.response?.data?.message || "Failed to save profile!",
-      });
-    }
+    );
   };
+
 
   const fetchDharamsalaData = async (filterType = "search") => {
     try {
@@ -249,17 +171,11 @@ const Dharmshala = () => {
     }
   };
 
-   const handleShare = async () => {
-          ToastAndroid.show("Under development", ToastAndroid.SHORT);
-        };
-  
-
   const renderItem = ({ item }) => {
-    const isSaved = item.isSaved || null;
     return (
       <View style={styles.card}
       >
-        <Pressable style={styles.cardData} onPress={() => navigation.navigate("DharamsalaDetail", { DharamsalaData: item ,_id:item._id })} >
+        <Pressable style={styles.cardData} onPress={() => navigation.navigate("DharamsalaDetail", { DharamsalaData: item })} >
           <TouchableOpacity onPress={() => openImageViewer(item.images?.[0])}>
             <Image
               source={item.images?.[0] ? { uri: item.images?.[0] } : require('../../Images/NoImage.png')}
@@ -285,18 +201,15 @@ const Dharmshala = () => {
           </View>
         </Pressable>
         <View style={styles.sharecontainer}>
-          <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
-            <FontAwesome
-              name={isSaved ? "bookmark" : "bookmark-o"}
-              size={19}
-              color={Colors.dark}
-            />
-          </TouchableOpacity>
+          <View style={styles.iconContainer}>
+            <FontAwesome name="bookmark-o" size={18} color={Colors.dark} />
+            <Text style={styles.iconText}>Save</Text>
+          </View>
 
-          <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
+          <View style={styles.iconContainer}>
             <Feather name="send" size={18} color={Colors.dark} />
             <Text style={styles.iconText}>Shares</Text>
-          </TouchableOpacity>
+          </View>
           <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
             <MaterialIcons name="call" size={17} color={Colors.light} />
           </TouchableOpacity>
@@ -353,80 +266,97 @@ const Dharmshala = () => {
         </View>
       </View>
 
-      {/* Scrollable Content */}
-      <View style={{ flex: 1 }}>
-        <Animated.View style={[styles.animatedAdvertise, { height: headerHeight }]}>
-          <AppIntroSlider
-            data={slider}
-            renderItem={({ item }) => (
-              <View>
-                <Image source={item.image} style={Globalstyles.sliderImage} />
-              </View>
-            )}
-            showNextButton={false}
-            showDoneButton={false}
-            dotStyle={Globalstyles.dot}
-            activeDotStyle={Globalstyles.activeDot}
-          />
-        </Animated.View>
-        <View style={styles.fixedHeader}>
+      <View>
+        {/* Search and Filter Section */}
+        <View style={styles.searchContainer}>
           <View style={styles.searchbar}>
             <TextInput
-              placeholder="Search in Your city"
+              placeholder='Search in Your City'
+              placeholderTextColor="gray"
               value={locality}
-              onChangeText={(text) => setLocality(text)}
-              onSubmitEditing={() => fetchDharamsalaData("search")}
-              placeholderTextColor={"gray"}
-              style={{ flex: 1 }}
+              onChangeText={(text) => {
+                setLocality(text);
+                fetchDharamsalaData("search");
+              }}
+              style={{ fontSize: SF(13) }}
             />
             {locality.length > 0 ? (
-              <AntDesign name={'close'} size={20} color={'gray'} onPress={() => setLocality('')} />
+              <AntDesign name={'close'} size={20} color={'gray'} onPress={() => {
+                setLocality('');
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'Dharmshala' }],
+                });
+              }} />
             ) : (
               <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchDharamsalaData("search")} />
             )}
           </View>
-          <View style={styles.ButtonContainer}>
-            <TouchableOpacity
-              style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton]}
-              onPress={handleOpenFilter}
-            >
-              <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Filter</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.button, activeButton === 2 ? styles.activeButton : styles.inactiveButton]}
-              onPress={handleUploadButton}
-            >
-              <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>Upload</Text>
-            </TouchableOpacity>
-          </View>
-
         </View>
-        <Animated.ScrollView
-          showsVerticalScrollIndicator={false}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-            { useNativeDriver: false }
-          )}
-          scrollEventThrottle={16}
-        >
-          {isLoading ? renderSkeleton() : (
-            <FlatList
-              data={daramsalaData}
-              renderItem={renderItem}
-              keyExtractor={(item) => item._id}
-              scrollEnabled={false}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.panditListData}
-              ListEmptyComponent={
-                <View style={styles.emptyContainer}>
-                  <Text style={styles.emptyText}>No daramsalaData Available</Text>
-                </View>
-              }
-            />
-          )}
-        </Animated.ScrollView>
+
+        <View style={styles.ButtonContainer}>
+          <TouchableOpacity
+            style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton]}
+            onPress={handleOpenFilter}
+          >
+            <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Filter</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.button, activeButton === 2 ? styles.activeButton : styles.inactiveButton]}
+            onPress={handleUploadButton}
+          >
+            <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>Upload</Text>
+          </TouchableOpacity>
+        </View>
       </View>
+
+      {/* Scrollable Content */}
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Image Slider */}
+        <View style={styles.sliderContainer}>
+          <AppIntroSlider
+            ref={sliderRef}
+            data={slider}
+            renderItem={SliderRenderItem}
+            showNextButton={false}
+            showDoneButton={false}
+            dotStyle={styles.dot}
+            activeDotStyle={styles.activeDot}
+            onSlideChange={(index) => setCurrentIndex(index)}
+          />
+        </View>
+        {/* Dharamsala List */}
+        {loading ? (
+          <ActivityIndicator size="large" color={Colors.theme_color} style={{ marginTop: 20 }} />
+        ) : error ? (
+          <Text style={{
+            textAlign: 'center', fontSize: SF(15),
+            color: Colors.gray,
+            fontFamily: 'Poppins-Regular', marginTop: SH(20)
+          }}>
+            {error} {/* This will show error messages */}
+          </Text>
+        ) : daramsalaData.length === 0 ? (
+          <Text style={{
+            textAlign: 'center', fontSize: SF(15),
+            color: Colors.gray, marginTop: SH(20),
+            fontFamily: 'Poppins-Regular',
+          }}>
+            No Dharamsala profiles found.
+          </Text>
+        ) : (
+          <FlatList
+            data={daramsalaData}
+            renderItem={renderItem}
+            keyExtractor={(item) => item._id.toString()}
+            scrollEnabled={false}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.DharamSalaList}
+          />
+        )}
+
+      </ScrollView>
 
       <Modal
         visible={modalVisible}
@@ -509,7 +439,7 @@ const Dharmshala = () => {
           </View>
         </View>
       </Modal>
-      <Toast />
+
     </SafeAreaView>
   );
 };

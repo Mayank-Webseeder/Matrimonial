@@ -96,8 +96,8 @@ const styles = StyleSheet.create({
     fontSize: SF(13)
   },
   sliderContainer: {
-    marginBottom: SH(30),
-    marginTop: SH(10)
+    marginBottom: SH(20),
+    // marginTop: SH(10)
   },
   sliderImage: {
     width: "100%",

@@ -14,7 +14,7 @@ import axios from 'axios';
 import { GET_ACTIVIST_PROFILES } from '../../utils/BaseUrl';
 import { useFocusEffect } from '@react-navigation/native';
 import ImageViewing from 'react-native-image-viewing';
-
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 
 const Activist = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -26,7 +26,7 @@ const Activist = ({ navigation }) => {
   const [filteredOptions, setFilteredOptions] = useState([]);
   const [listHeight, setListHeight] = useState(0);
   const [modalLocality, setModalLocality] = useState('');
- const [isImageVisible, setImageVisible] = useState(false);
+  const [isImageVisible, setImageVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
   const openImageViewer = (imageUri) => {
@@ -38,16 +38,21 @@ const Activist = ({ navigation }) => {
     React.useCallback(() => {
       setLocality('');
       setSubcaste('');
-      setActivistData([]);
-      fetchActivistData("all"); // Fetch full list by default when coming back
+      setError(null);
+      fetchActivistData("all"); // Fetch full list when coming back
     }, [])
   );
 
   const fetchActivistData = async (filterType = "search") => {
     try {
       setLoading(true);
+
       const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+      if (!token) {
+        console.warn("No token found");
+        setLoading(false);
+        return;
+      }
 
       const headers = {
         "Content-Type": "application/json",
@@ -57,39 +62,56 @@ const Activist = ({ navigation }) => {
       let queryParams = [];
 
       if (filterType === "search") {
-        const cleanedLocality = locality.trim();
-        const cleanedSubCaste = subcaste.trim();
-        if (cleanedLocality) queryParams.push(`locality=${encodeURIComponent(cleanedLocality.toLowerCase())}`);
-        if (cleanedSubCaste) queryParams.push(`subCaste=${encodeURIComponent(cleanedSubCaste.toLowerCase())}`);
+        const cleanedLocality = locality?.trim().toLowerCase();
+        const cleanedSubCaste = subcaste?.trim().toLowerCase();
+
+        if (cleanedLocality) {
+          queryParams.push(`locality=${encodeURIComponent(cleanedLocality)}`);
+        }
+        if (cleanedSubCaste) {
+          queryParams.push(`subCaste=${encodeURIComponent(cleanedSubCaste)}`);
+        }
       } else if (filterType === "modal") {
-        const cleanedModalLocality = modalLocality.trim();
-        const cleanedModalSubCaste = subcaste.trim();
-        if (cleanedModalLocality) queryParams.push(`locality=${encodeURIComponent(cleanedModalLocality.toLowerCase())}`);
+        const cleanedModalLocality = modalLocality?.trim().toLowerCase();
+        const cleanedModalSubCaste = subcaste?.trim().toLowerCase();
+
+        if (cleanedModalLocality) {
+          queryParams.push(`locality=${encodeURIComponent(cleanedModalLocality)}`);
+        }
+
         if (cleanedModalSubCaste) {
-          const isCustomSubCaste = !subCasteOptions.some(option => option.label.toLowerCase() === cleanedModalSubCaste.toLowerCase());
-          queryParams.push(`subCaste=${encodeURIComponent(isCustomSubCaste ? cleanedModalSubCaste : '')}`);
+          const isCustomSubCaste = !subCasteOptions.some(option =>
+            option.label.toLowerCase() === cleanedModalSubCaste
+          );
+
+          if (isCustomSubCaste) {
+            queryParams.push(`subCaste=${encodeURIComponent(cleanedModalSubCaste)}`);
+          }
         }
       }
 
-      const url = filterType === "all" ? GET_ACTIVIST_PROFILES : `${GET_ACTIVIST_PROFILES}?${queryParams.join("&")}`;
+      const url = filterType === "all"
+        ? GET_ACTIVIST_PROFILES
+        : `${GET_ACTIVIST_PROFILES}?${queryParams.join("&")}`;
 
       console.log("Fetching Data from:", url);
 
       const response = await axios.get(url, { headers });
 
-      if (response.data && response.data.data) {
+      if (response.data?.data?.length > 0) {
         setActivistData(response.data.data);
       } else {
         setActivistData([]);
+        setError("No activist profiles found.");
       }
+
     } catch (error) {
       console.error("Error fetching activist data:", error);
-      setError(error.response ? error.response.data.message : "Failed to fetch data. Please try again.");
+      setError(error.response?.data?.message || "Failed to fetch data. Please try again.");
     } finally {
       setLoading(false);
     }
   };
-
 
   const handleOpenFilter = () => {
     setModalVisible(true);
@@ -123,20 +145,36 @@ const Activist = ({ navigation }) => {
     setFilteredOptions([]);
   };
 
+  const renderSkeleton = () => (
+    <SkeletonPlaceholder>
+      <View style={{ margin: SH(20) }}>
+        {[1, 2, 3, 4].map((_, index) => (
+          <View key={index} style={{ flexDirection: "row", marginBottom: 20 }}>
+            <View style={{ width: SW(80), height: SH(80), borderRadius: 40, marginRight: SW(10) }} />
+            <View>
+              <View style={{ width: SW(150), height: SH(20), borderRadius: 4 }} />
+              <View style={{ width: SW(100), height: SH(15), borderRadius: 4, marginTop: SH(6) }} />
+              <View style={{ width: SW(80), height: SH(15), borderRadius: 4, marginTop: SH(6) }} />
+            </View>
+          </View>
+        ))}
+      </View>
+    </SkeletonPlaceholder>
+  );
 
   const renderItem = ({ item }) => {
     return (
       <View style={styles.card}>
         <View style={styles.cardData}>
-        <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto )}>
+          <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
             <Image
-              source={item.profilePhoto  ? { uri: item.profilePhoto  } : require('../../Images/NoImage.png')}
+              source={item.profilePhoto ? { uri: item.profilePhoto } : require('../../Images/NoImage.png')}
               style={styles.image}
             />
           </TouchableOpacity>
           {selectedImage && (
             <ImageViewing
-              images={[{ uri: selectedImage }]} 
+              images={[{ uri: selectedImage }]}
               imageIndex={0}
               visible={isImageVisible}
               onRequestClose={() => setImageVisible(false)}
@@ -160,17 +198,17 @@ const Activist = ({ navigation }) => {
   return (
     <SafeAreaView style={Globalstyles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
-     <View>
-     <View style={Globalstyles.header}>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <TouchableOpacity onPress={() => navigation.navigate('Tabs')}>
-            <MaterialIcons name={'arrow-back-ios-new'} size={25} color={Colors.theme_color} />
-          </TouchableOpacity>
-          <Text style={Globalstyles.headerText}>Activist</Text>
-        </View>
-        <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => navigation.navigate('Notification')} />
-      </View>
       <View>
+        <View style={Globalstyles.header}>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <TouchableOpacity onPress={() => navigation.navigate('Tabs')}>
+              <MaterialIcons name={'arrow-back-ios-new'} size={25} color={Colors.theme_color} />
+            </TouchableOpacity>
+            <Text style={Globalstyles.headerText}>Activist</Text>
+          </View>
+          <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => navigation.navigate('Notification')} />
+        </View>
+        <View>
           <View style={styles.searchbar}>
             <TextInput
               placeholder='Search in Your City'
@@ -182,12 +220,26 @@ const Activist = ({ navigation }) => {
               }}
             />
 
-
-            <AntDesign name={'search1'} size={20} color={'gray'} />
+            {locality.length > 0 ? (
+              <AntDesign
+                name={'close'}
+                size={20}
+                color={'gray'}
+                onPress={() => {
+                  setLocality('');
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Activist' }],
+                  });
+                }}
+              />
+            ) : (
+              <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchActivistData("search")} />
+            )}
           </View>
 
           <View style={styles.ButtonContainer}>
-            <TouchableOpacity style={[styles.button,{paddingHorizontal:SW(20)}]} onPress={handleOpenFilter}>
+            <TouchableOpacity style={[styles.button, { paddingHorizontal: SW(20) }]} onPress={handleOpenFilter}>
               <Text style={styles.buttonText}>Filter</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ActivistForm')}>
@@ -195,24 +247,24 @@ const Activist = ({ navigation }) => {
             </TouchableOpacity>
           </View>
         </View>
-     </View>
+      </View>
       <ScrollView>
 
-        {loading ? (
-          <ActivityIndicator size="large" color={Colors.theme_color} style={{ marginTop:SH(20) }} />
-        ) : error ? (
-          <Text style={{ textAlign: 'center', marginTop:SH(20), color: 'red' }}>{error}</Text>
-        ) : activistData.length === 0 ? (
-          <Text style={{ textAlign: 'center', marginTop:SH(20), color: 'gray' }}>No activist profiles yet</Text>
-        ) : (
+        {loading ? renderSkeleton() : (
           <FlatList
             data={activistData}
             renderItem={renderItem}
+            keyExtractor={(item) => item._id}
             scrollEnabled={false}
-            keyExtractor={(item) => item._id.toString()}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.panditListData}
+            contentContainerStyle={styles.ActivistDataList}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>No activist Data Available</Text>
+              </View>
+            }
           />
+
         )}
 
         <Modal

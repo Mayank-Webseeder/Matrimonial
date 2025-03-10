@@ -3,9 +3,10 @@ import Colors from "../../utils/Colors";
 import { SH, SW, SF } from "../../utils/Dimensions";
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        marginVertical: SH(10)
+    d: {
+        fontFamily: "Poppins-Medium",
+        fontSize: SF(18),
+        color: Colors.theme_color
     },
     righticons: {
         flexDirection: 'row',
@@ -90,6 +91,7 @@ const styles = StyleSheet.create({
         paddingVertical: SH(10),
         paddingHorizontal: SW(10),
         marginVertical: SH(15),
+        marginBottom:0,
         marginHorizontal: SW(7),
         borderRadius: 10,
         elevation: 10,

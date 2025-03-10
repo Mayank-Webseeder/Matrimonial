@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable,Animated, ToastAndroid } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, ToastAndroid } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -34,20 +34,13 @@ const Kathavachak = ({ navigation }) => {
   const [kathavachakData, setKathavachakData] = useState(null);
   const [isLoading, setLoading] = useState(false);
   const [modalLocality, setModalLocality] = useState('');
-   const [isImageVisible, setImageVisible] = useState(false);
-      const [selectedImage, setSelectedImage] = useState(null);
-    
-      const openImageViewer = (imageUri) => {
-        setSelectedImage(imageUri);
-        setImageVisible(true);
-      };
- const scrollY = useRef(new Animated.Value(0)).current;
+  const [isImageVisible, setImageVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
-  const headerHeight = scrollY.interpolate({
-    inputRange: [0, 200], 
-    outputRange: [SH(200), 0], 
-    extrapolate: "clamp",
-  });
+  const openImageViewer = (imageUri) => {
+    setSelectedImage(imageUri);
+    setImageVisible(true);
+  };
   const handleOpenFilter = () => {
     setModalVisible(true);
     setActiveButton(1);
@@ -86,15 +79,15 @@ const Kathavachak = ({ navigation }) => {
 
       let queryParams = [];
 
-      if (filterType === "search") {
-        if (locality.trim()) queryParams.push(`locality=${encodeURIComponent(locality.toLowerCase())}`);
-      } else if (filterType === "modal") {
-        if (modalLocality.trim()) queryParams.push(`locality=${encodeURIComponent(modalLocality.toLowerCase())}`);
-        if (services) queryParams.push(`services=${encodeURIComponent(services)}`);
-        if (rating && rating.trim()) queryParams.push(`rating=${encodeURIComponent(rating)}`);
-        if (experience && experience.trim()) queryParams.push(`experience=${encodeURIComponent(experience)}`);
+      if (filterType === "search" && locality.trim()) {
+        queryParams.push(`locality=${encodeURIComponent(locality.trim().toLowerCase())}`);
       }
-
+      else if (filterType === "modal") {
+        if (modalLocality?.trim()) queryParams.push(`locality=${encodeURIComponent(modalLocality.trim().toLowerCase())}`);
+        if (services?.trim()) queryParams.push(`services=${encodeURIComponent(services.trim())}`);
+        if (rating?.trim()) queryParams.push(`rating=${encodeURIComponent(rating.trim())}`);
+        if (experience?.trim()) queryParams.push(`experience=${encodeURIComponent(experience.trim())}`);
+      }
       // ⚡️ Construct URL only with valid params
       const url = queryParams.length > 0
         ? `${GET_ALL_KATHAVACHAK}?${queryParams.join("&")}`
@@ -199,14 +192,14 @@ const Kathavachak = ({ navigation }) => {
 
   const handleShare = async () => {
     ToastAndroid.show("Under development", ToastAndroid.SHORT);
-};
+  };
   const renderItem = ({ item }) => {
     const rating = item.averageRating || 0;
-    const isSaved=item.isSaved || null;
+    const isSaved = item.isSaved || null;
     return (
       <View style={styles.card}>
-         <View style={styles.cardData}>
-         <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
+        <View style={styles.cardData}>
+          <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
             <Image
               source={item.profilePhoto ? { uri: item.profilePhoto } : require('../../Images/NoImage.png')}
               style={styles.image}
@@ -214,44 +207,44 @@ const Kathavachak = ({ navigation }) => {
           </TouchableOpacity>
           {selectedImage && (
             <ImageViewing
-              images={[{ uri: selectedImage }]} 
+              images={[{ uri: selectedImage }]}
               imageIndex={0}
               visible={isImageVisible}
               onRequestClose={() => setImageVisible(false)}
             />
           )}
           <View>
-          <Pressable style={styles.leftContainer}  
-           onPress={() => navigation.navigate('KathavachakDetailsPage', { kathavachak_id: item._id ,isSaved:isSaved })}>
-            <Text style={styles.name}>{item?.fullName}</Text>
-            <View style={styles.rating}>
-              <Rating type="star" ratingCount={5} imageSize={15} startingValue={rating} readonly />
-              <Text style={[styles.text, { fontFamily: 'Poppins-Regular' }]}> {rating} Star Rating</Text>
-            </View>
-            <View style={styles.CityArea}>
-              <Text style={styles.text}>{item?.city}</Text>
-              <Text style={styles.text}>    {item?.state}</Text>
-            </View>
-            <Text style={styles.text}>{item?.residentialAddress}</Text>
-          </Pressable>
-          <View style={styles.sharecontainer}>
-          <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
-            <FontAwesome
-              name={isSaved ? "bookmark" : "bookmark-o"}
-              size={19}
-              color={Colors.dark}
-            />
-            {/* <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text> */}
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.iconContainer}  onPress={handleShare}>
-            <Feather name="send" size={18} color={Colors.dark} />
-            {/* <Text style={styles.iconText}>Shares</Text> */}
-          </TouchableOpacity>
+            <Pressable style={styles.leftContainer}
+              onPress={() => navigation.navigate('KathavachakDetailsPage', { kathavachak_id: item._id, isSaved: isSaved })}>
+              <Text style={styles.name}>{item?.fullName}</Text>
+              <View style={styles.rating}>
+                <Rating type="star" ratingCount={5} imageSize={15} startingValue={rating} readonly />
+                <Text style={[styles.text, { fontFamily: 'Poppins-Regular' }]}> {rating} Star Rating</Text>
+              </View>
+              <View style={styles.CityArea}>
+                <Text style={styles.text}>{item?.city}</Text>
+                <Text style={styles.text}>    {item?.state}</Text>
+              </View>
+              <Text style={styles.text}>{item?.residentialAddress}</Text>
+            </Pressable>
+            <View style={styles.sharecontainer}>
+              <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
+                <FontAwesome
+                  name={isSaved ? "bookmark" : "bookmark-o"}
+                  size={19}
+                  color={Colors.dark}
+                />
+                {/* <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text> */}
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
+                <Feather name="send" size={18} color={Colors.dark} />
+                {/* <Text style={styles.iconText}>Shares</Text> */}
+              </TouchableOpacity>
 
-          <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
-            <MaterialIcons name="call" size={17} color={Colors.light} />
-          </TouchableOpacity>
-        </View>
+              <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
+                <MaterialIcons name="call" size={17} color={Colors.light} />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </View>
@@ -273,88 +266,37 @@ const Kathavachak = ({ navigation }) => {
           <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => navigation.navigate('Notification')} />
         </View>
       </View>
-      <View style={{ flex: 1 }}>
-      {/* Animated Advertise Window */}
-      <Animated.View style={[styles.animatedAdvertise, { height: headerHeight }]}>
-        <AppIntroSlider
-          data={slider}
-          renderItem={({ item }) => (
-            <View>
-              <Image source={item.image} style={Globalstyles.sliderImage} />
-            </View>
-          )}
-          showNextButton={false}
-          showDoneButton={false}
-          dotStyle={Globalstyles.dot}
-          activeDotStyle={Globalstyles.activeDot}
-        />
-      </Animated.View>
+      <View style={styles.ButtonContainer}>
+        <TouchableOpacity
+          style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton]}
+          onPress={handleOpenFilter}
+        >
+          <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Filter</Text>
+        </TouchableOpacity>
 
-      {/* Fixed Header - Filter & Search Bar */}
-      <View style={styles.fixedHeader}>
-        <View style={styles.ButtonContainer}>
-          <TouchableOpacity
-            style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton]}
-            onPress={handleOpenFilter}
-          >
-            <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Filter</Text>
-          </TouchableOpacity>
-
-          <View style={styles.searchbar}>
-            <TextInput 
-              placeholder="Search in Your city" 
-              value={locality}
-              onChangeText={(text) => setLocality(text)} 
-              onSubmitEditing={() => KathavachakDataAPI("search")} 
-              placeholderTextColor={"gray"} 
-              style={{ flex: 1 }} 
-            />
-            {locality.length > 0 ? (
-              <AntDesign name={'close'} size={20} color={'gray'} onPress={() => setLocality('')} />
-            ) : (
-              <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => KathavachakDataAPI("search")} />
-            )}
-          </View>
-        </View>
-      </View>
-      <Animated.ScrollView
-        showsVerticalScrollIndicator={false}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: false }
-        )}
-        scrollEventThrottle={16}
-      >
-        {isLoading ? renderSkeleton() : (
-          <FlatList
-            data={kathavachakData}
-            renderItem={renderItem}
-            keyExtractor={(item) => item._id}
-            scrollEnabled={false}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.panditListData}
-            ListEmptyComponent={
-              <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>No Kathavachak Data Available</Text>
-              </View>
-            }
-          />
-          
-        )}
-      </Animated.ScrollView>
-    </View>
-      {/* <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.searchbar}>
           <TextInput
             placeholder="Search in Your city"
             value={locality}
             onChangeText={(text) => setLocality(text)}
-            onSubmitEditing={() => fetchPanditData("search")}
+            onSubmitEditing={() => KathavachakDataAPI("search")}
             placeholderTextColor={"gray"}
+            style={{ flex: 1 }}
           />
-          <AntDesign name={'search1'} size={20} color={'gray'} />
+          {locality.length > 0 ? (
+            <AntDesign name={'close'} size={20} color={'gray'} onPress={() => {
+              setLocality('');
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Kathavachak' }], 
+              });
+            }}  />
+          ) : (
+            <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => KathavachakDataAPI("search")} />
+          )}
         </View>
-
+      </View>
+      <ScrollView showsHorizontalScrollIndicator={false}>
         <View style={Globalstyles.sliderContainer}>
           <AppIntroSlider
             ref={sliderRef}
@@ -370,23 +312,6 @@ const Kathavachak = ({ navigation }) => {
             activeDotStyle={Globalstyles.activeDot}
           />
         </View>
-
-        <View style={styles.ButtonContainer}>
-          <TouchableOpacity
-            style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton]}
-            onPress={handleOpenFilter}
-          >
-            <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Filter</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.button, activeButton === 2 ? styles.activeButton : styles.inactiveButton]}
-            onPress={() => navigation.navigate('RoleRegisterForm')}
-          >
-            <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>Register</Text>
-          </TouchableOpacity>
-        </View>
-
         {isLoading ? renderSkeleton() : (
           <FlatList
             data={kathavachakData}
@@ -401,10 +326,9 @@ const Kathavachak = ({ navigation }) => {
               </View>
             }
           />
+
         )}
-
-      </ScrollView> */}
-
+      </ScrollView>
       <Modal
         visible={modalVisible}
         transparent={true}

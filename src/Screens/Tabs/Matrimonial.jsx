@@ -42,7 +42,7 @@ const Matrimonial = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       setSearchMode(false);
-      setSearchQuery('');
+      fetchProfiles()
     }, [])
   );
 
@@ -285,6 +285,7 @@ const Matrimonial = ({ navigation }) => {
   };
 
   const dataToDisplay = searchMode ? profiles : (activeButton === 1 ? girlsProfiles : activeButton === 2 ? boysProfiles : preferenceProfiles);
+  
   useEffect(() => {
     console.log("dataToDisplay", dataToDisplay);
   }, [])
@@ -319,7 +320,14 @@ const Matrimonial = ({ navigation }) => {
             onSubmitEditing={handleSearch}
           />
           {searchQuery.length > 0 ? (
-            <AntDesign name={'close'} size={20} color={'gray'} onPress={() => setSearchQuery('')} />
+            <AntDesign name={'close'} size={20} color={'gray'} onPress={() => {
+              setSearchQuery('');
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Matrimonial' }], 
+              });
+            }} 
+           />
           ) : (
             <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => setSearchMode(!searchMode)}/>
           )}

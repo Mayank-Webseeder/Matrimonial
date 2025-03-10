@@ -37,11 +37,11 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
   // Available images ko filter karo jo null na ho
   const images = [
-    personalDetails?.closeUpPhoto, 
-    !hideOptionalDetails && personalDetails?.fullPhoto, 
+    personalDetails?.closeUpPhoto,
+    !hideOptionalDetails && personalDetails?.fullPhoto,
     !hideOptionalDetails && personalDetails?.bestPhoto
   ].filter(Boolean); // Removes null/undefined values
-  
+
 
   const openImageViewer = (index) => {
     setImageIndex(index);
@@ -457,10 +457,10 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             <View>
               <Text style={styles.HeadingText}>About Me</Text>
               {!hideOptionalDetails && (
-                  <>
-                    {personalDetails?.aboutMe && <Text style={styles.text}>{personalDetails?.aboutMe}</Text>}
-                  </>
-                )}
+                <>
+                  {personalDetails?.aboutMe && <Text style={styles.text}>{personalDetails?.aboutMe}</Text>}
+                </>
+              )}
               <View style={styles.flexContainer2}>
                 {personalDetails?.complexion && <Text style={styles.text}>Completion: {personalDetails?.complexion}</Text>}
                 {personalDetails?.weight && <Text style={styles.text}>Weight: {personalDetails?.weight} kg </Text>}
@@ -527,27 +527,29 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           </View>
         }
 
-
-        <View style={styles.flexContainer3}>
-          <Text style={styles.HeadingText}>Matches</Text>
-          <View style={styles.flex}>
-            <Image source={{ uri: MyprofileData?.Biodata?.personalDetails?.closeUpPhoto }} style={styles.smallImage} />
-            <Text style={styles.text}>{matchedCount}/{totalCriteria}</Text>
-            <Image source={{ uri: profileData?.data?.photoUrl?.[0] }} style={styles.smallImage} />
-          </View>
-
-          {/* Comparison List */}
-          {Object.keys(profileData?.comparisonResults || {}).map((key, index) => (
-            <View key={index} style={styles.flexContainer5}>
-              <Text style={styles.label}>{key.replace(/([A-Z])/g, " $1").trim()}</Text>
-              {profileData.comparisonResults[key] ? (
-                <MaterialIcons name="check" style={[styles.icon, styles.checkIcon]} />
-              ) : (
-                <MaterialIcons name="close" style={[styles.icon, styles.crossIcon]} />
-              )}
+        {matchedCount > 0 && totalCriteria > 0 && profileData?.data ? (
+          <View style={styles.flexContainer3}>
+            <Text style={styles.HeadingText}>Matches</Text>
+            <View style={styles.flex}>
+              <Image source={{ uri: MyprofileData?.Biodata?.personalDetails?.closeUpPhoto }} style={styles.smallImage} />
+              <Text style={styles.text}>{matchedCount}/{totalCriteria}</Text>
+              <Image source={{ uri: profileData?.data?.photoUrl?.[0] }} style={styles.smallImage} />
             </View>
-          ))}
-        </View>
+
+            {/* Comparison List */}
+            {Object.keys(profileData?.comparisonResults || {}).map((key, index) => (
+              <View key={index} style={styles.flexContainer5}>
+                <Text style={styles.label}>{key.replace(/([A-Z])/g, " $1").trim()}</Text>
+                {profileData.comparisonResults[key] ? (
+                  <MaterialIcons name="check" style={[styles.icon, styles.checkIcon]} />
+                ) : (
+                  <MaterialIcons name="close" style={[styles.icon, styles.crossIcon]} />
+                )}
+              </View>
+            ))}
+          </View>
+        ) : null}
+
         <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
       </ScrollView>
       <Toast />

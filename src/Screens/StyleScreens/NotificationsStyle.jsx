@@ -3,7 +3,16 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
-
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: SH(200),
+  },
+  emptyText: {
+    fontSize: SF(15),
+    color: "gray",
+    fontFamily: 'Poppins-Regular',
+  },
   card: {
     backgroundColor: Colors.light,
     borderRadius: 10,
@@ -26,6 +35,12 @@ const styles = StyleSheet.create({
   message: {
     fontFamily: "Poppins-Regular",
     fontSize: SF(11)
+  },
+  notificationImage: {
+    width: SW(50),
+    height: SH(50),
+    resizeMode: "cover",
+    borderRadius: 50
   }
 
 });

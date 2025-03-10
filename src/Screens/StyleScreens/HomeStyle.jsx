@@ -3,6 +3,11 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
+  loading: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 
   headerContainer: {
     flexDirection: "row",
@@ -57,20 +62,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "white",
-    paddingHorizontal:SW(5),
-    paddingVertical:SW(2),
+    paddingHorizontal: SW(5),
+    paddingVertical: SW(2),
     borderRadius: 5,
   },
   verifiedBadge: {
     width: SW(10),
     height: SH(10),
-    marginRight:SW(1),
-    resizeMode:"contain"
+    marginRight: SW(1),
+    resizeMode: "contain"
   },
   verifiedText: {
     color: "green",
     fontWeight: "bold",
-    fontSize:SF(7),
+    fontSize: SF(7),
   },
   text: {
     paddingVertical: SH(4),
@@ -104,16 +109,16 @@ const styles = StyleSheet.create({
   },
   emptyContainer: {
     width: '100%',
-    paddingHorizontal: SW(50), 
-    paddingVertical:SH(25)
-},
-emptyText: {
+    paddingHorizontal: SW(50),
+    paddingVertical: SH(25)
+  },
+  emptyText: {
     fontSize: SF(15),
     color: Colors.gray,
     fontFamily: 'Poppins-Regular',
     textAlign: 'center',
     lineHeight: SF(22),
-}
+  }
 });
 
 export default styles;

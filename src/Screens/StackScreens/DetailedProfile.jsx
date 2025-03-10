@@ -22,7 +22,8 @@ import {
   OccupationData, QualificationData, maritalStatusData, ManglikStatusData, LivingData, ProfileCreatedData, CityData, Income,
   FamilyType, CookingStatus, DietHabit, smokingStatusData, DrinkingHabit, StateData, TobacooHabit, subCasteOptions,
   MyDisabilities, MyComplexionData,
-  MotherOccupationData
+  MotherOccupationData,
+  genderData
 } from '../../DummyData/DropdownData';
 
 const DetailedProfile = ({ navigation }) => {
@@ -38,6 +39,7 @@ const DetailedProfile = ({ navigation }) => {
 
   const [biodata, setBiodata] = useState({
     subCaste: '',
+    gender: '',
     fullname: '',
     dob: '',
     placeofbirth: '',
@@ -91,6 +93,21 @@ const DetailedProfile = ({ navigation }) => {
     }
   }, [myBiodata]);
 
+
+  useEffect(() => {
+    const loadFormData = async () => {
+      const savedData = await AsyncStorage.getItem('biodata');
+      if (savedData) {
+        setBiodata(JSON.parse(savedData)); // ✅ Restore saved data
+      }
+    };
+    loadFormData();
+  }, []);
+
+  useEffect(() => {
+    AsyncStorage.setItem('biodata', JSON.stringify(biodata));
+  }, [biodata]);
+
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [stateInput, setStateInput] = useState("");
   const [subCasteInput, setSubCasteInput] = useState("");
@@ -124,9 +141,9 @@ const DetailedProfile = ({ navigation }) => {
       width: 400,
       height: 400,
       cropping: true,
-      mediaType: "any",
       includeBase64: true,
-      compressImageQuality :1
+      mediaType: "photo",
+      compressImageQuality: 1
     })
       .then(image => {
         if (!image || !image.data) {
@@ -340,7 +357,7 @@ const DetailedProfile = ({ navigation }) => {
 
   const constructPayload = async (biodata, isNew = false) => {
     const keys = [
-      "subCaste", "fullname", "dob", "placeofbirth", "maritalStatus",
+      "subCaste", "gender", "fullname", "dob", "placeofbirth", "maritalStatus",
       "disabilities", "heightFeet", "weight", "timeOfBirth", "complexion",
       "manglikStatus", "nadi", "gotraSelf", "gotraMother", "qualification",
       "occupation", "annualIncome", "livingStatus", "currentCity", "aboutMe",
@@ -464,11 +481,11 @@ const DetailedProfile = ({ navigation }) => {
   };
 
 
-  if (isLoading) {
-    return <View style={styles.loading}>
-      <ActivityIndicator size={'large'} color={Colors.theme_color} />
-    </View>;
-  }
+  // if (isLoading) {
+  //   return <View style={styles.loading}>
+  //     <ActivityIndicator size={'large'} color={Colors.theme_color} />
+  //   </View>;
+  // }
 
   return (
     <SafeAreaView style={Globalstyles.container}>
@@ -482,13 +499,7 @@ const DetailedProfile = ({ navigation }) => {
 
         <View style={Globalstyles.form}>
           <View style={styles.detail}>
-            <Text style={Globalstyles.title}>Personal Details</Text>
-            {myBiodata && (
-              <TouchableOpacity onPress={() => setIsEditing(true)}>
-                <Text style={styles.detailText}>Edit</Text>
-              </TouchableOpacity>
-            )}
-
+            <Text style={styles.Formtitle}>Personal Details</Text>
           </View>
           <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
           <TextInput
@@ -497,6 +508,8 @@ const DetailedProfile = ({ navigation }) => {
             onChangeText={handleSubCasteInputChange}
             placeholder="Type your sub caste"
             placeholderTextColor={Colors.gray}
+            autoComplete="off"
+            textContentType="none"
           />
 
           {/* Agar user type karega toh list dikhegi */}
@@ -515,6 +528,21 @@ const DetailedProfile = ({ navigation }) => {
           ) : null}
 
           <View>
+            <Text style={Globalstyles.title}>Gender <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Dropdown
+              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              data={genderData}
+              labelField="label"
+              valueField="value"
+              value={biodata?.gender}
+              editable={isEditing}
+              onChange={(text) => handleInputChange("gender", text.value)}
+              placeholder='Enter Gender For Create Biodata'
+              placeholderStyle={{ color: '#E7E7E7' }}
+            />
+          </View>
+
+          <View>
             <Text style={Globalstyles.title}>Full Name <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
@@ -523,6 +551,9 @@ const DetailedProfile = ({ navigation }) => {
               onChangeText={(text) => handleInputChange("fullname", text)}
               placeholder='Enter Your Full Name'
               placeholderTextColor={Colors.gray}
+              autoComplete="off"
+              textContentType="none"
+
             />
           </View>
           <View>
@@ -534,6 +565,9 @@ const DetailedProfile = ({ navigation }) => {
               onFocus={() => setShowDatePicker(true)}
               placeholder="Select your date of birth"
               placeholderTextColor={Colors.gray}
+              autoComplete="off"
+              textContentType="none"
+
             />
 
 
@@ -555,6 +589,9 @@ const DetailedProfile = ({ navigation }) => {
               onFocus={() => setShowTimePicker(true)} // Open time picker
               placeholder="HH:MM AM/PM"
               placeholderTextColor={Colors.gray}
+              autoComplete="off"
+              textContentType="none"
+
             />
             {showTimePicker && (
               <DateTimePicker
@@ -575,6 +612,9 @@ const DetailedProfile = ({ navigation }) => {
               onChangeText={(text) => handleInputChange("placeofbirth", text)}
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Birth Place'
+              autoComplete="off"
+              textContentType="none"
+
             />
           </View>
           <View>
@@ -671,6 +711,9 @@ const DetailedProfile = ({ navigation }) => {
               onChangeText={(text) => handleInputChange("nadi", text)}
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Nadi'
+              autoComplete="off"
+              textContentType="none"
+
             />
           </View>
           <View>
@@ -682,6 +725,9 @@ const DetailedProfile = ({ navigation }) => {
               onChangeText={(text) => handleInputChange("gotraSelf", text)}
               placeholderTextColor={Colors.gray}
               placeholder={'Enter Your Self Gotra'}
+              autoComplete="off"
+              textContentType="none"
+
             />
           </View>
           <View>
@@ -693,6 +739,9 @@ const DetailedProfile = ({ navigation }) => {
               onChangeText={(text) => handleInputChange("gotraMother", text)}
               placeholderTextColor={Colors.gray}
               placeholder={'Enter Your Mother Gotra'}
+              autoComplete="off"
+              textContentType="none"
+
             />
           </View>
           <View>
@@ -764,6 +813,9 @@ const DetailedProfile = ({ navigation }) => {
               onChangeText={handleCityInputChange}
               placeholder="Enter your city"
               placeholderTextColor={Colors.gray}
+              autoComplete="off"
+              textContentType="none"
+
             />
             {filteredCities.length > 0 && cityInput ? (
               <FlatList
@@ -791,6 +843,9 @@ const DetailedProfile = ({ navigation }) => {
               placeholder="Write about yourself..."
               placeholderTextColor={Colors.gray}
               textAlignVertical="top"
+              autoComplete="off"
+              textContentType="none"
+
             />
           </View>
 
@@ -819,6 +874,9 @@ const DetailedProfile = ({ navigation }) => {
               editable={isEditing}
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Father Name'
+              autoComplete="off"
+              textContentType="none"
+
             />
           </View>
           <View>
@@ -830,6 +888,9 @@ const DetailedProfile = ({ navigation }) => {
               editable={isEditing}
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Mother Name'
+              autoComplete="off"
+              textContentType="none"
+
             />
           </View>
           <View>
@@ -935,14 +996,17 @@ const DetailedProfile = ({ navigation }) => {
               editable={isEditing}
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Family Info.'
+              autoComplete="off"
+              textContentType="none"
+
             />
           </View>
           <View>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-  <Text style={Globalstyles.title}>Contact No. 1 </Text>
-  <MaterialIcons name="call" color="#000" size={15} style={{paddingVertical:SW(5)}} />
-  <Entypo name="star" color="red" size={12} />
-</View>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={Globalstyles.title}>Contact No. 1 </Text>
+              <MaterialIcons name="call" color="#000" size={15} style={{ paddingVertical: SW(5) }} />
+              <Entypo name="star" color="red" size={12} />
+            </View>
 
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
@@ -953,6 +1017,9 @@ const DetailedProfile = ({ navigation }) => {
               editable={isEditing}
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Contact No. 1'
+              autoComplete="off"
+              textContentType="none"
+
             />
           </View>
 
@@ -967,6 +1034,8 @@ const DetailedProfile = ({ navigation }) => {
               editable={isEditing}
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Contact No. 2'
+              autoComplete="off"
+              textContentType="none"
             />
           </View>
           <View>
@@ -979,6 +1048,8 @@ const DetailedProfile = ({ navigation }) => {
               onChangeText={handleStateInputChange}
               placeholder="Type your State"
               placeholderTextColor={Colors.gray}
+              autoComplete="off"
+              textContentType="none"
             />
 
             {filteredStates.length > 0 ? (
@@ -1003,6 +1074,9 @@ const DetailedProfile = ({ navigation }) => {
               onChangeText={handleCityOrVillageInputChange}
               placeholder="Type your city/village"
               placeholderTextColor={Colors.gray}
+              autoComplete="off"
+              textContentType="none"
+
             />
             {filteredCitiesOrVillages.length > 0 && cityOrVillageInput ? (
               <FlatList
@@ -1107,6 +1181,9 @@ const DetailedProfile = ({ navigation }) => {
               editable={isEditing}
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Hobbies'
+              autoComplete="off"
+              textContentType="none"
+
             />
           </View>
           <View>
@@ -1163,16 +1240,15 @@ const DetailedProfile = ({ navigation }) => {
 
           </View>
 
+          {
+            isLoading ?
+              <ActivityIndicator size="large" color={Colors.theme_color} />
+              :
+              <TouchableOpacity style={styles.button} onPress={handleSave} disabled={isLoading}>
+                <Text style={styles.buttonText}>Submit</Text>
+              </TouchableOpacity>
+          }
 
-          {isEditing && (
-            <TouchableOpacity style={styles.button} onPress={handleSave}>
-              <Text style={styles.buttonText}>submit</Text>
-            </TouchableOpacity>
-          )}
-
-          {/* <TouchableOpacity style={styles.button} onPress={handleSave}>
-            <Text style={styles.buttonText}>submit</Text>
-          </TouchableOpacity> */}
         </View>
       </ScrollView>
     </SafeAreaView>

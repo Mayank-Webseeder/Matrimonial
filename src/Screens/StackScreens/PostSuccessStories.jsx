@@ -10,6 +10,8 @@ import ImageCropPicker from 'react-native-image-crop-picker';
 const PostSuccessStories = ({ navigation }) => {
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
+    const [gromname, setGromname] = useState('');
+    const [bridename, setBridename] = useState('');
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedImageName, setSelectedImageName] = useState("Upload Image");
     const handleSubmit = () => {
@@ -30,7 +32,7 @@ const PostSuccessStories = ({ navigation }) => {
             width: 300,
             height: 250,
             cropping: true,
-            compressImageQuality :1
+            compressImageQuality: 1
         })
             .then(image => {
                 setSelectedImage(image.path);
@@ -87,17 +89,17 @@ const PostSuccessStories = ({ navigation }) => {
                     style={Globalstyles.input}
                     placeholder="Enter groom name"
                     multiline={true}
-                    value={comment}
-                    onChangeText={setComment}
+                    value={gromname}
+                    onChangeText={setGromname}
                     placeholderTextColor={Colors.gray}
                 />
-                 <Text style={Globalstyles.title}>Bride name</Text>
+                <Text style={Globalstyles.title}>Bride name</Text>
                 <TextInput
                     style={Globalstyles.input}
                     placeholder="Enter Bride name"
                     multiline={true}
-                    value={comment}
-                    onChangeText={setComment}
+                    value={bridename}
+                    onChangeText={setBridename}
                     placeholderTextColor={Colors.gray}
                 />
                 <TextInput
@@ -106,7 +108,7 @@ const PostSuccessStories = ({ navigation }) => {
                     multiline={true}
                     value={comment}
                     onChangeText={setComment}
-                    placeholderTextColor={Colors.gray}  textAlignVertical='top'
+                    placeholderTextColor={Colors.gray} textAlignVertical='top'
                 />
                 <Text style={Globalstyles.title}>Upload your one couple picture</Text>
                 <TouchableOpacity style={styles.uploadButton} onPress={handleImagePick}>
@@ -129,7 +131,7 @@ const PostSuccessStories = ({ navigation }) => {
 export default PostSuccessStories;
 
 const styles = StyleSheet.create({
-   
+
     Text: {
         fontSize: SF(24),
         fontFamily: "Poppins-Bold",

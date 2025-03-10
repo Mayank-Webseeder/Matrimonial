@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, Image, TextInput, SafeAreaView, StatusBar, ScrollView } from 'react-native'
+import { Text, View, TouchableOpacity, Image, TextInput, SafeAreaView, StatusBar, ScrollView, ActivityIndicator } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -17,6 +17,7 @@ const CreatePost = ({ navigation, route }) => {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("")
     const [photos, setPhotos] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         console.log("MyActivistProfile", MyActivistProfile)
@@ -29,7 +30,7 @@ const CreatePost = ({ navigation, route }) => {
             width: 400,
             height: 400,
             includeBase64: true, // Get base64 directly
-            compressImageQuality :1
+            compressImageQuality: 1
         }).then(images => {
             const newPhotos = images.map(image => image.data); // Only store base64
             addPhotos(newPhotos);
@@ -48,6 +49,7 @@ const CreatePost = ({ navigation, route }) => {
 
     const handleSubmit = async () => {
         try {
+            setLoading(true)
             const token = await AsyncStorage.getItem('userToken'); // ✅ Fetch Token
             if (!token) throw new Error('No token found');
 
@@ -96,6 +98,10 @@ const CreatePost = ({ navigation, route }) => {
                 text1: 'Error',
                 text2: errorMessage,
             });
+            setLoading(false)
+        }
+        finally {
+            setLoading(false)
         }
     };
 
@@ -170,8 +176,16 @@ const CreatePost = ({ navigation, route }) => {
                 </View>
             )}
 
-            <TouchableOpacity style={styles.PostButton} onPress={handleSubmit}>
-                <Text style={styles.PostText}>Submit Post</Text>
+            <TouchableOpacity
+                style={styles.PostButton}
+                onPress={handleSubmit}
+                disabled={loading} // Disable button while loading
+            >
+                {loading ? (
+                    <ActivityIndicator size="large" color={Colors.theme_color} />
+                ) : (
+                    <Text style={styles.PostText}>Submit Post</Text>
+                )}
             </TouchableOpacity>
             <Toast />
         </SafeAreaView>

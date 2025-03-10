@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, Animated, ToastAndroid } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, ToastAndroid } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -41,13 +41,6 @@ const Jyotish = ({ navigation }) => {
     setSelectedImage(imageUri);
     setImageVisible(true);
   };
-  const scrollY = useRef(new Animated.Value(0)).current;
-
-  const headerHeight = scrollY.interpolate({
-    inputRange: [0, 200],
-    outputRange: [SH(200), 0],
-    extrapolate: "clamp",
-  });
 
   const handleOpenFilter = () => {
     setModalVisible(true);
@@ -86,13 +79,14 @@ const Jyotish = ({ navigation }) => {
 
       let queryParams = [];
 
-      if (filterType === "search") {
-        if (locality.trim()) queryParams.push(`locality=${encodeURIComponent(locality.toLowerCase())}`);
-      } else if (filterType === "modal") {
-        if (modalLocality.trim()) queryParams.push(`locality=${encodeURIComponent(modalLocality.toLowerCase())}`);
-        if (services) queryParams.push(`services=${encodeURIComponent(services)}`);
-        if (rating && rating.trim()) queryParams.push(`rating=${encodeURIComponent(rating)}`);
-        if (experience && experience.trim()) queryParams.push(`experience=${encodeURIComponent(experience)}`);
+      if (filterType === "search" && locality.trim()) {
+        queryParams.push(`locality=${encodeURIComponent(locality.trim().toLowerCase())}`);
+      }
+      else if (filterType === "modal") {
+        if (modalLocality?.trim()) queryParams.push(`locality=${encodeURIComponent(modalLocality.trim().toLowerCase())}`);
+        if (services?.trim()) queryParams.push(`services=${encodeURIComponent(services.trim())}`);
+        if (rating?.trim()) queryParams.push(`rating=${encodeURIComponent(rating.trim())}`);
+        if (experience?.trim()) queryParams.push(`experience=${encodeURIComponent(experience.trim())}`);
       }
 
       // ⚡️ Construct URL only with valid params
@@ -176,7 +170,6 @@ const Jyotish = ({ navigation }) => {
       setRating(' ')
       setExperience(' ')
       setServices('')
-      setJyotishData([]);
       JyotishDataAPI("all");
     }, [])
   );
@@ -278,10 +271,40 @@ const Jyotish = ({ navigation }) => {
           <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => navigation.navigate('Notification')} />
         </View>
       </View>
-      <View style={{ flex: 1 }}>
-        {/* Animated Advertise Window */}
-        <Animated.View style={[styles.animatedAdvertise, { height: headerHeight }]}>
+      <View style={styles.ButtonContainer}>
+        <TouchableOpacity
+          style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton]}
+          onPress={handleOpenFilter}
+        >
+          <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Filter</Text>
+        </TouchableOpacity>
+
+        <View style={styles.searchbar}>
+          <TextInput
+            placeholder="Search in Your city"
+            value={locality}
+            onChangeText={(text) => setLocality(text)}
+            onSubmitEditing={() => JyotishDataAPI("search")}
+            placeholderTextColor={"gray"}
+            style={{ flex: 1 }}
+          />
+          {locality.length > 0 ? (
+            <AntDesign name={'close'} size={20} color={'gray'} onPress={() => {
+              setLocality('');
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Jyotish' }], 
+              });
+            }}  />
+          ) : (
+            <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => JyotishDataAPI("search")} />
+          )}
+        </View>
+      </View>
+      <ScrollView showsHorizontalScrollIndicator={false}>
+        <View style={Globalstyles.sliderContainer}>
           <AppIntroSlider
+            ref={sliderRef}
             data={slider}
             renderItem={({ item }) => (
               <View>
@@ -293,61 +316,24 @@ const Jyotish = ({ navigation }) => {
             dotStyle={Globalstyles.dot}
             activeDotStyle={Globalstyles.activeDot}
           />
-        </Animated.View>
-
-        {/* Fixed Header - Filter & Search Bar */}
-        <View style={styles.fixedHeader}>
-          <View style={styles.ButtonContainer}>
-            <TouchableOpacity
-              style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton]}
-              onPress={handleOpenFilter}
-            >
-              <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Filter</Text>
-            </TouchableOpacity>
-
-            <View style={styles.searchbar}>
-              <TextInput
-                placeholder="Search in Your city"
-                value={locality}
-                onChangeText={(text) => setLocality(text)}
-                onSubmitEditing={() => JyotishDataAPI("search")}
-                placeholderTextColor={"gray"}
-                style={{ flex: 1 }}
-              />
-              {locality.length > 0 ? (
-                <AntDesign name={'close'} size={20} color={'gray'} onPress={() => setLocality('')} />
-              ) : (
-                <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => JyotishDataAPI("search")} />
-              )}
-            </View>
-          </View>
         </View>
-        <Animated.ScrollView
-          showsVerticalScrollIndicator={false}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-            { useNativeDriver: false }
-          )}
-          scrollEventThrottle={16}
-        >
-          {isLoading ? renderSkeleton() : (
-            <FlatList
-              data={JyotishData}
-              renderItem={renderItem}
-              keyExtractor={(item) => item._id}
-              scrollEnabled={false}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.panditListData}
-              ListEmptyComponent={
-                <View style={styles.emptyContainer}>
-                  <Text style={styles.emptyText}>No Jyotish Data Available</Text>
-                </View>
-              }
-            />
+        {isLoading ? renderSkeleton() : (
+          <FlatList
+            data={JyotishData}
+            renderItem={renderItem}
+            keyExtractor={(item) => item._id}
+            scrollEnabled={false}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.panditListData}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>No Jyotish Data Available</Text>
+              </View>
+            }
+          />
 
-          )}
-        </Animated.ScrollView>
-      </View>
+        )}
+      </ScrollView>
       <Modal
         visible={modalVisible}
         transparent={true}

@@ -16,15 +16,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UPLOAD_PROFILE_PHOTO } from '../../utils/BaseUrl';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
-import { PeoplePosition } from '../../DummyData/DropdownData';
-import { SH } from '../../utils/Dimensions';
+
 const MyProfile = ({ navigation }) => {
     const [selectedButton, setSelectedButton] = useState('CreateBioData');
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
     const ProfileData = useSelector((state) => state.profile);
     const profileData = ProfileData?.profiledata || {};
-    const [isProfileModalVisible, setProfileModalVisible] = useState(false);
     const [selectedProfile, setSelectedProfile] = useState('');
     const [fetchProfileDetails, setFetchProfileDetails] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -61,8 +59,6 @@ const MyProfile = ({ navigation }) => {
         await fetchProfilesDetails(profileType);
         navigation.navigate("ProfileDetail", { profileType });
     };
-    
-    
     
 
     const fetchProfilesDetails = async (profileType) => {

@@ -16,6 +16,8 @@ import Toast from 'react-native-toast-message';
 import DetailedProfile from '../StackScreens/DetailedProfile';
 import PartnersPreference from '../StackScreens/PartnersPreference';
 import PhotoGallery from '../StackScreens/PhotoGallery';
+import ImageViewing from 'react-native-image-viewing';
+
 const MainPartnerPrefrence = ({ navigation }) => {
     const [activeComponent, setActiveComponent] = useState("PartnersPreference");
     const profileData = useSelector((state) => state.profile);
@@ -25,7 +27,9 @@ const MainPartnerPrefrence = ({ navigation }) => {
     const formattedDate = moment(profileData?.profiledata?.dob).format("DD/MM/YYYY");
     const MyprofileData = useSelector((state) => state.getBiodata);
     const [biodataAvailable, setBiodataAvailable] = useState(false);
-    
+    const [visible, setVisible] = useState(false);
+    const imageSource = image ? { uri: image } : require('../../Images/Profile.png');
+
     const handlePress = (componentName) => {
         setActiveComponent(componentName);
     };
@@ -120,7 +124,15 @@ const MainPartnerPrefrence = ({ navigation }) => {
 
                 <View style={styles.topContainer}>
 
-                    <Image source={image ? { uri: image } : require('../../Images/Profile.png')} style={styles.image} />
+                    <TouchableOpacity onPress={() => setVisible(true)}>
+                        <Image source={imageSource} style={styles.image} />
+                    </TouchableOpacity>
+                    <ImageViewing
+                        images={[{ uri: image }]}
+                        imageIndex={0}
+                        visible={visible}
+                        onRequestClose={() => setVisible(false)}
+                    />
                     <View style={styles.userDeatil}>
                         <View>
                             <Text style={styles.text}>{capitalizeFirstLetter(profileData?.profiledata?.username || 'NA')}</Text>

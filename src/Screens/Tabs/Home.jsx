@@ -11,13 +11,15 @@ import AppIntroSlider from 'react-native-app-intro-slider';
 import Globalstyles from '../../utils/GlobalCss';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { GET_ACTIVIST, GET_ALL_BIODATA_PROFILES, GET_BIODATA } from '../../utils/BaseUrl';
+import { GET_ACTIVIST, GET_ALL_BIODATA_PROFILES, GET_BIODATA, PROFILE_ENDPOINT } from '../../utils/BaseUrl';
 import { useDispatch } from 'react-redux';
 import { setAllBiodata } from '../../ReduxStore/Slices/GetAllBiodataSlice';
 import { setBioData } from '../../ReduxStore/Slices/BiodataSlice';
 import { useFocusEffect } from '@react-navigation/native';
 import { setActivistdata } from '../../ReduxStore/Slices/ActivistSlice';
 import { useSelector } from 'react-redux';
+import { useCallback } from 'react';
+import { setProfiledata } from '../../ReduxStore/Slices/ProfileSlice';
 
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -29,7 +31,8 @@ const Home = ({ navigation }) => {
   const partnerPreferences = mybiodata?.partnerPreferences;
   const [isLoading, setIsLoading] = useState(false);
   const blurPhotos = useSelector((state) => state.privacy.blurPhotos);
- 
+  const [profiledata, setProfileData] = useState('');
+
   const handleNavigateToProfile = (item) => {
     if (!navigation.isFocused()) return;
 
@@ -51,6 +54,38 @@ const Home = ({ navigation }) => {
       });
     }
   };
+
+
+  const fetchProfile = async () => {
+    setIsLoading(true);
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) throw new Error("No token found");
+
+      const headers = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      };
+
+      console.log("headers in profile", headers);
+      const res = await axios.get(PROFILE_ENDPOINT, { headers });
+      console.log("Profile Response:", res.data);
+
+      setProfileData(res.data.data); // ✅ State update karo
+      dispatch(setProfiledata(res.data.data)); // Redux update karo
+
+    } catch (error) {
+      console.error("Error fetching profile:", error.response ? error.response.data : error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchProfile();
+    }, [])
+  );
 
   const GetAll_Biodata = async () => {
     setIsLoading(true)

@@ -1,7 +1,9 @@
 
-import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, 
-  StatusBar, Linking, Pressable, ActivityIndicator,Animated, 
-  ToastAndroid} from 'react-native';
+import {
+  Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView,
+  StatusBar, Linking, Pressable, ActivityIndicator, Animated,
+  ToastAndroid
+} from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 import { slider } from '../../DummyData/DummyData';
 import { Image } from 'react-native';
@@ -43,15 +45,6 @@ const Committee = ({ navigation }) => {
   const [isImageVisible, setImageVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
-     const scrollY = useRef(new Animated.Value(0)).current;
-     
-       const headerHeight = scrollY.interpolate({
-         inputRange: [0, 200],
-         outputRange: [SH(200), 0],
-         extrapolate: "clamp",
-       });
-       
-
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
     setImageVisible(true);
@@ -92,7 +85,6 @@ const Committee = ({ navigation }) => {
     React.useCallback(() => {
       setLocality('');
       setSubcaste('');
-      setCommitteeData([]); // Reset previous data
       fetchComitteeData("all"); // Fetch full list when coming back
     }, [])
   );
@@ -168,7 +160,7 @@ const Committee = ({ navigation }) => {
 
 
   const savedProfiles = async (_id) => {
-    console.log("_id",_id);
+    console.log("_id", _id);
     if (!_id) {
       Toast.show({
         type: "error",
@@ -190,8 +182,8 @@ const Committee = ({ navigation }) => {
       };
 
       const response = await axios.post(
-        `${SAVED_PROFILES}/${_id}`, 
-        {}, 
+        `${SAVED_PROFILES}/${_id}`,
+        {},
         { headers }
       );
 
@@ -285,30 +277,30 @@ const Committee = ({ navigation }) => {
     fetchComitteeData("modal");
   };
 
-    const handleUploadButton = () => {
-        if (MyActivistProfile && MyActivistProfile._id) {
-          Toast.show(
-            {
-              type: "success",
-              text1: "You have an activist account",
-              text2: "You can upload your dharamsala details"
-            }
-          )
-          setActiveButton(2);
-          navigation.navigate('CommitteeSubmissionPage');
-        } else {
-          Toast.show(
-            {
-              type: "error",
-              text1: "Please create an activist profile first!"
-            }
-          )
+  const handleUploadButton = () => {
+    if (MyActivistProfile && MyActivistProfile._id) {
+      Toast.show(
+        {
+          type: "success",
+          text1: "You have an activist account",
+          text2: "You can upload your dharamsala details"
         }
-      };
+      )
+      setActiveButton(2);
+      navigation.navigate('CommitteeSubmissionPage');
+    } else {
+      Toast.show(
+        {
+          type: "error",
+          text1: "Please create an activist profile first!"
+        }
+      )
+    }
+  };
 
-       const handleShare = async () => {
-                ToastAndroid.show("Under development", ToastAndroid.SHORT);
-              };
+  const handleShare = async () => {
+    ToastAndroid.show("Under development", ToastAndroid.SHORT);
+  };
   return (
     <SafeAreaView style={Globalstyles.container} showsVerticalScrollIndicator={false}>
       <StatusBar
@@ -339,81 +331,79 @@ const Committee = ({ navigation }) => {
           />
         </View>
       </View>
+      <View style={styles.fixedHeader}>
+        <View style={styles.searchbar}>
+          <TextInput
+            placeholder="Search in Your city"
+            value={locality}
+            onChangeText={(text) => setLocality(text)}
+            onSubmitEditing={() => fetchComitteeData("search")}
+            placeholderTextColor={"gray"}
+            style={{ flex: 1 }}
+             autoComplete="off"
+              textContentType="none"
+          />
+          {locality.length > 0 ? (
+            <AntDesign name={'close'} size={20} color={'gray'} onPress={() => {
+              setLocality('');
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Committee' }],
+              });
+            }} />
+          ) : (
+            <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchComitteeData("search")} />
+          )}
+        </View>
+        <View style={styles.ButtonContainer}>
+          <TouchableOpacity
+            style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton]}
+            onPress={handleOpenFilter}
+          >
+            <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Filter</Text>
+          </TouchableOpacity>
 
-      {/* Scrollable Content */}
-     <View style={{ flex: 1 }}>
-           <Animated.View style={[styles.animatedAdvertise, { height: headerHeight }]}>
-             <AppIntroSlider
-               data={slider}
-               renderItem={({ item }) => (
-                 <View>
-                   <Image source={item.image} style={Globalstyles.sliderImage} />
-                 </View>
-               )}
-               showNextButton={false}
-               showDoneButton={false}
-               dotStyle={Globalstyles.dot}
-               activeDotStyle={Globalstyles.activeDot}
-             />
-           </Animated.View>
-           <View style={styles.fixedHeader}>
-               <View style={styles.searchbar}>
-                 <TextInput
-                   placeholder="Search in Your city"
-                   value={locality}
-                   onChangeText={(text) => setLocality(text)}
-                   onSubmitEditing={() => fetchComitteeData("search")}
-                   placeholderTextColor={"gray"}
-                   style={{ flex: 1 }}
-                 />
-                 {locality.length > 0 ? (
-                   <AntDesign name={'close'} size={20} color={'gray'} onPress={() => setLocality('')} />
-                 ) : (
-                   <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchComitteeData("search")} />
-                 )}
-               </View>
-               <View style={styles.ButtonContainer}>
-             <TouchableOpacity
-               style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton]}
-               onPress={handleOpenFilter}
-             >
-               <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Filter</Text>
-             </TouchableOpacity>
-   
-             <TouchableOpacity
-               style={[styles.button, activeButton === 2 ? styles.activeButton : styles.inactiveButton]}
-               onPress={handleUploadButton}
-             >
-               <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>Upload</Text>
-             </TouchableOpacity>
-           </View>
-   
-           </View>
-           <Animated.ScrollView
-             showsVerticalScrollIndicator={false}
-             onScroll={Animated.event(
-               [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-               { useNativeDriver: false }
-             )}
-             scrollEventThrottle={16}
-           >
-             {isLoading ? renderSkeleton() : (
-              <FlatList
-              data={committeeData}
-              renderItem={renderItem}
-              keyExtractor={(item) => item._id}
-              scrollEnabled={false}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.panditListData}
-              ListEmptyComponent={
-                <View style={styles.emptyContainer}>
-                  <Text style={styles.emptyText}>No committeeData Available</Text>
-                </View>
-              }
-            />
-             )}
-           </Animated.ScrollView>
-         </View>
+          <TouchableOpacity
+            style={[styles.button, activeButton === 2 ? styles.activeButton : styles.inactiveButton]}
+            onPress={handleUploadButton}
+          >
+            <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>Upload</Text>
+          </TouchableOpacity>
+        </View>
+
+      </View>
+      <ScrollView showsHorizontalScrollIndicator={false}>
+        <View style={styles.sliderContainer}>
+          <AppIntroSlider
+            data={slider}
+            renderItem={({ item }) => (
+              <View>
+                <Image source={item.image} style={Globalstyles.sliderImage} />
+              </View>
+            )}
+            showNextButton={false}
+            showDoneButton={false}
+            dotStyle={Globalstyles.dot}
+            activeDotStyle={Globalstyles.activeDot}
+          />
+        </View>
+        {isLoading ? renderSkeleton() : (
+          <FlatList
+            data={committeeData}
+            renderItem={renderItem}
+            keyExtractor={(item) => item._id}
+            scrollEnabled={false}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.panditListData}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>No committeeData Available</Text>
+              </View>
+            }
+          />
+        )}
+      </ScrollView>
+
       <Modal
         visible={modalVisible}
         transparent={true}
@@ -438,6 +428,8 @@ const Committee = ({ navigation }) => {
                   onChangeText={(text) => setModalLocality(text)}
                   placeholder="Enter Locality"
                   placeholderTextColor={Colors.gray}
+                   autoComplete="off"
+              textContentType="none"
                 />
 
               </View>
@@ -450,6 +442,8 @@ const Committee = ({ navigation }) => {
                     placeholder="Type your caste"
                     placeholderTextColor={Colors.gray}
                     style={Globalstyles.input}
+                     autoComplete="off"
+              textContentType="none"
                   />
                   {filteredOptions.length > 0 && (
                     <FlatList
@@ -495,7 +489,7 @@ const Committee = ({ navigation }) => {
           </View>
         </View>
       </Modal>
-      <Toast/>
+      <Toast />
     </SafeAreaView>
   );
 };

@@ -40,6 +40,21 @@ export default function ActivistForm({ navigation }) {
     profilePhoto: '',
   });
 
+
+  useEffect(() => {
+    const loadFormData = async () => {
+      const savedData = await AsyncStorage.getItem('ActivistData');
+      if (savedData) {
+        setActivistData(JSON.parse(savedData)); // ✅ Restore saved data
+      }
+    };
+    loadFormData();
+  }, []);
+
+  useEffect(() => {
+    AsyncStorage.setItem('ActivistData', JSON.stringify(ActivistData));
+  }, [ActivistData]);
+
   useEffect(() => {
     if (MyActivistProfile) {
       setActivistData((prev) => ({
@@ -57,7 +72,7 @@ export default function ActivistForm({ navigation }) {
       cropping: true,
       includeBase64: true,
       mediaType: "photo",
-      compressImageQuality :1
+      compressImageQuality: 1
     })
       .then(image => {
         setActivistData(prev => ({
@@ -333,7 +348,9 @@ export default function ActivistForm({ navigation }) {
       <ScrollView style={Globalstyles.form} showsVerticalScrollIndicator={false}>
         <Text style={Globalstyles.title}>Full Name <Entypo name={'star'} color={'red'} size={12} /></Text>
         <TextInput style={Globalstyles.input} placeholder="Enter your Full Name" value={ActivistData.fullname}
-          onChangeText={(text) => setActivistData((prev) => ({ ...prev, fullname: text }))} placeholderTextColor={Colors.gray} />
+          onChangeText={(text) => setActivistData((prev) => ({ ...prev, fullname: text }))} placeholderTextColor={Colors.gray}
+          autoComplete="off"
+          textContentType="none" />
         {/* Sub Caste Dropdown */}
         <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
         <TextInput
@@ -342,6 +359,8 @@ export default function ActivistForm({ navigation }) {
           onChangeText={handleSubCasteInputChange}
           placeholder="Type your sub caste"
           placeholderTextColor={Colors.gray}
+          autoComplete="off"
+          textContentType="none"
         />
 
         {/* Agar user type karega toh list dikhegi */}
@@ -368,6 +387,8 @@ export default function ActivistForm({ navigation }) {
             onFocus={() => setShowDatePicker(true)}
             placeholder="Select your date of birth"
             placeholderTextColor={Colors.gray}
+            autoComplete="off"
+            textContentType="none"
           />
 
 
@@ -391,6 +412,8 @@ export default function ActivistForm({ navigation }) {
           onChangeText={handleStateInputChange}
           placeholder="Type your State"
           placeholderTextColor={Colors.gray}
+          autoComplete="off"
+          textContentType="none"
         />
 
         {filteredStates.length > 0 ? (
@@ -415,6 +438,8 @@ export default function ActivistForm({ navigation }) {
           onChangeText={handleCityInputChange}
           placeholder="Enter your city"
           placeholderTextColor={Colors.gray}
+          autoComplete="off"
+          textContentType="none"
         />
         {filteredCities.length > 0 && cityInput ? (
           <FlatList
@@ -439,6 +464,8 @@ export default function ActivistForm({ navigation }) {
           maxLength={10}
           placeholderTextColor={Colors.gray}
           value={ActivistData.mobileNo} onChangeText={(text) => setActivistData((prev) => ({ ...prev, mobileNo: text }))}
+          autoComplete="off"
+          textContentType="none"
         />
         <Text style={Globalstyles.title}>
           Known Activist ID No. <Entypo name={'star'} color={'red'} size={12} />
@@ -454,6 +481,8 @@ export default function ActivistForm({ navigation }) {
             }))
           }
           placeholderTextColor={Colors.gray}
+          autoComplete="off"
+          textContentType="none"
         />
 
         <Text style={Globalstyles.title}>Are you engaged with any Brahmin committee? </Text>

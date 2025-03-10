@@ -30,6 +30,20 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
         mobileNo: ''
     });
 
+    useEffect(() => {
+        const loadFormData = async () => {
+            const savedData = await AsyncStorage.getItem('DharamsalaData');
+            if (savedData) {
+                setDharamsalaData(JSON.parse(savedData)); // ✅ Restore saved data
+            }
+        };
+        loadFormData();
+    }, []);
+
+    useEffect(() => {
+        AsyncStorage.setItem('DharamsalaData', JSON.stringify(DharamsalaData));
+    }, [DharamsalaData]);
+
 
     useEffect(() => {
         const fetchDharamsalaData = async () => {
@@ -283,6 +297,8 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     value={DharamsalaData.dharmshalaName}
                     onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, dharmshalaName: text }))}
                     placeholderTextColor={Colors.gray}
+                    autoComplete="off"
+                    textContentType="none"
                 />
 
                 <Text style={Globalstyles.title}>Sub-Caste Name <Entypo name={'star'} color={'red'} size={12} /></Text>
@@ -292,6 +308,8 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     onChangeText={handleSubCasteInputChange}
                     placeholder="Type your sub caste"
                     placeholderTextColor={Colors.gray}
+                    autoComplete="off"
+                    textContentType="none"
                 />
 
                 {/* Agar user type karega toh list dikhegi */}
@@ -316,6 +334,8 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     onChangeText={handleCityInputChange}
                     placeholder="Enter your city"
                     placeholderTextColor={Colors.gray}
+                    autoComplete="off"
+                    textContentType="none"
                 />
                 {filteredCities.length > 0 && cityInput ? (
                     <FlatList
@@ -339,6 +359,8 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     maxLength={10}
                     placeholderTextColor={Colors.gray}
                     value={DharamsalaData.mobileNo} onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, mobileNo: text }))}
+                    autoComplete="off"
+                    textContentType="none"
                 />
 
                 <Text style={Globalstyles.title}>Description (Optional)</Text>

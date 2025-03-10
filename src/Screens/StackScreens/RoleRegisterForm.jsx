@@ -13,6 +13,8 @@ import { CREATE_JYOTISH, CREATE_KATHAVACHAK, CREATE_PANDIT } from '../../utils/B
 import { Dropdown } from 'react-native-element-dropdown';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import Entypo from 'react-native-vector-icons/Entypo';
+import { useSelector } from 'react-redux';
+
 const RoleRegisterForm = ({ navigation }) => {
     const [stateInput, setStateInput] = useState('');
     const [cityInput, setCityInput] = useState('');
@@ -24,6 +26,9 @@ const RoleRegisterForm = ({ navigation }) => {
     const [filteredCities, setFilteredCities] = useState([]);
     const [filteredSubCaste, setFilteredSubCaste] = useState([]);
     const [selectedState, setSelectedState] = useState('');
+    const ProfileData = useSelector((state) => state.profile);
+    const profileData = ProfileData?.profiledata || {};
+    const [fetchProfileDetails, setFetchProfileDetails] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
     const [RoleRegisterData, setRoleRegisterData] = useState({
@@ -45,6 +50,66 @@ const RoleRegisterForm = ({ navigation }) => {
         instagramUrl: '',
         whatsapp: ''
     });
+
+    useEffect(() => {
+        console.log("profileData:", JSON.stringify(profileData, null, 2));
+        fetchProfilesDetails();
+    }, []);
+
+
+    const fetchProfilesDetails = async () => {
+        try {
+            setIsLoading(true);
+
+            const token = await AsyncStorage.getItem('userToken');
+
+            // ✅ **Select first TRUE category**
+            let profileType = null;
+            if (profileData.isPandit) profileType = "Pandit";
+            else if (profileData.isJyotish) profileType = "Jyotish";
+            else if (profileData.isKathavachak) profileType = "Kathavachak";
+            else if (profileData.isMatrimonial) profileType = "Biodata";
+            else if (profileData.isActivist) profileType = "Activist";
+
+            if (!profileType) {
+                console.log("❌ No valid profileType found.");
+                setIsLoading(false);
+                return;
+            }
+
+            const apiUrl = `https://api-matrimonial.webseeder.tech/api/v1/user/profiles/${profileType}`;
+
+            // ✅ **Debugging: Print API details before request**
+            console.log("API Request:");
+            console.log("URL:", apiUrl);
+            console.log("Headers:", { Authorization: `Bearer ${token}` });
+
+            const response = await axios.get(apiUrl, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            console.log("Full API Response:", response);
+
+            setFetchProfileDetails(response.data.data);
+            console.log("Selected Profile Data:", response.data.data);
+
+            setIsLoading(false);
+        } catch (error) {
+            console.error("Error fetching profiles:", error);
+
+            if (error.response) {
+                console.error("Response Data:", error.response.data);
+                console.error("Response Status:", error.response.status);
+                console.error("Response Headers:", error.response.headers);
+            } else if (error.request) {
+                console.error("No Response Received:", error.request);
+            } else {
+                console.error("Error Message:", error.message);
+            }
+
+            setIsLoading(false);
+        }
+    };
 
     useEffect(() => {
         const loadFormData = async () => {
@@ -97,7 +162,7 @@ const RoleRegisterForm = ({ navigation }) => {
                 width: 400,
                 height: 400,
                 includeBase64: true,
-                compressImageQuality :1
+                compressImageQuality: 1
             });
 
             if (!image.data) {
@@ -362,29 +427,35 @@ const RoleRegisterForm = ({ navigation }) => {
                     {/* <Text style={styles.editText}>Edit Details</Text> */}
                     <Text style={Globalstyles.title}>Name <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput style={Globalstyles.input}
-                        value={RoleRegisterData.fullName}
+                        value={RoleRegisterData?.fullName || fetchProfileDetails?.fullName || ''}
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, fullName: text }))}
                         placeholder='Enter Your Full Name'
                         placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none"
                     />
 
                     <Text style={Globalstyles.title}>Mobile No. <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput style={Globalstyles.input}
-                        value={RoleRegisterData?.mobileNo}
+                        value={RoleRegisterData?.mobileNo || fetchProfileDetails?.mobileNo || ''}
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, mobileNo: text }))}
                         keyboardType="phone-pad"
                         placeholder="Enter Your Mobile No." maxLength={10}
-                        placeholderTextColor={Colors.gray} />
+                        placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none" />
 
                     <Text style={[Globalstyles.title, { color: Colors.theme_color }]}>Address</Text>
 
                     <Text style={Globalstyles.title}>State <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput
                         style={Globalstyles.input}
-                        value={RoleRegisterData?.state} // `biodata?.state` ki jagah `stateInput` use karein
+                        value={RoleRegisterData?.state || fetchProfileDetails?.state || ''} // `biodata?.state` ki jagah `stateInput` use karein
                         onChangeText={handleStateInputChange}
                         placeholder="Type your State"
                         placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none"
                     />
 
                     {filteredStates.length > 0 ? (
@@ -404,10 +475,12 @@ const RoleRegisterForm = ({ navigation }) => {
                     <Text style={Globalstyles.title}>Village / City <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput
                         style={Globalstyles.input}
-                        value={RoleRegisterData?.city}
+                        value={RoleRegisterData?.city || fetchProfileDetails?.city || ''}
                         onChangeText={handleCityInputChange}
                         placeholder="Enter your city"
                         placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none"
                     />
                     {filteredCities.length > 0 && cityInput ? (
                         <FlatList
@@ -426,27 +499,33 @@ const RoleRegisterForm = ({ navigation }) => {
 
                     <Text style={Globalstyles.title}>Area</Text>
                     <TextInput style={Globalstyles.input}
-                        value={RoleRegisterData?.residentialAddress}
+                        value={RoleRegisterData?.residentialAddress || fetchProfileDetails?.residentialAddress || ''}
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, residentialAddress: text }))}
                         placeholder='Enter Your Area'
                         placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none"
                     />
 
                     <Text style={Globalstyles.title}>Aadhar No. </Text>
                     <TextInput style={Globalstyles.input}
-                        value={RoleRegisterData?.aadharNo}
+                        value={RoleRegisterData?.aadharNo || fetchProfileDetails?.aadharNo || ''}
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, aadharNo: text }))}
                         placeholder='Enter Your Aadhar No.'
                         placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none"
                     />
 
                     <Text style={Globalstyles.title}>Sub Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput
                         style={Globalstyles.input}
-                        value={RoleRegisterData?.subCaste} // `myBiodata?.subCaste` ki jagah `subCasteInput` use karein
+                        value={RoleRegisterData?.subCaste || fetchProfileDetails?.subCaste || ''} // `myBiodata?.subCaste` ki jagah `subCasteInput` use karein
                         onChangeText={handleSubCasteInputChange}
                         placeholder="Type your sub caste"
                         placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none"
                     />
 
                     {/* Agar user type karega toh list dikhegi */}
@@ -514,9 +593,9 @@ const RoleRegisterForm = ({ navigation }) => {
                     <Text style={Globalstyles.title}>Profile Photo <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <View style={Globalstyles.input}>
                         <TouchableOpacity onPress={handleProfilePhotoPick}>
-                            {RoleRegisterData.profilePhoto ? (
+                            {RoleRegisterData.profilePhoto || fetchProfileDetails?.profilePhoto ? (
                                 <Image
-                                    source={{ uri: RoleRegisterData.profilePhoto }}
+                                    source={{ uri: RoleRegisterData.profilePhoto || fetchProfileDetails?.profilePhoto }}
                                     style={styles.profileImage}
                                 />
                             ) : (
@@ -527,10 +606,12 @@ const RoleRegisterForm = ({ navigation }) => {
                     </View>
 
                     <Text style={Globalstyles.title}>Add Description <Entypo name={'star'} color={'red'} size={12} /></Text>
-                    <TextInput style={Globalstyles.textInput} value={RoleRegisterData.description}
+                    <TextInput style={Globalstyles.textInput} value={RoleRegisterData.description || fetchProfileDetails?.description || ''}
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, description: text }))}
                         textAlignVertical='top' placeholder="Add Your Description"
                         placeholderTextColor={Colors.gray} multiline={true}
+                        autoComplete="off"
+                        textContentType="none"
                     />
 
                     <View style={styles.photopickContainer}>
@@ -562,6 +643,8 @@ const RoleRegisterForm = ({ navigation }) => {
                         onBlur={() => handleBlur("websiteUrl")}
                         placeholder="Give Your Website Link"
                         placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none"
                     />
 
                     <Text style={Globalstyles.title}>Youtube Link</Text>
@@ -582,6 +665,8 @@ const RoleRegisterForm = ({ navigation }) => {
                         onBlur={() => handleBlur("whatsapp")}
                         placeholder="Give Your Whatsapp Link"
                         placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none"
                     />
 
                     <Text style={Globalstyles.title}>Facebook Link</Text>
@@ -592,6 +677,8 @@ const RoleRegisterForm = ({ navigation }) => {
                         onBlur={() => handleBlur("facebookUrl")}
                         placeholder="Give Your Facebook Link"
                         placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none"
                     />
 
                     <Text style={Globalstyles.title}>Instagram Link</Text>
@@ -602,6 +689,8 @@ const RoleRegisterForm = ({ navigation }) => {
                         onBlur={() => handleBlur("instagramUrl")}
                         placeholder="Give Your Instagram Link"
                         placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none"
                     />
 
                     {

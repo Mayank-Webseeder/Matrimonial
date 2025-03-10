@@ -110,6 +110,9 @@ const HIDE_CONTACT="https://api-matrimonial.webseeder.tech/api/v1/settings/hide-
 const HIDE_OPTIONAL_DETAILS="https://api-matrimonial.webseeder.tech/api/v1/settings/hide-optionalDetails";
 const INACTIVE_ID="https://api-matrimonial.webseeder.tech/api/v1/settings/set-activityStatus";
 
+//notification
+const NOTIFICATION="https://api-matrimonial.webseeder.tech/api/v1/notification/getAllNotification";
+
 export {
     SIGNUP_ENDPOINT,
     LOGIN_ENDPOINT,
@@ -182,5 +185,6 @@ export {
     DELETE_BIODATA,
     HIDE_CONTACT,
     HIDE_OPTIONAL_DETAILS,
-    INACTIVE_ID
+    INACTIVE_ID,
+    NOTIFICATION
 }

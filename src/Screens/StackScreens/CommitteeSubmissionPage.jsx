@@ -18,6 +18,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
     const [filteredSubCaste, setFilteredSubCaste] = useState([]);
     const [isLoading, setIsLoading] = useState('');
     const [isEditing, setIsEditing] = useState(true);
+
     const [CommitteeData, setCommitteeData] = useState({
         committeeTitle: '',
         presidentName: '',
@@ -27,6 +28,21 @@ const CommitteeSubmissionPage = ({ navigation }) => {
         photoUrl: '',
         mobileNo: ''
     });
+
+    useEffect(() => {
+        const loadFormData = async () => {
+            const savedData = await AsyncStorage.getItem('CommitteeData');
+            if (savedData) {
+                setCommitteeData(JSON.parse(savedData)); // ✅ Restore saved data
+            }
+        };
+        loadFormData();
+    }, []);
+
+    useEffect(() => {
+        AsyncStorage.setItem('CommitteeData', JSON.stringify(CommitteeData));
+    }, [CommitteeData]);
+
 
     useEffect(() => {
         const fetchCommitteeData = async () => {
@@ -122,7 +138,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
             cropping: true,
             includeBase64: true,
             mediaType: "photo",
-            compressImageQuality :1
+            compressImageQuality: 1
         })
             .then(image => {
                 setCommitteeData(prev => ({
@@ -169,7 +185,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
 
     const constructCommitteePayload = async (CommitteeData, isNew = false) => {
         const keys = [
-           'committeeTitle','presidentName','subCaste','city','area','photoUrl','mobileNo'
+            'committeeTitle', 'presidentName', 'subCaste', 'city', 'area', 'photoUrl', 'mobileNo'
         ];
 
         const payload = {};
@@ -292,6 +308,8 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     style={Globalstyles.input}
                     placeholder="Enter title"
                     value={CommitteeData.committeeTitle}
+                    autoComplete="off"
+                    textContentType="none"
                     onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, committeeTitle: text }))} placeholderTextColor={Colors.gray}
                 />
 
@@ -303,6 +321,8 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     value={CommitteeData.presidentName}
                     onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, presidentName: text }))}
                     placeholderTextColor={Colors.gray}
+                    autoComplete="off"
+                    textContentType="none"
                 />
 
                 <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
@@ -312,6 +332,8 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     onChangeText={handleSubCasteInputChange}
                     placeholder="Type your sub caste"
                     placeholderTextColor={Colors.gray}
+                    autoComplete="off"
+                    textContentType="none"
                 />
 
                 {/* Agar user type karega toh list dikhegi */}
@@ -337,6 +359,8 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     onChangeText={handleCityInputChange}
                     placeholder="Enter your city"
                     placeholderTextColor={Colors.gray}
+                    autoComplete="off"
+                    textContentType="none"
                 />
                 {filteredCities.length > 0 && cityInput ? (
                     <FlatList
@@ -358,6 +382,8 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     placeholder="Enter Your Area"
                     value={CommitteeData.area} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, area: text }))}
                     placeholderTextColor={Colors.gray}
+                    autoComplete="off"
+                    textContentType="none"
                 />
 
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginVertical: SH(10) }}>
@@ -380,6 +406,8 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     keyboardType="numeric"
                     maxLength={10}
                     placeholderTextColor={Colors.gray}
+                     autoComplete="off"
+              textContentType="none"
                     value={CommitteeData.mobileNo} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, mobileNo: text }))}
                 />
 
@@ -454,7 +482,7 @@ const styles = StyleSheet.create({
         marginBottom: SH(15),
     },
     submitButton: {
-        backgroundColor:Colors.theme_color,
+        backgroundColor: Colors.theme_color,
         paddingVertical: SH(5),
         borderRadius: 5,
         alignItems: 'center',

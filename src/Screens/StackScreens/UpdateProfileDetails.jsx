@@ -361,6 +361,12 @@ const UpdateProfileDetails = ({ navigation, route }) => {
         }
     };
 
+    const handleCheckboxChange = (service) => {
+        setChecked((prev) => ({
+            ...prev,
+            [service]: !prev[service],
+        }));
+    };
 
     return (
         <SafeAreaView style={Globalstyles.container}>
@@ -376,7 +382,6 @@ const UpdateProfileDetails = ({ navigation, route }) => {
 
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={Globalstyles.form}>
-                    <Text style={styles.editText}>Edit Details</Text>
                     <Text style={Globalstyles.title}>Name</Text>
                     <TextInput style={Globalstyles.input}
                         value={RoleRegisterData.fullName}

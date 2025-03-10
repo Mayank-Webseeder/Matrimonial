@@ -178,8 +178,8 @@ export const CityData = [
 ];
 
 export const genderData = [
-  { label: "Male", value: "Male" },
-  { label: "Female", value: "Female" },
+  { label: "Male", value: "male" },
+  { label: "Female", value: "female" },
 ];
 
 export const Income = [

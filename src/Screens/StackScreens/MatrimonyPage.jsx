@@ -16,6 +16,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { REPOST } from '../../utils/BaseUrl';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
+import ImageViewing from 'react-native-image-viewing';
+
 
 const MatrimonyPage = ({ navigation }) => {
     const [activeComponent, setActiveComponent] = useState("DetailedProfile");
@@ -26,7 +28,10 @@ const MatrimonyPage = ({ navigation }) => {
     const formattedDate = moment(profileData?.profiledata?.dob).format("DD/MM/YYYY");
     const MyprofileData = useSelector((state) => state.getBiodata);
     const [biodataAvailable, setBiodataAvailable] = useState(false);
-    
+    const [visible, setVisible] = useState(false);
+
+    const imageSource = image ? { uri: image } : require('../../Images/Profile.png');
+
     const handlePress = (componentName) => {
         setActiveComponent(componentName);
     };
@@ -121,7 +126,16 @@ const MatrimonyPage = ({ navigation }) => {
 
                 <View style={styles.topContainer}>
 
-                    <Image source={image ? { uri: image } : require('../../Images/Profile.png')} style={styles.image} />
+                    <TouchableOpacity onPress={() => setVisible(true)}>
+                        <Image source={imageSource} style={styles.image} />
+                    </TouchableOpacity>
+                    <ImageViewing
+                        images={[{ uri: image }]}
+                        imageIndex={0}
+                        visible={visible}
+                        onRequestClose={() => setVisible(false)}
+                    />
+
                     <View style={styles.userDeatil}>
                         <View>
                             <Text style={styles.text}>{capitalizeFirstLetter(profileData?.profiledata?.username || 'NA')}</Text>

@@ -1,5 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, Animated, SafeAreaView, StatusBar, Linking, Pressable, ToastAndroid } from 'react-native';
+import {
+  Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, SafeAreaView, StatusBar, Linking, Pressable, ToastAndroid,
+  ScrollView
+} from 'react-native';
 import { slider } from '../../DummyData/DummyData';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -42,14 +45,6 @@ const Pandit = ({ navigation }) => {
     setImageVisible(true);
   };
 
-  const scrollY = useRef(new Animated.Value(0)).current;
-
-  const headerHeight = scrollY.interpolate({
-    inputRange: [0, 200],
-    outputRange: [SH(200), 0],
-    extrapolate: "clamp",
-  });
-
   const handleOpenFilter = () => {
     setModalVisible(true);
     setActiveButton(1);
@@ -78,40 +73,47 @@ const Pandit = ({ navigation }) => {
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
-
+  
+      if (!token) {
+        console.warn("No token found");
+        setLoading(false);
+        return;
+      }
+  
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-
+  
       let queryParams = [];
-
-      if (filterType === "search") {
-        if (locality.trim()) queryParams.push(`locality=${encodeURIComponent(locality.toLowerCase())}`);
-      } else if (filterType === "modal") {
-        if (modalLocality.trim()) queryParams.push(`locality=${encodeURIComponent(modalLocality.toLowerCase())}`);
-        if (services) queryParams.push(`services=${encodeURIComponent(services)}`);
-        if (rating && rating.trim()) queryParams.push(`rating=${encodeURIComponent(rating)}`);
-        if (experience && experience.trim()) queryParams.push(`experience=${encodeURIComponent(experience)}`);
+  
+      if (filterType === "search" && locality.trim()) {
+        queryParams.push(`locality=${encodeURIComponent(locality.trim().toLowerCase())}`);
+      } 
+      else if (filterType === "modal") {
+        if (modalLocality?.trim()) queryParams.push(`locality=${encodeURIComponent(modalLocality.trim().toLowerCase())}`);
+        if (services?.trim()) queryParams.push(`services=${encodeURIComponent(services.trim())}`);
+        if (rating?.trim()) queryParams.push(`rating=${encodeURIComponent(rating.trim())}`);
+        if (experience?.trim()) queryParams.push(`experience=${encodeURIComponent(experience.trim())}`);
       }
-
-      // ⚡️ Construct URL only with valid params
-      const url = queryParams.length > 0
-        ? `${GET_ALL_PANDIT_DATA}?${queryParams.join("&")}`
+  
+      const url = queryParams.length > 0 
+        ? `${GET_ALL_PANDIT_DATA}?${queryParams.join("&")}` 
         : GET_ALL_PANDIT_DATA;
-
+  
       console.log("Fetching Data from:", url);
-
+  
       const response = await axios.get(url, { headers });
-      console.log("response.data?.data", response.data?.data);
       setPanditData(response.data?.data || []);
+  
     } catch (error) {
       console.error("Error fetching Pandit data:", error);
+      setPanditData([]); // Clear data on error
     } finally {
       setLoading(false);
     }
   };
+  
 
   const savedProfiles = async (_id) => {
     if (!_id) {
@@ -200,8 +202,8 @@ const Pandit = ({ navigation }) => {
   );
 
   const handleShare = async () => {
-          ToastAndroid.show("Under development", ToastAndroid.SHORT);
-      };
+    ToastAndroid.show("Under development", ToastAndroid.SHORT);
+  };
 
   const renderItem = ({ item }) => {
     const isSaved = item.isSaved || null;
@@ -280,9 +282,47 @@ const Pandit = ({ navigation }) => {
           <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => navigation.navigate('Notification')} />
         </View>
       </View>
-      <View style={{ flex: 1 }}>
-        <Animated.View style={[styles.animatedAdvertise, { height: headerHeight }]}>
+      <View style={styles.ButtonContainer}>
+        <TouchableOpacity
+          style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton]}
+          onPress={handleOpenFilter}
+        >
+          <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Filter</Text>
+        </TouchableOpacity>
+
+        <View style={styles.searchbar}>
+          <TextInput
+            placeholder="Search in Your city"
+            value={locality}
+            onChangeText={(text) => setLocality(text)}
+            onSubmitEditing={() => fetchPanditData("search")}
+            placeholderTextColor={"gray"}
+            style={{ flex: 1 }}
+          />
+          {locality.length > 0 ? (
+            <AntDesign 
+            name={'close'} 
+            size={20} 
+            color={'gray'} 
+            onPress={() => {
+              setLocality('');
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Pandit' }], 
+              });
+            }} 
+          />
+          ) : (
+            <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchPanditData("search")} />
+          )}
+        </View>
+      </View>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={Globalstyles.sliderContainer}>
           <AppIntroSlider
+            ref={sliderRef}
             data={slider}
             renderItem={({ item }) => (
               <View>
@@ -294,59 +334,24 @@ const Pandit = ({ navigation }) => {
             dotStyle={Globalstyles.dot}
             activeDotStyle={Globalstyles.activeDot}
           />
-        </Animated.View>
-        <View style={styles.fixedHeader}>
-          <View style={styles.ButtonContainer}>
-            <TouchableOpacity
-              style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton]}
-              onPress={handleOpenFilter}
-            >
-              <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Filter</Text>
-            </TouchableOpacity>
-
-            <View style={styles.searchbar}>
-              <TextInput
-                placeholder="Search in Your city"
-                value={locality}
-                onChangeText={(text) => setLocality(text)}
-                onSubmitEditing={() => fetchPanditData("search")}
-                placeholderTextColor={"gray"}
-                style={{ flex: 1 }}
-              />
-              {locality.length > 0 ? (
-                <AntDesign name={'close'} size={20} color={'gray'} onPress={() => setLocality('')} />
-              ) : (
-                <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchPanditData("search")} />
-              )}
-            </View>
-          </View>
         </View>
-        <Animated.ScrollView
-          showsVerticalScrollIndicator={false}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-            { useNativeDriver: false }
-          )}
-          scrollEventThrottle={16}
-        >
-          {isLoading ? renderSkeleton() : (
-            <FlatList
-              data={panditData}
-              renderItem={renderItem}
-              keyExtractor={(item) => item._id}
-              scrollEnabled={false}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.panditListData}
-              ListEmptyComponent={
-                <View style={styles.emptyContainer}>
-                  <Text style={styles.emptyText}>No Pandit Data Available</Text>
-                </View>
-              }
-            />
+        {isLoading ? renderSkeleton() : (
+          <FlatList
+            data={panditData}
+            renderItem={renderItem}
+            keyExtractor={(item) => item._id}
+            scrollEnabled={false}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.panditListData}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>No Pandit Data Available</Text>
+              </View>
+            }
+          />
 
-          )}
-        </Animated.ScrollView>
-      </View>
+        )}
+      </ScrollView>
 
       <Modal
         visible={modalVisible}

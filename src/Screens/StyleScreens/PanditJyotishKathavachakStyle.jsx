@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between", // Spread out elements
     marginHorizontal: SW(10),
-    marginTop: SW(10),
+    marginBottom: SW(10),
   },
 
   button: {
@@ -152,8 +152,6 @@ const styles = StyleSheet.create({
   },
   panditListData: {
     marginVertical: SH(10),
-    marginBottom: SH(20),
-    marginTop: 0
   },
   leftContainer: {
     marginHorizontal: SW(10),
@@ -250,7 +248,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: SF(15),
-    color:"gray",
+    color: "gray",
     fontFamily: 'Poppins-Regular',
   },
 });

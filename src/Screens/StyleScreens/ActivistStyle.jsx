@@ -3,8 +3,18 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
+  emptyContainer: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: SH(200),
+    },
+    emptyText: {
+      fontSize: SF(15),
+      color: "gray",
+      fontFamily: 'Poppins-Regular',
+    },
   ActivistDataList:{
-    
+    marginVertical: SH(10),
   },
   righticons: {
     flexDirection: 'row',

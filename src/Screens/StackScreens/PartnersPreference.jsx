@@ -14,8 +14,8 @@ import Entypo from 'react-native-vector-icons/Entypo';
 
 import {
     PartnerOccupationData, FamilyTypeData,
-    FamilyFinancialStatusData, PartnersLiveinData, BodyStructureData, ComplexionData,PartnerQualificationData, PartnerDietHabit, Disabilities, subCasteOptions,
-    PartnermaritalStatusData, PartnersmokingStatusData, PartnerDrinkingHabit, PartnerManglikStatusData, PartnerFamliyIncome,Income, CityData, StateData
+    FamilyFinancialStatusData, PartnersLiveinData, BodyStructureData, ComplexionData, PartnerQualificationData, PartnerDietHabit, Disabilities, subCasteOptions,
+    PartnermaritalStatusData, PartnersmokingStatusData, PartnerDrinkingHabit, PartnerManglikStatusData, PartnerFamliyIncome, Income, CityData, StateData
 } from '../../DummyData/DropdownData';
 
 const PartnersPreference = ({ navigation }) => {
@@ -37,29 +37,29 @@ const PartnersPreference = ({ navigation }) => {
     const myPartnerPreferences = MyprofileData?.Biodata?.partnerPreferences;
 
     const [biodata, setBiodata] = useState({
-        partnerSubCaste:'',
-        partnerMinAge:'',
-        partnerMaxAge:'',
-        partnerMinHeightFeet:'',
-        partnerMaxHeightFeet:'',
-        partnerMaritalStatus:'',
-        partnerIncome:'',
-        partnerOccupation:'',
-        partnerQualification:'',
-        partnerDisabilities:'',
-        partnerManglikStatus:'',
-        partnersLivingStatus:'',
-        partnerState:'',
-        partnerCity:'',
-        partnerBodyStructure:'',
-        partnerComplexion:'',
-        partnerDietaryHabits:'',
-        partnerSmokingHabits:'',
-        partnerDrinkingHabits:'',
-        partnerExpectations:'',
-        partnerFamilyType:'',
-        partnerFamilyFinancialStatus:'',
-        partnerFamilyIncome:'',
+        partnerSubCaste: '',
+        partnerMinAge: '',
+        partnerMaxAge: '',
+        partnerMinHeightFeet: '',
+        partnerMaxHeightFeet: '',
+        partnerMaritalStatus: '',
+        partnerIncome: '',
+        partnerOccupation: '',
+        partnerQualification: '',
+        partnerDisabilities: '',
+        partnerManglikStatus: '',
+        partnersLivingStatus: '',
+        partnerState: '',
+        partnerCity: '',
+        partnerBodyStructure: '',
+        partnerComplexion: '',
+        partnerDietaryHabits: '',
+        partnerSmokingHabits: '',
+        partnerDrinkingHabits: '',
+        partnerExpectations: '',
+        partnerFamilyType: '',
+        partnerFamilyFinancialStatus: '',
+        partnerFamilyIncome: '',
     });
 
     useEffect(() => {
@@ -68,11 +68,26 @@ const PartnersPreference = ({ navigation }) => {
                 ...prev,
                 ...myPartnerPreferences, // Update biodata
             }));
-    
+
             setOriginalBiodata(myPartnerPreferences); // Store the original biodata for comparison
         }
     }, [myPartnerPreferences]);
-     // Runs when `myPartnerPreferences` changes
+    // Runs when `myPartnerPreferences` changes
+
+
+    useEffect(() => {
+        const loadFormData = async () => {
+            const savedData = await AsyncStorage.getItem('biodata');
+            if (savedData) {
+                setBiodata(JSON.parse(savedData)); // ✅ Restore saved data
+            }
+        };
+        loadFormData();
+    }, []);
+
+    useEffect(() => {
+        AsyncStorage.setItem('biodata', JSON.stringify(biodata));
+    }, [biodata]);
 
     const handleStateInputChange = (text) => {
         setStateInput(text);
@@ -293,12 +308,6 @@ const PartnersPreference = ({ navigation }) => {
                 <View style={Globalstyles.form}>
                     <View style={styles.detail}>
                         <Text style={styles.Formtitle}>Preferences</Text>
-                        {myPartnerPreferences && (
-                            <TouchableOpacity onPress={() => setIsEditing(true)}>
-                                <Text style={styles.detailText}>Edit</Text>
-                            </TouchableOpacity>
-                        )}
-
                     </View>
                     <Text style={Globalstyles.title}>Sub-Caste  </Text>
                     <TextInput
@@ -307,6 +316,8 @@ const PartnersPreference = ({ navigation }) => {
                         onChangeText={handleSubCasteInputChange}
                         placeholder="Enter your sub caste"
                         placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none"
                     />
                     {filteredSubCaste.length > 0 && subCasteInput ? (
                         <FlatList
@@ -477,6 +488,8 @@ const PartnersPreference = ({ navigation }) => {
                             onChangeText={handleStateInputChange}
                             placeholder="Type your State"
                             placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
                         />
                         {filteredStates.length > 0 && stateInput ? (
                             <FlatList
@@ -498,6 +511,8 @@ const PartnersPreference = ({ navigation }) => {
                             onChangeText={handleCityInputChange}
                             placeholder="Type your city/village"
                             placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
                         />
                         {filteredCities.length > 0 && cityInput ? (
                             <FlatList
@@ -617,16 +632,18 @@ const PartnersPreference = ({ navigation }) => {
                             onChangeText={(text) =>
                                 setBiodata({ ...biodata, partnerExpectations: text })
                             }
-                            textAlignVertical='top' />
-                        {isEditing && (
-                            <TouchableOpacity style={styles.button} onPress={handleSave}>
-                                {loading ? (
-                                    <ActivityIndicator size={'large'} color={Colors.light} />
-                                ) : (
+                            textAlignVertical='top'
+                            autoComplete="off"
+                            textContentType="none" />
+                        {
+                            loading ?
+                                <ActivityIndicator size="large" color={Colors.theme_color} />
+                                :
+                                <TouchableOpacity style={styles.button} onPress={handleSave} disabled={loading}>
                                     <Text style={styles.buttonText}>Submit</Text>
-                                )}
-                            </TouchableOpacity>
-                        )}
+                                </TouchableOpacity>
+                        }
+
 
                     </View>
                 </View>

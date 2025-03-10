@@ -3,10 +3,17 @@ import Colors from "../../utils/Colors";
 import { SH, SW, SF } from "../../utils/Dimensions";
 
 const styles = StyleSheet.create({
-   
+    noImageText: {
+        textAlign: 'center',
+        color: 'gray',
+        fontSize: SF(16),
+        marginTop: SH(20),
+        paddingHorizontal: 20,
+    },
+
     righticons: {
         flexDirection: 'row',
-        alignItems:"center"
+        alignItems: "center"
     },
     headerContainer: {
         flexDirection: "row",
@@ -22,21 +29,21 @@ const styles = StyleSheet.create({
         height: SH(250)
     },
     cameraIcon: {
-        position:"absolute",
-        top:SH(220)
+        position: "absolute",
+        top: SH(220)
     },
     smallHeader: {
         alignItems: "center",
         justifyContent: "center",
         flex: 1
     },
-    editText:{
-        color:Colors.theme_color,
-        paddingVertical:SH(15),
-        textAlign:"center",
-        fontFamily:"Poppins-Bold",
-       //  marginLeft:SW(250)
-       },
+    editText: {
+        color: Colors.theme_color,
+        paddingVertical: SH(15),
+        textAlign: "center",
+        fontFamily: "Poppins-Bold",
+        //  marginLeft:SW(250)
+    },
     name: {
         textAlign: "center",
         color: Colors.dark,
@@ -76,15 +83,15 @@ const styles = StyleSheet.create({
         borderColor: Colors.theme_color,
         borderWidth: 1,
         paddingHorizontal: SW(7),
-        paddingVertical:SH(7),
+        paddingVertical: SH(7),
         borderRadius: 50
     },
     Selectedicon: {
         backgroundColor: Colors.theme_color,
         paddingHorizontal: SW(7),
-        paddingVertical:SH(7),
+        paddingVertical: SH(7),
         borderRadius: 50,
-      },
+    },
     text: {
         fontFamily: "Poppins-Regular",
         fontSize: SF(15)
@@ -126,8 +133,7 @@ const styles = StyleSheet.create({
         width: "100%",
         height: SH(300),
         marginBottom: SH(10),
-        borderRadius:10
-
+        borderRadius: 10
     }
 
 

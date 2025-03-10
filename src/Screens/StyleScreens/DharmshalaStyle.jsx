@@ -15,12 +15,12 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: SF(15),
-    color:"gray",
+    color: "gray",
     fontFamily: 'Poppins-Regular',
   },
   fixedHeader: {
     marginVertical: SH(10),
-    paddingBottom:SH(20)
+    paddingBottom: SH(20)
   },
   righticons: {
     flexDirection: 'row',
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     marginHorizontal: SW(10),
     marginVertical: SH(10),
-    borderRadius:5
+    borderRadius: 5
   },
   searchbar: {
     display: "flex",
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     paddingHorizontal: SW(10),
     width: SW(350),
-    justifyContent:"space-between"
+    justifyContent: "space-between"
   },
   card: {
     backgroundColor: '#fff',
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     marginHorizontal: SW(10),
     marginVertical: SH(7),
     marginBottom: SH(3),
-    paddingVertical:SH(3)
+    paddingVertical: SH(3)
   },
   cardData: {
     flexDirection: "row"
@@ -65,9 +65,7 @@ const styles = StyleSheet.create({
     fontSize: SF(13)
   },
   sliderContainer: {
-    marginBottom: SH(30),
-    height: SH(180),
-    marginTop: SH(10)
+    marginBottom: SH(10),
   },
   sliderImage: {
     width: "100%",
@@ -100,7 +98,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: '#fff',
     marginHorizontal: SW(15),
-    marginTop:-SH(10)
+    marginTop: -SH(10)
   },
   iconContainer: {
     alignItems: 'center',
@@ -145,7 +143,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between"
   },
- 
+
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -177,7 +175,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: SF(17)
   },
- 
+
   leftContainer: {
     marginHorizontal: SW(10),
     marginVertical: SH(15)
@@ -192,7 +190,8 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
-    marginVertical:SH(15)
+    marginVertical: SH(15),
+    marginBottom: SH(36)
   },
   button: {
     width: SW(100),
@@ -237,7 +236,7 @@ const styles = StyleSheet.create({
     top: SH(300),
     left: SW(150)
   },
-  label:{
+  label: {
     fontSize: SF(13),
     marginBottom: SH(5),
     fontFamily: "Poppins-Medium"

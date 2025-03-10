@@ -96,7 +96,7 @@ const Globalstyles = StyleSheet.create({
     borderRadius: 10
   },
   sliderContainer: {
-    marginVertical: SH(10)
+    marginBottom: SH(10)
   },
   sliderImage: {
     width: "100%",
@@ -109,14 +109,14 @@ const Globalstyles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: '#ccc',
     marginHorizontal: SH(2),
-    marginTop: SW(60)
+    marginTop: SW(100)
   },
   activeDot: {
     width: SW(25),
     height: SH(5),
     borderRadius: 4,
     backgroundColor: Colors.theme_color,
-    marginTop: SW(60)
+    marginTop: SW(100)
   },
   dropdown: {
     borderColor: '#ccc',

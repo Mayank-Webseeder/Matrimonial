@@ -79,49 +79,51 @@ const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
 function MyTabs() {
-  const dispatch = useDispatch();
-  const [profiledata, setProfileData] = useState('');
-  const image = profiledata?.photoUrl?.[0];
+  // const dispatch = useDispatch();
+  // const [profiledata, setProfileData] = useState('');
+   const ProfileData = useSelector((state) => state.profile);
+  const profileData = ProfileData?.profiledata || {};
+  const image = profileData?.photoUrl?.[0];
   const MyprofileData = useSelector((state) => state.getBiodata);
   const partnerPreferences = MyprofileData?.Biodata?.partnerPreferences || null;
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
 
-  const fetchProfile = async () => {
-    setLoading(true);
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+  // const fetchProfile = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const token = await AsyncStorage.getItem("userToken");
+  //     if (!token) throw new Error("No token found");
 
-      const headers = {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      };
+  //     const headers = {
+  //       "Content-Type": "application/json",
+  //       "Authorization": `Bearer ${token}`,
+  //     };
 
-      console.log("headers in profile", headers);
-      const res = await axios.get(PROFILE_ENDPOINT, { headers });
-      console.log("API Response:", res.data);
+  //     console.log("headers in profile", headers);
+  //     const res = await axios.get(PROFILE_ENDPOINT, { headers });
+  //     console.log("API Response:", res.data);
 
-      setProfileData(res.data.data); // ✅ State update karo
-      dispatch(setProfiledata(res.data.data)); // Redux update karo
+  //     setProfileData(res.data.data); // ✅ State update karo
+  //     dispatch(setProfiledata(res.data.data)); // Redux update karo
 
-    } catch (error) {
-      console.error("Error fetching profile:", error.response ? error.response.data : error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  //   } catch (error) {
+  //     console.error("Error fetching profile:", error.response ? error.response.data : error.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  useFocusEffect(
-    useCallback(() => {
-      fetchProfile();
-    }, [])
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     fetchProfile();
+  //   }, [])
+  // );
 
   const iconSize = SF(30);
 
-  if (loading) {
-    return <LoadingScreen />;
-  }
+  // if (loading) {
+  //   return <LoadingScreen />;
+  // }
 
   return (
     <Tab.Navigator

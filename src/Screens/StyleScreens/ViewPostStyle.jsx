@@ -48,7 +48,8 @@ const styles = StyleSheet.create({
     image: {
         width: "100%",
         height: "auto",
-        borderRadius: 10
+        borderRadius: 10,
+        marginBottom:SH(10)
     },
 
 })

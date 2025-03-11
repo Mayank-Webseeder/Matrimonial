@@ -36,12 +36,60 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Regular",
     fontSize: SF(11)
   },
+  detailText: {
+    fontFamily: "Poppins-Regular",
+    fontSize: SF(14)
+  },
   notificationImage: {
     width: SW(50),
     height: SH(50),
     resizeMode: "cover",
     borderRadius: 50
+  },
+  detailImage: {
+    width: SW(340),
+    height: SH(300),
+    resizeMode: "cover",
+    borderRadius: 10,
+    marginBottom: SH(10)
+  },
+  tabContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    paddingVertical: SH(7),
+    paddingHorizontal: SW(10),
+    backgroundColor: "#f5f5f5",
+  },
+
+  tabButton: {
+    paddingVertical: SH(7),
+    paddingHorizontal: SW(15),
+    borderRadius:10,
+    backgroundColor: "#ddd",
+  },
+
+  activeTab: {
+    backgroundColor: Colors.theme_color,
+  },
+
+  tabText: {
+    fontSize: SF(15),
+    color: "#333",
+  },
+
+  activeTabText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+
+  disabledTab: {
+    backgroundColor: "#ccc",
+  },
+
+  disabledTabText: {
+    color: "#777",
   }
+
 
 });
 

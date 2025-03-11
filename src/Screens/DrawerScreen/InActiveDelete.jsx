@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, View, TouchableOpacity, Modal, SafeAreaView, StatusBar, ToastAndroid } from 'react-native';
 import Colors from '../../utils/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -7,13 +7,18 @@ import Globalstyles from '../../utils/GlobalCss';
 import { DELETE_BIODATA } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { useSelector } from 'react-redux';
 const InActiveDelete = ({ navigation }) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [actionType, setActionType] = useState('');
     const [successModalVisible, setSuccessModalVisible] = useState(false);
     const [IsLoading, setIsLoading] = useState('');
-    const [biodataExists, setBiodataExists] = useState('');
+    const profileData = useSelector((state) => state.profile);
+    const Profiledata = profileData?.profiledata || null;
+
+    useEffect(() => {
+        console.log("Profiledata", Profiledata);
+    }, [])
 
     const DELETE_BIODATA_API = async () => {
         try {
@@ -52,8 +57,6 @@ const InActiveDelete = ({ navigation }) => {
         }
     };
 
-
-
     const handleAction = (type) => {
         setActionType(type);
         setIsModalVisible(true);
@@ -71,7 +74,6 @@ const InActiveDelete = ({ navigation }) => {
                     text1: "Biodata Not Found!",
                 });
             } else {
-                setBiodataExists(false); // Hide delete button
                 Toast.show({
                     type: "success",
                     text1: "Biodata Deleted Successfully!",
@@ -79,7 +81,6 @@ const InActiveDelete = ({ navigation }) => {
             }
         }
     };
-
 
 
     const closeSuccessModal = () => {
@@ -106,7 +107,7 @@ const InActiveDelete = ({ navigation }) => {
                     <Text style={styles.optionText}>Inactivate My Biodata</Text>
                 </TouchableOpacity>
 
-                {biodataExists && ( // Only show button if biodata exists
+                {Profiledata?.isMatrimonial && (
                     <TouchableOpacity
                         style={styles.optionButton}
                         onPress={() => handleAction('deleteBiodata')}
@@ -114,7 +115,6 @@ const InActiveDelete = ({ navigation }) => {
                         <Text style={styles.optionText}>Delete My Biodata</Text>
                     </TouchableOpacity>
                 )}
-
 
                 <TouchableOpacity style={styles.optionButton} onPress={() => handleAction('deleteAccount')}>
                     <Text style={styles.optionText}>Delete My Account</Text>

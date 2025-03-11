@@ -264,7 +264,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                     <Text style={styles.text}>Disabilities: {profileData.partnerPreferences.partnerDisabilities}</Text>
                                 )}
                                 {profileData?.partnerPreferences?.partnerManglikStatus && (
-                                    <Text style={styles.text}>Manglik: {profileData.partnerPreferences.partnerManglikStatus}</Text>
+                                    <Text style={styles.text}>{profileData.partnerPreferences.partnerManglikStatus}</Text>
                                 )}
                                 {profileData?.partnerPreferences?.partnerFamilyType && (
                                     <Text style={styles.text}>Family Type: {profileData.partnerPreferences.partnerFamilyType}</Text>

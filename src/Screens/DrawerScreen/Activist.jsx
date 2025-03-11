@@ -291,6 +291,8 @@ const Activist = ({ navigation }) => {
                     onChangeText={(text) => setModalLocality(text)}
                     placeholder="Enter Locality"
                     placeholderTextColor={Colors.gray}
+                    autoComplete="off"
+            textContentType="none"
                   />
 
                 </View>
@@ -303,6 +305,8 @@ const Activist = ({ navigation }) => {
                       placeholder="Type your caste"
                       placeholderTextColor={Colors.gray}
                       style={Globalstyles.input}
+                      autoComplete="off"
+            textContentType="none"
                     />
                     {filteredOptions.length > 0 && (
                       <FlatList

@@ -32,7 +32,7 @@ const MyProfile = ({ navigation }) => {
 
     const handlePress = async (profileType) => {
         setSelectedButton(profileType);
-    
+
         const keyMap = {
             Biodata: "isMatrimonial",
             Jyotish: "isJyotish",
@@ -40,10 +40,10 @@ const MyProfile = ({ navigation }) => {
             Pandit: "isPandit",
             Activist: "isActivist",
         };
-    
+
         const isRegistered = profileData?.[keyMap[profileType]];
         console.log("isRegistered:", isRegistered);
-    
+
         if (profileType === "Biodata") {
             if (!isRegistered) {
                 navigation.navigate("MatrimonyPage");
@@ -59,7 +59,7 @@ const MyProfile = ({ navigation }) => {
         await fetchProfilesDetails(profileType);
         navigation.navigate("ProfileDetail", { profileType });
     };
-    
+
 
     const fetchProfilesDetails = async (profileType) => {
         try {

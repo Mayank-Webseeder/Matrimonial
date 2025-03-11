@@ -115,7 +115,7 @@ const RoleRegisterForm = ({ navigation }) => {
         const loadFormData = async () => {
             const savedData = await AsyncStorage.getItem('RoleRegisterData');
             if (savedData) {
-                setRoleRegisterData(JSON.parse(savedData)); // ✅ Restore saved data
+                setRoleRegisterData(JSON.parse(savedData));
             }
         };
         loadFormData();
@@ -224,16 +224,16 @@ const RoleRegisterForm = ({ navigation }) => {
         };
 
         const commonPayload = {
-            mobileNo: RoleRegisterData.mobileNo,
-            fullName: RoleRegisterData.fullName,
-            residentialAddress: RoleRegisterData.residentialAddress,
-            state: RoleRegisterData.state,
-            city: RoleRegisterData.city,
-            subCaste: RoleRegisterData.subCaste,
+            mobileNo: RoleRegisterData.mobileNo || fetchProfileDetails?.mobileNo ,
+            fullName: RoleRegisterData.fullName || fetchProfileDetails?.fullName,
+            residentialAddress: RoleRegisterData.residentialAddress  || fetchProfileDetails?.residentialAddress,
+            state: RoleRegisterData.state || fetchProfileDetails?.state,
+            city: RoleRegisterData.city || fetchProfileDetails?.city,
+            subCaste: RoleRegisterData.subCaste || fetchProfileDetails?.subCaste,
             profilePhoto: RoleRegisterData.profilePhoto,
             additionalPhotos: RoleRegisterData.additionalPhotos,
             experience: String(RoleRegisterData.experience),
-            description: RoleRegisterData.description,
+            description: RoleRegisterData.description || fetchProfileDetails?.description,
             websiteUrl: RoleRegisterData.websiteUrl,
             facebookUrl: RoleRegisterData.facebookUrl,
             youtubeUrl: RoleRegisterData.youtubeUrl,
@@ -266,7 +266,7 @@ const RoleRegisterForm = ({ navigation }) => {
                     [`${role.toLowerCase()}Services`]: filteredServices,
                 };
 
-                console.log(`Sending Payload for ${role}:`, payload); // ✅ Debugging
+                console.log(`Sending Payload for ${role}:`, payload);
 
                 const response = await axios.post(url, payload, { headers });
 
@@ -275,9 +275,11 @@ const RoleRegisterForm = ({ navigation }) => {
                     text1: 'Success!',
                     text2: `Successfully registered for ${role}.`,
                 });
-            }
-
-            // ✅ Clear saved form data after successful registration
+                setTimeout(() => {
+                    navigation.navigate("MainApp");
+                }, 2000);
+                
+            } 
             await AsyncStorage.removeItem('RoleRegisterData');
 
         } catch (error) {
@@ -593,9 +595,9 @@ const RoleRegisterForm = ({ navigation }) => {
                     <Text style={Globalstyles.title}>Profile Photo <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <View style={Globalstyles.input}>
                         <TouchableOpacity onPress={handleProfilePhotoPick}>
-                            {RoleRegisterData.profilePhoto || fetchProfileDetails?.profilePhoto ? (
+                            {RoleRegisterData.profilePhoto ? (
                                 <Image
-                                    source={{ uri: RoleRegisterData.profilePhoto || fetchProfileDetails?.profilePhoto }}
+                                    source={{ uri: RoleRegisterData.profilePhoto}}
                                     style={styles.profileImage}
                                 />
                             ) : (

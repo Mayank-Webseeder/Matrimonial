@@ -44,7 +44,7 @@ const Login = ({ navigation }) => {
 
             const response = await axios.post(LOGIN_ENDPOINT, payload);
             const LoginData = response.data;
-            console.log("LoginData",LoginData);
+            console.log("LoginData", LoginData);
             const token = LoginData.user.token;
 
             console.log("Token from response:", token);
@@ -136,6 +136,8 @@ const Login = ({ navigation }) => {
                         onChangeText={setMobileNumber}
                         placeholderTextColor={Colors.gray}
                         maxLength={10}
+                        autoComplete="off"
+                        textContentType="none"
                     />
                     {errors.mobileNumber && (
                         <Text style={styles.errorText}>{errors.mobileNumber}</Text>
@@ -152,6 +154,8 @@ const Login = ({ navigation }) => {
                             value={password}
                             onChangeText={setPassword}
                             placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
                         />
                         <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
                             <AntDesign
@@ -166,9 +170,9 @@ const Login = ({ navigation }) => {
                         <Text style={styles.errorText}>{errors.password}</Text>
                     )}
 
-                      <TouchableOpacity style={styles.forgotPasswordButton} onPress={()=>navigation.navigate('ForgotScreen')}>
+                    <TouchableOpacity style={styles.forgotPasswordButton} onPress={() => navigation.navigate('ForgotScreen')}>
                         <Text style={styles.forgotPasswordText}>Forgot Password</Text>
-                      </TouchableOpacity>
+                    </TouchableOpacity>
                     {/* Login Button */}
                     <TouchableOpacity
                         style={styles.button}

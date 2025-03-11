@@ -112,6 +112,8 @@ const INACTIVE_ID="https://api-matrimonial.webseeder.tech/api/v1/settings/set-ac
 
 //notification
 const NOTIFICATION="https://api-matrimonial.webseeder.tech/api/v1/notification/getAllNotification";
+const VIEW_NOTIFICATION="https://api-matrimonial.webseeder.tech/api/v1/notification/seeNotification";
+const SEEN_NOTIFICATION="https://api-matrimonial.webseeder.tech/api/v1/notification/getAllNotification?seen=true";
 
 export {
     SIGNUP_ENDPOINT,
@@ -186,5 +188,7 @@ export {
     HIDE_CONTACT,
     HIDE_OPTIONAL_DETAILS,
     INACTIVE_ID,
-    NOTIFICATION
+    NOTIFICATION,
+    VIEW_NOTIFICATION,
+    SEEN_NOTIFICATION
 }

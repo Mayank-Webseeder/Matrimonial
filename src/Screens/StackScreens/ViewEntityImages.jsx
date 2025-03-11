@@ -8,6 +8,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styles from '../StyleScreens/ViewPostStyle';
 import Globalstyles from '../../utils/GlobalCss';
 import { SH, SW } from '../../utils/Dimensions';
+import ImageViewing from 'react-native-image-viewing';
 
 const ViewEntityImages = ({ navigation, route }) => {
     const { post, images, panditDetails, jyotishDetails, kathavachakDetails } = route.params;
@@ -15,6 +16,10 @@ const ViewEntityImages = ({ navigation, route }) => {
     // Determine which entity details are available
     const entityDetails = panditDetails || jyotishDetails || kathavachakDetails;
     const entityType = panditDetails ? "Pandit" : jyotishDetails ? "Jyotish" : "Kathavachak";
+
+    const [visible, setVisible] = useState(false);
+    const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+    const formattedImages = images.map((img) => ({ uri: img }));
 
     console.log("Entity Details:", entityDetails);
 
@@ -42,7 +47,7 @@ const ViewEntityImages = ({ navigation, route }) => {
     return (
         <SafeAreaView style={Globalstyles.container}>
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
-            
+
             {/* Header */}
             <View style={Globalstyles.header}>
                 <View style={{ flexDirection: 'row', alignItems: "center" }}>
@@ -67,14 +72,14 @@ const ViewEntityImages = ({ navigation, route }) => {
                 {/* Images */}
                 <View style={{ marginVertical: SH(10), marginHorizontal: SW(10) }}>
                     {images.map((image, index) => (
-                        <View key={index} style={styles.card}>
+                        <TouchableOpacity key={index} style={styles.card} onPress={() => { setSelectedImageIndex(index); setVisible(true); }}>
                             <Image
                                 source={typeof image === 'string' ? { uri: image } : image}
                                 style={[styles.image, { aspectRatio: imageAspectRatios[index] || 1 }]}
                                 resizeMode="cover"
                             />
                             {/* Like, Comment, Share */}
-                            <View style={styles.likeShareComment}>
+                            {/* <View style={styles.likeShareComment}>
                                 <View style={styles.likeShare}>
                                     <AntDesign name="hearto" size={20} color={Colors.dark} />
                                     <Text style={styles.shareText}>25k Likes</Text>
@@ -87,10 +92,16 @@ const ViewEntityImages = ({ navigation, route }) => {
                                     <Feather name="send" size={20} color={Colors.dark} />
                                     <Text style={styles.shareText}>250 Shares</Text>
                                 </View>
-                            </View>
-                        </View>
+                            </View> */}
+                        </TouchableOpacity>
                     ))}
                 </View>
+                <ImageViewing
+                    images={formattedImages}
+                    imageIndex={selectedImageIndex}
+                    visible={visible}
+                    onRequestClose={() => setVisible(false)}
+                />
             </ScrollView>
         </SafeAreaView>
     );

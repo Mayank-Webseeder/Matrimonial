@@ -126,6 +126,10 @@ const EventNews = ({ navigation }) => {
           text1: 'Success',
           text2: message, // "Event liked" or "Like removed"
         });
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'EventNews' }],
+        });
       } else {
         setLikeData(prevState => ({
           ...prevState,
@@ -202,6 +206,10 @@ const EventNews = ({ navigation }) => {
           text2: fetchedData.message || "Comment added successfully!",
         });
 
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'EventNews' }],
+        });
       }
     } catch (error) {
       console.error("Error adding comment:", error?.response?.data || error.message);
@@ -243,6 +251,11 @@ const EventNews = ({ navigation }) => {
         );
 
         ToastAndroid.show("Comment deleted successfully!", ToastAndroid.SHORT);
+
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'EventNews' }],
+        });
       }
     } catch (error) {
       console.error("Error deleting comment:", error?.response?.data || error.message);
@@ -505,7 +518,7 @@ const EventNews = ({ navigation }) => {
                   <Text style={styles.hour}>{GetTimeAgo(item?.date)}</Text>
                   {item?.user === myprofile_id && (
                     <TouchableOpacity onPress={() => DELETE_COMMENT(selectedPostId, item?._id)}>
-                      <Entypo name={'cross'} color={Colors.theme_color} size={12} />
+                      <Entypo name={'cross'} color={Colors.theme_color} size={15} />
                     </TouchableOpacity>
                   )}
                 </View>

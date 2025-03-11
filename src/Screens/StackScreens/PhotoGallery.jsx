@@ -6,7 +6,7 @@ import styles from '../StyleScreens/PhotoGallleryStyle';
 import { useSelector } from 'react-redux';
 
 const PhotoGallery = () => {
-    const MyprofileData = useSelector((state) => state.biodata);
+    const MyprofileData = useSelector((state) => state.getBiodata);
     const myBiodata = MyprofileData?.Biodata?.personalDetails;
 
     // Check if all images are missing
@@ -25,7 +25,7 @@ const PhotoGallery = () => {
                         <Text style={styles.detailText}>PHOTO GALLERY</Text>
                         <AntDesign name={'camera'} color={Colors.theme_color} size={25} />
                     </View>
-                    
+
                     {/* Agar koi image na ho toh ye message show hoga */}
                     {noImages ? (
                         <Text style={styles.noImageText}>

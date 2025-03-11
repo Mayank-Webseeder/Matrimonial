@@ -116,18 +116,18 @@ const Register = ({ navigation }) => {
 
     const handleSignup = async () => {
         if (!validateFields()) return;
-    
+
         if (!otp || otp.length !== 6) {
             Toast.show({ type: "error", text1: "Invalid OTP", text2: "Please enter the correct OTP." });
             return;
         }
-    
+
         setIsLoading(true);
         try {
             const formattedDate = selectedDate
                 ? `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, "0")}-${selectedDate.getDate().toString().padStart(2, "0")}`
                 : null;
-    
+
             const payload = {
                 username: fullName.trim(),
                 dob: formattedDate,
@@ -138,14 +138,14 @@ const Register = ({ navigation }) => {
                 mobileNo: mobileNumber,
                 otp: otp,
             };
-    
+
             console.log("SignUp Payload:", payload);
             const response = await axios.post(SIGNUP_ENDPOINT, payload);
             console.log("Signup Response:", response.data);
             const RegisterData = response.data;
-    
+
             const token = RegisterData?.user?.token || null;
-    
+
             if (token) {
                 await AsyncStorage.setItem("userToken", token);
                 console.log("Token saved:", token);
@@ -154,7 +154,7 @@ const Register = ({ navigation }) => {
             } else {
                 console.warn("Token is missing in response, skipping storage.");
             }
-    
+
             if (response.status === 200 && response.data.message === "User account created successfully.") {
                 Toast.show({
                     type: "success",
@@ -175,7 +175,7 @@ const Register = ({ navigation }) => {
             setIsLoading(false);
         }
     };
-    
+
 
     const handleDateChange = (event, date) => {
         if (date && date !== selectedDate) {
@@ -204,7 +204,7 @@ const Register = ({ navigation }) => {
                     color={Colors.light}
                     onPress={() => navigation.navigate("Splash")}
                 />
-                <ScrollView style={styles.contentContainer}  contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+                <ScrollView style={styles.contentContainer} contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
                     showsVerticalScrollIndicator={false}>
                     <Text style={styles.text}>Sign Up</Text>
 
@@ -216,6 +216,8 @@ const Register = ({ navigation }) => {
                             value={fullName}
                             onChangeText={setFullName}
                             placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
                         />
                         {errors.fullName && (
                             <Text style={styles.errorText}>{errors.fullName}</Text>
@@ -244,6 +246,8 @@ const Register = ({ navigation }) => {
                             onChangeText={handleCityInputChange}
                             placeholder="Enter your city"
                             placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
                         />
                         {filteredCities.length > 0 && cityInput ? (
                             <FlatList
@@ -306,6 +310,8 @@ const Register = ({ navigation }) => {
                                     value={password}
                                     onChangeText={setPassword}
                                     placeholderTextColor={Colors.gray}
+                                    autoComplete="off"
+                                    textContentType="none"
                                 />
                                 <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                                     <AntDesign
@@ -332,6 +338,8 @@ const Register = ({ navigation }) => {
                                     value={confirmPassword}
                                     onChangeText={setConfirmpassword}
                                     placeholderTextColor={Colors.gray}
+                                    autoComplete="off"
+                                    textContentType="none"
                                 />
                                 <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
                                     <AntDesign
@@ -365,6 +373,8 @@ const Register = ({ navigation }) => {
                                 maxLength={10}
                                 placeholderTextColor={Colors.gray}
                                 editable={!otpSent}
+                                autoComplete="off"
+                                textContentType="none"
                             />
                             <TouchableOpacity style={styles.otpButton} onPress={handleSendOtp} disabled={isOtpLoading}>
                                 {isOtpLoading ? <ActivityIndicator size="small" color={Colors.theme_color} /> : <Text style={styles.otpButtonText}>Send OTP</Text>}

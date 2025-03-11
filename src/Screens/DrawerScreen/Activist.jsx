@@ -149,7 +149,7 @@ const Activist = ({ navigation }) => {
     <SkeletonPlaceholder>
       <View style={{ margin: SH(20) }}>
         {[1, 2, 3, 4].map((_, index) => (
-          <View key={index} style={{ flexDirection: "row", marginBottom: 20 }}>
+          <View key={index} style={{ flexDirection: "row", marginBottom: SH(20) }}>
             <View style={{ width: SW(80), height: SH(80), borderRadius: 40, marginRight: SW(10) }} />
             <View>
               <View style={{ width: SW(150), height: SH(20), borderRadius: 4 }} />
@@ -292,7 +292,7 @@ const Activist = ({ navigation }) => {
                     placeholder="Enter Locality"
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
-            textContentType="none"
+                    textContentType="none"
                   />
 
                 </View>
@@ -306,7 +306,7 @@ const Activist = ({ navigation }) => {
                       placeholderTextColor={Colors.gray}
                       style={Globalstyles.input}
                       autoComplete="off"
-            textContentType="none"
+                      textContentType="none"
                     />
                     {filteredOptions.length > 0 && (
                       <FlatList

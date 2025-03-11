@@ -9,6 +9,8 @@ import { NOTIFICATION, VIEW_NOTIFICATION, SEEN_NOTIFICATION } from '../../utils/
 import axios from 'axios';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import { useFocusEffect } from '@react-navigation/native';
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+
 const Notification = ({ navigation }) => {
   const [NotificationData, setNotificationData] = useState([]);
   const [seenotificationData, setseenNotificationData] = useState([]);
@@ -89,6 +91,23 @@ const Notification = ({ navigation }) => {
       GetAll_Seen_Notification();
     }, [])
   );
+
+   const renderSkeleton = () => (
+      <SkeletonPlaceholder>
+        <View style={{ margin: SH(20) }}>
+          {[1, 2, 3, 4].map((_, index) => (
+            <View key={index} style={{ flexDirection: "row", marginBottom: 20 }}>
+              <View style={{ width: SW(80), height: SH(80), borderRadius: 40, marginRight: SW(10) }} />
+              <View>
+                <View style={{ width: SW(150), height: SH(20), borderRadius: 4 }} />
+                <View style={{ width: SW(100), height: SH(15), borderRadius: 4, marginTop: SH(6) }} />
+                <View style={{ width: SW(80), height: SH(15), borderRadius: 4, marginTop: SH(6) }} />
+              </View>
+            </View>
+          ))}
+        </View>
+      </SkeletonPlaceholder>
+    );
 
   const renderItem = ({ item }) => {
     return (
@@ -172,7 +191,7 @@ const Notification = ({ navigation }) => {
 
         {/* Notification List */}
         {IsLoading ? (
-          <ActivityIndicator size="large" color={Colors.theme_color} style={{ marginTop: 20 }} />
+          renderSkeleton()
         ) : (
           <FlatList
             data={showSeen ? seenotificationData : NotificationData}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Image,StyleSheet } from 'react-native';
+import { Image, StyleSheet ,Linking} from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -69,9 +69,10 @@ import ViewMyEventPost from '../Screens/StackScreens/ViewMyEventPost';
 import UpdateEventPost from '../Screens/StackScreens/UpdateEventPost';
 import AdvertiseWithUs from '../Screens/StackScreens/AdvertiseWithUs';
 import ShortMatrimonialProfile from '../Screens/StackScreens/ShortMatrimonialProfile';
-import { useFocusEffect } from '@react-navigation/native';
+import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
 import NotificationDetails from '../Screens/StackScreens/NotificationDetails';
+import { initializeSocket } from '../../socket';
 
 const Stack = createNativeStackNavigator();
 const AppStackNavigator = createNativeStackNavigator();
@@ -82,7 +83,7 @@ const Drawer = createDrawerNavigator();
 function MyTabs() {
   // const dispatch = useDispatch();
   // const [profiledata, setProfileData] = useState('');
-   const ProfileData = useSelector((state) => state.profile);
+  const ProfileData = useSelector((state) => state.profile);
   const profileData = ProfileData?.profiledata || {};
   const image = profileData?.photoUrl?.[0];
   const MyprofileData = useSelector((state) => state.getBiodata);
@@ -276,6 +277,8 @@ const AppStack = () => (
     <AppStackNavigator.Screen name="UpdateProfileDetails" component={UpdateProfileDetails} />
     <AppStackNavigator.Screen name="AdvertiseWithUs" component={AdvertiseWithUs} />
     <AppStackNavigator.Screen name="ShortMatrimonialProfile" component={ShortMatrimonialProfile} />
+    <AppStackNavigator.Screen name="Matrimonial" component={Matrimonial} />
+    <AppStackNavigator.Screen name="BioData" component={BioData} />
   </AppStackNavigator.Navigator>
 );
 
@@ -291,6 +294,7 @@ const AuthStack = () => (
 const RootNavigator = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [initialRoute, setInitialRoute] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     const checkUserToken = async () => {
@@ -302,6 +306,19 @@ const RootNavigator = () => {
 
     checkUserToken();
   }, []);
+
+  // useEffect(() => {
+  //   const reconnectSocket = async () => {
+  //     const storedUserId = await AsyncStorage.getItem("userId");
+  //     if (storedUserId) {
+  //       console.log("🔄 Reconnecting Socket with userId:", storedUserId);
+  //       await initializeSocket(storedUserId);
+  //     }
+  //   };
+
+  //   reconnectSocket();
+  // }, []);
+  
 
   if (isLoading) {
     return <LoadingScreen />;

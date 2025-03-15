@@ -217,6 +217,7 @@ const Kathavachak = ({ navigation }) => {
             <Pressable style={styles.leftContainer}
               onPress={() => navigation.navigate('KathavachakDetailsPage', { kathavachak_id: item._id, isSaved: isSaved })}>
               <Text style={styles.name}>{item?.fullName}</Text>
+              <Text style={styles.text}>ID : {item?.kathavachakId}</Text>
               <View style={styles.rating}>
                 <Rating type="star" ratingCount={5} imageSize={15} startingValue={rating} readonly />
                 <Text style={[styles.text, { fontFamily: 'Poppins-Regular' }]}> {rating} Star Rating</Text>
@@ -225,7 +226,7 @@ const Kathavachak = ({ navigation }) => {
                 <Text style={styles.text}>{item?.city}</Text>
                 <Text style={styles.text}>    {item?.state}</Text>
               </View>
-              <Text style={styles.text}>{item?.residentialAddress}</Text>
+              <Text style={styles.text} numberOfLines={1}>{item?.residentialAddress}</Text>
             </Pressable>
             <View style={styles.sharecontainer}>
               <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, SafeAreaView, StatusBar, Linking, Pressable, ToastAndroid,
-  ScrollView
+  ScrollView,Share
 } from 'react-native';
 import { slider } from '../../DummyData/DummyData';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -105,6 +105,7 @@ const Pandit = ({ navigation }) => {
   
       const response = await axios.get(url, { headers });
       setPanditData(response.data?.data || []);
+      console.log("response.data?.data ",JSON.stringify(response.data?.data ))
   
     } catch (error) {
       console.error("Error fetching Pandit data:", error);
@@ -172,6 +173,24 @@ const Pandit = ({ navigation }) => {
     }
   };
 
+  const generateDeepLink = (type, id) => {
+    return `matrimonialapp://${type}/${id}`;
+};
+
+// Function to share profile link
+const shareProfile = async (type, id) => {
+    const link = generateDeepLink(type, id);
+    console.log("Generated Deep Link:", link);
+
+    try {
+        await Share.share({
+            message: `Check this ${type} profile: ${link}`,
+        });
+    } catch (error) {
+        console.error("Error sharing:", error);
+    }
+};
+
   useFocusEffect(
     React.useCallback(() => {
       setLocality('');
@@ -233,6 +252,7 @@ const Pandit = ({ navigation }) => {
             <Pressable style={styles.leftContainer}
               onPress={() => navigation.navigate('PanditDetailPage', { pandit_id: item._id, isSaved: isSaved })}>
               <Text style={styles.name}>{item?.fullName}</Text>
+              <Text style={styles.text}>ID : {item?.panditId}</Text>
               <View style={styles.rating}>
                 <Rating type="star" ratingCount={5} imageSize={15} startingValue={rating} readonly />
                 <Text style={[styles.text, { fontFamily: 'Poppins-Regular' }]}> {rating} Star Rating</Text>
@@ -241,7 +261,7 @@ const Pandit = ({ navigation }) => {
                 <Text style={styles.text}>{item?.city}</Text>
                 <Text style={styles.text}>    {item?.state}</Text>
               </View>
-              <Text style={styles.text}>{item?.residentialAddress}</Text>
+              <Text style={styles.text} numberOfLines={1}>{item?.residentialAddress}</Text>
             </Pressable>
             <View style={styles.sharecontainer}>
               <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
@@ -252,7 +272,7 @@ const Pandit = ({ navigation }) => {
                 />
                 {/* <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text> */}
               </TouchableOpacity>
-              <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
+              <TouchableOpacity style={styles.iconContainer} onPress={() => shareProfile("pandit",item._id)}>
                 <Feather name="send" size={18} color={Colors.dark} />
                 {/* <Text style={styles.iconText}>Shares</Text> */}
               </TouchableOpacity>

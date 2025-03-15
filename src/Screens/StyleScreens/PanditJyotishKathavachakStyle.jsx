@@ -79,8 +79,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: '#fff',
-    // marginHorizontal: SW(15),
-    // marginTop:SH(5)
+    marginHorizontal: SW(15),
+    marginTop:-SH(5)
   },
   iconContainer: {
     alignItems: 'center',

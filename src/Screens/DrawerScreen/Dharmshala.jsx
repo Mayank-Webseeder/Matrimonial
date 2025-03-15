@@ -1,4 +1,6 @@
-import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, ActivityIndicator } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, ActivityIndicator,
+  ToastAndroid
+ } from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 import { slider } from '../../DummyData/DummyData';
 import { Image } from 'react-native';
@@ -19,7 +21,6 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
-import Toast from 'react-native-toast-message';
 import { useNavigation } from "@react-navigation/native";
 import ImageViewing from 'react-native-image-viewing';
 
@@ -152,22 +153,17 @@ const Dharmshala = () => {
 
   const handleUploadButton = () => {
     if (MyActivistProfile && MyActivistProfile._id) {
-      Toast.show(
-        {
-          type: "success",
-          text1: "You have an activist account",
-          text2: "You can upload your dharamsala details"
-        }
-      )
+      ToastAndroid.show(
+        "You can fill details!", 
+        ToastAndroid.SHORT
+      );
       setActiveButton(2);
       navigation.navigate('DharamsalaSubmissionPage');
     } else {
-      Toast.show(
-        {
-          type: "error",
-          text1: "Please create an activist profile first!"
-        }
-      )
+      ToastAndroid.show(
+        "Only activists can fill details!", 
+        ToastAndroid.SHORT
+      );
     }
   };
 

@@ -7,6 +7,7 @@ import { SH, SW, SF } from '../../utils/Dimensions';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { disconnectSocket } from '../../../socket';
 
 const CustomDrawer = (props) => {
   const { navigation } = props;
@@ -51,17 +52,22 @@ const CustomDrawer = (props) => {
 
   const handleLogout = async () => {
     try {
+      disconnectSocket(); // ✅ Properly disconnect socket
+  
       await AsyncStorage.removeItem("userToken");
+      await AsyncStorage.removeItem("userId");
+  
       navigation.reset({
         index: 0,
         routes: [{ name: "AuthStack" }],
       });
-
-      console.log("Logged out successfully");
+  
+      console.log("✅ Logged out successfully");
     } catch (error) {
-      console.error("Error logging out:", error);
+      console.error("❌ Error logging out:", error);
     }
   };
+  
 
   const handleDropdownToggle = (dropdown) => {
     setOpenDropdown((prev) => (prev === dropdown ? null : dropdown));

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator, Share } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator, Share, Switch, ToastAndroid } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
@@ -10,20 +10,27 @@ import Globalstyles from '../../utils/GlobalCss';
 import { useRoute } from "@react-navigation/native";
 import moment from "moment";
 import axios from 'axios';
-import { MATCHED_PROFILE, SAVED_PROFILES, SEND_REQUEST, SHARED_PROFILES } from '../../utils/BaseUrl';
+import { MATCHED_PROFILE, SAVED_PROFILES, SEND_REQUEST, SHARED_PROFILES, VERIFY_PROFILE } from '../../utils/BaseUrl';
 import { useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import ImageViewing from 'react-native-image-viewing';
 import { SH, SW } from '../../utils/Dimensions';
 
-
 const MatrimonyPeopleProfile = ({ navigation }) => {
   const route = useRoute();
+  const MyActivistProfile = useSelector((state) => state.activist.activist_data);
   const { userDetails, details, details_userId, userId, isSaved } = route.params || {};
+  const Biodata_id = userDetails?.bioDataId || null;
   const hideContact = !!(userDetails?.hideContact || details?.hideContact);
   const hideOptionalDetails = !!(userDetails?.hideOptionalDetails || details?.hideOptionalDetails)
-  console.log("userDetails", userDetails);
+  const isActivist = MyActivistProfile?._id;
+  const activistId = MyActivistProfile?._id;
+  const isVerified = userDetails?.verified || details?.verified;
+  const verifiedBy = userDetails?.verifiedBy || details?.verifiedBy;
+  useEffect(() => {
+    console.log("userDetails", isActivist);
+  }, [])
   const User_Id = userDetails?.userId || details_userId;
   console.log("userId", hideOptionalDetails);
   const _id = userDetails?._id;
@@ -34,6 +41,69 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const MyprofileData = useSelector((state) => state.getBiodata);
   const [isImageVisible, setImageVisible] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
+
+  const [isSwitchOn, setIsSwitchOn] = useState(isVerified);
+
+  const handleToggle = async () => {
+    const newValue = !isSwitchOn;
+    setIsSwitchOn(newValue);
+
+    const responseMessage = await VerifiedProfiles(Biodata_id);
+
+    if (responseMessage.includes("verified")) {
+      setIsSwitchOn(true);
+    } else if (responseMessage.includes("disapproved")) {
+      setIsSwitchOn(false);
+    }
+  };
+
+  const VerifiedProfiles = async (Biodata_id) => {
+    if (!Biodata_id) {
+      ToastAndroid.show("Error: User ID not found!", ToastAndroid.SHORT);
+      return "";
+    }
+
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) throw new Error("No token found");
+
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+
+      const response = await axios.post(`${VERIFY_PROFILE}/${Biodata_id}`, {}, { headers });
+
+      console.log("Response Data:", JSON.stringify(response?.data));
+
+      const message = response?.data?.message || "";
+
+      // ✅ Success Message
+      if (message.toLowerCase().includes("verified")) {
+        ToastAndroid.show("Matrimonial Profile Approved ✅", ToastAndroid.SHORT);
+      }
+      // ❌ Disapproved Message
+      else if (message.toLowerCase().includes("disapproved")) {
+        ToastAndroid.show("Matrimonial Profile Disapproved ❌", ToastAndroid.SHORT);
+      }
+      // ⚠️ Default Message (Agar kuch match nahi hota)
+      else {
+        ToastAndroid.show(message, ToastAndroid.SHORT);
+      }
+
+      return message;
+    } catch (error) {
+      console.error(
+        "API Error:",
+        error?.response ? JSON.stringify(error.response.data) : error.message
+      );
+      ToastAndroid.show(
+        error.response?.data?.message || "Failed to send interest!",
+        ToastAndroid.LONG
+      );
+      return "";
+    }
+  };
 
   // Available images ko filter karo jo null na ho
   const images = [
@@ -274,7 +344,6 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       });
     }
   };
-
   // Map API comparisonResults to UI labels
   const comparisonResults = profileData?.comparisonResults || {};
   const totalCriteria = Object.keys(comparisonResults).length;
@@ -340,22 +409,57 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             )}
           />
         </View>
-        {(userDetails?.verified || details?.verified) && (
-          <View style={styles.verifiedContainer}>
-            <Image
-              source={require("../../Images/verified.png")}
-              style={styles.verifiedBadge}
-            />
-            <Text style={styles.verifiedText}>Verified</Text>
-          </View>
-        )}
+        <View style={styles.verifiedContainer}>
+          <Image
+            source={require("../../Images/verified.png")}
+            style={styles.verifiedBadge}
+          />
+          {isActivist ? (
+            isVerified ? (
+              verifiedBy === activistId ? (
+                //  Agar current activist ne verify kiya hai, to toggle bhi dikhega (disapprove karne ke liye)
+                <>
+                  <Text style={styles.verifiedText}>Verified</Text>
+                  <Switch
+                    value={isSwitchOn}
+                    onValueChange={handleToggle}
+                    thumbColor={isSwitchOn ? "#4CAF50" : "#767577"} // Green when ON, Gray when OFF
+                    trackColor={{ false: "#f4f3f4", true: "#4CAF50" }} // Background color
+                  />
+                </>
+              ) : (
+                // Agar kisi aur activist ne verify kiya hai, to sirf "Verified" likha aaye (toggle nahi)
+                <Text style={styles.verifiedText}>Verified</Text>
+              )
+            ) : (
+              //  Agar profile verify nahi hai, to toggle dikhega verify karne ke liye
+              <>
+                <Text style={styles.verifiedText}>Verify Profile</Text>
+                <Switch
+                  value={isSwitchOn}
+                  onValueChange={handleToggle}
+                  thumbColor={isSwitchOn ? "#4CAF50" : "#767577"} // Green when ON, Gray when OFF
+                  trackColor={{ false: "#f4f3f4", true: "#4CAF50" }} // Background color
+                />
+              </>
+            )
+          ) : (
+            // 🚫 Non-activist ke liye sirf "Verified" text dikhana hai
+            isVerified && <Text style={styles.verifiedText}>Verified</Text>
+          )}
+        </View>
 
         {/* Profile Info Section */}
         <View style={styles.flexContainer}>
           <View style={styles.flex}>
             {/* <Text style={styles.Idtext}>ID NO. :- {user?._id}</Text> */}
             <Text style={styles.Idtext}>ID NO. :- {userDetails?.bioDataId || details?.bioDataId}</Text>
-            <Text style={styles.toptext}>{matchPercentage}% Compatible according to your preference</Text>
+            <Text style={styles.toptext}>{matchPercentage > 0 && (
+              <Text style={styles.toptext}>
+                {matchPercentage}% Compatible according to your preference
+              </Text>
+            )}
+            </Text>
           </View>
           <View style={styles.sharecontainer}>
             <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>

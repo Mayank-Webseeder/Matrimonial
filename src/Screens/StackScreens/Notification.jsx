@@ -10,35 +10,41 @@ import axios from 'axios';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import { useFocusEffect } from '@react-navigation/native';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import { useSelector } from 'react-redux';
 
 const Notification = ({ navigation }) => {
-  const [NotificationData, setNotificationData] = useState([]);
+  // const [NotificationData, setNotificationData] = useState([]);
   const [seenotificationData, setseenNotificationData] = useState([]);
   const [viewNotification, setViewnotification] = useState({});
   const [IsLoading, setIsLoading] = useState(true);
   const [showSeen, setShowSeen] = useState(false);
+  // const dispatch=useDispatch();
+  const Notificationdata = useSelector((state) => state.GetAllNotification);
+  const NotificationData = Notificationdata?.AllNotification;
 
-  const GetAll_Notification = async () => {
-    setIsLoading(true);
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+  // const GetAll_Notification = async () => {
+  //   setIsLoading(true);
+  //   try {
+  //     const token = await AsyncStorage.getItem("userToken");
+  //     if (!token) throw new Error("No token found");
 
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      };
+  //     const headers = {
+  //       "Content-Type": "application/json",
+  //       Authorization: `Bearer ${token}`,
+  //     };
 
-      const res = await axios.get(NOTIFICATION, { headers });
-      const notificationData = res.data.data;
-      console.log("notificationData", JSON.stringify(notificationData));
-      setNotificationData(notificationData);
-    } catch (error) {
-      console.error("Error fetching notifications:", error.response ? error.response.data : error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //     const res = await axios.get(NOTIFICATION, { headers });
+  //     const notificationData = res.data.data;
+  //     console.log("notificationData", JSON.stringify(notificationData));
+  //     setNotificationData(notificationData);
+  //     dispatch(setAllNotification(notificationData));
+  //   } catch (error) {
+  //     console.error("Error fetching notifications:", error.response ? error.response.data : error.message);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
   const GetAll_Seen_Notification = async () => {
     setIsLoading(true);
     try {
@@ -87,42 +93,45 @@ const Notification = ({ navigation }) => {
 
   useFocusEffect(
     useCallback(() => {
-      GetAll_Notification();
+      console.log("NotificationData in notification page", NotificationData)
       GetAll_Seen_Notification();
     }, [])
   );
 
-   const renderSkeleton = () => (
-      <SkeletonPlaceholder>
-        <View style={{ margin: SH(20) }}>
-          {[1, 2, 3, 4].map((_, index) => (
-            <View key={index} style={{ flexDirection: "row", marginBottom: 20 }}>
-              <View style={{ width: SW(80), height: SH(80), borderRadius: 40, marginRight: SW(10) }} />
-              <View>
-                <View style={{ width: SW(150), height: SH(20), borderRadius: 4 }} />
-                <View style={{ width: SW(100), height: SH(15), borderRadius: 4, marginTop: SH(6) }} />
-                <View style={{ width: SW(80), height: SH(15), borderRadius: 4, marginTop: SH(6) }} />
-              </View>
+  const renderSkeleton = () => (
+    <SkeletonPlaceholder>
+      <View style={{ margin: SH(20) }}>
+        {[1, 2, 3, 4].map((_, index) => (
+          <View key={index} style={{ flexDirection: "row", marginBottom: 20 }}>
+            <View style={{ width: SW(80), height: SH(80), borderRadius: 40, marginRight: SW(10) }} />
+            <View>
+              <View style={{ width: SW(150), height: SH(20), borderRadius: 4 }} />
+              <View style={{ width: SW(100), height: SH(15), borderRadius: 4, marginTop: SH(6) }} />
+              <View style={{ width: SW(80), height: SH(15), borderRadius: 4, marginTop: SH(6) }} />
             </View>
-          ))}
-        </View>
-      </SkeletonPlaceholder>
-    );
+          </View>
+        ))}
+      </View>
+    </SkeletonPlaceholder>
+  );
 
   const renderItem = ({ item }) => {
+    const photoUrl = Array.isArray(item?.relatedData?.photoUrl)
+      ? item.relatedData.photoUrl[0] // Get the first URL if it's an array
+      : item?.relatedData?.photoUrl;
     return (
       <TouchableOpacity style={styles.card} onPress={() => VIEW_Notification(item._id)}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           {/* Notification Image */}
-          {item.relatedData?.photoUrl?.length > 0 && (
-            <Image
-              source={{ uri: item.relatedData.photoUrl[0] }}
-              style={styles.notificationImage}
-            />
-          )}
-          <View style={{ marginLeft: 10 }}>
-            <Text style={styles.name}>{item.relatedData.likedBy?.name || item.relatedData.commentBy?.name}</Text>
-            <Text style={styles.message}>{item.message}</Text>
+
+          <Image
+            source={{ uri: photoUrl }}
+            style={styles.notificationImage}
+            onError={(e) => console.log("Image Load Error:", e.nativeEvent.error)}
+          />
+          <View style={{ marginLeft: SW(10) }}>
+            <Text style={styles.name}>{item.relatedData.username || item?.relatedData?.likedBy?.name || item?.relatedData?.commentBy?.name}</Text>
+            <Text style={styles.message}>{item?.message}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -130,18 +139,20 @@ const Notification = ({ navigation }) => {
   };
 
   const renderSeenItem = ({ item }) => {
+    const photoUrl = Array.isArray(item?.relatedData?.photoUrl)
+      ? item.relatedData.photoUrl[0] // Get the first URL if it's an array
+      : item?.relatedData?.photoUrl;
     return (
       <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('NotificationDetails', { NotificationData: item })}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           {/* Notification Image */}
-          {item.relatedData?.photoUrl?.length > 0 && (
-            <Image
-              source={{ uri: item.relatedData.photoUrl[0] }}
-              style={styles.notificationImage}
-            />
-          )}
+          <Image
+            source={{ uri: photoUrl }}
+            style={styles.notificationImage}
+            onError={(e) => console.log("Image Load Error:", e.nativeEvent.error)}
+          />
           <View style={{ marginLeft: 10 }}>
-            <Text style={styles.name}>{item.relatedData.likedBy?.name || item.relatedData.commentBy?.name}</Text>
+            <Text style={styles.name}>{item.relatedData.username || item.relatedData.likedBy?.name || item.relatedData.commentBy?.name}</Text>
             <Text style={styles.message}>{item.message}</Text>
           </View>
         </View>

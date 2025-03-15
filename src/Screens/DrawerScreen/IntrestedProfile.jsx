@@ -38,6 +38,7 @@ const IntrestedProfile = ({ navigation }) => {
     useCallback(() => {
       fetchData(SENDER_REQUESTS, setInterestSentData);
       fetchData(RECEIVER_REQUESTS, setInterestReceivedData);
+      
     }, [])
   );
 

@@ -16,15 +16,13 @@ const styles = StyleSheet.create({
     width: SW(350), height: SH(270), borderRadius: 10, resizeMode: "cover"
   },
   verifiedContainer: {
-    position: "absolute",
-    top: SH(243),
-    left: SW(280),
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "white",
     paddingHorizontal: SW(5),
     paddingVertical: SW(2),
     borderRadius: 5,
+    alignSelf:"flex-end"
   },
   verifiedBadge: {
     width: SW(20),
@@ -35,7 +33,8 @@ const styles = StyleSheet.create({
   verifiedText: {
     color: "green",
     fontWeight: "bold",
-    fontSize: SF(12),
+    fontSize: SF(13),
+    paddingHorizontal:SW(2)
   },
   dot: {
     backgroundColor: Colors.light,

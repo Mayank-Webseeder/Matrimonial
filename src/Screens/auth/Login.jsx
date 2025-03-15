@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 import { setLoginData } from "../../ReduxStore/Slices/authSlice";
 import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { initializeSocket } from "../../../socket";
 
 const Login = ({ navigation }) => {
 
@@ -28,36 +29,115 @@ const Login = ({ navigation }) => {
         return Object.keys(newErrors).length === 0;
     };
 
+    // const handleLogin = async () => {
+    //     if (!validateFields()) return;
+    //     setLoading(true);
+      
+    //     try {
+    //       const payload = { mobileNo: mobileNumber.trim(), password:password.trim() };
+    //     //   console.log("📤 Logging in...");
+      
+    //       const response = await axios.post(LOGIN_ENDPOINT, payload);
+    //       const LoginData = response.data;
+      
+    //       const token = LoginData?.user?.token;
+    //       const userId = LoginData?.user?.user?.id;
+      
+    //       if (!token || !userId) {
+    //         throw new Error("Invalid user data received");
+    //       }
+      
+    //       await AsyncStorage.setItem("userToken", token);
+    //       await AsyncStorage.setItem("userId", userId);
+    //       dispatch(setLoginData(LoginData));
+      
+    //     //   console.log(`🔄 Initializirng Socket for userId: ${userId}`);
+    //     //   await initializeSocket(userId); // ✅ Ensure socket is initialized
+      
+    //       Toast.show({
+    //         type: "success",
+    //         text1: "Login Successful",
+    //         text2: "You have logged in!",
+    //         position: "top",
+    //         visibilityTime: 1000,
+    //         backgroundColor: "green",
+    //         onHide: () =>
+    //           navigation.reset({
+    //             index: 0,
+    //             routes: [{ name: "AppStack" }],
+    //           }),
+    //       });
+    //     } catch (error) {
+    //       console.error("🚨 Login Error:", error);
+      
+    //       let errorMessage = "Something went wrong";
+    //       if (error.response?.data?.message) {
+    //         errorMessage = error.response.data.message;
+    //       } else if (error.message === "Invalid user data received") {
+    //         errorMessage = "User authentication failed!";
+    //       }
+      
+    //       Toast.show({
+    //         type: "error",
+    //         text1: "Login Failed",
+    //         text2: errorMessage,
+    //         position: "top",
+    //         visibilityTime: 2000,
+    //         backgroundColor: "red",
+    //       });
+    //     } finally {
+    //       setLoading(false);
+    //     }
+    //   };
+      
     const handleLogin = async () => {
         if (!validateFields()) {
             return;
         }
         setLoading(true);
-
+    
         try {
             const payload = {
                 mobileNo: mobileNumber.trim(),
                 password: password,
             };
-
-            console.log("Login payload:", payload);
-
+    
+            console.log("📤 Login payload:", payload);
+    
             const response = await axios.post(LOGIN_ENDPOINT, payload);
             const LoginData = response.data;
-            console.log("LoginData", LoginData);
-            const token = LoginData.user.token;
-
-            console.log("Token from response:", token);
+            console.log("🔑 LoginData:", LoginData);
+    
+            // ✅ Debugging Response Status
+            console.log("🟢 Response Status:", response.status);
+            console.log("🟢 Response Data Status:", response.data.status);
+    
+            // ✅ Ensure correct access to token and userId
+            const token = LoginData?.user?.token;
+            const userId = LoginData?.user?.user?.id;  // ✅ Corrected Path
+    
+            console.log("🔐 Extracted Token:", token);
+            console.log("🆔 Extracted User ID:", userId);
+    
+            if (!token || !userId) {
+                throw new Error("❌ Invalid response structure");
+            }
+    
             await AsyncStorage.setItem("userToken", token);
-
             const storedToken = await AsyncStorage.getItem("userToken");
-            console.log("Retrieved token from AsyncStorage:", storedToken);
-
-            console.log("LoginData:", LoginData);
-
+            console.log("🛠 Retrieved token from AsyncStorage:", storedToken);
+    
             dispatch(setLoginData(LoginData));
-
+    
             if (response.status === 200 && response.data.status) {
+                // ✅ Initialize Socket
+                try {
+                    initializeSocket(userId);
+                    console.log(`✅ Socket initialized successfully for user: ${userId}`);
+                } catch (socketError) {
+                    console.error("🚨 Socket Initialization Failed:", socketError);
+                }
+    
                 Toast.show({
                     type: "success",
                     text1: "Login Successful",
@@ -66,12 +146,16 @@ const Login = ({ navigation }) => {
                     visibilityTime: 1000,
                     textStyle: { fontSize: 14, color: "white" },
                     backgroundColor: "green",
-                    onHide: () => navigation.reset({
-                        index: 0,
-                        routes: [{ name: "AppStack" }],
-                    }),
+                    onHide: () => {
+                        console.log("🟢 Navigating to AppStack...");
+                        navigation.reset({
+                            index: 0,
+                            routes: [{ name: "AppStack" }],
+                        });
+                    },
                 });
             } else {
+                console.log("❌ Login failed, invalid credentials.");
                 Toast.show({
                     type: "error",
                     text1: "Login Failed",
@@ -84,8 +168,9 @@ const Login = ({ navigation }) => {
             }
         } catch (error) {
             setLoading(false);
-
-            if (error.response && error.response.status === 401) {
+    
+            if (error.response?.status === 401) {
+                console.error("❌ Unauthorized:", error.response.data);
                 Toast.show({
                     type: "error",
                     text1: "Unauthorized",
@@ -96,6 +181,7 @@ const Login = ({ navigation }) => {
                     backgroundColor: "red",
                 });
             } else {
+                console.error("🚨 Login Error:", error);
                 Toast.show({
                     type: "error",
                     text1: "Error",
@@ -110,6 +196,8 @@ const Login = ({ navigation }) => {
             setLoading(false);
         }
     };
+    
+    
 
     return (
         <SafeAreaView style={styles.container}>

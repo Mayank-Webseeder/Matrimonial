@@ -279,22 +279,17 @@ const Committee = ({ navigation }) => {
 
   const handleUploadButton = () => {
     if (MyActivistProfile && MyActivistProfile._id) {
-      Toast.show(
-        {
-          type: "success",
-          text1: "You have an activist account",
-          text2: "You can upload your dharamsala details"
-        }
-      )
+      ToastAndroid.show(
+        "You can fill details!", 
+        ToastAndroid.SHORT
+      );
       setActiveButton(2);
       navigation.navigate('CommitteeSubmissionPage');
     } else {
-      Toast.show(
-        {
-          type: "error",
-          text1: "Please create an activist profile first!"
-        }
-      )
+      ToastAndroid.show(
+        "Only activists can fill details!", 
+        ToastAndroid.SHORT
+      );
     }
   };
 

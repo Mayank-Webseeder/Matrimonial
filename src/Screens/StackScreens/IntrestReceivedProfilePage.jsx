@@ -141,64 +141,72 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   };
 
   const acceptConnectionRequest = async (requestId) => {
-    if (!requestId) {
-      console.error("Error: requestId is undefined");
-      return;
-    }
+    if (!requestId) return; 
 
-    console.log("Accepting request for userId:", requestId);
+    console.log("✅ Accepting request for userId:", requestId);
 
     try {
-      const token = await AsyncStorage.getItem('userToken');
-      if (!token) throw new Error('No token found');
+        const token = await AsyncStorage.getItem('userToken');
+        if (!token) {
+            Toast.show({ type: "error", text1: "Error", text2: "User token missing!" });
+            return;
+        }
 
-      const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
-      const response = await axios.post(`${ACCEPTED_API}/${requestId}`, {}, { headers });
+        const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
+        const response = await axios.post(`${ACCEPTED_API}/${requestId}`, {}, { headers });
 
-      console.log("Response Data:", JSON.stringify(response?.data));
+        console.log("🚀 Response Status:", response.status); // Debugging
 
-      if (response.data.status === "success") {
-        Toast.show({ type: "success", text1: 'Success', text2: 'Request accepted successfully!' });
-      } else {
-        Toast.show({ type: "error", text1: 'Error', text2: response.data.message || 'Something went wrong!' });
-      }
+        if (response.status === 200) {
+            Toast.show({ type: "success", text1: 'Success', text2: 'Request accepted successfully!' });
+        } else {
+            Toast.show({ type: "error", text1: 'Error', text2: response.data.message || 'Something went wrong!' });
+        }
     } catch (error) {
-      console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
-      Toast.show({ type: "error", text1: 'Error', text2: error.response?.data?.message || 'Failed to accept request!' });
+        console.error("🚨 API Error:", error?.response?.data?.message || error.message);
+        Toast.show({ type: "error", text1: 'Error', text2: 'Failed to accept request!' });
     }
-  };
+};
 
-  const rejectConnectionRequest = async (requestId) => {
-    if (!requestId) {
-      console.error("Error: requestId is undefined");
-      return;
-    }
+const rejectConnectionRequest = async (requestId) => {
+    if (!requestId) return; 
 
-    console.log("Rejecting request for userId:", requestId);
+    console.log("❌ Rejecting request for userId:", requestId);
 
     try {
-      const token = await AsyncStorage.getItem('userToken');
-      if (!token) throw new Error('No token found');
+        const token = await AsyncStorage.getItem('userToken');
+        if (!token) {
+            Toast.show({ type: "error", text1: "Error", text2: "User token missing!" });
+            return;
+        }
 
-      const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
-      const response = await axios.post(`${REJECTED_API}/${requestId}`, {}, { headers });
+        const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
+        const response = await axios.post(`${REJECTED_API}/${requestId}`, {}, { headers });
 
-      console.log("Response Data:", JSON.stringify(response?.data));
+        console.log("🚀 Response Status:", response.status); // Debugging
 
-      if (response.data.status === "success") {
-        Toast.show({ type: 'success', text1: 'Success', text2: 'Request rejected successfully!' });
-      } else {
-        Toast.show({ type: 'error', text1: 'Error', text2: response.data.message || 'Something went wrong!' });
-      }
+        if (response.status === 200) {
+            Toast.show({ type: 'success', text1: 'Success', text2: 'Request rejected successfully!' });
+        } else {
+            Toast.show({ type: 'error', text1: 'Error', text2: response.data.message || 'Something went wrong!' });
+        }
     } catch (error) {
-      console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
-      Toast.show({ type: 'error', text1: 'Error', text2: error.response?.data?.message || 'Failed to reject request!' });
+        console.error("🚨 API Error:", error?.response?.data?.message || error.message);
+        Toast.show({ type: 'error', text1: 'Error', text2: 'Failed to reject request!' });
     }
-  };
+};
+
 
   const handleShare = async () => {
-    ToastAndroid.show("Under development", ToastAndroid.SHORT);
-  };
+    Toast.show({
+        type: "info",
+        text1: "Feature in Progress",
+        text2: "This feature is under development.",
+        position: "top",
+        visibilityTime: 3000,
+    });
+};
+
 
 
   // Map API comparisonResults to UI labels
@@ -255,6 +263,15 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
             )}
           />
         </View>
+        {(biodata?.verified) && (
+          <View style={styles.verifiedContainer}>
+            <Image
+              source={require("../../Images/verified.png")}
+              style={styles.verifiedBadge}
+            />
+            <Text style={styles.verifiedText}>Verified</Text>
+          </View>
+        )}
         <View style={styles.flexContainer}>
           <View style={styles.flex}>
             {/* <Text style={styles.Idtext}>ID NO. :- {userId}</Text> */}
@@ -428,7 +445,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           <Text style={styles.acceptButtonText}>Accept</Text>
         </TouchableOpacity>
       </View>
-      <Toast />
+     <Toast/>
     </SafeAreaView>
   );
 };

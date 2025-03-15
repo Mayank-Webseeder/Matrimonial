@@ -126,9 +126,9 @@ const ProfileDetail = ({ route, navigation }) => {
             </View>
             {profileType === 'Biodata' && (
                 <>
-                    {profileData?.personalDetails?.bestPhoto && (
+                    {profileData?.personalDetails?.closeUpPhoto && (
                         <Image
-                            source={{ uri: profileData.personalDetails.bestPhoto }}
+                            source={{ uri: profileData?.personalDetails?.closeUpPhoto }}
                             style={styles.matrimonyImage}
                         />
                     )}

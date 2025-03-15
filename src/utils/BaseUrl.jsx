@@ -75,6 +75,7 @@ const CREATE_ACTIVIST = "https://api-matrimonial.webseeder.tech/api/v1/activist/
 const GET_ACTIVIST = "https://api-matrimonial.webseeder.tech/api/v1/activist/viewActivist";
 const UPDATE_ACTIVIST = "https://api-matrimonial.webseeder.tech/api/v1/activist/updateActivist";
 const GET_ACTIVIST_PROFILES = "https://api-matrimonial.webseeder.tech/api/v1/activist/getAllActivist";
+const VERIFY_PROFILE="https://api-matrimonial.webseeder.tech/api/v1/activist/verify-metrimonialProfile";
 
 // committes
 const CREATE_COMMITTEE = "https://api-matrimonial.webseeder.tech/api/v1/committee/createCommittee";
@@ -190,5 +191,6 @@ export {
     INACTIVE_ID,
     NOTIFICATION,
     VIEW_NOTIFICATION,
-    SEEN_NOTIFICATION
+    SEEN_NOTIFICATION,
+    VERIFY_PROFILE
 }

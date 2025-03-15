@@ -5,6 +5,7 @@ import GetAllBiodataSlice from '../ReduxStore/Slices/GetAllBiodataSlice';
 import BioDataSlice from '../ReduxStore/Slices/BiodataSlice';
 import ActivistSlice from '../ReduxStore/Slices/ActivistSlice';
 import privacyReducer from '../ReduxStore/Slices/privacySlice';
+import NotificationReducer from '../ReduxStore/Slices/GetAllNotificationSlice';
 
 const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ const store = configureStore({
     getBiodata:BioDataSlice,
     activist:ActivistSlice,
     privacy: privacyReducer,
+    GetAllNotification:NotificationReducer
   },
 });
 

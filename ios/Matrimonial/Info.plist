@@ -11,7 +11,9 @@
 		<key>
 			CFBundleDisplayName
 		</key>
-		<string>Matrimonial</string>
+		<string>
+			Matrimonial
+		</string>
 		<key>
 			CFBundleExecutable
 		</key>
@@ -63,7 +65,7 @@
 		<key>
 			LSRequiresIPhoneOS
 		</key>
-		<true/>
+		<true />
 		<key>
 			NSAppTransportSecurity
 		</key>
@@ -72,11 +74,11 @@
 			<key>
 				NSAllowsArbitraryLoads
 			</key>
-			<false/>
+			<false />
 			<key>
 				NSAllowsLocalNetworking
 			</key>
-			<true/>
+			<true />
 		</dict>
 		<key>
 			NSLocationWhenInUseUsageDescription
@@ -126,7 +128,7 @@
 		<key>
 			UIViewControllerBasedStatusBarAppearance
 		</key>
-		<false/>
+		<false />
 		<key>
 			NSPhotoLibraryUsageDescription
 		</key>
@@ -152,6 +154,21 @@
 			<string>
 				UIInterfaceOrientationPortrait
 			</string>
+		</array>
+		<key>
+			CFBundleURLTypes
+		</key>
+		<array>
+			<dict>
+				<key>
+					CFBundleURLSchemes
+				</key>
+				<array>
+					<string>
+						matrimonialapp
+					</string>
+				</array>
+			</dict>
 		</array>
 	</dict>
 </plist>

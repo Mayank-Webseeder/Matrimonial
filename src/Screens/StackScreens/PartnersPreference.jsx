@@ -77,7 +77,7 @@ const PartnersPreference = ({ navigation }) => {
 
     useEffect(() => {
         const loadFormData = async () => {
-            const savedData = await AsyncStorage.getItem('biodata');
+            const savedData = await AsyncStorage.getItem('myPartnerPreferences');
             if (savedData) {
                 setBiodata(JSON.parse(savedData)); // ✅ Restore saved data
             }
@@ -86,8 +86,8 @@ const PartnersPreference = ({ navigation }) => {
     }, []);
 
     useEffect(() => {
-        AsyncStorage.setItem('biodata', JSON.stringify(biodata));
-    }, [biodata]);
+        AsyncStorage.setItem('myPartnerPreferences', JSON.stringify(myPartnerPreferences));
+    }, [myPartnerPreferences]);
 
     const handleStateInputChange = (text) => {
         setStateInput(text);

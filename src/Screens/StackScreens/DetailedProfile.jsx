@@ -1,6 +1,6 @@
 
 import { Text, View, Image, ImageBackground, TextInput, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, FlatList } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState,useCallback } from 'react'
 import styles from '../StyleScreens/ProfileStyle';
 import { TouchableOpacity } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
@@ -17,7 +17,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Colors from '../../utils/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { SW } from '../../utils/Dimensions';
-
+import { useFocusEffect } from '@react-navigation/native';
 import {
   OccupationData, QualificationData, maritalStatusData, ManglikStatusData, LivingData, ProfileCreatedData, CityData, Income,
   FamilyType, CookingStatus, DietHabit, smokingStatusData, DrinkingHabit, StateData, TobacooHabit, subCasteOptions,
@@ -31,6 +31,16 @@ const DetailedProfile = ({ navigation }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const profileData = useSelector((state) => state.profile);
   const [isLoading, setIsLoading] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [stateInput, setStateInput] = useState("");
+  const [subCasteInput, setSubCasteInput] = useState("");
+  const [filteredStates, setFilteredStates] = useState([]);
+  const [filteredCities, setFilteredCities] = useState([]);
+  const [filteredSubCaste, setFilteredSubCaste] = useState([]);
+  const [cityInput, setCityInput] = useState("");
+  const [cityOrVillageInput, setCityOrVillageInput] = useState("");
+  const [filteredCitiesOrVillages, setFilteredCitiesOrVillages] = useState([]);
+  const [selectedState, setSelectedState] = useState("");
   console.log("profileData", profileData);
   const MyprofileData = useSelector((state) => state.getBiodata);
   const myBiodata = MyprofileData?.Biodata?.personalDetails;
@@ -83,47 +93,61 @@ const DetailedProfile = ({ navigation }) => {
     fullPhoto: '',
     bestPhoto: '',
   });
-
-  useEffect(() => {
-    if (myBiodata) {
-      setBiodata((prev) => ({
-        ...prev,
-        ...myBiodata,
-      }));
-    }
-  }, [myBiodata]);
-
-
-  useEffect(() => {
-    const loadFormData = async () => {
-      const savedData = await AsyncStorage.getItem('biodata');
-      if (savedData) {
-        setBiodata(JSON.parse(savedData)); // ✅ Restore saved data
-      }
-    };
-    loadFormData();
-  }, []);
-
-  useEffect(() => {
-    AsyncStorage.setItem('biodata', JSON.stringify(biodata));
-  }, [biodata]);
-
-  const [showTimePicker, setShowTimePicker] = useState(false);
-  const [stateInput, setStateInput] = useState("");
-  const [subCasteInput, setSubCasteInput] = useState("");
-  const [filteredStates, setFilteredStates] = useState([]);
-  const [filteredCities, setFilteredCities] = useState([]);
-  const [filteredSubCaste, setFilteredSubCaste] = useState([]);
-  const [cityInput, setCityInput] = useState("");
-  const [cityOrVillageInput, setCityOrVillageInput] = useState("");
-  const [filteredCitiesOrVillages, setFilteredCitiesOrVillages] = useState([]);
-  const [selectedState, setSelectedState] = useState("");
-
+  
   const [imageNames, setImageNames] = useState({
     closeupImageName: "Upload One Closeup Image",
     fullImageName: "Upload One Full Image",
     bestImageName: "Upload One Best Image",
   });
+
+  useFocusEffect(
+    useCallback(() => {
+        console.log("Received myBiodata:", myBiodata); // ✅ Debugging
+        
+        if (myBiodata && Object.keys(myBiodata).length > 0) {
+            setBiodata((prev) => {
+                if (JSON.stringify(prev) !== JSON.stringify(myBiodata)) {
+                    console.log("Updating biodata..."); // ✅ Debugging
+                    return { ...prev, ...myBiodata };
+                }
+                return prev;
+            });
+        }
+    }, [myBiodata])
+);
+
+
+
+useFocusEffect(
+  useCallback(() => {
+      const loadFormData = async () => {
+          try {
+              const savedData = await AsyncStorage.getItem("myBiodata");
+              if (savedData) {
+                  const parsedData = JSON.parse(savedData);
+                  console.log("Loaded from AsyncStorage:", parsedData); // ✅ Debugging
+                  setBiodata(parsedData);
+              }
+          } catch (error) {
+              console.error("Error loading biodata:", error);
+          }
+      };
+      loadFormData();
+  }, [])
+);
+
+
+  useEffect(() => {
+    AsyncStorage.setItem('myBiodata', JSON.stringify(myBiodata));
+  }, [myBiodata]);
+
+  useEffect(() => {
+    if (myBiodata && Object.keys(myBiodata).length > 0) {
+        AsyncStorage.setItem("biodata", JSON.stringify(myBiodata));
+        console.log("Saved to AsyncStorage:", myBiodata); // ✅ Debugging
+    }
+}, [myBiodata]);
+
 
   const handleTimeChange = (event, selectedDate) => {
     setShowTimePicker(false);
@@ -167,17 +191,6 @@ const DetailedProfile = ({ navigation }) => {
         console.error(`Error picking ${field}:`, error);
       });
   };
-
-
-
-  useEffect(() => {
-    if (myBiodata) {
-      setBiodata((prev) => ({
-        ...prev,
-        ...myBiodata,
-      }));
-    }
-  }, [myBiodata]);
 
   const handleStateInputChange = (text) => {
     setStateInput(text); // Input field ko update karein

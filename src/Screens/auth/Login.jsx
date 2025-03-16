@@ -124,16 +124,18 @@ const Login = ({ navigation }) => {
             }
     
             await AsyncStorage.setItem("userToken", token);
+            await AsyncStorage.setItem("userId",userId);
             const storedToken = await AsyncStorage.getItem("userToken");
             console.log("🛠 Retrieved token from AsyncStorage:", storedToken);
     
             dispatch(setLoginData(LoginData));
     
             if (response.status === 200 && response.data.status) {
+                const User_ID= await AsyncStorage.getItem("userId");
                 // ✅ Initialize Socket
                 try {
-                    initializeSocket(userId);
-                    console.log(`✅ Socket initialized successfully for user: ${userId}`);
+                    initializeSocket(User_ID);
+                    console.log(`✅ Socket initialized successfully for user: ${User_ID}`);
                 } catch (socketError) {
                     console.error("🚨 Socket Initialization Failed:", socketError);
                 }

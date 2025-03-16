@@ -267,7 +267,7 @@ const Home = ({ navigation }) => {
       // 🟢 Listening for "newMatch"
       socket.on("post-commented", (data) => {
         console.log("💬 New Comment on Post:", data);
-        ToastAndroid.show("Your got a new Connection!", ToastAndroid.SHORT);
+        // ToastAndroid.show("Your got a new Connection!", ToastAndroid.SHORT);
 
         if (data.commentBy.name) {
           ToastAndroid.show(`🎉 New comment by ${data.commentBy.name} on your post!`, ToastAndroid.SHORT);

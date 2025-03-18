@@ -80,9 +80,13 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
         ToastAndroid.show("Under development", ToastAndroid.SHORT);
     };
 
+    const popop=async()=>{
+        ToastAndroid.show("Please create biodata to see full information of the this profile", ToastAndroid.SHORT);
+    }
+
     const renderProfileCard = ({ item }) => {
         return (
-            <Pressable style={styles.card}>
+            <Pressable style={styles.card} onPress={popop}>
                 <Image
                     source={item.personalDetails.closeUpPhoto ? { uri: item.personalDetails.closeUpPhoto } : require('../../Images/NoImage.png')}
                     style={styles.ProfileImage}

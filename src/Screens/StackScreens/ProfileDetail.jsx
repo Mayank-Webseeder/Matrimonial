@@ -44,7 +44,11 @@ const ProfileDetail = ({ route, navigation }) => {
     }, [profileType]);
 
     if (loading) {
-        return <ActivityIndicator size="large" color="blue" />;
+        return (
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                <ActivityIndicator size="large" color={Colors.theme_color} />
+            </View>
+        );
     }
 
     if (!profileData) {
@@ -101,20 +105,13 @@ const ProfileDetail = ({ route, navigation }) => {
         return <View style={styles.imageContainer}>{rows}</View>;
     };
 
-    const calculateAverageRating = (ratings) => {
-        if (!ratings || ratings.length === 0) return 0; // Agar koi rating na ho toh default 0 dikhaye
-        const total = ratings.reduce((sum, review) => sum + review.rating, 0);
-        return (total / ratings.length).toFixed(1); // Decimal me 1 place tak dikhane ke liye
-    };
-
     const formattedHeight = profileData?.personalDetails?.heightFeet
         ?.replace(/\s*-\s*/, "") // Remove space and dash (-) between feet and inches
         ?.replace(/\s+/g, "");
-
     return (
         <ScrollView style={Globalstyles.container}>
             <View style={Globalstyles.header}>
-                <View style={{ flexDirection: 'row', alignItems: "center" }}>
+                <View style={{ flex:1, flexDirection: 'row',alignContent:"center" }}>
                     <TouchableOpacity
                         // onPress={() => navigation.goBack()}
                         onPress={() => navigation.pop()}
@@ -243,60 +240,67 @@ const ProfileDetail = ({ route, navigation }) => {
                             </View>
                         </View>
                     )}
-                    <View style={styles.flexContainer1}>
-                        <Text style={styles.HeadingText}>My PartnerPreferences</Text>
-                        {/* Left Column */}
-                        <View style={[styles.flexContainer1, { borderWidth: 0, paddingHorizontal: 0, paddingVertical: 0 }]}>
-                            <View style={styles.column}>
-                                {profileData?.partnerPreferences?.partnerBodyStructure && (
-                                    <Text style={styles.text}>Body Structure: {profileData.partnerPreferences.partnerBodyStructure}</Text>
-                                )}
-                                {profileData?.partnerPreferences?.partnerDietaryHabits && (
-                                    <Text style={styles.text}>Diet: {profileData.partnerPreferences.partnerDietaryHabits}</Text>
-                                )}
-                                {profileData?.partnerPreferences?.partnerSmokingHabits && (
-                                    <Text style={styles.text}>Smoke: {profileData.partnerPreferences.partnerSmokingHabits}</Text>
-                                )}
-                                {profileData?.partnerPreferences?.partnerDrinkingHabits && (
-                                    <Text style={styles.text}>Drinking: {profileData.partnerPreferences.partnerDrinkingHabits}</Text>
-                                )}
-                                {profileData?.partnerPreferences?.partnerDisabilities && (
-                                    <Text style={styles.text}>Disabilities: {profileData.partnerPreferences.partnerDisabilities}</Text>
-                                )}
-                                {profileData?.partnerPreferences?.partnerManglikStatus && (
-                                    <Text style={styles.text}>{profileData.partnerPreferences.partnerManglikStatus}</Text>
-                                )}
-                                {profileData?.partnerPreferences?.partnerFamilyType && (
-                                    <Text style={styles.text}>Family Type: {profileData.partnerPreferences.partnerFamilyType}</Text>
-                                )}
-                            </View>
+                    {profileData?.partnerPreferences && Object.keys(profileData.partnerPreferences).length > 0 && (
+                        <View style={styles.flexContainer1}>
+                            <Text style={styles.HeadingText}>My PartnerPreferences</Text>
 
-                            {/* Right Column */}
-                            <View style={styles.column}>
-                                {profileData?.partnerPreferences?.partnerMinAge && profileData?.partnerPreferences?.partnerMaxAge && (
-                                    <Text style={styles.text}>Age Range: {profileData.partnerPreferences.partnerMinAge} - {profileData.partnerPreferences.partnerMaxAge} yrs</Text>
-                                )}
-                                {profileData?.partnerPreferences?.partnerMinHeightFeet && profileData?.partnerPreferences?.partnerMaxHeightFeet && (
-                                    <Text style={styles.text}>Height Range: {profileData.partnerPreferences.partnerMinHeightFeet} - {profileData.partnerPreferences.partnerMaxHeightFeet} ft</Text>
-                                )}
-                                {profileData?.partnerPreferences?.partnerIncome && (
-                                    <Text style={styles.text}>Income: {profileData.partnerPreferences.partnerIncome} INR</Text>
-                                )}
-                                {profileData?.partnerPreferences?.partnerOccupation && (
-                                    <Text style={styles.text}>Occupation: {profileData.partnerPreferences.partnerOccupation}</Text>
-                                )}
-                                {profileData?.partnerPreferences?.partnerQualification && (
-                                    <Text style={styles.text}>Qualification: {profileData.partnerPreferences.partnerQualification}</Text>
-                                )}
-                                {profileData?.partnerPreferences?.partnerState && (
-                                    <Text style={styles.text}>State: {profileData.partnerPreferences.partnerState}</Text>
-                                )}
-                                {profileData?.partnerPreferences?.partnerCity && (
-                                    <Text style={styles.text}>City: {profileData.partnerPreferences.partnerCity}</Text>
-                                )}
+                            {/* Left & Right Columns */}
+                            <View style={[styles.flexContainer1, { borderWidth: 0, paddingHorizontal: 0, paddingVertical: 0 }]}>
+
+                                {/* Left Column */}
+                                <View style={styles.column}>
+                                    {profileData.partnerPreferences.partnerBodyStructure && (
+                                        <Text style={styles.text}>Body Structure: {profileData.partnerPreferences.partnerBodyStructure}</Text>
+                                    )}
+                                    {profileData.partnerPreferences.partnerDietaryHabits && (
+                                        <Text style={styles.text}>Diet: {profileData.partnerPreferences.partnerDietaryHabits}</Text>
+                                    )}
+                                    {profileData.partnerPreferences.partnerSmokingHabits && (
+                                        <Text style={styles.text}>Smoke: {profileData.partnerPreferences.partnerSmokingHabits}</Text>
+                                    )}
+                                    {profileData.partnerPreferences.partnerDrinkingHabits && (
+                                        <Text style={styles.text}>Drinking: {profileData.partnerPreferences.partnerDrinkingHabits}</Text>
+                                    )}
+                                    {profileData.partnerPreferences.partnerDisabilities && (
+                                        <Text style={styles.text}>Disabilities: {profileData.partnerPreferences.partnerDisabilities}</Text>
+                                    )}
+                                    {profileData.partnerPreferences.partnerManglikStatus && (
+                                        <Text style={styles.text}>{profileData.partnerPreferences.partnerManglikStatus}</Text>
+                                    )}
+                                    {profileData.partnerPreferences.partnerFamilyType && (
+                                        <Text style={styles.text}>Family Type: {profileData.partnerPreferences.partnerFamilyType}</Text>
+                                    )}
+                                </View>
+
+                                {/* Right Column */}
+                                <View style={styles.column}>
+                                    {profileData.partnerPreferences.partnerMinAge && profileData.partnerPreferences.partnerMaxAge && (
+                                        <Text style={styles.text}>Age Range: {profileData.partnerPreferences.partnerMinAge} - {profileData.partnerPreferences.partnerMaxAge} yrs</Text>
+                                    )}
+                                    {profileData.partnerPreferences.partnerMinHeightFeet && profileData.partnerPreferences.partnerMaxHeightFeet && (
+                                        <Text style={styles.text}>Height Range: {profileData.partnerPreferences.partnerMinHeightFeet} - {profileData.partnerPreferences.partnerMaxHeightFeet} ft</Text>
+                                    )}
+                                    {profileData.partnerPreferences.partnerIncome && (
+                                        <Text style={styles.text}>Income: {profileData.partnerPreferences.partnerIncome} INR</Text>
+                                    )}
+                                    {profileData.partnerPreferences.partnerOccupation && (
+                                        <Text style={styles.text}>Occupation: {profileData.partnerPreferences.partnerOccupation}</Text>
+                                    )}
+                                    {profileData.partnerPreferences.partnerQualification && (
+                                        <Text style={styles.text}>Qualification: {profileData.partnerPreferences.partnerQualification}</Text>
+                                    )}
+                                    {profileData.partnerPreferences.partnerState && (
+                                        <Text style={styles.text}>State: {profileData.partnerPreferences.partnerState}</Text>
+                                    )}
+                                    {profileData.partnerPreferences.partnerCity && (
+                                        <Text style={styles.text}>City: {profileData.partnerPreferences.partnerCity}</Text>
+                                    )}
+                                </View>
+
                             </View>
                         </View>
-                    </View>
+                    )}
+
                 </>
             )}
             {profileType === "Pandit" && (

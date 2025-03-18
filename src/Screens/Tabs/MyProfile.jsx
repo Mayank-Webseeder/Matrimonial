@@ -1,4 +1,4 @@
-import { Text, View, Image, SafeAreaView, StatusBar, Modal, PermissionsAndroid, Platform, FlatList, ActivityIndicator } from 'react-native';
+import { Text, View, Image, SafeAreaView, StatusBar, Modal, PermissionsAndroid, Platform, FlatList, ActivityIndicator, ToastAndroid } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Colors from '../../utils/Colors';
@@ -15,8 +15,6 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UPLOAD_PROFILE_PHOTO } from '../../utils/BaseUrl';
 import axios from 'axios';
-import Toast from 'react-native-toast-message';
-
 const MyProfile = ({ navigation }) => {
     const [selectedButton, setSelectedButton] = useState('CreateBioData');
     const [modalVisible, setModalVisible] = useState(false);
@@ -126,29 +124,22 @@ const MyProfile = ({ navigation }) => {
         try {
             const token = await AsyncStorage.getItem("userToken");
             if (!token) throw new Error("Authorization token is missing.");
-
+    
             const headers = {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`,
             };
-
+    
             const response = await axios.put(UPLOAD_PROFILE_PHOTO, { photoUrl: base64Data }, { headers });
             console.log("Profile image updated successfully:", response.data);
             const message = response?.data?.message;
             console.log("message", message);
-
+    
             if (message === "Profile image updated successfully.") {
                 console.log("Profile image uploaded, now fetching profile data...");
-
-                Toast.show({
-                    type: 'success',
-                    position: 'bottom',
-                    text1: 'Profile Updated!',
-                    text2: 'Your profile image has been successfully updated.',
-                    visibilityTime: 3000,
-                    autoHide: true,
-                });
-
+    
+                ToastAndroid.show("Profile Updated! Your image has been successfully uploaded.", ToastAndroid.SHORT);
+    
                 console.log("Navigating to MainApp...");
                 navigation.reset({
                     index: 0,
@@ -161,23 +152,17 @@ const MyProfile = ({ navigation }) => {
             } else {
                 console.error("Error uploading profile image:", error.message);
             }
-
-            Toast.show({
-                type: 'error',
-                position: 'bottom',
-                text1: 'Upload Failed',
-                text2: 'There was an error uploading the image. Please try again.',
-                visibilityTime: 3000,
-                autoHide: true,
-            });
+    
+            ToastAndroid.show("Upload Failed! Please try again.", ToastAndroid.SHORT);
         }
     };
+    
 
 
     const handleImageUpload = async () => {
         ImageCropPicker.openPicker({
             width: 300,
-            height: 250,
+            height: 300,
             cropping: true,
             includeBase64: true,
         })

@@ -32,28 +32,28 @@ const Login = ({ navigation }) => {
     // const handleLogin = async () => {
     //     if (!validateFields()) return;
     //     setLoading(true);
-      
+
     //     try {
     //       const payload = { mobileNo: mobileNumber.trim(), password:password.trim() };
     //     //   console.log("📤 Logging in...");
-      
+
     //       const response = await axios.post(LOGIN_ENDPOINT, payload);
     //       const LoginData = response.data;
-      
+
     //       const token = LoginData?.user?.token;
     //       const userId = LoginData?.user?.user?.id;
-      
+
     //       if (!token || !userId) {
     //         throw new Error("Invalid user data received");
     //       }
-      
+
     //       await AsyncStorage.setItem("userToken", token);
     //       await AsyncStorage.setItem("userId", userId);
     //       dispatch(setLoginData(LoginData));
-      
+
     //     //   console.log(`🔄 Initializirng Socket for userId: ${userId}`);
     //     //   await initializeSocket(userId); // ✅ Ensure socket is initialized
-      
+
     //       Toast.show({
     //         type: "success",
     //         text1: "Login Successful",
@@ -69,14 +69,14 @@ const Login = ({ navigation }) => {
     //       });
     //     } catch (error) {
     //       console.error("🚨 Login Error:", error);
-      
+
     //       let errorMessage = "Something went wrong";
     //       if (error.response?.data?.message) {
     //         errorMessage = error.response.data.message;
     //       } else if (error.message === "Invalid user data received") {
     //         errorMessage = "User authentication failed!";
     //       }
-      
+
     //       Toast.show({
     //         type: "error",
     //         text1: "Login Failed",
@@ -89,49 +89,49 @@ const Login = ({ navigation }) => {
     //       setLoading(false);
     //     }
     //   };
-      
+
     const handleLogin = async () => {
         if (!validateFields()) {
             return;
         }
         setLoading(true);
-    
+
         try {
             const payload = {
                 mobileNo: mobileNumber.trim(),
-                password: password,
+                password: password.trim(),
             };
-    
+
             console.log("📤 Login payload:", payload);
-    
+
             const response = await axios.post(LOGIN_ENDPOINT, payload);
             const LoginData = response.data;
             console.log("🔑 LoginData:", LoginData);
-    
+
             // ✅ Debugging Response Status
             console.log("🟢 Response Status:", response.status);
             console.log("🟢 Response Data Status:", response.data.status);
-    
+
             // ✅ Ensure correct access to token and userId
             const token = LoginData?.user?.token;
             const userId = LoginData?.user?.user?.id;  // ✅ Corrected Path
-    
+
             console.log("🔐 Extracted Token:", token);
             console.log("🆔 Extracted User ID:", userId);
-    
+
             if (!token || !userId) {
                 throw new Error("❌ Invalid response structure");
             }
-    
+
             await AsyncStorage.setItem("userToken", token);
-            await AsyncStorage.setItem("userId",userId);
+            await AsyncStorage.setItem("userId", userId);
             const storedToken = await AsyncStorage.getItem("userToken");
             console.log("🛠 Retrieved token from AsyncStorage:", storedToken);
-    
+
             dispatch(setLoginData(LoginData));
-    
+
             if (response.status === 200 && response.data.status) {
-                const User_ID= await AsyncStorage.getItem("userId");
+                const User_ID = await AsyncStorage.getItem("userId");
                 // ✅ Initialize Socket
                 try {
                     initializeSocket(User_ID);
@@ -139,7 +139,7 @@ const Login = ({ navigation }) => {
                 } catch (socketError) {
                     console.error("🚨 Socket Initialization Failed:", socketError);
                 }
-    
+
                 Toast.show({
                     type: "success",
                     text1: "Login Successful",
@@ -170,7 +170,7 @@ const Login = ({ navigation }) => {
             }
         } catch (error) {
             setLoading(false);
-    
+
             if (error.response?.status === 401) {
                 console.error("❌ Unauthorized:", error.response.data);
                 Toast.show({
@@ -198,8 +198,8 @@ const Login = ({ navigation }) => {
             setLoading(false);
         }
     };
-    
-    
+
+
 
     return (
         <SafeAreaView style={styles.container}>

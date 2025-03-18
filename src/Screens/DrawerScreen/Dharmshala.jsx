@@ -1,6 +1,7 @@
-import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, ActivityIndicator,
+import {
+  Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, ActivityIndicator,
   ToastAndroid
- } from 'react-native';
+} from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 import { slider } from '../../DummyData/DummyData';
 import { Image } from 'react-native';
@@ -16,13 +17,14 @@ import { subCasteOptions } from '../../DummyData/DropdownData';
 import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { SH, SF, SW } from '../../utils/Dimensions';
-import { GET_ALL_DHARAMSALA } from '../../utils/BaseUrl';
+import { GET_ALL_DHARAMSALA, SAVED_PROFILES } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { useNavigation } from "@react-navigation/native";
 import ImageViewing from 'react-native-image-viewing';
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 
 const Dharmshala = () => {
   const navigation = useNavigation();
@@ -150,24 +152,98 @@ const Dharmshala = () => {
     }, [])
   );
 
+  const renderSkeleton = () => (
+    <SkeletonPlaceholder>
+      <View style={{ margin: SH(20) }}>
+        {[1, 2, 3, 4].map((_, index) => (
+          <View key={index} style={{ flexDirection: "row", marginBottom: 20 }}>
+            <View style={{ width: SW(80), height: SH(80), borderRadius: 40, marginRight: SW(10) }} />
+            <View>
+              <View style={{ width: SW(150), height: SH(20), borderRadius: 4 }} />
+              <View style={{ width: SW(100), height: SH(15), borderRadius: 4, marginTop: SH(6) }} />
+              <View style={{ width: SW(80), height: SH(15), borderRadius: 4, marginTop: SH(6) }} />
+            </View>
+          </View>
+        ))}
+      </View>
+    </SkeletonPlaceholder>
+  );
 
   const handleUploadButton = () => {
     if (MyActivistProfile && MyActivistProfile._id) {
       ToastAndroid.show(
-        "You can fill details!", 
+        "You can fill details!",
         ToastAndroid.SHORT
       );
       setActiveButton(2);
       navigation.navigate('DharamsalaSubmissionPage');
     } else {
       ToastAndroid.show(
-        "Only activists can fill details!", 
+        "Only activists can fill details!",
         ToastAndroid.SHORT
       );
     }
   };
 
+  const savedProfiles = async (_id) => {
+    if (!_id) {
+      ToastAndroid.showWithGravity(
+        "User ID not found!",
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER
+      );
+      return;
+    }
+
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        throw new Error("No token found");
+      }
+
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+
+      const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
+
+      console.log("Response Data:", JSON.stringify(response?.data));
+
+      if (response?.data?.message) {
+        ToastAndroid.showWithGravity(
+          response.data.message,
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER
+        );
+
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Dharmshala' }],
+        });
+      } else {
+        ToastAndroid.showWithGravity(
+          response.data.message || "Something went wrong!",
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER
+        );
+      }
+    } catch (error) {
+      console.error(
+        "API Error:",
+        error?.response ? JSON.stringify(error.response.data) : error.message
+      );
+
+      ToastAndroid.showWithGravity(
+        error.response?.data?.message || "Failed to save profile!",
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER
+      );
+    }
+  };
+
   const renderItem = ({ item }) => {
+    const isSaved = item.isSaved || null;
     return (
       <View style={styles.card}
       >
@@ -197,10 +273,14 @@ const Dharmshala = () => {
           </View>
         </Pressable>
         <View style={styles.sharecontainer}>
-          <View style={styles.iconContainer}>
-            <FontAwesome name="bookmark-o" size={18} color={Colors.dark} />
-            <Text style={styles.iconText}>Save</Text>
-          </View>
+          <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
+            <FontAwesome
+              name={isSaved ? "bookmark" : "bookmark-o"}
+              size={19}
+              color={Colors.dark}
+            />
+            {/* <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text> */}
+          </TouchableOpacity>
 
           <View style={styles.iconContainer}>
             <Feather name="send" size={18} color={Colors.dark} />
@@ -322,26 +402,8 @@ const Dharmshala = () => {
             onSlideChange={(index) => setCurrentIndex(index)}
           />
         </View>
-        {/* Dharamsala List */}
-        {loading ? (
-          <ActivityIndicator size="large" color={Colors.theme_color} style={{ marginTop: 20 }} />
-        ) : error ? (
-          <Text style={{
-            textAlign: 'center', fontSize: SF(15),
-            color: Colors.gray,
-            fontFamily: 'Poppins-Regular', marginTop: SH(20)
-          }}>
-            {error} {/* This will show error messages */}
-          </Text>
-        ) : daramsalaData.length === 0 ? (
-          <Text style={{
-            textAlign: 'center', fontSize: SF(15),
-            color: Colors.gray, marginTop: SH(20),
-            fontFamily: 'Poppins-Regular',
-          }}>
-            No Dharamsala profiles found.
-          </Text>
-        ) : (
+
+        {loading ? renderSkeleton() : (
           <FlatList
             data={daramsalaData}
             renderItem={renderItem}
@@ -349,6 +411,11 @@ const Dharmshala = () => {
             scrollEnabled={false}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.DharamSalaList}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>No DharamsalaData Available</Text>
+              </View>
+            }
           />
         )}
 
@@ -435,7 +502,6 @@ const Dharmshala = () => {
           </View>
         </View>
       </Modal>
-
     </SafeAreaView>
   );
 };

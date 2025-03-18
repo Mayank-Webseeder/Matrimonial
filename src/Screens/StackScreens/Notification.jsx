@@ -143,7 +143,8 @@ const Notification = ({ navigation }) => {
       ? item.relatedData.photoUrl[0] // Get the first URL if it's an array
       : item?.relatedData?.photoUrl;
     return (
-      <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('NotificationDetails', { NotificationData: item })}>
+      // onPress={() => navigation.navigate('NotificationDetails', { NotificationData: item })}
+      <TouchableOpacity style={styles.card}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           {/* Notification Image */}
           <Image

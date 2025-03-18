@@ -17,11 +17,12 @@ const styles = StyleSheet.create({
         height: SH(30)
     },
     image: {
-        width: '100%',
-        height: undefined,
-        aspectRatio: 1.5,
+        width: SW(310),
+        height: SH(300),
+        // aspectRatio: 1.5,
         resizeMode: 'cover',
-        borderRadius: 10
+        borderRadius: 10,
+        alignSelf: "center"
     },
     cameraIcon: {
         position: "absolute",

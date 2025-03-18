@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, TextInput, ToastAndroid } from 'react-native';
+import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, TextInput, ToastAndroid, ActivityIndicator } from 'react-native';
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import styles from '../StyleScreens/EventNewsStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -14,7 +14,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
-import Toast from 'react-native-toast-message';
 import RBSheet from "react-native-raw-bottom-sheet";
 import Entypo from 'react-native-vector-icons/Entypo';
 
@@ -118,12 +117,8 @@ const EventNews = ({ navigation }) => {
           likesCount,
         }));
 
+        ToastAndroid.show(`${message}`,ToastAndroid.SHORT)
         // Show proper toast message
-        Toast.show({
-          type: 'success',
-          text1: 'Success',
-          text2: message, // "Event liked" or "Like removed"
-        });
         navigation.reset({
           index: 0,
           routes: [{ name: 'EventNews' }],
@@ -136,11 +131,7 @@ const EventNews = ({ navigation }) => {
       }
     } catch (error) {
       console.error("Error fetching event news:", error);
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: 'Failed to like event. Please try again!',
-      });
+      ToastAndroid.show("Failed to like event. Please try again!",ToastAndroid.SHORT)
     } finally {
       setIsLoading(false);
     }
@@ -176,46 +167,40 @@ const EventNews = ({ navigation }) => {
       setIsLoading(true);
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
-
+  
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-
+  
       const payload = {
         postId: postId,
         comment: myComment,
       };
-
+  
       const response = await axios.post(COMMENTPOST, payload, { headers });
-
+  
       if (response.data) {
         const fetchedData = response.data;
         console.log("Updated comments:", JSON.stringify(fetchedData.comments));
-
-        // Update the commentData state to reflect new comments instantly
-        // setCommentData((prevComments) => [...prevComments, fetchedData.newComment]);
-
+  
         setMyComment(""); // Clear input field
-
-        Toast.show({
-          type: "success",
-          text1: "Success",
-          text2: fetchedData.message || "Comment added successfully!",
-        });
-
+  
+        // Show success toast
+        ToastAndroid.show(fetchedData.message || "Comment added successfully!", ToastAndroid.SHORT);
+  
         navigation.reset({
           index: 0,
-          routes: [{ name: 'EventNews' }],
+          routes: [{ name: "EventNews" }],
         });
       }
     } catch (error) {
       console.error("Error adding comment:", error?.response?.data || error.message);
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: error?.response?.data?.message || "Failed to add comment. Please try again!",
-      });
+  
+      ToastAndroid.show(
+        error?.response?.data?.message || "Failed to add comment. Please try again!",
+        ToastAndroid.SHORT
+      );
     } finally {
       setIsLoading(false);
     }
@@ -550,6 +535,13 @@ const EventNews = ({ navigation }) => {
     );
   };
 
+  if (isLoading) {
+      return (
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+          <ActivityIndicator size="large" color={Colors.theme_color} />
+        </View>
+      );
+    }
 
   return (
     <SafeAreaView style={Globalstyles.container}>
@@ -616,7 +608,6 @@ const EventNews = ({ navigation }) => {
 
         {/* <Image source={require('../../Images/EventImage.png')} style={styles.bannerImage} /> */}
       </ScrollView>
-      <Toast />
     </SafeAreaView>
   );
 };

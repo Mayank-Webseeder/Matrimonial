@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator, ToastAndroid } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
@@ -13,13 +13,12 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MATCHED_PROFILE } from '../../utils/BaseUrl';
 import { ACCEPTED_API, REJECTED_API, SAVED_PROFILES } from '../../utils/BaseUrl';
-import Toast from 'react-native-toast-message';
 import ImageViewing from 'react-native-image-viewing';
 import { SH, SW } from '../../utils/Dimensions';
 import moment from 'moment';
 
 const IntrestReceivedProfilePage = ({ navigation, route }) => {
-  const { userId, biodata, requestId } = route.params;
+  const { userId, biodata, requestId ,isSaved } = route.params;
   const hideContact = !!(biodata?.hideContact || biodata?.hideContact);
   const hideOptionalDetails = !!(biodata?.hideOptionalDetails || biodata?.hideOptionalDetails)
   const _id = biodata?._id;
@@ -27,9 +26,9 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   console.log(userId, biodata, requestId)
   const [loading, setLoading] = useState(true);
   const [profileData, setProfileData] = useState(null);
-
   const MyprofileData = useSelector((state) => state.getBiodata);
-  console.log("MyprofileData", biodata);
+  console.log("biodata",biodata);
+  console.log("isSaved", isSaved);
 
   const [isImageVisible, setImageVisible] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
@@ -76,137 +75,114 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   };
 
   if (loading) {
-    return <ActivityIndicator size="large" color={Colors.theme_color} />;
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color={Colors.theme_color} />
+      </View>
+    );
   }
 
   if (!profileData) {
-    return <Text>No data found!</Text>;
+    return <Text style={{ padding: 20 }}>No Data Available</Text>;
   }
 
   const savedProfiles = async () => {
     if (!_id) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "User ID not found!",
-      });
+      ToastAndroid.show("Error: User ID not found!", ToastAndroid.SHORT);
       return;
     }
 
     try {
       const token = await AsyncStorage.getItem("userToken");
-      if (!token) {
-        throw new Error("No token found");
-      }
+      if (!token) throw new Error("No token found");
 
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
 
-      const response = await axios.post(
-        `${SAVED_PROFILES}/${_id}`,
-        {},
-        { headers }
-      );
-
+      const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
       console.log("Response Data:", JSON.stringify(response?.data));
 
       if (response?.data?.message) {
-        Toast.show({
-          type: "success",
-          text2: response.data.message,
-          position: "top",
-          visibilityTime: 3000,
-          textStyle: { fontSize: 14, color: "green" },
-        });
+        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+
       } else {
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: response.data.message || "Something went wrong!",
-        });
+        ToastAndroid.show("Something went wrong!", ToastAndroid.SHORT);
       }
     } catch (error) {
-      console.error(
-        "API Error:",
-        error?.response ? JSON.stringify(error.response.data) : error.message
-      );
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: error.response?.data?.message || "Failed to send interest!",
-      });
+      console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
+      ToastAndroid.show("Failed to send interest!", ToastAndroid.SHORT);
     }
   };
 
   const acceptConnectionRequest = async (requestId) => {
-    if (!requestId) return; 
+    if (!requestId) return;
 
     console.log("✅ Accepting request for userId:", requestId);
 
     try {
-        const token = await AsyncStorage.getItem('userToken');
-        if (!token) {
-            Toast.show({ type: "error", text1: "Error", text2: "User token missing!" });
-            return;
-        }
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+        ToastAndroid.show("Error: User token missing!", ToastAndroid.SHORT);
+        return;
+      }
 
-        const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
-        const response = await axios.post(`${ACCEPTED_API}/${requestId}`, {}, { headers });
+      const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
+      const response = await axios.post(`${ACCEPTED_API}/${requestId}`, {}, { headers });
 
-        console.log("🚀 Response Status:", response.status); // Debugging
+      console.log("🚀 Response Status:", response.status);
 
-        if (response.status === 200) {
-            Toast.show({ type: "success", text1: 'Success', text2: 'Request accepted successfully!' });
-        } else {
-            Toast.show({ type: "error", text1: 'Error', text2: response.data.message || 'Something went wrong!' });
-        }
+      if (response.status === 200) {
+        ToastAndroid.show("Request accepted successfully!", ToastAndroid.SHORT);
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'IntrestedProfile' }],
+        });
+      } else {
+        ToastAndroid.show("Something went wrong!", ToastAndroid.SHORT);
+      }
     } catch (error) {
-        console.error("🚨 API Error:", error?.response?.data?.message || error.message);
-        Toast.show({ type: "error", text1: 'Error', text2: 'Failed to accept request!' });
+      console.error("🚨 API Error:", error?.response?.data?.message || error.message);
+      ToastAndroid.show("Failed to accept request!", ToastAndroid.SHORT);
     }
-};
+  };
 
-const rejectConnectionRequest = async (requestId) => {
-    if (!requestId) return; 
+  const rejectConnectionRequest = async (requestId) => {
+    if (!requestId) return;
 
     console.log("❌ Rejecting request for userId:", requestId);
 
     try {
-        const token = await AsyncStorage.getItem('userToken');
-        if (!token) {
-            Toast.show({ type: "error", text1: "Error", text2: "User token missing!" });
-            return;
-        }
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+        ToastAndroid.show("Error: User token missing!", ToastAndroid.SHORT);
+        return;
+      }
 
-        const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
-        const response = await axios.post(`${REJECTED_API}/${requestId}`, {}, { headers });
+      const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
+      const response = await axios.post(`${REJECTED_API}/${requestId}`, {}, { headers });
 
-        console.log("🚀 Response Status:", response.status); // Debugging
+      console.log("🚀 Response Status:", response.status);
 
-        if (response.status === 200) {
-            Toast.show({ type: 'success', text1: 'Success', text2: 'Request rejected successfully!' });
-        } else {
-            Toast.show({ type: 'error', text1: 'Error', text2: response.data.message || 'Something went wrong!' });
-        }
+      if (response.status === 200) {
+        ToastAndroid.show("Request rejected successfully!", ToastAndroid.SHORT);
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'IntrestedProfile' }],
+        });
+      } else {
+        ToastAndroid.show("Something went wrong!", ToastAndroid.SHORT);
+      }
     } catch (error) {
-        console.error("🚨 API Error:", error?.response?.data?.message || error.message);
-        Toast.show({ type: 'error', text1: 'Error', text2: 'Failed to reject request!' });
+      console.error("🚨 API Error:", error?.response?.data?.message || error.message);
+      ToastAndroid.show("Failed to reject request!", ToastAndroid.SHORT);
     }
-};
-
+  };
 
   const handleShare = async () => {
-    Toast.show({
-        type: "info",
-        text1: "Feature in Progress",
-        text2: "This feature is under development.",
-        position: "top",
-        visibilityTime: 3000,
-    });
-};
-
+    ToastAndroid.show("This feature is under development.", ToastAndroid.SHORT);
+  };
 
 
   // Map API comparisonResults to UI labels
@@ -276,12 +252,21 @@ const rejectConnectionRequest = async (requestId) => {
           <View style={styles.flex}>
             {/* <Text style={styles.Idtext}>ID NO. :- {userId}</Text> */}
             <Text style={styles.Idtext}>ID NO. :- {biodata?.bioDataId}</Text>
-            <Text style={styles.toptext}>{matchPercentage}% Compatible according to your preference</Text>
+            <Text style={styles.toptext}>{matchPercentage > 0 && (
+              <Text style={styles.toptext}>
+                {matchPercentage}% Compatible according to your preference
+              </Text>
+            )}
+            </Text>
           </View>
           <View style={styles.sharecontainer}>
             <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
-              <FontAwesome name="bookmark-o" size={19} color={Colors.dark} />
-              <Text style={styles.iconText}>Save</Text>
+              <FontAwesome
+                name={isSaved ? "bookmark" : "bookmark-o"}
+                size={19}
+                color={Colors.dark}
+              />
+              <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
               <Feather name="send" size={19} color={Colors.dark} />
@@ -405,10 +390,6 @@ const rejectConnectionRequest = async (requestId) => {
             </View>
           </View>
         )}
-        <View style={styles.flexContainer3}>
-          <Text style={styles.HeadingText}>Expectation with partner</Text>
-          {biodata?.partnerPreferences?.partnerExpectations && <Text style={styles.text}>{biodata?.partnerPreferences?.partnerExpectations}</Text>}
-        </View>
         {matchedCount > 0 && totalCriteria > 0 && profileData?.data ? (
           <View style={styles.flexContainer3}>
             <Text style={styles.HeadingText}>Matches</Text>
@@ -445,7 +426,6 @@ const rejectConnectionRequest = async (requestId) => {
           <Text style={styles.acceptButtonText}>Accept</Text>
         </TouchableOpacity>
       </View>
-     <Toast/>
     </SafeAreaView>
   );
 };

@@ -111,20 +111,6 @@ const RoleRegisterForm = ({ navigation }) => {
         }
     };
 
-    useEffect(() => {
-        const loadFormData = async () => {
-            const savedData = await AsyncStorage.getItem('RoleRegisterData');
-            if (savedData) {
-                setRoleRegisterData(JSON.parse(savedData));
-            }
-        };
-        loadFormData();
-    }, []);
-
-    useEffect(() => {
-        AsyncStorage.setItem('RoleRegisterData', JSON.stringify(RoleRegisterData));
-    }, [RoleRegisterData]);
-
     const roleOptions = [
         { label: 'Pandit', value: 'Pandit' },
         { label: 'Jyotish', value: 'Jyotish' },
@@ -224,9 +210,9 @@ const RoleRegisterForm = ({ navigation }) => {
         };
 
         const commonPayload = {
-            mobileNo: RoleRegisterData.mobileNo || fetchProfileDetails?.mobileNo ,
+            mobileNo: RoleRegisterData.mobileNo || fetchProfileDetails?.mobileNo,
             fullName: RoleRegisterData.fullName || fetchProfileDetails?.fullName,
-            residentialAddress: RoleRegisterData.residentialAddress  || fetchProfileDetails?.residentialAddress,
+            residentialAddress: RoleRegisterData.residentialAddress || fetchProfileDetails?.residentialAddress,
             state: RoleRegisterData.state || fetchProfileDetails?.state,
             city: RoleRegisterData.city || fetchProfileDetails?.city,
             subCaste: RoleRegisterData.subCaste || fetchProfileDetails?.subCaste,
@@ -278,8 +264,8 @@ const RoleRegisterForm = ({ navigation }) => {
                 setTimeout(() => {
                     navigation.navigate("MainApp");
                 }, 2000);
-                
-            } 
+
+            }
             await AsyncStorage.removeItem('RoleRegisterData');
 
         } catch (error) {
@@ -597,7 +583,7 @@ const RoleRegisterForm = ({ navigation }) => {
                         <TouchableOpacity onPress={handleProfilePhotoPick}>
                             {RoleRegisterData.profilePhoto ? (
                                 <Image
-                                    source={{ uri: RoleRegisterData.profilePhoto}}
+                                    source={{ uri: RoleRegisterData.profilePhoto }}
                                     style={styles.profileImage}
                                 />
                             ) : (

@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, FlatList, ScrollView, Image, SafeAreaView, StatusBar, ActivityIndicator } from "react-native";
+import { View, Text, TouchableOpacity, FlatList, ScrollView, Image, SafeAreaView, StatusBar, ActivityIndicator,ToastAndroid } from "react-native";
 import React, { useState, useRef, useCallback } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -9,7 +9,7 @@ import Colors from "../../utils/Colors";
 import HeadingWithViewAll from "../../Components/HeadingWithViewAll";
 import Globalstyles from "../../utils/GlobalCss";
 import { SavedProfileData } from "../../DummyData/DummyData";
-import { GET_SAVED__PROFILES } from "../../utils/BaseUrl";
+import { DELETE_SAVED_PROFILE, GET_SAVED__PROFILES } from "../../utils/BaseUrl";
 import { useFocusEffect } from '@react-navigation/native';
 
 const SavedProfile = ({ navigation }) => {
@@ -21,29 +21,80 @@ const SavedProfile = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       fetchSavedProfiles();
-    }, []));
-
+    }, []) // This will re-fetch saved profiles whenever the screen is focused
+  );
+  
   const fetchSavedProfiles = async () => {
     try {
+      setLoading(true); // Ensure loading state is set before fetching
       const token = await AsyncStorage.getItem("userToken");
+  
       if (!token) {
         throw new Error("No token found");
       }
-
+  
       const headers = { Authorization: `Bearer ${token}` };
       const response = await axios.get(GET_SAVED__PROFILES, { headers });
-      console.log("response.data?.savedProfiles", JSON.stringify(response.data?.savedProfiles))
+  
+      console.log("Fetched saved profiles:", JSON.stringify(response.data?.savedProfiles));
       setSavedProfiles(response.data?.savedProfiles || []);
+  
       setTimeout(() => {
         flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
       }, 100);
-
     } catch (error) {
       console.error("Error fetching saved profiles:", error);
     } finally {
       setLoading(false);
     }
   };
+  
+  const DeleteSaveProfile = async (_id) => {
+    if (!_id) {
+      console.warn("Invalid ID: Cannot delete profile without a valid _id");
+      ToastAndroid.show("Error: Profile ID is missing!", ToastAndroid.SHORT);
+      return;
+    }
+  
+    try {
+      setLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
+  
+      if (!token) {
+        throw new Error("No token found. Please log in again.");
+      }
+  
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+  
+      console.log("Deleting saved profile with ID:", _id);
+      console.log("Headers:", headers);
+  
+      const response = await axios.delete(`${DELETE_SAVED_PROFILE}/${_id}`, { headers });
+  
+      if (response.status === 200 || response.status === 204) {
+        console.log("Profile deleted successfully:", response.data);
+        ToastAndroid.show("Saved profile deleted successfully!", ToastAndroid.SHORT);
+  
+        // ✅ Refresh saved profiles after deletion
+        fetchSavedProfiles();
+      } else {
+        throw new Error("Unexpected response from server");
+      }
+    } catch (error) {
+      console.error("Error deleting profile:", error?.response?.data || error.message);
+  
+      ToastAndroid.show(
+        error?.response?.data?.message || "Failed to delete profile. Please try again!",
+        ToastAndroid.LONG
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
   const getFilteredData = () => {
     if (["Biodata", "Pandit", "Jyotish", "Kathavachak", "Dharmshala", "Committee"].includes(activeCategory)) {
@@ -73,6 +124,7 @@ const SavedProfile = ({ navigation }) => {
                 <Text style={styles.text}>Age: {saveProfile.personalDetails?.dob ? new Date().getFullYear() - new Date(saveProfile.personalDetails.dob).getFullYear() : "N/A"} Years</Text>
                 <Text style={styles.text}>Marital Status: {saveProfile.personalDetails?.maritalStatus || "N/A"}</Text>
                 <Text style={styles.text}>Sub Caste: {saveProfile.personalDetails?.subCaste || "N/A"}</Text>
+                <Text style={styles.unsaveText} onPress={()=>DeleteSaveProfile(saveProfile?._id)}>Remove</Text>
               </View>
             </>
           )}
@@ -89,6 +141,7 @@ const SavedProfile = ({ navigation }) => {
                 <Text style={styles.text}>Experience: {saveProfile.experience || "N/A"} years</Text>
                 <Text style={styles.text}>Sub Caste: {saveProfile.subCaste || "N/A"}</Text>
                 <Text style={styles.text}>Area: {saveProfile.area || "N/A"}</Text>
+                <Text style={styles.unsaveText} onPress={()=>DeleteSaveProfile(saveProfile?._id)}>Remove</Text>
               </View>
             </>
           )}
@@ -103,6 +156,7 @@ const SavedProfile = ({ navigation }) => {
                 <Text style={styles.name}>{saveProfile?.dharmshalaName || "N/A"}</Text>
                 <Text style={styles.text}>City: {saveProfile?.city || "N/A"}</Text>
                 <Text style={styles.text}>Sub Caste: {saveProfile?.subCaste || "N/A"}</Text>
+                <Text style={styles.unsaveText} onPress={()=>DeleteSaveProfile(saveProfile?._id)}>Remove</Text>
               </View>
             </>
           )}
@@ -117,6 +171,7 @@ const SavedProfile = ({ navigation }) => {
                 <Text style={styles.name}>{saveProfile?.committeeTitle || "N/A"}</Text>
                 <Text style={styles.text}>City: {saveProfile?.city || "N/A"}</Text>
                 <Text style={styles.text}>Sub Caste: {saveProfile?.subCaste || "N/A"}</Text>
+                <Text style={styles.unsaveText} onPress={()=>DeleteSaveProfile(saveProfile?._id)}>Remove</Text>
               </View>
             </>
           )}

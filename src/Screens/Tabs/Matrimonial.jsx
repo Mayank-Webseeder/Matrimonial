@@ -145,6 +145,10 @@ const Matrimonial = ({ navigation }) => {
     ToastAndroid.show("Under development", ToastAndroid.SHORT);
   };
 
+   const popop=async()=>{
+          ToastAndroid.show("Please create biodata to see full information of the this profile", ToastAndroid.SHORT);
+      }
+
 
   const savedProfiles = async (_id) => {
     if (!_id) {
@@ -183,6 +187,10 @@ const Matrimonial = ({ navigation }) => {
           visibilityTime: 3000,
           textStyle: { fontSize: 14, color: "green" },
         });
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Matrimonial' }],
+        });
       } else {
         Toast.show({
           type: "error",
@@ -213,12 +221,12 @@ const Matrimonial = ({ navigation }) => {
 
   const renderProfileCard = ({ item }) => {
     const isPressable = partnerPreferences !== null && partnerPreferences !== undefined; // Only check global partnerPreferences
-
+    const isSaved=item.isSaved;
+    // console.log("isSaved",isSaved);
     return (
       <Pressable
         style={styles.card}
-        onPress={isPressable ? () => navigation.navigate('MatrimonyPeopleProfile', { details: item, details_userId: item?.userId }) : null}
-        disabled={!isPressable} // Disable press if global partnerPreferences is missing
+        onPress={popop}
       >
         <Image
           source={item.personalDetails.closeUpPhoto ? { uri: item.personalDetails.closeUpPhoto } : require('../../Images/NoImage.png')}
@@ -261,12 +269,12 @@ const Matrimonial = ({ navigation }) => {
           </View>
           <View style={styles.sharecontainer}>
             <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
-              <FontAwesome
-                name={"bookmark-o"}
-                size={19}
-                color={Colors.dark}
-              />
-              <Text style={styles.iconText}>Save</Text>
+            <FontAwesome
+                            name={isSaved ? "bookmark" : "bookmark-o"}
+                            size={19}
+                            color={Colors.dark}
+                          />
+                          <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>

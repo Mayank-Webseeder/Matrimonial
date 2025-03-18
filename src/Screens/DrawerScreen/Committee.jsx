@@ -158,66 +158,67 @@ const Committee = ({ navigation }) => {
     </SkeletonPlaceholder>
   );
 
+const savedProfiles = async (_id) => {
+  console.log("_id", _id);
+  if (!_id) {
+    ToastAndroid.showWithGravity(
+      "User ID not found!",
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER
+    );
+    return;
+  }
 
-  const savedProfiles = async (_id) => {
-    console.log("_id", _id);
-    if (!_id) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "User ID not found!",
-      });
-      return;
+  try {
+    const token = await AsyncStorage.getItem("userToken");
+    if (!token) {
+      throw new Error("No token found");
     }
 
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) {
-        throw new Error("No token found");
-      }
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
 
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      };
+    const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
 
-      const response = await axios.post(
-        `${SAVED_PROFILES}/${_id}`,
-        {},
-        { headers }
+    console.log("Response Data:", JSON.stringify(response?.data));
+
+    if (response?.data?.message) {
+      ToastAndroid.showWithGravity(
+        response.data.message,
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER
       );
-
-      console.log("Response Data:", JSON.stringify(response?.data));
-
-      if (response?.data?.message) {
-        Toast.show({
-          type: "success",
-          text2: response.data.message,
-          position: "top",
-          visibilityTime: 3000,
-          textStyle: { fontSize: 14, color: "green" },
-        });
-      } else {
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: response.data.message || "Something went wrong!",
-        });
-      }
-    } catch (error) {
-      console.error(
-        "API Error:",
-        error?.response ? JSON.stringify(error.response.data) : error.message
-      );
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: error.response?.data?.message || "Failed to save profile!",
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Committee' }],
       });
+    } else {
+      ToastAndroid.showWithGravity(
+        response.data.message || "Something went wrong!",
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER
+      );
     }
-  };
+  } catch (error) {
+    console.error(
+      "API Error:",
+      error?.response ? JSON.stringify(error.response.data) : error.message
+    );
 
-  const renderItem = ({ item }) => (
+    ToastAndroid.showWithGravity(
+      error.response?.data?.message || "Failed to save profile!",
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER
+    );
+  }
+};
+
+const renderItem = ({ item }) => {
+  const isSaved = item.isSaved || false; // Ensures proper boolean value
+
+  return (
     <View style={styles.card}>
       <Pressable style={styles.cardData}>
         <TouchableOpacity onPress={() => openImageViewer(item.photoUrl)}>
@@ -228,14 +229,15 @@ const Committee = ({ navigation }) => {
         </TouchableOpacity>
 
         {/* Image Viewer Modal */}
-        {selectedImage && (
+        {selectedImage === item.photoUrl && (
           <ImageViewing
-            images={[{ uri: selectedImage }]} // Now, it correctly updates per click
+            images={[{ uri: selectedImage }]}
             imageIndex={0}
             visible={isImageVisible}
             onRequestClose={() => setImageVisible(false)}
           />
         )}
+
         <View style={styles.leftContainer}>
           <Text style={styles.title}>{item.committeeTitle}</Text>
           <Text style={styles.Nametext}>{item.presidentName}</Text>
@@ -246,15 +248,20 @@ const Committee = ({ navigation }) => {
           <Text style={styles.text}>{item.area}</Text>
         </View>
       </Pressable>
+
       <View style={styles.sharecontainer}>
+        {/* Bookmark Button */}
         <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
-          <FontAwesome name="bookmark-o" size={18} color={Colors.dark} />
-          <Text style={styles.iconText}>Save</Text>
+          <FontAwesome name={isSaved ? "bookmark" : "bookmark-o"} size={19} color={Colors.dark} />
         </TouchableOpacity>
+
+        {/* Share Button */}
         <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
           <Feather name="send" size={18} color={Colors.dark} />
-          <Text style={styles.iconText}>Shares</Text>
+          <Text style={styles.iconText}>Share</Text>
         </TouchableOpacity>
+
+        {/* Call Button */}
         <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
           <MaterialIcons name="call" size={17} color={Colors.light} />
           <Text style={styles.RequestText}>Request for call</Text>
@@ -262,6 +269,7 @@ const Committee = ({ navigation }) => {
       </View>
     </View>
   );
+};
 
 
   const handleOpenFilter = () => {

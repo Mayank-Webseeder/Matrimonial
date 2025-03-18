@@ -1,5 +1,5 @@
-import { Text, View, Image, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Linking, ToastAndroid } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import { Text, View, Image, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Linking, ToastAndroid, ActivityIndicator } from 'react-native';
+import React, { useState,useCallback } from 'react';
 import styles from '../StyleScreens/PanditDetailPageStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
@@ -14,28 +14,37 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { JYOTISH_DESCRIPTION, SAVED_PROFILES } from '../../utils/BaseUrl';
 import Toast from 'react-native-toast-message';
-import moment from 'moment';
+import moment from "moment";
+import { useSelector } from 'react-redux';
+import { useFocusEffect } from '@react-navigation/native';
 
 const jyotishDetailsPage = ({ navigation, item, route }) => {
-    const { jyotish_id, isSaved } = route.params || {};
+    const { jyotish_id, isSaved: initialSavedState } = route.params || {};
+    const [Save, setIsSaved] = useState(initialSavedState || false);
     const [profileData, setProfileData] = useState(null);
-    const [userRating, setUserRating] = useState(0);
     const images = profileData?.additionalPhotos || [];
     const profileType = profileData?.profileType;
-
-    console.log("profileData", profileData);
-    console.log("jyotish_id", jyotish_id);
-
-    useEffect(() => {
-        fetchJyotishProfile();
-    }, []);
+    const ProfileData = useSelector((state) => state.profile);
+    const my_id = ProfileData?.profiledata?._id || null;
+    const rating = ProfileData?.ratings;
+    const [Loading, setLoading] = useState(false);
+    const [myRatings, setMyRatings] = useState([]);
+    const [otherRatings, setOtherRatings] = useState([]);
+    
+    useFocusEffect(
+        useCallback(() => {
+            fetchJyotishProfile();
+            console.log("myRatings", JSON.stringify(myRatings));
+        }, [])
+    );
 
     const fetchJyotishProfile = async () => {
+        setLoading(true)
         if (!jyotish_id) {
             Toast.show({
                 type: "error",
                 text1: "Error",
-                text2: "Pandit ID not found!",
+                text2: "Jyotish ID not found!",
             });
             return;
         }
@@ -51,6 +60,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
         }
 
         try {
+            setLoading(true)
             const response = await axios.get(`${JYOTISH_DESCRIPTION}/${jyotish_id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -58,8 +68,10 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
             });
 
             if (response.data.status === "success") {
-                console.log("response.data.data", response.data.data);
+                console.log("response.data.data", JSON.stringify(response.data.data));
                 setProfileData(response.data.data);
+                setMyRatings(response.data.data.ratings.filter(rating => rating.userId._id === my_id));
+                setOtherRatings(response.data.data.ratings.filter(rating => rating.userId._id !== my_id));
             } else {
                 Toast.show({
                     type: "error",
@@ -68,6 +80,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                 });
             }
         } catch (error) {
+            setLoading(false)
             console.error("Error fetching profile:", error);
             Toast.show({
                 type: "error",
@@ -79,62 +92,42 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
         }
     };
 
-    const savedProfiles = async (jyotish_id) => {
+    const savedProfiles = async () => {
         if (!jyotish_id) {
-            Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: "User ID not found!",
-            });
+            ToastAndroid.show("Error: User ID not found!", ToastAndroid.SHORT);
             return;
         }
 
         try {
             const token = await AsyncStorage.getItem("userToken");
-            if (!token) {
-                throw new Error("No token found");
-            }
+            if (!token) throw new Error("No token found");
 
             const headers = {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             };
 
-            const response = await axios.post(
-                `${SAVED_PROFILES}/${jyotish_id}`,
-                {},
-                { headers }
-            );
-
+            const response = await axios.post(`${SAVED_PROFILES}/${jyotish_id}`, {}, { headers });
             console.log("Response Data:", JSON.stringify(response?.data));
 
             if (response?.data?.message) {
-                Toast.show({
-                    type: "success",
-                    text2: response.data.message,
-                    position: "top",
-                    visibilityTime: 3000,
-                    textStyle: { fontSize: 14, color: "green" },
-                });
+                ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+
+                // Toggle state based on API response
+                if (response.data.message === "Profile saved successfully.") {
+                    setIsSaved(true);
+                } else {
+                    setIsSaved(false);
+                }
             } else {
-                Toast.show({
-                    type: "error",
-                    text1: "Error",
-                    text2: response.data.message || "Something went wrong!",
-                });
+                ToastAndroid.show("Something went wrong!", ToastAndroid.SHORT);
             }
         } catch (error) {
-            console.error(
-                "API Error:",
-                error?.response ? JSON.stringify(error.response.data) : error.message
-            );
-            Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: error.response?.data?.message || "Failed to save profile!",
-            });
+            console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
+            ToastAndroid.show("Failed to send interest!", ToastAndroid.SHORT);
         }
     };
+
 
     const openLink = (url, platform) => {
         if (url) {
@@ -161,8 +154,8 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                     key={i}
                     onPress={() =>
                         navigation.navigate('ViewEntityImages', {
-                            post: profileData, // Pass pandit details
-                            images: images.filter(Boolean), // Ensure this is a valid array of images
+                            post: profileData,
+                            images: images.filter(Boolean),
                             jyotishDetails: profileData,
                         })
                     }
@@ -178,7 +171,6 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
 
         return <View style={styles.imageContainer}>{rows}</View>;
     };
-
     const calculateAverageRating = (ratings) => {
         if (!ratings || ratings.length === 0) return 0; // Agar koi rating na ho toh default 0 dikhaye
         const total = ratings.reduce((sum, review) => sum + review.rating, 0);
@@ -187,10 +179,17 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
 
     const averageRating = calculateAverageRating(profileData?.ratings);
 
-
     const handleShare = async () => {
         ToastAndroid.show("Under development", ToastAndroid.SHORT);
     };
+
+    if (Loading) {
+        return (
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                <ActivityIndicator size="large" color={Colors.theme_color} />
+            </View>
+        );
+    }
 
     return (
         <SafeAreaView style={Globalstyles.container}>
@@ -214,12 +213,14 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.profileSection}>
                     <Image source={{ uri: profileData?.profilePhoto }} style={styles.profileImage} />
-                    <View>
-                        <Text style={styles.name}>{profileData?.fullName}</Text>
+                    <View style={{ flex: 1 }}>
+                        <Text style={styles.name} numberOfLines={2}>{profileData?.fullName}</Text>
+
                         <View style={styles.FlexContainer}>
-                            <Text style={styles.city}>{profileData?.city}</Text>
-                            <Text style={styles.surname}>{profileData?.state}</Text>
+                            <Text style={styles.city}>{profileData?.city}, </Text>
+                            <Text style={styles.city}>{profileData?.state}</Text>
                         </View>
+
                         <View style={styles.FlexContainer}>
                             <Rating
                                 type="star"
@@ -231,27 +232,25 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                             <Text style={styles.rating}>
                                 {profileData?.ratings?.length > 0 ? `${profileData.ratings.length} Reviews` : "No Ratings Yet"}
                             </Text>
-
                         </View>
-                        <Text style={styles.surname}>{profileData?.subCaste}</Text>
+
+                        <Text style={styles.city}>{profileData?.subCaste}</Text>
                     </View>
                 </View>
-                <View style={styles.contentContainer}>
-                    <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Description</Text>
-                        <Text style={styles.text}>{profileData?.description}</Text>
-                    </View>
 
+                <View style={styles.contentContainer}>
+                    <Text style={styles.sectionTitle}>Description</Text>
+                    <Text style={styles.text}>{profileData?.description}</Text>
                     <View style={styles.sharecontainer}>
-                        <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
+                        <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(profileData._id)}>
                             <FontAwesome
-                                name={isSaved ? "bookmark" : "bookmark-o"}
+                                name={Save ? "bookmark" : "bookmark-o"}
                                 size={19}
                                 color={Colors.dark}
                             />
-                            <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text>
+                            <Text style={styles.iconText}>{Save ? "Saved" : "Save"}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
+                        <TouchableOpacity style={styles.iconContainer} onPress={handleShare} >
                             <Feather name="send" size={20} color={Colors.dark} />
                             <Text style={styles.iconText}>Shares</Text>
                         </TouchableOpacity>
@@ -265,8 +264,9 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                             <MaterialIcons name="error-outline" size={20} color={Colors.dark} />
                             <Text style={styles.iconText}>Report</Text>
                         </TouchableOpacity>
+
                     </View>
-                    <View style={styles.section}>
+                    <View>
                         <Text style={styles.sectionTitle}>Services List</Text>
                         <View style={styles.servicesGrid}>
                             {profileData?.jyotishServices.map((service, index) => (
@@ -276,51 +276,65 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                             ))}
                         </View>
                     </View>
-                    <View style={styles.section}>
+                    <View>
                         <View style={styles.ReviewPost}>
                             <View>
                                 <Text style={styles.sectionTitle}>Reviews & Rating</Text>
                             </View>
                             <TouchableOpacity
                                 style={styles.postReviewButton}
-                                onPress={() => navigation.navigate('PostReview', { jyotish_id: jyotish_id, entityType: profileType })}
+                                onPress={() => navigation.navigate('PostReview', {
+                                    jyotish_id: jyotish_id,
+                                    entityType: profileType,
+                                    myReview: myRatings.length > 0 ? myRatings[0] : null
+                                })}
                             >
-                                <Text style={styles.postReviewText}>Post Review</Text>
+                                <Text style={styles.postReviewText}>
+                                    {myRatings.length > 0 ? "Edit Review" : "Post Review"}
+                                </Text>
                             </TouchableOpacity>
+
 
                         </View>
                         <Text style={styles.rating}>{averageRating} (⭐ Star Rating)</Text>
-                        {/* <View style={styles.ratingCount}>
+
+                    </View>
+                </View>
+                {myRatings?.length > 0 && (
+                    <View style={styles.reviewContainer}>
+                        <View style={styles.FlexContainer}>
+                            <View style={styles.FlexContainer}>
+                                <Text style={styles.reviewName}>You</Text>
+                            </View>
+                            <Text style={styles.reviewDate}>
+                                {moment(myRatings[0].createdAt).format("DD/MM/YYYY")}
+                            </Text>
+                        </View>
+                        <View style={styles.reviewRating}>
                             <Rating
                                 type="star"
                                 ratingCount={5}
                                 imageSize={15}
-                                startingValue={profileData?.rating}
+                                startingValue={myRatings[0]?.rating}
                                 readonly
                             />
-                        </View> */}
-
-                        {/* <Text style={styles.reviewLabel}>Your Review</Text>
-                        <View style={styles.ratingCount}>
-                            <Rating
-                                type='star'
-                                ratingCount={5}
-                                imageSize={15}
-                                startingValue={userRating}
-                                onFinishRating={(rating) => setUserRating(rating)}
-                            />
-                        </View> */}
+                        </View>
+                        <Text style={styles.reviewText}>{myRatings[0]?.review}</Text>
                     </View>
-                </View>
-                <View style={styles.section}>
+                )}
+                <View>
                     <Text style={[styles.sectionTitle, { textAlign: "center" }]}>Reviews</Text>
 
-                    {profileData?.ratings?.length > 0 ? (
+                    {otherRatings?.length > 0 ? (
                         <>
-                            {profileData?.ratings?.slice(0, 2).map((review, index) => (
+                            {otherRatings?.slice(0, 2).map((review, index) => (
                                 <View key={review._id || index} style={styles.reviewContainer}>
                                     <View style={styles.FlexContainer}>
-                                        <Text style={styles.reviewName}>{review.userId.username}</Text>
+                                        <View style={styles.FlexContainer}>
+                                            <Text style={styles.reviewName}>{review?.userId?.username || "Unknown"}</Text>
+
+                                        </View>
+
                                         <Text style={styles.reviewDate}>
                                             {moment(review.createdAt).format("DD/MM/YYYY")}
                                         </Text>
@@ -338,9 +352,9 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                                 </View>
                             ))}
 
-                            {profileData?.ratings?.length > 2 && (
+                            {otherRatings.length > 2 && (
                                 <TouchableOpacity
-                                    onPress={() => navigation.navigate('AllReviewsPage', { reviews: profileData?.ratings })}
+                                    onPress={() => navigation.navigate('AllReviewsPage', { reviews: otherRatings })}
                                     style={styles.viewMoreButton}>
                                     <Text style={styles.viewMoreText}>View More Reviews</Text>
                                 </TouchableOpacity>
@@ -383,3 +397,4 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
 };
 
 export default jyotishDetailsPage;
+

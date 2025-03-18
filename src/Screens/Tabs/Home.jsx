@@ -24,16 +24,21 @@ import { getSocket } from '../../../socket';
 import Toast from 'react-native-toast-message';
 import { setAllNotification } from '../../ReduxStore/Slices/GetAllNotificationSlice';
 import { SF, SW, SH } from '../../utils/Dimensions';
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
   const sliderRef = useRef(null);
   const [socket, setSocket] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [biodata, setBiodata] = useState("");
+   const [mybiodata, setMybiodata] = useState("");
   const [allbiodata, setallBiodata] = useState("");
-  const [mybiodata, setMybiodata] = useState("");
-  const partnerPreferences = mybiodata?.partnerPreferences;
+  // const [mybiodata, setMybiodata] = useState("");
+   const MyprofileData = useSelector((state) => state.getBiodata);
+   const partnerPreferences = MyprofileData?.Biodata?.partnerPreferences || null;
   const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  
   const blurPhotos = useSelector((state) => state.privacy.blurPhotos);
   const [profiledata, setProfileData] = useState('');
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
@@ -62,22 +67,51 @@ const Home = ({ navigation }) => {
   };
 
   useEffect(() => {
-    console.log("notifications", notificationCount)
+    console.log("MyprofileData", MyprofileData)
   }, [])
 
   useFocusEffect(
     React.useCallback(() => {
       fetchProfile();
+      getBiodata();
       GetAll_Notification();
     }, [])
   );
+const getBiodata = async () => {
+    try {
+      setLoading(true)
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
 
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+      const response = await axios.get(GET_BIODATA, { headers });
+      if (response.data) {
+        const fetchedData = response.data.data;
+        console.log("My bio data", fetchedData);
+        setMybiodata(fetchedData);
+        dispatch(setBioData(fetchedData));
+        setLoading(false)
+      } else {
+        setBiodata({});
+      }
+    } catch (error) {
+      console.error("Error fetching biodata:", error);
+    }
+    finally {
+      setLoading(false)
+    }
+  };
   const handleNavigateToProfile = (item) => {
+    console.log("item",item);
     if (!navigation.isFocused()) return;
 
     // console.log("Current Partner Preferences:", mybiodata?.partnerPreferences);
 
-    if (!mybiodata || !mybiodata.partnerPreferences) {
+    if (!partnerPreferences) {
       // Partner preferences nahi hai, toh "Matrimonial" screen par bhejo
       console.log("Navigating to Matrimonial because Partner Preferences are missing");
       navigation.navigate("ShortMatrimonialProfile", {
@@ -88,8 +122,8 @@ const Home = ({ navigation }) => {
       console.log("Navigating to MatrimonyPeopleProfile");
       navigation.navigate("MatrimonyPeopleProfile", {
         userDetails: item,
-        userId: item._id,
-        isSaved: item.isSaved
+        userId: item?.userId,
+        isSaved: item?.isSaved
       });
     }
   };
@@ -126,10 +160,10 @@ const Home = ({ navigation }) => {
 
       if (socket.connected) {
         console.log("✅ Socket already connected. Listening to new events!");
-        ToastAndroid.show("✅ Socket already connected. Listening to new events!", ToastAndroid.SHORT);
+        // ToastAndroid.show("✅ Socket already connected. Listening to new events!", ToastAndroid.SHORT);
       } else {
         console.log("⏳ Socket not connected. Connecting...");
-        ToastAndroid.show("🔄 Reconnecting to Socket...", ToastAndroid.SHORT);
+        // ToastAndroid.show("🔄 Reconnecting to Socket...", ToastAndroid.SHORT);
         socket.connect();
       }
 
@@ -164,7 +198,7 @@ const Home = ({ navigation }) => {
 
     } catch (e) {
       console.error("🚨 Error in subscribeToNewMatches:", e);
-      ToastAndroid.show("❌ Error subscribing to events!", ToastAndroid.SHORT);
+      // ToastAndroid.show("❌ Error subscribing to events!", ToastAndroid.SHORT);
     }
   }, []);
 
@@ -194,10 +228,10 @@ const Home = ({ navigation }) => {
 
       if (socket.connected) {
         console.log("✅ Socket already connected. Listening to new events!");
-        ToastAndroid.show("✅ Socket already connected. Listening to new events!", ToastAndroid.SHORT);
+        // ToastAndroid.show("✅ Socket already connected. Listening to new events!", ToastAndroid.SHORT);
       } else {
         console.log("⏳ Socket not connected. Connecting...");
-        ToastAndroid.show("🔄 Reconnecting to Socket...", ToastAndroid.SHORT);
+        // ToastAndroid.show("🔄 Reconnecting to Socket...", ToastAndroid.SHORT);
         socket.connect();
       }
 
@@ -221,7 +255,7 @@ const Home = ({ navigation }) => {
 
     } catch (e) {
       console.error("🚨 Error in subscribeToNewMatches:", e);
-      ToastAndroid.show("❌ Error subscribing to events!", ToastAndroid.SHORT);
+      // ToastAndroid.show("❌ Error subscribing to events!", ToastAndroid.SHORT);
     }
   }, []);
 
@@ -250,10 +284,10 @@ const Home = ({ navigation }) => {
 
       if (socket.connected) {
         console.log("✅ Socket already connected. Listening to new events!");
-        ToastAndroid.show("✅ Socket already connected. Listening to new events!", ToastAndroid.SHORT);
+        // ToastAndroid.show("✅ Socket already connected. Listening to new events!", ToastAndroid.SHORT);
       } else {
         console.log("⏳ Socket not connected. Connecting...");
-        ToastAndroid.show("🔄 Reconnecting to Socket...", ToastAndroid.SHORT);
+        // ToastAndroid.show("🔄 Reconnecting to Socket...", ToastAndroid.SHORT);
         socket.connect();
       }
 
@@ -287,7 +321,7 @@ const Home = ({ navigation }) => {
 
     } catch (e) {
       console.error("🚨 Error in subscribeToNewMatches:", e);
-      ToastAndroid.show("❌ Error subscribing to events!", ToastAndroid.SHORT);
+      // ToastAndroid.show("❌ Error subscribing to events!", ToastAndroid.SHORT);
     }
   }, []);
 
@@ -312,7 +346,7 @@ const Home = ({ navigation }) => {
 
 
   const GetAll_Biodata = async () => {
-    setIsLoading(true)
+    setLoading(true)
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
@@ -334,41 +368,12 @@ const Home = ({ navigation }) => {
         "Error fetching profile:",
         error.response ? error.response.data : error.message
       );
-      setIsLoading(false)
+      setLoading(false)
     }
     finally {
-      setIsLoading(false)
+      setLoading(false)
     }
   }
-
-  const getBiodata = async () => {
-    try {
-      setIsLoading(true)
-      const token = await AsyncStorage.getItem('userToken');
-      if (!token) throw new Error('No token found');
-
-      const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      };
-
-      const response = await axios.get(GET_BIODATA, { headers });
-      if (response.data) {
-        const fetchedData = response.data.data;
-        // console.log("My bio data", fetchedData);
-        setMybiodata(fetchedData);
-        dispatch(setBioData(fetchedData));
-        setIsLoading(false)
-      } else {
-        setBiodata({});
-      }
-    } catch (error) {
-      console.error("Error fetching biodata:", error);
-    }
-    finally {
-      setIsLoading(false)
-    }
-  };
 
   const getActivistProfile = async () => {
     try {
@@ -401,7 +406,7 @@ const Home = ({ navigation }) => {
   useFocusEffect(
     React.useCallback(() => {
       GetAll_Biodata();
-      getBiodata();
+      // getBiodata();
       getActivistProfile();
     }, [])
   );
@@ -419,6 +424,19 @@ const Home = ({ navigation }) => {
 
     return () => clearInterval(interval);
   }, [currentIndex]);
+
+
+  const renderSkeleton = () => (
+    <SkeletonPlaceholder>
+      <View style={{ marginVertical: SH(20) }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between", gap: SW(10) }}>
+          {[1, 2, 3, 4].map((_, index) => (
+            <View key={index} style={{ width: SW(118),height: SH(115),resizeMode: "cover",borderRadius: 10, }} />
+          ))}
+        </View>
+      </View>
+    </SkeletonPlaceholder>
+  );
 
 
   if (isLoading) {
@@ -495,7 +513,7 @@ const Home = ({ navigation }) => {
             heading="MATRIMONY"
             showViewAll={true}
             onViewAllPress={() => {
-              if (mybiodata && mybiodata.partnerPreferences) {
+              if (partnerPreferences) {
                 navigation.navigate("BioData");
               } else {
                 navigation.navigate("Matrimonial");
@@ -504,43 +522,45 @@ const Home = ({ navigation }) => {
 
           />
 
-          <FlatList
-            data={allbiodata}
-            keyExtractor={(item) => item._id}
-            renderItem={({ item }) => (
-              <View style={styles.imageWrapper}>
-                <TouchableOpacity onPress={() => handleNavigateToProfile(item)}>
-                  <Image
-                    source={
-                      item?.personalDetails?.closeUpPhoto
-                        ? { uri: item.personalDetails.closeUpPhoto }
-                        : require("../../Images/NoImage.png")
-                    }
-                    style={styles.ProfileImages}
-                    blurRadius={blurPhotos ? 10 : 0}
-                  />
+          {loading ? renderSkeleton() : (
+            <FlatList
+              data={allbiodata}
+              keyExtractor={(item) => item._id}
+              renderItem={({ item }) => (
+                <View style={styles.imageWrapper}>
+                  <TouchableOpacity onPress={() => handleNavigateToProfile(item)}>
+                    <Image
+                      source={
+                        item?.personalDetails?.closeUpPhoto
+                          ? { uri: item.personalDetails.closeUpPhoto }
+                          : require("../../Images/NoImage.png")
+                      }
+                      style={styles.ProfileImages}
+                      blurRadius={blurPhotos ? 10 : 0}
+                    />
 
-                  {item.verified && (
-                    <View style={styles.verifiedContainer}>
-                      <Image
-                        source={require("../../Images/verified.png")}
-                        style={styles.verifiedBadge}
-                      />
-                      <Text style={styles.verifiedText}>Verified</Text>
-                    </View>
-                  )}
-                </TouchableOpacity>
-              </View>
-            )}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            ListEmptyComponent={
-              <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>No Matrimonial Profile Created Yet</Text>
-              </View>
-            }
-          />
+                    {item.verified && (
+                      <View style={styles.verifiedContainer}>
+                        <Image
+                          source={require("../../Images/verified.png")}
+                          style={styles.verifiedBadge}
+                        />
+                        <Text style={styles.verifiedText}>Verified</Text>
+                      </View>
+                    )}
+                  </TouchableOpacity>
+                </View>
+              )}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+              ListEmptyComponent={
+                <View style={styles.emptyContainer}>
+                  <Text style={styles.emptyText}>No Matrimonial Profile Created Yet</Text>
+                </View>
+              }
+            />
 
+          )}
         </View>
 
         <View>

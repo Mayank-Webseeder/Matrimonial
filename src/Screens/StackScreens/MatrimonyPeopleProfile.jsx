@@ -13,30 +13,31 @@ import axios from 'axios';
 import { MATCHED_PROFILE, SAVED_PROFILES, SEND_REQUEST, SHARED_PROFILES, VERIFY_PROFILE } from '../../utils/BaseUrl';
 import { useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Toast from 'react-native-toast-message';
 import ImageViewing from 'react-native-image-viewing';
 import { SH, SW } from '../../utils/Dimensions';
 
 const MatrimonyPeopleProfile = ({ navigation }) => {
   const route = useRoute();
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
-  const { userDetails, details, details_userId, userId, isSaved } = route.params || {};
+  const { userDetails, isSaved ,userId } = route.params || {};
   const Biodata_id = userDetails?.bioDataId || null;
-  const hideContact = !!(userDetails?.hideContact || details?.hideContact);
-  const hideOptionalDetails = !!(userDetails?.hideOptionalDetails || details?.hideOptionalDetails)
+  const hideContact = !!(userDetails?.hideContact);
+  const hideOptionalDetails = !!(userDetails?.hideOptionalDetails)
   const isActivist = MyActivistProfile?._id;
   const activistId = MyActivistProfile?._id;
-  const isVerified = userDetails?.verified || details?.verified;
-  const verifiedBy = userDetails?.verifiedBy || details?.verifiedBy;
+  const isVerified = userDetails?.verified;
+  const verifiedBy = userDetails?.verifiedBy;
+  
   useEffect(() => {
-    console.log("userDetails", isActivist);
+    console.log("userDetails", userId);
   }, [])
-  const User_Id = userDetails?.userId || details_userId;
-  console.log("userId", hideOptionalDetails);
+
+  // const User_Id = userDetails?.userId || details_userId;
+  // console.log("userId", hideOptionalDetails);
   const _id = userDetails?._id;
-  console.log("_id", _id);
-  const personalDetails = details?.personalDetails || userDetails?.personalDetails || {};
-  const partnerPreferences = details?.partnerPreferences || userDetails?.partnerPreferences || {};
+  // console.log("_id", User_Id);
+  const personalDetails = userDetails?.personalDetails || {};
+  const partnerPreferences = userDetails?.partnerPreferences || {};
   const [profileData, setProfileData] = useState([]);
   const MyprofileData = useSelector((state) => state.getBiodata);
   const [isImageVisible, setImageVisible] = useState(false);
@@ -120,230 +121,139 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
   // console.log("MyprofileData", MyprofileData);
 
+ 
   useEffect(() => {
-    fetchUserProfile();
-  }, []);
+    console.log("userId in profile function:", userId); // Debugging step
 
-  // Function to fetch profile details
-
-  const fetchUserProfile = async () => {
-    if (!User_Id) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "User ID not found!",
-      });
-      return;
+    if (!userId) {
+        console.log("⚠️ userId is missing!");
+        return;
     }
 
-    const token = await AsyncStorage.getItem('userToken');
-    if (!token) {
-      Toast.show({
-        type: "error",
-        text1: "Authentication Error",
-        text2: "No token found. Please log in again.",
-      });
-      return;
-    }
+    const fetchUserProfile = async () => {
+        console.log("✅ FetchUserProfile Function Called");
 
-    const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
+        setLoading(true);
+        try {
+            const token = await AsyncStorage.getItem('userToken');
+            console.log("🔑 Token from AsyncStorage:", token);
+
+            if (!token) {
+                console.log("❌ No token found!");
+                return;
+            }
+
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            };
+
+            // const apiUrl = `${MATCHED_PROFILE}/${userId}`;
+            console.log("🌍 API URL:", apiUrl);
+
+            const response = await axios.get(`${MATCHED_PROFILE}/${userId}`, { headers });
+            console.log("📥 API Response:", JSON.stringify(response.data));
+
+            if (response.data.status === "success") {
+                console.log("🎯 Profile Data Fetched Successfully!");
+                setProfileData(response.data);
+            } else {
+                console.log("⚠️ API Response Status Not Success:", response.data);
+            }
+        } catch (error) {
+            console.error("❌ Error fetching profile:", error?.response?.data || error.message);
+        } finally {
+            setLoading(false);
+            console.log("🔄 Loading state set to false");
+        }
     };
 
-    try {
-      const response = await axios.get(`${MATCHED_PROFILE}/${User_Id}`, { headers });
-      console.log("matched profile data ", JSON.stringify(response.data))
-      if (response.data.status === "success") {
-        setProfileData(response.data);
-      } else {
-        Toast.show({
-          type: "error",
-          text1: "No Profile Found",
-          text2: response.data.message || "Something went wrong!",
-        });
-      }
-    } catch (error) {
-      // console.error("Error fetching profile:", error);
+    fetchUserProfile();
+}, [userId]);
 
-      if (error.response && error.response.status === 404) {
-        Toast.show({
-          type: "error",
-          text1: "Please set your biodata first.",
-          text2: "If You want to Match Your Profile",
-        });
-      } else {
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: error.response?.data?.message || "Something went wrong!",
-        });
-      }
-    }
-  };
 
   const sendInterestRequest = async () => {
-    if (!User_Id) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "User ID not found!",
-      });
+    if (!userId) {
+      ToastAndroid.show("Error: User ID not found!", ToastAndroid.SHORT);
       return;
     }
-
+  
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         throw new Error("No token found");
       }
-
+  
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-
-      const response = await axios.post(`${SEND_REQUEST}/${User_Id}`, {}, { headers });
-
+  
+      const response = await axios.post(`${SEND_REQUEST}/${userId}`, {}, { headers });
+  
       console.log("Response Data:", JSON.stringify(response?.data));
-
+  
       if (response?.data?.message) {
-        Toast.show({
-          type: "success",
-          text1: "Interest Sent",
-          text2: response.data.message,
-          position: "top",
-          visibilityTime: 3000,
-          textStyle: { fontSize: 14, color: "green" },
-        });
+        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
       } else {
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: response.data.message || "Something went wrong!",
-        });
+        ToastAndroid.show("Something went wrong!", ToastAndroid.SHORT);
       }
     } catch (error) {
       console.error(
         "API Error:",
         error?.response ? JSON.stringify(error.response.data) : error.message
       );
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: error.response?.data?.message || "Failed to send interest!",
-      });
+  
+      ToastAndroid.show(
+        error.response?.data?.message || "Failed to send interest!",
+        ToastAndroid.SHORT
+      );
     }
   };
-
+  
   const savedProfiles = async () => {
     if (!_id) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "User ID not found!",
-      });
+      ToastAndroid.show("Error: User ID not found!", ToastAndroid.SHORT);
       return;
     }
-
+  
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         throw new Error("No token found");
       }
-
+  
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-
-      const response = await axios.post(
-        `${SAVED_PROFILES}/${_id}`,
-        {},
-        { headers }
-      );
-
+  
+      const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
+  
       console.log("Response Data:", JSON.stringify(response?.data));
-
+  
       if (response?.data?.message) {
-        Toast.show({
-          type: "success",
-          text2: response.data.message,
-          position: "top",
-          visibilityTime: 3000,
-          textStyle: { fontSize: 14, color: "green" },
-        });
+        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
       } else {
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: response.data.message || "Something went wrong!",
-        });
+        ToastAndroid.show("Something went wrong!", ToastAndroid.SHORT);
       }
     } catch (error) {
       console.error(
         "API Error:",
         error?.response ? JSON.stringify(error.response.data) : error.message
       );
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: error.response?.data?.message || "Failed to send interest!",
-      });
+  
+      ToastAndroid.show(
+        error.response?.data?.message || "Failed to save profile!",
+        ToastAndroid.SHORT
+      );
     }
   };
 
   const shareProfiles = async () => {
-    if (!userId) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "User ID not found!",
-      });
-      return;
-    }
-
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) {
-        throw new Error("No token found");
-      }
-
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      };
-      console.log("headers", headers)
-
-      const response = await axios.get(`${SHARED_PROFILES}/${userId}`, { headers });
-
-      console.log("Response Data:", JSON.stringify(response?.data));
-
-      const shareableUrl = response?.data?.shareableLink;
-
-      if (shareableUrl) {
-        await Share.share({
-          message: `Check out this profile: ${shareableUrl}`,
-        });
-      } else {
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: "No shareable link found!",
-        });
-      }
-    } catch (error) {
-      console.error(
-        "API Error:",
-        error?.response ? JSON.stringify(error.response.data) : error.message
-      );
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: error.response?.data?.message || "Failed to share profile!",
-      });
-    }
+   ToastAndroid.show("Under development", ToastAndroid.SHORT);
   };
+
   // Map API comparisonResults to UI labels
   const comparisonResults = profileData?.comparisonResults || {};
   const totalCriteria = Object.keys(comparisonResults).length;
@@ -656,7 +566,6 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
         <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
       </ScrollView>
-      <Toast />
     </SafeAreaView>
   );
 };

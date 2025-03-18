@@ -1,5 +1,5 @@
-import { Text, View, TextInput, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, FlatList } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import { Text, View, TextInput, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, FlatList, ToastAndroid } from 'react-native'
+import React, { useState, useEffect ,useCallback} from 'react'
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/PartnerPreferenceStyle';
 import { TouchableOpacity } from 'react-native';
@@ -11,6 +11,7 @@ import Globalstyles from '../../utils/GlobalCss';
 import { useSelector } from 'react-redux';
 import Toast from 'react-native-toast-message';
 import Entypo from 'react-native-vector-icons/Entypo';
+import { useFocusEffect } from '@react-navigation/native';
 
 import {
     PartnerOccupationData, FamilyTypeData,
@@ -66,29 +67,11 @@ const PartnersPreference = ({ navigation }) => {
         if (myPartnerPreferences) {
             setBiodata((prev) => ({
                 ...prev,
-                ...myPartnerPreferences, // Update biodata
+                ...myPartnerPreferences, // Spread new data from Redux
             }));
-
-            setOriginalBiodata(myPartnerPreferences); // Store the original biodata for comparison
         }
     }, [myPartnerPreferences]);
-    // Runs when `myPartnerPreferences` changes
-
-
-    useEffect(() => {
-        const loadFormData = async () => {
-            const savedData = await AsyncStorage.getItem('myPartnerPreferences');
-            if (savedData) {
-                setBiodata(JSON.parse(savedData)); // ✅ Restore saved data
-            }
-        };
-        loadFormData();
-    }, []);
-
-    useEffect(() => {
-        AsyncStorage.setItem('myPartnerPreferences', JSON.stringify(myPartnerPreferences));
-    }, [myPartnerPreferences]);
-
+      
     const handleStateInputChange = (text) => {
         setStateInput(text);
         if (text) {
@@ -187,37 +170,31 @@ const PartnersPreference = ({ navigation }) => {
     const handleSave = async () => {
         try {
             setLoading(true);
-
             const token = await AsyncStorage.getItem("userToken");
             if (!token) throw new Error("No token found");
-
+    
             const headers = {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             };
-
+    
             let payload = {};
-
-            if (biodata?._id) {
+            let isUpdating = Boolean(biodata?._id); // ✅ Check if biodata exists
+    
+            if (isUpdating) {
                 Object.keys(biodata).forEach((key) => {
                     if (biodata[key] !== originalBiodata[key]) {
                         payload[key] = biodata[key];
                     }
                 });
-
+    
                 if (Object.keys(payload).length === 0) {
-                    Toast.show({
-                        type: "info",
-                        text1: "No changes detected.",
-                        text2: "You haven't made any modifications.",
-                        position: "top",
-                        visibilityTime: 3000,
-                        textStyle: { fontSize: 12, color: "blue" },
-                    });
+                    ToastAndroid.show("No changes detected.", ToastAndroid.SHORT);
                     setLoading(false);
                     return;
                 }
             } else {
+                // ✅ Creating new partner preferences
                 payload = {
                     partnerSubCaste: biodata?.partnerSubCaste || "",
                     partnerMinAge: biodata?.partnerMinAge || "",
@@ -244,54 +221,47 @@ const PartnersPreference = ({ navigation }) => {
                     partnerExpectations: biodata?.partnerExpectations || "",
                 };
             }
-
+    
+            console.log(`🔹 API Type: ${isUpdating ? "UPDATE" : "CREATE"}`);
             console.log("Payload:", payload);
-
-            const apiCall = biodata?._id ? axios.put : axios.post;
-            const endpoint = biodata?._id ? UPDATE_PARTNER_PERFRENCES : CREATE_PARTNER_PERFRENCES;
+    
+            const apiCall = isUpdating ? axios.put : axios.post;
+            const endpoint = isUpdating ? UPDATE_PARTNER_PERFRENCES : CREATE_PARTNER_PERFRENCES;
+    
+            console.log(`🔹 Calling API: ${endpoint}`);
+    
             const response = await apiCall(endpoint, payload, { headers });
-
-            console.log("Save response:", response.data);
-
+    
+            console.log("✅ Save response:", response.data);
+    
             if (response.data?.status?.toLowerCase() === "success") {
-                Toast.show({
-                    type: "success",
-                    text1: biodata?._id ? "Partner Preferences Updated Successfully" : "Partner Preferences Created Successfully",
-                    text2: response.data.message || "Your changes have been saved!",
-                    position: "top",
-                });
-
+                ToastAndroid.show(
+                    isUpdating ? "Partner Preferences Updated Successfully!" : "Partner Preferences Created Successfully!",
+                    ToastAndroid.SHORT
+                );
+    
+                // ✅ If created successfully, update the biodata state
+                if (!isUpdating && response.data._id) {
+                    setBiodata((prev) => ({ ...prev, _id: response.data._id })); // Update _id after creation
+                    console.log("✅ New Biodata ID:", response.data._id);
+                }
+    
                 setIsEditing(false);
                 setTimeout(() => {
                     navigation.navigate("MainApp");
                 }, 1000);
-                return; // ✅ Success case handled, no need for `catch`
+                return;
             }
-
+    
             throw new Error(response.data.message || "Something went wrong");
-
         } catch (error) {
-            if (error.response) {
-                console.error("API Error:", error.response.data);
-            } else {
-                console.error("Unexpected Error:", error.message);
-            }
-
-            // ✅ Show error only if it's an actual error
-            if (error.message.toLowerCase() !== "biodata updated successfully.") {
-                Toast.show({
-                    type: "error",
-                    text1: "Error",
-                    text2: error.response?.data?.message || error.message || "Something went wrong",
-                    position: "top",
-                    visibilityTime: 2000,
-                    textStyle: { fontSize: 12, color: "red" },
-                });
-            }
+            console.error("🚨 API Error:", error.response?.data || error.message);
+            ToastAndroid.show(error.response?.data?.message || "Something went wrong!", ToastAndroid.SHORT);
         } finally {
             setLoading(false);
         }
     };
+    
 
 
 
@@ -594,7 +564,7 @@ const PartnersPreference = ({ navigation }) => {
                             valueField="value"
                             placeholder="Select Family Type"
                             placeholderStyle={{ color: '#E7E7E7' }}
-                            value={biodata.partnerFamilyType}
+                            value={biodata?.partnerFamilyType}
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerFamilyType: item.value })}
                         />
@@ -648,7 +618,7 @@ const PartnersPreference = ({ navigation }) => {
                     </View>
                 </View>
             </ScrollView>
-            <Toast />
+            <Toast/>
         </SafeAreaView>
     )
 }

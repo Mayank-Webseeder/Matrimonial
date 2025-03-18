@@ -133,10 +133,10 @@ const Register = ({ navigation }) => {
                 dob: formattedDate,
                 city: selectedCity || cityInput.trim(),
                 gender: gender,
-                password: password,
+                password: password.trim(),
                 photoUrl: selectedImage,
-                mobileNo: mobileNumber,
-                otp: otp,
+                mobileNo: mobileNumber.trim(),
+                otp: otp.trim(),
             };
 
             console.log("SignUp Payload:", payload);
@@ -414,7 +414,7 @@ const Register = ({ navigation }) => {
                     onChange={handleDateChange}
                 />
             )}
-            <Toast />
+            <Toast/>
         </SafeAreaView>
     );
 };

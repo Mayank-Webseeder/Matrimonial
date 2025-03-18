@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 3,
     width: '48%',
-    marginTop: SH(5)
+    paddingBottom:0
   },
   image: {
     width: '100%',
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: SW(10),
     paddingVertical: SH(10)
   },
-  detailscontent:{
+  detailscontent: {
     paddingVertical: SH(10)
   },
   row: {
@@ -110,6 +110,18 @@ const styles = StyleSheet.create({
     color: "gray",
     fontWeight: "bold",
   },
+  unsaveText: {
+    backgroundColor: Colors.theme_color,
+    color: Colors.light,
+    alignSelf: "flex-start",
+    textAlign: "center",
+    marginTop: SH(5),
+    paddingVertical: SH(2),
+    paddingHorizontal: SW(5),
+    fontFamily:"Poppins-Medium",
+    fontSize:SF(11),
+    borderRadius:2
+  }
 });
 
 export default styles;

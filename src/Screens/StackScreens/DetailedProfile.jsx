@@ -1,6 +1,6 @@
 
-import { Text, View, Image, ImageBackground, TextInput, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, FlatList } from 'react-native'
-import React, { useEffect, useState,useCallback } from 'react'
+import { Text, View, Image, ImageBackground, TextInput, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, FlatList, ToastAndroid } from 'react-native'
+import React, { useEffect, useState, useCallback } from 'react'
 import styles from '../StyleScreens/ProfileStyle';
 import { TouchableOpacity } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
@@ -51,7 +51,7 @@ const DetailedProfile = ({ navigation }) => {
     subCaste: '',
     gender: '',
     fullname: '',
-    dob: '',
+    dob:'',
     placeofbirth: '',
     maritalStatus: '',
     disabilities: '',
@@ -93,61 +93,21 @@ const DetailedProfile = ({ navigation }) => {
     fullPhoto: '',
     bestPhoto: '',
   });
-  
+
   const [imageNames, setImageNames] = useState({
     closeupImageName: "Upload One Closeup Image",
     fullImageName: "Upload One Full Image",
     bestImageName: "Upload One Best Image",
   });
 
-  useFocusEffect(
-    useCallback(() => {
-        console.log("Received myBiodata:", myBiodata); // ✅ Debugging
-        
-        if (myBiodata && Object.keys(myBiodata).length > 0) {
-            setBiodata((prev) => {
-                if (JSON.stringify(prev) !== JSON.stringify(myBiodata)) {
-                    console.log("Updating biodata..."); // ✅ Debugging
-                    return { ...prev, ...myBiodata };
-                }
-                return prev;
-            });
-        }
-    }, [myBiodata])
-);
-
-
-
-useFocusEffect(
-  useCallback(() => {
-      const loadFormData = async () => {
-          try {
-              const savedData = await AsyncStorage.getItem("myBiodata");
-              if (savedData) {
-                  const parsedData = JSON.parse(savedData);
-                  console.log("Loaded from AsyncStorage:", parsedData); // ✅ Debugging
-                  setBiodata(parsedData);
-              }
-          } catch (error) {
-              console.error("Error loading biodata:", error);
-          }
-      };
-      loadFormData();
-  }, [])
-);
-
-
   useEffect(() => {
-    AsyncStorage.setItem('myBiodata', JSON.stringify(myBiodata));
-  }, [myBiodata]);
-
-  useEffect(() => {
-    if (myBiodata && Object.keys(myBiodata).length > 0) {
-        AsyncStorage.setItem("biodata", JSON.stringify(myBiodata));
-        console.log("Saved to AsyncStorage:", myBiodata); // ✅ Debugging
+    if (myBiodata) {
+      setBiodata((prev) => ({
+        ...prev,
+        ...myBiodata,
+      }));
     }
-}, [myBiodata]);
-
+  }, [myBiodata]);
 
   const handleTimeChange = (event, selectedDate) => {
     setShowTimePicker(false);
@@ -413,75 +373,64 @@ useFocusEffect(
 
   const handleSave = async () => {
     try {
-      setIsLoading(true);
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+        setIsLoading(true);
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) throw new Error("No token found");
 
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      };
+        const headers = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        };
 
-      const payload = await constructPayload(biodata, !biodata?._id);
-      console.log("Payload:", payload);
+        const payload = await constructPayload(biodata, !biodata?._id);
+        console.log("Payload:", payload);
 
-      const apiCall = biodata?._id ? axios.put : axios.post;
-      const endpoint = biodata?._id ? UPDATE_PERSONAL_DETAILS : CREATE_PERSONAL_DETAILS;
+        const isUpdating = Boolean(biodata?._id);
+        const apiCall = isUpdating ? axios.put : axios.post;
+        const endpoint = isUpdating ? UPDATE_PERSONAL_DETAILS : CREATE_PERSONAL_DETAILS;
 
-      const response = await apiCall(endpoint, payload, { headers });
+        console.log(`🔹 Calling API: ${endpoint}`);
 
-      console.log("API Response:", response.data);
+        const response = await apiCall(endpoint, payload, { headers });
 
-      // ✅ Ensure response is successful
-      if (response.data?.status?.toLowerCase() === "success") {
-        Toast.show({
-          type: "success",
-          text1: biodata?._id ? "Profile Updated Successfully" : "Detailed Profile Created Successfully",
-          text2: response.data.message || "Your changes have been saved!",
-          position: "top",
-        });
+        console.log("✅ API Response:", response.data);
 
-        setIsEditing(false);
+        if (response.data?.status?.toLowerCase() === "success") {
+            const successMessage = isUpdating 
+                ? "Profile Updated Successfully!" 
+                : "Detailed Profile Created Successfully!";
+            
+            ToastAndroid.show(successMessage, ToastAndroid.SHORT);
 
-        setTimeout(() => {
-          if (biodata?._id) {
-            // ✅ If updating, refresh the **same page** (DetailedProfile)
-            navigation.navigate("MainApp");
-          } else {
-            // ✅ If creating, navigate to **MainPartnerPrefrence**
-            navigation.navigate("MainPartnerPrefrence");
-          }
-        }, 1000);
+            setIsEditing(false);
 
-        return; // ✅ Exit here, no need to continue to `catch`
-      }
+            setTimeout(() => {
+                if (isUpdating) {
+                    navigation.navigate("MainApp");
+                } else {
+                    navigation.navigate("MainPartnerPrefrence");
+                }
+            }, 1000);
 
-      // ❌ If API response is NOT success, handle it properly
-      throw new Error(response.data.message || "Something went wrong");
+            return;
+        }
+
+        throw new Error(response.data.message || "Something went wrong");
 
     } catch (error) {
-      // ✅ Log actual errors only
-      if (error.response) {
-        console.error("API Error:", error.response.data);
-      } else {
-        console.error("Unexpected Error:", error.message);
-      }
+        console.error("🚨 API Error:", error.response?.data || error.message);
 
-      // ✅ Show error only if it's a real failure, not a success message
-      if (!error.message.toLowerCase().includes("success")) {
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: error.response?.data?.message || error.message || "Something went wrong",
-          position: "top",
-          visibilityTime: 2000,
-          textStyle: { fontSize: 12, color: "red" },
-        });
-      }
+        if (!error.message.toLowerCase().includes("success")) {
+            ToastAndroid.show(
+                error.response?.data?.message || "Something went wrong!", 
+                ToastAndroid.SHORT
+            );
+        }
     } finally {
-      setIsLoading(false);
+        setIsLoading(false);
     }
-  };
+};
+
 
 
 
@@ -547,7 +496,7 @@ useFocusEffect(
               data={genderData}
               labelField="label"
               valueField="value"
-              value={biodata?.gender}
+              value={MyprofileData?.Biodata?.gender}
               editable={isEditing}
               onChange={(text) => handleInputChange("gender", text.value)}
               placeholder='Enter Gender For Create Biodata'
@@ -573,7 +522,7 @@ useFocusEffect(
             <Text style={Globalstyles.title}>Date of Birth <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
-              value={biodata.dob ? formatDate(biodata.dob) : ""}
+              value={biodata?.dob ? formatDate(biodata.dob) : ""}
               editable={isEditing}
               onFocus={() => setShowDatePicker(true)}
               placeholder="Select your date of birth"
@@ -597,7 +546,7 @@ useFocusEffect(
             <Text style={Globalstyles.title}>Time of Birth <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
-              value={biodata.timeOfBirth}
+              value={biodata?.timeOfBirth}
               editable={isEditing}
               onFocus={() => setShowTimePicker(true)} // Open time picker
               placeholder="HH:MM AM/PM"
@@ -620,7 +569,7 @@ useFocusEffect(
             <Text style={Globalstyles.title}>Place of Birth <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
-              value={biodata.placeofbirth}
+              value={biodata?.placeofbirth}
               editable={isEditing}
               onChangeText={(text) => handleInputChange("placeofbirth", text)}
               placeholderTextColor={Colors.gray}
@@ -637,7 +586,7 @@ useFocusEffect(
               data={maritalStatusData}
               labelField="label"
               valueField="value"
-              value={biodata.maritalStatus}
+              value={biodata?.maritalStatus}
               editable={isEditing}
               onChange={(text) => handleInputChange("maritalStatus", text.value)}
               placeholder="Select marital status"
@@ -652,7 +601,7 @@ useFocusEffect(
               data={MyDisabilities}
               labelField="label"
               valueField="value"
-              value={biodata.disabilities}
+              value={biodata?.disabilities}
               editable={isEditing}
               onChange={(text) => handleInputChange("disabilities", text.value)}
               placeholder="Select disability"
@@ -694,7 +643,7 @@ useFocusEffect(
               data={MyComplexionData}
               labelField="label"
               valueField="value"
-              value={biodata.complexion}
+              value={biodata?.complexion}
               editable={isEditing}
               onChange={(text) => handleInputChange("complexion", text.value)}
               placeholder="Select Complexion"
@@ -708,7 +657,7 @@ useFocusEffect(
               data={ManglikStatusData}
               labelField="label"
               valueField="value"
-              value={biodata.manglikStatus}
+              value={biodata?.manglikStatus}
               editable={isEditing}
               onChange={(text) => handleInputChange("manglikStatus", text.value)}
               placeholder="Select status"
@@ -719,7 +668,7 @@ useFocusEffect(
             <Text style={Globalstyles.title}>Nadi</Text>
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
-              value={biodata.nadi}
+              value={biodata?.nadi}
               editable={isEditing}
               onChangeText={(text) => handleInputChange("nadi", text)}
               placeholderTextColor={Colors.gray}
@@ -733,7 +682,7 @@ useFocusEffect(
             <Text style={Globalstyles.title}>Self Gotra</Text>
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
-              value={biodata.gotraSelf}
+              value={biodata?.gotraSelf}
               editable={isEditing}
               onChangeText={(text) => handleInputChange("gotraSelf", text)}
               placeholderTextColor={Colors.gray}
@@ -747,7 +696,7 @@ useFocusEffect(
             <Text style={Globalstyles.title}>Mother Gotra</Text>
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
-              value={biodata.gotraMother}
+              value={biodata?.gotraMother}
               editable={isEditing}
               onChangeText={(text) => handleInputChange("gotraMother", text)}
               placeholderTextColor={Colors.gray}
@@ -764,7 +713,7 @@ useFocusEffect(
               data={QualificationData}
               labelField="label"
               valueField="value"
-              value={biodata.qualification}
+              value={biodata?.qualification}
               editable={isEditing}
               onChange={(text) => handleInputChange("qualification", text.value)}
               placeholder="Select Qualification"
@@ -794,7 +743,7 @@ useFocusEffect(
               data={Income}
               labelField="label"
               valueField="value"
-              value={biodata.annualIncome}
+              value={biodata?.annualIncome}
               editable={isEditing}
               onChange={(text) => handleInputChange("annualIncome", text.value)}
               placeholder="Select Income"
@@ -810,7 +759,7 @@ useFocusEffect(
               data={LivingData}
               labelField="label"
               valueField="value"
-              value={biodata.livingStatus}
+              value={biodata?.livingStatus}
               editable={isEditing}
               onChange={(text) => handleInputChange("livingStatus", text.value)}
               placeholder="Select Status"
@@ -850,7 +799,7 @@ useFocusEffect(
               style={[Globalstyles.textInput, !isEditing && styles.readOnly]}
               multiline={true}
               numberOfLines={6}
-              value={biodata.aboutMe}
+              value={biodata?.aboutMe}
               editable={isEditing}
               onChangeText={(text) => handleInputChange("aboutMe", text)}
               placeholder="Write about yourself..."
@@ -869,7 +818,7 @@ useFocusEffect(
               data={ProfileCreatedData}
               labelField="label"
               valueField="value"
-              value={biodata.profileCreatedBy}
+              value={biodata?.profileCreatedBy}
               editable={isEditing}
               onChange={(text) => handleInputChange("profileCreatedBy", text.value)}
               placeholder="Select Person"
@@ -882,7 +831,7 @@ useFocusEffect(
             <Text style={Globalstyles.title}>Father Full Name <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
-              value={biodata.fatherName}
+              value={biodata?.fatherName}
               onChangeText={(text) => handleInputChange("fatherName", text)}
               editable={isEditing}
               placeholderTextColor={Colors.gray}
@@ -896,7 +845,7 @@ useFocusEffect(
             <Text style={Globalstyles.title}>Mother Full Name <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
-              value={biodata.motherName}
+              value={biodata?.motherName}
               onChangeText={(text) => handleInputChange("motherName", text)}
               editable={isEditing}
               placeholderTextColor={Colors.gray}
@@ -913,7 +862,7 @@ useFocusEffect(
               data={MotherOccupationData}
               labelField="label"
               valueField="value"
-              value={biodata.fatherOccupation}
+              value={biodata?.fatherOccupation}
               editable={isEditing}
               onChange={(text) => handleInputChange("fatherOccupation", text.value)}
               placeholder="Select Occupation"
@@ -928,7 +877,7 @@ useFocusEffect(
               data={Income}
               labelField="label"
               valueField="value"
-              value={biodata.fatherIncomeAnnually}
+              value={biodata?.fatherIncomeAnnually}
               editable={isEditing}
               onChange={(text) => handleInputChange("fatherIncomeAnnually", text.value)}
               placeholder="Select Income"
@@ -944,7 +893,7 @@ useFocusEffect(
               data={MotherOccupationData}
               labelField="label"
               valueField="value"
-              value={biodata.motherOccupation}
+              value={biodata?.motherOccupation}
               editable={isEditing}
               onChange={(text) => handleInputChange("motherOccupation", text.value)}
               placeholder="Select Occupation"
@@ -959,7 +908,7 @@ useFocusEffect(
               data={Income}
               labelField="label"
               valueField="value"
-              value={biodata.motherIncomeAnnually}
+              value={biodata?.motherIncomeAnnually}
               editable={isEditing}
               onChange={(text) => handleInputChange("motherIncomeAnnually", text.value)}
               placeholder="Select Income"
@@ -975,7 +924,7 @@ useFocusEffect(
               data={FamilyType}
               labelField="label"
               valueField="value"
-              value={biodata.familyType}
+              value={biodata?.familyType}
               editable={isEditing}
               onChange={(text) => handleInputChange("familyType", text.value)}
               placeholder="Select Type"
@@ -990,7 +939,7 @@ useFocusEffect(
               data={siblings}
               labelField="label"
               valueField="value"
-              value={siblings.find((item) => item.value == biodata.siblings)?.value || null}
+              value={siblings.find((item) => item.value == biodata?.siblings)?.value || null}
               editable={isEditing}
               onChange={(text) => handleInputChange("siblings", String(text.value))}
               placeholder="Select Type"
@@ -1002,7 +951,7 @@ useFocusEffect(
             <Text style={Globalstyles.title}>Any family member info. </Text>
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
-              value={biodata.otherFamilyMemberInfo}
+              value={biodata?.otherFamilyMemberInfo}
               onChangeText={(text) => handleInputChange("otherFamilyMemberInfo", text)}
               multiline={true}
               numberOfLines={6}
@@ -1023,7 +972,7 @@ useFocusEffect(
 
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
-              value={biodata.contactNumber1}
+              value={biodata?.contactNumber1}
               onChangeText={(text) => handleInputChange("contactNumber1", text)}
               keyboardType="phone-pad"
               maxLength={10}
@@ -1040,7 +989,7 @@ useFocusEffect(
             <Text style={Globalstyles.title}>Contact No. 2 <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
-              value={biodata.contactNumber2}
+              value={biodata?.contactNumber2}
               onChangeText={(text) => handleInputChange("contactNumber2", text)}
               keyboardType="phone-pad"
               maxLength={10}
@@ -1114,7 +1063,7 @@ useFocusEffect(
               data={CookingStatus}
               labelField="label"
               valueField="value"
-              value={biodata.knowCooking}
+              value={biodata?.knowCooking}
               editable={isEditing}
               onChange={(text) => handleInputChange("knowCooking", text.value)}
               placeholder="Select Status"
@@ -1129,7 +1078,7 @@ useFocusEffect(
               data={DietHabit}
               labelField="label"
               valueField="value"
-              value={biodata.dietaryHabit}
+              value={biodata?.dietaryHabit}
               editable={isEditing}
               onChange={(text) => handleInputChange("dietaryHabit", text.value)}
               placeholder="Select Habit"
@@ -1144,7 +1093,7 @@ useFocusEffect(
               data={smokingStatusData}
               labelField="label"
               valueField="value"
-              value={biodata.smokingHabit}
+              value={biodata?.smokingHabit}
               editable={isEditing}
               onChange={(text) => handleInputChange("smokingHabit", text.value)}
               placeholder="Select Status"
@@ -1159,7 +1108,7 @@ useFocusEffect(
               data={DrinkingHabit}
               labelField="label"
               valueField="value"
-              value={biodata.drinkingHabit}
+              value={biodata?.drinkingHabit}
               editable={isEditing}
               onChange={(text) => handleInputChange("drinkingHabit", text.value)}
               placeholder="Select Habit"
@@ -1174,7 +1123,7 @@ useFocusEffect(
               data={TobacooHabit}
               labelField="label"
               valueField="value"
-              value={biodata.tobaccoHabits}
+              value={biodata?.tobaccoHabits}
               editable={isEditing}
               onChange={(text) => handleInputChange("tobaccoHabits", text.value)}
               placeholder="Select Habit"
@@ -1187,7 +1136,7 @@ useFocusEffect(
             <Text style={Globalstyles.title}>Your Hobbies  </Text>
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
-              value={biodata.hobbies}
+              value={biodata?.hobbies}
               onChangeText={(text) => handleInputChange("hobbies", text)}
               multiline={true}
               numberOfLines={6}
@@ -1204,9 +1153,9 @@ useFocusEffect(
 
             <View style={Globalstyles.input}>
               <TouchableOpacity onPress={() => handleImageSelection('closeUpPhoto')}>
-                {biodata.closeUpPhoto ? (
+                {biodata?.closeUpPhoto ? (
                   <Image
-                    source={{ uri: biodata.closeUpPhoto }}
+                    source={{ uri: biodata?.closeUpPhoto }}
                     style={styles.selectedImage}
                   />
                 ) : (
@@ -1222,9 +1171,9 @@ useFocusEffect(
 
             <View style={Globalstyles.input}>
               <TouchableOpacity onPress={() => handleImageSelection('fullPhoto')}>
-                {biodata.fullPhoto ? (
+                {biodata?.fullPhoto ? (
                   <Image
-                    source={{ uri: biodata.fullPhoto }}
+                    source={{ uri: biodata?.fullPhoto }}
                     style={styles.selectedImage}
                   />
                 ) : (
@@ -1240,9 +1189,9 @@ useFocusEffect(
 
             <View style={Globalstyles.input}>
               <TouchableOpacity onPress={() => handleImageSelection('bestPhoto')}>
-                {biodata.bestPhoto ? (
+                {biodata?.bestPhoto ? (
                   <Image
-                    source={{ uri: biodata.bestPhoto }}
+                    source={{ uri: biodata?.bestPhoto }}
                     style={styles.selectedImage}
                   />
                 ) : (
@@ -1254,13 +1203,17 @@ useFocusEffect(
           </View>
 
           {
-            isLoading ?
+            isLoading ? (
               <ActivityIndicator size="large" color={Colors.theme_color} />
-              :
+            ) : (
               <TouchableOpacity style={styles.button} onPress={handleSave} disabled={isLoading}>
-                <Text style={styles.buttonText}>Submit</Text>
+                <Text style={styles.buttonText}>
+                  {biodata?._id ? "Submit" : "Continue"}
+                </Text>
               </TouchableOpacity>
+            )
           }
+
 
         </View>
       </ScrollView>

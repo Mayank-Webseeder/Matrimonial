@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, TouchableOpacity, Text, SafeAreaView, StatusBar, Image, FlatList, ScrollView } from 'react-native';
+import { View, TouchableOpacity, Text, SafeAreaView, StatusBar, Image, FlatList, ScrollView, ActivityIndicator } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styles from '../StyleScreens/IntrestedProfileStyle';
 import Colors from '../../utils/Colors';
@@ -26,6 +26,7 @@ const IntrestedProfile = ({ navigation }) => {
 
       const headers = { 'Authorization': `Bearer ${token}` };
       const response = await axios.get(url, { headers });
+      console.log("response.data.data",JSON.stringify(response.data.data));
       setData(response.data.data || []);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -37,8 +38,7 @@ const IntrestedProfile = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       fetchData(SENDER_REQUESTS, setInterestSentData);
-      fetchData(RECEIVER_REQUESTS, setInterestReceivedData);
-      
+      fetchData(RECEIVER_REQUESTS, setInterestReceivedData);   
     }, [])
   );
 
@@ -70,6 +70,7 @@ const IntrestedProfile = ({ navigation }) => {
             userId: userData?.userId,
             biodata: userData,
             requestId: item?.requestId,
+            isSaved:item?.isSaved
           })
         }
       >
@@ -93,6 +94,15 @@ const IntrestedProfile = ({ navigation }) => {
       </TouchableOpacity>
     );
   };
+
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color={Colors.theme_color} />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={Globalstyles.container}>

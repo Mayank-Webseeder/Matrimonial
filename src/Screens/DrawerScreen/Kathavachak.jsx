@@ -19,7 +19,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { SH, SW } from '../../utils/Dimensions';
 import { useFocusEffect } from '@react-navigation/native';
-import Toast from 'react-native-toast-message';
 import ImageViewing from 'react-native-image-viewing';
 
 const Kathavachak = ({ navigation }) => {
@@ -107,58 +106,58 @@ const Kathavachak = ({ navigation }) => {
 
   const savedProfiles = async (_id) => {
     if (!_id) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "User ID not found!",
-      });
+      ToastAndroid.showWithGravity(
+        "User ID not found!",
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER
+      );
       return;
     }
-
+  
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         throw new Error("No token found");
       }
-
+  
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-
-      const response = await axios.post(
-        `${SAVED_PROFILES}/${_id}`,
-        {},
-        { headers }
-      );
-
+  
+      const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
+  
       console.log("Response Data:", JSON.stringify(response?.data));
-
+  
       if (response?.data?.message) {
-        Toast.show({
-          type: "success",
-          text2: response.data.message,
-          position: "top",
-          visibilityTime: 3000,
-          textStyle: { fontSize: 14, color: "green" },
+        ToastAndroid.showWithGravity(
+          response.data.message,
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER
+        );
+  
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Kathavachak' }],
         });
       } else {
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: response.data.message || "Something went wrong!",
-        });
+        ToastAndroid.showWithGravity(
+          response.data.message || "Something went wrong!",
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER
+        );
       }
     } catch (error) {
       console.error(
         "API Error:",
         error?.response ? JSON.stringify(error.response.data) : error.message
       );
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: error.response?.data?.message || "Failed to save profile!",
-      });
+  
+      ToastAndroid.showWithGravity(
+        error.response?.data?.message || "Failed to save profile!",
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER
+      );
     }
   };
 
@@ -229,7 +228,7 @@ const Kathavachak = ({ navigation }) => {
               <Text style={styles.text} numberOfLines={1}>{item?.residentialAddress}</Text>
             </Pressable>
             <View style={styles.sharecontainer}>
-              <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
+              <TouchableOpacity style={styles.iconContainer} onPress={()=>savedProfiles(item._id)}>
                 <FontAwesome
                   name={isSaved ? "bookmark" : "bookmark-o"}
                   size={19}

@@ -10,7 +10,9 @@ import moment from 'moment';
 const NotificationDetails = ({ route, navigation }) => {
     const { notification, NotificationData } = route.params;
     const data = notification || NotificationData;
-
+    const photoUrl = Array.isArray(data?.relatedData?.photoUrl)
+    ? data.relatedData.photoUrl[0] // Get the first URL if it's an array
+    : data?.relatedData?.photoUrl;
     return (
         <SafeAreaView style={Globalstyles.container}>
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
@@ -30,9 +32,7 @@ const NotificationDetails = ({ route, navigation }) => {
             </View>
 
             <View style={styles.card}>
-                {data?.relatedData?.photoUrl?.length > 0 && (
-                    <Image source={{ uri: data.relatedData.photoUrl[0] }} style={styles.detailImage} />
-                )}
+            <Image  source={{ uri: photoUrl }} style={styles.detailImage} />
 
                 <Text style={[styles.name, { fontSize: SF(15) }]}>Name: {data?.relatedData?.likedBy?.name || data?.relatedData?.commentBy?.name}</Text>
                 <Text style={styles.detailText}>Message: {data?.message}</Text>

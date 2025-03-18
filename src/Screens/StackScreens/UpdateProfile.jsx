@@ -1,13 +1,4 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-  StatusBar,
-  SafeAreaView,
-} from "react-native";
+import {StyleSheet,Text,View,TextInput,TouchableOpacity,ScrollView,StatusBar,SafeAreaView,ToastAndroid} from "react-native";
 import React, { useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
@@ -18,7 +9,6 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 import { UPDATE_PROFILE } from "../../utils/BaseUrl";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
 
 const UpdateProfile = ({ navigation }) => {
@@ -50,54 +40,26 @@ const UpdateProfile = ({ navigation }) => {
 
         const response = await axios.put(UPDATE_PROFILE, payload, { headers });
         const message = response?.data?.message;
-        console.log("message", response.data);
+        console.log("Profile update response:", response.data);
 
         if (message && message.includes("User profile updated successfully.")) {
-            Toast.show({
-                type: "success",
-                text1: "Profile Updated Successfully",
-                text2: "Your profile changes have been saved.",
-                position: "top",
-                visibilityTime: 3000,
-                textStyle: { fontSize: 10, color: "green" },
-            });
+            ToastAndroid.show("Profile Updated Successfully!", ToastAndroid.SHORT);
             navigation.navigate("MainApp");
         } else {
-            Toast.show({
-                type: "info",
-                text1: "Profile Updated",
-                text2: message || "Your profile has been updated.",
-                position: "top",
-                visibilityTime: 3000,
-                textStyle: { fontSize: 10, color: "red" },
-            });
+            ToastAndroid.show(message || "Your profile has been updated.", ToastAndroid.SHORT);
         }
 
-        console.log("Profile updated successfully:", response.data);
     } catch (error) {
         if (error.response) {
             console.error("API Error:", error.response.data);
-            Toast.show({
-                type: "error",
-                text1: "Update Failed",
-                text2: error.response.data.message || "Unable to update profile. Please try again.",
-                position: "top",
-                visibilityTime: 3000,
-                textStyle: { fontSize: 10, color: "red" },
-            });
+            ToastAndroid.show(error.response.data.message || "Unable to update profile. Please try again.", ToastAndroid.SHORT);
         } else {
             console.error("Error updating profile:", error.message);
-            Toast.show({
-                type: "error",
-                text1: "Update Failed",
-                text2: "Something went wrong. Please try again later.",
-                position: "top",
-                visibilityTime: 3000,
-                textStyle: { fontSize: 10, color: "red" },
-            });
+            ToastAndroid.show("Something went wrong. Please try again later.", ToastAndroid.SHORT);
         }
     }
 };
+
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || dob;
@@ -186,7 +148,6 @@ const UpdateProfile = ({ navigation }) => {
           <Text style={styles.updateButtonText}>Update Profile</Text>
         </TouchableOpacity>
       </ScrollView>
-      <Toast />
     </SafeAreaView>
   );
 };

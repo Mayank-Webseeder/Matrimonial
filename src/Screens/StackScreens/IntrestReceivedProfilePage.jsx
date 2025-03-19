@@ -18,7 +18,8 @@ import { SH, SW } from '../../utils/Dimensions';
 import moment from 'moment';
 
 const IntrestReceivedProfilePage = ({ navigation, route }) => {
-  const { userId, biodata, requestId ,isSaved } = route.params;
+  const { userId, biodata, requestId ,isSaved: initialSavedState  } = route.params;
+  const [Save, setIsSaved] = useState(initialSavedState || false);
   const hideContact = !!(biodata?.hideContact || biodata?.hideContact);
   const hideOptionalDetails = !!(biodata?.hideOptionalDetails || biodata?.hideOptionalDetails)
   const _id = biodata?._id;
@@ -28,7 +29,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const [profileData, setProfileData] = useState(null);
   const MyprofileData = useSelector((state) => state.getBiodata);
   console.log("biodata",biodata);
-  console.log("isSaved", isSaved);
+  console.log("Save", Save);
 
   const [isImageVisible, setImageVisible] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
@@ -106,7 +107,11 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
 
       if (response?.data?.message) {
         ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
-
+        if (response.data.message === "Profile saved successfully.") {
+          setIsSaved(true);
+      } else {
+          setIsSaved(false);
+      }
       } else {
         ToastAndroid.show("Something went wrong!", ToastAndroid.SHORT);
       }
@@ -135,10 +140,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
 
       if (response.status === 200) {
         ToastAndroid.show("Request accepted successfully!", ToastAndroid.SHORT);
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'IntrestedProfile' }],
-        });
+        navigation.navigate("Interested Profile");
       } else {
         ToastAndroid.show("Something went wrong!", ToastAndroid.SHORT);
       }
@@ -167,10 +169,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
 
       if (response.status === 200) {
         ToastAndroid.show("Request rejected successfully!", ToastAndroid.SHORT);
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'IntrestedProfile' }],
-        });
+        navigation.navigate("Interested Profile");
       } else {
         ToastAndroid.show("Something went wrong!", ToastAndroid.SHORT);
       }
@@ -260,13 +259,13 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
             </Text>
           </View>
           <View style={styles.sharecontainer}>
-            <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
+          <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles()}>
               <FontAwesome
-                name={isSaved ? "bookmark" : "bookmark-o"}
+                name={Save ? "bookmark" : "bookmark-o"}
                 size={19}
                 color={Colors.dark}
               />
-              <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text>
+              <Text style={styles.iconText}>{Save ? "Saved" : "Save"}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
               <Feather name="send" size={19} color={Colors.dark} />

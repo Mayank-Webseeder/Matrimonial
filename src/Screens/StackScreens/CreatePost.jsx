@@ -49,61 +49,62 @@ const CreatePost = ({ navigation, route }) => {
 
     const handleSubmit = async () => {
         try {
-            setLoading(true)
-            const token = await AsyncStorage.getItem('userToken'); // ✅ Fetch Token
+            setLoading(true);
+            const token = await AsyncStorage.getItem('userToken'); 
             if (!token) throw new Error('No token found');
-
+    
             const payload = {
                 title: title,
                 description: description,
                 images: photos
             };
-
-            console.log("payload", payload);
-
+    
+            console.log("Payload:", payload);
+    
             const headers = {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             };
-
-            const API_URL = `${CREATE_EVENT_NEWS}`; // ✅ Append profileId
-
-            console.log('Submitting feedback to:', API_URL);
-            console.log('Payload:', payload);
-
+    
+            const API_URL = `${CREATE_EVENT_NEWS}`; 
+    
+            console.log('Submitting event news to:', API_URL);
+    
             const response = await axios.post(API_URL, payload, { headers });
-            console.log("feedback response", JSON.stringify(response.data))
+            console.log("Event response:", JSON.stringify(response.data));
+    
             if (response.status === 200 || response.status === 201) {
                 Toast.show({
                     type: 'success',
                     text1: 'Success',
-                    text2: response.data.message || 'Your Feedback has been submitted successfully!',
+                    text2: response.data.message || 'Your event has been created successfully!',
+                    position: "top",
+                    onHide: () => {
+                        navigation.navigate('EventNews'); // ✅ Toast band hone ke baad navigate
+                    }
                 });
-
-                setTimeout(() => {
-                    navigation.navigate('MainApp');
-                }, 2000);
             }
         } catch (error) {
-            console.error('Error submitting feedback :', error);
-
-            let errorMessage = 'Failed to submit feedback . Please try again later.';
-
-            if (error.response && error.response.data && error.response.data.message) {
-                errorMessage = error.response.data.message; // ✅ Show API error message
+            console.error('Error submitting event:', error);
+    
+            let errorMessage = 'Failed to create event. Please try again later.';
+    
+            if (error.response?.data?.message) {
+                errorMessage = error.response.data.message;
             }
-
+    
             Toast.show({
                 type: 'error',
                 text1: 'Error',
                 text2: errorMessage,
             });
-            setLoading(false)
-        }
-        finally {
-            setLoading(false)
+    
+            setLoading(false);
+        } finally {
+            setLoading(false);
         }
     };
+    
 
 
     return (

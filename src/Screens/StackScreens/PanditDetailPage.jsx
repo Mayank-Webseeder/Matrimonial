@@ -94,40 +94,58 @@ const PanditDetailPage = ({ navigation, item, route }) => {
 
     const savedProfiles = async () => {
         if (!pandit_id) {
-            ToastAndroid.show("Error: User ID not found!", ToastAndroid.SHORT);
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: "User ID not found!",
+                position: "top",
+            });
             return;
         }
-
+    
+        setIsSaved((prev) => !prev); // Optimistic UI Update
+    
         try {
             const token = await AsyncStorage.getItem("userToken");
             if (!token) throw new Error("No token found");
-
+    
             const headers = {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             };
-
+    
+            console.log("API Request:", `${SAVED_PROFILES}/${pandit_id}`);
+            
             const response = await axios.post(`${SAVED_PROFILES}/${pandit_id}`, {}, { headers });
-            console.log("Response Data:", JSON.stringify(response?.data));
-
-            if (response?.data?.message) {
-                ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
-
-                // Toggle state based on API response
-                if (response.data.message === "Profile saved successfully.") {
-                    setIsSaved(true);
-                } else {
-                    setIsSaved(false);
-                }
-            } else {
-                ToastAndroid.show("Something went wrong!", ToastAndroid.SHORT);
+    
+            console.log("Response Data:", response?.data);
+    
+            if (response.status === 200 && response?.data?.message) {
+                Toast.show({
+                    type: "success",
+                    text1: "Success",
+                    text2: response.data.message,
+                    position: "top",
+                });
+    
+                // ✅ Correct State Update
+                setIsSaved(response.data.message.includes("saved successfully"));
             }
         } catch (error) {
             console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
-            ToastAndroid.show("Failed to send interest!", ToastAndroid.SHORT);
+    
+            // Rollback State If API Fails
+            setIsSaved((prev) => !prev);
+    
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: error.response?.data?.message || "Something went wrong!",
+                position: "top",
+            });
         }
     };
-
+    
 
     const openLink = (url, platform) => {
         if (url) {
@@ -180,8 +198,14 @@ const PanditDetailPage = ({ navigation, item, route }) => {
     const averageRating = calculateAverageRating(profileData?.ratings);
 
     const handleShare = async () => {
-        ToastAndroid.show("Under development", ToastAndroid.SHORT);
-    };
+        Toast.show({
+          type: "info",
+          text1: "Info",
+          text2: "Under development",
+          position: "top",
+        });
+      };
+
 
     if (Loading) {
         return (
@@ -230,11 +254,10 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                                 readonly
                             />
                             <Text style={styles.rating}>
-                                {profileData?.ratings?.length > 0 ? `${profileData.ratings.length} Reviews` : "No Ratings Yet"}
+                                {profileData?.ratings?.length > 0 ? `${profileData?.ratings?.length} Reviews` : "No Ratings Yet"}
                             </Text>
                         </View>
-
-                        <Text style={styles.city}>{profileData?.subCaste}</Text>
+                        <Text style={styles.text} numberOfLines={1}>{profileData?.residentialAddress}</Text>
                     </View>
                 </View>
 
@@ -392,6 +415,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 </View>
                 <Image source={require('../../Images/slider.png')} style={styles.Bottomimage} />
             </ScrollView>
+            <Toast/>
         </SafeAreaView>
     );
 };

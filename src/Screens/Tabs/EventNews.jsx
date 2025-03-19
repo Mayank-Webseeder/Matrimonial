@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, TextInput, ToastAndroid, ActivityIndicator } from 'react-native';
+import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, TextInput, ActivityIndicator } from 'react-native';
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import styles from '../StyleScreens/EventNewsStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -16,6 +16,7 @@ import moment from 'moment';
 import { useSelector } from 'react-redux';
 import RBSheet from "react-native-raw-bottom-sheet";
 import Entypo from 'react-native-vector-icons/Entypo';
+import Toast from 'react-native-toast-message';
 
 const EventNews = ({ navigation }) => {
   const sheetRef = useRef(null);
@@ -37,22 +38,35 @@ const EventNews = ({ navigation }) => {
     console.log("myprofile_id", myprofile_id);
   }, [])
 
-  const handlePress = () => {
-    console.log("MyActivistProfile", MyActivistProfile);
+  const handlePress = async () => {
     if (MyActivistProfile && MyActivistProfile._id) {
-      ToastAndroid.show(
-        "You can post event & news details!", 
-        ToastAndroid.SHORT
-      );
-      navigation.navigate('CreatePost');
+      Toast.show({
+        type: "info",
+        text1: "Info",
+        text2: "You can fill details!",
+        position: "top",
+      });
+      setTimeout(() => {
+        navigation.navigate("CreatePost");
+      }, 3000);
     } else {
-      ToastAndroid.show(
-        "Only activists can post events & news!", 
-        ToastAndroid.SHORT
-      );
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Only activists can fill details!",
+        position: "top",
+      });
     }
   };
 
+  const handleShare = async () => {
+    Toast.show({
+      type: "info",
+      text1: "Info",
+      text2: "Under development",
+      position: "top",
+    });
+  };
 
   const getTimeAgo = (createdAt) => {
     const eventTime = moment(createdAt);
@@ -93,73 +107,68 @@ const EventNews = ({ navigation }) => {
 
   const LIKE = async (postId) => {
     try {
-      setIsLoading(true);
-      const token = await AsyncStorage.getItem('userToken');
-      if (!token) throw new Error('No token found');
+        setIsLoading(true);
+        const token = await AsyncStorage.getItem('userToken');
+        if (!token) throw new Error('No token found');
 
-      const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      };
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        };
 
-      const payload = { postId };
+        const payload = { postId };
 
-      const response = await axios.post(LIKEPOST, payload, { headers });
+        const response = await axios.post(LIKEPOST, payload, { headers });
 
-      if (response.data) {
-        const { message, likesCount } = response.data;
+        if (response.data) {
+            const { message, likesCount } = response.data;
 
-        console.log("My event news data", JSON.stringify(response.data));
+            console.log("My event news data", JSON.stringify(response.data));
 
-        // Update like count
-        setLikeData(prevState => ({
-          ...prevState,
-          likesCount,
-        }));
+            // Update like count
+            setLikeData(prevState => ({
+                ...prevState,
+                likesCount,
+            }));
 
-        ToastAndroid.show(`${message}`,ToastAndroid.SHORT)
-        // Show proper toast message
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'EventNews' }],
-        });
-      } else {
-        setLikeData(prevState => ({
-          ...prevState,
-          likesCount: 0, // Fallback
-        }));
-      }
-    } catch (error) {
-      console.error("Error fetching event news:", error);
-      ToastAndroid.show("Failed to like event. Please try again!",ToastAndroid.SHORT)
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      const fetchPostData = async () => {
-        try {
-          const token = await AsyncStorage.getItem('userToken');
-          if (!token) throw new Error('No token found');
-
-          const headers = { Authorization: `Bearer ${token}` };
-          const response = await axios.get(VIEW_EVENT, { headers });
-
-          if (response.status === 200) {
-            const postData = response.data.data;
-            console.log("myeventpost", postData);
-            setMyeventpost(postData);
-          }
-        } catch (error) {
-          console.error('Error fetching post data:', error);
+            if (message) {
+                Toast.show({
+                    type: "success",
+                    text1: "Success",
+                    text2: message,
+                    position: "top",
+                    onHide: () => {
+                        navigation.reset({
+                            index: 0,
+                            routes: [{ name: 'EventNews' }],
+                        });
+                    }
+                });
+            } else {
+                // Agar message nahi hai, toh bina toast dikhaye refresh ho
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'EventNews' }],
+                });
+            }
+        } else {
+            setLikeData(prevState => ({
+                ...prevState,
+                likesCount: 0, // Fallback
+            }));
         }
-      };
-
-      fetchPostData();
-    }, []) // Empty dependency array to prevent multiple re-renders
-  );
+    } catch (error) {
+        console.error("Error fetching event news:", error);
+        Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: "Failed to like event. Please try again!",
+            position: "top",
+        });
+    } finally {
+        setIsLoading(false);
+    }
+};
 
 
   const COMMENT = async (postId) => {
@@ -167,40 +176,47 @@ const EventNews = ({ navigation }) => {
       setIsLoading(true);
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
-  
+
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-  
+
       const payload = {
         postId: postId,
         comment: myComment,
       };
-  
+
       const response = await axios.post(COMMENTPOST, payload, { headers });
-  
+
       if (response.data) {
         const fetchedData = response.data;
         console.log("Updated comments:", JSON.stringify(fetchedData.comments));
-  
+
         setMyComment(""); // Clear input field
-  
-        // Show success toast
-        ToastAndroid.show(fetchedData.message || "Comment added successfully!", ToastAndroid.SHORT);
-  
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "EventNews" }],
+
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: fetchedData.message || "Comment added successfully!",
+          position: "top",
+          onHide: () => {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "EventNews" }],
+            });
+          }
         });
       }
     } catch (error) {
       console.error("Error adding comment:", error?.response?.data || error.message);
-  
-      ToastAndroid.show(
-        error?.response?.data?.message || "Failed to add comment. Please try again!",
-        ToastAndroid.SHORT
-      );
+
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error?.response?.data?.message || "Failed to add comment. Please try again!",
+        position: "top",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -233,24 +249,57 @@ const EventNews = ({ navigation }) => {
           prevComments.filter((comment) => comment._id !== commentId)
         );
 
-        ToastAndroid.show("Comment deleted successfully!", ToastAndroid.SHORT);
-
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'EventNews' }],
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "Comment deleted successfully!",
+          position: "top",
+          onHide: () => {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'EventNews' }],
+            });
+          }
         });
       }
     } catch (error) {
       console.error("Error deleting comment:", error?.response?.data || error.message);
 
-      ToastAndroid.show(
-        error?.response?.data?.message || "Failed to delete comment. Please try again!",
-        ToastAndroid.LONG
-      );
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error?.response?.data?.message || "Failed to delete comment. Please try again!",
+        position: "top",
+      });
     } finally {
       setIsLoading(false);
     }
   };
+
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchPostData = async () => {
+        try {
+          const token = await AsyncStorage.getItem('userToken');
+          if (!token) throw new Error('No token found');
+
+          const headers = { Authorization: `Bearer ${token}` };
+          const response = await axios.get(VIEW_EVENT, { headers });
+
+          if (response.status === 200) {
+            const postData = response.data.data;
+            console.log("myeventpost", postData);
+            setMyeventpost(postData);
+          }
+        } catch (error) {
+          console.error('Error fetching post data:', error);
+        }
+      };
+
+      fetchPostData();
+    }, []) // Empty dependency array to prevent multiple re-renders
+  );
 
   const GetEventNews = async () => {
     try {
@@ -337,10 +386,6 @@ const EventNews = ({ navigation }) => {
 
     fetchPostData();
   }, []);
-
-  const handleShare = async () => {
-    ToastAndroid.show("Under development", ToastAndroid.SHORT);
-  };
 
   const openBottomSheet = (postId, comments) => {
     console.log("commentData", commentData);
@@ -536,12 +581,12 @@ const EventNews = ({ navigation }) => {
   };
 
   if (isLoading) {
-      return (
-        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color={Colors.theme_color} />
-        </View>
-      );
-    }
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color={Colors.theme_color} />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={Globalstyles.container}>
@@ -608,6 +653,7 @@ const EventNews = ({ navigation }) => {
 
         {/* <Image source={require('../../Images/EventImage.png')} style={styles.bannerImage} /> */}
       </ScrollView>
+      <Toast/>
     </SafeAreaView>
   );
 };

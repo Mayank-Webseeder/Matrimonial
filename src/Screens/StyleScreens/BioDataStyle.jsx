@@ -3,10 +3,9 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
- 
     righticons: {
         flexDirection: 'row',
-        alignItems:"center"
+        alignItems: "center"
     },
     images: {
         width: SW(80),
@@ -15,39 +14,39 @@ const styles = StyleSheet.create({
     sliderContainer: {
         marginBottom: SH(30),
         marginTop: SH(10)
-      },
-      sliderImage: {
+    },
+    sliderImage: {
         width: "100%",
         height: SH(180),
         resizeMode: 'cover',
-      },
-      dot: {
+    },
+    dot: {
         width: SW(25),
         height: SH(5),
         borderRadius: 4,
         backgroundColor: '#ccc',
         marginHorizontal: SW(2),
         marginTop: SH(105)
-      },
-      activeDot: {
+    },
+    activeDot: {
         width: SW(25),
         height: SH(5),
         borderRadius: 4,
         backgroundColor: Colors.theme_color,
         marginTop: SH(105)
-      },
+    },
     EditPerference: {
         flexDirection: "row", justifyContent: "space-between",
         marginHorizontal: SW(15), alignItems: "center",
-        marginVertical:SH(7),marginTop:0
+        marginVertical: SH(7), marginTop: 0
     },
     editText: {
         borderColor: Colors.theme_color,
         borderWidth: 1,
         paddingHorizontal: SW(5),
-        paddingVertical:SH(5),
+        paddingVertical: SH(5),
         borderRadius: 5,
-        color:Colors.theme_color
+        color: Colors.theme_color
     },
     viewAll: {
         marginHorizontal: SW(10),
@@ -73,22 +72,22 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         elevation: 3,
         marginVertical: SH(5),
-        gap:10,
-        width:SW(180)
+        gap: 10,
+        width: SW(180)
     },
-    
+
     image: {
-    width: '100%',
-    height: SH(150),
-    borderRadius: 10
+        width: '100%',
+        height: SH(150),
+        borderRadius: 10
     },
     detailsContainer: {
         paddingHorizontal: SW(10),
-    paddingVertical: SH(10)
+        paddingVertical: SH(10)
     },
     row: {
         flexDirection: 'row',
-        justifyContent:"flex-start",
+        justifyContent: "flex-start",
         alignItems: 'center',
         // marginBottom: 5,
     },
@@ -121,12 +120,12 @@ const styles = StyleSheet.create({
     Sliderimage: {
         width: '100%',
         height: SH(180),
-        marginBottom:SH(10)
+        marginBottom: SH(10)
     },
     icon: {
         backgroundColor: Colors.gray,
         paddingHorizontal: SW(10),
-        paddingVertical:SH(10),
+        paddingVertical: SH(10),
         borderRadius: 10
     }
 

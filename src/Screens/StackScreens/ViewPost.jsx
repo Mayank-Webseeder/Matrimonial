@@ -11,11 +11,11 @@ import moment from 'moment';
 
 const ViewPost = ({ navigation, route }) => {
   const { post } = route.params;
-  const isLiked=post.isLiked;
+  const isLiked=post?.isLiked;
   console.log("post", post);
 
   // ✅ Get images from API response correctly
-  const images = post.images || [];
+  const images = post?.images || [];
 
 
    const formatDateTime = (createdAt) => {
@@ -78,7 +78,7 @@ const ViewPost = ({ navigation, route }) => {
         </View>
 
         <Text style={styles.postDescriptionText}>
-          {post.description}
+          {post?.description}
         </Text>
 
         {images.length > 0 && (
@@ -95,11 +95,11 @@ const ViewPost = ({ navigation, route }) => {
                 <View style={styles.likeShareComment}>
                   <View style={styles.likeShare}>
                   <AntDesign name={isLiked ? "heart" : "hearto"} size={20} color={isLiked ? "red" : Colors.dark} />
-                  <Text style={styles.shareText}>{post.likes.length} Likes</Text>
+                  <Text style={styles.shareText}>{post?.likes?.length} Likes</Text>
                   </View>
                   <View style={styles.likeShare}>
                     <EvilIcons name="comment" size={20} color={Colors.dark} />
-                    <Text style={styles.shareText}>{post.comments.length} Comments</Text>
+                    <Text style={styles.shareText}>{post?.comments?.length} Comments</Text>
                   </View>
                   <View style={styles.likeShare}>
                     <Feather name="send" size={20} color={Colors.dark} />

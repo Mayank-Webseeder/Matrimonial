@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
-  Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, SafeAreaView, StatusBar, Linking, Pressable, ToastAndroid,
+  Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, SafeAreaView, StatusBar, Linking, Pressable,
   ScrollView,Share
 } from 'react-native';
 import { slider } from '../../DummyData/DummyData';
@@ -23,6 +23,7 @@ import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { SH, SW } from '../../utils/Dimensions';
 import { useFocusEffect } from '@react-navigation/native';
 import ImageViewing from 'react-native-image-viewing';
+import Toast from 'react-native-toast-message';
 
 const Pandit = ({ navigation }) => {
   const sliderRef = useRef(null);
@@ -116,58 +117,63 @@ const Pandit = ({ navigation }) => {
   
   const savedProfiles = async (_id) => {
     if (!_id) {
-      ToastAndroid.showWithGravity(
-        "User ID not found!",
-        ToastAndroid.SHORT,
-        ToastAndroid.CENTER
-      );
-      return;
+        Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: "User ID not found!",
+            position: "top",
+        });
+        return;
     }
   
     try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) {
-        throw new Error("No token found");
-      }
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) {
+            throw new Error("No token found");
+        }
   
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      };
+        const headers = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        };
   
-      const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
+        const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
   
-      console.log("Response Data:", JSON.stringify(response?.data));
+        console.log("Response Data:", JSON.stringify(response?.data));
   
-      if (response?.data?.message) {
-        ToastAndroid.showWithGravity(
-          response.data.message,
-          ToastAndroid.SHORT,
-          ToastAndroid.CENTER
-        );
-  
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Pandit' }],
-        });
-      } else {
-        ToastAndroid.showWithGravity(
-          response.data.message || "Something went wrong!",
-          ToastAndroid.SHORT,
-          ToastAndroid.CENTER
-        );
-      }
+        if (response?.data?.message) {
+            Toast.show({
+                type: "success",
+                text1: "Success",
+                text2: response.data.message,
+                position: "top",
+                onHide: () => {
+                  navigation.reset({
+                      index: 0,
+                      routes: [{ name: 'Pandit' }],
+                  });
+              }
+            });
+        } else {
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: "Something went wrong!",
+                position: "top",
+            });
+        }
     } catch (error) {
-      console.error(
-        "API Error:",
-        error?.response ? JSON.stringify(error.response.data) : error.message
-      );
+        console.error(
+            "API Error:",
+            error?.response ? JSON.stringify(error.response.data) : error.message
+        );
   
-      ToastAndroid.showWithGravity(
-        error.response?.data?.message || "Failed to save profile!",
-        ToastAndroid.SHORT,
-        ToastAndroid.CENTER
-      );
+        Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: error.response?.data?.message || "Failed to save profile!",
+            position: "top",
+        });
     }
   };
 
@@ -218,9 +224,14 @@ const shareProfile = async (type, id) => {
     </SkeletonPlaceholder>
   );
 
-  const handleShare = async () => {
-    ToastAndroid.show("Under development", ToastAndroid.SHORT);
-  };
+   const handleShare = async () => {
+     Toast.show({
+       type: "info",
+       text1: "Info",
+       text2: "Under development",
+       position: "top",
+     });
+   };
 
   const renderItem = ({ item }) => {
     const isSaved = item.isSaved || null;
@@ -270,7 +281,7 @@ const shareProfile = async (type, id) => {
                 />
                 {/* <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text> */}
               </TouchableOpacity>
-              <TouchableOpacity style={styles.iconContainer} onPress={() => shareProfile("pandit",item._id)}>
+              <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
                 <Feather name="send" size={18} color={Colors.dark} />
                 {/* <Text style={styles.iconText}>Shares</Text> */}
               </TouchableOpacity>
@@ -452,6 +463,7 @@ const shareProfile = async (type, id) => {
           </View>
         </View>
       </Modal>
+      <Toast/>
     </SafeAreaView>
   );
 };

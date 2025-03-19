@@ -348,6 +348,7 @@ const getBiodata = async () => {
   const GetAll_Biodata = async () => {
     setLoading(true)
     try {
+      setLoading(true)
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
 
@@ -476,7 +477,7 @@ const getBiodata = async () => {
                   top: -5,
                   backgroundColor: 'red',
                   borderRadius: 10,
-                  paddingHorizontal: SW(3),
+                  paddingHorizontal: SW(4),
                   paddingVertical: SH(1),
                   justifyContent: 'center',
                   alignItems: 'center',

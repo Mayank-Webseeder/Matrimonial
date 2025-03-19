@@ -8,6 +8,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { disconnectSocket } from '../../../socket';
+import Toast from 'react-native-toast-message';
 
 const CustomDrawer = (props) => {
   const { navigation } = props;
@@ -83,8 +84,13 @@ const CustomDrawer = (props) => {
 
 
   const handleShare = async () => {
-    ToastAndroid.show("Under development", ToastAndroid.SHORT);
-  };
+    Toast.show({
+        type: "info",
+        text1: "Info",
+        text2: "Under development",
+        position: "top",
+    });
+};
 
   return (
     <DrawerContentScrollView
@@ -249,6 +255,7 @@ const CustomDrawer = (props) => {
           </View>
         </View>
       </Modal>
+      <Toast/>
     </DrawerContentScrollView>
   );
 };

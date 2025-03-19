@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar, Linking, ToastAndroid } from 'react-native';
+import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar, Linking } from 'react-native';
 import styles from '../StyleScreens/DharamsalaDetailStyle';
 import Colors from '../../utils/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -14,11 +14,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 
 const DharamsalaDetail = ({ navigation, route }) => {
-  const { DharamsalaData, _id } = route.params;
+  const { DharamsalaData, _id,isSaved: initialSavedState } = route.params;
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showFullText, setShowFullText] = useState(false);
-
+ const [Save, setIsSaved] = useState(initialSavedState || false);
   const description = DharamsalaData.description || "No description available.";
   const truncatedDescription = description.slice(0, 100) + "..."; // First 100 characters
 
@@ -48,65 +48,67 @@ const DharamsalaDetail = ({ navigation, route }) => {
   );
 
   const handleShare = async () => {
-    ToastAndroid.show("Under development", ToastAndroid.SHORT);
-  };
+    Toast.show({
+        type: "info",
+        text1: "Info",
+        text2: "Under development",
+        position: "top",
+    });
+};
 
-  const savedProfiles = async () => {
-    if (!_id) {
+const savedProfiles = async () => {
+  if (!_id) {
       Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "User ID not found!",
-      });
-      return;
-    }
-
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) {
-        throw new Error("No token found");
-      }
-
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      };
-
-      const response = await axios.post(
-        `${SAVED_PROFILES}/${_id}`,
-        {},
-        { headers }
-      );
-
-      console.log("Response Data:", JSON.stringify(response?.data));
-
-      if (response?.data?.message) {
-        Toast.show({
-          type: "success",
-          text2: response.data.message,
-          position: "top",
-          visibilityTime: 3000,
-          textStyle: { fontSize: 14, color: "green" },
-        });
-      } else {
-        Toast.show({
           type: "error",
           text1: "Error",
-          text2: response.data.message || "Something went wrong!",
-        });
-      }
-    } catch (error) {
-      console.error(
-        "API Error:",
-        error?.response ? JSON.stringify(error.response.data) : error.message
-      );
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: error.response?.data?.message || "Failed to save profile!",
+          text2: "User ID not found!",
+          position: "top",
       });
-    }
-  };
+      return;
+  }
+
+  setIsSaved((prev) => !prev); // Optimistic UI Update
+
+  try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) throw new Error("No token found");
+
+      const headers = {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+      };
+
+      console.log("API Request:", `${SAVED_PROFILES}/${_id}`);
+      
+      const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
+
+      console.log("Response Data:", response?.data);
+
+      if (response.status === 200 && response?.data?.message) {
+          Toast.show({
+              type: "success",
+              text1: "Success",
+              text2: response.data.message,
+              position: "top",
+          });
+
+          // ✅ Correct State Update
+          setIsSaved(response.data.message.includes("saved successfully"));
+      }
+  } catch (error) {
+      console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
+
+      // Rollback State If API Fails
+      setIsSaved((prev) => !prev);
+
+      Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: error.response?.data?.message || "Something went wrong!",
+          position: "top",
+      });
+  }
+};
 
   return (
     <SafeAreaView style={Globalstyles.container}>
@@ -167,10 +169,14 @@ const DharamsalaDetail = ({ navigation, route }) => {
 
         {/* Share & Call Section */}
         <View style={styles.sharecontainer}>
-          <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
-            <FontAwesome name="bookmark-o" size={20} color={Colors.dark} />
-            <Text style={styles.iconText}>Save</Text>
-          </TouchableOpacity>
+        <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
+              <FontAwesome
+                name={Save ? "bookmark" : "bookmark-o"}
+                size={19}
+                color={Colors.dark}
+              />
+              <Text style={styles.iconText}>{Save ? "Saved" : "Save"}</Text>
+            </TouchableOpacity>
 
           <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
             <Feather name="send" size={20} color={Colors.dark} />
@@ -186,7 +192,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
         <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
 
       </ScrollView>
-      <Toast />
+      <Toast/>
     </SafeAreaView>
   );
 };

@@ -1,15 +1,11 @@
 
-import {
-  Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView,
-  StatusBar, Linking, Pressable, ActivityIndicator, Animated,
-  ToastAndroid
-} from 'react-native';
+import {Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView,StatusBar, Linking, Pressable} from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 import { slider } from '../../DummyData/DummyData';
 import { Image } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import styles from '../StyleScreens/CommunityStyle';
+import styles from '../StyleScreens/CommunityStyle'
 import Colors from '../../utils/Colors';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
@@ -158,65 +154,103 @@ const Committee = ({ navigation }) => {
     </SkeletonPlaceholder>
   );
 
+  const handleUploadButton = () => {
+    if (MyActivistProfile && MyActivistProfile._id) {
+        Toast.show({
+            type: "info",
+            text1: "Info",
+            text2: "You can fill details!",
+            position: "top",
+        });
+        setTimeout(() => {
+            setActiveButton(2);
+            navigation.navigate("DharamsalaSubmissionPage");
+        }, 2000);
+    } else {
+        Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: "Only activists can fill details!",
+            position: "top",
+        });
+    }
+};
+
 const savedProfiles = async (_id) => {
-  console.log("_id", _id);
   if (!_id) {
-    ToastAndroid.showWithGravity(
-      "User ID not found!",
-      ToastAndroid.SHORT,
-      ToastAndroid.CENTER
-    );
-    return;
+      Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "User ID not found!",
+          position: "top",
+      });
+      return;
   }
 
   try {
-    const token = await AsyncStorage.getItem("userToken");
-    if (!token) {
-      throw new Error("No token found");
-    }
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+          throw new Error("No token found");
+      }
 
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    };
+      const headers = {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+      };
 
-    const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
+      const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
 
-    console.log("Response Data:", JSON.stringify(response?.data));
+      console.log("Response Data:", JSON.stringify(response?.data));
 
-    if (response?.data?.message) {
-      ToastAndroid.showWithGravity(
-        response.data.message,
-        ToastAndroid.SHORT,
-        ToastAndroid.CENTER
-      );
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Committee' }],
-      });
-    } else {
-      ToastAndroid.showWithGravity(
-        response.data.message || "Something went wrong!",
-        ToastAndroid.SHORT,
-        ToastAndroid.CENTER
-      );
-    }
+      if (response?.data?.message) {
+          Toast.show({
+              type: "success",
+              text1: "Success",
+              text2: response.data.message,
+              position: "top",
+          });
+
+          // ✅ Toast dismiss hone ke baad page refresh hoga
+          setTimeout(() => {
+              navigation.reset({
+                  index: 0,
+                  routes: [{ name: "Committee" }],
+              });
+          }, 2000); // Toast ki default duration
+      } else {
+          Toast.show({
+              type: "error",
+              text1: "Error",
+              text2: "Something went wrong!",
+              position: "top",
+          });
+      }
   } catch (error) {
-    console.error(
-      "API Error:",
-      error?.response ? JSON.stringify(error.response.data) : error.message
-    );
+      console.error(
+          "API Error:",
+          error?.response ? JSON.stringify(error.response.data) : error.message
+      );
 
-    ToastAndroid.showWithGravity(
-      error.response?.data?.message || "Failed to save profile!",
-      ToastAndroid.SHORT,
-      ToastAndroid.CENTER
-    );
+      Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: error.response?.data?.message || "Failed to save profile!",
+          position: "top",
+      });
   }
 };
 
+const handleShare = async () => {
+    Toast.show({
+        type: "info",
+        text1: "Info",
+        text2: "Under development",
+        position: "top",
+    });
+};
+
 const renderItem = ({ item }) => {
-  const isSaved = item.isSaved || false; // Ensures proper boolean value
+  const isSaved = item.isSaved || false; 
 
   return (
     <View style={styles.card}>
@@ -285,25 +319,6 @@ const renderItem = ({ item }) => {
     fetchComitteeData("modal");
   };
 
-  const handleUploadButton = () => {
-    if (MyActivistProfile && MyActivistProfile._id) {
-      ToastAndroid.show(
-        "You can fill details!", 
-        ToastAndroid.SHORT
-      );
-      setActiveButton(2);
-      navigation.navigate('CommitteeSubmissionPage');
-    } else {
-      ToastAndroid.show(
-        "Only activists can fill details!", 
-        ToastAndroid.SHORT
-      );
-    }
-  };
-
-  const handleShare = async () => {
-    ToastAndroid.show("Under development", ToastAndroid.SHORT);
-  };
   return (
     <SafeAreaView style={Globalstyles.container} showsVerticalScrollIndicator={false}>
       <StatusBar
@@ -492,7 +507,7 @@ const renderItem = ({ item }) => {
           </View>
         </View>
       </Modal>
-      <Toast />
+      <Toast/>
     </SafeAreaView>
   );
 };

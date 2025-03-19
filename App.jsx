@@ -53,7 +53,7 @@ const App = () => {
         <RootNavigator />
       </NavigationContainer>
       <InternetCheck />
-      <Toast />
+      <Toast/>
     </Provider>
   );
 };

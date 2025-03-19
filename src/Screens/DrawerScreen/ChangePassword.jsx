@@ -176,8 +176,7 @@ const ChangePassword = ({ navigation }) => {
           </View>
         </View>
       </Modal>
-
-      <Toast />
+      <Toast/>
     </SafeAreaView>
   );
 };

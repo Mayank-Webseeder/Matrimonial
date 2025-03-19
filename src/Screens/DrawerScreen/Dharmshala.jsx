@@ -1,7 +1,4 @@
-import {
-  Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, ActivityIndicator,
-  ToastAndroid
-} from 'react-native';
+import {Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable,} from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 import { slider } from '../../DummyData/DummyData';
 import { Image } from 'react-native';
@@ -25,6 +22,7 @@ import { useSelector } from 'react-redux';
 import { useNavigation } from "@react-navigation/native";
 import ImageViewing from 'react-native-image-viewing';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import Toast from 'react-native-toast-message';
 
 const Dharmshala = () => {
   const navigation = useNavigation();
@@ -171,39 +169,46 @@ const Dharmshala = () => {
 
   const handleUploadButton = () => {
     if (MyActivistProfile && MyActivistProfile._id) {
-      ToastAndroid.show(
-        "You can fill details!",
-        ToastAndroid.SHORT
-      );
-      setActiveButton(2);
-      navigation.navigate('DharamsalaSubmissionPage');
+        Toast.show({
+            type: "info",
+            text1: "Info",
+            text2: "You can fill details!",
+            position: "top",
+        });
+        setTimeout(() => {
+            setActiveButton(2);
+            navigation.navigate("DharamsalaSubmissionPage");
+        }, 2000);
     } else {
-      ToastAndroid.show(
-        "Only activists can fill details!",
-        ToastAndroid.SHORT
-      );
+        Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: "Only activists can fill details!",
+            position: "top",
+        });
     }
-  };
+};
 
-  const savedProfiles = async (_id) => {
-    if (!_id) {
-      ToastAndroid.showWithGravity(
-        "User ID not found!",
-        ToastAndroid.SHORT,
-        ToastAndroid.CENTER
-      );
+const savedProfiles = async (_id) => {
+  if (!_id) {
+      Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "User ID not found!",
+          position: "top",
+      });
       return;
-    }
+  }
 
-    try {
+  try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        throw new Error("No token found");
+          throw new Error("No token found");
       }
 
       const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
       };
 
       const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
@@ -211,43 +216,58 @@ const Dharmshala = () => {
       console.log("Response Data:", JSON.stringify(response?.data));
 
       if (response?.data?.message) {
-        ToastAndroid.showWithGravity(
-          response.data.message,
-          ToastAndroid.SHORT,
-          ToastAndroid.CENTER
-        );
+          Toast.show({
+              type: "success",
+              text1: "Success",
+              text2: response.data.message,
+              position: "top",
+          });
 
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Dharmshala' }],
-        });
+          // ✅ Toast dismiss hone ke baad page refresh hoga
+          setTimeout(() => {
+              navigation.reset({
+                  index: 0,
+                  routes: [{ name: "Dharmshala" }],
+              });
+          }, 2000); // Toast ki default duration
       } else {
-        ToastAndroid.showWithGravity(
-          response.data.message || "Something went wrong!",
-          ToastAndroid.SHORT,
-          ToastAndroid.CENTER
-        );
+          Toast.show({
+              type: "error",
+              text1: "Error",
+              text2: "Something went wrong!",
+              position: "top",
+          });
       }
-    } catch (error) {
+  } catch (error) {
       console.error(
-        "API Error:",
-        error?.response ? JSON.stringify(error.response.data) : error.message
+          "API Error:",
+          error?.response ? JSON.stringify(error.response.data) : error.message
       );
 
-      ToastAndroid.showWithGravity(
-        error.response?.data?.message || "Failed to save profile!",
-        ToastAndroid.SHORT,
-        ToastAndroid.CENTER
-      );
-    }
-  };
+      Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: error.response?.data?.message || "Failed to save profile!",
+          position: "top",
+      });
+  }
+};
+
+const handleShare = async () => {
+    Toast.show({
+        type: "info",
+        text1: "Info",
+        text2: "Under development",
+        position: "top",
+    });
+};
 
   const renderItem = ({ item }) => {
     const isSaved = item.isSaved || null;
     return (
       <View style={styles.card}
       >
-        <Pressable style={styles.cardData} onPress={() => navigation.navigate("DharamsalaDetail", { DharamsalaData: item })} >
+        <Pressable style={styles.cardData} onPress={() => navigation.navigate("DharamsalaDetail", { DharamsalaData: item, isSaved: isSaved, _id: item._id })} >
           <TouchableOpacity onPress={() => openImageViewer(item.images?.[0])}>
             <Image
               source={item.images?.[0] ? { uri: item.images?.[0] } : require('../../Images/NoImage.png')}
@@ -282,10 +302,10 @@ const Dharmshala = () => {
             {/* <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text> */}
           </TouchableOpacity>
 
-          <View style={styles.iconContainer}>
+          <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
             <Feather name="send" size={18} color={Colors.dark} />
             <Text style={styles.iconText}>Shares</Text>
-          </View>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
             <MaterialIcons name="call" size={17} color={Colors.light} />
           </TouchableOpacity>
@@ -502,6 +522,7 @@ const Dharmshala = () => {
           </View>
         </View>
       </Modal>
+      <Toast/>
     </SafeAreaView>
   );
 };

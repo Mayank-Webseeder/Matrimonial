@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     alignItems: 'center',
     flexDirection: "row",
-    marginHorizontal: SW(10)
+    marginHorizontal: SW(10),
   },
   smalltext: {
     fontFamily: "Poppins-Regular",

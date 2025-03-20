@@ -1,5 +1,5 @@
 import { Text, View, Image, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Linking, ToastAndroid, ActivityIndicator } from 'react-native';
-import React, { useState,useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import styles from '../StyleScreens/PanditDetailPageStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
@@ -17,7 +17,7 @@ import Toast from 'react-native-toast-message';
 import moment from "moment";
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
-
+import ImageViewing from 'react-native-image-viewing';
 const PanditDetailPage = ({ navigation, item, route }) => {
     const { pandit_id, isSaved: initialSavedState } = route.params || {};
     const [Save, setIsSaved] = useState(initialSavedState || false);
@@ -30,7 +30,12 @@ const PanditDetailPage = ({ navigation, item, route }) => {
     const [Loading, setLoading] = useState(false);
     const [myRatings, setMyRatings] = useState([]);
     const [otherRatings, setOtherRatings] = useState([]);
-    
+    const [visible, setVisible] = useState(false);
+    const profilePhoto = profileData?.profilePhoto
+        ? { uri: profileData.profilePhoto }
+        : require('../../Images/NoImage.png');
+
+
     useFocusEffect(
         useCallback(() => {
             fetchPanditProfile();
@@ -67,7 +72,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 },
             });
 
-            if (response.data.status === "success") {
+            if (response.data.status) {
                 console.log("response.data.data", JSON.stringify(response.data.data));
                 setProfileData(response.data.data);
                 setMyRatings(response.data.data.ratings.filter(rating => rating.userId._id === my_id));
@@ -102,41 +107,41 @@ const PanditDetailPage = ({ navigation, item, route }) => {
             });
             return;
         }
-    
-        setIsSaved((prev) => !prev); // Optimistic UI Update
-    
+
+        setIsSaved((prev) => !prev); // ✅ Optimistic UI Update
+
         try {
             const token = await AsyncStorage.getItem("userToken");
             if (!token) throw new Error("No token found");
-    
+
             const headers = {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             };
-    
+
             console.log("API Request:", `${SAVED_PROFILES}/${pandit_id}`);
-            
+
             const response = await axios.post(`${SAVED_PROFILES}/${pandit_id}`, {}, { headers });
-    
+
             console.log("Response Data:", response?.data);
-    
-            if (response.status === 200 && response?.data?.message) {
+
+            if (response.status === 200) {
                 Toast.show({
                     type: "success",
                     text1: "Success",
-                    text2: response.data.message,
+                    text2: response.data.message || "Profile saved successfully!",
                     position: "top",
                 });
-    
-                // ✅ Correct State Update
+
+                // ✅ API response ke hisaab se state update karo
                 setIsSaved(response.data.message.includes("saved successfully"));
             }
         } catch (error) {
             console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
-    
-            // Rollback State If API Fails
+
+            // ❌ Rollback state if API fails
             setIsSaved((prev) => !prev);
-    
+
             Toast.show({
                 type: "error",
                 text1: "Error",
@@ -145,7 +150,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
             });
         }
     };
-    
+
 
     const openLink = (url, platform) => {
         if (url) {
@@ -199,12 +204,12 @@ const PanditDetailPage = ({ navigation, item, route }) => {
 
     const handleShare = async () => {
         Toast.show({
-          type: "info",
-          text1: "Info",
-          text2: "Under development",
-          position: "top",
+            type: "info",
+            text1: "Info",
+            text2: "Under development",
+            position: "top",
         });
-      };
+    };
 
 
     if (Loading) {
@@ -236,7 +241,16 @@ const PanditDetailPage = ({ navigation, item, route }) => {
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.profileSection}>
-                    <Image source={{ uri: profileData?.profilePhoto }} style={styles.profileImage} />
+                    <TouchableOpacity onPress={() => setVisible(true)}>
+                        <Image source={profilePhoto} style={styles.profileImage} />
+                    </TouchableOpacity>
+
+                    <ImageViewing
+                        images={[profileData?.profilePhoto ? { uri: profileData.profilePhoto } : require('../../Images/NoImage.png')]}
+                        imageIndex={0}
+                        visible={visible}
+                        onRequestClose={() => setVisible(false)}
+                    />
                     <View style={{ flex: 1 }}>
                         <Text style={styles.name} numberOfLines={2}>{profileData?.fullName}</Text>
 

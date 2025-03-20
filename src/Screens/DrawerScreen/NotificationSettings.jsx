@@ -7,14 +7,27 @@ import Globalstyles from "../../utils/GlobalCss";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { EVENT_NEWS_NOTIFICATION_HANDLE_API, CONNECTION_REQUEST_HANDLE_API } from "../../utils/BaseUrl";
+import { useSelector } from "react-redux";
 
 const NotificationSettings = ({ navigation }) => {
-  const [profileInterest, setProfileInterest] = useState(true); // Always ON initially
-  const [newsEvents, setNewsEvents] = useState(true); // Always ON initially
+  const ProfileData = useSelector((state) => state.profile);
+  const profiledata = ProfileData?.profiledata || {};
+
+  const [profileInterest, setProfileInterest] = useState(profiledata?.connReqNotification ?? false);
+  const [newsEvents, setNewsEvents] = useState(profiledata?.eventPostNotification ?? false);
   const [loadingProfileInterest, setLoadingProfileInterest] = useState(false);
   const [loadingNewsEvents, setLoadingNewsEvents] = useState(false);
 
+  useEffect(() => {
+    console.log("ProfileData", ProfileData);
+    console.log("connReqNotification", profileInterest);
+    console.log("eventPostNotification", newsEvents);
+  }, []);
+
   const updateProfileInterestNotification = async () => {
+    const newState = !profileInterest;
+    setProfileInterest(newState); // Optimistically toggle state
+
     try {
       setLoadingProfileInterest(true);
       const token = await AsyncStorage.getItem("userToken");
@@ -23,10 +36,10 @@ const NotificationSettings = ({ navigation }) => {
       const headers = { Authorization: `Bearer ${token}` };
       const response = await axios.patch(CONNECTION_REQUEST_HANDLE_API, {}, { headers });
 
-      setProfileInterest(prevState => !prevState); // Just toggle the state
-      ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+      ToastAndroid.show(response.data.message, ToastAndroid.SHORT); // Show API message
     } catch (error) {
       console.error("Error updating profile interest notification:", error);
+      setProfileInterest(!newState); // Revert UI if API fails
       ToastAndroid.show("Failed to update setting. Try again!", ToastAndroid.LONG);
     } finally {
       setLoadingProfileInterest(false);
@@ -34,6 +47,9 @@ const NotificationSettings = ({ navigation }) => {
   };
 
   const updateNewsEventsNotification = async () => {
+    const newState = !newsEvents;
+    setNewsEvents(newState); // Optimistically toggle state
+
     try {
       setLoadingNewsEvents(true);
       const token = await AsyncStorage.getItem("userToken");
@@ -42,15 +58,17 @@ const NotificationSettings = ({ navigation }) => {
       const headers = { Authorization: `Bearer ${token}` };
       const response = await axios.patch(EVENT_NEWS_NOTIFICATION_HANDLE_API, {}, { headers });
 
-      setNewsEvents(prevState => !prevState); // Just toggle the state
-      ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+      ToastAndroid.show(response.data.message, ToastAndroid.SHORT); // Show API message
     } catch (error) {
       console.error("Error updating news/events notification:", error);
+      setNewsEvents(!newState); // Revert UI if API fails
       ToastAndroid.show("Failed to update setting. Try again!", ToastAndroid.LONG);
     } finally {
       setLoadingNewsEvents(false);
     }
   };
+
+
 
   return (
     <SafeAreaView style={Globalstyles.container}>
@@ -69,10 +87,10 @@ const NotificationSettings = ({ navigation }) => {
         <View style={styles.toggleRow}>
           <Text style={styles.toggleLabel}>Profile Interest Notifications</Text>
           <Switch
-            trackColor={{ false: Colors.gray, true: Colors.gray }}
-            thumbColor={profileInterest ? Colors.theme_color : Colors.theme_color}
+            trackColor={{ false: Colors.gray, true: Colors.gray }} // Set ON color correctly
+            thumbColor={profileInterest ? Colors.theme_color : Colors.theme_color} // Change thumb color based on state
             onValueChange={updateProfileInterestNotification}
-            value={profileInterest}
+            value={profileInterest} // Keep the state as it is
             disabled={loadingProfileInterest}
           />
         </View>

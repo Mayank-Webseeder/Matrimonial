@@ -470,8 +470,7 @@ const DetailedProfile = ({ navigation }) => {
             onChangeText={handleSubCasteInputChange}
             placeholder="Type your sub caste"
             placeholderTextColor={Colors.gray}
-            autoComplete="off"
-            textContentType="none"
+          s
           />
 
           {/* Agar user type karega toh list dikhegi */}

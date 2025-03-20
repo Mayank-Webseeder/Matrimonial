@@ -16,6 +16,7 @@ import { ACCEPTED_API, REJECTED_API, SAVED_PROFILES } from '../../utils/BaseUrl'
 import ImageViewing from 'react-native-image-viewing';
 import { SH, SW } from '../../utils/Dimensions';
 import moment from 'moment';
+import Toast from 'react-native-toast-message';
 
 const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const { userId, biodata, requestId ,isSaved: initialSavedState  } = route.params;
@@ -127,57 +128,90 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
     console.log("✅ Accepting request for userId:", requestId);
 
     try {
-      const token = await AsyncStorage.getItem('userToken');
-      if (!token) {
-        ToastAndroid.show("Error: User token missing!", ToastAndroid.SHORT);
-        return;
-      }
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) {
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: "User token missing!",
+            });
+            return;
+        }
 
-      const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
-      const response = await axios.post(`${ACCEPTED_API}/${requestId}`, {}, { headers });
+        const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` };
+        const response = await axios.post(`${ACCEPTED_API}/${requestId}`, {}, { headers });
 
-      console.log("🚀 Response Status:", response.status);
+        console.log("🚀 Response Status:", response.status);
 
-      if (response.status === 200) {
-        ToastAndroid.show("Request accepted successfully!", ToastAndroid.SHORT);
-        navigation.navigate("Interested Profile");
-      } else {
-        ToastAndroid.show("Something went wrong!", ToastAndroid.SHORT);
-      }
+        if (response.status === 200) {
+            Toast.show({
+                type: "success",
+                text1: "Success",
+                text2: "Request accepted successfully!",
+                onHide: () => setTimeout(() => navigation.navigate("IntrestedProfile"), 1000), // 2 sec delay
+            });
+        } else {
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: "Something went wrong!",
+            });
+        }
     } catch (error) {
-      console.error("🚨 API Error:", error?.response?.data?.message || error.message);
-      ToastAndroid.show("Failed to accept request!", ToastAndroid.SHORT);
+        console.error("🚨 API Error:", error?.response?.data?.message || error.message);
+        Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: "Failed to accept request!",
+        });
     }
-  };
+};
 
-  const rejectConnectionRequest = async (requestId) => {
+const rejectConnectionRequest = async (requestId) => {
     if (!requestId) return;
 
     console.log("❌ Rejecting request for userId:", requestId);
 
     try {
-      const token = await AsyncStorage.getItem('userToken');
-      if (!token) {
-        ToastAndroid.show("Error: User token missing!", ToastAndroid.SHORT);
-        return;
-      }
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) {
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: "User token missing!",
+            });
+            return;
+        }
 
-      const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
-      const response = await axios.post(`${REJECTED_API}/${requestId}`, {}, { headers });
+        const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` };
+        const response = await axios.post(`${REJECTED_API}/${requestId}`, {}, { headers });
 
-      console.log("🚀 Response Status:", response.status);
+        console.log("🚀 Response Status:", response.status);
 
-      if (response.status === 200) {
-        ToastAndroid.show("Request rejected successfully!", ToastAndroid.SHORT);
-        navigation.navigate("Interested Profile");
-      } else {
-        ToastAndroid.show("Something went wrong!", ToastAndroid.SHORT);
-      }
+        if (response.status === 200) {
+            Toast.show({
+                type: "success",
+                text1: "Success",
+                text2: "Request rejected successfully!",
+                onHide: () => setTimeout(() => navigation.navigate("IntrestedProfile"), 1000), // 2 sec delay
+            });
+        } else {
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: "Something went wrong!",
+            });
+        }
     } catch (error) {
-      console.error("🚨 API Error:", error?.response?.data?.message || error.message);
-      ToastAndroid.show("Failed to reject request!", ToastAndroid.SHORT);
+        console.error("🚨 API Error:", error?.response?.data?.message || error.message);
+        Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: "Failed to reject request!",
+        });
     }
-  };
+};
+
 
   const handleShare = async () => {
     ToastAndroid.show("This feature is under development.", ToastAndroid.SHORT);
@@ -425,6 +459,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           <Text style={styles.acceptButtonText}>Accept</Text>
         </TouchableOpacity>
       </View>
+      <Toast/>
     </SafeAreaView>
   );
 };

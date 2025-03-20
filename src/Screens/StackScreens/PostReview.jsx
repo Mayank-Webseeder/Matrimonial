@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StatusBar, SafeAreaView, ToastAndroid } from 'react-native';
+import Toast from 'react-native-toast-message';
+import { View, Text, TextInput, TouchableOpacity, StatusBar, SafeAreaView, ActivityIndicator } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -9,6 +10,7 @@ import Colors from '../../utils/Colors';
 import Globalstyles from '../../utils/GlobalCss';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import {
     PANDIT_REVIEW,
     JYOTISH_REVIEW,
@@ -18,13 +20,13 @@ import {
     UPDATE_KATHAVACHAK_REVIEW
 } from '../../utils/BaseUrl';
 
-
 const PostReview = ({ navigation, route }) => {
     const [description, setDescription] = useState('');
     const [rating, setRating] = useState(0);
     const { pandit_id, entityType, jyotish_id, kathavachak_id, myReview } = route.params;
     console.log(" pandit_id, entityType, jyotish_id, kathavachak_id, myReview", pandit_id, entityType, jyotish_id, kathavachak_id, myReview)
     const [isEditMode, setIsEditMode] = useState(!!myReview);
+    const [isLoading, setIsLoading] = useState(false);
 
 
     useEffect(() => {
@@ -33,15 +35,15 @@ const PostReview = ({ navigation, route }) => {
             setRating(myReview.rating);
         }
         console.log("Route Parameters:");
-  console.log("pandit_id:", pandit_id);
-  console.log("entityType:", entityType);
-  console.log("jyotish_id:", jyotish_id);
-  console.log("kathavachak_id:", kathavachak_id);
-  console.log("myReview:", myReview);
+        console.log("pandit_id:", pandit_id);
+        console.log("entityType:", entityType);
+        console.log("jyotish_id:", jyotish_id);
+        console.log("kathavachak_id:", kathavachak_id);
+        console.log("myReview:", myReview);
     }, [myReview]);
 
 
-    const getApiEndpoint = (entityType, isEditMode) => {
+    const getApiEndpoint = (entityType, isEditMode, pandit_id, jyotish_id, kathavachak_id) => {
         const baseUrl = () => {
             switch (entityType) {
                 case "Pandit":
@@ -67,36 +69,31 @@ const PostReview = ({ navigation, route }) => {
             }
         };
 
-
         const endpoints = baseUrl();
-
 
         if (!endpoints) {
             return null;
         }
-
 
         return isEditMode
             ? { url: endpoints.update, entityId: endpoints.entityId }
             : { url: endpoints.create, entityId: endpoints.entityId };
     };
 
-
     const handleSubmit = async () => {
+        setIsLoading(true)
         try {
+            setIsLoading(true)
             const token = await AsyncStorage.getItem("userToken");
             if (!token) throw new Error("Authorization token is missing.");
 
-
             const formattedEntityType = entityType.charAt(0).toUpperCase() + entityType.slice(1).toLowerCase();
-            const apiData = getApiEndpoint(formattedEntityType, isEditMode);
-
+            const apiData = getApiEndpoint(formattedEntityType, isEditMode, pandit_id, jyotish_id, kathavachak_id);
 
             if (!apiData || !apiData.entityId) {
                 console.error("❌ Invalid entity type or missing entity ID");
                 return;
             }
-
 
             const payload = {
                 entityId: apiData.entityId,
@@ -104,64 +101,67 @@ const PostReview = ({ navigation, route }) => {
                 review: description
             };
 
+            console.log("payload", payload);
 
             if (!isEditMode) {
                 payload.entityType = formattedEntityType;
             }
-
 
             const headers = {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`,
             };
 
-
             const requestConfig = {
-                method: isEditMode ? 'patch' : 'post',
+                method: isEditMode ? "patch" : "post",
                 url: apiData.url,
                 data: payload,
-                headers: headers
+                headers: headers,
             };
-
 
             console.log("✅ Selected API:", apiData.url);
             console.log("📤 Payload being sent:", JSON.stringify(payload, null, 2));
-            console.log("🛠️ Request Configuration:", JSON.stringify(requestConfig, null, 2));
-
 
             const response = await axios(requestConfig);
-            console.log("response", JSON.stringify(response.data))
+            console.log("response", JSON.stringify(response.data));
 
-            if (response.status === 200) {
-                ToastAndroid.showWithGravityAndOffset(
-                    `Your review has been ${isEditMode ? 'updated' : 'posted'} successfully!`,
-                    ToastAndroid.LONG,
-                    ToastAndroid.BOTTOM,
-                    25,
-                    50
-                );
-                navigation.goBack();
+            // ✅ Check if response is successful
+            if (response.status === 200 || response.data.status === true) {
+                Toast.show({
+                    type: "success",
+                    text1: "Success",
+                    text2: `Your review has been ${isEditMode ? "updated" : "posted"} successfully!`,
+                    position: "top",
+                    onHide: () => {
+                        navigation.goBack(); // ✅ Toast dismiss hone ke baad navigate hoga
+                    },
+                });
             } else {
-                ToastAndroid.showWithGravityAndOffset(
-                    'Failed to post/update the review. Please try again.',
-                    ToastAndroid.LONG,
-                    ToastAndroid.BOTTOM,
-                    25,
-                    50
-                );
+                Toast.show({
+                    type: "error",
+                    text1: "Error",
+                    text2: "Failed to post/update the review. Please try again.",
+                    position: "top",
+                });
             }
         } catch (error) {
-            console.error('❌ Error posting review:', error);
-            const errorMessage = error.response?.data?.message || 'An error occurred while posting the review.';
-            ToastAndroid.showWithGravityAndOffset(
-                errorMessage,
-                ToastAndroid.LONG,
-                ToastAndroid.BOTTOM,
-                25,
-                50
-            );
+            setIsLoading(false)
+            console.error("❌ Error posting review:", error);
+            const errorMessage = error.response?.data?.message || "An error occurred while posting the review.";
+
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: errorMessage,
+                position: "top",
+            });
+        }
+        finally {
+            setIsLoading(false)
         }
     };
+
+
 
 
     const renderStars = () => {
@@ -208,10 +208,16 @@ const PostReview = ({ navigation, route }) => {
                     onChangeText={setDescription}
                     textAlignVertical='top'
                 />
-                <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-                    <Text style={styles.submitButtonText}>{isEditMode ? 'Update Review' : 'Submit Review'}</Text>
-                </TouchableOpacity>
+                {
+                    isLoading ?
+                        <ActivityIndicator size={'large'} color={Colors.theme_color} />
+                        :
+                        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+                            <Text style={styles.submitButtonText}>{isEditMode ? 'Update Review' : 'Submit Review'}</Text>
+                        </TouchableOpacity>
+                }
             </View>
+            <Toast/>
         </SafeAreaView>
     );
 };

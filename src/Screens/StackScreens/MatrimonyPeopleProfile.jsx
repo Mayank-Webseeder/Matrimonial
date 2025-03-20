@@ -157,42 +157,73 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
   const sendInterestRequest = async () => {
     if (!userId) {
-      ToastAndroid.show("Error: User ID not found!", ToastAndroid.SHORT);
-      return;
+        Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: "User ID not found!",
+            position: "top",
+            visibilityTime: 3000,
+            autoHide: true
+        });
+        return;
     }
 
     try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) {
-        throw new Error("No token found");
-      }
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) {
+            throw new Error("No token found");
+        }
 
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      };
+        const headers = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        };
 
-      const response = await axios.post(`${SEND_REQUEST}/${userId}`, {}, { headers });
+        const response = await axios.post(`${SEND_REQUEST}/${userId}`, {}, { headers });
 
-      console.log("Response Data:", JSON.stringify(response?.data));
+        console.log("Response Data:", JSON.stringify(response?.data));
+        console.log("response?.data?.status",response?.data?.status);
 
-      if (response?.data?.message) {
-        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
-      } else {
-        ToastAndroid.show("Something went wrong!", ToastAndroid.SHORT);
-      }
+        // ✅ Status Check
+        if (response?.status===200 || response?.data?.status) {
+            Toast.show({
+                type: "success",
+                text1: "Success",
+                text2: response.data.message,
+                position: "top", // ✅ Ensure it's visible
+                visibilityTime: 2000, 
+                autoHide: true,
+                onHide: () => setTimeout(() => navigation.navigate("IntrestedProfile"), 2000)
+            });
+            return;
+        }
+
+        // ❌ Default Error
+        Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: "Unexpected response from server!",
+            position: "top",
+        });
+
     } catch (error) {
-      console.error(
-        "API Error:",
-        error?.response ? JSON.stringify(error.response.data) : error.message
-      );
+        console.error(
+            "API Error:",
+            error?.response ? JSON.stringify(error.response.data) : error.message
+        );
 
-      ToastAndroid.show(
-        error.response?.data?.message || "Failed to send interest!",
-        ToastAndroid.SHORT
-      );
+        const errorMessage = error.response?.data?.message || "Failed to send interest!";
+
+        Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: errorMessage,
+            position: "top",
+        });
     }
-  };
+};
+
+
 
   const savedProfiles = async () => {
     if (!_id) {
@@ -564,7 +595,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         ) : null}
         <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
       </ScrollView>
-      <Toast/>
+    <Toast/>
     </SafeAreaView>
   );
 };

@@ -209,14 +209,12 @@ const savedProfiles = async (_id) => {
               text2: response.data.message,
               position: "top",
           });
-
-          // ✅ Toast dismiss hone ke baad page refresh hoga
           setTimeout(() => {
               navigation.reset({
                   index: 0,
                   routes: [{ name: "Committee" }],
               });
-          }, 2000); // Toast ki default duration
+          }, 2000);
       } else {
           Toast.show({
               type: "error",

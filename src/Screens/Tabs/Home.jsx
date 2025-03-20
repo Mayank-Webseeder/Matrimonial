@@ -31,18 +31,23 @@ const Home = ({ navigation }) => {
   const [socket, setSocket] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [biodata, setBiodata] = useState("");
-   const [mybiodata, setMybiodata] = useState("");
+  const [mybiodata, setMybiodata] = useState("");
   const [allbiodata, setallBiodata] = useState("");
   // const [mybiodata, setMybiodata] = useState("");
-   const MyprofileData = useSelector((state) => state.getBiodata);
-   const partnerPreferences = MyprofileData?.Biodata?.partnerPreferences || null;
+  const MyprofileData = useSelector((state) => state.getBiodata);
+  const partnerPreferences = MyprofileData?.Biodata?.partnerPreferences || null;
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
-  
+
   const blurPhotos = useSelector((state) => state.privacy.blurPhotos);
   const [profiledata, setProfileData] = useState('');
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
+  // const ProfileData = useSelector((state) => state.profile);
+  // const profile_data = ProfileData?.profiledata || {};
+  const [connReqNotification,setconnReqNotification] = useState("");
+  const [eventPostNotification,seteventPostNotification] =useState("");
+
 
   const GetAll_Notification = async () => {
     setIsLoading(true);
@@ -72,12 +77,41 @@ const Home = ({ navigation }) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      fetchProfile();
       getBiodata();
       GetAll_Notification();
     }, [])
   );
-const getBiodata = async () => {
+
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
+  
+      const fetchAndSubscribe = async () => {
+        await fetchProfile();
+        if (isActive) {
+          if (connReqNotification) {
+            subscribeToNewMatches();
+            subscribeToConnectionRequests();
+          }
+    
+          if (eventPostNotification) {
+            subscribeToPostEvents();
+          }
+        }
+      };
+  
+      fetchAndSubscribe();
+  
+      return () => {
+        isActive = false;
+        unsubscribeFromNewMatches();
+        unsubscribeToConnectionRequests();
+        unsubscribeToPostEvents();
+      };
+    }, [connReqNotification, eventPostNotification])
+  );
+  
+  const getBiodata = async () => {
     try {
       setLoading(true)
       const token = await AsyncStorage.getItem('userToken');
@@ -106,7 +140,7 @@ const getBiodata = async () => {
     }
   };
   const handleNavigateToProfile = (item) => {
-    console.log("item",item);
+    console.log("item", item);
     if (!navigation.isFocused()) return;
 
     // console.log("Current Partner Preferences:", mybiodata?.partnerPreferences);
@@ -142,10 +176,14 @@ const getBiodata = async () => {
 
       console.log("headers in profile", headers);
       const res = await axios.get(PROFILE_ENDPOINT, { headers });
-      console.log("Profile Response:", res.data);
+      const profiledata=res.data.data;
 
-      setProfileData(res.data.data); // ✅ State update karo
-      dispatch(setProfiledata(res.data.data)); // Redux update karo
+      console.log("Profile Response:",profiledata);
+      
+      setProfileData(profiledata); // ✅ State update karo
+      setconnReqNotification(profiledata?.connReqNotification)
+      seteventPostNotification(profiledata?.eventPostNotification)
+      dispatch(setProfiledata(profiledata)); // Redux update karo
 
     } catch (error) {
       console.error("Error fetching profile:", error.response ? error.response.data : error.message);
@@ -155,6 +193,12 @@ const getBiodata = async () => {
   };
 
   const subscribeToNewMatches = useCallback(async () => {
+
+    if (!connReqNotification) {
+      console.log("❌ connReqNotification disabled. Not subscribing.");
+      return;
+    }
+
     try {
       const socket = getSocket();
 
@@ -175,32 +219,23 @@ const getBiodata = async () => {
       });
 
       // 🟢 Listening for "newMatch"
-      socket.on("newMatch", (newMatch) => {
-        console.log("🔥 New Match Received:", newMatch);
+      if (connReqNotification) {
+        socket.on("newMatch", (newMatch) => {
+          console.log("🔥 New Match Received:", newMatch);
+          ToastAndroid.show(`🎉 Matched with ${newMatch.name || "someone"}!`, ToastAndroid.SHORT);
+        });
 
-        ToastAndroid.show("You got a new Connection!", ToastAndroid.SHORT);
-
-        if (newMatch?.name) {
-          ToastAndroid.show(`🎉 Matched with ${newMatch.name}`, ToastAndroid.SHORT);
-        }
-      });
-
-      // 🟢 Listening for "connectionRequestResponse"
-      socket.on("connectionRequestResponse", (data) => {
-        console.log("✅ Connection Request Response Received:", data);
-
-        if (data?.message) {
-          ToastAndroid.show(`${data.message}`, ToastAndroid.SHORT);
-        } else {
-          ToastAndroid.show("You have a new connection request response!", ToastAndroid.SHORT);
-        }
-      });
+        socket.on("connectionRequestResponse", (data) => {
+          console.log("✅ Connection Request Response Received:", data);
+          ToastAndroid.show(data?.message || "You have a new connection request response!", ToastAndroid.SHORT);
+        });
+      }
 
     } catch (e) {
       console.error("🚨 Error in subscribeToNewMatches:", e);
       // ToastAndroid.show("❌ Error subscribing to events!", ToastAndroid.SHORT);
     }
-  }, []);
+  }, [connReqNotification]);
 
   const unsubscribeFromNewMatches = useCallback(async () => {
     try {
@@ -213,16 +248,11 @@ const getBiodata = async () => {
     }
   }, []);
 
-  useEffect(() => {
-    subscribeToNewMatches();
-
-    return () => {
-      unsubscribeFromNewMatches();
-    };
-  }, [subscribeToNewMatches, unsubscribeFromNewMatches]);
-
-
   const subscribeToConnectionRequests = useCallback(async () => {
+    if (!connReqNotification) {
+      console.log("❌ connReqNotification disabled. Not subscribing.");
+      return;
+    }
     try {
       const socket = getSocket();
 
@@ -242,43 +272,43 @@ const getBiodata = async () => {
         console.log(`📡 Received Event: ${event}`, data);
       });
 
-      // 🟢 Listening for "connectionRequest"
-      socket.on("connectionRequest", (data) => {
-        console.log("✅ Connection Request Response Received:", data);
+      if (connReqNotification) {
 
-        if (data.username) {
-          ToastAndroid.show(`${data.username}`, ToastAndroid.SHORT);
-        } else {
-          ToastAndroid.show("You have a new connection request response!", ToastAndroid.SHORT);
-        }
-      });
+        socket.on("connectionRequest", (data) => {
+          console.log("✅ Connection Request Response Received:", data);
+
+          if (data.username) {
+            ToastAndroid.show(`You have a new connection from  ${data.username}`, ToastAndroid.SHORT);
+          } else {
+            ToastAndroid.show("You have a new connection request response!", ToastAndroid.SHORT);
+          }
+        });
+      }
+      // 🟢 Listening for "connectionRequest"
 
     } catch (e) {
       console.error("🚨 Error in subscribeToNewMatches:", e);
       // ToastAndroid.show("❌ Error subscribing to events!", ToastAndroid.SHORT);
     }
-  }, []);
+  }, [connReqNotification]);
 
   const unsubscribeToConnectionRequests = useCallback(async () => {
     try {
-      const socket = getSocket();
-      console.log("🔴 Unsubscribing from events...");
-      socket.off("unsubscribeToConnectionRequests");
+        const socket = getSocket();
+        console.log("🔴 Unsubscribing from events...");
+        socket.off("connectionRequest"); // Remove event listener properly
+        socket.off("connectionRequestResponse");
     } catch (e) {
-      console.log("🚨 Error unsubscribing:", e);
+        console.log("🚨 Error unsubscribing:", e);
     }
-  }, []);
-
-  useEffect(() => {
-    subscribeToConnectionRequests();
-
-    return () => {
-      unsubscribeToConnectionRequests();
-    };
-  }, [subscribeToConnectionRequests, unsubscribeToConnectionRequests]);
-
+}, []);
 
   const subscribeToPostEvents = useCallback(async () => {
+    if (!eventPostNotification) {
+      console.log("❌ Events disabled. Not subscribing.");
+      return;
+    }
+
     try {
       const socket = getSocket();
 
@@ -298,32 +328,35 @@ const getBiodata = async () => {
         console.log(`📡 Received Event: ${event}`, data);
       });
 
-      // 🟢 Listening for "newMatch"
-      socket.on("post-commented", (data) => {
-        console.log("💬 New Comment on Post:", data);
-        // ToastAndroid.show("Your got a new Connection!", ToastAndroid.SHORT);
+      if (eventPostNotification) {
+        // 🟢 Listening for "newMatch"
+        socket.on("post-commented", (data) => {
+          console.log("💬 New Comment on Post:", data);
+          // ToastAndroid.show("Your got a new Connection!", ToastAndroid.SHORT);
 
-        if (data.commentBy.name) {
-          ToastAndroid.show(`🎉 New comment by ${data.commentBy.name} on your post!`, ToastAndroid.SHORT);
-        }
-      });
+          if (data.commentBy.name) {
+            ToastAndroid.show(`🎉 New comment by ${data.commentBy.name} on your post!`, ToastAndroid.SHORT);
+          }
+        });
 
-      // 🟢 Listening for "connectionRequestResponse"
-      socket.on("post-liked", (data) => {
-        console.log("❤️ Post Liked:", data);
+        // 🟢 Listening for "connectionRequestResponse"
+        socket.on("post-liked", (data) => {
+          console.log("❤️ Post Liked:", data);
 
-        if (data.likedBy.name) {
-          ToastAndroid.show(`${data.likedBy.name} liked your post!`, ToastAndroid.SHORT);
-        } else {
-          ToastAndroid.show("liked your post!", ToastAndroid.SHORT);
-        }
-      });
+          if (data.likedBy.name) {
+            ToastAndroid.show(`${data.likedBy.name} liked your post!`, ToastAndroid.SHORT);
+          } else {
+            ToastAndroid.show("liked your post!", ToastAndroid.SHORT);
+          }
+        });
+      }
+
 
     } catch (e) {
       console.error("🚨 Error in subscribeToNewMatches:", e);
       // ToastAndroid.show("❌ Error subscribing to events!", ToastAndroid.SHORT);
     }
-  }, []);
+  }, [eventPostNotification]);
 
   const unsubscribeToPostEvents = useCallback(async () => {
     try {
@@ -335,15 +368,6 @@ const getBiodata = async () => {
       console.log("🚨 Error unsubscribing:", e);
     }
   }, []);
-
-  useEffect(() => {
-    subscribeToPostEvents();
-
-    return () => {
-      unsubscribeToPostEvents();
-    };
-  }, [subscribeToPostEvents, unsubscribeToPostEvents]);
-
 
   const GetAll_Biodata = async () => {
     setLoading(true)
@@ -407,7 +431,6 @@ const getBiodata = async () => {
   useFocusEffect(
     React.useCallback(() => {
       GetAll_Biodata();
-      // getBiodata();
       getActivistProfile();
     }, [])
   );
@@ -432,7 +455,7 @@ const getBiodata = async () => {
       <View style={{ marginVertical: SH(20) }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between", gap: SW(10) }}>
           {[1, 2, 3, 4].map((_, index) => (
-            <View key={index} style={{ width: SW(118),height: SH(115),resizeMode: "cover",borderRadius: 10, }} />
+            <View key={index} style={{ width: SW(118), height: SH(115), resizeMode: "cover", borderRadius: 10, }} />
           ))}
         </View>
       </View>
@@ -460,14 +483,13 @@ const getBiodata = async () => {
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>Home</Text>
         </View>
-        <View style={styles.righticons}>
+        <TouchableOpacity style={styles.righticons} onPress={() => navigation.navigate('Notification')}>
           {/* <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} /> */}
           <View style={{ position: 'relative' }}>
             <AntDesign
               name="bells"
               size={25}
               color={Colors.theme_color}
-              onPress={() => navigation.navigate('Notification')}
             />
             {notificationCount > 0 && (
               <View
@@ -489,7 +511,7 @@ const getBiodata = async () => {
               </View>
             )}
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.sliderContainer}>

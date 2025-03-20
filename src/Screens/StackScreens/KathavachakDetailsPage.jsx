@@ -17,6 +17,8 @@ import Toast from 'react-native-toast-message';
 import moment from "moment";
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
+import ImageViewing from 'react-native-image-viewing';
+
 
 const kathavachakDetailsPage = ({ navigation, item, route }) => {
     const { kathavachak_id, isSaved: initialSavedState } = route.params || {};
@@ -30,6 +32,11 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
     const [Loading, setLoading] = useState(false);
     const [myRatings, setMyRatings] = useState([]);
     const [otherRatings, setOtherRatings] = useState([]);
+    const [visible, setVisible] = useState(false);
+
+    const profilePhoto = profileData?.profilePhoto
+        ? { uri: profileData.profilePhoto }
+        : require('../../Images/NoImage.png');
 
     useFocusEffect(
         useCallback(() => {
@@ -67,7 +74,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                 },
             });
 
-            if (response.data.status === "success") {
+            if (response.data.status) {
                 console.log("response.data.data", JSON.stringify(response.data.data));
                 setProfileData(response.data.data);
                 setMyRatings(response.data.data.ratings.filter(rating => rating.userId._id === my_id));
@@ -102,56 +109,50 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
             });
             return;
         }
-
-        setIsSaved((prev) => !prev);
-
+    
+        setIsSaved((prev) => !prev); // ✅ Optimistic UI Update
+    
         try {
             const token = await AsyncStorage.getItem("userToken");
             if (!token) throw new Error("No token found");
-
+    
             const headers = {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             };
-
+    
+            console.log("API Request:", `${SAVED_PROFILES}/${kathavachak_id}`);
+    
             const response = await axios.post(`${SAVED_PROFILES}/${kathavachak_id}`, {}, { headers });
-
-            console.log("Response Data:", JSON.stringify(response?.data));
-
+    
+            console.log("Response Data:", response?.data);
+    
             if (response.status === 200) {
-                const message = response?.data?.message || "Profile saved successfully!";
-
                 Toast.show({
                     type: "success",
                     text1: "Success",
-                    text2: message,
+                    text2: response.data.message || "Profile saved successfully!",
                     position: "top",
                 });
+    
+                // ✅ API response ke hisaab se state update karo
                 setIsSaved(response.data.message.includes("saved successfully"));
-
-            } else {
-                Toast.show({
-                    type: "error",
-                    text1: "Error",
-                    text2: "Something went wrong!",
-                    position: "top",
-                });
             }
         } catch (error) {
             console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
-
+    
+            // ❌ Rollback state if API fails
+            setIsSaved((prev) => !prev);
+    
             Toast.show({
                 type: "error",
                 text1: "Error",
-                text2: error.response?.data?.message || "Failed to send interest!",
+                text2: error.response?.data?.message || "Something went wrong!",
                 position: "top",
             });
         }
     };
-
-
-
-
+    
     const openLink = (url, platform) => {
         if (url) {
             Linking.openURL(url);
@@ -240,7 +241,16 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.profileSection}>
-                    <Image source={{ uri: profileData?.profilePhoto }} style={styles.profileImage} />
+                    <TouchableOpacity onPress={() => setVisible(true)}>
+                        <Image source={profilePhoto} style={styles.profileImage} />
+                    </TouchableOpacity>
+
+                    <ImageViewing
+                        images={[profileData?.profilePhoto ? { uri: profileData.profilePhoto } : require('../../Images/NoImage.png')]}
+                        imageIndex={0}
+                        visible={visible}
+                        onRequestClose={() => setVisible(false)}
+                    />
                     <View style={{ flex: 1 }}>
                         <Text style={styles.name} numberOfLines={2}>{profileData?.fullName}</Text>
 
@@ -265,7 +275,6 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                         <Text style={styles.text} numberOfLines={1}>{profileData?.residentialAddress}</Text>
                     </View>
                 </View>
-
                 <View style={styles.contentContainer}>
                     <Text style={styles.sectionTitle}>Description</Text>
                     <Text style={styles.text}>{profileData?.description}</Text>
@@ -420,7 +429,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                 </View>
                 <Image source={require('../../Images/slider.png')} style={styles.Bottomimage} />
             </ScrollView>
-            <Toast/>
+            <Toast />
         </SafeAreaView>
     );
 };

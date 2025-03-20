@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
-import axios from 'axios'; // ✅ Import Axios
-import AsyncStorage from '@react-native-async-storage/async-storage'; // ✅ Import AsyncStorage for Token Storage
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Colors from '../../utils/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -83,6 +83,7 @@ const ReportPage = ({ navigation, route }) => {
       
       if (error.response && error.response.data && error.response.data.message) {
         errorMessage = error.response.data.message; // ✅ Show API error message
+        console.log("errorMessage",errorMessage);
       }
   
       Toast.show({
@@ -144,6 +145,7 @@ const ReportPage = ({ navigation, route }) => {
           <Text style={styles.submitButtonText}>Submit Report</Text>
         </TouchableOpacity>
       </View>
+      <Toast/>
     </View>
   );
 };

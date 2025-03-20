@@ -92,6 +92,9 @@ const PostSuccessStories = ({ navigation }) => {
                     value={gromname}
                     onChangeText={setGromname}
                     placeholderTextColor={Colors.gray}
+                    autoComplete="off"
+                    textContentType="none"
+
                 />
                 <Text style={Globalstyles.title}>Bride name</Text>
                 <TextInput
@@ -101,6 +104,8 @@ const PostSuccessStories = ({ navigation }) => {
                     value={bridename}
                     onChangeText={setBridename}
                     placeholderTextColor={Colors.gray}
+                    autoComplete="off"
+                    textContentType="none"
                 />
                 <TextInput
                     style={Globalstyles.textInput}
@@ -109,6 +114,8 @@ const PostSuccessStories = ({ navigation }) => {
                     value={comment}
                     onChangeText={setComment}
                     placeholderTextColor={Colors.gray} textAlignVertical='top'
+                    autoComplete="off"
+                    textContentType="none"
                 />
                 <Text style={Globalstyles.title}>Upload your one couple picture</Text>
                 <TouchableOpacity style={styles.uploadButton} onPress={handleImagePick}>

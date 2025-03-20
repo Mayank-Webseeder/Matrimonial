@@ -132,27 +132,27 @@ const Jyotish = ({ navigation }) => {
   
         console.log("Response Data:", JSON.stringify(response?.data));
   
-        if (response?.data?.message) {
-            Toast.show({
-                type: "success",
-                text1: "Success",
-                text2: response.data.message,
-                position: "top",
-                onHide: () => {
-                  navigation.reset({
-                      index: 0,
-                      routes: [{ name: 'Jyotish' }],
-                  });
-              }
-            });
-        } else {
-            Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: "Something went wrong!",
-                position: "top",
-            });
-        }
+         if (response.status === 200) {
+               Toast.show({
+                 type: "success",
+                 text1: "Success",
+                 text2: response.data?.message || "Profile saved successfully!",
+                 position: "top",
+                 onHide: () => {
+                   navigation.reset({
+                     index: 0,
+                     routes: [{ name: "Pandit" }],
+                   });
+                 },
+               });
+             } else {
+               Toast.show({
+                 type: "error",
+                 text1: "Error",
+                 text2: response.data?.message || "Something went wrong!",
+                 position: "top",
+               });
+             }
     } catch (error) {
         console.error(
             "API Error:",

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, SafeAreaView, StatusBar, Linking, Pressable,
-  ScrollView,Share
+  ScrollView, Share
 } from 'react-native';
 import { slider } from '../../DummyData/DummyData';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -73,40 +73,40 @@ const Pandit = ({ navigation }) => {
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
-  
+
       if (!token) {
         console.warn("No token found");
         setLoading(false);
         return;
       }
-  
+
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-  
+
       let queryParams = [];
-  
+
       if (filterType === "search" && locality.trim()) {
         queryParams.push(`locality=${encodeURIComponent(locality.trim().toLowerCase())}`);
-      } 
+      }
       else if (filterType === "modal") {
         if (modalLocality?.trim()) queryParams.push(`locality=${encodeURIComponent(modalLocality.trim().toLowerCase())}`);
         if (services?.trim()) queryParams.push(`services=${encodeURIComponent(services.trim())}`);
         if (rating?.trim()) queryParams.push(`rating=${encodeURIComponent(rating.trim())}`);
         if (experience?.trim()) queryParams.push(`experience=${encodeURIComponent(experience.trim())}`);
       }
-  
-      const url = queryParams.length > 0 
-        ? `${GET_ALL_PANDIT_DATA}?${queryParams.join("&")}` 
+
+      const url = queryParams.length > 0
+        ? `${GET_ALL_PANDIT_DATA}?${queryParams.join("&")}`
         : GET_ALL_PANDIT_DATA;
-  
+
       console.log("Fetching Data from:", url);
-  
+
       const response = await axios.get(url, { headers });
       setPanditData(response.data?.data || []);
-      console.log("response.data?.data ",JSON.stringify(response.data?.data ))
-  
+      console.log("response.data?.data ", JSON.stringify(response.data?.data))
+
     } catch (error) {
       console.error("Error fetching Pandit data:", error);
       setPanditData([]); // Clear data on error
@@ -114,86 +114,87 @@ const Pandit = ({ navigation }) => {
       setLoading(false);
     }
   };
-  
+
   const savedProfiles = async (_id) => {
     if (!_id) {
-        Toast.show({
-            type: "error",
-            text1: "Error",
-            text2: "User ID not found!",
-            position: "top",
-        });
-        return;
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "User ID not found!",
+        position: "top",
+      });
+      return;
     }
   
     try {
-        const token = await AsyncStorage.getItem("userToken");
-        if (!token) {
-            throw new Error("No token found");
-        }
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        throw new Error("No token found");
+      }
   
-        const headers = {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-        };
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
   
-        const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
+      const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
   
-        console.log("Response Data:", JSON.stringify(response?.data));
+      console.log("Response Data:", JSON.stringify(response?.data));
   
-        if (response?.data?.message) {
-            Toast.show({
-                type: "success",
-                text1: "Success",
-                text2: response.data.message,
-                position: "top",
-                onHide: () => {
-                  navigation.reset({
-                      index: 0,
-                      routes: [{ name: 'Pandit' }],
-                  });
-              }
-            });
-        } else {
-            Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: "Something went wrong!",
-                position: "top",
-            });
-        }
-    } catch (error) {
-        console.error(
-            "API Error:",
-            error?.response ? JSON.stringify(error.response.data) : error.message
-        );
-  
+      if (response.status === 200) {
         Toast.show({
-            type: "error",
-            text1: "Error",
-            text2: error.response?.data?.message || "Failed to save profile!",
-            position: "top",
+          type: "success",
+          text1: "Success",
+          text2: response.data?.message || "Profile saved successfully!",
+          position: "top",
+          onHide: () => {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "Pandit" }],
+            });
+          },
         });
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: response.data?.message || "Something went wrong!",
+          position: "top",
+        });
+      }
+    } catch (error) {
+      console.error(
+        "API Error:",
+        error?.response ? JSON.stringify(error.response.data) : error.message
+      );
+  
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error.response?.data?.message || "Failed to save profile!",
+        position: "top",
+      });
     }
   };
+  
 
   const generateDeepLink = (type, id) => {
     return `matrimonialapp://${type}/${id}`;
-};
+  };
 
-// Function to share profile link
-const shareProfile = async (type, id) => {
+  // Function to share profile link
+  const shareProfile = async (type, id) => {
     const link = generateDeepLink(type, id);
     console.log("Generated Deep Link:", link);
 
     try {
-        await Share.share({
-            message: `Check this ${type} profile: ${link}`,
-        });
+      await Share.share({
+        message: `Check this ${type} profile: ${link}`,
+      });
     } catch (error) {
-        console.error("Error sharing:", error);
+      console.error("Error sharing:", error);
     }
-};
+  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -224,14 +225,14 @@ const shareProfile = async (type, id) => {
     </SkeletonPlaceholder>
   );
 
-   const handleShare = async () => {
-     Toast.show({
-       type: "info",
-       text1: "Info",
-       text2: "Under development",
-       position: "top",
-     });
-   };
+  const handleShare = async () => {
+    Toast.show({
+      type: "info",
+      text1: "Info",
+      text2: "Under development",
+      position: "top",
+    });
+  };
 
   const renderItem = ({ item }) => {
     const isSaved = item.isSaved || null;
@@ -273,7 +274,7 @@ const shareProfile = async (type, id) => {
               <Text style={styles.text} numberOfLines={1}>{item?.residentialAddress}</Text>
             </Pressable>
             <View style={styles.sharecontainer}>
-              <TouchableOpacity style={styles.iconContainer} onPress={()=>savedProfiles(item._id)}>
+              <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
                 <FontAwesome
                   name={isSaved ? "bookmark" : "bookmark-o"}
                   size={19}
@@ -329,18 +330,18 @@ const shareProfile = async (type, id) => {
             style={{ flex: 1 }}
           />
           {locality.length > 0 ? (
-            <AntDesign 
-            name={'close'} 
-            size={20} 
-            color={'gray'} 
-            onPress={() => {
-              setLocality('');
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'Pandit' }], 
-              });
-            }} 
-          />
+            <AntDesign
+              name={'close'}
+              size={20}
+              color={'gray'}
+              onPress={() => {
+                setLocality('');
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'Pandit' }],
+                });
+              }}
+            />
           ) : (
             <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchPanditData("search")} />
           )}
@@ -463,7 +464,7 @@ const shareProfile = async (type, id) => {
           </View>
         </View>
       </Modal>
-      <Toast/>
+      <Toast />
     </SafeAreaView>
   );
 };

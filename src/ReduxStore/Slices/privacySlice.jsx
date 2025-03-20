@@ -10,9 +10,12 @@ const privacySlice = createSlice({
     reducers: {
         toggleBlurPhotos: (state) => {
             state.blurPhotos = !state.blurPhotos;
+        },
+        setBlurPhotosState: (state, action) => {
+            state.blurPhotos = action.payload; // Directly set the blurPhotos state
         }
     }
 });
 
-export const { toggleBlurPhotos } = privacySlice.actions;
+export const { toggleBlurPhotos, setBlurPhotosState } = privacySlice.actions;
 export default privacySlice.reducer;

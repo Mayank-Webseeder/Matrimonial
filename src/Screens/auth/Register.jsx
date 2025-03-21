@@ -13,8 +13,10 @@ import Globalstyles from "../../utils/GlobalCss";
 import ImageCropPicker from 'react-native-image-crop-picker';
 import Entypo from 'react-native-vector-icons/Entypo';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { resetBioData } from "../../ReduxStore/Slices/BiodataSlice";
+import { useDispatch } from "react-redux";
 const Register = ({ navigation }) => {
+    const dispatch= useDispatch();
     const [selectedDate, setSelectedDate] = useState(null);
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [cityInput, setCityInput] = useState('');
@@ -88,19 +90,19 @@ const Register = ({ navigation }) => {
         return Object.keys(newErrors).length === 0;
     };
 
-
     const handleSendOtp = async () => {
         if (!/^\d{10}$/.test(mobileNumber)) {
             Toast.show({ type: "error", text1: "Invalid Number", text2: "Enter a valid 10-digit mobile number" });
             return;
         }
-
+    
         try {
             setIsOtpLoading(true);
             const response = await axios.post(OTP_ENDPOINT, { mobileNo: mobileNumber });
+    
             console.log("OTP Response:", response.data);
-
-            if (response.status === 200 && response.data.success) {
+    
+            if (response.status === 200 && response.data.status === true) {
                 setOtpSent(true);  // Mark OTP as sent
                 Toast.show({ type: "success", text1: "OTP Sent", text2: "Check your SMS for the OTP" });
             } else {
@@ -108,26 +110,31 @@ const Register = ({ navigation }) => {
             }
         } catch (error) {
             console.error("OTP Error:", error);
-            Toast.show({ type: "error", text1: "OTP Error", text2: "Failed to send OTP. Try again." });
+    
+            if (error.response?.status === 400) {
+                Toast.show({ type: "error", text1: "Invalid Request", text2: error.response.data.message || "Mobile number is required" });
+            } else {
+                Toast.show({ type: "error", text1: "OTP Error", text2: error.message || "Failed to send OTP. Try again." });
+            }
         } finally {
             setIsOtpLoading(false);
         }
     };
-
+    
     const handleSignup = async () => {
         if (!validateFields()) return;
-
+    
         if (!otp || otp.length !== 6) {
             Toast.show({ type: "error", text1: "Invalid OTP", text2: "Please enter the correct OTP." });
             return;
         }
-
+    
         setIsLoading(true);
         try {
             const formattedDate = selectedDate
                 ? `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, "0")}-${selectedDate.getDate().toString().padStart(2, "0")}`
                 : null;
-
+    
             const payload = {
                 username: fullName.trim(),
                 dob: formattedDate,
@@ -138,44 +145,59 @@ const Register = ({ navigation }) => {
                 mobileNo: mobileNumber.trim(),
                 otp: otp.trim(),
             };
-
+    
             console.log("SignUp Payload:", payload);
             const response = await axios.post(SIGNUP_ENDPOINT, payload);
             console.log("Signup Response:", response.data);
             const RegisterData = response.data;
-
-            const token = RegisterData?.user?.token || null;
-
-            if (token) {
-                await AsyncStorage.setItem("userToken", token);
-                console.log("Token saved:", token);
-                const storedToken = await AsyncStorage.getItem("userToken");
-                console.log("Retrieved token from AsyncStorage:", storedToken);
-            } else {
-                console.warn("Token is missing in response, skipping storage.");
-            }
-
-            if (response.status === 200 && response.data.message === "User account created successfully.") {
+    
+            if (response.status === 200 && response.data.status === true) {
+                // ✅ Redux store reset karein (purana biodata remove ho jaye)
+                dispatch(resetBioData());
+    
+                // ✅ Token store karein
+                const token = RegisterData?.user?.token || null;
+                if (token) {
+                    await AsyncStorage.setItem("userToken", token);
+                    console.log("Token saved:", token);
+                } else {
+                    console.warn("Token is missing in response, skipping storage.");
+                }
+    
                 Toast.show({
                     type: "success",
                     text1: "Sign Up Successful",
                     text2: "You have successfully signed up!",
-                    onHide: () => navigation.reset({
-                        index: 0,
-                        routes: [{ name: "AppStack" }],
-                    }),
+                    onHide: () =>
+                        navigation.reset({
+                            index: 0,
+                            routes: [{ name: "AppStack" }],
+                        }),
                 });
             } else {
-                throw new Error(response.data.message || "Signup failed");
+                throw new Error(RegisterData.message || "Signup failed");
             }
         } catch (error) {
             console.error("Sign Up Error:", error);
-            Toast.show({ type: "error", text1: "Sign Up Error", text2: error.message || "An error occurred. Please try again." });
+    
+            if (error.response?.status === 400) {
+                Toast.show({
+                    type: "error",
+                    text1: "Invalid Request",
+                    text2: error.response.data.message || "Please check your input.",
+                });
+            } else {
+                Toast.show({
+                    type: "error",
+                    text1: "Sign Up Error",
+                    text2: error.message || "An error occurred. Please try again.",
+                });
+            }
         } finally {
             setIsLoading(false);
         }
     };
-
+    
 
     const handleDateChange = (event, date) => {
         if (date && date !== selectedDate) {

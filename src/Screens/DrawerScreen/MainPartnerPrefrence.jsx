@@ -50,38 +50,34 @@ const MainPartnerPrefrence = ({ navigation }) => {
             });
             return;
         }
-
+    
         const headers = {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
         };
-
+    
         try {
             const response = await axios.post(REPOST, {}, { headers });
-
-            console.log("repost data ", response.data);
-
-            if (response.data.status === "success") {
+    
+            console.log("Repost Data:", response.data);
+    
+            if (response.status === 200 && response.data.status === true) {
                 Toast.show({
                     type: 'success',
-                    text1: 'Repost successfully!',
-                    text2: response.data.message,
+                    text1: 'Success',
+                    text2: response.data.message || 'Reposted successfully!',
                 });
-            } else if (response.data.status === "failed") {
-                Toast.show({
-                    type: 'error',
-                    text1: 'Cooldown Active!',
-                    text2: response.data.message || 'You can repost after some time.',
-                });
+            } else {
+                throw new Error(response.data.message || 'Something went wrong!');
             }
         } catch (error) {
             console.error("Error fetching profile:", error);
             let errorMessage = "Something went wrong. Please try again later.";
-
-            if (error.response && error.response.data && error.response.data.message) {
-                errorMessage = error.response.data.message;
+    
+            if (error.response && error.response.status === 400) {
+                errorMessage = error.response.data?.message || "Failed to repost. Please try again!";
             }
-
+    
             Toast.show({
                 type: 'error',
                 text1: 'Error',
@@ -89,8 +85,6 @@ const MainPartnerPrefrence = ({ navigation }) => {
             });
         }
     };
-
-
 
     const capitalizeFirstLetter = (text) => {
         return text ? text.charAt(0).toUpperCase() + text.slice(1) : "Unknown";

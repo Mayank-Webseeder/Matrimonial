@@ -51,6 +51,11 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginBottom:SH(10)
     },
+    profilePhoto:{
+        width:SW(50),
+        height:SH(50),
+        borderRadius:50
+    }
 
 })
 

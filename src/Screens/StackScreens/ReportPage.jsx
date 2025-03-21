@@ -12,8 +12,8 @@ import Toast from 'react-native-toast-message';
 import { REPORT } from '../../utils/BaseUrl';
 
 const ReportPage = ({ navigation, route }) => {
-  const { profileId} = route.params || {};
-  console.log("profileId",profileId);
+  const { profileId } = route.params || {};
+  console.log("profileId", profileId);
   const [selectedReason, setSelectedReason] = useState('');
   const [additionalDetails, setAdditionalDetails] = useState('');
   const [isFocus, setIsFocus] = useState(false);
@@ -42,53 +42,56 @@ const ReportPage = ({ navigation, route }) => {
     if (!validateForm()) {
       return;
     }
-  
+
     try {
-      const token = await AsyncStorage.getItem('userToken'); // ✅ Fetch Token
-      if (!token) throw new Error('No token found');
-  
+      const token = await AsyncStorage.getItem("userToken"); // ✅ Fetch Token
+      if (!token) throw new Error("No token found");
+
       const payload = {
         reportReason: selectedReason,
         additionalDetails: additionalDetails,
       };
-  
+
       const headers = {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-  
+
       const API_URL = `${REPORT}/${profileId}`; // ✅ Append profileId
-  
-      console.log('Submitting Report to:', API_URL);
-      console.log('Payload:',payload);
-  
+
+      console.log("Submitting Report to:", API_URL);
+      console.log("Payload:", payload);
+
       const response = await axios.post(API_URL, payload, { headers });
-      console.log('response:',JSON.stringify(response.data));
-  
-      if (response.status === 200 || response.status === 201) {
+
+      console.log("Response:", JSON.stringify(response.data));
+
+      if (response.status === 200 && response.data.status === true) {
         Toast.show({
-          type: 'success',
-          text1: 'Success',
-          text2: response.data.message || 'Your report has been submitted successfully!',
+          type: "success",
+          text1: "Success",
+          text2: response.data.message || "Your report has been submitted successfully!",
         });
-  
+
         setTimeout(() => {
-          navigation.navigate('MainApp');
+          navigation.navigate("MainApp");
         }, 2000);
+        return;
       }
+
+      throw new Error(response.data.message || "Something went wrong");
     } catch (error) {
-      console.error('Error submitting report:', error);
-  
-      let errorMessage = 'Failed to submit report. Please try again later.';
-      
-      if (error.response && error.response.data && error.response.data.message) {
-        errorMessage = error.response.data.message; // ✅ Show API error message
-        console.log("errorMessage",errorMessage);
+      console.error("🚨 Error submitting report:", error.response?.data || error.message);
+
+      let errorMessage = "Failed to submit report. Please try again later.";
+
+      if (error.response?.status === 400) {
+        errorMessage = error.response.data?.message || "Bad request.";
       }
-  
+
       Toast.show({
-        type: 'error',
-        text1: 'Error',
+        type: "error",
+        text1: "Error",
         text2: errorMessage,
       });
     }
@@ -145,7 +148,7 @@ const ReportPage = ({ navigation, route }) => {
           <Text style={styles.submitButtonText}>Submit Report</Text>
         </TouchableOpacity>
       </View>
-      <Toast/>
+      <Toast />
     </View>
   );
 };

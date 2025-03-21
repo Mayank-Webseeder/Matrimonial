@@ -8,6 +8,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { EVENT_NEWS_NOTIFICATION_HANDLE_API, CONNECTION_REQUEST_HANDLE_API } from "../../utils/BaseUrl";
 import { useSelector } from "react-redux";
+import Toast from "react-native-toast-message";
 
 const NotificationSettings = ({ navigation }) => {
   const ProfileData = useSelector((state) => state.profile);
@@ -36,11 +37,29 @@ const NotificationSettings = ({ navigation }) => {
       const headers = { Authorization: `Bearer ${token}` };
       const response = await axios.patch(CONNECTION_REQUEST_HANDLE_API, {}, { headers });
 
-      ToastAndroid.show(response.data.message, ToastAndroid.SHORT); // Show API message
+      if (response.status === 200 && response.data.status) {
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: response.data.message || "Setting updated successfully!",
+        });
+      } else {
+        throw new Error(response.data.message || "Something went wrong!");
+      }
     } catch (error) {
       console.error("Error updating profile interest notification:", error);
       setProfileInterest(!newState); // Revert UI if API fails
-      ToastAndroid.show("Failed to update setting. Try again!", ToastAndroid.LONG);
+
+      let errorMessage = "Failed to update setting. Try again!";
+      if (error.response && error.response.status === 400) {
+        errorMessage = error.response.data?.message || "Invalid request!";
+      }
+
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: errorMessage,
+      });
     } finally {
       setLoadingProfileInterest(false);
     }
@@ -58,16 +77,33 @@ const NotificationSettings = ({ navigation }) => {
       const headers = { Authorization: `Bearer ${token}` };
       const response = await axios.patch(EVENT_NEWS_NOTIFICATION_HANDLE_API, {}, { headers });
 
-      ToastAndroid.show(response.data.message, ToastAndroid.SHORT); // Show API message
+      if (response.status === 200 && response.data.status === true) {
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: response.data.message || "Notification updated successfully!",
+        });
+      } else {
+        throw new Error(response.data.message || "Something went wrong!");
+      }
     } catch (error) {
       console.error("Error updating news/events notification:", error);
       setNewsEvents(!newState); // Revert UI if API fails
-      ToastAndroid.show("Failed to update setting. Try again!", ToastAndroid.LONG);
+
+      let errorMessage = "Failed to update setting. Try again!";
+      if (error.response && error.response.status === 400) {
+        errorMessage = error.response.data?.message || "Invalid request!";
+      }
+
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: errorMessage,
+      });
     } finally {
       setLoadingNewsEvents(false);
     }
   };
-
 
 
   return (
@@ -106,6 +142,7 @@ const NotificationSettings = ({ navigation }) => {
           />
         </View>
       </View>
+      <Toast />
     </SafeAreaView>
   );
 };

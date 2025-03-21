@@ -70,7 +70,7 @@ const ViewPost = ({ navigation, route }) => {
 
       <ScrollView showsVerticalScrollIndicator={false} >
         <View style={styles.postHeader}>
-          <Image source={require('../../Images/user.png')} />
+          <Image source={require('../../Images/NoImage.png')} />
           <View style={styles.postTextContainer}>
             <Text style={styles.Text}>{post.activistName}</Text>
             <Text style={styles.date_time}>{formatDateTime(post.createdAt)}</Text>

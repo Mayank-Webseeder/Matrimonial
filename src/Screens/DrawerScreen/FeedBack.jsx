@@ -16,50 +16,55 @@ const FeedBack = ({ navigation }) => {
 
   const handleSubmit = async () => {
     try {
-      const token = await AsyncStorage.getItem('userToken'); // ✅ Fetch Token
-      if (!token) throw new Error('No token found');
+        const token = await AsyncStorage.getItem('userToken'); // ✅ Fetch Token
+        if (!token) throw new Error('No token found');
 
-      const payload = {
-        rating: rating,
-        comment: comment,
-      };
+        const payload = {
+            rating: rating,
+            comment: comment,
+        };
 
-      const headers = {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      };
+        const headers = {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        };
 
-      console.log('Payload:', payload);
+        console.log('Payload:', payload);
 
-      const response = await axios.post(FEEDBACK, payload, { headers });
-      console.log("feedback response", JSON.stringify(response.data))
-      if (response.status === 200 || response.status === 201) {
-        Toast.show({
-          type: 'success',
-          text1: 'Success',
-          text2: response.data.message || 'Your Feedback has been submitted successfully!',
-        });
+        const response = await axios.post(FEEDBACK, payload, { headers });
+        console.log("✅ Feedback Response:", JSON.stringify(response.data));
 
-        setTimeout(() => {
-          navigation.navigate('MainApp');
-        }, 2000);
-      }
+        if (response.status === 200 && response.data.status === true) {
+            Toast.show({
+                type: 'success',
+                text1: 'Success',
+                text2: response.data.message || 'Your Feedback has been submitted successfully!',
+            });
+
+            setTimeout(() => {
+                navigation.navigate('MainApp');
+            }, 2000);
+        } else {
+            throw new Error(response.data.message || "Something went wrong!");
+        }
+
     } catch (error) {
-      console.error('Error submitting feedback :', error);
+        console.error('❌ Error submitting feedback:', error);
 
-      let errorMessage = 'Failed to submit feedback . Please try again later.';
+        let errorMessage = 'Failed to submit feedback. Please try again later.';
 
-      if (error.response && error.response.data && error.response.data.message) {
-        errorMessage = error.response.data.message; // ✅ Show API error message
-      }
+        if (error.response && error.response.status === 400) {
+            errorMessage = error.response.data.message || errorMessage; // ✅ Show API error message
+        }
 
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: errorMessage,
-      });
+        Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: errorMessage,
+        });
     }
-  };
+};
+
 
   const renderStars = () => {
     const stars = [];

@@ -44,29 +44,35 @@ const ForgotScreen = ({ navigation }) => {
     };
     
     const handleSendOtp = async () => {
-        if (!/^\d{10}$/.test(mobileNumber)) {
-            Toast.show({ type: "error", text1: "Invalid Number", text2: "Enter a valid 10-digit mobile number" });
-            return;
-        }
-
-        try {
-            setIsOtpLoading(true);
-            const response = await axios.post(OTP_ENDPOINT, { mobileNo: mobileNumber });
-            console.log("OTP Response:", response.data);
-
-            if (response.status === 200 && response.data.success) {
-                setOtpSent(true);  
-                Toast.show({ type: "success", text1: "OTP Sent", text2: "Check your SMS for the OTP" });
-            } else {
-                throw new Error(response.data.message || "OTP request failed");
-            }
-        } catch (error) {
-            console.error("OTP Error:", error);
-            Toast.show({ type: "error", text1: "OTP Error", text2: "Failed to send OTP. Try again." });
-        } finally {
-            setIsOtpLoading(false);
-        }
-    };
+           if (!/^\d{10}$/.test(mobileNumber)) {
+               Toast.show({ type: "error", text1: "Invalid Number", text2: "Enter a valid 10-digit mobile number" });
+               return;
+           }
+       
+           try {
+               setIsOtpLoading(true);
+               const response = await axios.post(OTP_ENDPOINT, { mobileNo: mobileNumber });
+       
+               console.log("OTP Response:", response.data);
+       
+               if (response.status === 200 && response.data.status === true) {
+                   setOtpSent(true);  // Mark OTP as sent
+                   Toast.show({ type: "success", text1: "OTP Sent", text2: "Check your SMS for the OTP" });
+               } else {
+                   throw new Error(response.data.message || "OTP request failed");
+               }
+           } catch (error) {
+               console.error("OTP Error:", error);
+       
+               if (error.response?.status === 400) {
+                   Toast.show({ type: "error", text1: "Invalid Request", text2: error.response.data.message || "Mobile number is required" });
+               } else {
+                   Toast.show({ type: "error", text1: "OTP Error", text2: error.message || "Failed to send OTP. Try again." });
+               }
+           } finally {
+               setIsOtpLoading(false);
+           }
+       };
 
     const handleForgotPassword = async () => {
         if (!validateFields()) return; // Validate user inputs
@@ -86,7 +92,7 @@ const ForgotScreen = ({ navigation }) => {
             console.log("Forgot Password Response:", response.data);
     
             // ✅ Check if the response contains a success message
-            if (response.status === 200 && response.data?.message?.toLowerCase().includes("password is reset successfully")) {
+            if (response.status === 200 || response.data.status === true) {
                 Toast.show({
                     type: "success",
                     text1: "Password Reset Successful",
@@ -148,6 +154,8 @@ const ForgotScreen = ({ navigation }) => {
                                 maxLength={10}
                                 placeholderTextColor={Colors.gray}
                                 editable={!otpSent}
+                                 autoComplete="off"
+                        textContentType="none"
                             />
                             <TouchableOpacity style={styles.otpButton} onPress={handleSendOtp} disabled={isOtpLoading}>
                                 {isOtpLoading ? <ActivityIndicator size="small" color={Colors.theme_color} /> : <Text style={styles.otpButtonText}>Send OTP</Text>}
@@ -175,6 +183,8 @@ const ForgotScreen = ({ navigation }) => {
                                 value={newPassword}
                                 onChangeText={setNewPassword}
                                 placeholderTextColor={Colors.gray}
+                                 autoComplete="off"
+                        textContentType="none"
                             />
                             <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                                 <AntDesign
@@ -203,7 +213,7 @@ const ForgotScreen = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
             </ImageBackground>
-            <Toast />
+            <Toast/>
         </SafeAreaView>
     );
 };

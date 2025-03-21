@@ -10,6 +10,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Globalstyles from '../../utils/GlobalCss';
+import { SH, SW } from '../../utils/Dimensions';
+import ImageViewing from 'react-native-image-viewing';
 
 const ProfileDetail = ({ route, navigation }) => {
     const { profileType } = route.params;
@@ -17,6 +19,11 @@ const ProfileDetail = ({ route, navigation }) => {
     console.log("profileData", profileData);
     const [loading, setLoading] = useState(true);
     const images = profileData?.additionalPhotos || [];
+    const [visible, setVisible] = useState(false);
+    const profilePhoto = profileData?.profilePhoto
+        ? { uri: profileData.profilePhoto }
+        : require('../../Images/NoImage.png');
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -111,7 +118,7 @@ const ProfileDetail = ({ route, navigation }) => {
     return (
         <ScrollView style={Globalstyles.container}>
             <View style={Globalstyles.header}>
-                <View style={{ flex:1, flexDirection: 'row',alignContent:"center" }}>
+                <View style={{ flex: 1, flexDirection: 'row', alignContent: "center" }}>
                     <TouchableOpacity
                         // onPress={() => navigation.goBack()}
                         onPress={() => navigation.pop()}
@@ -306,13 +313,24 @@ const ProfileDetail = ({ route, navigation }) => {
             {profileType === "Pandit" && (
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View style={styles.profileSection}>
-                        <Image source={{ uri: profileData?.profilePhoto }} style={styles.profileImage} />
-                        <View>
-                            <Text style={styles.name}>{profileData?.fullName}</Text>
+                        <TouchableOpacity onPress={() => setVisible(true)}>
+                            <Image source={profilePhoto} style={styles.profileImage} />
+                        </TouchableOpacity>
+
+                        <ImageViewing
+                            images={[profileData?.profilePhoto ? { uri: profileData?.profilePhoto } : require('../../Images/NoImage.png')]}
+                            imageIndex={0}
+                            visible={visible}
+                            onRequestClose={() => setVisible(false)}
+                        />
+                        <View style={{ flex: 1 }}>
+                            <Text style={styles.name} numberOfLines={2}>{profileData?.fullName}</Text>
+
                             <View style={styles.FlexContainer}>
-                                <Text style={styles.city}>{profileData?.city}</Text>
-                                <Text style={styles.surname}>{profileData?.state}</Text>
+                                <Text style={styles.city}>{profileData?.city}, </Text>
+                                <Text style={styles.city}>{profileData?.state}</Text>
                             </View>
+
                             <View style={styles.FlexContainer}>
                                 <Rating
                                     type="star"
@@ -322,11 +340,10 @@ const ProfileDetail = ({ route, navigation }) => {
                                     readonly
                                 />
                                 <Text style={styles.rating}>
-                                    {profileData?.totalReviews > 0 ? `${profileData.totalReviews} Reviews` : "No Ratings Yet"}
+                                    {profileData?.ratings?.length > 0 ? `${profileData?.ratings?.length} Reviews` : "No Ratings Yet"}
                                 </Text>
-
                             </View>
-                            <Text style={styles.surname}>{profileData?.subCaste}</Text>
+                            <Text style={styles.text} numberOfLines={1}>{profileData?.residentialAddress}</Text>
                         </View>
                     </View>
                     <View style={styles.contentContainer}>
@@ -347,6 +364,72 @@ const ProfileDetail = ({ route, navigation }) => {
                                 ))}
                             </View>
                         </View>
+                        <View style={styles.ReviewPost}>
+                            <View>
+                                <Text style={styles.sectionTitle}>Reviews & Rating</Text>
+                                <Text style={styles.rating}>{profileData?.averageRating} (⭐ Star Rating)</Text>
+                            </View>
+
+                        </View>
+                        <View>
+                            <Text style={[styles.sectionTitle, { textAlign: "center" }]}>Reviews</Text>
+
+                            {profileData?.ratings?.length > 0 ? (
+                                <>
+                                    {profileData?.ratings?.slice(0, 2).map((review, index) => (
+                                        <View key={review._id || index} style={[styles.reviewContainer, { marginHorizontal: 0, width: "100%" }]}>
+                                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                                                <View>
+                                                    <Image
+                                                        source={review?.userId?.photoUrl[0]
+                                                            ? { uri: review.userId.photoUrl[0] }
+                                                            : require("../../Images/NoImage.png") // Fallback image
+                                                        }
+                                                        style={{ width: SW(50), height: SH(50), borderRadius: 50 }}
+                                                        resizeMode="cover"
+                                                    />
+                                                </View>
+                                                <View style={{ flex: 1, marginHorizontal: SW(10) }}>
+                                                    <Text style={styles.reviewName}>{review?.userId?.username || "Unknown"}</Text>
+                                                    <View style={styles.reviewRating}>
+                                                        <Rating
+                                                            type="star"
+                                                            ratingCount={5}
+                                                            imageSize={15}
+                                                            startingValue={review?.rating}
+                                                            readonly
+                                                        />
+                                                    </View>
+                                                    <Text style={styles.reviewText}>{review?.review}</Text>
+
+                                                </View>
+                                                <View style={{ alignSelf: "flex-end" }}>
+                                                    <Text style={styles.reviewDate}>
+                                                        {moment(review.createdAt).format("DD-MM-YYYY")}
+                                                    </Text>
+                                                    <Text style={styles.reviewDate}>
+                                                        {moment(review.createdAt).format("hh:mm A")}
+                                                    </Text>
+
+                                                </View>
+                                            </View>
+                                        </View>
+                                    ))}
+
+                                    {profileData?.ratings?.length > 2 && (
+                                        <TouchableOpacity
+                                            onPress={() => navigation.navigate('AllReviewsPage', { reviews: profileData?.ratings })}
+                                            style={styles.viewMoreButton}>
+                                            <Text style={styles.viewMoreText}>View More Reviews</Text>
+                                        </TouchableOpacity>
+                                    )}
+                                </>
+                            ) : (
+                                <Text style={styles.noReviewsText}>No reviews yet</Text>
+                            )}
+
+                        </View>
+
                     </View>
                     <View style={styles.container}>
                         {renderImages(images)}
@@ -379,13 +462,24 @@ const ProfileDetail = ({ route, navigation }) => {
             {profileType === 'Kathavachak' && (
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View style={styles.profileSection}>
-                        <Image source={{ uri: profileData?.profilePhoto }} style={styles.profileImage} />
-                        <View>
-                            <Text style={styles.name}>{profileData?.fullName}</Text>
+                        <TouchableOpacity onPress={() => setVisible(true)}>
+                            <Image source={profilePhoto} style={styles.profileImage} />
+                        </TouchableOpacity>
+
+                        <ImageViewing
+                            images={[profileData?.profilePhoto ? { uri: profileData?.profilePhoto } : require('../../Images/NoImage.png')]}
+                            imageIndex={0}
+                            visible={visible}
+                            onRequestClose={() => setVisible(false)}
+                        />
+                        <View style={{ flex: 1 }}>
+                            <Text style={styles.name} numberOfLines={2}>{profileData?.fullName}</Text>
+
                             <View style={styles.FlexContainer}>
-                                <Text style={styles.city}>{profileData?.city}</Text>
-                                <Text style={styles.surname}>{profileData?.state}</Text>
+                                <Text style={styles.city}>{profileData?.city}, </Text>
+                                <Text style={styles.city}>{profileData?.state}</Text>
                             </View>
+
                             <View style={styles.FlexContainer}>
                                 <Rating
                                     type="star"
@@ -395,10 +489,10 @@ const ProfileDetail = ({ route, navigation }) => {
                                     readonly
                                 />
                                 <Text style={styles.rating}>
-                                    {profileData?.totalReviews > 0 ? `${profileData.totalReviews} Reviews` : "No Ratings Yet"}
+                                    {profileData?.ratings?.length > 0 ? `${profileData?.ratings?.length} Reviews` : "No Ratings Yet"}
                                 </Text>
-
                             </View>
+                            <Text style={styles.text} numberOfLines={1}>{profileData?.residentialAddress}</Text>
                         </View>
                     </View>
                     <View style={styles.contentContainer}>
@@ -418,6 +512,71 @@ const ProfileDetail = ({ route, navigation }) => {
                                     </View>
                                 ))}
                             </View>
+                        </View>
+                        <View style={styles.ReviewPost}>
+                            <View>
+                                <Text style={styles.sectionTitle}>Reviews & Rating</Text>
+                                <Text style={styles.rating}>{profileData?.averageRating} (⭐ Star Rating)</Text>
+                            </View>
+
+                        </View>
+                        <View>
+                            <Text style={[styles.sectionTitle, { textAlign: "center" }]}>Reviews</Text>
+
+                            {profileData?.ratings?.length > 0 ? (
+                                <>
+                                    {profileData?.ratings?.slice(0, 2).map((review, index) => (
+                                        <View key={review._id || index} style={[styles.reviewContainer, { marginHorizontal: 0, width: "100%" }]}>
+                                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                                                <View>
+                                                    <Image
+                                                        source={review?.userId?.photoUrl[0]
+                                                            ? { uri: review.userId.photoUrl[0] }
+                                                            : require("../../Images/NoImage.png") // Fallback image
+                                                        }
+                                                        style={{ width: SW(50), height: SH(50), borderRadius: 50 }}
+                                                        resizeMode="cover"
+                                                    />
+                                                </View>
+                                                <View style={{ flex: 1, marginHorizontal: SW(10) }}>
+                                                    <Text style={styles.reviewName}>{review?.userId?.username || "Unknown"}</Text>
+                                                    <View style={styles.reviewRating}>
+                                                        <Rating
+                                                            type="star"
+                                                            ratingCount={5}
+                                                            imageSize={15}
+                                                            startingValue={review?.rating}
+                                                            readonly
+                                                        />
+                                                    </View>
+                                                    <Text style={styles.reviewText}>{review?.review}</Text>
+
+                                                </View>
+                                                <View style={{ alignSelf: "flex-end" }}>
+                                                    <Text style={styles.reviewDate}>
+                                                        {moment(review.createdAt).format("DD-MM-YYYY")}
+                                                    </Text>
+                                                    <Text style={styles.reviewDate}>
+                                                        {moment(review.createdAt).format("hh:mm A")}
+                                                    </Text>
+
+                                                </View>
+                                            </View>
+                                        </View>
+                                    ))}
+
+                                    {profileData?.ratings?.length > 2 && (
+                                        <TouchableOpacity
+                                            onPress={() => navigation.navigate('AllReviewsPage', { reviews: profileData?.ratings })}
+                                            style={styles.viewMoreButton}>
+                                            <Text style={styles.viewMoreText}>View More Reviews</Text>
+                                        </TouchableOpacity>
+                                    )}
+                                </>
+                            ) : (
+                                <Text style={styles.noReviewsText}>No reviews yet</Text>
+                            )}
+
                         </View>
                     </View>
                     <View style={styles.container}>
@@ -450,13 +609,24 @@ const ProfileDetail = ({ route, navigation }) => {
             {profileType === 'Jyotish' && (
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View style={styles.profileSection}>
-                        <Image source={{ uri: profileData?.profilePhoto }} style={styles.profileImage} />
-                        <View>
-                            <Text style={styles.name}>{profileData?.fullName}</Text>
+                        <TouchableOpacity onPress={() => setVisible(true)}>
+                            <Image source={profilePhoto} style={styles.profileImage} />
+                        </TouchableOpacity>
+
+                        <ImageViewing
+                            images={[profileData?.profilePhoto ? { uri: profileData?.profilePhoto } : require('../../Images/NoImage.png')]}
+                            imageIndex={0}
+                            visible={visible}
+                            onRequestClose={() => setVisible(false)}
+                        />
+                        <View style={{ flex: 1 }}>
+                            <Text style={styles.name} numberOfLines={2}>{profileData?.fullName}</Text>
+
                             <View style={styles.FlexContainer}>
-                                <Text style={styles.city}>{profileData?.city}</Text>
-                                <Text style={styles.surname}>{profileData?.state}</Text>
+                                <Text style={styles.city}>{profileData?.city}, </Text>
+                                <Text style={styles.city}>{profileData?.state}</Text>
                             </View>
+
                             <View style={styles.FlexContainer}>
                                 <Rating
                                     type="star"
@@ -466,11 +636,10 @@ const ProfileDetail = ({ route, navigation }) => {
                                     readonly
                                 />
                                 <Text style={styles.rating}>
-                                    {profileData?.totalReviews > 0 ? `${profileData.totalReviews} Reviews` : "No Ratings Yet"}
+                                    {profileData?.ratings?.length > 0 ? `${profileData?.ratings?.length} Reviews` : "No Ratings Yet"}
                                 </Text>
-
                             </View>
-                            <Text style={styles.surname}>{profileData?.subCaste}</Text>
+                            <Text style={styles.text} numberOfLines={1}>{profileData?.residentialAddress}</Text>
                         </View>
                     </View>
                     <View style={styles.contentContainer}>
@@ -490,6 +659,71 @@ const ProfileDetail = ({ route, navigation }) => {
                                     </View>
                                 ))}
                             </View>
+                        </View>
+                        <View style={styles.ReviewPost}>
+                            <View>
+                                <Text style={styles.sectionTitle}>Reviews & Rating</Text>
+                                <Text style={styles.rating}>{profileData?.averageRating} (⭐ Star Rating)</Text>
+                            </View>
+
+                        </View>
+                        <View>
+                            <Text style={[styles.sectionTitle, { textAlign: "center" }]}>Reviews</Text>
+
+                            {profileData?.ratings?.length > 0 ? (
+                                <>
+                                    {profileData?.ratings?.slice(0, 2).map((review, index) => (
+                                        <View key={review._id || index} style={[styles.reviewContainer, { marginHorizontal: 0, width: "100%" }]}>
+                                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                                                <View>
+                                                    <Image
+                                                        source={review?.userId?.photoUrl[0]
+                                                            ? { uri: review.userId.photoUrl[0] }
+                                                            : require("../../Images/NoImage.png") // Fallback image
+                                                        }
+                                                        style={{ width: SW(50), height: SH(50), borderRadius: 50 }}
+                                                        resizeMode="cover"
+                                                    />
+                                                </View>
+                                                <View style={{ flex: 1, marginHorizontal: SW(10) }}>
+                                                    <Text style={styles.reviewName}>{review?.userId?.username || "Unknown"}</Text>
+                                                    <View style={styles.reviewRating}>
+                                                        <Rating
+                                                            type="star"
+                                                            ratingCount={5}
+                                                            imageSize={15}
+                                                            startingValue={review?.rating}
+                                                            readonly
+                                                        />
+                                                    </View>
+                                                    <Text style={styles.reviewText}>{review?.review}</Text>
+
+                                                </View>
+                                                <View style={{ alignSelf: "flex-end" }}>
+                                                    <Text style={styles.reviewDate}>
+                                                        {moment(review.createdAt).format("DD-MM-YYYY")}
+                                                    </Text>
+                                                    <Text style={styles.reviewDate}>
+                                                        {moment(review.createdAt).format("hh:mm A")}
+                                                    </Text>
+
+                                                </View>
+                                            </View>
+                                        </View>
+                                    ))}
+
+                                    {profileData?.ratings?.length > 2 && (
+                                        <TouchableOpacity
+                                            onPress={() => navigation.navigate('AllReviewsPage', { reviews: profileData?.ratings })}
+                                            style={styles.viewMoreButton}>
+                                            <Text style={styles.viewMoreText}>View More Reviews</Text>
+                                        </TouchableOpacity>
+                                    )}
+                                </>
+                            ) : (
+                                <Text style={styles.noReviewsText}>No reviews yet</Text>
+                            )}
+
                         </View>
                     </View>
                     <View style={styles.container}>

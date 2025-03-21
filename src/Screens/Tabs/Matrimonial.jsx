@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from '../StyleScreens/ExploreStyle';
 import Colors from '../../utils/Colors';
 import Globalstyles from '../../utils/GlobalCss';
-import { FEMALE_FILTER_API, MALE_FILTER_API, SET_PREFRENCE_FILTER_API, SAVED_PROFILES } from '../../utils/BaseUrl';
+import { FEMALE_FILTER_API, MALE_FILTER_API, SAVED_PROFILES } from '../../utils/BaseUrl';
 import { slider } from '../../DummyData/DummyData';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import { useFocusEffect } from '@react-navigation/native';
@@ -20,7 +20,6 @@ const Matrimonial = ({ navigation }) => {
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [activeButton, setActiveButton] = useState(1);
-  const [preferenceProfiles, setPreferenceProfiles] = useState([]);
   const [boysProfiles, setboysProfiles] = useState([]);
   const [girlsProfiles, setgirlsProfiles] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -99,21 +98,7 @@ const Matrimonial = ({ navigation }) => {
   useEffect(() => {
     if (activeButton === 1) fetchGirlsFilterData();
     if (activeButton === 2) fetchBoysFilterData();
-    if (activeButton === 3) fetchSetPreferenceFilterData();
   }, [activeButton]);
-
-  const fetchSetPreferenceFilterData = async () => {
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
-
-      const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` };
-      const res = await axios.get(SET_PREFRENCE_FILTER_API, { headers });
-      setPreferenceProfiles(res.data.profiles);
-    } catch (error) {
-      console.error("Error fetching profiles:", error.message);
-    }
-  };
 
   const fetchBoysFilterData = async () => {
     try {
@@ -145,9 +130,9 @@ const Matrimonial = ({ navigation }) => {
     ToastAndroid.show("Under development", ToastAndroid.SHORT);
   };
 
-   const popop=async()=>{
-          ToastAndroid.show("Please create biodata to see full information of the this profile", ToastAndroid.SHORT);
-      }
+  const popop = async () => {
+    ToastAndroid.show("Please create biodata to see full information of the this profile", ToastAndroid.SHORT);
+  }
 
 
   const savedProfiles = async (_id) => {
@@ -156,57 +141,54 @@ const Matrimonial = ({ navigation }) => {
         type: "error",
         text1: "Error",
         text2: "User ID not found!",
+        position: "top",
       });
       return;
     }
 
     try {
       const token = await AsyncStorage.getItem("userToken");
-      if (!token) {
-        throw new Error("No token found");
-      }
+      if (!token) throw new Error("No token found");
 
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
 
-      const response = await axios.post(
-        `${SAVED_PROFILES}/${_id}`,
-        {},
-        { headers }
-      );
+      const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
 
-      console.log("Response Data:", JSON.stringify(response?.data));
+      console.log("✅ Response Data:", JSON.stringify(response?.data));
 
-      if (response?.data?.message) {
+      if (response.status === 200 && response.data.status === true) {
         Toast.show({
           type: "success",
-          text2: response.data.message,
+          text1: "Success",
+          text2: response.data.message || "Profile saved successfully!",
           position: "top",
           visibilityTime: 3000,
           textStyle: { fontSize: 14, color: "green" },
         });
+
         navigation.reset({
           index: 0,
-          routes: [{ name: 'Matrimonial' }],
+          routes: [{ name: "Matrimonial" }],
         });
       } else {
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: response.data.message || "Something went wrong!",
-        });
+        throw new Error(response.data.message || "Something went wrong!");
       }
     } catch (error) {
-      console.error(
-        "API Error:",
-        error?.response ? JSON.stringify(error.response.data) : error.message
-      );
+      console.error("🚨 API Error:", error?.response?.data || error.message);
+
+      let errorMessage = "Failed to save profile!";
+      if (error.response?.status === 400) {
+        errorMessage = error.response.data?.message || "Bad request.";
+      }
+
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: error.response?.data?.message || "Failed to send interest!",
+        text2: errorMessage,
+        position: "top",
       });
     }
   };
@@ -217,11 +199,10 @@ const Matrimonial = ({ navigation }) => {
       // 🔍 Yaha API call ya search filter apply kar sakte ho
     }
   };
-  
 
   const renderProfileCard = ({ item }) => {
     const isPressable = partnerPreferences !== null && partnerPreferences !== undefined; // Only check global partnerPreferences
-    const isSaved=item.isSaved;
+    const isSaved = item.isSaved;
     // console.log("isSaved",isSaved);
     return (
       <Pressable
@@ -269,12 +250,12 @@ const Matrimonial = ({ navigation }) => {
           </View>
           <View style={styles.sharecontainer}>
             <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
-            <FontAwesome
-                            name={isSaved ? "bookmark" : "bookmark-o"}
-                            size={19}
-                            color={Colors.dark}
-                          />
-                          <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text>
+              <FontAwesome
+                name={isSaved ? "bookmark" : "bookmark-o"}
+                size={19}
+                color={Colors.dark}
+              />
+              <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
@@ -292,8 +273,8 @@ const Matrimonial = ({ navigation }) => {
     );
   };
 
-  const dataToDisplay = searchMode ? profiles : (activeButton === 1 ? girlsProfiles : activeButton === 2 ? boysProfiles : preferenceProfiles);
-  
+  const dataToDisplay = searchMode ? profiles : (activeButton === 1 ? girlsProfiles : activeButton === 2 ? boysProfiles : null);
+
   useEffect(() => {
     console.log("dataToDisplay", dataToDisplay);
   }, [])
@@ -332,12 +313,12 @@ const Matrimonial = ({ navigation }) => {
               setSearchQuery('');
               navigation.reset({
                 index: 0,
-                routes: [{ name: 'Matrimonial' }], 
+                routes: [{ name: 'Matrimonial' }],
               });
-            }} 
-           />
+            }}
+            />
           ) : (
-            <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => setSearchMode(!searchMode)}/>
+            <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => setSearchMode(!searchMode)} />
           )}
         </View>
       )}
@@ -376,10 +357,16 @@ const Matrimonial = ({ navigation }) => {
               {/* Right Side: Set Preferences */}
               <TouchableOpacity
                 style={[styles.button, activeButton === 3 ? styles.activeButton : styles.inactiveButton]}
-                onPress={() => setActiveButton(3)}
+                onPress={() => {
+                  setActiveButton(3);
+                  navigation.navigate("MainPartnerPrefrence");
+                }}
               >
-                <Text style={activeButton === 3 ? styles.activeText : styles.inactiveText}>Set Preferences</Text>
+                <Text style={activeButton === 3 ? styles.activeText : styles.inactiveText}>
+                  Set Preferences
+                </Text>
               </TouchableOpacity>
+
             </View>
 
           </>

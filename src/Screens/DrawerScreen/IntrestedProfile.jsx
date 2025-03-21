@@ -7,7 +7,7 @@ import Globalstyles from '../../utils/GlobalCss';
 import axios from 'axios';
 import { RECEIVER_REQUESTS, SENDER_REQUESTS } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import profileImage from '../../Images/Profile1.png';
+import profileImage from '../../Images/NoImage.png';
 import { useFocusEffect } from '@react-navigation/native';
 import { SH, SW } from '../../utils/Dimensions';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";

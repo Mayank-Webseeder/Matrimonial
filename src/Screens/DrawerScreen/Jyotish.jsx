@@ -108,65 +108,58 @@ const Jyotish = ({ navigation }) => {
 
   const savedProfiles = async (_id) => {
     if (!_id) {
-        Toast.show({
-            type: "error",
-            text1: "Error",
-            text2: "User ID not found!",
-            position: "top",
-        });
-        return;
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "User ID not found!",
+        position: "top",
+      });
+      return;
     }
-  
+
     try {
-        const token = await AsyncStorage.getItem("userToken");
-        if (!token) {
-            throw new Error("No token found");
-        }
-  
-        const headers = {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-        };
-  
-        const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
-  
-        console.log("Response Data:", JSON.stringify(response?.data));
-  
-         if (response.status === 200) {
-               Toast.show({
-                 type: "success",
-                 text1: "Success",
-                 text2: response.data?.message || "Profile saved successfully!",
-                 position: "top",
-                 onHide: () => {
-                   navigation.reset({
-                     index: 0,
-                     routes: [{ name: "Pandit" }],
-                   });
-                 },
-               });
-             } else {
-               Toast.show({
-                 type: "error",
-                 text1: "Error",
-                 text2: response.data?.message || "Something went wrong!",
-                 position: "top",
-               });
-             }
-    } catch (error) {
-        console.error(
-            "API Error:",
-            error?.response ? JSON.stringify(error.response.data) : error.message
-        );
-  
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        throw new Error("No token found");
+      }
+
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+
+      const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
+
+      console.log("Response Data:", JSON.stringify(response?.data));
+
+      if (response.status === 200 && response.data.status === true) {
         Toast.show({
-            type: "error",
-            text1: "Error",
-            text2: error.response?.data?.message || "Failed to save profile!",
-            position: "top",
+          type: "success",
+          text1: "Success",
+          text2: response.data?.message || "Profile saved successfully!",
+          position: "top",
+          onHide: () => {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "Pandit" }],
+            });
+          },
         });
+      } else {
+        throw new Error(response.data?.message || "Something went wrong!");
+      }
+    } catch (error) {
+      console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
+
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error?.response?.data?.message || "Failed to save profile!",
+        position: "top",
+      });
     }
   };
+
 
   useFocusEffect(
     React.useCallback(() => {
@@ -197,14 +190,14 @@ const Jyotish = ({ navigation }) => {
     </SkeletonPlaceholder>
   );
 
- const handleShare = async () => {
-     Toast.show({
-       type: "info",
-       text1: "Info",
-       text2: "Under development",
-       position: "top",
-     });
-   };
+  const handleShare = async () => {
+    Toast.show({
+      type: "info",
+      text1: "Info",
+      text2: "Under development",
+      position: "top",
+    });
+  };
 
   const renderItem = ({ item }) => {
     const rating = item.averageRating || 0;
@@ -232,7 +225,7 @@ const Jyotish = ({ navigation }) => {
             <Pressable style={styles.leftContainer}
               onPress={() => navigation.navigate('JyotishDetailsPage', { jyotish_id: item._id, isSaved: isSaved })}>
               <Text style={styles.name}>{item?.fullName}</Text>
-               <Text style={styles.text}>ID : {item?.jyotishId}</Text>
+              <Text style={styles.text}>ID : {item?.jyotishId}</Text>
               <View style={styles.rating}>
                 <Rating type="star" ratingCount={5} imageSize={15} startingValue={rating} readonly />
                 <Text style={[styles.text, { fontFamily: 'Poppins-Regular' }]}> {rating} Star Rating</Text>
@@ -244,7 +237,7 @@ const Jyotish = ({ navigation }) => {
               <Text style={styles.text} numberOfLines={1}>{item?.residentialAddress}</Text>
             </Pressable>
             <View style={styles.sharecontainer}>
-              <TouchableOpacity style={styles.iconContainer} onPress={()=>savedProfiles(item._id)}>
+              <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
                 <FontAwesome
                   name={isSaved ? "bookmark" : "bookmark-o"}
                   size={19}
@@ -304,9 +297,9 @@ const Jyotish = ({ navigation }) => {
               setLocality('');
               navigation.reset({
                 index: 0,
-                routes: [{ name: 'Jyotish' }], 
+                routes: [{ name: 'Jyotish' }],
               });
-            }}  />
+            }} />
           ) : (
             <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => JyotishDataAPI("search")} />
           )}
@@ -426,7 +419,7 @@ const Jyotish = ({ navigation }) => {
           </View>
         </View>
       </Modal>
-      <Toast/>
+      <Toast />
     </SafeAreaView>
   );
 };

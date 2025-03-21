@@ -61,27 +61,23 @@ const MatrimonyPage = ({ navigation }) => {
         try {
             const response = await axios.post(REPOST, {}, { headers });
 
-            console.log("repost data ", response.data);
+            console.log("Repost Data:", response.data);
 
-            if (response.data.status === "success") {
+            if (response.status === 200 && response.data.status === true) {
                 Toast.show({
                     type: 'success',
-                    text1: 'Repost successfully!',
-                    text2: response.data.message,
+                    text1: 'Success',
+                    text2: response.data.message || 'Reposted successfully!',
                 });
-            } else if (response.data.status === "failed") {
-                Toast.show({
-                    type: 'error',
-                    text1: 'Cooldown Active!',
-                    text2: response.data.message || 'You can repost after some time.',
-                });
+            } else {
+                throw new Error(response.data.message || 'Something went wrong!');
             }
         } catch (error) {
             console.error("Error fetching profile:", error);
             let errorMessage = "Something went wrong. Please try again later.";
 
-            if (error.response && error.response.data && error.response.data.message) {
-                errorMessage = error.response.data.message;
+            if (error.response && error.response.status === 400) {
+                errorMessage = error.response.data?.message || "Failed to repost. Please try again!";
             }
 
             Toast.show({
@@ -91,6 +87,7 @@ const MatrimonyPage = ({ navigation }) => {
             });
         }
     };
+
 
 
 

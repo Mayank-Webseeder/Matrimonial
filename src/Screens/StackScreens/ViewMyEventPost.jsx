@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, Modal, ToastAndroid } from 'react-native';
+import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, Modal } from 'react-native';
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import styles from '../StyleScreens/EventNewsStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -7,7 +7,6 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { useFocusEffect } from '@react-navigation/native';
 import { SW, SH, SF } from '../../utils/Dimensions';
 import Globalstyles from '../../utils/GlobalCss';
 import moment from 'moment';
@@ -67,7 +66,8 @@ const ViewMyEventPost = ({ navigation, route }) => {
   };
 
   const DELETE_EVENT_POST = async (postId) => {
-    console.log("postId", postId);
+    console.log("🗑️ Deleting Post ID:", postId);
+
     try {
       setIsLoading(true);
       const token = await AsyncStorage.getItem("userToken");
@@ -79,33 +79,48 @@ const ViewMyEventPost = ({ navigation, route }) => {
         Authorization: `Bearer ${token}`,
       };
 
-      console.log("headers", headers);
+      console.log("🔹 Headers:", headers);
 
-      const response = await axios.delete(
-        `${DELETE_EVENT}/${postId}`,
-        { headers }
-      );
+      const response = await axios.delete(`${DELETE_EVENT}/${postId}`, { headers });
 
-      if (response.data) {
-        ToastAndroid.show("Event post deleted successfully!", ToastAndroid.SHORT);
+      console.log("✅ Delete Response:", response.data);
 
-        // Pehle modal band karein (agar modal use ho raha ho)
+      if (response.status === 200 && response.data.status === true) {
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "Event post deleted successfully!",
+          position: "top",
+        });
+
+        // ✅ Close modal if used
         setModalVisible(false);
 
-        // Navigation ensure karein
+        // ✅ Ensure navigation is available before using it
         if (navigation && navigation.navigate) {
-          navigation.navigate('MainApp');
+          navigation.navigate("MainApp");
         } else {
-          console.warn("Navigation is not available");
+          console.warn("⚠️ Navigation is not available");
         }
-      }
-    } catch (error) {
-      console.error("Error deleting event post:", error?.response?.data || error.message);
 
-      ToastAndroid.show(
-        error?.response?.data?.message || "Failed to delete event post. Please try again!",
-        ToastAndroid.LONG
-      );
+        return;
+      }
+
+      throw new Error(response.data.message || "Failed to delete event post.");
+    } catch (error) {
+      console.error("🚨 Error deleting event post:", error?.response?.data || error.message);
+
+      let errorMessage = "Failed to delete event post. Please try again!";
+      if (error.response?.status === 400) {
+        errorMessage = error.response.data?.message || "Bad request.";
+      }
+
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: errorMessage,
+        position: "top",
+      });
     } finally {
       setIsLoading(false);
     }

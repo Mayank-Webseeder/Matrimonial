@@ -27,6 +27,8 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const personalDetails = biodata?.personalDetails;
   console.log(userId, biodata, requestId)
   const [loading, setLoading] = useState(true);
+  const [loadingAccept, setLoadingAccept] = useState(false);
+const [loadingDecline, setLoadingDecline] = useState(false);
   const [profileData, setProfileData] = useState(null);
   const MyprofileData = useSelector((state) => state.getBiodata);
   console.log("biodata",biodata);
@@ -66,7 +68,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
     try {
       const response = await axios.get(`${MATCHED_PROFILE}/${id}`, { headers });
       console.log("response", JSON.stringify(response.data))
-      if (response.data.status === "success") {
+      if (response.data.status) {
         setProfileData(response.data);
       }
     } catch (error) {
@@ -90,39 +92,60 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
 
   const savedProfiles = async () => {
     if (!_id) {
-      ToastAndroid.show("Error: User ID not found!", ToastAndroid.SHORT);
-      return;
+        Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: "User ID not found!",
+        });
+        return;
     }
 
     try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+      setLoading(true)
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) throw new Error("No token found");
 
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      };
+        const headers = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        };
 
-      const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
-      console.log("Response Data:", JSON.stringify(response?.data));
+        const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
+        console.log("Response Data:", JSON.stringify(response?.data));
 
-      if (response?.data?.message) {
-        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
-        if (response.data.message === "Profile saved successfully.") {
-          setIsSaved(true);
-      } else {
-          setIsSaved(false);
-      }
-      } else {
-        ToastAndroid.show("Something went wrong!", ToastAndroid.SHORT);
-      }
+        if (response.status === 200 && response.data.status === true) {
+            Toast.show({
+                type: "success",
+                text1: "Success",
+                text2: response.data.message || "Profile saved successfully!",
+            });
+
+            setIsSaved(response.data.message.includes("saved successfully"));
+        } else {
+            throw new Error(response.data.message || "Something went wrong");
+        }
     } catch (error) {
-      console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
-      ToastAndroid.show("Failed to send interest!", ToastAndroid.SHORT);
-    }
-  };
+        console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
 
-  const acceptConnectionRequest = async (requestId) => {
+        let errorMessage = "Failed to save profile!";
+        if (error.response?.status === 400) {
+            errorMessage = error.response.data?.message || "Bad request.";
+        }
+
+        Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: errorMessage,
+        });
+    }
+    finally{
+      setLoading(false)
+    }
+};
+
+// Accept Connection Request
+const acceptConnectionRequest = async (requestId) => {
+  setLoadingAccept(true);
     if (!requestId) return;
 
     console.log("✅ Accepting request for userId:", requestId);
@@ -143,31 +166,38 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
 
         console.log("🚀 Response Status:", response.status);
 
-        if (response.status === 200) {
+        if (response.status === 200 && response.data.status === true) {
             Toast.show({
                 type: "success",
                 text1: "Success",
-                text2: "Request accepted successfully!",
-                onHide: () => setTimeout(() => navigation.navigate("IntrestedProfile"), 1000), // 2 sec delay
+                text2: response.data.message || "Request accepted successfully!",
+                onHide: () => setTimeout(() => navigation.navigate("IntrestedProfile"), 1000),
             });
         } else {
-            Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: "Something went wrong!",
-            });
+            throw new Error(response.data.message || "Something went wrong");
         }
     } catch (error) {
         console.error("🚨 API Error:", error?.response?.data?.message || error.message);
+
+        let errorMessage = "Failed to accept request!";
+        if (error.response?.status === 400) {
+            errorMessage = error.response.data?.message || "Bad request.";
+        }
+
         Toast.show({
             type: "error",
             text1: "Error",
-            text2: "Failed to accept request!",
+            text2: errorMessage,
         });
+    }
+    finally{
+      setLoadingDecline(false); 
     }
 };
 
+// Reject Connection Request
 const rejectConnectionRequest = async (requestId) => {
+  setLoadingDecline(true); 
     if (!requestId) return;
 
     console.log("❌ Rejecting request for userId:", requestId);
@@ -188,35 +218,44 @@ const rejectConnectionRequest = async (requestId) => {
 
         console.log("🚀 Response Status:", response.status);
 
-        if (response.status === 200) {
+        if (response.status === 200 && response.data.status === true) {
             Toast.show({
                 type: "success",
                 text1: "Success",
-                text2: "Request rejected successfully!",
-                onHide: () => setTimeout(() => navigation.navigate("IntrestedProfile"), 1000), // 2 sec delay
+                text2: response.data.message || "Request rejected successfully!",
+                onHide: () => setTimeout(() => navigation.navigate("IntrestedProfile"), 1000),
             });
         } else {
-            Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: "Something went wrong!",
-            });
+            throw new Error(response.data.message || "Something went wrong");
         }
     } catch (error) {
         console.error("🚨 API Error:", error?.response?.data?.message || error.message);
+
+        let errorMessage = "Failed to reject request!";
+        if (error.response?.status === 400) {
+            errorMessage = error.response.data?.message || "Bad request.";
+        }
+
         Toast.show({
             type: "error",
             text1: "Error",
-            text2: "Failed to reject request!",
+            text2: errorMessage,
         });
+    }
+    finally{
+      setLoading(false)
     }
 };
 
 
   const handleShare = async () => {
-    ToastAndroid.show("This feature is under development.", ToastAndroid.SHORT);
-  };
-
+     Toast.show({
+       type: "info",
+       text1: "Info",
+       text2: "Under development",
+       position: "top",
+     });
+   };
 
   // Map API comparisonResults to UI labels
   const comparisonResults = profileData?.comparisonResults || {};
@@ -449,16 +488,36 @@ const rejectConnectionRequest = async (requestId) => {
         <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
       </ScrollView>
       <View style={styles.bottomContainer}>
-        <TouchableOpacity style={styles.declineButton} onPress={() => rejectConnectionRequest(requestId)}>
-          <Entypo name={'cross'} color={Colors.light} size={20} />
-          <Text style={styles.declineButtonText}>Decline</Text>
+        <TouchableOpacity
+            style={styles.declineButton}
+            onPress={() => rejectConnectionRequest(requestId)}
+            disabled={loadingDecline} // ✅ Disable Button When Loading
+        >
+            {loadingDecline ? (
+                <ActivityIndicator size="small" color="#fff" /> // ✅ Show Loader
+            ) : (
+                <>
+                    <Entypo name={'cross'} color={Colors.light} size={20} />
+                    <Text style={styles.declineButtonText}>Decline</Text>
+                </>
+            )}
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.acceptButton} onPress={() => acceptConnectionRequest(requestId)}>
-          <Entypo name={'check'} color={Colors.light} size={20} />
-          <Text style={styles.acceptButtonText}>Accept</Text>
+        <TouchableOpacity
+            style={styles.acceptButton}
+            onPress={() => acceptConnectionRequest(requestId)}
+            disabled={loadingAccept} // ✅ Disable Button When Loading
+        >
+            {loadingAccept ? (
+                <ActivityIndicator size="small" color="#fff" /> // ✅ Show Loader
+            ) : (
+                <>
+                    <Entypo name={'check'} color={Colors.light} size={20} />
+                    <Text style={styles.acceptButtonText}>Accept</Text>
+                </>
+            )}
         </TouchableOpacity>
-      </View>
+    </View>
       <Toast/>
     </SafeAreaView>
   );

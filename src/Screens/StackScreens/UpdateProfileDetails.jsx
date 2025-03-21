@@ -53,28 +53,28 @@ const UpdateProfileDetails = ({ navigation, route }) => {
         Jyotish: jyotishServices,
         Kathavachak: kathavachakServices,
     };
-    
+
     // ✅ Correct profile key dynamically
     const profileServicesKey = `${profileType.toLowerCase()}Services`;
-    
+
     const [checked, setChecked] = useState({});
-    
+
     useEffect(() => {
         if (!profileData || !profileType || !servicesOptions[profileType]) return;
-    
+
         console.log("✅ Updating checked services...");
-    
+
         const updatedChecked = {};
         servicesOptions[profileType].forEach(service => {
             const normalizedServiceValue = service.value.replace(/\s+/g, "_");
-            
+
             updatedChecked[service.value] = profileData[profileServicesKey]?.includes(normalizedServiceValue);
         });
-    
+
         console.log("✅ New checked state:", updatedChecked);
         setChecked(updatedChecked);
     }, [profileData]);
-    
+
 
     const handleProfilePhotoPick = async () => {
         try {
@@ -84,7 +84,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                 width: 400,
                 height: 400,
                 includeBase64: true,
-                compressImageQuality :1
+                compressImageQuality: 1
             });
 
             if (!image.data) {
@@ -119,22 +119,24 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                 return;
             }
 
-            setRoleRegisterData(prevData => {
-                const newPhotos = images.map(img => `data:${img.mime};base64,${img.data}`);
-                const updatedPhotos = [...prevData.additionalPhotos, ...newPhotos];
+            const newPhotos = images.map(img => `data:${img.mime};base64,${img.data}`);
 
-                if (updatedPhotos.length <= 5) {
-                    return { ...prevData, additionalPhotos: updatedPhotos };
-                } else {
-                    alert('You can only upload up to 5 additional photos.');
-                    return prevData;
-                }
-            });
+            if (newPhotos.length > 5) {
+                alert("You can only upload up to 5 photos.");
+                return;
+            }
+
+            // ❌ Old logic was appending; ✅ Now it REPLACES old photos
+            setRoleRegisterData(prevData => ({
+                ...prevData,
+                additionalPhotos: newPhotos, // Replaces old images with new ones
+            }));
 
         } catch (err) {
             console.log("Additional Photos Picker Error:", err);
         }
     };
+
 
     const handleStateInputChange = (text) => {
         setStateInput(text);
@@ -269,9 +271,9 @@ const UpdateProfileDetails = ({ navigation, route }) => {
 
         if (!profileType || !roleApiMapping[profileType]) {
             Toast.show({
-                type: 'error',
-                text1: 'Error',
-                text2: 'Invalid profile type selected.',
+                type: "error",
+                text1: "Error",
+                text2: "Invalid profile type selected.",
             });
             setIsLoading(false);
             return;
@@ -287,19 +289,13 @@ const UpdateProfileDetails = ({ navigation, route }) => {
             };
 
             const url = roleApiMapping[profileType];
-
-            // ✅ Profile ke type ke hisaab se services ka key determine karein
             const servicesKey = `${profileType.toLowerCase()}Services`;
-
-            // ✅ ProfileData se existing services lein (agar available ho)
             const existingServices = profileData?.[servicesKey] || [];
 
-            // ✅ Sirf selected services bhejne ke liye filter karein
             const filteredServices = Object.keys(checked).filter(service =>
                 servicesOptions[profileType].some(option => option.value === service) && checked[service]
             );
 
-            // ✅ Profile photo ko Base64 me convert karein
             let profilePhotoBase64 = null;
             if (RoleRegisterData.profilePhoto) {
                 try {
@@ -310,7 +306,6 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                 }
             }
 
-            // ✅ Additional photos ko Base64 me convert karein (Array)
             let additionalPhotosBase64 = [];
             if (RoleRegisterData.additionalPhotos && Array.isArray(RoleRegisterData.additionalPhotos)) {
                 additionalPhotosBase64 = await Promise.all(
@@ -325,8 +320,8 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                 state: RoleRegisterData.state,
                 city: RoleRegisterData.city,
                 subCaste: RoleRegisterData.subCaste,
-                profilePhoto: profilePhotoBase64, // ✅ Converted Base64
-                additionalPhotos: additionalPhotosBase64, // ✅ Converted Array
+                profilePhoto: profilePhotoBase64,
+                additionalPhotos: additionalPhotosBase64,
                 experience: RoleRegisterData.experience,
                 description: RoleRegisterData.description,
                 websiteUrl: RoleRegisterData.websiteUrl,
@@ -340,26 +335,45 @@ const UpdateProfileDetails = ({ navigation, route }) => {
             console.log("Final Payload to be Sent:", payload);
 
             const response = await axios.patch(url, payload, { headers });
+            console.log("response",JSON.stringify(response.data))
 
-            Toast.show({
-                type: "success",
-                text1: "Success!",
-                text2: `Successfully updated profile for ${profileType}.`,
-                onHide: () => navigation.navigate('MyProfile')
-            });
+            if (response.status === 200 && response.data.status === true) {
+                Toast.show({
+                    type: "success",
+                    text1: "Success!",
+                    text2: `Successfully updated profile for ${profileType}.`,
+                });
+                
+                setTimeout(() => {
+                    navigation.navigate("MyProfile");
+                    setIsLoading(false);
+                }, 2000);
+                
+            } else {
+                throw new Error(response.data.message || "Failed to update profile.");
+            }
 
         } catch (error) {
-            console.error("Error:", error.message);
+            console.error("Error:", error);
 
-            Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: error.message,
-            });
+            if (error.response?.status === 400) {
+                Toast.show({
+                    type: "error",
+                    text1: "Update Failed",
+                    text2: error.response.data.message || "Invalid request. Please check your input.",
+                });
+            } else {
+                Toast.show({
+                    type: "error",
+                    text1: "Error",
+                    text2: error.message || "Something went wrong. Please try again.",
+                });
+            }
         } finally {
             setIsLoading(false);
         }
     };
+
 
     const handleCheckboxChange = (service) => {
         setChecked((prev) => ({
@@ -376,7 +390,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
-                    <Text style={Globalstyles.headerText}>Register</Text>
+                    <Text style={Globalstyles.headerText}>Update details</Text>
                 </View>
             </View>
 
@@ -398,7 +412,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                         placeholder="Enter Your Mobile No." maxLength={10}
                         placeholderTextColor={Colors.gray} />
 
-<Text style={[Globalstyles.title,{color:Colors.theme_color}]}>Address</Text>
+                    <Text style={[Globalstyles.title, { color: Colors.theme_color }]}>Address</Text>
 
                     <Text style={Globalstyles.title}>State</Text>
                     <TextInput
@@ -599,7 +613,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                     }
                 </View>
             </ScrollView>
-            <Toast />
+            <Toast/>
         </SafeAreaView>
     );
 };

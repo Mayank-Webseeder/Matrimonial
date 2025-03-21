@@ -264,6 +264,7 @@ export default function ActivistForm({ navigation }) {
     try {
       setIsLoading(true);
       const token = await AsyncStorage.getItem("userToken");
+
       if (!token) {
         Toast.show({
           type: "error",
@@ -278,19 +279,19 @@ export default function ActivistForm({ navigation }) {
         Authorization: `Bearer ${token}`,
       };
 
-      // ✅ Use `constructActivistPayload` to prepare payload
+      // ✅ Prepare the payload
       const payload = await constructActivistPayload(ActivistData, !ActivistData?._id);
       console.log("Payload:", payload);
 
       // ✅ Decide whether to create or update
       const apiCall = ActivistData?._id ? axios.patch : axios.post;
-      const endpoint = ActivistData?._id ? `${UPDATE_ACTIVIST}` : CREATE_ACTIVIST;
+      const endpoint = ActivistData?._id ? UPDATE_ACTIVIST : CREATE_ACTIVIST;
 
       const response = await apiCall(endpoint, payload, { headers });
       console.log("API Response:", response.data);
 
       // ✅ Ensure response is successful
-      if (response.status === 200 || response.status === 201) {
+      if (response.status === 200 && response.data.status === true) {
         Toast.show({
           type: "success",
           text1: ActivistData?._id ? "Profile Updated Successfully" : "Activist Profile Created Successfully",
@@ -310,29 +311,27 @@ export default function ActivistForm({ navigation }) {
         return; // ✅ Success case handled
       }
 
-      // ❌ If status is NOT success, throw an error
+      // ❌ If response is not successful, throw an error
       throw new Error(response.data.message || "Something went wrong");
 
     } catch (error) {
-      // ✅ Handle API errors properly
-      if (error.response) {
-        console.error("API Error:", error.response.data);
-      } else {
-        console.error("Unexpected Error:", error.message);
+      console.error("Error saving activist data:", error?.response?.data || error.message);
+
+      let errorMessage = "Failed to save activist data.";
+      if (error.response && error.response.status === 400) {
+        errorMessage = error.response.data?.message || "Invalid request!";
       }
 
-      // ✅ Show error message if needed
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: error.response?.data?.message || "Failed to save activist data.",
+        text2: errorMessage,
       });
 
     } finally {
       setIsLoading(false);
     }
   };
-
 
   return (
     <SafeAreaView style={Globalstyles.container}>
@@ -544,7 +543,6 @@ export default function ActivistForm({ navigation }) {
             <Text style={styles.submitText}>Submit</Text>
           )}
         </TouchableOpacity>
-
       </ScrollView>
       <Toast />
     </SafeAreaView>

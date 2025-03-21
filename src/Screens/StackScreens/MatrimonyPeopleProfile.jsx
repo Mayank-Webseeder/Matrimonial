@@ -30,13 +30,12 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const isVerified = userDetails?.verified;
   const verifiedBy = userDetails?.verifiedBy;
   const [loading, setLoading] = useState(true);
+  const [loadingIntrest, setLoadingIntrest] = useState(false);
 
   useEffect(() => {
     console.log("userDetails", userId);
   }, [])
-
-  // const User_Id = userDetails?.userId || details_userId;
-  // console.log("userId", hideOptionalDetails);
+  
   const _id = userDetails?._id;
   // console.log("_id", User_Id);
   const personalDetails = userDetails?.personalDetails || {};
@@ -144,7 +143,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
     try {
       const response = await axios.get(`${MATCHED_PROFILE}/${id}`, { headers });
       console.log("response", JSON.stringify(response.data))
-      if (response.data.status === "success") {
+      if (response.data.status) {
         setProfileData(response.data);
       }
     } catch (error) {
@@ -156,72 +155,62 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
 
   const sendInterestRequest = async () => {
+    setLoadingIntrest(true); // ✅ Show Loader
+
     if (!userId) {
-        Toast.show({
-            type: "error",
-            text1: "Error",
-            text2: "User ID not found!",
-            position: "top",
-            visibilityTime: 3000,
-            autoHide: true
-        });
-        return;
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "User ID not found!",
+        position: "top",
+        visibilityTime: 3000,
+        autoHide: true
+      });
+      setLoadingIntrest(false);
+      return;
     }
 
     try {
-        const token = await AsyncStorage.getItem("userToken");
-        if (!token) {
-            throw new Error("No token found");
-        }
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        throw new Error("No token found");
+      }
 
-        const headers = {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-        };
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
 
-        const response = await axios.post(`${SEND_REQUEST}/${userId}`, {}, { headers });
+      const response = await axios.post(`${SEND_REQUEST}/${userId}`, {}, { headers });
 
-        console.log("Response Data:", JSON.stringify(response?.data));
-        console.log("response?.data?.status",response?.data?.status);
+      console.log("Response Data:", JSON.stringify(response?.data));
 
-        // ✅ Status Check
-        if (response?.status===200 || response?.data?.status) {
-            Toast.show({
-                type: "success",
-                text1: "Success",
-                text2: response.data.message,
-                position: "top", // ✅ Ensure it's visible
-                visibilityTime: 2000, 
-                autoHide: true,
-                onHide: () => setTimeout(() => navigation.navigate("IntrestedProfile"), 2000)
-            });
-            return;
-        }
-
-        // ❌ Default Error
+      if (response.status === 200 && response.data.status === true) {
         Toast.show({
-            type: "error",
-            text1: "Error",
-            text2: "Unexpected response from server!",
-            position: "top",
+          type: "success",
+          text1: "Success",
+          text2: response.data.message,
+          position: "top",
+          visibilityTime: 2000,
+          autoHide: true,
+          onHide: () => setTimeout(() => navigation.navigate("IntrestedProfile"), 2000)
         });
-
+      } else {
+        throw new Error("Unexpected response from server!");
+      }
     } catch (error) {
-        console.error(
-            "API Error:",
-            error?.response ? JSON.stringify(error.response.data) : error.message
-        );
+      console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
 
-        const errorMessage = error.response?.data?.message || "Failed to send interest!";
-
-        Toast.show({
-            type: "error",
-            text1: "Error",
-            text2: errorMessage,
-            position: "top",
-        });
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error.response?.data?.message || "Failed to send interest!",
+        position: "top",
+      });
+    } finally {
+      setLoadingIntrest(false); // ✅ Hide Loader
     }
-};
+  };
 
 
 
@@ -417,8 +406,16 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             </TouchableOpacity>
 
 
-            <TouchableOpacity style={styles.interestedButton} onPress={sendInterestRequest}>
-              <Text style={styles.buttonText}>Interested</Text>
+            <TouchableOpacity
+              style={styles.interestedButton}
+              onPress={sendInterestRequest}
+              disabled={loadingIntrest}
+            >
+              {loadingIntrest ? (
+                <ActivityIndicator size="small" color={Colors.theme_color} />
+              ) : (
+                <Text style={styles.buttonText}>Interested</Text>
+              )}
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -595,7 +592,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         ) : null}
         <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
       </ScrollView>
-    <Toast/>
+      <Toast />
     </SafeAreaView>
   );
 };

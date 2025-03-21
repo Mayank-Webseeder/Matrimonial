@@ -30,7 +30,7 @@ const UpdateEventPost = ({ navigation, route }) => {
             width: 400,
             height: 400,
             includeBase64: true,
-            compressImageQuality :1
+            compressImageQuality: 1
         }).then(images => {
             const newPhotos = images.map(image => `data:image/jpeg;base64,${image.data}`);
             setPhotos(newPhotos); // Purani images hata kar sirf naye images set ho rahi hain
@@ -41,12 +41,13 @@ const UpdateEventPost = ({ navigation, route }) => {
 
     const handleSubmit = async () => {
         try {
-            setLoading(true);  // Start Loader
-            const token = await AsyncStorage.getItem('userToken');
-            if (!token) throw new Error('No token found');
+            setLoading(true); // Start Loader
+
+            const token = await AsyncStorage.getItem("userToken");
+            if (!token) throw new Error("No token found");
 
             if (!eventData?._id) {
-                throw new Error('Event ID is missing, update cannot proceed.');
+                throw new Error("Event ID is missing, update cannot proceed.");
             }
 
             const updatedImages = photos.length > 0 ? photos : eventData?.images;
@@ -59,43 +60,46 @@ const UpdateEventPost = ({ navigation, route }) => {
             };
 
             const headers = {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             };
+
+            console.log("🔹 API Request to:", UPDATE_EVENT_NEWS);
+            console.log("🔹 Payload:", payload);
 
             const response = await axios.patch(UPDATE_EVENT_NEWS, payload, { headers });
 
             console.log("✅ Event Updated Response:", JSON.stringify(response.data));
 
-            if (response.status === 200 || response.status === 201) {
+            if (response.status === 200 && response.data.status === true) {
                 Toast.show({
-                    type: 'success',
-                    text1: 'Success',
-                    text2: response.data.message || 'Event updated successfully!',
+                    type: "success",
+                    text1: "Success",
+                    text2: response.data.message || "Event updated successfully!",
                 });
 
-                setTimeout(() => navigation.navigate('EventNews'), 2000);
+                setTimeout(() => navigation.navigate("EventNews"), 2000);
+                return;
             }
-        } catch (error) {
-            console.error('❌ Error updating event:', error);
 
-            let errorMessage = 'Failed to update event. Please try again later.';
-            if (error.response?.data?.message) {
-                errorMessage = error.response.data.message;
+            throw new Error(response.data.message || "Something went wrong");
+        } catch (error) {
+            console.error("❌ Error updating event:", error.response?.data || error.message);
+
+            let errorMessage = "Failed to update event. Please try again later.";
+            if (error.response?.status === 400) {
+                errorMessage = error.response.data?.message || "Bad request.";
             }
 
             Toast.show({
-                type: 'error',
-                text1: 'Error',
+                type: "error",
+                text1: "Error",
                 text2: errorMessage,
             });
         } finally {
-            setLoading(false);  // Stop Loader
+            setLoading(false); // Stop Loader
         }
     };
-
-
-
     return (
         <SafeAreaView style={Globalstyles.container}>
             <StatusBar

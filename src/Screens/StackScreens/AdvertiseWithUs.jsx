@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SafeAreaView, View, Text, TextInput, TouchableOpacity, ScrollView, Image } from "react-native";
+import { SafeAreaView, View, Text, TextInput, TouchableOpacity, ScrollView, Image, Linking } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Globalstyles from "../../utils/GlobalCss";
@@ -21,52 +21,61 @@ const AdvertiseWithUs = ({ navigation }) => {
 
     const handleSubmit = async () => {
         try {
-          const token = await AsyncStorage.getItem('userToken'); // ✅ Fetch Token
-          if (!token) throw new Error('No token found');
-    
-          const payload = {
-            firstName: firstName,
-            lastName: lastName,
-            email:email,
-            phoneNumber:mobileNo,
-            message:message
-          };
-    
-          const headers = {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          };
-          console.log('Payload:', payload);
-    
-          const response = await axios.post(ADVERTISE_WITH_US, payload, { headers });
-          console.log("feedback response", JSON.stringify(response.data))
-          if (response.status === 200 || response.status === 201) {
-            Toast.show({
-              type: 'success',
-              text1: 'Success',
-              text2: response.data.message || 'Your Advertise Request has been submitted successfully!',
-            });
-    
-            setTimeout(() => {
-              navigation.navigate('MainApp');
-            }, 2000);
-          }
+            const token = await AsyncStorage.getItem('userToken'); // ✅ Fetch Token
+            if (!token) throw new Error('No token found');
+
+            const payload = {
+                firstName,
+                lastName,
+                email,
+                phoneNumber: mobileNo,
+                message
+            };
+
+            const headers = {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            };
+
+            console.log('Payload:', payload);
+
+            const response = await axios.post(ADVERTISE_WITH_US, payload, { headers });
+            console.log("Feedback response:", JSON.stringify(response.data));
+
+            // ✅ Ensure response is successful
+            if (response.status === 200 && response.data.status === true) {
+                Toast.show({
+                    type: 'success',
+                    text1: 'Success',
+                    text2: response.data.message || 'Your Advertise Request has been submitted successfully!',
+                });
+
+                setTimeout(() => {
+                    navigation.navigate('MainApp');
+                }, 2000);
+                return;
+            }
+
+            // ❌ If response is not successful, throw an error
+            throw new Error(response.data.message || "Something went wrong");
+
         } catch (error) {
-          console.error('Error submitting Advertise :', error);
-    
-          let errorMessage = 'Failed to submit Advertise . Please try again later.';
-    
-          if (error.response && error.response.data && error.response.data.message) {
-            errorMessage = error.response.data.message;
-          }
-    
-          Toast.show({
-            type: 'error',
-            text1: 'Error',
-            text2: errorMessage,
-          });
+            console.error('Error submitting Advertise:', error?.response?.data || error.message);
+
+            let errorMessage = 'Failed to submit Advertise. Please try again later.';
+            if (error.response && error.response.status === 400) {
+                errorMessage = error.response.data?.message || "Invalid request!";
+            }
+
+            Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: errorMessage,
+            });
+
         }
-      };
+    };
+
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: Colors.light }}>
@@ -88,15 +97,44 @@ const AdvertiseWithUs = ({ navigation }) => {
                         <View style={styles.contactCard}>
                             <Text style={styles.title}>Contact Information</Text>
                             <Text style={styles.subtitle}>Say something to start a live chat!</Text>
-
                             <View style={styles.iconContainer}>
                                 <MaterialIcons name="phone" size={22} color={Colors.light} />
-                                <Text style={styles.contactText}>+1012 3456 788</Text>
+                                <Text
+                                    style={styles.contactText}
+                                    onPress={() => Linking.openURL("tel:8871186630")}
+                                >
+                                    8871186630
+                                </Text>
+                            </View>
+
+                            {/* <View style={styles.iconContainer}>
+                                <MaterialIcons name="phone" size={22} color={Colors.light} />
+                                <Text
+                                    style={styles.contactText}
+                                    onPress={() => Linking.openURL("tel:YOUR_SECOND_NUMBER")}
+                                >
+                                    YOUR_SECOND_NUMBER
+                                </Text>
+                            </View> */}
+
+                            <View style={styles.iconContainer}>
+                                <MaterialIcons name="email" size={22} color={Colors.light} />
+                                <Text
+                                    style={styles.contactText}
+                                    onPress={() => Linking.openURL("mailto:brahminmilan.in@gmail.com")}
+                                >
+                                    brahminmilan.in@gmail.com
+                                </Text>
                             </View>
 
                             <View style={styles.iconContainer}>
                                 <MaterialIcons name="email" size={22} color={Colors.light} />
-                                <Text style={styles.contactText}>demo@gmail.com</Text>
+                                <Text
+                                    style={styles.contactText}
+                                    onPress={() => Linking.openURL("mailto:appwin.in@gmail.com")}
+                                >
+                                    appwin.in@gmail.com
+                                </Text>
                             </View>
 
                             <View style={styles.iconContainer}>
@@ -146,7 +184,7 @@ const AdvertiseWithUs = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
             </ScrollView>
-            <Toast/>
+            <Toast />
         </SafeAreaView>
     );
 };

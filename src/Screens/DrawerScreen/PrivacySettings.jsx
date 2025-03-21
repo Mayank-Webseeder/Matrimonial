@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { toggleBlurPhotos, setBlurPhotosState } from '../../ReduxStore/Slices/privacySlice';
 import { useSelector, useDispatch } from 'react-redux';
+import Toast from 'react-native-toast-message';
 
 const PrivacySettings = ({ navigation }) => {
     const dispatch = useDispatch();
@@ -32,34 +33,50 @@ const PrivacySettings = ({ navigation }) => {
             setIsLoading(true);
             const token = await AsyncStorage.getItem("userToken");
             if (!token) throw new Error("No token found");
-
+    
             const headers = {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             };
-
+    
             const newValue = !currentValue;
-
-            setter(newValue);
+            setter(newValue); // Optimistically update UI
+    
             setTimeout(async () => {
                 const response = await axios.patch(apiUrl, { status: newValue }, { headers });
-
-                if (response.status === 200 || response.status === 201) {
+    
+                if (response.status === 200 && response.data.status === true) {
                     console.log("response", JSON.stringify(response.data));
-                    ToastAndroid.show(`${settingType} ${newValue ? 'enabled' : 'disabled'} successfully!`, ToastAndroid.SHORT);
+    
+                    Toast.show({
+                        type: "success",
+                        text1: "Success",
+                        text2: `${settingType} ${newValue ? 'enabled' : 'disabled'} successfully!`,
+                    });
                 } else {
-                    throw new Error("Unexpected response from server");
+                    throw new Error(response.data.message || "Something went wrong!");
                 }
             }, 300);
-
         } catch (error) {
             console.error(`Error updating ${settingType}:`, error?.response?.data || error.message);
-            ToastAndroid.show(`Failed to update ${settingType}. Please try again!`, ToastAndroid.LONG);
+    
+            let errorMessage = `Failed to update ${settingType}. Please try again!`;
+            if (error.response && error.response.status === 400) {
+                errorMessage = error.response.data?.message || "Invalid request!";
+            }
+    
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: errorMessage,
+            });
+    
+            setter(!currentValue); // Revert UI if API fails
         } finally {
             setTimeout(() => setIsLoading(false), 300);
         }
     };
-
+    
     return (
         <SafeAreaView style={Globalstyles.container}>
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
@@ -124,6 +141,7 @@ const PrivacySettings = ({ navigation }) => {
                     />
                 </View>
             </View>
+            <Toast/>
         </SafeAreaView>
     );
 };

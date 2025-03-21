@@ -14,7 +14,7 @@ import { SAVED_PROFILES } from '../../utils/BaseUrl';
 
 const ShortMatrimonialProfile = ({ navigation, route }) => {
     const { userDetails } = route.params;
-    
+
     useEffect(() => {
         console.log("userDetails", userDetails);
     }, [])
@@ -75,12 +75,18 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
             });
         }
     };
-      
+
     const handleShare = async () => {
-        ToastAndroid.show("Under development", ToastAndroid.SHORT);
+        Toast.show({
+            type: "info",
+            text1: "Info",
+            text2: "Under development",
+            position: "top",
+        });
     };
 
-    const popop=async()=>{
+
+    const popop = async () => {
         ToastAndroid.show("Please create biodata to see full information of the this profile", ToastAndroid.SHORT);
     }
 
@@ -176,7 +182,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                 />
 
             </ScrollView>
-            <Toast/>
+            <Toast />
         </SafeAreaView>
     );
 };

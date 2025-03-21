@@ -1,5 +1,5 @@
 import { Text, View, TextInput, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, FlatList, ToastAndroid } from 'react-native'
-import React, { useState, useEffect ,useCallback} from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/PartnerPreferenceStyle';
 import { TouchableOpacity } from 'react-native';
@@ -71,7 +71,7 @@ const PartnersPreference = ({ navigation }) => {
             }));
         }
     }, [myPartnerPreferences]);
-      
+
     const handleStateInputChange = (text) => {
         setStateInput(text);
         if (text) {
@@ -172,24 +172,29 @@ const PartnersPreference = ({ navigation }) => {
             setLoading(true);
             const token = await AsyncStorage.getItem("userToken");
             if (!token) throw new Error("No token found");
-    
+
             const headers = {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             };
-    
+
             let payload = {};
             let isUpdating = Boolean(biodata?._id); // ✅ Check if biodata exists
-    
+
             if (isUpdating) {
                 Object.keys(biodata).forEach((key) => {
                     if (biodata[key] !== originalBiodata[key]) {
                         payload[key] = biodata[key];
                     }
                 });
-    
+
                 if (Object.keys(payload).length === 0) {
-                    ToastAndroid.show("No changes detected.", ToastAndroid.SHORT);
+                    Toast.show({
+                        type: "info",
+                        text1: "No Changes Detected",
+                        text2: "You haven't made any changes.",
+                        position: "top",
+                    });
                     setLoading(false);
                     return;
                 }
@@ -221,47 +226,61 @@ const PartnersPreference = ({ navigation }) => {
                     partnerExpectations: biodata?.partnerExpectations || "",
                 };
             }
-    
+
             console.log(`🔹 API Type: ${isUpdating ? "UPDATE" : "CREATE"}`);
             console.log("Payload:", payload);
-    
+
             const apiCall = isUpdating ? axios.put : axios.post;
             const endpoint = isUpdating ? UPDATE_PARTNER_PERFRENCES : CREATE_PARTNER_PERFRENCES;
-    
+
             console.log(`🔹 Calling API: ${endpoint}`);
-    
+
             const response = await apiCall(endpoint, payload, { headers });
-    
+
             console.log("✅ Save response:", response.data);
-    
-            if (response.data?.status?.toLowerCase() === "success") {
-                ToastAndroid.show(
-                    isUpdating ? "Partner Preferences Updated Successfully!" : "Partner Preferences Created Successfully!",
-                    ToastAndroid.SHORT
-                );
-    
+
+            if (response.status === 200 && response.data.status === true) {
+                Toast.show({
+                    type: "success",
+                    text1: "Success",
+                    text2: isUpdating
+                        ? "Partner Preferences Updated Successfully!"
+                        : "Partner Preferences Created Successfully!",
+                    position: "top",
+                });
+
                 // ✅ If created successfully, update the biodata state
                 if (!isUpdating && response.data._id) {
                     setBiodata((prev) => ({ ...prev, _id: response.data._id })); // Update _id after creation
                     console.log("✅ New Biodata ID:", response.data._id);
                 }
-    
+
                 setIsEditing(false);
                 setTimeout(() => {
                     navigation.navigate("MainApp");
                 }, 1000);
                 return;
             }
-    
+
             throw new Error(response.data.message || "Something went wrong");
         } catch (error) {
             console.error("🚨 API Error:", error.response?.data || error.message);
-            ToastAndroid.show(error.response?.data?.message || "Something went wrong!", ToastAndroid.SHORT);
+
+            let errorMessage = "Something went wrong!";
+            if (error.response?.status === 400) {
+                errorMessage = error.response.data?.message || "Bad request.";
+            }
+
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: errorMessage,
+                position: "top",
+            });
         } finally {
             setLoading(false);
         }
     };
-    
 
 
 
@@ -618,7 +637,7 @@ const PartnersPreference = ({ navigation }) => {
                     </View>
                 </View>
             </ScrollView>
-            <Toast/>
+            <Toast />
         </SafeAreaView>
     )
 }

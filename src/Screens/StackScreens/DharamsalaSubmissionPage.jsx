@@ -65,7 +65,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
 
                 const response = await axios.get(GET_DHARAMSALA, { headers });
 
-                if (response.status === 200 && response.data?.data) {
+                if (response.status === 200 && response.data.status === true) {
                     console.log("dharamsala view data", JSON.stringify(response.data?.data))
                     setDharamsalaData(response.data.data);
                 }
@@ -204,11 +204,11 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
         return payload;
     };
 
-
     const handleDharamSalaSave = async () => {
         try {
             setIsLoading(true);
             const token = await AsyncStorage.getItem("userToken");
+
             if (!token) {
                 Toast.show({
                     type: "error",
@@ -228,21 +228,22 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
 
             const isUpdating = !!DharamsalaData?._id;
             const apiCall = isUpdating ? axios.patch : axios.post;
-            const endpoint = isUpdating ? `${UPDATE_DHARAMSALA}` : CREATE_DHARAMSALA;
+            const endpoint = isUpdating ? UPDATE_DHARAMSALA : CREATE_DHARAMSALA;
 
             const response = await apiCall(endpoint, payload, { headers });
-            console.log("dharamsala create , update data", JSON.stringify(response.data));
+            console.log("Dharamsala create/update response:", JSON.stringify(response.data));
 
-            if (response.status === 200 || response.status === 201) {
+            if (response.status === 200 && response.data.status === true) {
                 console.log("Updated Data:", JSON.stringify(response.data.data));
 
-                // ✅ Show Toast First
+                // ✅ Show Success Toast
                 Toast.show({
                     type: "success",
-                    text1: response.data.message || (isUpdating ? "Profile Updated Successfully" : "Profile Created Successfully"),
-                    text2: "Your changes have been saved!",
+                    text1: isUpdating ? "Profile Updated Successfully" : "Profile Created Successfully",
+                    text2: response.data.message || "Your changes have been saved!",
                 });
 
+                // ✅ Update state if new Dharamsala is created
                 if (!DharamsalaData?._id && response.data?.data?._id) {
                     setDharamsalaData((prev) => ({
                         ...prev,
@@ -250,20 +251,31 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     }));
                 }
 
-
             } else {
                 throw new Error(response.data.message || "Something went wrong");
             }
         } catch (error) {
+            console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
+
+            let errorMessage = "Failed to save data.";
+
+            if (error.response?.status === 400) {
+                errorMessage = error.response?.data?.message || "Bad request. Please check your input.";
+            } else if (error.response?.data?.message) {
+                errorMessage = error.response.data.message;
+            }
+
+            // ✅ Show Error Toast
             Toast.show({
                 type: "error",
                 text1: "Error",
-                text2: error.response?.data?.message || "Failed to save data.",
+                text2: errorMessage,
             });
         } finally {
             setIsLoading(false);
         }
     };
+
 
 
 

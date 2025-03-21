@@ -107,69 +107,60 @@ const EventNews = ({ navigation }) => {
 
   const LIKE = async (postId) => {
     try {
-        setIsLoading(true);
-        const token = await AsyncStorage.getItem('userToken');
-        if (!token) throw new Error('No token found');
+      setIsLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) throw new Error("No token found");
 
-        const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-        };
+      const headers = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      };
 
-        const payload = { postId };
+      const payload = { postId };
 
-        const response = await axios.post(LIKEPOST, payload, { headers });
+      const response = await axios.post(LIKEPOST, payload, { headers });
 
-        if (response.data) {
-            const { message, likesCount } = response.data;
+      if (response.status === 200 && response.data.status === true) {
+        const { message, likesCount } = response.data;
 
-            console.log("My event news data", JSON.stringify(response.data));
+        console.log("My event news data", JSON.stringify(response.data));
 
-            // Update like count
-            setLikeData(prevState => ({
-                ...prevState,
-                likesCount,
-            }));
+        // ✅ Like count update
+        setLikeData(prevState => ({
+          ...prevState,
+          likesCount,
+        }));
 
-            if (message) {
-                Toast.show({
-                    type: "success",
-                    text1: "Success",
-                    text2: message,
-                    position: "top",
-                    onHide: () => {
-                        navigation.reset({
-                            index: 0,
-                            routes: [{ name: 'EventNews' }],
-                        });
-                    }
-                });
-            } else {
-                // Agar message nahi hai, toh bina toast dikhaye refresh ho
-                navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'EventNews' }],
-                });
-            }
-        } else {
-            setLikeData(prevState => ({
-                ...prevState,
-                likesCount: 0, // Fallback
-            }));
-        }
-    } catch (error) {
-        console.error("Error fetching event news:", error);
         Toast.show({
-            type: "error",
-            text1: "Error",
-            text2: "Failed to like event. Please try again!",
-            position: "top",
+          type: "success",
+          text1: "Success",
+          text2: message || "Liked successfully!",
+          position: "top",
+          onHide: () => {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "EventNews" }],
+            });
+          }
         });
-    } finally {
-        setIsLoading(false);
-    }
-};
 
+      } else {
+        throw new Error(response.data.message || "Failed to like event.");
+      }
+
+    } catch (error) {
+      console.error("Error fetching event news:", error?.response?.data || error.message);
+
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error?.response?.data?.message || "Failed to like event. Please try again!",
+        position: "top",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const COMMENT = async (postId) => {
     try {
@@ -189,11 +180,11 @@ const EventNews = ({ navigation }) => {
 
       const response = await axios.post(COMMENTPOST, payload, { headers });
 
-      if (response.data) {
+      if (response.status === 200 && response.data.status === true) {
         const fetchedData = response.data;
         console.log("Updated comments:", JSON.stringify(fetchedData.comments));
 
-        setMyComment(""); // Clear input field
+        setMyComment(""); // ✅ Input field clear karein
 
         Toast.show({
           type: "success",
@@ -207,7 +198,11 @@ const EventNews = ({ navigation }) => {
             });
           }
         });
+
+      } else if (response.status === 400) {
+        throw new Error(response.data.message || "Invalid request.");
       }
+
     } catch (error) {
       console.error("Error adding comment:", error?.response?.data || error.message);
 
@@ -287,7 +282,7 @@ const EventNews = ({ navigation }) => {
           const headers = { Authorization: `Bearer ${token}` };
           const response = await axios.get(VIEW_EVENT, { headers });
 
-          if (response.status === 200) {
+          if (response.status === 200 && response.data.status === true) {
             const postData = response.data.data;
             console.log("myeventpost", postData);
             setMyeventpost(postData);
@@ -374,7 +369,7 @@ const EventNews = ({ navigation }) => {
         const headers = { Authorization: `Bearer ${token}` };
         const response = await axios.get(VIEW_EVENT, { headers });
 
-        if (response.status === 200) {
+        if (response.status === 200 && response.data.status === true) {
           const postData = response.data.data[0];
           console.log("postData", postData);
           // setEventData(postData)
@@ -500,13 +495,15 @@ const EventNews = ({ navigation }) => {
 
         <View style={styles.likeShareComment}>
           <TouchableOpacity style={styles.likeShare} onPress={() => LIKE(item._id)}>
-            <AntDesign name={isLiked ? "heart" : "hearto"} size={20} color={isLiked ? "red" : Colors.dark} />
+            <AntDesign name={item.isLiked ? "heart" : "hearto"} size={20} color={item.isLiked ? "red" : Colors.dark} />
             <Text style={styles.shareText}>{item.likes.length} Likes</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.likeShare} onPress={() => openBottomSheet(item._id, item.comments)} >
+
+          <TouchableOpacity style={styles.likeShare} onPress={() => openBottomSheet(item._id, item.comments)}>
             <FontAwesome5 name="comment" size={20} color="black" />
             <Text style={styles.shareText}>{item.comments.length} Comments</Text>
           </TouchableOpacity>
+
 
           <TouchableOpacity style={styles.likeShare} onPress={handleShare}>
             <Feather name="send" size={20} color={Colors.dark} />
@@ -653,7 +650,7 @@ const EventNews = ({ navigation }) => {
 
         {/* <Image source={require('../../Images/EventImage.png')} style={styles.bannerImage} /> */}
       </ScrollView>
-      <Toast/>
+      <Toast />
     </SafeAreaView>
   );
 };

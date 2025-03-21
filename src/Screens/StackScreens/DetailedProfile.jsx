@@ -395,45 +395,48 @@ const DetailedProfile = ({ navigation }) => {
 
         console.log("✅ API Response:", response.data);
 
-        if (response.data?.status?.toLowerCase() === "success") {
+        // ✅ Ensure the success response
+        if (response.status === 200 && response.data.status === true) {
             const successMessage = isUpdating 
                 ? "Profile Updated Successfully!" 
                 : "Detailed Profile Created Successfully!";
-            
-            ToastAndroid.show(successMessage, ToastAndroid.SHORT);
+
+            Toast.show({
+                type: "success",
+                text1: "Success",
+                text2: successMessage,
+            });
 
             setIsEditing(false);
 
             setTimeout(() => {
-                if (isUpdating) {
-                    navigation.navigate("MainApp");
-                } else {
-                    navigation.navigate("MainPartnerPrefrence");
-                }
+                navigation.navigate(isUpdating ? "MainApp" : "MainPartnerPrefrence");
             }, 1000);
 
             return;
         }
 
+        // ❌ Handle unexpected responses
         throw new Error(response.data.message || "Something went wrong");
 
     } catch (error) {
         console.error("🚨 API Error:", error.response?.data || error.message);
 
-        if (!error.message.toLowerCase().includes("success")) {
-            ToastAndroid.show(
-                error.response?.data?.message || "Something went wrong!", 
-                ToastAndroid.SHORT
-            );
+        let errorMessage = "Something went wrong!";
+        if (error.response?.status === 400) {
+            errorMessage = error.response.data.message || "Bad request. Please check your input.";
         }
+
+        Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: errorMessage,
+        });
+
     } finally {
         setIsLoading(false);
     }
 };
-
-
-
-
 
   const handleInputChange = (field, value) => {
     setBiodata((prev) => ({
@@ -441,13 +444,6 @@ const DetailedProfile = ({ navigation }) => {
       [field]: value,
     }));
   };
-
-
-  // if (isLoading) {
-  //   return <View style={styles.loading}>
-  //     <ActivityIndicator size={'large'} color={Colors.theme_color} />
-  //   </View>;
-  // }
 
   return (
     <SafeAreaView style={Globalstyles.container}>

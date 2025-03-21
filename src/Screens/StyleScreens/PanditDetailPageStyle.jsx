@@ -68,7 +68,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
     textAlign: 'center',
     color: Colors.dark,
-    textAlign: "center"
+    textAlign: "center",
+    textTransform:"capitalize"
   },
   ratingCount: {
     marginRight: SW(260),
@@ -93,25 +94,22 @@ const styles = StyleSheet.create({
     paddingVertical: SH(10),
   },
   reviewRating: {
-    marginLeft: -SW(255)
+    alignSelf:"flex-start"
   },
   reviewName: {
-    fontSize: SF(16),
-    fontFamily: 'Poppins-Medium',
-  },
-  reviewStatus: {
-    fontSize: SF(13),
-    color: 'green',
-    fontFamily: "Poppins-Regular",
+    fontSize: SF(12),
+    fontFamily: 'Poppins-Bold',
   },
   reviewDate: {
-    fontSize: SF(13),
+    fontSize: SF(11),
     color: 'gray',
   },
   reviewText: {
-    fontSize: SF(13),
-    marginVertical: SH(5),
+    fontSize: SF(11),
     fontFamily: "Poppins-Regular",
+    flexWrap: "wrap",
+    flexShrink: 1,
+    width: "100%",
   },
   FlexContainer: {
     flexDirection: "row",
@@ -148,14 +146,21 @@ const styles = StyleSheet.create({
     paddingVertical: SH(3),
     borderRadius: 8,
     alignItems: "center",
-    width: SW(75)
-  },
-  buttonText: {
+    width: SW(75),
+},
+buttonText: {
     color: Colors.light,
     fontFamily: "Poppins-Regular",
     fontSize: SF(10),
-    marginLeft: SW(2)
-  },
+    marginLeft: SW(2),
+},
+disabledButton: {
+    backgroundColor: Colors.gray, // ✅ Gray background for disabled buttons
+    opacity: 0.5, // ✅ Reduce opacity to indicate it's disabled
+},
+disabledText: {
+    color: Colors.gray, // ✅ Gray text for disabled buttons
+},
   iconText: {
     fontSize: SF(13),
     color: Colors.dark,
@@ -180,7 +185,8 @@ const styles = StyleSheet.create({
   ReviewPost: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center"
+    alignItems: "center",
+    marginRight:SW(5)
   },
   postReviewButton: {
     paddingHorizontal: SW(10),

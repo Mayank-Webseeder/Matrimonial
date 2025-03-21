@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     paddingVertical: SH(2),
     paddingHorizontal: SW(5),
     fontFamily:"Poppins-Medium",
-    fontSize:SF(11),
+    fontSize:SF(12),
     borderRadius:2
   }
 });

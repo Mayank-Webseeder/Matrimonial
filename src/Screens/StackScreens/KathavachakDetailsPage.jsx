@@ -18,6 +18,7 @@ import moment from "moment";
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
 import ImageViewing from 'react-native-image-viewing';
+import { SH, SW } from '../../utils/Dimensions';
 
 
 const kathavachakDetailsPage = ({ navigation, item, route }) => {
@@ -74,7 +75,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                 },
             });
 
-            if (response.data.status) {
+            if (response.status === 200 && response.data.status === true) {
                 console.log("response.data.data", JSON.stringify(response.data.data));
                 setProfileData(response.data.data);
                 setMyRatings(response.data.data.ratings.filter(rating => rating.userId._id === my_id));
@@ -109,50 +110,58 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
             });
             return;
         }
-    
+
         setIsSaved((prev) => !prev); // ✅ Optimistic UI Update
-    
+
         try {
             const token = await AsyncStorage.getItem("userToken");
             if (!token) throw new Error("No token found");
-    
+
             const headers = {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             };
-    
+
             console.log("API Request:", `${SAVED_PROFILES}/${kathavachak_id}`);
-    
+
             const response = await axios.post(`${SAVED_PROFILES}/${kathavachak_id}`, {}, { headers });
-    
+
             console.log("Response Data:", response?.data);
-    
-            if (response.status === 200) {
+
+            if (response.status === 200 && response.data?.success) {
                 Toast.show({
                     type: "success",
                     text1: "Success",
                     text2: response.data.message || "Profile saved successfully!",
                     position: "top",
                 });
-    
+
                 // ✅ API response ke hisaab se state update karo
                 setIsSaved(response.data.message.includes("saved successfully"));
+            } else {
+                throw new Error(response.data.message || "Something went wrong");
             }
         } catch (error) {
             console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
-    
+
             // ❌ Rollback state if API fails
             setIsSaved((prev) => !prev);
-    
+
+            let errorMessage = "Something went wrong!";
+            if (error.response?.status === 400) {
+                errorMessage = error.response.data?.message || "Bad request.";
+            }
+
             Toast.show({
                 type: "error",
                 text1: "Error",
-                text2: error.response?.data?.message || "Something went wrong!",
+                text2: errorMessage,
                 position: "top",
             });
         }
     };
-    
+
+
     const openLink = (url, platform) => {
         if (url) {
             Linking.openURL(url);
@@ -195,13 +204,6 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
 
         return <View style={styles.imageContainer}>{rows}</View>;
     };
-    const calculateAverageRating = (ratings) => {
-        if (!ratings || ratings.length === 0) return 0; // Agar koi rating na ho toh default 0 dikhaye
-        const total = ratings.reduce((sum, review) => sum + review.rating, 0);
-        return (total / ratings.length).toFixed(1); // Decimal me 1 place tak dikhane ke liye
-    };
-
-    const averageRating = calculateAverageRating(profileData?.ratings);
 
     const handleShare = async () => {
         Toast.show({
@@ -264,7 +266,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                                 type="star"
                                 ratingCount={5}
                                 imageSize={15}
-                                startingValue={profileData?.ratings}
+                                startingValue={profileData?.averageRating}
                                 readonly
                             />
                             <Text style={styles.rating}>
@@ -279,29 +281,55 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                     <Text style={styles.sectionTitle}>Description</Text>
                     <Text style={styles.text}>{profileData?.description}</Text>
                     <View style={styles.sharecontainer}>
-                        <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(profileData._id)}>
+                        <TouchableOpacity
+                            style={[styles.iconContainer, my_id === profileData?.userId]}
+                            onPress={() => savedProfiles(profileData._id)}
+                            disabled={my_id === profileData?.userId} // ✅ Disable button for self
+                        >
                             <FontAwesome
                                 name={Save ? "bookmark" : "bookmark-o"}
                                 size={19}
-                                color={Colors.dark}
+                                color={my_id === profileData?.userId ? Colors.gray : Colors.dark} // ✅ Gray if disabled
                             />
-                            <Text style={styles.iconText}>{Save ? "Saved" : "Save"}</Text>
+                            <Text style={[styles.iconText, my_id === profileData?.userId && styles.disabledText]}>
+                                {Save ? "Saved" : "Save"}
+                            </Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.iconContainer} onPress={handleShare} >
+
+                        {/* ✅ Share button (Always Active) */}
+                        <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
                             <Feather name="send" size={20} color={Colors.dark} />
                             <Text style={styles.iconText}>Shares</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${profileData?.mobileNo}`)}>
-                            <MaterialIcons name="call" size={20} color={Colors.light} />
-                        </TouchableOpacity>
+
+                        {/* ✅ Call Button (Disabled for self profile) */}
                         <TouchableOpacity
-                            style={styles.iconContainer}
-                            onPress={() => navigation.navigate('ReportPage', { profileId: profileData?._id })}
+                            style={[styles.Button, my_id === profileData?.userId && styles.disabledButton]}
+                            onPress={() => Linking.openURL(`tel:${profileData?.mobileNo}`)}
+                            disabled={my_id === profileData?.userId} // ✅ Disable button
                         >
-                            <MaterialIcons name="error-outline" size={20} color={Colors.dark} />
-                            <Text style={styles.iconText}>Report</Text>
+                            <MaterialIcons
+                                name="call"
+                                size={20}
+                                color={my_id === profileData?.userId ? Colors.gray : Colors.light} // ✅ Gray if disabled
+                            />
                         </TouchableOpacity>
 
+                        {/* ✅ Report Button (Disabled for self profile) */}
+                        <TouchableOpacity
+                            style={[styles.iconContainer, my_id === profileData?.userId]}
+                            onPress={() => navigation.navigate('ReportPage', { profileId: profileData?._id })}
+                            disabled={my_id === profileData?.userId} // ✅ Disable button
+                        >
+                            <MaterialIcons
+                                name="error-outline"
+                                size={20}
+                                color={my_id === profileData?.userId ? Colors.gray : Colors.dark} // ✅ Gray if disabled
+                            />
+                            <Text style={[styles.iconText, my_id === profileData?.userId && styles.disabledText]}>
+                                Report
+                            </Text>
+                        </TouchableOpacity>
                     </View>
                     <View>
                         <Text style={styles.sectionTitle}>Services List</Text>
@@ -318,22 +346,25 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                             <View>
                                 <Text style={styles.sectionTitle}>Reviews & Rating</Text>
                             </View>
-                            <TouchableOpacity
-                                style={styles.postReviewButton}
-                                onPress={() => navigation.navigate('PostReview', {
-                                    kathavachak_id: kathavachak_id,
-                                    entityType: profileType,
-                                    myReview: myRatings.length > 0 ? myRatings[0] : null
-                                })}
-                            >
-                                <Text style={styles.postReviewText}>
-                                    {myRatings.length > 0 ? "Edit Review" : "Post Review"}
-                                </Text>
-                            </TouchableOpacity>
-
+                            {
+                                my_id !== profileData?.userId && (
+                                    <TouchableOpacity
+                                        style={styles.postReviewButton}
+                                        onPress={() => navigation.navigate('PostReview', {
+                                            kathavachak_id: kathavachak_id,
+                                            entityType: profileType,
+                                            myReview: myRatings.length > 0 ? myRatings[0] : null
+                                        })}
+                                    >
+                                        <Text style={styles.postReviewText}>
+                                            {myRatings.length > 0 ? "Edit Review" : "Post Review"}
+                                        </Text>
+                                    </TouchableOpacity>
+                                )
+                            }
 
                         </View>
-                        <Text style={styles.rating}>{averageRating} (⭐ Star Rating)</Text>
+                        <Text style={styles.rating}>{profileData?.averageRating} (⭐ Star Rating)</Text>
 
                     </View>
                 </View>
@@ -343,9 +374,15 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                             <View style={styles.FlexContainer}>
                                 <Text style={styles.reviewName}>You</Text>
                             </View>
-                            <Text style={styles.reviewDate}>
-                                {moment(myRatings[0].createdAt).format("DD/MM/YYYY")}
-                            </Text>
+                            <View>
+                                            <Text style={styles.reviewDate}>
+                                                {moment(myRatings.createdAt).format("DD-MM-YYYY")}
+                                            </Text>
+                                            <Text style={styles.reviewDate}>
+                                                {moment(myRatings.createdAt).format("hh:mm A")}
+                                            </Text>
+
+                                        </View>
                         </View>
                         <View style={styles.reviewRating}>
                             <Rating
@@ -366,26 +403,42 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                         <>
                             {otherRatings?.slice(0, 2).map((review, index) => (
                                 <View key={review._id || index} style={styles.reviewContainer}>
-                                    <View style={styles.FlexContainer}>
-                                        <View style={styles.FlexContainer}>
+                                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                                        <View>
+                                            <Image
+                                                source={review?.userId?.photoUrl[0]
+                                                    ? { uri: review.userId.photoUrl[0] }
+                                                    : require("../../Images/NoImage.png") // Fallback image
+                                                }
+                                                style={{ width: SW(50), height: SH(50), borderRadius: 50 }}
+                                                resizeMode="cover"
+                                            />
+                                        </View>
+                                        <View style={{ flex: 1, marginHorizontal: SW(10) }}>
                                             <Text style={styles.reviewName}>{review?.userId?.username || "Unknown"}</Text>
+                                            <View style={styles.reviewRating}>
+                                                <Rating
+                                                    type="star"
+                                                    ratingCount={5}
+                                                    imageSize={15}
+                                                    startingValue={review?.rating}
+                                                    readonly
+                                                />
+                                            </View>
+                                            <Text style={styles.reviewText}>{review?.review}</Text>
 
                                         </View>
+                                        <View style={{ alignSelf:"flex-start" }}>
+                                            <Text style={styles.reviewDate}>
+                                                {moment(review.createdAt).format("DD-MM-YYYY")}
+                                            </Text>
+                                            <Text style={styles.reviewDate}>
+                                                {moment(review.createdAt).format("hh:mm A")}
+                                            </Text>
 
-                                        <Text style={styles.reviewDate}>
-                                            {moment(review.createdAt).format("DD/MM/YYYY")}
-                                        </Text>
+                                        </View>
                                     </View>
-                                    <View style={styles.reviewRating}>
-                                        <Rating
-                                            type="star"
-                                            ratingCount={5}
-                                            imageSize={15}
-                                            startingValue={review?.rating}
-                                            readonly
-                                        />
-                                    </View>
-                                    <Text style={styles.reviewText}>{review?.review}</Text>
+
                                 </View>
                             ))}
 
@@ -400,7 +453,6 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                     ) : (
                         <Text style={styles.noReviewsText}>No reviews yet</Text>
                     )}
-
                 </View>
 
                 <View style={styles.container}>

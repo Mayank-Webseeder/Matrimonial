@@ -36,26 +36,31 @@ const InActiveDelete = ({ navigation }) => {
 
             const response = await axios.delete(DELETE_BIODATA, { headers });
 
-            if (response.status === 200 || response.status === 204) {
-                console.log("response", response.data)
+            console.log("✅ Response Data:", response.data);
+
+            if (response.status === 200 && response.data.status === true) {
                 ToastAndroid.show("Your Biodata has been deleted successfully!", ToastAndroid.SHORT);
 
-                // Show success modal only if API succeeds
+                // ✅ Show success modal only if deletion succeeds
                 setSuccessModalVisible(true);
             } else {
-                throw new Error("Unexpected response from server");
+                throw new Error(response.data.message || "Unexpected response from server");
             }
-        } catch (error) {
-            console.error("Error deleting Biodata:", error?.response?.data || error.message);
 
-            ToastAndroid.show(
-                error?.response?.data?.message || "Failed to delete Biodata. Please try again!",
-                ToastAndroid.LONG
-            );
+        } catch (error) {
+            console.error("❌ Error deleting Biodata:", error?.response?.data || error.message);
+
+            let errorMessage = "Failed to delete Biodata. Please try again!";
+            if (error.response && error.response.status === 400) {
+                errorMessage = error.response.data.message || errorMessage; // ✅ Show API error message
+            }
+
+            ToastAndroid.show(errorMessage, ToastAndroid.LONG);
         } finally {
             setIsLoading(false);
         }
     };
+
 
     const handleAction = (type) => {
         setActionType(type);
@@ -66,21 +71,35 @@ const InActiveDelete = ({ navigation }) => {
         setIsModalVisible(false); // Close confirmation modal
 
         if (actionType === 'deleteBiodata') {
-            const response = await DELETE_BIODATA_API(); // Call API
+            try {
+                const response = await DELETE_BIODATA_API(); // Call API
 
-            if (response.status === "failure") {
+                if (response?.status === 400) {
+                    Toast.show({
+                        type: "error",
+                        text1: "Error",
+                        text2: response.data.message || "Failed to delete Biodata!",
+                    });
+                } else {
+                    Toast.show({
+                        type: "success",
+                        text1: "Success",
+                        text2: "Biodata Deleted Successfully!",
+                    });
+                }
+
+            } catch (error) {
+                console.error("❌ Error in handleConfirm:", error);
+
                 Toast.show({
                     type: "error",
-                    text1: "Biodata Not Found!",
-                });
-            } else {
-                Toast.show({
-                    type: "success",
-                    text1: "Biodata Deleted Successfully!",
+                    text1: "Error",
+                    text2: error?.response?.data?.message || "Something went wrong!",
                 });
             }
         }
     };
+
 
 
     const closeSuccessModal = () => {

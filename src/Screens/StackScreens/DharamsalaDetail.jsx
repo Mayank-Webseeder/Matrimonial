@@ -79,26 +79,27 @@ const savedProfiles = async () => {
       };
 
       console.log("API Request:", `${SAVED_PROFILES}/${_id}`);
-      
+
       const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
 
       console.log("Response Data:", response?.data);
 
-      if (response.status === 200 && response?.data?.message) {
+      // ✅ Ensure response is successful
+      if (response.status === 200 && response.data.status === true) {
           Toast.show({
               type: "success",
               text1: "Success",
-              text2: response.data.message,
+              text2: response.data.message || "Profile saved successfully!",
               position: "top",
           });
 
-          // ✅ Correct State Update
-          setIsSaved(response.data.message.includes("saved successfully"));
+          // ✅ Update state correctly based on success message
+          setIsSaved(response.data.message.toLowerCase().includes("saved successfully"));
       }
   } catch (error) {
       console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
 
-      // Rollback State If API Fails
+      // ❌ Rollback State If API Fails
       setIsSaved((prev) => !prev);
 
       Toast.show({

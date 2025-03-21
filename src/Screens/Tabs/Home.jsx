@@ -5,7 +5,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from '../StyleScreens/HomeStyle';
 import Colors from '../../utils/Colors';
 import HeadingWithViewAll from '../../Components/HeadingWithViewAll';
-import { profileImages, Category, communityData, slider } from '../../DummyData/DummyData';
+import { Category, communityData, slider } from '../../DummyData/DummyData';
 import { ScrollView } from 'react-native-gesture-handler';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import Globalstyles from '../../utils/GlobalCss';
@@ -179,11 +179,10 @@ const Home = ({ navigation }) => {
       const profiledata=res.data.data;
 
       console.log("Profile Response:",profiledata);
-      
-      setProfileData(profiledata); // ✅ State update karo
+      setProfileData(profiledata);
       setconnReqNotification(profiledata?.connReqNotification)
       seteventPostNotification(profiledata?.eventPostNotification)
-      dispatch(setProfiledata(profiledata)); // Redux update karo
+      dispatch(setProfiledata(profiledata));
 
     } catch (error) {
       console.error("Error fetching profile:", error.response ? error.response.data : error.message);

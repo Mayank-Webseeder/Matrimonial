@@ -1,4 +1,4 @@
-import React, { useState,useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Text, View, TouchableOpacity, Modal, TextInput, SafeAreaView, StatusBar } from 'react-native';
 import Colors from '../../utils/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -65,11 +65,11 @@ const ChangePassword = ({ navigation }) => {
 
       console.log("🔹 Sending API Request:", payload);
       const response = await axios.post(CHANGE_PASSWORD, payload, { headers });
-      setLoading(false);
 
       console.log("✅ API Response:", response.data);
+      setLoading(false);
 
-      if (response.status === 200) {
+      if (response.status === 200 && response.data.status === true) {
         Toast.show({ type: 'success', text1: 'Success', text2: 'Password changed successfully!' });
         setIsModalVisible(true);
       } else {
@@ -78,7 +78,8 @@ const ChangePassword = ({ navigation }) => {
 
     } catch (error) {
       setLoading(false);
-      if (error.response) {
+
+      if (error.response && error.response.status === 400) {
         console.log("❌ API Error Response:", error.response.data);
         Toast.show({ type: 'error', text1: 'Error', text2: error.response.data.message || "Error changing password!" });
       } else {
@@ -87,6 +88,7 @@ const ChangePassword = ({ navigation }) => {
       }
     }
   };
+
 
   const closeModalAndNavigate = () => {
     setIsModalVisible(false);
@@ -176,7 +178,7 @@ const ChangePassword = ({ navigation }) => {
           </View>
         </View>
       </Modal>
-      <Toast/>
+      <Toast />
     </SafeAreaView>
   );
 };

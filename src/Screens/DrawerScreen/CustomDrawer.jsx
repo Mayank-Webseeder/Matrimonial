@@ -5,12 +5,13 @@ import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { useSelector } from 'react-redux';
+import { useSelector,useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { disconnectSocket } from '../../../socket';
 import Toast from 'react-native-toast-message';
-
+import { resetBioData } from '../../ReduxStore/Slices/BiodataSlice';
 const CustomDrawer = (props) => {
+  const dispatch = useDispatch();
   const { navigation } = props;
   const [openDropdown, setOpenDropdown] = useState(null);
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
@@ -53,21 +54,24 @@ const CustomDrawer = (props) => {
 
   const handleLogout = async () => {
     try {
-      disconnectSocket(); // ✅ Properly disconnect socket
-  
-      await AsyncStorage.removeItem("userToken");
-      await AsyncStorage.removeItem("userId");
-  
-      navigation.reset({
-        index: 0,
-        routes: [{ name: "AuthStack" }],
-      });
-  
-      console.log("✅ Logged out successfully");
+        disconnectSocket(); // ✅ Socket disconnect karo
+
+        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem("userId");
+
+        dispatch(resetBioData()); // ✅ Redux store clear karo
+
+        navigation.reset({
+            index: 0,
+            routes: [{ name: "AuthStack" }],
+        });
+
+        console.log("✅ Logged out successfully");
     } catch (error) {
-      console.error("❌ Error logging out:", error);
+        console.error("❌ Error logging out:", error);
     }
-  };
+};
+
   
 
   const handleDropdownToggle = (dropdown) => {

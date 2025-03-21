@@ -58,14 +58,11 @@ const MyProfile = ({ navigation }) => {
         navigation.navigate("ProfileDetail", { profileType });
     };
 
-
     const fetchProfilesDetails = async (profileType) => {
         try {
             setLoading(true);
             setSelectedProfile(profileType);
             const token = await AsyncStorage.getItem('userToken');
-            // const formattedType = profileType.toLowerCase(); // Convert label to lowercase
-
             const response = await axios.get(
                 `https://api-matrimonial.webseeder.tech/api/v1/user/profiles/${profileType}`,
                 {
@@ -74,7 +71,7 @@ const MyProfile = ({ navigation }) => {
             );
 
             console.log("Fetched Data:", response.data.data);
-            setFetchProfileDetails(response.data.data); // Store API response
+            setFetchProfileDetails(response.data.data);
             setLoading(false);
         } catch (error) {
             console.error("Error fetching profiles:", error);

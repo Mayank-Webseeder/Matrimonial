@@ -225,6 +225,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
         try {
             setIsLoading(true);
             const token = await AsyncStorage.getItem("userToken");
+    
             if (!token) {
                 Toast.show({
                     type: "error",
@@ -233,27 +234,30 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                 });
                 return;
             }
-
+    
             const headers = {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             };
-
+    
             const payload = await constructCommitteePayload(CommitteeData, !CommitteeData?._id);
             console.log("Payload:", payload);
+    
             const apiCall = CommitteeData?._id ? axios.patch : axios.post;
             const endpoint = CommitteeData?._id ? `${UPDATE_COMMITTEE}` : CREATE_COMMITTEE;
-
+    
             const response = await apiCall(endpoint, payload, { headers });
             console.log("API Response:", response.data);
-            if (response.status === 200 || response.status === 201) {
+    
+            if (response.status === 200 && response.data.status === true) {
                 Toast.show({
                     type: "success",
                     text1: CommitteeData?._id ? "Profile Updated Successfully" : "Committee Profile Created Successfully",
                     text2: response.data.message || "Your changes have been saved!",
                 });
-
+    
                 setIsEditing(false);
+    
                 if (!CommitteeData?._id && response.data?.data?._id) {
                     setCommitteeData((prev) => ({
                         ...prev,
@@ -262,24 +266,35 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                 }
                 return;
             }
+    
             throw new Error(response.data.message || "Something went wrong");
-
+    
         } catch (error) {
+            let errorMessage = "Failed to save committee data.";
+    
             if (error.response) {
                 console.error("API Error:", error.response.data);
+    
+                if (error.response.status === 400) {
+                    errorMessage = error.response.data.message || "Bad request. Please check your input.";
+                } else {
+                    errorMessage = error.response.data.message || errorMessage;
+                }
             } else {
                 console.error("Unexpected Error:", error.message);
             }
+    
             Toast.show({
                 type: "error",
                 text1: "Error",
-                text2: error.response?.data?.message || "Failed to save activist data.",
+                text2: errorMessage,
             });
-
+    
         } finally {
             setIsLoading(false);
         }
     };
+    
 
     return (
         <SafeAreaView style={Globalstyles.container}>

@@ -1,4 +1,4 @@
-import {StyleSheet,Text,View,TextInput,TouchableOpacity,ScrollView,StatusBar,SafeAreaView,ToastAndroid} from "react-native";
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, ToastAndroid } from "react-native";
 import React, { useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
@@ -10,6 +10,7 @@ import { UPDATE_PROFILE } from "../../utils/BaseUrl";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSelector } from "react-redux";
+import Toast from "react-native-toast-message";
 
 const UpdateProfile = ({ navigation }) => {
   const ProfileData = useSelector((state) => state.profile);
@@ -23,42 +24,57 @@ const UpdateProfile = ({ navigation }) => {
 
   const update_profile = async () => {
     try {
-        const token = await AsyncStorage.getItem("userToken");
-        if (!token) throw new Error("Authorization token is missing.");
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) throw new Error("Authorization token is missing.");
 
-        const headers = {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-        };
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
 
-        const payload = {
-            username,
-            dob,
-            city,
-            gender,
-        };
+      const payload = {
+        username,
+        dob,
+        city,
+        gender,
+      };
 
-        const response = await axios.put(UPDATE_PROFILE, payload, { headers });
-        const message = response?.data?.message;
-        console.log("Profile update response:", response.data);
+      console.log("🔹 Sending Profile Update Request to:", UPDATE_PROFILE);
+      console.log("🔹 Payload:", payload);
 
-        if (message && message.includes("User profile updated successfully.")) {
-            ToastAndroid.show("Profile Updated Successfully!", ToastAndroid.SHORT);
-            navigation.navigate("MainApp");
-        } else {
-            ToastAndroid.show(message || "Your profile has been updated.", ToastAndroid.SHORT);
-        }
+      const response = await axios.put(UPDATE_PROFILE, payload, { headers });
 
+      console.log("✅ Profile Update Response:", JSON.stringify(response.data));
+
+      if (response.status === 200 && response.data.status === true) {
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "Profile Updated Successfully!",
+          position: "top",
+        });
+
+        navigation.navigate("MainApp");
+      } else {
+        throw new Error(response.data.message || "Your profile has been updated, but there was an issue.");
+      }
     } catch (error) {
-        if (error.response) {
-            console.error("API Error:", error.response.data);
-            ToastAndroid.show(error.response.data.message || "Unable to update profile. Please try again.", ToastAndroid.SHORT);
-        } else {
-            console.error("Error updating profile:", error.message);
-            ToastAndroid.show("Something went wrong. Please try again later.", ToastAndroid.SHORT);
-        }
+      console.error("❌ API Error:", error.response?.data || error.message);
+
+      let errorMessage = "Unable to update profile. Please try again.";
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
+
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: errorMessage,
+        position: "top",
+      });
     }
-};
+  };
+
 
 
   const handleDateChange = (event, selectedDate) => {
@@ -148,6 +164,7 @@ const UpdateProfile = ({ navigation }) => {
           <Text style={styles.updateButtonText}>Update Profile</Text>
         </TouchableOpacity>
       </ScrollView>
+      <Toast />
     </SafeAreaView>
   );
 };
@@ -192,17 +209,17 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   updateButton: {
-    backgroundColor:Colors.theme_color,
-        paddingVertical: SH(5),
-        borderRadius: 5,
-        alignItems: 'center',
-        marginTop: SH(20),
-        marginBottom: SH(80)
+    backgroundColor: Colors.theme_color,
+    paddingVertical: SH(5),
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: SH(20),
+    marginBottom: SH(80)
   },
   updateButtonText: {
     color: Colors.light,
     fontSize: SF(15),
     fontWeight: 'Poppins-Bold',
-    textTransform:"capitalize"
+    textTransform: "capitalize"
   },
 });

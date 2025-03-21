@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, FlatList, ScrollView, Image, SafeAreaView, StatusBar, ActivityIndicator,ToastAndroid } from "react-native";
+import { View, Text, TouchableOpacity, FlatList, ScrollView, Image, SafeAreaView, StatusBar, ActivityIndicator, ToastAndroid } from "react-native";
 import React, { useState, useRef, useCallback } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -8,9 +8,9 @@ import styles from "../StyleScreens/SavedProfileStyle";
 import Colors from "../../utils/Colors";
 import HeadingWithViewAll from "../../Components/HeadingWithViewAll";
 import Globalstyles from "../../utils/GlobalCss";
-import { SavedProfileData } from "../../DummyData/DummyData";
 import { DELETE_SAVED_PROFILE, GET_SAVED__PROFILES } from "../../utils/BaseUrl";
 import { useFocusEffect } from '@react-navigation/native';
+import Toast from "react-native-toast-message";
 
 const SavedProfile = ({ navigation }) => {
   const flatListRef = useRef(null);
@@ -23,22 +23,22 @@ const SavedProfile = ({ navigation }) => {
       fetchSavedProfiles();
     }, []) // This will re-fetch saved profiles whenever the screen is focused
   );
-  
+
   const fetchSavedProfiles = async () => {
     try {
       setLoading(true); // Ensure loading state is set before fetching
       const token = await AsyncStorage.getItem("userToken");
-  
+
       if (!token) {
         throw new Error("No token found");
       }
-  
+
       const headers = { Authorization: `Bearer ${token}` };
       const response = await axios.get(GET_SAVED__PROFILES, { headers });
-  
+
       console.log("Fetched saved profiles:", JSON.stringify(response.data?.savedProfiles));
       setSavedProfiles(response.data?.savedProfiles || []);
-  
+
       setTimeout(() => {
         flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
       }, 100);
@@ -48,61 +48,76 @@ const SavedProfile = ({ navigation }) => {
       setLoading(false);
     }
   };
-  
+
   const DeleteSaveProfile = async (_id) => {
     if (!_id) {
       console.warn("Invalid ID: Cannot delete profile without a valid _id");
-      ToastAndroid.show("Error: Profile ID is missing!", ToastAndroid.SHORT);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Profile ID is missing!",
+      });
       return;
     }
-  
+
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
-  
+
       if (!token) {
         throw new Error("No token found. Please log in again.");
       }
-  
+
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-  
+
       console.log("Deleting saved profile with ID:", _id);
       console.log("Headers:", headers);
-  
+
       const response = await axios.delete(`${DELETE_SAVED_PROFILE}/${_id}`, { headers });
-  
-      if (response.status === 200 || response.status === 204) {
+      console.log("response", JSON.stringify(response.data))
+
+      if (response.status === 200 && response.data.status === true) {
         console.log("Profile deleted successfully:", response.data);
-        ToastAndroid.show("Saved profile deleted successfully!", ToastAndroid.SHORT);
-  
+
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "Saved profile deleted successfully!",
+        });
+
         // ✅ Refresh saved profiles after deletion
         fetchSavedProfiles();
       } else {
-        throw new Error("Unexpected response from server");
+        throw new Error(response.data.message || "Something went wrong!");
       }
     } catch (error) {
       console.error("Error deleting profile:", error?.response?.data || error.message);
-  
-      ToastAndroid.show(
-        error?.response?.data?.message || "Failed to delete profile. Please try again!",
-        ToastAndroid.LONG
-      );
+
+      let errorMessage = "Failed to delete profile. Please try again!";
+      if (error.response && error.response.status === 400) {
+        errorMessage = error.response.data?.message || "Invalid request!";
+      }
+
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: errorMessage,
+      });
     } finally {
       setLoading(false);
     }
   };
-  
 
   const getFilteredData = () => {
     if (["Biodata", "Pandit", "Jyotish", "Kathavachak", "Dharmshala", "Committee"].includes(activeCategory)) {
       const filteredProfiles = savedProfiles.filter((item) => item.profileType === activeCategory);
-      return filteredProfiles.length > 0 ? filteredProfiles : null; // Return null if no profiles found
+      return filteredProfiles.length > 0 ? filteredProfiles : null;
     } else {
-      const filteredProfiles = SavedProfileData.filter((item) => item.category === activeCategory);
-      return filteredProfiles.length > 0 ? filteredProfiles : null; // Return null if no profiles found
+      const filteredProfiles = savedProfiles.filter((item) => item.category === activeCategory);
+      return filteredProfiles.length > 0 ? filteredProfiles : null;
     }
   };
 
@@ -110,21 +125,33 @@ const SavedProfile = ({ navigation }) => {
     const { saveProfile, profileType } = item;
 
     return (
-      <TouchableOpacity
+      <View
         style={styles.card}
       // onPress={() => navigation.navigate("MatrimonyPeopleProfile", { userDetails: saveProfile, userId: saveProfile.userId })}
       >
-        <View style={styles.detailsContainer}>
+        <TouchableOpacity style={styles.detailsContainer}
+          onPress={() => {
+            if (profileType === "Biodata") {
+              navigation.navigate("MatrimonyPeopleProfile", { userDetails: saveProfile, userId: saveProfile?.userId, isSaved: true });
+            } else if (profileType === "Pandit") {
+              navigation.navigate("PanditDetailPage", { pandit_id: saveProfile._id, isSaved: true });
+            } else if (profileType === "Jyotish") {
+              navigation.navigate("JyotishDetailsPage", { jyotish_id: saveProfile._id, isSaved: true });
+            } else if (profileType === "Kathavachak") {
+              navigation.navigate("KathavachakDetailsPage", { kathavachak_id: saveProfile._id, isSaved: true });
+            } else if (profileType === "Dharmshala") {
+              navigation.navigate("DharamsalaDetail", { DharamsalaData: saveProfile, isSaved: true, _id: saveProfile._id });
+            }
+          }}>
           {profileType === "Biodata" && (
             <>
               <Image source={{ uri: saveProfile.personalDetails?.closeUpPhoto || "https://via.placeholder.com/150" }} style={styles.image} />
               <View style={styles.detailscontent}>
                 <Text style={styles.name}>{saveProfile.personalDetails?.fullname || "N/A"}</Text>
-                <Text style={styles.text}>City: {saveProfile.personalDetails?.cityOrVillage || "N/A"}</Text>
+                <Text style={styles.text} numberOfLines={1}>City: {saveProfile.personalDetails?.cityOrVillage || "N/A"}</Text>
                 <Text style={styles.text}>Age: {saveProfile.personalDetails?.dob ? new Date().getFullYear() - new Date(saveProfile.personalDetails.dob).getFullYear() : "N/A"} Years</Text>
-                <Text style={styles.text}>Marital Status: {saveProfile.personalDetails?.maritalStatus || "N/A"}</Text>
+                <Text style={styles.text}>{saveProfile.personalDetails?.maritalStatus || "N/A"}</Text>
                 <Text style={styles.text}>Sub Caste: {saveProfile.personalDetails?.subCaste || "N/A"}</Text>
-                <Text style={styles.unsaveText} onPress={()=>DeleteSaveProfile(saveProfile?._id)}>Remove</Text>
               </View>
             </>
           )}
@@ -141,7 +168,6 @@ const SavedProfile = ({ navigation }) => {
                 <Text style={styles.text}>Experience: {saveProfile.experience || "N/A"} years</Text>
                 <Text style={styles.text}>Sub Caste: {saveProfile.subCaste || "N/A"}</Text>
                 <Text style={styles.text}>Area: {saveProfile.area || "N/A"}</Text>
-                <Text style={styles.unsaveText} onPress={()=>DeleteSaveProfile(saveProfile?._id)}>Remove</Text>
               </View>
             </>
           )}
@@ -156,7 +182,6 @@ const SavedProfile = ({ navigation }) => {
                 <Text style={styles.name}>{saveProfile?.dharmshalaName || "N/A"}</Text>
                 <Text style={styles.text}>City: {saveProfile?.city || "N/A"}</Text>
                 <Text style={styles.text}>Sub Caste: {saveProfile?.subCaste || "N/A"}</Text>
-                <Text style={styles.unsaveText} onPress={()=>DeleteSaveProfile(saveProfile?._id)}>Remove</Text>
               </View>
             </>
           )}
@@ -171,12 +196,12 @@ const SavedProfile = ({ navigation }) => {
                 <Text style={styles.name}>{saveProfile?.committeeTitle || "N/A"}</Text>
                 <Text style={styles.text}>City: {saveProfile?.city || "N/A"}</Text>
                 <Text style={styles.text}>Sub Caste: {saveProfile?.subCaste || "N/A"}</Text>
-                <Text style={styles.unsaveText} onPress={()=>DeleteSaveProfile(saveProfile?._id)}>Remove</Text>
               </View>
             </>
           )}
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
+        <Text style={styles.unsaveText} onPress={() => DeleteSaveProfile(saveProfile?._id)}>Remove</Text>
+      </View>
     );
   };
 
@@ -239,9 +264,10 @@ const SavedProfile = ({ navigation }) => {
         )}
 
       </View>
-
+      <Toast />
     </SafeAreaView>
   );
 };
 
 export default SavedProfile;
+

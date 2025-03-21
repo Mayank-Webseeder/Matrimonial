@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
         height: SH(270)
     },
     contactCard: {
-        paddingVertical: SH(20),
+        paddingVertical: SH(5),
         paddingHorizontal: SW(20),
         marginVertical: SH(20),
         marginHorizontal: SW(10),

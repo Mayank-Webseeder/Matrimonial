@@ -46,66 +46,70 @@ const CreatePost = ({ navigation, route }) => {
         }
     };
 
-
     const handleSubmit = async () => {
         try {
             setLoading(true);
-            const token = await AsyncStorage.getItem('userToken'); 
+            const token = await AsyncStorage.getItem('userToken');
             if (!token) throw new Error('No token found');
-    
+
             const payload = {
                 title: title,
                 description: description,
                 images: photos
             };
-    
+
             console.log("Payload:", payload);
-    
+
             const headers = {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             };
-    
-            const API_URL = `${CREATE_EVENT_NEWS}`; 
-    
+
+            const API_URL = `${CREATE_EVENT_NEWS}`;
+
             console.log('Submitting event news to:', API_URL);
-    
+
             const response = await axios.post(API_URL, payload, { headers });
             console.log("Event response:", JSON.stringify(response.data));
-    
-            if (response.status === 200 || response.status === 201) {
+
+            if (response.status === 200 && response.data.status === true) {
                 Toast.show({
                     type: 'success',
                     text1: 'Success',
                     text2: response.data.message || 'Your event has been created successfully!',
                     position: "top",
                     onHide: () => {
-                        navigation.navigate('EventNews'); // ✅ Toast band hone ke baad navigate
+                        navigation.navigate('EventNews'); // ✅ Navigate after toast hides
                     }
                 });
+            } else {
+                throw new Error(response.data.message || "Unexpected response from server");
             }
+
         } catch (error) {
             console.error('Error submitting event:', error);
-    
+
             let errorMessage = 'Failed to create event. Please try again later.';
-    
-            if (error.response?.data?.message) {
-                errorMessage = error.response.data.message;
+
+            if (error.response) {
+                console.error("API Error:", error.response.data);
+                if (error.response.status === 400) {
+                    errorMessage = error.response.data.message || "Bad request. Please check your input.";
+                } else {
+                    errorMessage = error.response.data.message || errorMessage;
+                }
             }
-    
+
             Toast.show({
                 type: 'error',
                 text1: 'Error',
                 text2: errorMessage,
             });
-    
-            setLoading(false);
+
         } finally {
             setLoading(false);
         }
     };
-    
-
 
     return (
         <SafeAreaView style={Globalstyles.container}>

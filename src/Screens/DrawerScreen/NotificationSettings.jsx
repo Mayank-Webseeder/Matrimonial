@@ -9,6 +9,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { EVENT_NEWS_NOTIFICATION_HANDLE_API, CONNECTION_REQUEST_HANDLE_API } from "../../utils/BaseUrl";
 import { useSelector } from "react-redux";
 import Toast from "react-native-toast-message";
+import { DrawerActions } from "@react-navigation/native";
 
 const NotificationSettings = ({ navigation }) => {
   const ProfileData = useSelector((state) => state.profile);
@@ -112,7 +113,7 @@ const NotificationSettings = ({ navigation }) => {
 
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>Notification Settings</Text>

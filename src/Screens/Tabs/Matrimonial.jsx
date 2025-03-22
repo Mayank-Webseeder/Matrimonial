@@ -15,6 +15,7 @@ import AppIntroSlider from 'react-native-app-intro-slider';
 import { useFocusEffect } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import Toast from 'react-native-toast-message';
+import { SW } from '../../utils/Dimensions';
 
 const Matrimonial = ({ navigation }) => {
   const sliderRef = useRef(null);
@@ -205,71 +206,70 @@ const Matrimonial = ({ navigation }) => {
     const isSaved = item.isSaved;
     // console.log("isSaved",isSaved);
     return (
-      <Pressable
-        style={styles.card}
-        onPress={popop}
-      >
-        <Image
-          source={item.personalDetails.closeUpPhoto ? { uri: item.personalDetails.closeUpPhoto } : require('../../Images/NoImage.png')}
-          style={styles.ProfileImage}
-        />
-        {item.verified && (
-          <View style={styles.verifiedContainer}>
-            <Image
-              source={require("../../Images/verified.png")}
-              style={styles.verifiedBadge}
-            />
-            <Text style={styles.verifiedText}>Verified</Text>
-          </View>
-        )}
-
-        <View style={styles.profileData}>
-          {/* Full Name at the Top */}
-          <Text style={[styles.text, styles.boldText]}>{item?.personalDetails?.fullname}</Text>
-
-          {/* Two Column Layout */}
-          <View style={styles.columnsContainer}>
-            {/* Left Column */}
-            <View style={styles.leftColumn}>
-              <Text style={[styles.text, styles.rowItem]}>
-                {new Date().getFullYear() - new Date(item?.personalDetails?.dob).getFullYear()} Yrs. , {item?.personalDetails?.heightFeet}
-              </Text>
-              <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.subCaste}</Text>
-              <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.maritalStatus}</Text>
-              <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.manglikStatus}</Text>
-              <Text style={[styles.text, styles.rowItem]}>Disability: {item?.personalDetails?.disabilities}</Text>
-            </View>
-
-            {/* Right Column */}
-            <View style={styles.rightColumn}>
-              <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.currentCity}</Text>
-              <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.occupation}</Text>
-              <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.annualIncome} INR </Text>
-              <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.qualification}</Text>
-            </View>
-          </View>
-          <View style={styles.sharecontainer}>
-            <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
-              <FontAwesome
-                name={isSaved ? "bookmark" : "bookmark-o"}
-                size={19}
-                color={Colors.dark}
+      <View style={styles.card}>
+        <Pressable onPress={popop}>
+          <Image
+            source={item.personalDetails.closeUpPhoto ? { uri: item.personalDetails.closeUpPhoto } : require('../../Images/NoImage.png')}
+            style={styles.ProfileImage}
+          />
+          {item.verified && (
+            <View style={styles.verifiedContainer}>
+              <Image
+                source={require("../../Images/verified.png")}
+                style={styles.verifiedBadge}
               />
-              <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text>
-            </TouchableOpacity>
+              <Text style={styles.verifiedText}>Verified</Text>
+            </View>
+          )}
 
-            <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
-              <Feather name="send" size={19} color={Colors.dark} />
-              <Text style={styles.iconText}>Share</Text>
-            </TouchableOpacity>
+          <View style={styles.profileData}>
+            {/* Full Name at the Top */}
+            <Text style={[styles.text, styles.boldText]}>{item?.personalDetails?.fullname}</Text>
 
-            <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ReportPage', { profileId: item?._id })}>
-              <MaterialIcons name="error-outline" size={20} color={Colors.dark} />
-              <Text style={styles.iconText}>Report</Text>
-            </TouchableOpacity>
+            {/* Two Column Layout */}
+            <View style={styles.columnsContainer}>
+              {/* Left Column */}
+              <View style={styles.leftColumn}>
+                <Text style={[styles.text, styles.rowItem]}>
+                  {new Date().getFullYear() - new Date(item?.personalDetails?.dob).getFullYear()} Yrs. , {item?.personalDetails?.heightFeet}
+                </Text>
+                <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.subCaste}</Text>
+                <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.maritalStatus}</Text>
+                <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.manglikStatus}</Text>
+                <Text style={[styles.text, styles.rowItem]}>Disability: {item?.personalDetails?.disabilities}</Text>
+              </View>
+
+              {/* Right Column */}
+              <View style={styles.rightColumn}>
+                <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.currentCity}</Text>
+                <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.occupation}</Text>
+                <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.annualIncome} INR </Text>
+                <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.qualification}</Text>
+              </View>
+            </View>
           </View>
+        </Pressable>
+        <View style={[styles.sharecontainer, { paddingHorizontal: SW(20) }]}>
+          <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
+            <FontAwesome
+              name={isSaved ? "bookmark" : "bookmark-o"}
+              size={19}
+              color={Colors.dark}
+            />
+            <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
+            <Feather name="send" size={19} color={Colors.dark} />
+            <Text style={styles.iconText}>Share</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ReportPage', { profileId: item?._id })}>
+            <MaterialIcons name="error-outline" size={20} color={Colors.dark} />
+            <Text style={styles.iconText}>Report</Text>
+          </TouchableOpacity>
         </View>
-      </Pressable>
+      </View>
     );
   };
 

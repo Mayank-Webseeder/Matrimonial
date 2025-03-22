@@ -10,6 +10,7 @@ import axios from 'axios';
 import { toggleBlurPhotos, setBlurPhotosState } from '../../ReduxStore/Slices/privacySlice';
 import { useSelector, useDispatch } from 'react-redux';
 import Toast from 'react-native-toast-message';
+import { DrawerActions } from '@react-navigation/native';
 
 const PrivacySettings = ({ navigation }) => {
     const dispatch = useDispatch();
@@ -82,7 +83,7 @@ const PrivacySettings = ({ navigation }) => {
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
             <View style={Globalstyles.header}>
                 <View style={{ flexDirection: 'row', alignItems: "center" }}>
-                    <TouchableOpacity onPress={() => navigation.navigate('Tabs')}>
+                    <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
                     <Text style={Globalstyles.headerText}>Privacy Settings</Text>

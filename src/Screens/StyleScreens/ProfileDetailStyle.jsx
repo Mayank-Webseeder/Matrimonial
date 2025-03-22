@@ -3,6 +3,18 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
+  RepostText: {
+    backgroundColor: Colors.theme_color,
+    color: Colors.light,
+    paddingVertical: SH(3),
+    paddingHorizontal: SW(10),
+    borderRadius: 5,
+    fontFamily: "Poppins-Regular",
+    fontSize: SF(13),
+    textAlign: "center",
+    marginHorizontal: SW(10),
+    marginBottom: 0
+},
   biodataname: {
     fontSize: SF(15),
     color: Colors.dark,
@@ -188,7 +200,6 @@ const styles = StyleSheet.create({
 
   editButton: {
     backgroundColor: Colors.theme_color,
-    alignSelf: "flex-end",
     marginRight: SW(10),
     paddingHorizontal: SW(10),
     paddingVertical: SH(5),

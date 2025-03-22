@@ -12,10 +12,6 @@ import Globalstyles from '../../utils/GlobalCss';
 import DetailedProfile from './DetailedProfile';
 import PartnersPreference from './PartnersPreference';
 import PhotoGallery from './PhotoGallery';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { REPOST } from '../../utils/BaseUrl';
-import axios from 'axios';
-import Toast from 'react-native-toast-message';
 import ImageViewing from 'react-native-image-viewing';
 
 
@@ -41,55 +37,6 @@ const MatrimonyPage = ({ navigation }) => {
             setBiodataAvailable(true);
         }
     }, [MyprofileData]);
-
-    const Repost = async () => {
-        const token = await AsyncStorage.getItem('userToken');
-        if (!token) {
-            Toast.show({
-                type: 'error',
-                text1: 'Error',
-                text2: 'No token found!',
-            });
-            return;
-        }
-
-        const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-        };
-
-        try {
-            const response = await axios.post(REPOST, {}, { headers });
-
-            console.log("Repost Data:", response.data);
-
-            if (response.status === 200 && response.data.status === true) {
-                Toast.show({
-                    type: 'success',
-                    text1: 'Success',
-                    text2: response.data.message || 'Reposted successfully!',
-                });
-            } else {
-                throw new Error(response.data.message || 'Something went wrong!');
-            }
-        } catch (error) {
-            console.error("Error fetching profile:", error);
-            let errorMessage = "Something went wrong. Please try again later.";
-
-            if (error.response && error.response.status === 400) {
-                errorMessage = error.response.data?.message || "Failed to repost. Please try again!";
-            }
-
-            Toast.show({
-                type: 'error',
-                text1: 'Error',
-                text2: errorMessage,
-            });
-        }
-    };
-
-
-
 
     const capitalizeFirstLetter = (text) => {
         return text ? text.charAt(0).toUpperCase() + text.slice(1) : "Unknown";
@@ -147,11 +94,6 @@ const MatrimonyPage = ({ navigation }) => {
                     </View>
 
                 </View>
-                {biodataAvailable && (
-                    <Text style={styles.RepostText} onPress={() => Repost()}>
-                        Repost
-                    </Text>
-                )}
                 {/* Tab Buttons */}
                 <View style={styles.IconFlex}>
                     <TouchableOpacity

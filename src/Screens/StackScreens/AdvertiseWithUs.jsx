@@ -137,17 +137,17 @@ const AdvertiseWithUs = ({ navigation }) => {
                                 </Text>
                             </View>
 
-                            <View style={styles.iconContainer}>
+                            {/* <View style={styles.iconContainer}>
                                 <MaterialIcons name="location-on" size={22} color={Colors.light} />
                                 <Text style={styles.contactText}>132 Dartmouth Street Boston, MA</Text>
-                            </View>
+                            </View> */}
 
                             {/* Social Media Icons */}
-                            <View style={styles.socialContainer}>
+                            {/* <View style={styles.socialContainer}>
                                 <AntDesign name="twitter" size={20} color={Colors.light} style={styles.socialIcon} />
                                 <AntDesign name="instagram" size={20} color={Colors.light} style={styles.socialIcon} />
                                 <MaterialIcons name="discord" size={20} color={Colors.light} style={styles.socialIcon} />
-                            </View>
+                            </View> */}
                         </View>
                     </View>
 

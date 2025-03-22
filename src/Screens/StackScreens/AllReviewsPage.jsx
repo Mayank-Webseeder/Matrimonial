@@ -1,17 +1,17 @@
-import React,{useEffect} from 'react';
-import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, StatusBar,Image } from 'react-native';
 import styles from '../StyleScreens/AllReviewsPageStyle';
 import { Rating } from 'react-native-ratings';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
 import Globalstyles from '../../utils/GlobalCss';
-import { SH } from '../../utils/Dimensions';
+import { SH,SW } from '../../utils/Dimensions';
 import moment from 'moment';
 const AllReviewsPage = ({ route, navigation }) => {
     const { reviews } = route.params;
-   useEffect(()=>{
-     console.log("reviews",reviews);
-   },[])
+    useEffect(() => {
+        console.log("reviews", reviews);
+    }, [])
     return (
         <SafeAreaView style={Globalstyles.container}>
             <StatusBar
@@ -29,28 +29,43 @@ const AllReviewsPage = ({ route, navigation }) => {
             </View>
             <ScrollView style={{ marginVertical: SH(10) }} showsVerticalScrollIndicator={false}>
                 {reviews.map((review, index) => (
-                     <View key={review._id || index} style={styles.reviewContainer}>
-                     <View style={styles.FlexContainer}>
-                         <View style={styles.FlexContainer}>
-                             <Text style={styles.reviewName}>{review?.userId?.username || "Unknown"}</Text>
+                    <View key={review._id || index} style={styles.reviewContainer}>
+                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                            <View>
+                                <Image
+                                    source={review?.userId?.photoUrl[0]
+                                        ? { uri: review.userId.photoUrl[0] }
+                                        : require("../../Images/NoImage.png") // Fallback image
+                                    }
+                                    style={{ width: SW(50), height: SH(50), borderRadius: 50 }}
+                                    resizeMode="cover"
+                                />
+                            </View>
+                            <View style={{ flex: 1, marginHorizontal: SW(10) }}>
+                                <Text style={styles.reviewName}>{review?.userId?.username || "Unknown"}</Text>
+                                <View style={styles.reviewRating}>
+                                    <Rating
+                                        type="star"
+                                        ratingCount={5}
+                                        imageSize={15}
+                                        startingValue={review?.rating}
+                                        readonly
+                                    />
+                                </View>
+                                <Text style={styles.reviewText}>{review?.review}</Text>
 
-                         </View>
+                            </View>
+                            <View style={{ alignSelf: "flex-start" }}>
+                                <Text style={styles.reviewDate}>
+                                    {moment(review.createdAt).format("DD-MM-YYYY")}
+                                </Text>
+                                <Text style={styles.reviewDate}>
+                                    {moment(review.createdAt).format("hh:mm A")}
+                                </Text>
 
-                         <Text style={styles.reviewDate}>
-                             {moment(review.createdAt).format("DD/MM/YYYY")}
-                         </Text>
-                     </View>
-                     <View style={styles.reviewRating}>
-                         <Rating
-                             type="star"
-                             ratingCount={5}
-                             imageSize={15}
-                             startingValue={review?.rating}
-                             readonly
-                         />
-                     </View>
-                     <Text style={styles.reviewText}>{review?.review}</Text>
-                 </View>
+                            </View>
+                        </View>
+                    </View>
                 ))}
             </ScrollView>
         </SafeAreaView>

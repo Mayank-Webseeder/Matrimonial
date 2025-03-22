@@ -1,5 +1,5 @@
 
-import {Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView,StatusBar, Linking, Pressable} from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable } from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 import { slider } from '../../DummyData/DummyData';
 import { Image } from 'react-native';
@@ -76,6 +76,14 @@ const Committee = ({ navigation }) => {
 
     return () => clearInterval(interval);
   }, [currentIndex]);
+
+  const SliderRenderItem = ({ item }) => {
+    return (
+      <View>
+        <Image source={item.image} style={styles.sliderImage} />
+      </View>
+    );
+  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -156,46 +164,46 @@ const Committee = ({ navigation }) => {
 
   const handleUploadButton = () => {
     if (MyActivistProfile && MyActivistProfile._id) {
-        Toast.show({
-            type: "info",
-            text1: "Info",
-            text2: "You can fill details!",
-            position: "top",
-        });
-        setTimeout(() => {
-            setActiveButton(2);
-            navigation.navigate("DharamsalaSubmissionPage");
-        }, 2000);
-    } else {
-        Toast.show({
-            type: "error",
-            text1: "Error",
-            text2: "Only activists can fill details!",
-            position: "top",
-        });
-    }
-};
-
-const savedProfiles = async (_id) => {
-  if (!_id) {
       Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: "User ID not found!",
-          position: "top",
+        type: "info",
+        text1: "Info",
+        text2: "You can fill details!",
+        position: "top",
+      });
+      setTimeout(() => {
+        setActiveButton(2);
+        navigation.navigate("DharamsalaSubmissionPage");
+      }, 2000);
+    } else {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Only activists can fill details!",
+        position: "top",
+      });
+    }
+  };
+
+  const savedProfiles = async (_id) => {
+    if (!_id) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "User ID not found!",
+        position: "top",
       });
       return;
-  }
+    }
 
-  try {
+    try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-          throw new Error("No token found");
+        throw new Error("No token found");
       }
 
       const headers = {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       };
 
       const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
@@ -203,105 +211,105 @@ const savedProfiles = async (_id) => {
       console.log("Response Data:", JSON.stringify(response?.data));
 
       if (response?.data?.message) {
-          Toast.show({
-              type: "success",
-              text1: "Success",
-              text2: response.data.message,
-              position: "top",
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: response.data.message,
+          position: "top",
+        });
+        setTimeout(() => {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "Committee" }],
           });
-          setTimeout(() => {
-              navigation.reset({
-                  index: 0,
-                  routes: [{ name: "Committee" }],
-              });
-          }, 2000);
+        }, 2000);
       } else {
-          Toast.show({
-              type: "error",
-              text1: "Error",
-              text2: "Something went wrong!",
-              position: "top",
-          });
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Something went wrong!",
+          position: "top",
+        });
       }
-  } catch (error) {
+    } catch (error) {
       console.error(
-          "API Error:",
-          error?.response ? JSON.stringify(error.response.data) : error.message
+        "API Error:",
+        error?.response ? JSON.stringify(error.response.data) : error.message
       );
 
       Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: error.response?.data?.message || "Failed to save profile!",
-          position: "top",
-      });
-  }
-};
-
-const handleShare = async () => {
-    Toast.show({
-        type: "info",
-        text1: "Info",
-        text2: "Under development",
+        type: "error",
+        text1: "Error",
+        text2: error.response?.data?.message || "Failed to save profile!",
         position: "top",
+      });
+    }
+  };
+
+  const handleShare = async () => {
+    Toast.show({
+      type: "info",
+      text1: "Info",
+      text2: "Under development",
+      position: "top",
     });
-};
+  };
 
-const renderItem = ({ item }) => {
-  const isSaved = item.isSaved || false; 
+  const renderItem = ({ item }) => {
+    const isSaved = item.isSaved || false;
 
-  return (
-    <View style={styles.card}>
-      <Pressable style={styles.cardData}>
-        <TouchableOpacity onPress={() => openImageViewer(item.photoUrl)}>
-          <Image
-            source={item.photoUrl ? { uri: item.photoUrl } : require('../../Images/NoImage.png')}
-            style={styles.image}
-          />
-        </TouchableOpacity>
+    return (
+      <View style={styles.card}>
+        <Pressable style={styles.cardData}>
+          <TouchableOpacity onPress={() => openImageViewer(item.photoUrl)}>
+            <Image
+              source={item.photoUrl ? { uri: item.photoUrl } : require('../../Images/NoImage.png')}
+              style={styles.image}
+            />
+          </TouchableOpacity>
 
-        {/* Image Viewer Modal */}
-        {selectedImage === item.photoUrl && (
-          <ImageViewing
-            images={[{ uri: selectedImage }]}
-            imageIndex={0}
-            visible={isImageVisible}
-            onRequestClose={() => setImageVisible(false)}
-          />
-        )}
+          {/* Image Viewer Modal */}
+          {selectedImage === item.photoUrl && (
+            <ImageViewing
+              images={[{ uri: selectedImage }]}
+              imageIndex={0}
+              visible={isImageVisible}
+              onRequestClose={() => (false)}
+            />
+          )}
 
-        <View style={styles.leftContainer}>
-          <Text style={styles.title}>{item.committeeTitle}</Text>
-          <Text style={styles.Nametext}>{item.presidentName}</Text>
-          <View style={styles.CityArea}>
-            <Text style={styles.text}>{item.city}</Text>
-            <Text style={styles.text}>{item.subCaste}</Text>
+          <View style={styles.leftContainer}>
+            <Text style={styles.title}>{item.committeeTitle}</Text>
+            <Text style={styles.Nametext}>{item.presidentName}</Text>
+            <View style={styles.CityArea}>
+              <Text style={styles.text}>{item.city}</Text>
+              <Text style={styles.text}>{item.subCaste}</Text>
+            </View>
+            <Text style={styles.text}>{item.area}</Text>
           </View>
-          <Text style={styles.text}>{item.area}</Text>
+        </Pressable>
+
+        <View style={styles.sharecontainer}>
+          {/* Bookmark Button */}
+          <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
+            <FontAwesome name={isSaved ? "bookmark" : "bookmark-o"} size={19} color={Colors.dark} />
+          </TouchableOpacity>
+
+          {/* Share Button */}
+          <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
+            <Feather name="send" size={18} color={Colors.dark} />
+            <Text style={styles.iconText}>Share</Text>
+          </TouchableOpacity>
+
+          {/* Call Button */}
+          <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
+            <MaterialIcons name="call" size={17} color={Colors.light} />
+            <Text style={styles.RequestText}>Request for call</Text>
+          </TouchableOpacity>
         </View>
-      </Pressable>
-
-      <View style={styles.sharecontainer}>
-        {/* Bookmark Button */}
-        <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
-          <FontAwesome name={isSaved ? "bookmark" : "bookmark-o"} size={19} color={Colors.dark} />
-        </TouchableOpacity>
-
-        {/* Share Button */}
-        <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
-          <Feather name="send" size={18} color={Colors.dark} />
-          <Text style={styles.iconText}>Share</Text>
-        </TouchableOpacity>
-
-        {/* Call Button */}
-        <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
-          <MaterialIcons name="call" size={17} color={Colors.light} />
-          <Text style={styles.RequestText}>Request for call</Text>
-        </TouchableOpacity>
       </View>
-    </View>
-  );
-};
+    );
+  };
 
 
   const handleOpenFilter = () => {
@@ -318,7 +326,7 @@ const renderItem = ({ item }) => {
   };
 
   return (
-    <SafeAreaView style={Globalstyles.container} showsVerticalScrollIndicator={false}>
+    <SafeAreaView style={Globalstyles.container}>
       <StatusBar
         barStyle="dark-content"
         backgroundColor="transparent"
@@ -356,8 +364,8 @@ const renderItem = ({ item }) => {
             onSubmitEditing={() => fetchComitteeData("search")}
             placeholderTextColor={"gray"}
             style={{ flex: 1 }}
-             autoComplete="off"
-              textContentType="none"
+            autoComplete="off"
+            textContentType="none"
           />
           {locality.length > 0 ? (
             <AntDesign name={'close'} size={20} color={'gray'} onPress={() => {
@@ -388,19 +396,17 @@ const renderItem = ({ item }) => {
         </View>
 
       </View>
-      <ScrollView showsHorizontalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.sliderContainer}>
           <AppIntroSlider
+            ref={sliderRef}
             data={slider}
-            renderItem={({ item }) => (
-              <View>
-                <Image source={item.image} style={Globalstyles.sliderImage} />
-              </View>
-            )}
+            renderItem={SliderRenderItem}
             showNextButton={false}
             showDoneButton={false}
-            dotStyle={Globalstyles.dot}
-            activeDotStyle={Globalstyles.activeDot}
+            dotStyle={styles.dot}
+            activeDotStyle={styles.activeDot}
+            onSlideChange={(index) => setCurrentIndex(index)}
           />
         </View>
         {isLoading ? renderSkeleton() : (
@@ -444,8 +450,8 @@ const renderItem = ({ item }) => {
                   onChangeText={(text) => setModalLocality(text)}
                   placeholder="Enter Locality"
                   placeholderTextColor={Colors.gray}
-                   autoComplete="off"
-              textContentType="none"
+                  autoComplete="off"
+                  textContentType="none"
                 />
 
               </View>
@@ -458,8 +464,8 @@ const renderItem = ({ item }) => {
                     placeholder="Type your caste"
                     placeholderTextColor={Colors.gray}
                     style={Globalstyles.input}
-                     autoComplete="off"
-              textContentType="none"
+                    autoComplete="off"
+                    textContentType="none"
                   />
                   {filteredOptions.length > 0 && (
                     <FlatList
@@ -505,7 +511,7 @@ const renderItem = ({ item }) => {
           </View>
         </View>
       </Modal>
-      <Toast/>
+      <Toast />
     </SafeAreaView>
   );
 };

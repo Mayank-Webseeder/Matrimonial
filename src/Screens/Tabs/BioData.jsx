@@ -143,13 +143,13 @@ const BioData = ({ navigation }) => {
       />
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: "row" }}>
-          <MaterialIcons name={'arrow-back-ios-new'} size={20} color={Colors.theme_color} onPress={() => navigation.goBack()} />
+          <MaterialIcons name={'arrow-back-ios-new'} size={25} color={Colors.theme_color} onPress={() => navigation.goBack()} />
           <Text style={Globalstyles.headerText}>Matrimony</Text>
         </View>
-        <View style={styles.righticons}>
-          <AntDesign name={'bells'} size={20} color={Colors.theme_color} />
+        <TouchableOpacity style={styles.righticons} onPress={() => navigation.navigate("Notification")}>
+          <AntDesign name={'bells'} size={25} color={Colors.theme_color} />
           {/* <AntDesign name={'search1'} size={20} color={Colors.theme_color} style={{ marginHorizontal: 10 }} /> */}
-        </View>
+        </TouchableOpacity>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>

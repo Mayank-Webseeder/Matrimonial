@@ -5,7 +5,7 @@ import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { useSelector,useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { disconnectSocket } from '../../../socket';
 import Toast from 'react-native-toast-message';
@@ -34,7 +34,7 @@ const CustomDrawer = (props) => {
     { title: 'Advertise with Us', screen: 'AdvertiseWithUs' },
     { title: 'Success Stories', screen: 'SuccessStories' },
     { title: 'Account & Settings' },
-    { title: 'About Us' },
+    { title: 'About Us', screen: 'AboutJs' },
     { title: 'Feedback/Suggestion', screen: 'FeedBack' },
     { title: 'Share App' },
   ];
@@ -54,47 +54,49 @@ const CustomDrawer = (props) => {
 
   const handleLogout = async () => {
     try {
-        disconnectSocket(); // ✅ Socket disconnect karo
+      disconnectSocket(); // ✅ Socket disconnect karo
 
-        await AsyncStorage.removeItem("userToken");
-        await AsyncStorage.removeItem("userId");
+      await AsyncStorage.removeItem("userToken");
+      await AsyncStorage.removeItem("userId");
 
-        dispatch(resetBioData()); // ✅ Redux store clear karo
+      dispatch(resetBioData()); // ✅ Redux store clear karo
 
-        navigation.reset({
-            index: 0,
-            routes: [{ name: "AuthStack" }],
-        });
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "AuthStack" }],
+      });
 
-        console.log("✅ Logged out successfully");
+      console.log("✅ Logged out successfully");
     } catch (error) {
-        console.error("❌ Error logging out:", error);
+      console.error("❌ Error logging out:", error);
     }
-};
+  };
 
-  
 
   const handleDropdownToggle = (dropdown) => {
     setOpenDropdown((prev) => (prev === dropdown ? null : dropdown));
   };
-
+  
   const handleNavigation = (screen) => {
+    setOpenDropdown(null);
+  
     if (screen) {
       navigation.navigate(screen);
     } else {
       console.log('Screen not available');
     }
   };
+  
 
 
   const handleShare = async () => {
     Toast.show({
-        type: "info",
-        text1: "Info",
-        text2: "Under development",
-        position: "top",
+      type: "info",
+      text1: "Info",
+      text2: "Under development",
+      position: "top",
     });
-};
+  };
 
   return (
     <DrawerContentScrollView
@@ -106,7 +108,11 @@ const CustomDrawer = (props) => {
         name="cross"
         size={30}
         color={Colors.theme_color}
-        onPress={() => navigation.goBack()}
+        onPress={() => {
+          navigation.goBack();
+          setOpenDropdown(null);
+        }}
+        
       />
       <View style={styles.header}>
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
@@ -187,17 +193,6 @@ const CustomDrawer = (props) => {
               </View>
             );
           }
-          else if (item.title === 'About Us') {
-            return (
-              <TouchableOpacity
-                key={index}
-                style={styles.drawerButton}
-                onPress={handleShare}
-              >
-                <Text style={styles.buttonText}>{item.title}</Text>
-              </TouchableOpacity>
-            );
-          }
           else if (item.title === 'Share App') {
             return (
               <TouchableOpacity
@@ -259,7 +254,7 @@ const CustomDrawer = (props) => {
           </View>
         </View>
       </Modal>
-      <Toast/>
+      <Toast />
     </DrawerContentScrollView>
   );
 };

@@ -7,6 +7,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import styles from '../StyleScreens/SuccessStoriesStyle';
 import { SuccessStoriesData } from '../../DummyData/DummyData';
 import Globalstyles from '../../utils/GlobalCss';
+import { DrawerActions } from '@react-navigation/native';
 
 const SuccessStories = ({ navigation }) => {
   const renderStars = (rating) => {
@@ -47,7 +48,7 @@ const SuccessStories = ({ navigation }) => {
       />
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>Success Stories</Text>

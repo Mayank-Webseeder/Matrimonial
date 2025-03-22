@@ -337,7 +337,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
             const response = await axios.patch(url, payload, { headers });
             console.log("response",JSON.stringify(response.data))
 
-            if (response.status === 200 && response.data.status === true) {
+            if (response.status === 200 || response.data.status === true) {
                 Toast.show({
                     type: "success",
                     text1: "Success!",

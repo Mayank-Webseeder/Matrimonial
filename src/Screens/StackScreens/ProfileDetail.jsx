@@ -12,12 +12,15 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Globalstyles from '../../utils/GlobalCss';
 import { SH, SW } from '../../utils/Dimensions';
 import ImageViewing from 'react-native-image-viewing';
+import { REPOST } from '../../utils/BaseUrl';
+import Toast from 'react-native-toast-message';
 
 const ProfileDetail = ({ route, navigation }) => {
     const { profileType } = route.params;
     const [profileData, setProfileData] = useState(null);
     console.log("profileData", profileData);
     const [loading, setLoading] = useState(true);
+    const [postloading, setPostLoading] = useState(false);
     const images = profileData?.additionalPhotos || [];
     const [visible, setVisible] = useState(false);
     const profilePhoto = profileData?.profilePhoto
@@ -113,8 +116,70 @@ const ProfileDetail = ({ route, navigation }) => {
     };
 
     const formattedHeight = profileData?.personalDetails?.heightFeet
-        ?.replace(/\s*-\s*/, "") // Remove space and dash (-) between feet and inches
+        ?.replace(/\s*-\s*/, "")
         ?.replace(/\s+/g, "");
+
+        const Repost = async () => {
+            setPostLoading(true);
+        
+            const token = await AsyncStorage.getItem('userToken');
+            if (!token) {
+                Toast.show({
+                    type: 'error',
+                    text1: 'Error',
+                    text2: 'No token found!',
+                });
+                setPostLoading(false);
+                return;
+            }
+        
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            };
+        
+            try {
+                const response = await axios.post(REPOST, {}, { headers });
+        
+                console.log("✅ Repost Data:", response.data);
+        
+                if (response.status === 200 && response.data.status === true) {
+                    Toast.show({
+                        type: 'success',
+                        text1: 'Success',
+                        text2: response.data.message || 'Reposted successfully!',
+                    });
+                    // ToastAndroid.show(response.data.message || 'Reposted successfully!', ToastAndroid.SHORT);
+                } else {
+                    throw new Error(response.data.message || 'Something went wrong!');
+                }
+            } catch (error) {
+                console.error("❌ Error fetching profile:", error?.response?.data || error);
+        
+                // ✅ Error message को हैंडल करने के लिए default वैल्यू सेट करें
+                let errorMessage = "Something went wrong. Please try again later.";
+        
+                if (error?.response) {
+                    if (error?.response?.status === 400 && error?.response?.data?.status === false) {
+                        errorMessage = error.response.data?.message || "Failed to repost. Please try again!";
+                    }
+                }
+        
+                // ✅ अब Toast 100% दिखेगा
+                Toast.show({
+                    type: 'error',
+                    text1: 'Error',
+                    text2: errorMessage,
+                });
+        
+                // ToastAndroid.show(errorMessage, ToastAndroid.SHORT);
+            } finally {
+                setPostLoading(false); // Stop loading
+            }
+        };
+        
+        
+
     return (
         <ScrollView style={Globalstyles.container}>
             <View style={Globalstyles.header}>
@@ -138,9 +203,15 @@ const ProfileDetail = ({ route, navigation }) => {
                     )}
 
                     <View>
+                      <View style={{display:"flex",flexDirection:"row",alignItems:"center", alignSelf: "flex-end",}}>
+                      <Text style={styles.RepostText} onPress={() => !postloading && Repost()}>
+                            {postloading ? <ActivityIndicator color="white" /> : "Repost"}
+                        </Text>
+
                         <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('MatrimonyPage')}>
                             <Text style={styles.editButtonText}>Edit Biodata</Text>
                         </TouchableOpacity>
+                      </View>
                         {/* Full Name at the top */}
                         <Text style={styles.biodataname}>{profileData?.personalDetails?.fullname}</Text>
                         {/* Two-column Layout */}
@@ -753,6 +824,7 @@ const ProfileDetail = ({ route, navigation }) => {
                     {/* <Image source={require('../../Images/slider.png')} style={styles.Bottomimage} /> */}
                 </ScrollView>
             )}
+            <Toast/>
         </ScrollView>
     );
 };

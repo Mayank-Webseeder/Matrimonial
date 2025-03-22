@@ -5,7 +5,7 @@ const styles = StyleSheet.create({
   FlexContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent:"space-between"
+    justifyContent: "space-between"
   },
   section: {
     marginBottom: SH(15),
@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: SF(15),
     fontFamily: 'Poppins-Bold',
-    marginBottom:SH(8),
+    marginBottom: SH(8),
   },
   reviewContainer: {
     marginBottom: SH(15),
@@ -21,35 +21,32 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',
     marginHorizontal: SW(10),
-    marginVertical:SH(2),
+    marginVertical: SH(2),
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
     width: '95%',
     paddingHorizontal: SW(10),
-    paddingVertical:SH(10),
+    paddingVertical: SH(10),
   },
-  reviewRating:{
-    marginLeft:-SW(255)
+  reviewRating: {
+    alignSelf: "flex-start"
   },
   reviewName: {
-    fontSize: SF(16),
-    fontFamily: 'Poppins-Medium',
-  },
-  reviewStatus: {
-    fontSize: SF(13),
-    color: 'green',
-    fontFamily: "Poppins-Regular",
+    fontSize: SF(12),
+    fontFamily: 'Poppins-Bold',
   },
   reviewDate: {
-    fontSize: SF(13),
+    fontSize: SF(11),
     color: 'gray',
   },
   reviewText: {
-    fontSize: SF(13),
-    marginVertical: SH(5),
+    fontSize: SF(11),
     fontFamily: "Poppins-Regular",
+    flexWrap: "wrap",
+    flexShrink: 1,
+    width: "100%",
   },
 });
 export default styles;

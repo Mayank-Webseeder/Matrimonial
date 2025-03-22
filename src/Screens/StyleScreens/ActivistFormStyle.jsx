@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
         borderRadius: 10
     },
     submitButton: {
-        backgroundColor:Colors.theme_color,
+        backgroundColor: Colors.theme_color,
         paddingVertical: SH(5),
         borderRadius: 5,
         alignItems: 'center',
@@ -48,10 +48,10 @@ const styles = StyleSheet.create({
         marginBottom: SH(80)
     },
     submitText: {
-    color: Colors.light,
-    fontSize: SF(15),
-    fontWeight: 'Poppins-Bold',
-    textTransform:"capitalize"
+        color: Colors.light,
+        fontSize: SF(15),
+        fontWeight: 'Poppins-Bold',
+        textTransform: "capitalize"
     },
     photosContainer: {
         paddingVertical: SH(10),

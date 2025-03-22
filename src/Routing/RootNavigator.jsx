@@ -74,6 +74,7 @@ import { useCallback } from 'react';
 import NotificationDetails from '../Screens/StackScreens/NotificationDetails';
 import { initializeSocket } from '../../socket';
 import { setBioData } from '../ReduxStore/Slices/BiodataSlice';
+import AboutJs from '../Screens/StackScreens/AboutJs';
 
 const Stack = createNativeStackNavigator();
 const AppStackNavigator = createNativeStackNavigator();
@@ -270,6 +271,7 @@ function MyDrawer() {
       <Drawer.Screen name="ChangePassword" component={ChangePassword} />
       <Drawer.Screen name="PrivacySettings" component={PrivacySettings} />
       <Drawer.Screen name="InActiveDelete" component={InActiveDelete} />
+      <Drawer.Screen name="AboutJs" component={AboutJs} />
     </Drawer.Navigator>
   );
 }

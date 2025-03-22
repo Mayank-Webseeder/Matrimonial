@@ -4,21 +4,21 @@ import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
   emptyContainer: {
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: SH(200),
-    },
-    emptyText: {
-      fontSize: SF(15),
-      color: "gray",
-      fontFamily: 'Poppins-Regular',
-    },
-  ActivistDataList:{
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: SH(200),
+  },
+  emptyText: {
+    fontSize: SF(15),
+    color: "gray",
+    fontFamily: 'Poppins-Regular',
+  },
+  ActivistDataList: {
     marginVertical: SH(10),
   },
   righticons: {
     flexDirection: 'row',
-    alignItems:"center"
+    alignItems: "center"
   },
   image: {
     width: SW(60),
@@ -35,14 +35,14 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     paddingHorizontal: SW(10),
     width: SW(350),
-    justifyContent:"space-between"
+    justifyContent: "space-between"
   },
   card: {
     backgroundColor: Colors.light,
     borderRadius: 10,
     overflow: 'hidden',
     marginHorizontal: SW(6),
-    marginVertical:SH(6),
+    marginVertical: SH(6),
     shadowColor: Colors.dark,
     shadowOpacity: 0.1,
     shadowRadius: 5,
@@ -50,31 +50,36 @@ const styles = StyleSheet.create({
     width: '95%',
     marginHorizontal: SW(10),
     paddingHorizontal: SW(10),
-    paddingVertical:SH(7),
+    paddingVertical: SH(7),
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems:"center"
+    alignItems: "center"
   },
   cardData: {
     flexDirection: "row"
   },
   text: {
     fontFamily: "Poppins-Bold",
-    fontSize: SF(14)
+    fontSize: SF(15)
   },
   smalltext: {
     fontFamily: "Poppins-Regular",
     fontSize: SF(12)
   },
-
+  IDText:{
+    fontFamily: "Poppins-Bold",
+    fontSize: SF(12),
+    alignSelf:"fleax-end",
+    paddingHorizontal:SW(5)
+  },
   ButtonContainer: {
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between"
   },
   button: {
-    paddingHorizontal:SW(10),
-    paddingVertical:SH(5),
+    paddingHorizontal: SW(10),
+    paddingVertical: SH(5),
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: SH(10),
@@ -106,13 +111,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     width: SW(470)
   },
-  ActivistListData:{
-    marginTop:SH(70)
+  ActivistListData: {
+    marginTop: SH(70)
   },
   modalContent: {
     backgroundColor: 'white',
     paddingHorizontal: SW(10),
-    paddingVertical:SH(10),
+    paddingVertical: SH(10),
     width: '80%',
     borderRadius: 10,
   },
@@ -150,12 +155,12 @@ const styles = StyleSheet.create({
     top: SH(300),
     left: SW(150)
   },
-  label:{
+  label: {
     fontSize: SF(13),
     marginBottom: SH(5),
     fontFamily: "Poppins-Medium"
   }
- 
+
 });
 
 export default styles;

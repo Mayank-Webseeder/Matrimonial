@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
     },
     background: {
         width: "100%",
-        height: SH(270)
+        height: SH(230)
     },
     contactCard: {
         paddingVertical: SH(5),

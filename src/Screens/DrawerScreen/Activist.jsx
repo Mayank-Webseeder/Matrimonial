@@ -12,7 +12,7 @@ import { SH, SW } from '../../utils/Dimensions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { GET_ACTIVIST_PROFILES } from '../../utils/BaseUrl';
-import { useFocusEffect } from '@react-navigation/native';
+import { DrawerActions, useFocusEffect } from '@react-navigation/native';
 import ImageViewing from 'react-native-image-viewing';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 
@@ -100,6 +100,7 @@ const Activist = ({ navigation }) => {
 
       if (response.data?.data?.length > 0) {
         setActivistData(response.data.data);
+        console.log("activist data ",response.data?.data);
       } else {
         setActivistData([]);
         setError("No activist profiles found.");
@@ -183,7 +184,10 @@ const Activist = ({ navigation }) => {
           <View style={{ marginLeft: SW(10) }}>
             <Text style={styles.text}>{item.fullname}</Text>
             <Text style={styles.smalltext}>{item.subCaste}</Text>
-            <Text style={styles.smalltext}>{item.city}</Text>
+           <View style={{display:"flex",flexDirection:"row",justifyContent:"space-around"}}>
+           <Text style={styles.smalltext}>{item.city}</Text>
+           <Text style={styles.IDText}>Id : {item.activistId}</Text>
+           </View>
           </View>
         </View>
         <View>
@@ -201,7 +205,7 @@ const Activist = ({ navigation }) => {
       <View>
         <View style={Globalstyles.header}>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <TouchableOpacity onPress={() => navigation.navigate('Tabs')}>
+            <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
               <MaterialIcons name={'arrow-back-ios-new'} size={25} color={Colors.theme_color} />
             </TouchableOpacity>
             <Text style={Globalstyles.headerText}>Activist</Text>

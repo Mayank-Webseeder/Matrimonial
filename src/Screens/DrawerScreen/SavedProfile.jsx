@@ -9,46 +9,51 @@ import Colors from "../../utils/Colors";
 import HeadingWithViewAll from "../../Components/HeadingWithViewAll";
 import Globalstyles from "../../utils/GlobalCss";
 import { DELETE_SAVED_PROFILE, GET_SAVED__PROFILES } from "../../utils/BaseUrl";
-import { useFocusEffect } from '@react-navigation/native';
+import { DrawerActions, useFocusEffect } from '@react-navigation/native';
 import Toast from "react-native-toast-message";
+import { useSelector } from "react-redux";
 
 const SavedProfile = ({ navigation }) => {
   const flatListRef = useRef(null);
   const [activeCategory, setActiveCategory] = useState("Biodata");
   const [savedProfiles, setSavedProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const MyprofileData = useSelector((state) => state.getBiodata);
+  const partnerPreferences = MyprofileData?.Biodata?.partnerPreferences || null;
 
   useFocusEffect(
     useCallback(() => {
       fetchSavedProfiles();
-    }, []) // This will re-fetch saved profiles whenever the screen is focused
+    }, [])
   );
-
+  
   const fetchSavedProfiles = async () => {
     try {
-      setLoading(true); // Ensure loading state is set before fetching
+      setLoading(true);
+      setSavedProfiles([]);
+  
       const token = await AsyncStorage.getItem("userToken");
-
       if (!token) {
         throw new Error("No token found");
       }
-
+  
       const headers = { Authorization: `Bearer ${token}` };
       const response = await axios.get(GET_SAVED__PROFILES, { headers });
-
+  
       console.log("Fetched saved profiles:", JSON.stringify(response.data?.savedProfiles));
-      setSavedProfiles(response.data?.savedProfiles || []);
 
+      setSavedProfiles(response.data?.savedProfiles || []);
+  
       setTimeout(() => {
         flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
       }, 100);
     } catch (error) {
-      console.error("Error fetching saved profiles:", error);
+      console.error("❌ Error fetching saved profiles:", error?.response?.data || error);
     } finally {
       setLoading(false);
     }
   };
-
+  
   const DeleteSaveProfile = async (_id) => {
     if (!_id) {
       console.warn("Invalid ID: Cannot delete profile without a valid _id");
@@ -132,8 +137,20 @@ const SavedProfile = ({ navigation }) => {
         <TouchableOpacity style={styles.detailsContainer}
           onPress={() => {
             if (profileType === "Biodata") {
-              navigation.navigate("MatrimonyPeopleProfile", { userDetails: saveProfile, userId: saveProfile?.userId, isSaved: true });
-            } else if (profileType === "Pandit") {
+              if (!partnerPreferences) {
+                  navigation.navigate("ShortMatrimonialProfile", {
+                      userDetails: saveProfile,
+                      isSaved: true
+                  });
+              } else {
+                  navigation.navigate("MatrimonyPeopleProfile", {
+                      userDetails: saveProfile,
+                      userId: saveProfile?.userId,
+                      isSaved: true
+                  });
+              }
+          }
+           else if (profileType === "Pandit") {
               navigation.navigate("PanditDetailPage", { pandit_id: saveProfile._id, isSaved: true });
             } else if (profileType === "Jyotish") {
               navigation.navigate("JyotishDetailsPage", { jyotish_id: saveProfile._id, isSaved: true });
@@ -163,11 +180,12 @@ const SavedProfile = ({ navigation }) => {
                 style={styles.image}
               />
               <View style={styles.detailscontent}>
-                <Text style={styles.name}>{saveProfile.fullName || "N/A"}</Text>
-                <Text style={styles.text}>City: {saveProfile.city || "N/A"}</Text>
-                <Text style={styles.text}>Experience: {saveProfile.experience || "N/A"} years</Text>
-                <Text style={styles.text}>Sub Caste: {saveProfile.subCaste || "N/A"}</Text>
-                <Text style={styles.text}>Area: {saveProfile.area || "N/A"}</Text>
+                <Text style={styles.name}>{saveProfile?.fullName || "N/A"}</Text>
+                <Text style={styles.text}>City: {saveProfile?.city || "N/A"}</Text>
+                {saveProfile?.experience && <Text style={styles.text}>Experience: {saveProfile?.experience}</Text>}
+                {/* <Text style={styles.text}>Experience: {saveProfile?.experience || "N/A"} years</Text> */}
+                {/* <Text style={styles.text}>Sub Caste: {saveProfile.subCaste || "N/A"}</Text> */}
+                {saveProfile?.area && <Text style={styles.text}>Area: {saveProfile?.area}</Text>}
               </View>
             </>
           )}
@@ -205,6 +223,13 @@ const SavedProfile = ({ navigation }) => {
     );
   };
 
+  {loading ? (
+    <View style={styles.loaderContainer}>
+      <ActivityIndicator size="large" color={Colors.theme_color} />
+    </View>
+  ) : null}
+  
+
 
   return (
     <SafeAreaView style={Globalstyles.container}>
@@ -212,7 +237,7 @@ const SavedProfile = ({ navigation }) => {
       <View>
         <View style={Globalstyles.header}>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+            <TouchableOpacity  onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
               <MaterialIcons name={"arrow-back-ios-new"} size={25} color={Colors.theme_color} />
             </TouchableOpacity>
             <Text style={Globalstyles.headerText}>Saved</Text>

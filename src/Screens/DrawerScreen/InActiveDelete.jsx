@@ -8,6 +8,7 @@ import { DELETE_BIODATA } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector } from 'react-redux';
+import { DrawerActions } from '@react-navigation/native';
 const InActiveDelete = ({ navigation }) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [actionType, setActionType] = useState('');
@@ -112,7 +113,7 @@ const InActiveDelete = ({ navigation }) => {
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
             <View style={Globalstyles.header}>
                 <View style={{ flexDirection: 'row', alignItems: "center" }}>
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
                     <Text style={Globalstyles.headerText}>Account Settings</Text>

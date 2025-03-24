@@ -204,11 +204,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: SW(10),
     paddingVertical: SH(5),
     borderRadius: 5,
+    alignSelf:"flex-end"
     //  marginVertical:SH(10)
   },
   editButtonText: {
     color: Colors.light,
-    fontSize: SF(13)
+    fontSize: SF(13),
+    textAlign:"center"
   },
   link: {
     color: "#4948b8",

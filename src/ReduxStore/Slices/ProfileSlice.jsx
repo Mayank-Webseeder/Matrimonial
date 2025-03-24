@@ -9,9 +9,12 @@ const ProfileSlice = createSlice({
     setProfiledata: (state, action) => {
       state.profiledata = action.payload;
     },
+    resetProfiledata: (state) => {
+      state.profiledata = null;
+    },
   },
 });
 
-export const { setProfiledata } = ProfileSlice.actions;
+export const { setProfiledata,resetProfiledata } = ProfileSlice.actions;
 
 export default ProfileSlice.reducer;

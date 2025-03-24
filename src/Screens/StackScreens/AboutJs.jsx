@@ -20,7 +20,6 @@ const AboutJs = ({ navigation }) => {
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
                 <Text style={styles.heading}>हमारे बारे में</Text>
                 <Text style={styles.text}>ब्राह्मण मिलन ऐप में आपका स्वागत है, "Brahmin Milan" Appwin Info Tech द्वारा विकसित एक मोबाइल ऐप है, जिसका उद्देश्य ब्राह्मण समुदाय को तकनीक के माध्यम से एकजुट और सशक्त बनाना है। यह ऐप ब्राह्मण समाज की विशेष आवश्यकताओं को पूरा करने के लिए डिज़ाइन किया गया है।</Text>
-
                 <Text style={styles.heading}>सेवाएँ</Text>
                 <Text style={styles.text}>- <Text style={styles.bold}>विवाह सेवा:</Text> आप समुदाय के भीतर योग्य जीवनसाथी खोज सकते हैं।</Text>
                 <Text style={styles.text}>- <Text style={styles.bold}>धर्मशालाओं की जानकारी:</Text> यात्रा और आयोजनों के लिए समुदाय की धर्मशालाओं की जानकारी प्राप्त कर सकते हैं।</Text>
@@ -29,12 +28,9 @@ const AboutJs = ({ navigation }) => {
                 <Text style={styles.text}>- <Text style={styles.bold}>पंडित और ज्योतिषी:</Text> पूजन, अनुष्ठानों और ज्योतिषीय मार्गदर्शन के लिए विद्वान पंडितों और अनुभवी ज्योतिषियों से संपर्क कर सकते हैं।</Text>
                 <Text style={styles.text}>- <Text style={styles.bold}>कथावाचक:</Text> आध्यात्मिक प्रवचनों के लिए प्रसिद्ध कथावाचकों की जानकारी प्राप्त कर संपर्क कर सकते हैं।</Text>
                 <Text style={styles.text}>- <Text style={styles.bold}>सामाजिक कार्यकर्ता:</Text> ब्राह्मण समाज के उत्थान और एकता के लिए काम कर रहे सामाजिक कार्यकर्ताओं से संपर्क करें।</Text>
-
                 <Text style={styles.text}>हमारा उद्देश्य परंपराओं को संरक्षित करना, आपसी जुड़ाव बढ़ाना और ब्राह्मण समुदाय को जानकारी और सेवाओं की सहज पहुंच के माध्यम से सशक्त बनाना है।</Text>
-
                 <Text style={styles.heading}>हमारी दृष्टि (Vision)</Text>
                 <Text style={styles.text}>"ब्राह्मण समुदाय को एकजुट, सशक्त और डिजिटल रूप से उन्नत बनाना, जहां परंपराएं और आधुनिकता साथ-साथ चलें।" हमारा सपना एक ऐसा मंच बनाना है जो ब्राह्मण समाज के हर व्यक्ति को आपस में जोड़ते हुए उनकी सांस्कृतिक, सामाजिक और आध्यात्मिक आवश्यकताओं को पूरा करे।</Text>
-
                 <Text style={styles.heading}>हमारा मिशन (Mission)</Text>
                 <Text style={styles.text}>- ब्राह्मण समुदाय के लिए "डिजिटल सेवाओं" का एक ऐसा केंद्र बनाना, जो विवाह, धर्मशालाओं, समाचार और धार्मिक गतिविधियों की जानकारी एक ही जगह प्रदान करे।</Text>
                 <Text style={styles.text}>- ब्राह्मण समाज के पदाधिकारियों, पंडितों, ज्योतिषियों और कथावाचकों को आसानी से जोड़ने में मदद करना।</Text>

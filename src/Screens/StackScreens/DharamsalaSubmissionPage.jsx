@@ -48,7 +48,6 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
     useEffect(() => {
         const fetchDharamsalaData = async () => {
             try {
-                setIsLoading(true);
                 const token = await AsyncStorage.getItem("userToken");
                 if (!token) {
                     Toast.show({
@@ -71,8 +70,6 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                 }
             } catch (error) {
                 console.error("Error fetching committee data:", error);
-            } finally {
-                setIsLoading(false);
             }
         };
 
@@ -239,7 +236,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                 // ✅ Show Success Toast
                 Toast.show({
                     type: "success",
-                    text1: isUpdating ? "Profile Updated Successfully" : "Profile Created Successfully",
+                    text1: isUpdating ? "Dharamsala details Updated Successfully" : "Dharamsala detials Created Successfully",
                     text2: response.data.message || "Your changes have been saved!",
                 });
 
@@ -250,6 +247,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                         _id: response.data.data._id,
                     }));
                 }
+                navigation.navigate("Dharmshala")
 
             } else {
                 throw new Error(response.data.message || "Something went wrong");
@@ -404,8 +402,16 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     </View>
                 )}
 
-                <TouchableOpacity style={styles.submitButton} onPress={handleDharamSalaSave}>
-                    <Text style={styles.submitButtonText}>Submit</Text>
+                <TouchableOpacity
+                    style={styles.submitButton}
+                    onPress={handleDharamSalaSave}
+                    disabled={isLoading} // Disable button while loading
+                >
+                    {isLoading ? (
+                        <ActivityIndicator size="large" color={Colors.light} />
+                    ) : (
+                        <Text style={styles.submitButtonText}>Submit</Text>
+                    )}
                 </TouchableOpacity>
             </View>
         </SafeAreaView>

@@ -38,10 +38,42 @@ const UpdateEventPost = ({ navigation, route }) => {
         }).catch(err => console.log('Crop Picker Error:', err));
     };
 
+    const convertToBase64 = async (imageUri) => {
+        try {
+            if (!imageUri) return null;
+
+            // If already in Base64 format, return directly ✅
+            if (imageUri.startsWith("data:image")) {
+                return imageUri;
+            }
+
+            // Fetch image and convert to blob ✅
+            const response = await fetch(imageUri);
+            const blob = await response.blob();
+
+            const mimeType = blob.type || "image/jpeg"; // Default JPEG ✅
+
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    if (reader.result) {
+                        resolve(`data:${mimeType};base64,${reader.result.split(",")[1]}`);
+                    } else {
+                        reject("Error reading Base64 data.");
+                    }
+                };
+                reader.readAsDataURL(blob);
+            });
+        } catch (error) {
+            console.error("Error converting image to Base64:", error);
+            return null;
+        }
+    };
+
 
     const handleSubmit = async () => {
         try {
-            setLoading(true); // Start Loader
+            setLoading(true);
 
             const token = await AsyncStorage.getItem("userToken");
             if (!token) throw new Error("No token found");
@@ -50,13 +82,16 @@ const UpdateEventPost = ({ navigation, route }) => {
                 throw new Error("Event ID is missing, update cannot proceed.");
             }
 
-            const updatedImages = photos.length > 0 ? photos : eventData?.images;
+            // Convert images to Base64 format before sending
+            const base64Images = await Promise.all(
+                (photos.length > 0 ? photos : eventData?.images || []).map(convertToBase64)
+            );
 
             const payload = {
                 postId: eventData._id,
                 title: eventData?.title,
                 description: eventData?.description,
-                images: updatedImages,
+                images: base64Images,
             };
 
             const headers = {
@@ -65,7 +100,7 @@ const UpdateEventPost = ({ navigation, route }) => {
             };
 
             console.log("🔹 API Request to:", UPDATE_EVENT_NEWS);
-            console.log("🔹 Payload:", payload);
+            console.log("🔹 Payload:", JSON.stringify(payload));
 
             const response = await axios.patch(UPDATE_EVENT_NEWS, payload, { headers });
 
@@ -100,6 +135,8 @@ const UpdateEventPost = ({ navigation, route }) => {
             setLoading(false); // Stop Loader
         }
     };
+
+
     return (
         <SafeAreaView style={Globalstyles.container}>
             <StatusBar
@@ -174,16 +211,17 @@ const UpdateEventPost = ({ navigation, route }) => {
             )}
 
 
-            {loading && (
-                <View style={styles.loaderContainer}>
-                    <ActivityIndicator size="large" color={Colors.theme_color} />
-                </View>
-            )}
-
-            <TouchableOpacity style={styles.PostButton} onPress={handleSubmit} disabled={loading}>
-                <Text style={styles.PostText}>Update Post</Text>
+            <TouchableOpacity
+                style={styles.PostButton}
+                onPress={handleSubmit}
+                disabled={loading} // Disable button while loading
+            >
+                {loading ? (
+                    <ActivityIndicator size="large" color={Colors.light} />
+                ) : (
+                    <Text style={styles.PostText}>Update Post</Text>
+                )}
             </TouchableOpacity>
-
             <Toast />
         </SafeAreaView>
     );

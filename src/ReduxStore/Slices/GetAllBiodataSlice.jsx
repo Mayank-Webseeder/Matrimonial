@@ -9,8 +9,11 @@ const GetAllBiodataSlice = createSlice({
     setAllBiodata: (state, action) => {
       state.allBiodata = action.payload;
     },
+    resetAllBiodata: (state) => {
+          state.allBiodata = []; // ✅ Redux store reset karein
+        },
   },
 });
 
-export const { setAllBiodata } = GetAllBiodataSlice.actions;
+export const { setAllBiodata,resetAllBiodata } = GetAllBiodataSlice.actions;
 export default GetAllBiodataSlice.reducer;

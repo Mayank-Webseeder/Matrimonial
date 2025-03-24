@@ -9,8 +9,11 @@ const ActivistSlice = createSlice({
     setActivistdata: (state, action) => {
       state.activist_data = action.payload;
     },
+    resetsetActivistdata: (state) => {
+      state.activist_data = null; // ✅ Redux store reset karein
+    },
   },
 });
 
-export const { setActivistdata } = ActivistSlice.actions;
+export const { setActivistdata ,resetsetActivistdata } = ActivistSlice.actions;
 export default ActivistSlice.reducer;

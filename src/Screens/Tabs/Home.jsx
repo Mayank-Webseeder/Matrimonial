@@ -493,15 +493,15 @@ const Home = ({ navigation }) => {
             {notificationCount > 0 && (
               <View
                 style={{
-                  position: 'absolute',
+                  position: "absolute",
                   right: -5,
                   top: -5,
-                  backgroundColor: 'red',
-                  borderRadius: 10,
-                  paddingHorizontal: SW(4),
-                  paddingVertical: SH(1),
-                  justifyContent: 'center',
-                  alignItems: 'center',
+                  width: SW(16),
+                  height: SW(16),
+                  borderRadius: SW(16) / 2,
+                  backgroundColor: "red",
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
                 <Text style={{ color: 'white', fontSize: SF(9), fontFamily: "Poppins-Bold" }}>

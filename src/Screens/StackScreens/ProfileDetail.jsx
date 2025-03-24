@@ -181,7 +181,7 @@ const ProfileDetail = ({ route, navigation }) => {
         
 
     return (
-        <ScrollView style={Globalstyles.container}>
+        <View style={Globalstyles.container}>
             <View style={Globalstyles.header}>
                 <View style={{ flex: 1, flexDirection: 'row', alignContent: "center" }}>
                     <TouchableOpacity
@@ -193,7 +193,8 @@ const ProfileDetail = ({ route, navigation }) => {
                     <Text style={styles.HeadingText}>{profileType} Details</Text>
                 </View>
             </View>
-            {profileType === 'Biodata' && (
+           <ScrollView showsVerticalScrollIndicator={false}>
+           {profileType === 'Biodata' && (
                 <>
                     {profileData?.personalDetails?.closeUpPhoto && (
                         <Image
@@ -824,8 +825,9 @@ const ProfileDetail = ({ route, navigation }) => {
                     {/* <Image source={require('../../Images/slider.png')} style={styles.Bottomimage} /> */}
                 </ScrollView>
             )}
+           </ScrollView>
             <Toast/>
-        </ScrollView>
+        </View>
     );
 };
 

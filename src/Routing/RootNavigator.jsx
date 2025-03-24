@@ -315,6 +315,8 @@ const AppStack = () => (
     <AppStackNavigator.Screen name="ShortMatrimonialProfile" component={ShortMatrimonialProfile} />
     <AppStackNavigator.Screen name="Matrimonial" component={Matrimonial} />
     <AppStackNavigator.Screen name="BioData" component={BioData} />
+    <AppStackNavigator.Screen name="Dharmshala" component={Dharmshala} />
+    <AppStackNavigator.Screen name="Committee" component={Committee} />
   </AppStackNavigator.Navigator>
 );
 

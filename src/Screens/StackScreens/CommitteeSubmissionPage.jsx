@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, SafeAreaView, StatusBar, FlatList } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, SafeAreaView, StatusBar, FlatList,ActivityIndicator } from 'react-native';
 import Colors from '../../utils/Colors';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -16,7 +16,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
     const [cityInput, setCityInput] = useState('');
     const [filteredCities, setFilteredCities] = useState([]);
     const [filteredSubCaste, setFilteredSubCaste] = useState([]);
-    const [isLoading, setIsLoading] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const [isEditing, setIsEditing] = useState(true);
 
     const [CommitteeData, setCommitteeData] = useState({
@@ -225,7 +225,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
         try {
             setIsLoading(true);
             const token = await AsyncStorage.getItem("userToken");
-    
+
             if (!token) {
                 Toast.show({
                     type: "error",
@@ -234,47 +234,48 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                 });
                 return;
             }
-    
+
             const headers = {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             };
-    
+
             const payload = await constructCommitteePayload(CommitteeData, !CommitteeData?._id);
             console.log("Payload:", payload);
-    
+
             const apiCall = CommitteeData?._id ? axios.patch : axios.post;
             const endpoint = CommitteeData?._id ? `${UPDATE_COMMITTEE}` : CREATE_COMMITTEE;
-    
+
             const response = await apiCall(endpoint, payload, { headers });
             console.log("API Response:", response.data);
-    
-            if (response.status === 200 && response.data.status === true) {
+
+            if (response.status === 200 || response.data.status === true || response.data.data.status===true) {
                 Toast.show({
                     type: "success",
                     text1: CommitteeData?._id ? "Profile Updated Successfully" : "Committee Profile Created Successfully",
                     text2: response.data.message || "Your changes have been saved!",
                 });
-    
+
                 setIsEditing(false);
-    
+
                 if (!CommitteeData?._id && response.data?.data?._id) {
                     setCommitteeData((prev) => ({
                         ...prev,
                         _id: response.data.data._id,
                     }));
                 }
+                navigation.navigate("Committee")
                 return;
             }
-    
+
             throw new Error(response.data.message || "Something went wrong");
-    
+
         } catch (error) {
             let errorMessage = "Failed to save committee data.";
-    
+
             if (error.response) {
                 console.error("API Error:", error.response.data);
-    
+
                 if (error.response.status === 400) {
                     errorMessage = error.response.data.message || "Bad request. Please check your input.";
                 } else {
@@ -283,18 +284,18 @@ const CommitteeSubmissionPage = ({ navigation }) => {
             } else {
                 console.error("Unexpected Error:", error.message);
             }
-    
+
             Toast.show({
                 type: "error",
                 text1: "Error",
                 text2: errorMessage,
             });
-    
+
         } finally {
             setIsLoading(false);
         }
     };
-    
+
 
     return (
         <SafeAreaView style={Globalstyles.container}>
@@ -421,14 +422,23 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     keyboardType="numeric"
                     maxLength={10}
                     placeholderTextColor={Colors.gray}
-                     autoComplete="off"
-              textContentType="none"
+                    autoComplete="off"
+                    textContentType="none"
                     value={CommitteeData.mobileNo} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, mobileNo: text }))}
                 />
 
-                <TouchableOpacity style={styles.submitButton} onPress={handleCommitteeSave}>
-                    <Text style={styles.submitButtonText}>Submit</Text>
+                <TouchableOpacity
+                    style={styles.submitButton}
+                    onPress={handleCommitteeSave}
+                    disabled={isLoading}
+                >
+                    {isLoading ? (
+                        <ActivityIndicator size="large" color={Colors.light} />
+                    ) : (
+                        <Text style={styles.submitButtonText}>Submit</Text>
+                    )}
                 </TouchableOpacity>
+
             </ScrollView>
             <Toast />
         </SafeAreaView>

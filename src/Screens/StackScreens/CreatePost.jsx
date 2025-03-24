@@ -187,7 +187,7 @@ const CreatePost = ({ navigation, route }) => {
                 disabled={loading} // Disable button while loading
             >
                 {loading ? (
-                    <ActivityIndicator size="large" color={Colors.theme_color} />
+                    <ActivityIndicator size="large" color={Colors.light} />
                 ) : (
                     <Text style={styles.PostText}>Submit Post</Text>
                 )}

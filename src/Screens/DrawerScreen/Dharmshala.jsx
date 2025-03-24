@@ -299,7 +299,7 @@ const handleShare = async () => {
               size={19}
               color={Colors.dark}
             />
-            {/* <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text> */}
+        <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>

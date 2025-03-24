@@ -10,6 +10,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { disconnectSocket } from '../../../socket';
 import Toast from 'react-native-toast-message';
 import { resetBioData } from '../../ReduxStore/Slices/BiodataSlice';
+import { resetsetActivistdata } from '../../ReduxStore/Slices/ActivistSlice';
+import { resetAllBiodata } from '../../ReduxStore/Slices/GetAllBiodataSlice';
+import { reseAllNotification } from '../../ReduxStore/Slices/GetAllNotificationSlice';
+import { resetProfiledata } from '../../ReduxStore/Slices/ProfileSlice';
 const CustomDrawer = (props) => {
   const dispatch = useDispatch();
   const { navigation } = props;
@@ -60,7 +64,11 @@ const CustomDrawer = (props) => {
       await AsyncStorage.removeItem("userId");
 
       dispatch(resetBioData()); // ✅ Redux store clear karo
-
+      dispatch(resetsetActivistdata());
+      dispatch(resetAllBiodata());
+      dispatch(reseAllNotification());
+      dispatch(resetProfiledata());
+      
       navigation.reset({
         index: 0,
         routes: [{ name: "AuthStack" }],
@@ -90,12 +98,13 @@ const CustomDrawer = (props) => {
 
 
   const handleShare = async () => {
-    Toast.show({
-      type: "info",
-      text1: "Info",
-      text2: "Under development",
-      position: "top",
-    });
+    // Toast.show({
+    //   type: "info",
+    //   text1: "Info",
+    //   text2: "Under development",
+    //   position: "top",
+    // });
+    ToastAndroid.show("under development",ToastAndroid.SHORT)
   };
 
   return (

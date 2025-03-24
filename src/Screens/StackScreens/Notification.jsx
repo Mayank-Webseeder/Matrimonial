@@ -11,39 +11,42 @@ import { SH, SW, SF } from '../../utils/Dimensions';
 import { useFocusEffect } from '@react-navigation/native';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { useSelector } from 'react-redux';
+import { setAllNotification } from '../../ReduxStore/Slices/GetAllNotificationSlice';
+import { useDispatch } from 'react-redux';
 
 const Notification = ({ navigation }) => {
-  // const [NotificationData, setNotificationData] = useState([]);
+  const [NotificationData, setNotificationData] = useState([]);
   const [seenotificationData, setseenNotificationData] = useState([]);
   const [viewNotification, setViewnotification] = useState({});
   const [IsLoading, setIsLoading] = useState(true);
   const [showSeen, setShowSeen] = useState(false);
-  // const dispatch=useDispatch();
+  const dispatch=useDispatch();
   const Notificationdata = useSelector((state) => state.GetAllNotification);
-  const NotificationData = Notificationdata?.AllNotification;
+  // const NotificationDatas = Notificationdata?.AllNotification;
 
-  // const GetAll_Notification = async () => {
-  //   setIsLoading(true);
-  //   try {
-  //     const token = await AsyncStorage.getItem("userToken");
-  //     if (!token) throw new Error("No token found");
+  const GetAll_Notification = async () => {
+    setNotificationData([]);
+    setIsLoading(true);
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) throw new Error("No token found");
 
-  //     const headers = {
-  //       "Content-Type": "application/json",
-  //       Authorization: `Bearer ${token}`,
-  //     };
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
 
-  //     const res = await axios.get(NOTIFICATION, { headers });
-  //     const notificationData = res.data.data;
-  //     console.log("notificationData", JSON.stringify(notificationData));
-  //     setNotificationData(notificationData);
-  //     dispatch(setAllNotification(notificationData));
-  //   } catch (error) {
-  //     console.error("Error fetching notifications:", error.response ? error.response.data : error.message);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+      const res = await axios.get(NOTIFICATION, { headers });
+      const notificationData = res.data.data;
+      console.log("notificationData", JSON.stringify(notificationData));
+      setNotificationData(notificationData);
+      dispatch(setAllNotification(notificationData));
+    } catch (error) {
+      console.error("Error fetching notifications:", error.response ? error.response.data : error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const GetAll_Seen_Notification = async () => {
     setIsLoading(true);
@@ -82,7 +85,11 @@ const Notification = ({ navigation }) => {
       const notificationData = res.data.data;
       console.log("notificationData", JSON.stringify(notificationData));
       setViewnotification(notificationData);
-      navigation.navigate('NotificationDetails', { notification: notificationData })
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Notification" }],
+      });
+      // navigation.navigate('NotificationDetails', { notification: notificationData })
     } catch (error) {
       console.error("Error fetching notifications:", error.response ? error.response.data : error.message);
     } finally {
@@ -95,6 +102,7 @@ const Notification = ({ navigation }) => {
     useCallback(() => {
       console.log("NotificationData in notification page", NotificationData)
       GetAll_Seen_Notification();
+      GetAll_Notification();
     }, [])
   );
 
@@ -165,7 +173,7 @@ const Notification = ({ navigation }) => {
 
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity onPress={() => navigation.navigate("MainApp")}>
             <MaterialIcons name={'arrow-back-ios-new'} size={25} color={Colors.theme_color} />
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>Notifications</Text>

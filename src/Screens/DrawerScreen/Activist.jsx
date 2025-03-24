@@ -15,6 +15,7 @@ import { GET_ACTIVIST_PROFILES } from '../../utils/BaseUrl';
 import { DrawerActions, useFocusEffect } from '@react-navigation/native';
 import ImageViewing from 'react-native-image-viewing';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import { useSelector } from 'react-redux';
 
 const Activist = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -28,6 +29,7 @@ const Activist = ({ navigation }) => {
   const [modalLocality, setModalLocality] = useState('');
   const [isImageVisible, setImageVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const MyActivistProfile = useSelector((state) => state.activist.activist_data);
 
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
@@ -100,7 +102,7 @@ const Activist = ({ navigation }) => {
 
       if (response.data?.data?.length > 0) {
         setActivistData(response.data.data);
-        console.log("activist data ",response.data?.data);
+        console.log("activist data ", response.data?.data);
       } else {
         setActivistData([]);
         setError("No activist profiles found.");
@@ -184,10 +186,10 @@ const Activist = ({ navigation }) => {
           <View style={{ marginLeft: SW(10) }}>
             <Text style={styles.text}>{item.fullname}</Text>
             <Text style={styles.smalltext}>{item.subCaste}</Text>
-           <View style={{display:"flex",flexDirection:"row",justifyContent:"space-around"}}>
-           <Text style={styles.smalltext}>{item.city}</Text>
-           <Text style={styles.IDText}>Id : {item.activistId}</Text>
-           </View>
+            <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-around" }}>
+              <Text style={styles.smalltext}>{item.city}</Text>
+              <Text style={styles.IDText}>Id : {item.activistId}</Text>
+            </View>
           </View>
         </View>
         <View>
@@ -246,9 +248,15 @@ const Activist = ({ navigation }) => {
             <TouchableOpacity style={[styles.button, { paddingHorizontal: SW(20) }]} onPress={handleOpenFilter}>
               <Text style={styles.buttonText}>Filter</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ActivistForm')}>
-              <Text style={styles.buttonText}> Be an Activist</Text>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => navigation.navigate('ActivistForm')}
+            >
+              <Text style={styles.buttonText}>
+                {MyActivistProfile ? "Update Profile" : "Be an Activist"}
+              </Text>
             </TouchableOpacity>
+
           </View>
         </View>
       </View>

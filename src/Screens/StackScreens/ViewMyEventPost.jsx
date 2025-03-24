@@ -15,6 +15,7 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import { DELETE_EVENT } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSelector } from 'react-redux';
 
 const ViewMyEventPost = ({ navigation, route }) => {
   const sheetRef = useRef(null);
@@ -25,7 +26,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
   const [commentData, setCommentData] = useState(' ');
   const [page, setPage] = useState(1);
   const [IsLoading, setIsLoading] = useState(false);
-
+  const MyActivistProfile = useSelector((state) => state.activist.activist_data);
   const postsPerPage = 3;
 
   const getTimeAgo = (createdAt) => {
@@ -98,7 +99,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
 
         // ✅ Ensure navigation is available before using it
         if (navigation && navigation.navigate) {
-          navigation.navigate("MainApp");
+          navigation.navigate("EventNews");
         } else {
           console.warn("⚠️ Navigation is not available");
         }
@@ -156,14 +157,14 @@ const ViewMyEventPost = ({ navigation, route }) => {
     }
   };
 
-  const openBottomSheet = (comments) => {
-    console.log("commentData", commentData);
+  const openBottomSheet = (_id, comments) => {
+    console.log("commentData aara h kya ", comments);
     setCommentData(comments);
     if (sheetRef.current) {
       sheetRef.current.open();
     }
   };
-
+  
   const closeBottomSheet = () => {
     if (sheetRef.current) {
       sheetRef.current.close();
@@ -259,9 +260,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
         <View style={styles.cardheader}>
           <View style={{ display: "flex", flexDirection: 'row', alignItems: 'center' }}>
             <View>
-              {images.length > 0 && (
-                <Image source={{ uri: images[0] }} style={styles.EventheaderImage} />
-              )}
+            <Image source={{ uri: MyActivistProfile?.profilePhoto }} style={styles.EventheaderImage} />
             </View>
             <View>
               <Text style={styles.name}>
@@ -334,8 +333,8 @@ const ViewMyEventPost = ({ navigation, route }) => {
         <Text style={styles.captionText}>{item.description}</Text>
 
         <View style={styles.likeShareComment}>
-          <TouchableOpacity style={styles.likeShare} onPress={() => LIKE(item._id)}>
-            <AntDesign name={isLiked ? "heart" : "hearto"} size={20} color={isLiked ? "red" : Colors.dark} />
+          <TouchableOpacity style={styles.likeShare}>
+            <AntDesign name={"heart"} size={20} color={"red"} />
             <Text style={styles.shareText}>{item.likes.length} Likes</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.likeShare} onPress={() => openBottomSheet(item._id, item.comments)} >
@@ -376,28 +375,8 @@ const ViewMyEventPost = ({ navigation, route }) => {
                   <Text style={styles.hour}>{GetTimeAgo(item?.date)}</Text>
                 </View>
               )}
+              showsVerticalScrollIndicator={false}
             />
-
-            {/* Comment Input */}
-            {/* <View style={styles.commentInputContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder="Write a comment..."
-                value={myComment}
-                onChangeText={setMyComment}
-                placeholderTextColor={Colors.gray}
-              />
-              <TouchableOpacity
-                style={styles.postButton}
-                onPress={() => {
-                //   COMMENT(selectedPostId);
-                  closeBottomSheet();
-                }}
-                disabled={!myComment.trim()}
-              >
-                <Text style={styles.postButtonText}>Post</Text>
-              </TouchableOpacity>
-            </View> */}
           </View>
         </RBSheet>
 

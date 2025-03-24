@@ -172,7 +172,7 @@ const Committee = ({ navigation }) => {
       });
       setTimeout(() => {
         setActiveButton(2);
-        navigation.navigate("DharamsalaSubmissionPage");
+        navigation.navigate("CommitteeSubmissionPage");
       }, 2000);
     } else {
       Toast.show({
@@ -293,6 +293,7 @@ const Committee = ({ navigation }) => {
           {/* Bookmark Button */}
           <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
             <FontAwesome name={isSaved ? "bookmark" : "bookmark-o"} size={19} color={Colors.dark} />
+            <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text>
           </TouchableOpacity>
 
           {/* Share Button */}

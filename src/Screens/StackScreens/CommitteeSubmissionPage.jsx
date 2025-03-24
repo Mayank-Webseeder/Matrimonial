@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, SafeAreaView, StatusBar, FlatList,ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, SafeAreaView, StatusBar, FlatList, ActivityIndicator, ToastAndroid } from 'react-native';
 import Colors from '../../utils/Colors';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -249,12 +249,16 @@ const CommitteeSubmissionPage = ({ navigation }) => {
             const response = await apiCall(endpoint, payload, { headers });
             console.log("API Response:", response.data);
 
-            if (response.status === 200 || response.data.status === true || response.data.data.status===true) {
+            if (response.status === 200 || response.data.status === true || response.data.data.status === true) {
                 Toast.show({
                     type: "success",
-                    text1: CommitteeData?._id ? "Profile Updated Successfully" : "Committee Profile Created Successfully",
+                    text1: CommitteeData?._id ? "Committee details Updated Successfully" : "Committee details Created Successfully",
                     text2: response.data.message || "Your changes have been saved!",
                 });
+                ToastAndroid.show(
+                    CommitteeData?._id ? "Committee details Updated Successfully" : "Committee details Created Successfully",
+                    ToastAndroid.SHORT
+                );
 
                 setIsEditing(false);
 

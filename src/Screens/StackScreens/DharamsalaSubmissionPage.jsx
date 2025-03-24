@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, StatusBar, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, StatusBar, SafeAreaView, FlatList, ActivityIndicator, ToastAndroid } from 'react-native';
 import Colors from '../../utils/Colors';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -232,13 +232,17 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
 
             if (response.status === 200 && response.data.status === true) {
                 console.log("Updated Data:", JSON.stringify(response.data.data));
-
                 // ✅ Show Success Toast
                 Toast.show({
                     type: "success",
                     text1: isUpdating ? "Dharamsala details Updated Successfully" : "Dharamsala detials Created Successfully",
                     text2: response.data.message || "Your changes have been saved!",
                 });
+                
+                ToastAndroid.show(
+                    isUpdating ? "Dharamsala details Updated Successfully" : "Dharamsala details Created Successfully",
+                    ToastAndroid.SHORT
+                  );
 
                 // ✅ Update state if new Dharamsala is created
                 if (!DharamsalaData?._id && response.data?.data?._id) {

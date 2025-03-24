@@ -10,7 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { disconnectSocket } from '../../../socket';
 import Toast from 'react-native-toast-message';
 import { resetBioData } from '../../ReduxStore/Slices/BiodataSlice';
-import { resetsetActivistdata } from '../../ReduxStore/Slices/ActivistSlice';
+import { resetsetActivistadata } from '../../ReduxStore/Slices/ActivistSlice';
 import { resetAllBiodata } from '../../ReduxStore/Slices/GetAllBiodataSlice';
 import { reseAllNotification } from '../../ReduxStore/Slices/GetAllNotificationSlice';
 import { resetProfiledata } from '../../ReduxStore/Slices/ProfileSlice';
@@ -68,7 +68,7 @@ const CustomDrawer = (props) => {
       dispatch(resetAllBiodata());
       dispatch(reseAllNotification());
       dispatch(resetProfiledata());
-      
+
       navigation.reset({
         index: 0,
         routes: [{ name: "AuthStack" }],

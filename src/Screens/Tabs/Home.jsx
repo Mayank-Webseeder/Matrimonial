@@ -420,7 +420,7 @@ const Home = ({ navigation }) => {
         setActivistdata({});
       }
     } catch (error) {
-      console.error("Error fetching biodata:", error);
+      console.error("Error fetching Activist data:", error);
     }
     finally {
       setIsLoading(false)

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, TextInput, TouchableOpacity, SafeAreaView, ScrollView, FlatList, Image, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, SafeAreaView, ScrollView, FlatList, Image, ActivityIndicator, ToastAndroid } from 'react-native';
 
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/ActivistFormStyle';
@@ -40,21 +40,6 @@ export default function ActivistForm({ navigation }) {
     profilePhoto: '',
   });
 
-
-  useEffect(() => {
-    const loadFormData = async () => {
-      const savedData = await AsyncStorage.getItem('ActivistData');
-      if (savedData) {
-        setActivistData(JSON.parse(savedData)); // ✅ Restore saved data
-      }
-    };
-    loadFormData();
-  }, []);
-
-  useEffect(() => {
-    AsyncStorage.setItem('ActivistData', JSON.stringify(ActivistData));
-  }, [ActivistData]);
-
   useEffect(() => {
     if (MyActivistProfile) {
       setActivistData((prev) => ({
@@ -65,26 +50,35 @@ export default function ActivistForm({ navigation }) {
     }
   }, [MyActivistProfile]);
 
-  const handleImagePick = () => {
-    ImageCropPicker.openPicker({
-      width: 300,
-      height: 250,
-      cropping: true,
-      includeBase64: true,
-      mediaType: "photo",
-      compressImageQuality: 1
-    })
-      .then(image => {
-        setActivistData(prev => ({
-          ...prev,
-          profilePhoto: `data:${image.mime};base64,${image.data}`,
-        }));
-      })
-      .catch(error => {
-        if (error.code !== "E_PICKER_CANCELLED") {
-          console.error("Image Picking Error:", error);
-        }
+  const handleImagePick = async () => {
+    try {
+      const image = await ImageCropPicker.openPicker({
+        width: 300,
+        height: 300,
+        cropping: true,
+        includeBase64: true, // ✅ Base64 directly from picker
+        mediaType: "any",
+        compressImageQuality: 1,
       });
+
+      console.log("📷 Selected Image:", image); // Debugging
+
+      if (!image.data) {
+        console.error("❌ Base64 data is missing!");
+        return;
+      }
+
+      // ✅ Update state with Base64 image
+      setActivistData((prev) => ({
+        ...prev,
+        profilePhoto: `data:${image.mime};base64,${image.data}`,
+      }));
+
+    } catch (error) {
+      if (error.code !== "E_PICKER_CANCELLED") {
+        console.error("❌ Image Picking Error:", error.message || error);
+      }
+    }
   };
 
   const handleDateChange = (event, selectedDate) => {
@@ -226,24 +220,28 @@ export default function ActivistForm({ navigation }) {
       }
     }
 
-    // ✅ Ensure DOB is in the correct format before sending to backend
-    if (payload.dob && typeof payload.dob === "string") {
+    // ✅ Ensure DOB is formatted as DD/MM/YYYY before sending to backend
+    if (payload.dob) {
       let parsedDate;
 
-      // 🟢 Check if dob is already in "YYYY-MM-DD" format
-      if (moment(payload.dob, "YYYY-MM-DD", true).isValid()) {
+      // 🔍 If dob is in ISO format (YYYY-MM-DDTHH:mm:ss.sssZ), convert it
+      if (moment(payload.dob, moment.ISO_8601, true).isValid()) {
+        parsedDate = moment(payload.dob);
+      }
+      // 🔍 If dob is in "YYYY-MM-DD", convert it
+      else if (moment(payload.dob, "YYYY-MM-DD", true).isValid()) {
         parsedDate = moment(payload.dob, "YYYY-MM-DD");
       }
-      // 🔴 If dob is in "DD/MM/YYYY", convert it
+      // 🔍 If dob is already in "DD/MM/YYYY", keep it
       else if (moment(payload.dob, "DD/MM/YYYY", true).isValid()) {
         parsedDate = moment(payload.dob, "DD/MM/YYYY");
       }
 
       if (parsedDate && parsedDate.isValid()) {
-        payload.dob = parsedDate.format("YYYY-MM-DD"); // ✅ Convert to correct format
+        payload.dob = parsedDate.format("DD/MM/YYYY"); // ✅ Convert to required format
       } else {
-        console.error("Invalid DOB format received:", payload.dob);
-        throw new Error("Invalid DOB format. Expected format is DD/MM/YYYY or YYYY-MM-DD.");
+        console.error("❌ Invalid DOB format received:", payload.dob);
+        throw new Error("Invalid DOB format. Expected format is DD/MM/YYYY.");
       }
     }
 
@@ -251,14 +249,15 @@ export default function ActivistForm({ navigation }) {
     if (ActivistData.profilePhoto) {
       try {
         payload.profilePhoto = await convertToBase64(ActivistData.profilePhoto);
-        console.log("Converted Base64 Image:", payload.profilePhoto);
+        console.log("📸 Converted Base64 Image:", payload.profilePhoto);
       } catch (error) {
-        console.error("Base64 Conversion Error:", error);
+        console.error("❌ Base64 Conversion Error:", error);
       }
     }
 
     return payload;
   };
+
 
   const handleActivistSave = async () => {
     try {
@@ -294,9 +293,13 @@ export default function ActivistForm({ navigation }) {
       if (response.status === 200 && response.data.status === true) {
         Toast.show({
           type: "success",
-          text1: ActivistData?._id ? "Profile Updated Successfully" : "Activist Profile Created Successfully",
+          text1: ActivistData?._id ? "Activist Profile Updated Successfully" : "Your activist approval request is on its way! Stay tuned.",
           text2: response.data.message || "Your changes have been saved!",
         });
+        ToastAndroid.show(
+          ActivistData?._id ? "Activist Profile Updated Successfully" : "Your activist approval request is on its way! Stay tuned.",
+          ToastAndroid.SHORT
+        );
 
         setIsEditing(false);
 
@@ -307,7 +310,7 @@ export default function ActivistForm({ navigation }) {
             _id: response.data.data._id,
           }));
         }
-
+        navigation.navigate("Activist")
         return; // ✅ Success case handled
       }
 
@@ -467,7 +470,7 @@ export default function ActivistForm({ navigation }) {
           textContentType="none"
         />
         <Text style={Globalstyles.title}>
-          Known Activist ID No. <Entypo name={'star'} color={'red'} size={12} />
+          Known Activist ID No.
         </Text>
         <TextInput
           style={Globalstyles.input}

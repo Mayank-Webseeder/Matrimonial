@@ -11,6 +11,7 @@ import { CREATE_DHARAMSALA, UPDATE_DHARAMSALA, GET_DHARAMSALA } from '../../util
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
+import _ from "lodash";
 
 const DharamsalaSubmissionPage = ({ navigation }) => {
     const [subCasteInput, setSubCasteInput] = useState('');
@@ -30,31 +31,24 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
         mobileNo: ''
     });
 
-    useEffect(() => {
-        const loadFormData = async () => {
-            const savedData = await AsyncStorage.getItem('DharamsalaData');
-            if (savedData) {
-                setDharamsalaData(JSON.parse(savedData)); // ✅ Restore saved data
-            }
-        };
-        loadFormData();
-    }, []);
-
-    useEffect(() => {
-        AsyncStorage.setItem('DharamsalaData', JSON.stringify(DharamsalaData));
-    }, [DharamsalaData]);
-
+    const showToast = _.debounce((type, text1, text2, onHide) => {
+        Toast.show({
+            type,
+            text1,
+            text2,
+            position: "top",
+            visibilityTime: 1000,
+            onHide,
+        });
+    }, 500);
+    
 
     useEffect(() => {
         const fetchDharamsalaData = async () => {
             try {
                 const token = await AsyncStorage.getItem("userToken");
                 if (!token) {
-                    Toast.show({
-                        type: "error",
-                        text1: "Error",
-                        text2: "Authorization token is missing.",
-                    });
+                    showToast("error", "Error", "Authorization token is missing.");
                     return;
                 }
 
@@ -132,30 +126,23 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
 
     const handleImageUpload = () => {
         ImageCropPicker.openPicker({
-            multiple: false,
+            multiple: false, // Single image upload
             cropping: true,
             width: 400,
             height: 400,
-            compressImageQuality: 1
+            compressImageQuality: 1,
+            mediaType:"any"
         })
-            .then((image) => {
-                setDharamsalaData((prev) => {
-                    // Ensure images is always an array
-                    const updatedImages = prev?.images?.length ? [...prev.images] : [];
-
-                    if (updatedImages.length < 3) {
-                        return {
-                            ...prev,
-                            images: [...updatedImages, { uri: image.path }],
-                        };
-                    } else {
-                        alert("You can only upload up to 3 photos.");
-                        return prev; // Return unchanged state
-                    }
-                });
-            })
-            .catch((err) => console.log("Crop Picker Error:", err));
+        .then((image) => {
+            setDharamsalaData((prev) => ({
+                ...prev,
+                images: [{ uri: image.path }], // ✅ Purani images hata kar nayi wali save karega
+            }));
+        })
+        .catch((err) => console.log("Crop Picker Error:", err));
     };
+    
+    
 
     const convertToBase64 = async (images) => {
         try {
@@ -205,81 +192,66 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
         try {
             setIsLoading(true);
             const token = await AsyncStorage.getItem("userToken");
-
+    
             if (!token) {
-                Toast.show({
-                    type: "error",
-                    text1: "Error",
-                    text2: "Authorization token is missing.",
-                });
+                showToast("error", "Error", "Authorization token is missing.");
                 return;
             }
-
+    
             const headers = {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             };
-
+    
             const payload = await constructDharamsalaPayload(DharamsalaData, !DharamsalaData?._id);
             console.log("Payload:", payload);
-
+    
             const isUpdating = !!DharamsalaData?._id;
             const apiCall = isUpdating ? axios.patch : axios.post;
             const endpoint = isUpdating ? UPDATE_DHARAMSALA : CREATE_DHARAMSALA;
-
+    
             const response = await apiCall(endpoint, payload, { headers });
             console.log("Dharamsala create/update response:", JSON.stringify(response.data));
-
+    
             if (response.status === 200 && response.data.status === true) {
                 console.log("Updated Data:", JSON.stringify(response.data.data));
-                // ✅ Show Success Toast
-                Toast.show({
-                    type: "success",
-                    text1: isUpdating ? "Dharamsala details Updated Successfully" : "Dharamsala detials Created Successfully",
-                    text2: response.data.message || "Your changes have been saved!",
-                });
-                
-                ToastAndroid.show(
+    
+                // ✅ Show Toast with `onHide` callback
+                showToast(
+                    "success",
                     isUpdating ? "Dharamsala details Updated Successfully" : "Dharamsala details Created Successfully",
-                    ToastAndroid.SHORT
-                  );
-
-                // ✅ Update state if new Dharamsala is created
-                if (!DharamsalaData?._id && response.data?.data?._id) {
-                    setDharamsalaData((prev) => ({
-                        ...prev,
-                        _id: response.data.data._id,
-                    }));
-                }
-                navigation.navigate("Dharmshala")
-
+                    response.data.message || "Your changes have been saved!",
+                    () => {
+                        if (!DharamsalaData?._id && response.data?.data?._id) {
+                            setDharamsalaData((prev) => ({
+                                ...prev,
+                                _id: response.data.data._id,
+                            }));
+                        }
+                        navigation.navigate("Dharmshala");
+                    }
+                );
+    
             } else {
                 throw new Error(response.data.message || "Something went wrong");
             }
         } catch (error) {
             console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
-
+    
             let errorMessage = "Failed to save data.";
-
             if (error.response?.status === 400) {
                 errorMessage = error.response?.data?.message || "Bad request. Please check your input.";
             } else if (error.response?.data?.message) {
                 errorMessage = error.response.data.message;
             }
-
-            // ✅ Show Error Toast
-            Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: errorMessage,
-            });
+    
+            showToast("error", "Error", errorMessage);
         } finally {
             setIsLoading(false);
         }
     };
-
-
-
+    
+    
 
     return (
         <SafeAreaView style={Globalstyles.container}>
@@ -290,7 +262,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
             />
             <View style={Globalstyles.header}>
                 <View style={{ flexDirection: 'row' }}>
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <TouchableOpacity c>
                         <MaterialIcons
                             name="arrow-back-ios-new"
                             size={25}

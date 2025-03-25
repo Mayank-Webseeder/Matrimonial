@@ -1,4 +1,4 @@
-import {Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable,} from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, } from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 import { slider } from '../../DummyData/DummyData';
 import { Image } from 'react-native';
@@ -23,6 +23,7 @@ import { useNavigation } from "@react-navigation/native";
 import ImageViewing from 'react-native-image-viewing';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import Toast from 'react-native-toast-message';
+import _ from "lodash";
 
 const Dharmshala = () => {
   const navigation = useNavigation();
@@ -41,6 +42,11 @@ const Dharmshala = () => {
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
   const [isImageVisible, setImageVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+
+
+  const showToast = _.debounce((type, text1, text2) => {
+    Toast.show({ type, text1, text2, position: "top" });
+  }, 500);
 
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
@@ -145,8 +151,8 @@ const Dharmshala = () => {
     React.useCallback(() => {
       setLocality('');
       setSubcaste('');
-      setDharamsalaData([]);  // Reset data before fetching
-      fetchDharamsalaData("all"); // Fetch full list by default
+      setDharamsalaData([]);
+      fetchDharamsalaData("all"); 
     }, [])
   );
 
@@ -169,98 +175,63 @@ const Dharmshala = () => {
 
   const handleUploadButton = () => {
     if (MyActivistProfile && MyActivistProfile._id) {
-        Toast.show({
-            type: "info",
-            text1: "Info",
-            text2: "You can fill details!",
-            position: "top",
-        });
-        setTimeout(() => {
-            setActiveButton(2);
-            navigation.navigate("DharamsalaSubmissionPage");
-        }, 2000);
+      showToast("success", "Success", "You can fill details!");
+      setTimeout(() => {
+        setActiveButton(2);
+        navigation.navigate("DharamsalaSubmissionPage");
+      }, 2000);
     } else {
-        Toast.show({
-            type: "error",
-            text1: "Error",
-            text2: "Only activists can fill details!",
-            position: "top",
-        });
+      showToast("info", "Info", "Only activists can fill details!");
     }
-};
+  };
 
-const savedProfiles = async (_id) => {
-  if (!_id) {
-      Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: "User ID not found!",
-          position: "top",
-      });
+
+  const savedProfiles = async (_id) => {
+    if (!_id) {
+      showToast("error", "Error", "User ID not found!");
       return;
-  }
+    }
 
-  try {
+    try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-          throw new Error("No token found");
+        throw new Error("No token found");
       }
 
       const headers = {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       };
 
       const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
 
       console.log("Response Data:", JSON.stringify(response?.data));
+      const message = response?.data?.message || "Default success message";
 
-      if (response?.data?.message) {
-          Toast.show({
-              type: "success",
-              text1: "Success",
-              text2: response.data.message,
-              position: "top",
+      if (message) {
+        showToast("success", "Success", message);
+        setTimeout(() => {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "Dharmshala" }],
           });
-
-          // ✅ Toast dismiss hone ke baad page refresh hoga
-          setTimeout(() => {
-              navigation.reset({
-                  index: 0,
-                  routes: [{ name: "Dharmshala" }],
-              });
-          }, 2000); // Toast ki default duration
+        }, 2000); 
       } else {
-          Toast.show({
-              type: "error",
-              text1: "Error",
-              text2: "Something went wrong!",
-              position: "top",
-          });
+        showToast("error", "Error", "Something went wrong!");
       }
-  } catch (error) {
+    } catch (error) {
+
       console.error(
-          "API Error:",
-          error?.response ? JSON.stringify(error.response.data) : error.message
+        "API Error:",
+        error?.response ? JSON.stringify(error.response.data) : error.message
       );
+      showToast("error", "Error", error.response?.data?.message || "Failed to save profile!")
+    }
+  };
 
-      Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: error.response?.data?.message || "Failed to save profile!",
-          position: "top",
-      });
-  }
-};
-
-const handleShare = async () => {
-    Toast.show({
-        type: "info",
-        text1: "Info",
-        text2: "Under development",
-        position: "top",
-    });
-};
+  const handleShare = async () => {
+    showToast("info", "Info", "Under development");
+  };
 
   const renderItem = ({ item }) => {
     const isSaved = item.isSaved || null;
@@ -299,7 +270,7 @@ const handleShare = async () => {
               size={19}
               color={Colors.dark}
             />
-        <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text>
+            <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
@@ -341,7 +312,7 @@ const handleShare = async () => {
       {/* Fixed Header */}
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: "center" }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity  onPress={() => navigation.navigate("MainApp")}>
             <MaterialIcons
               name="arrow-back-ios-new"
               size={25}
@@ -522,7 +493,7 @@ const handleShare = async () => {
           </View>
         </View>
       </Modal>
-      <Toast/>
+      <Toast />
     </SafeAreaView>
   );
 };

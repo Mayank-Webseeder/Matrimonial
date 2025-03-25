@@ -12,6 +12,8 @@ const REPORT = "https://api-matrimonial.webseeder.tech/api/v1/report/createRepor
 const PROFILE_ENDPOINT = "https://api-matrimonial.webseeder.tech/api/v1/user/view";
 const UPLOAD_PROFILE_PHOTO = "https://api-matrimonial.webseeder.tech/api/v1/user/updateProfileImage";
 const UPDATE_PROFILE = "https://api-matrimonial.webseeder.tech/api/v1/user/updateProfile";
+const DELETE_USER="https://api-matrimonial.webseeder.tech/api/v1/user/deleteUser";
+const DELETE_PROFILE_PHOTO="https://api-matrimonial.webseeder.tech/api/v1/user/delete-profileImage";
 
 // biodata api's
 const CREATE_PERSONAL_DETAILS = "https://api-matrimonial.webseeder.tech/api/v1/biodata/createPersonalDetails";
@@ -206,5 +208,7 @@ export {
     EVENT_NEWS_NOTIFICATION_HANDLE_API,
     UPDATE_PANDIT_REVIEW,
     UPDATE_JYOTISH_REVIEW,
-    UPDATE_KATHAVACHAK_REVIEW
+    UPDATE_KATHAVACHAK_REVIEW,
+    DELETE_PROFILE_PHOTO,
+    DELETE_USER
 }

@@ -164,11 +164,11 @@ const SavedProfile = ({ navigation }) => {
             <>
               <Image source={{ uri: saveProfile.personalDetails?.closeUpPhoto || "https://via.placeholder.com/150" }} style={styles.image} />
               <View style={styles.detailscontent}>
-                <Text style={styles.name}>{saveProfile.personalDetails?.fullname || "N/A"}</Text>
-                <Text style={styles.text} numberOfLines={1}>City: {saveProfile.personalDetails?.cityOrVillage || "N/A"}</Text>
-                <Text style={styles.text}>Age: {saveProfile.personalDetails?.dob ? new Date().getFullYear() - new Date(saveProfile.personalDetails.dob).getFullYear() : "N/A"} Years</Text>
-                <Text style={styles.text}>{saveProfile.personalDetails?.maritalStatus || "N/A"}</Text>
-                <Text style={styles.text}>Sub Caste: {saveProfile.personalDetails?.subCaste || "N/A"}</Text>
+                <Text style={styles.name} numberOfLines={1}>{saveProfile.personalDetails?.fullname || "N/A"}</Text>
+                <Text style={styles.text} numberOfLines={1} >City: {saveProfile.personalDetails?.cityOrVillage || "N/A"}</Text>
+                <Text style={styles.text} >Age: {saveProfile.personalDetails?.dob ? new Date().getFullYear() - new Date(saveProfile.personalDetails.dob).getFullYear() : "N/A"} Years</Text>
+                {/* <Text style={styles.text}>{saveProfile.personalDetails?.maritalStatus || "N/A"}</Text> */}
+                <Text style={styles.text} numberOfLines={1}>Sub Caste: {saveProfile.personalDetails?.subCaste || "N/A"}</Text>
               </View>
             </>
           )}
@@ -180,12 +180,12 @@ const SavedProfile = ({ navigation }) => {
                 style={styles.image}
               />
               <View style={styles.detailscontent}>
-                <Text style={styles.name}>{saveProfile?.fullName || "N/A"}</Text>
-                <Text style={styles.text}>City: {saveProfile?.city || "N/A"}</Text>
+                <Text style={styles.name} numberOfLines={1}>{saveProfile?.fullName || "N/A"}</Text>
+                <Text style={styles.text} numberOfLines={1}>City: {saveProfile?.city || "N/A"}</Text>
                 {saveProfile?.experience && <Text style={styles.text}>Experience: {saveProfile?.experience}</Text>}
                 {/* <Text style={styles.text}>Experience: {saveProfile?.experience || "N/A"} years</Text> */}
                 {/* <Text style={styles.text}>Sub Caste: {saveProfile.subCaste || "N/A"}</Text> */}
-                {saveProfile?.area && <Text style={styles.text}>Area: {saveProfile?.area}</Text>}
+                {saveProfile?.area && <Text style={styles.text} numberOfLines={1}>Area: {saveProfile?.area}</Text>}
               </View>
             </>
           )}
@@ -197,9 +197,9 @@ const SavedProfile = ({ navigation }) => {
                 style={styles.image}
               />
               <View style={styles.detailscontent}>
-                <Text style={styles.name}>{saveProfile?.dharmshalaName || "N/A"}</Text>
-                <Text style={styles.text}>City: {saveProfile?.city || "N/A"}</Text>
-                <Text style={styles.text}>Sub Caste: {saveProfile?.subCaste || "N/A"}</Text>
+                <Text style={styles.name} numberOfLines={1}>{saveProfile?.dharmshalaName || "N/A"}</Text>
+                <Text style={styles.text} numberOfLines={1}>City: {saveProfile?.city || "N/A"}</Text>
+                <Text style={styles.text} numberOfLines={1}>Sub Caste: {saveProfile?.subCaste || "N/A"}</Text>
               </View>
             </>
           )}
@@ -211,9 +211,9 @@ const SavedProfile = ({ navigation }) => {
                 style={styles.image}
               />
               <View style={styles.detailscontent}>
-                <Text style={styles.name}>{saveProfile?.committeeTitle || "N/A"}</Text>
-                <Text style={styles.text}>City: {saveProfile?.city || "N/A"}</Text>
-                <Text style={styles.text}>Sub Caste: {saveProfile?.subCaste || "N/A"}</Text>
+                <Text style={styles.name} numberOfLines={1}>{saveProfile?.committeeTitle || "N/A"}</Text>
+                <Text style={styles.text} numberOfLines={1}>City: {saveProfile?.city || "N/A"}</Text>
+                <Text style={styles.text} numberOfLines={1}>Sub Caste: {saveProfile?.subCaste || "N/A"}</Text>
               </View>
             </>
           )}

@@ -4,11 +4,12 @@ import Colors from '../../utils/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styles from '../StyleScreens/InactiveDeleteStyle';
 import Globalstyles from '../../utils/GlobalCss';
-import { DELETE_BIODATA } from '../../utils/BaseUrl';
+import { DELETE_BIODATA, DELETE_USER } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector } from 'react-redux';
 import { DrawerActions } from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 const InActiveDelete = ({ navigation }) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [actionType, setActionType] = useState('');
@@ -61,7 +62,50 @@ const InActiveDelete = ({ navigation }) => {
             setIsLoading(false);
         }
     };
+    const DELETE_USER_API = async () => {
+        try {
+            setIsLoading(true);
+            const token = await AsyncStorage.getItem("userToken");
 
+            if (!token) throw new Error("No token found");
+
+            const headers = {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            };
+
+            console.log("Headers:", headers);
+
+            const response = await axios.delete(DELETE_USER, { headers });
+
+            console.log("✅ Response Data:", response.data);
+
+            if (response.status === 200 && response.data.status === true) {
+                ToastAndroid.show("Your Account has been deleted successfully!", ToastAndroid.SHORT);
+
+                // ✅ Clear storage and navigate to SignUp
+                await AsyncStorage.clear();
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                  });
+            } else {
+                throw new Error(response.data.message || "Unexpected response from server");
+            }
+
+        } catch (error) {
+            console.error("❌ Error deleting Account:", error?.response?.data || error.message);
+
+            let errorMessage = "Failed to delete Account. Please try again!";
+            if (error.response && error.response.status === 400) {
+                errorMessage = error.response.data.message || errorMessage;
+            }
+
+            ToastAndroid.show(errorMessage, ToastAndroid.LONG);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const handleAction = (type) => {
         setActionType(type);
@@ -99,6 +143,38 @@ const InActiveDelete = ({ navigation }) => {
                 });
             }
         }
+        else if (actionType === 'deleteAccount') {
+            try {
+                const response = await DELETE_USER_API(); // Call API
+
+                if (response?.status === 400) {
+                    Toast.show({
+                        type: "error",
+                        text1: "Error",
+                        text2: response.data.message || "Failed to delete account!",
+                    });
+                } else {
+                    Toast.show({
+                        type: "success",
+                        text1: "Success",
+                        text2: "Account Deleted Successfully!",
+                    });
+                }
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
+
+            } catch (error) {
+                console.error("❌ Error in handleConfirm:", error);
+
+                Toast.show({
+                    type: "error",
+                    text1: "Error",
+                    text2: error?.response?.data?.message || "Something went wrong!",
+                });
+            }
+        }
     };
 
 
@@ -123,9 +199,14 @@ const InActiveDelete = ({ navigation }) => {
             <Text style={styles.Text}>Do you really want to Inactivate or Delete your Profile?</Text>
 
             <View style={styles.optionsContainer}>
-                <TouchableOpacity style={styles.optionButton} onPress={() => handleAction('inactivate')}>
-                    <Text style={styles.optionText}>Inactivate My Biodata</Text>
-                </TouchableOpacity>
+            {Profiledata?.isMatrimonial && (
+                    <TouchableOpacity
+                        style={styles.optionButton}
+                        onPress={() => handleAction('inactivate')}
+                    >
+                        <Text style={styles.optionText}>Inactivate My Biodata</Text>
+                    </TouchableOpacity>
+                )}
 
                 {Profiledata?.isMatrimonial && (
                     <TouchableOpacity
@@ -173,6 +254,7 @@ const InActiveDelete = ({ navigation }) => {
                     </View>
                 </View>
             </Modal>
+            <Toast/>
         </SafeAreaView>
     );
 };

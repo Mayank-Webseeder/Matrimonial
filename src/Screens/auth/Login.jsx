@@ -83,7 +83,6 @@ const Login = ({ navigation }) => {
                     position: "top",
                     visibilityTime: 1000,
                     textStyle: { fontSize: 14, color: "white" },
-                    backgroundColor: "green",
                     onHide: () => {
                         console.log("🟢 Navigating to AppStack...");
                         navigation.reset({

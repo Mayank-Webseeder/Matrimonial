@@ -2,6 +2,24 @@ import { StyleSheet } from "react-native";
 import Colors from "../../utils/Colors";
 import { SH, SW, SF } from "../../utils/Dimensions";
 const styles = StyleSheet.create({
+    tag: {
+        flexDirection: "row",
+        backgroundColor: "#E0E0E0",
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        borderRadius: 20,
+        margin: 5,
+        alignItems: "center",
+    },
+    tagText: {
+        color: "#333",
+        marginRight: 8,
+    },
+    removeTag: {
+        color: "red",
+        fontSize: 16,
+        fontWeight: "bold",
+    },
     radioGroup: {
         flexDirection: 'row',
         marginBottom: SH(15),

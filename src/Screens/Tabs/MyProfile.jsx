@@ -13,8 +13,9 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { UPLOAD_PROFILE_PHOTO } from '../../utils/BaseUrl';
+import { UPLOAD_PROFILE_PHOTO,DELETE_PROFILE_PHOTO } from '../../utils/BaseUrl';
 import axios from 'axios';
+import Toast from 'react-native-toast-message';
 const MyProfile = ({ navigation }) => {
     const [selectedButton, setSelectedButton] = useState('CreateBioData');
     const [modalVisible, setModalVisible] = useState(false);
@@ -25,6 +26,7 @@ const MyProfile = ({ navigation }) => {
     const [fetchProfileDetails, setFetchProfileDetails] = useState(null);
     const [loading, setLoading] = useState(false);
     const image = profileData?.photoUrl?.[0];
+    const [isLoading, setIsLoading] = useState(false);
     // console.log("profileData", profileData);
     const formattedDate = moment(profileData.dob).format("DD/MM/YYYY");
 
@@ -111,11 +113,76 @@ const MyProfile = ({ navigation }) => {
     }, []);
 
 
-    const handleDeleteImage = () => {
-        setSelectedImage(null);
-        setModalVisible(false);
-    };
+    const handleDeleteImage = async () => {
+        try {
+          setIsLoading(true);
+          const token = await AsyncStorage.getItem("userToken");
+      
+          if (!token) {
+            Toast.show({
+              type: "error",
+              text1: "Error",
+              text2: "Authorization token is missing.",
+            });
+            return;
+          }
+      
+          const headers = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          };
+      
+          const response = await axios.delete(DELETE_PROFILE_PHOTO, { headers });
+      
+          if (response.status === 200 && response.data.status === true) {
+            console.log(" delete response",JSON.stringify(response.data));
+            Toast.show({
+              type: "success",
+              text1: "Profile Photo Deleted Successfully",
+              text2: response.data.message || "Your profile photo has been removed.",
+            });
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'MainApp' }],
+            });
+            setModalVisible(false)
+          } else {
+            throw new Error(response.data.message || "Failed to delete profile photo.");
+          }
+        } catch (error) {
+          console.error("Error deleting profile photo:", error?.response?.data || error.message);
+          Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: "Failed to delete profile photo.",
+          });
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      
 
+      const handleImageUpload = async () => {
+        ImageCropPicker.openPicker({
+            width: 300,
+            height: 300,
+            cropping: true,
+            includeBase64: true,
+        })
+        .then(image => {
+            setSelectedImage(image.path);
+            setModalVisible(false);
+            console.log('Selected Image:', image);
+            
+            // Start loader before upload
+            setIsLoading(true);
+            upload_profile_image(image.data);
+        })
+        .catch(error => {
+            console.error('Image Picking Error:', error);
+        });
+    };
+    
     const upload_profile_image = async (base64Data) => {
         console.log("Base64 Image Data:", base64Data);
         try {
@@ -130,11 +197,8 @@ const MyProfile = ({ navigation }) => {
             const response = await axios.put(UPLOAD_PROFILE_PHOTO, { photoUrl: base64Data }, { headers });
             console.log("Profile image updated successfully:", response.data);
             const message = response?.data?.message;
-            console.log("message", message);
     
             if (message === "Profile image updated successfully.") {
-                console.log("Profile image uploaded, now fetching profile data...");
-    
                 ToastAndroid.show("Profile Updated! Your image has been successfully uploaded.", ToastAndroid.SHORT);
     
                 console.log("Navigating to MainApp...");
@@ -151,28 +215,12 @@ const MyProfile = ({ navigation }) => {
             }
     
             ToastAndroid.show("Upload Failed! Please try again.", ToastAndroid.SHORT);
+        } finally {
+            // Stop loader after upload
+            setIsLoading(false);
         }
     };
     
-
-
-    const handleImageUpload = async () => {
-        ImageCropPicker.openPicker({
-            width: 300,
-            height: 300,
-            cropping: true,
-            includeBase64: true,
-        })
-            .then(image => {
-                setSelectedImage(image.path);
-                setModalVisible(false);
-                console.log('Selected Image:', image);
-                upload_profile_image(image.data);
-            })
-            .catch(error => {
-                console.error('Image Picking Error:', error);
-            });
-    };
 
     const handleCameraCapture = () => {
         ImageCropPicker.openCamera({
@@ -221,7 +269,14 @@ const MyProfile = ({ navigation }) => {
                         style={styles.image}
                     />
                     <View style={styles.profileButtons}>
-                        <Text style={styles.editText} onPress={() => setModalVisible(true)}>Upload Photo</Text>
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <Text 
+            style={styles.editText} 
+            onPress={() => !isLoading && setModalVisible(true)}
+        >
+            {isLoading ? "Uploading..." : "Upload Photo"}
+        </Text>
+    </View>
                         <Text style={styles.editText} onPress={() => navigation.navigate('UpdateProfile')}>Update Profile</Text>
                     </View>
                     <View style={styles.userDeatil}>
@@ -314,6 +369,7 @@ const MyProfile = ({ navigation }) => {
                     </View>
                 </View>
             </Modal>
+            <Toast/>
         </SafeAreaView>
     );
 };

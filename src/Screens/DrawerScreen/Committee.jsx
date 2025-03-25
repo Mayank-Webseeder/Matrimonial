@@ -23,6 +23,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImageViewing from 'react-native-image-viewing';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { SW } from '../../utils/Dimensions';
+import _ from "lodash";
+
 const Committee = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [locality, setLocality] = useState('');
@@ -37,9 +39,12 @@ const Committee = ({ navigation }) => {
   const [committeeData, setCommitteeData] = useState([]);
   const [modalLocality, setModalLocality] = useState('');
   const [error, setError] = useState(null);
-
   const [isImageVisible, setImageVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+
+   const showToast = _.debounce((type, text1, text2) => {
+      Toast.show({ type, text1, text2, position: "top" });
+    }, 500);
 
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
@@ -161,99 +166,67 @@ const Committee = ({ navigation }) => {
       </View>
     </SkeletonPlaceholder>
   );
+ 
+ const handleUploadButton = () => {
+     if (MyActivistProfile && MyActivistProfile._id) {
+         showToast("success", "Success", "You can fill details!");
+         setTimeout(() => {
+             setActiveButton(2);
+             navigation.navigate("CommitteeSubmissionPage");
+         }, 2000);
+     } else {
+         showToast("info", "Info", "Only activists can fill details!");
+     }
+ };
+ 
 
-  const handleUploadButton = () => {
-    if (MyActivistProfile && MyActivistProfile._id) {
-      Toast.show({
-        type: "info",
-        text1: "Info",
-        text2: "You can fill details!",
-        position: "top",
-      });
+ const savedProfiles = async (_id) => {
+  if (!_id) {
+    showToast("error", "Error", "User ID not found!");
+    return;
+  }
+
+  try {
+    const token = await AsyncStorage.getItem("userToken");
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+
+    const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
+
+    console.log("Response Data:", JSON.stringify(response?.data));
+    const message = response?.data?.message || "Default success message";
+
+    if (message) {
+      showToast("success", "Success", message);
+
       setTimeout(() => {
-        setActiveButton(2);
-        navigation.navigate("CommitteeSubmissionPage");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Committee" }],
+        });
       }, 2000);
     } else {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Only activists can fill details!",
-        position: "top",
-      });
+      showToast("error", "Error", "Something went wrong!");
     }
-  };
+  } catch (error) {
 
-  const savedProfiles = async (_id) => {
-    if (!_id) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "User ID not found!",
-        position: "top",
-      });
-      return;
-    }
+    console.error(
+      "API Error:",
+      error?.response ? JSON.stringify(error.response.data) : error.message
+    );
+    showToast("error", "Error", error.response?.data?.message || "Failed to save profile!")
+  }
+};
 
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) {
-        throw new Error("No token found");
-      }
-
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      };
-
-      const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
-
-      console.log("Response Data:", JSON.stringify(response?.data));
-
-      if (response?.data?.message) {
-        Toast.show({
-          type: "success",
-          text1: "Success",
-          text2: response.data.message,
-          position: "top",
-        });
-        setTimeout(() => {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: "Committee" }],
-          });
-        }, 2000);
-      } else {
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: "Something went wrong!",
-          position: "top",
-        });
-      }
-    } catch (error) {
-      console.error(
-        "API Error:",
-        error?.response ? JSON.stringify(error.response.data) : error.message
-      );
-
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: error.response?.data?.message || "Failed to save profile!",
-        position: "top",
-      });
-    }
-  };
-
-  const handleShare = async () => {
-    Toast.show({
-      type: "info",
-      text1: "Info",
-      text2: "Under development",
-      position: "top",
-    });
-  };
+const handleShare = async () => {
+  showToast("info", "Info", "Under development");
+};
 
   const renderItem = ({ item }) => {
     const isSaved = item.isSaved || false;
@@ -336,7 +309,7 @@ const Committee = ({ navigation }) => {
       {/* Fixed Header */}
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: "center" }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity onPress={() => navigation.navigate("MainApp")}>
             <MaterialIcons
               name="arrow-back-ios-new"
               size={25}

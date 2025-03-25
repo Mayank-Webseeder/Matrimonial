@@ -310,7 +310,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
             />
             <View style={Globalstyles.header}>
                 <View style={{ flexDirection: 'row', alignItems: "center" }}>
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <TouchableOpacity onPress={() => navigation.navigate("Committee")}>
                         <MaterialIcons
                             name="arrow-back-ios-new"
                             size={25}

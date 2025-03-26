@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, SafeAreaView, StatusBar, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, SafeAreaView, StatusBar, FlatList, ActivityIndicator, ToastAndroid } from 'react-native';
 import styles from '../StyleScreens/RoleRegisterStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
@@ -30,7 +30,7 @@ const RoleRegisterForm = ({ navigation }) => {
     const profileData = ProfileData?.profiledata || {};
     const [fetchProfileDetails, setFetchProfileDetails] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-
+    const [errors, setErrors] = useState({});
     const [RoleRegisterData, setRoleRegisterData] = useState({
         mobileNo: '',
         fullName: '',
@@ -60,43 +60,46 @@ const RoleRegisterForm = ({ navigation }) => {
     const fetchProfilesDetails = async () => {
         try {
             setIsLoading(true);
-
+    
             const token = await AsyncStorage.getItem('userToken');
-
-            // ✅ **Select first TRUE category**
+    
+            // ✅ **Select first TRUE category (Only Pandit, Jyotish, Kathavachak)**
             let profileType = null;
             if (profileData.isPandit) profileType = "Pandit";
             else if (profileData.isJyotish) profileType = "Jyotish";
             else if (profileData.isKathavachak) profileType = "Kathavachak";
-            else if (profileData.isMatrimonial) profileType = "Biodata";
-            else if (profileData.isActivist) profileType = "Activist";
-
+    
             if (!profileType) {
                 console.log("❌ No valid profileType found.");
                 setIsLoading(false);
                 return;
             }
-
+    
             const apiUrl = `https://api-matrimonial.webseeder.tech/api/v1/user/profiles/${profileType}`;
-
-            // ✅ **Debugging: Print API details before request**
+    
             console.log("API Request:");
             console.log("URL:", apiUrl);
             console.log("Headers:", { Authorization: `Bearer ${token}` });
-
+    
             const response = await axios.get(apiUrl, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-
-            console.log("Full API Response:", response);
-
+    
+            console.log("Full API Response:", JSON.stringify(response.data));
+    
+            // ✅ **Filter out Activist profiles**
+            if (response.data?.data?.profileType === "Activist") {
+                console.log("❌ Skipping Activist Profile");
+                setIsLoading(false);
+                return;
+            }
+    
             setFetchProfileDetails(response.data.data);
             console.log("Selected Profile Data:", response.data.data);
-
-            setIsLoading(false);
+    
         } catch (error) {
             console.error("Error fetching profiles:", error);
-
+    
             if (error.response) {
                 console.error("Response Data:", error.response.data);
                 console.error("Response Status:", error.response.status);
@@ -106,10 +109,16 @@ const RoleRegisterForm = ({ navigation }) => {
             } else {
                 console.error("Error Message:", error.message);
             }
-
+        } finally {
             setIsLoading(false);
         }
     };
+    
+    useEffect(() => {
+        console.log("profileData:", JSON.stringify(profileData, null, 2));
+        fetchProfilesDetails();
+    }, []);
+    
 
     const roleOptions = [
         { label: 'Pandit', value: 'Pandit' },
@@ -200,87 +209,142 @@ const RoleRegisterForm = ({ navigation }) => {
         }
     };
 
-
+    const OPTIONAL_FIELDS = [
+        "residentialAddress", "additionalPhotos", "experience", "websiteUrl", 
+        "facebookUrl", "youtubeUrl", "instagramUrl", "whatsapp","description","aadharNo"
+    ];
+    
+    const validateForm = (data) => {
+        let errors = {};
+    
+        if (!data) return errors; // Ensure data exists to avoid undefined errors
+    
+        const allFields = Object.keys(data);
+    
+        // Get mandatory fields (all except optional ones)
+        const MANDATORY_FIELDS = allFields.filter(field => !OPTIONAL_FIELDS.includes(field));
+    
+        MANDATORY_FIELDS.forEach((field) => {
+            if (!data[field] || String(data[field]).trim() === "") {
+                errors[field] = `${field} is required`;
+            }
+        });
+    
+        return errors;
+    };
+    
     const handleSubmit = async () => {
-        setIsLoading(true);
-        const roleApiMapping = {
-            Pandit: CREATE_PANDIT,
-            Jyotish: CREATE_JYOTISH,
-            Kathavachak: CREATE_KATHAVACHAK
-        };
-
-        const commonPayload = {
-            mobileNo: RoleRegisterData.mobileNo || fetchProfileDetails?.mobileNo,
-            fullName: RoleRegisterData.fullName || fetchProfileDetails?.fullName,
-            residentialAddress: RoleRegisterData.residentialAddress || fetchProfileDetails?.residentialAddress,
-            state: RoleRegisterData.state || fetchProfileDetails?.state,
-            city: RoleRegisterData.city || fetchProfileDetails?.city,
-            subCaste: RoleRegisterData.subCaste || fetchProfileDetails?.subCaste,
-            profilePhoto: RoleRegisterData.profilePhoto,
-            additionalPhotos: RoleRegisterData.additionalPhotos,
-            experience: String(RoleRegisterData.experience),
-            description: RoleRegisterData.description || fetchProfileDetails?.description,
-            websiteUrl: RoleRegisterData.websiteUrl,
-            facebookUrl: RoleRegisterData.facebookUrl,
-            youtubeUrl: RoleRegisterData.youtubeUrl,
-            instagramUrl: RoleRegisterData.instagramUrl,
-            whatsapp: RoleRegisterData.whatsapp,
-            status: "pending"
-        };
-
-        console.log("Payload to be sent:", commonPayload);
-
         try {
+            console.log("Submitting..."); 
+            setIsLoading(true);
+            console.log("Loader Started..."); 
+    
+            const roleApiMapping = {
+                Pandit: CREATE_PANDIT,
+                Jyotish: CREATE_JYOTISH,
+                Kathavachak: CREATE_KATHAVACHAK
+            };
+    
+            const commonPayload = {
+                mobileNo: RoleRegisterData?.mobileNo || fetchProfileDetails?.mobileNo,
+                residentialAddress: RoleRegisterData?.residentialAddress || fetchProfileDetails?.residentialAddress || "",
+                aadharNo: RoleRegisterData?.aadharNo || fetchProfileDetails?.aadharNo || "",
+                fullName: RoleRegisterData?.fullName || fetchProfileDetails?.fullName,
+                state: RoleRegisterData?.state || fetchProfileDetails?.state,
+                city: RoleRegisterData?.city || fetchProfileDetails?.city,
+                subCaste: RoleRegisterData?.subCaste || fetchProfileDetails?.subCaste,
+                profilePhoto: RoleRegisterData?.profilePhoto,
+                additionalPhotos: RoleRegisterData?.additionalPhotos,
+                experience: RoleRegisterData?.experience ? String(RoleRegisterData.experience) : "",
+                description: RoleRegisterData?.description || fetchProfileDetails?.description || "",
+                websiteUrl: RoleRegisterData?.websiteUrl,
+                facebookUrl: RoleRegisterData?.facebookUrl,
+                youtubeUrl: RoleRegisterData?.youtubeUrl,
+                instagramUrl: RoleRegisterData?.instagramUrl,
+                whatsapp: RoleRegisterData?.whatsapp,
+                status: "pending"
+            };
+    
+            const errors = validateForm(commonPayload);
+            console.log("Validation Errors:", errors);
+    
+            if (Object.keys(errors).length > 0) {
+                setErrors(errors);
+                setIsLoading(false);
+                return;
+            }
+    
             const token = await AsyncStorage.getItem("userToken");
             if (!token) throw new Error("Authorization token is missing.");
-
+            console.log("Token found:", token);
+    
             const headers = {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`,
             };
-
-            for (const role of selectedRoles) {
+    
+            if (!selectedRoles || selectedRoles.length === 0) {
+                throw new Error("No roles selected!");
+            }
+            console.log("Selected Roles:", selectedRoles);
+    
+            // ✅ Use Promise.all() to wait for all requests
+            const requests = selectedRoles.map(async (role) => {
                 const url = roleApiMapping[role];
-
-                // ✅ Filter only the selected services for the specific role
+    
                 const filteredServices = Object.keys(checked).filter(service =>
                     servicesOptions[role].some(option => option.value === service) && checked[service]
                 );
-
+    
                 const payload = {
                     ...commonPayload,
                     [`${role.toLowerCase()}Services`]: filteredServices,
                 };
-
+    
                 console.log(`Sending Payload for ${role}:`, payload);
-
+    
                 const response = await axios.post(url, payload, { headers });
-
+                console.log(`Response for ${role}:`, response.data);
+    
                 Toast.show({
                     type: 'success',
                     text1: 'Success!',
                     text2: `Successfully registered for ${role}.`,
                 });
-                setTimeout(() => {
-                    navigation.navigate("MainApp");
-                }, 2000);
-
-            }
+    
+                ToastAndroid.show(`Successfully registered for ${role}`, ToastAndroid.SHORT);
+            });
+    
+            // ✅ Wait for all API requests to complete
+            await Promise.all(requests);
+    
+            // ✅ Navigate only after all requests are successful
+            console.log("All roles registered successfully! Navigating...");
             await AsyncStorage.removeItem('RoleRegisterData');
-
+    
+            setTimeout(() => {
+                navigation.navigate("MainApp");
+            }, 2000);
+    
         } catch (error) {
-            console.error('Error:', error.response?.data);
-
+            console.error('Error:', error.response?.data || error.message);
+    
             Toast.show({
                 type: 'error',
                 text1: 'Error',
                 text2: error.response?.data?.message || 'Something went wrong!',
             });
-
+    
+            ToastAndroid.show(error.response?.data?.message || "Something went wrong!", ToastAndroid.SHORT);
         } finally {
+            console.log("Loader Stopped!");
             setIsLoading(false);
         }
     };
+    
+    
+    
+
 
     const handleStateInputChange = (text) => {
         setStateInput(text);
@@ -422,6 +486,7 @@ const RoleRegisterForm = ({ navigation }) => {
                         autoComplete="off"
                         textContentType="none"
                     />
+                    {errors.fullName && <Text style={styles.errorText}>{errors.fullName}</Text>}
 
                     <Text style={Globalstyles.title}>Mobile No. <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput style={Globalstyles.input}
@@ -432,7 +497,7 @@ const RoleRegisterForm = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none" />
-
+                    {errors.mobileNo && <Text style={styles.errorText}>{errors.mobileNo}</Text>}
                     <Text style={[Globalstyles.title, { color: Colors.theme_color }]}>Address</Text>
 
                     <Text style={Globalstyles.title}>State <Entypo name={'star'} color={'red'} size={12} /></Text>
@@ -445,6 +510,7 @@ const RoleRegisterForm = ({ navigation }) => {
                         autoComplete="off"
                         textContentType="none"
                     />
+                    {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
 
                     {filteredStates.length > 0 ? (
                         <FlatList
@@ -470,6 +536,7 @@ const RoleRegisterForm = ({ navigation }) => {
                         autoComplete="off"
                         textContentType="none"
                     />
+                    {errors.city && <Text style={styles.errorText}>{errors.city}</Text>}
                     {filteredCities.length > 0 && cityInput ? (
                         <FlatList
                             data={filteredCities.slice(0, 5)}
@@ -515,6 +582,7 @@ const RoleRegisterForm = ({ navigation }) => {
                         autoComplete="off"
                         textContentType="none"
                     />
+                    {errors.subCaste && <Text style={styles.errorText}>{errors.subCaste}</Text>}
 
                     {/* Agar user type karega toh list dikhegi */}
                     {filteredSubCaste.length > 0 ? (
@@ -590,10 +658,10 @@ const RoleRegisterForm = ({ navigation }) => {
                                 <Text style={styles.imagePlaceholder}>Upload Profile Photo</Text>
                             )}
                         </TouchableOpacity>
-
                     </View>
+                    {errors.profilePhoto && <Text style={styles.errorText}>{errors.profilePhoto}</Text>}
 
-                    <Text style={Globalstyles.title}>Add Description <Entypo name={'star'} color={'red'} size={12} /></Text>
+                    <Text style={Globalstyles.title}>Add Description</Text>
                     <TextInput style={Globalstyles.textInput} value={RoleRegisterData.description || fetchProfileDetails?.description || ''}
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, description: text }))}
                         textAlignVertical='top' placeholder="Add Your Description"
@@ -680,15 +748,17 @@ const RoleRegisterForm = ({ navigation }) => {
                         autoComplete="off"
                         textContentType="none"
                     />
-
-                    {
-                        isLoading ?
-                            <ActivityIndicator size={'large'} color={Colors.theme_color} />
-                            :
-                            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                                <Text style={styles.buttonText}>submit</Text>
-                            </TouchableOpacity>
-                    }
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={handleSubmit}
+                        disabled={isLoading}
+                    >
+                        {isLoading ? (
+                            <ActivityIndicator size="large" color={Colors.light} />
+                        ) : (
+                            <Text style={styles.buttonText}>submit</Text>
+                        )}
+                    </TouchableOpacity>
                 </View>
             </ScrollView>
             <Toast />

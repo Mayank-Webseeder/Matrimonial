@@ -98,6 +98,7 @@ const AdvertiseWithUs = ({ navigation }) => {
                             <Text style={styles.title}>Contact Information</Text>
                             <Text style={styles.subtitle}>Say something to start a live chat!</Text>
                             <View style={styles.iconContainer}>
+                            <View style={styles.iconContainer}>
                                 <MaterialIcons name="phone" size={22} color={Colors.light} />
                                 <Text
                                     style={styles.contactText}
@@ -105,6 +106,16 @@ const AdvertiseWithUs = ({ navigation }) => {
                                 >
                                     8871186630
                                 </Text>
+                            </View>
+                            <View style={styles.iconContainer}>
+                                <MaterialIcons name="phone" size={22} color={Colors.light} />
+                                <Text
+                                    style={styles.contactText}
+                                    onPress={() => Linking.openURL("tel:8871186630")}
+                                >
+                                     8966930727
+                                </Text>
+                            </View>
                             </View>
 
                             {/* <View style={styles.iconContainer}>

@@ -268,6 +268,11 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         marginTop: SH(150)
+    },
+    errorText:{
+        fontFamily:"Poppins-Medium",
+        fontSize:SF(13),
+        color:"red"
     }
 
 })

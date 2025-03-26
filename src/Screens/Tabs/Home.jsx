@@ -265,8 +265,6 @@ const Home = ({ navigation }) => {
       }
 
       console.log("📡 Subscribing to events...");
-
-      // 🔥 Catch-all event listener for debugging
       socket.onAny((event, data) => {
         console.log(`📡 Received Event: ${event}`, data);
       });

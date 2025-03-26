@@ -33,7 +33,8 @@ const styles = StyleSheet.create({
     iconContainer: {
         flexDirection: "row",
         alignItems: "center",
-        marginVertical: SH(5)
+        marginVertical: SH(5),
+        marginHorizontal:SW(5)
     },
     contactText: {
         color: Colors.light,

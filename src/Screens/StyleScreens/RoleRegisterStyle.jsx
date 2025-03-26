@@ -2,6 +2,11 @@ import { StyleSheet } from "react-native";
 import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 const styles = StyleSheet.create({
+  errorText:{
+    fontFamily:"Poppins-Medium",
+    fontSize:SF(13),
+    color:"red"
+},
   editText: {
     fontSize: SF(15),
     color: Colors.theme_color,

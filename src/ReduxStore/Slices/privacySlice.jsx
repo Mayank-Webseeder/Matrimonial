@@ -12,7 +12,7 @@ const privacySlice = createSlice({
             state.blurPhotos = !state.blurPhotos;
         },
         setBlurPhotosState: (state, action) => {
-            state.blurPhotos = action.payload; // Directly set the blurPhotos state
+            state.blurPhotos = action.payload; 
         }
     }
 });

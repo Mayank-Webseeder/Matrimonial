@@ -212,6 +212,7 @@ const SavedProfile = ({ navigation }) => {
               />
               <View style={styles.detailscontent}>
                 <Text style={styles.name} numberOfLines={1}>{saveProfile?.committeeTitle || "N/A"}</Text>
+                <Text style={styles.text} numberOfLines={1}>{saveProfile?.presidentName || "N/A"}</Text>
                 <Text style={styles.text} numberOfLines={1}>City: {saveProfile?.city || "N/A"}</Text>
                 <Text style={styles.text} numberOfLines={1}>Sub Caste: {saveProfile?.subCaste || "N/A"}</Text>
               </View>

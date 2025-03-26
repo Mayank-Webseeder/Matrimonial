@@ -41,6 +41,7 @@ const DetailedProfile = ({ navigation }) => {
   const [cityOrVillageInput, setCityOrVillageInput] = useState("");
   const [filteredCitiesOrVillages, setFilteredCitiesOrVillages] = useState([]);
   const [selectedState, setSelectedState] = useState("");
+  const [errors, setErrors] = useState({});
   console.log("profileData", profileData);
   const MyprofileData = useSelector((state) => state.getBiodata);
   const myBiodata = MyprofileData?.Biodata?.personalDetails;
@@ -328,6 +329,7 @@ const DetailedProfile = ({ navigation }) => {
     }
   };
 
+
   const constructPayload = async (biodata, isNew = false) => {
     const keys = [
       "subCaste", "gender", "fullname", "dob", "placeofbirth", "maritalStatus",
@@ -370,74 +372,97 @@ const DetailedProfile = ({ navigation }) => {
 
     return payload;
   };
-
+  const OPTIONAL_FIELDS = [
+    "weight","complexion","nadi", "gotraSelf", "gotraMother", "aboutMe", "otherFamilyMemberInfo",
+    "knowCooking", "dietaryHabit", "smokingHabit", "drinkingHabit",
+    "tobaccoHabits", "hobbies", "fullPhoto", "bestPhoto"
+  ];
+  
+  const validateForm = (biodata) => {
+    let errors = {};
+    const allFields = Object.keys(biodata);
+    const MANDATORY_FIELDS = allFields.filter(field => !OPTIONAL_FIELDS.includes(field));
+  
+    MANDATORY_FIELDS.forEach((field) => {
+      if (!biodata[field] || biodata[field] === "") {
+        errors[field] = `${field} is required`;
+      }
+    });
+  
+    return errors;
+  };
+  
   const handleSave = async () => {
-    try {
-        setIsLoading(true);
-        const token = await AsyncStorage.getItem("userToken");
-        if (!token) throw new Error("No token found");
+      try {
+          setIsLoading(true);
+          const errors = validateForm(biodata);
+          if (Object.keys(errors).length > 0) {
+              setErrors(errors); 
+              return;
+          }
+  
+          const token = await AsyncStorage.getItem("userToken");
+          if (!token) throw new Error("No token found");
+  
+          const headers = {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+          };
+  
+          const payload = await constructPayload(biodata, !biodata?._id);
+          console.log("Payload:", payload);
+  
+          const isUpdating = Boolean(biodata?._id);
+          const apiCall = isUpdating ? axios.put : axios.post;
+          const endpoint = isUpdating ? UPDATE_PERSONAL_DETAILS : CREATE_PERSONAL_DETAILS;
+  
+          console.log(`🔹 Calling API: ${endpoint}`);
+  
+          const response = await apiCall(endpoint, payload, { headers });
+  
+          console.log("✅ API Response:", response.data);
 
-        const headers = {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-        };
-
-        const payload = await constructPayload(biodata, !biodata?._id);
-        console.log("Payload:", payload);
-
-        const isUpdating = Boolean(biodata?._id);
-        const apiCall = isUpdating ? axios.put : axios.post;
-        const endpoint = isUpdating ? UPDATE_PERSONAL_DETAILS : CREATE_PERSONAL_DETAILS;
-
-        console.log(`🔹 Calling API: ${endpoint}`);
-
-        const response = await apiCall(endpoint, payload, { headers });
-
-        console.log("✅ API Response:", response.data);
-
-        // ✅ Ensure the success response
-        if (response.status === 200 && response.data.status === true) {
-            const successMessage = isUpdating 
-                ? "Profile Updated Successfully!" 
-                : "Detailed Profile Created Successfully!";
-
-            Toast.show({
-                type: "success",
-                text1: "Success",
-                text2: successMessage,
-            });
-
-            setIsEditing(false);
-
-            setTimeout(() => {
-                navigation.navigate(isUpdating ? "MainApp" : "MainPartnerPrefrence");
-            }, 1000);
-
-            return;
-        }
-
-        // ❌ Handle unexpected responses
-        throw new Error(response.data.message || "Something went wrong");
-
-    } catch (error) {
-        console.error("🚨 API Error:", error.response?.data || error.message);
-
-        let errorMessage = "Something went wrong!";
-        if (error.response?.status === 400) {
-            errorMessage = error.response.data.message || "Bad request. Please check your input.";
-        }
-
-        Toast.show({
-            type: "error",
-            text1: "Error",
-            text2: errorMessage,
-        });
-
-    } finally {
-        setIsLoading(false);
-    }
-};
-
+          if (response.status === 200 && response.data.status === true) {
+              const successMessage = isUpdating 
+                  ? "Profile Updated Successfully!" 
+                  : "Detailed Profile Created Successfully!";
+  
+              Toast.show({
+                  type: "success",
+                  text1: "Success",
+                  text2: successMessage,
+              });
+  
+              setIsEditing(false);
+              setErrors({}); 
+  
+              setTimeout(() => {
+                  navigation.navigate(isUpdating ? "MainApp" : "MainPartnerPrefrence");
+              }, 1000);
+  
+              return;
+          }
+          throw new Error(response.data.message || "Something went wrong");
+  
+      } catch (error) {
+          console.error("🚨 API Error:", error.response?.data || error.message);
+  
+          let errorMessage = "Something went wrong!";
+          if (error.response?.status === 400) {
+              errorMessage = error.response.data.message || "Bad request. Please check your input.";
+          }
+  
+          Toast.show({
+              type: "error",
+              text1: "Error",
+              text2: errorMessage,
+          });
+  
+      } finally {
+          setIsLoading(false);
+      }
+  };
+  
   const handleInputChange = (field, value) => {
     setBiodata((prev) => ({
       ...prev,
@@ -466,8 +491,8 @@ const DetailedProfile = ({ navigation }) => {
             onChangeText={handleSubCasteInputChange}
             placeholder="Type your sub caste"
             placeholderTextColor={Colors.gray}
-          s
           />
+          {errors.subCaste && <Text style={styles.errorText}>{errors.subCaste}</Text>}
 
           {/* Agar user type karega toh list dikhegi */}
           {filteredSubCaste.length > 0 ? (
@@ -510,8 +535,8 @@ const DetailedProfile = ({ navigation }) => {
               placeholderTextColor={Colors.gray}
               autoComplete="off"
               textContentType="none"
-
             />
+            {errors.fullname && <Text style={styles.errorText}>{errors.fullname}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Date of Birth <Entypo name={'star'} color={'red'} size={12} /> </Text>
@@ -526,8 +551,7 @@ const DetailedProfile = ({ navigation }) => {
               textContentType="none"
 
             />
-
-
+                {errors.dob && <Text style={styles.errorText}>{errors.dob}</Text>}
             {showDatePicker && (
               <DateTimePicker
                 value={biodata.dob ? new Date(biodata.dob) : new Date()} // Ensure it's a Date object
@@ -550,6 +574,7 @@ const DetailedProfile = ({ navigation }) => {
               textContentType="none"
 
             />
+              {errors.timeOfBirth && <Text style={styles.errorText}>{errors.timeOfBirth}</Text>}
             {showTimePicker && (
               <DateTimePicker
                 value={new Date()} // Default to current time if not set
@@ -571,8 +596,8 @@ const DetailedProfile = ({ navigation }) => {
               placeholder='Enter Your Birth Place'
               autoComplete="off"
               textContentType="none"
-
             />
+            {errors.placeofbirth && <Text style={styles.errorText}>{errors.placeofbirth}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Marital Status <Entypo name={'star'} color={'red'} size={12} /> </Text>
@@ -588,6 +613,7 @@ const DetailedProfile = ({ navigation }) => {
               placeholderStyle={{ color: '#E7E7E7' }}
             />
           </View>
+          {errors.maritalStatus && <Text style={styles.errorText}>{errors.maritalStatus}</Text>}
           <View>
             <Text style={Globalstyles.title}>
               Disabilities (physical, mental, etc.) <Entypo name={'star'} color={'red'} size={12} /> </Text>
@@ -602,6 +628,7 @@ const DetailedProfile = ({ navigation }) => {
               placeholder="Select disability"
               placeholderStyle={{ color: '#E7E7E7' }}
             />
+             {errors.disabilities && <Text style={styles.errorText}>{errors.disabilities}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Height <Entypo name={'star'} color={'red'} size={12} /> </Text>
@@ -617,6 +644,7 @@ const DetailedProfile = ({ navigation }) => {
               placeholderStyle={{ color: '#E7E7E7' }}
             />
           </View>
+          {errors.heightFeet && <Text style={styles.errorText}>{errors.heightFeet}</Text>}
           <View>
             <Text style={Globalstyles.title}>Weight (in kg) </Text>
             <Dropdown
@@ -658,6 +686,7 @@ const DetailedProfile = ({ navigation }) => {
               placeholder="Select status"
               placeholderStyle={{ color: '#E7E7E7' }}
             />
+              {errors.manglikStatus && <Text style={styles.errorText}>{errors.manglikStatus}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Nadi</Text>
@@ -715,6 +744,7 @@ const DetailedProfile = ({ navigation }) => {
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
             />
+            {errors.qualification && <Text style={styles.errorText}>{errors.qualification}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Occupation <Entypo name={'star'} color={'red'} size={12} /> </Text>
@@ -730,6 +760,7 @@ const DetailedProfile = ({ navigation }) => {
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
             />
+              {errors.occupation && <Text style={styles.errorText}>{errors.occupation}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Income (Annually) <Entypo name={'star'} color={'red'} size={12} /> </Text>
@@ -745,7 +776,7 @@ const DetailedProfile = ({ navigation }) => {
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
             />
-
+  {errors.annualIncome && <Text style={styles.errorText}>{errors.annualIncome}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Are you living with Family <Entypo name={'star'} color={'red'} size={12} /> </Text>
@@ -761,6 +792,7 @@ const DetailedProfile = ({ navigation }) => {
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
             />
+              {errors.livingStatus && <Text style={styles.errorText}>{errors.livingStatus}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Which city do you currently live in? <Entypo name={'star'} color={'red'} size={12} /> </Text>
@@ -772,8 +804,8 @@ const DetailedProfile = ({ navigation }) => {
               placeholderTextColor={Colors.gray}
               autoComplete="off"
               textContentType="none"
-
             />
+             {errors.currentCity && <Text style={styles.errorText}>{errors.currentCity}</Text>}
             {filteredCities.length > 0 && cityInput ? (
               <FlatList
                 data={filteredCities.slice(0, 5)}
@@ -820,6 +852,7 @@ const DetailedProfile = ({ navigation }) => {
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
             />
+              {errors.profileCreatedBy && <Text style={styles.errorText}>{errors.profileCreatedBy}</Text>}
           </View>
           <Text style={styles.headText}>Family details </Text>
           <View>
@@ -833,8 +866,8 @@ const DetailedProfile = ({ navigation }) => {
               placeholder='Enter Your Father Name'
               autoComplete="off"
               textContentType="none"
-
             />
+             {errors.fatherName && <Text style={styles.errorText}>{errors.fatherName}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Mother Full Name <Entypo name={'star'} color={'red'} size={12} /> </Text>
@@ -847,8 +880,8 @@ const DetailedProfile = ({ navigation }) => {
               placeholder='Enter Your Mother Name'
               autoComplete="off"
               textContentType="none"
-
             />
+              {errors.motherName && <Text style={styles.errorText}>{errors.motherName}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Father Occupation <Entypo name={'star'} color={'red'} size={12} /> </Text>
@@ -864,6 +897,7 @@ const DetailedProfile = ({ navigation }) => {
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
             />
+              {errors.fatherOccupation && <Text style={styles.errorText}>{errors.fatherOccupation}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Father Income (Annually) <Entypo name={'star'} color={'red'} size={12} /> </Text>
@@ -879,6 +913,7 @@ const DetailedProfile = ({ navigation }) => {
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
             />
+              {errors.fatherIncomeAnnually && <Text style={styles.errorText}>{errors.fatherIncomeAnnually}</Text>}
 
           </View>
           <View>
@@ -895,6 +930,7 @@ const DetailedProfile = ({ navigation }) => {
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
             />
+                {errors.motherOccupation && <Text style={styles.errorText}>{errors.motherOccupation}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Mother Income (Annually) <Entypo name={'star'} color={'red'} size={12} /> </Text>
@@ -910,6 +946,7 @@ const DetailedProfile = ({ navigation }) => {
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
             />
+               {errors.motherIncomeAnnually && <Text style={styles.errorText}>{errors.motherIncomeAnnually}</Text>}
           </View>
 
           <View>
@@ -926,6 +963,7 @@ const DetailedProfile = ({ navigation }) => {
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
             />
+              {errors.familyType && <Text style={styles.errorText}>{errors.familyType}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Siblings <Entypo name={'star'} color={'red'} size={12} /> </Text>
@@ -941,6 +979,7 @@ const DetailedProfile = ({ navigation }) => {
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
             />
+                {errors.siblings && <Text style={styles.errorText}>{errors.siblings}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Any family member info. </Text>
@@ -976,8 +1015,8 @@ const DetailedProfile = ({ navigation }) => {
               placeholder='Enter Your Contact No. 1'
               autoComplete="off"
               textContentType="none"
-
             />
+              {errors.contactNumber1 && <Text style={styles.errorText}>{errors.contactNumber1}</Text>}
           </View>
 
           <View>
@@ -994,6 +1033,7 @@ const DetailedProfile = ({ navigation }) => {
               autoComplete="off"
               textContentType="none"
             />
+              {errors.contactNumber2 && <Text style={styles.errorText}>{errors.contactNumber2}</Text>}
           </View>
           <View>
             <Text style={styles.headText}> Address</Text>
@@ -1008,7 +1048,7 @@ const DetailedProfile = ({ navigation }) => {
               autoComplete="off"
               textContentType="none"
             />
-
+  {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
             {filteredStates.length > 0 ? (
               <FlatList
                 data={filteredStates.slice(0, 5)}
@@ -1033,8 +1073,8 @@ const DetailedProfile = ({ navigation }) => {
               placeholderTextColor={Colors.gray}
               autoComplete="off"
               textContentType="none"
-
             />
+            {errors.cityOrVillage && <Text style={styles.errorText}>{errors.cityOrVillage}</Text>}
             {filteredCitiesOrVillages.length > 0 && cityOrVillageInput ? (
               <FlatList
                 data={filteredCitiesOrVillages.slice(0, 5)}
@@ -1158,7 +1198,7 @@ const DetailedProfile = ({ navigation }) => {
                 )}
               </TouchableOpacity>
             </View>
-
+            {errors.closeUpPhoto && <Text style={styles.errorText}>{errors.closeUpPhoto}</Text>}
           </View>
 
           <View>

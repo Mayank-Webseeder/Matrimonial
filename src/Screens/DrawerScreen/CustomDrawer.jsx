@@ -27,8 +27,10 @@ const CustomDrawer = (props) => {
   const Id = ProfileData?.profiledata?.userId || 'user id';
 
   const menuItems = [
-    { title: 'Partners Preference', screen: 'MainPartnerPrefrence' },
-    ...(isMatrimonial ? [{ title: 'Interested Profile', screen: 'Interested Profile' }] : []),
+    ...(isMatrimonial ? [
+      { title: 'Partners Preference', screen: 'MainPartnerPrefrence' },
+      { title: 'Interested Profile', screen: 'Interested Profile' }
+  ] : []),  
     { title: 'Saved Profile', screen: 'Saved Profile' },
     { title: 'Pandit/Jyotish' },
     { title: 'Event/News', screen: 'EventNews' },
@@ -62,6 +64,8 @@ const CustomDrawer = (props) => {
 
       await AsyncStorage.removeItem("userToken");
       await AsyncStorage.removeItem("userId");
+      await AsyncStorage.getItem("profileInterest");
+      await AsyncStorage.getItem("newsEvents");
 
       dispatch(resetBioData()); // ✅ Redux store clear karo
       dispatch(resetsetActivistdata());
@@ -139,7 +143,7 @@ const CustomDrawer = (props) => {
           </View>
 
           {/* Edit Icon on the Right */}
-          <TouchableOpacity onPress={() => navigation.navigate('MatrimonyPage')}>
+          <TouchableOpacity onPress={() => navigation.navigate('MyProfile')}>
             <AntDesign name="edit" size={20} color={Colors.theme_color} />
           </TouchableOpacity>
 

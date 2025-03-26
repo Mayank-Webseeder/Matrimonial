@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     color: Colors.light,
     alignSelf: "flex-start",
     textAlign: "center",
-    marginTop: SH(5),
+    // marginTop: SH(5),
     paddingVertical: SH(2),
     paddingHorizontal: SW(5),
     fontFamily:"Poppins-Medium",

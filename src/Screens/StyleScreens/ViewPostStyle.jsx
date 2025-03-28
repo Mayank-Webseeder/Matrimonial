@@ -3,9 +3,12 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
+    profileImage: {
+        width: SW(50), height: SH(50), borderRadius: 50
+    },
     righticons: {
         flexDirection: 'row',
-        alignItems:"center"
+        alignItems: "center"
     },
     postHeader: {
         flexDirection: "row",
@@ -49,12 +52,12 @@ const styles = StyleSheet.create({
         width: "100%",
         height: "auto",
         borderRadius: 10,
-        marginBottom:SH(10)
+        marginBottom: SH(10)
     },
-    profilePhoto:{
-        width:SW(50),
-        height:SH(50),
-        borderRadius:50
+    profilePhoto: {
+        width: SW(50),
+        height: SH(50),
+        borderRadius: 50
     }
 
 })

@@ -22,8 +22,8 @@ const EventNews = ({ navigation }) => {
   const sheetRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
   const [eventdata, setEventData] = useState([]);
-  const [likeData, setLikeData] = useState(' ');
-  const [commentData, setCommentData] = useState(' ');
+  const [likeData, setLikeData] = useState({});
+  const [commentData, setCommentData] = useState({});
   const [myComment, setMyComment] = useState("");
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
   const [page, setPage] = useState(1);
@@ -33,7 +33,8 @@ const EventNews = ({ navigation }) => {
   const ProfileData = useSelector((state) => state.profile);
   const profileData = ProfileData?.profiledata || {};
   const myprofile_id = profileData?._id || null;
-
+  const [LikeLoading, setLikeLoading] = useState(false);
+  const [commentLoading, setCommentLoading] = useState(false);
   useEffect(() => {
     console.log("myprofile_id", myprofile_id);
   }, [])
@@ -107,49 +108,38 @@ const EventNews = ({ navigation }) => {
 
   const LIKE = async (postId) => {
     try {
-      setIsLoading(true);
+      setLikeLoading(true);
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
 
       const headers = {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       };
 
-      const payload = { postId };
+      setLikeData((prevState) => {
+        const prevLikeData = prevState[postId] || { isLiked: false, likesCount: 0 };
 
-      const response = await axios.post(LIKEPOST, payload, { headers });
-
-      if (response.status === 200 && response.data.status === true) {
-        const { message, likesCount } = response.data;
-
-        console.log("My event news data", JSON.stringify(response.data));
-
-        // ✅ Like count update
-        setLikeData(prevState => ({
+        return {
           ...prevState,
-          likesCount,
-        }));
+          [postId]: {
+            ...prevLikeData,
+            isLiked: !prevLikeData.isLiked,
+            likesCount: prevLikeData.isLiked
+              ? prevLikeData.likesCount - 1
+              : prevLikeData.likesCount + 1,
+          },
+        };
+      });
 
-        Toast.show({
-          type: "success",
-          text1: "Success",
-          text2: message || "Liked successfully!",
-          position: "top",
-          onHide: () => {
-            navigation.reset({
-              index: 0,
-              routes: [{ name: "EventNews" }],
-            });
-          }
-        });
+      const response = await axios.post(LIKEPOST, { postId }, { headers });
 
-      } else {
+      if (!(response.status === 200 && response.data.status === true)) {
         throw new Error(response.data.message || "Failed to like event.");
       }
 
     } catch (error) {
-      console.error("Error fetching event news:", error?.response?.data || error.message);
+      console.error("Error liking post:", error?.response?.data || error.message);
 
       Toast.show({
         type: "error",
@@ -157,14 +147,28 @@ const EventNews = ({ navigation }) => {
         text2: error?.response?.data?.message || "Failed to like event. Please try again!",
         position: "top",
       });
+      setLikeData((prevState) => {
+        const prevLikeData = prevState[postId] || { isLiked: false, likesCount: 0 };
+
+        return {
+          ...prevState,
+          [postId]: {
+            ...prevLikeData,
+            isLiked: !prevLikeData.isLiked,
+            likesCount: prevLikeData.isLiked
+              ? prevLikeData.likesCount + 1
+              : prevLikeData.likesCount - 1,
+          },
+        };
+      });
     } finally {
-      setIsLoading(false);
+      setLikeLoading(false);
     }
   };
 
   const COMMENT = async (postId) => {
     try {
-      setIsLoading(true);
+      setCommentLoading(true);
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
 
@@ -213,7 +217,7 @@ const EventNews = ({ navigation }) => {
         position: "top",
       });
     } finally {
-      setIsLoading(false);
+      setCommentLoading(false);
     }
   };
 
@@ -249,12 +253,6 @@ const EventNews = ({ navigation }) => {
           text1: "Success",
           text2: "Comment deleted successfully!",
           position: "top",
-          onHide: () => {
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'EventNews' }],
-            });
-          }
         });
       }
     } catch (error) {
@@ -495,8 +493,12 @@ const EventNews = ({ navigation }) => {
 
         <View style={styles.likeShareComment}>
           <TouchableOpacity style={styles.likeShare} onPress={() => LIKE(item._id)}>
-            <AntDesign name={item.isLiked ? "heart" : "hearto"} size={20} color={item.isLiked ? "red" : Colors.dark} />
-            <Text style={styles.shareText}>{item.likes.length} Likes</Text>
+            <AntDesign
+              name={likeData[item._id]?.isLiked ? "heart" : "hearto"}
+              size={20}
+              color={likeData[item._id]?.isLiked ? "red" : Colors.dark}
+            />
+            <Text style={styles.shareText}>{likeData[item._id]?.likesCount ?? item.likes.length} Likes</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.likeShare} onPress={() => openBottomSheet(item._id, item.comments)}>

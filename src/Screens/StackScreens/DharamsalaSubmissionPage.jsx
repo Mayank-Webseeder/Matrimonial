@@ -126,7 +126,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
 
     const handleImageUpload = () => {
         ImageCropPicker.openPicker({
-            multiple: false, // Single image upload
+            multiple: true, 
             cropping: true,
             width: 400,
             height: 400,
@@ -381,7 +381,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                 <TouchableOpacity
                     style={styles.submitButton}
                     onPress={handleDharamSalaSave}
-                    disabled={isLoading} // Disable button while loading
+                    disabled={isLoading} 
                 >
                     {isLoading ? (
                         <ActivityIndicator size="large" color={Colors.light} />

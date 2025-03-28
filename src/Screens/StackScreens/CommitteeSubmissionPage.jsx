@@ -29,19 +29,19 @@ const CommitteeSubmissionPage = ({ navigation }) => {
         mobileNo: ''
     });
 
-    useEffect(() => {
-        const loadFormData = async () => {
-            const savedData = await AsyncStorage.getItem('CommitteeData');
-            if (savedData) {
-                setCommitteeData(JSON.parse(savedData)); // ✅ Restore saved data
-            }
-        };
-        loadFormData();
-    }, []);
+    // useEffect(() => {
+    //     const loadFormData = async () => {
+    //         const savedData = await AsyncStorage.getItem('CommitteeData');
+    //         if (savedData) {
+    //             setCommitteeData(JSON.parse(savedData)); // ✅ Restore saved data
+    //         }
+    //     };
+    //     loadFormData();
+    // }, []);
 
-    useEffect(() => {
-        AsyncStorage.setItem('CommitteeData', JSON.stringify(CommitteeData));
-    }, [CommitteeData]);
+    // useEffect(() => {
+    //     AsyncStorage.setItem('CommitteeData', JSON.stringify(CommitteeData));
+    // }, [CommitteeData]);
 
 
     useEffect(() => {
@@ -310,7 +310,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
             />
             <View style={Globalstyles.header}>
                 <View style={{ flexDirection: 'row', alignItems: "center" }}>
-                    <TouchableOpacity onPress={() => navigation.navigate("Committee")}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons
                             name="arrow-back-ios-new"
                             size={25}

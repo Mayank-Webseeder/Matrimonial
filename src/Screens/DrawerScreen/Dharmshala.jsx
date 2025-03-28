@@ -24,6 +24,7 @@ import ImageViewing from 'react-native-image-viewing';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import Toast from 'react-native-toast-message';
 import _ from "lodash";
+import { setShouldAnimateExitingForTag } from 'react-native-reanimated/lib/typescript/core';
 
 const Dharmshala = () => {
   const navigation = useNavigation();
@@ -152,7 +153,7 @@ const Dharmshala = () => {
       setLocality('');
       setSubcaste('');
       setDharamsalaData([]);
-      fetchDharamsalaData("all"); 
+      fetchDharamsalaData("all");
     }, [])
   );
 
@@ -188,9 +189,19 @@ const Dharmshala = () => {
 
   const savedProfiles = async (_id) => {
     if (!_id) {
-      showToast("error", "Error", "User ID not found!");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "User ID not found!",
+        position: "top",
+      });
       return;
     }
+    setDharamsalaData((prevProfiles) =>
+      prevProfiles.map((profile) =>
+        profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
+      )
+    );
 
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -206,26 +217,34 @@ const Dharmshala = () => {
       const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
 
       console.log("Response Data:", JSON.stringify(response?.data));
-      const message = response?.data?.message || "Default success message";
 
-      if (message) {
-        showToast("success", "Success", message);
-        setTimeout(() => {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: "Dharmshala" }],
-          });
-        }, 2000); 
+      if (response.status === 200 && response.data.status === true) {
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: response.data?.message || "Profile saved successfully!",
+          position: "top",
+        });
       } else {
-        showToast("error", "Error", "Something went wrong!");
+        throw new Error(response.data?.message || "Something went wrong!");
       }
     } catch (error) {
-
       console.error(
         "API Error:",
         error?.response ? JSON.stringify(error.response.data) : error.message
       );
-      showToast("error", "Error", error.response?.data?.message || "Failed to save profile!")
+
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error?.response?.data?.message || "Failed to save profile!",
+        position: "top",
+      });
+      setDharamsalaData((prevProfiles) =>
+        prevProfiles.map((profile) =>
+          profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
+        )
+      );
     }
   };
 
@@ -266,11 +285,11 @@ const Dharmshala = () => {
         <View style={styles.sharecontainer}>
           <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
             <FontAwesome
-              name={isSaved ? "bookmark" : "bookmark-o"}
+              name={item.isSaved ? "bookmark" : "bookmark-o"}
               size={19}
               color={Colors.dark}
             />
-            <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text>
+            <Text style={styles.iconText}>{item.isSaved ? "Saved" : "Save"}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
@@ -312,7 +331,7 @@ const Dharmshala = () => {
       {/* Fixed Header */}
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: "center" }}>
-          <TouchableOpacity  onPress={() => navigation.navigate("MainApp")}>
+          <TouchableOpacity onPress={() => navigation.navigate("MainApp")}>
             <MaterialIcons
               name="arrow-back-ios-new"
               size={25}

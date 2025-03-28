@@ -30,7 +30,7 @@ const CustomDrawer = (props) => {
     ...(isMatrimonial ? [
       { title: 'Partners Preference', screen: 'MainPartnerPrefrence' },
       { title: 'Interested Profile', screen: 'Interested Profile' }
-  ] : []),  
+    ] : []),
     { title: 'Saved Profile', screen: 'Saved Profile' },
     { title: 'Pandit/Jyotish' },
     { title: 'Event/News', screen: 'EventNews' },
@@ -88,17 +88,17 @@ const CustomDrawer = (props) => {
   const handleDropdownToggle = (dropdown) => {
     setOpenDropdown((prev) => (prev === dropdown ? null : dropdown));
   };
-  
+
   const handleNavigation = (screen) => {
     setOpenDropdown(null);
-  
+
     if (screen) {
       navigation.navigate(screen);
     } else {
       console.log('Screen not available');
     }
   };
-  
+
 
 
   const handleShare = async () => {
@@ -108,7 +108,7 @@ const CustomDrawer = (props) => {
     //   text2: "Under development",
     //   position: "top",
     // });
-    ToastAndroid.show("under development",ToastAndroid.SHORT)
+    ToastAndroid.show("under development", ToastAndroid.SHORT)
   };
 
   return (
@@ -125,10 +125,10 @@ const CustomDrawer = (props) => {
           navigation.goBack();
           setOpenDropdown(null);
         }}
-        
+
       />
       <View style={styles.header}>
-        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-evenly", width: "100%" }}>
 
           {/* Profile Image on the Left */}
           <Image
@@ -137,7 +137,7 @@ const CustomDrawer = (props) => {
           />
 
           {/* Name and ID in Center */}
-          <View style={{ marginLeft: -SW(40) }}>
+          <View>
             <Text style={styles.name}>{name}</Text>
             <Text style={styles.idText}>ID Number: {Id}</Text>
           </View>
@@ -285,6 +285,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     justifyContent: "space-between",
     paddingHorizontal: SW(10),
+    marginLeft: -SW(10)
   },
   profileImage: {
     width: SW(40),

@@ -125,7 +125,7 @@ const Home = ({ navigation }) => {
       const response = await axios.get(GET_BIODATA, { headers });
       if (response.data) {
         const fetchedData = response.data.data;
-        console.log("My bio data", fetchedData);
+        console.log("My bio data in home page", fetchedData);
         setMybiodata(fetchedData);
         dispatch(setBioData(fetchedData));
         setLoading(false)

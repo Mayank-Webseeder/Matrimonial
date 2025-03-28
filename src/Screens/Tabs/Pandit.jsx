@@ -39,7 +39,6 @@ const Pandit = ({ navigation }) => {
   const [modalLocality, setModalLocality] = useState('');
   const [isImageVisible, setImageVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [savedProfileIds, setSavedProfileIds] = useState(new Set());
 
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
@@ -126,6 +125,11 @@ const Pandit = ({ navigation }) => {
         });
         return;
     }
+    setPanditData((prevProfiles) =>
+        prevProfiles.map((profile) =>
+            profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
+        )
+    );
 
     try {
         const token = await AsyncStorage.getItem("userToken");
@@ -142,34 +146,15 @@ const Pandit = ({ navigation }) => {
 
         console.log("Response Data:", JSON.stringify(response?.data));
 
-        if (response.status === 200) {
-            const message = response.data?.message || "";
-            
-            setSavedProfileIds((prev) => {
-                const newSaved = new Set(prev);
-                if (message.includes("removed")) {
-                    // ✅ Remove from saved list if it was removed
-                    newSaved.delete(_id);
-                } else {
-                    // ✅ Add to saved list if it was saved
-                    newSaved.add(_id);
-                }
-                return newSaved;
-            });
-
+        if (response.status === 200 && response.data.status === true) {
             Toast.show({
                 type: "success",
                 text1: "Success",
-                text2: message,
+                text2: response.data?.message || "Profile saved successfully!",
                 position: "top",
             });
         } else {
-            Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: response.data?.message || "Something went wrong!",
-                position: "top",
-            });
+            throw new Error(response.data?.message || "Something went wrong!");
         }
     } catch (error) {
         console.error(
@@ -180,12 +165,18 @@ const Pandit = ({ navigation }) => {
         Toast.show({
             type: "error",
             text1: "Error",
-            text2: error.response?.data?.message || "Failed to save profile!",
+            text2: error?.response?.data?.message || "Failed to save profile!",
             position: "top",
         });
+        setPanditData((prevProfiles) =>
+            prevProfiles.map((profile) =>
+                profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
+            )
+        );
     }
 };
-  
+
+
 
   const generateDeepLink = (type, id) => {
     return `matrimonialapp://${type}/${id}`;
@@ -283,21 +274,17 @@ const Pandit = ({ navigation }) => {
               <Text style={styles.text} numberOfLines={1}>{item?.residentialAddress}</Text>
             </Pressable>
             <View style={styles.sharecontainer}>
-            <TouchableOpacity
-    style={styles.iconContainer}
-    onPress={() => savedProfiles(item._id)}
->
-    <FontAwesome
-        name={savedProfileIds.has(item._id) ? "bookmark" : "bookmark-o"}
-        size={19}
-        color={Colors.dark}
-    />
-</TouchableOpacity>
+            <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
+                            <FontAwesome
+                                name={item.isSaved ? "bookmark" : "bookmark-o"}
+                                size={19}
+                                color={Colors.dark}
+                            />
+                        </TouchableOpacity>
 
 
               <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
                 <Feather name="send" size={18} color={Colors.dark} />
-                {/* <Text style={styles.iconText}>Shares</Text> */}
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>

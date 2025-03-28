@@ -335,7 +335,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
             console.log("Final Payload to be Sent:", payload);
 
             const response = await axios.patch(url, payload, { headers });
-            console.log("response",JSON.stringify(response.data))
+            console.log("response", JSON.stringify(response.data))
 
             if (response.status === 200 || response.data.status === true) {
                 Toast.show({
@@ -343,12 +343,12 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                     text1: "Success!",
                     text2: `Successfully updated profile for ${profileType}.`,
                 });
-                
+
                 setTimeout(() => {
                     navigation.navigate("MyProfile");
                     setIsLoading(false);
                 }, 2000);
-                
+
             } else {
                 throw new Error(response.data.message || "Failed to update profile.");
             }
@@ -603,17 +603,23 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                         placeholder="give Your Instagram Link"
                         placeholderTextColor={Colors.gray} />
 
-                    {
-                        isLoading ?
-                            <ActivityIndicator size={'large'} color={Colors.theme_color} />
-                            :
-                            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                                <Text style={styles.buttonText}>submit</Text>
-                            </TouchableOpacity>
-                    }
+
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={handleSubmit}
+                        disabled={isLoading}
+                    >
+                        {isLoading ? (
+                            <ActivityIndicator size="large" color={Colors.light} />
+                        ) : (
+                            <Text style={styles.buttonText}>submit</Text>
+                        )}
+                    </TouchableOpacity>
+
+
                 </View>
             </ScrollView>
-            <Toast/>
+            <Toast />
         </SafeAreaView>
     );
 };

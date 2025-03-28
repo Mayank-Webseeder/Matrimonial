@@ -11,16 +11,16 @@ import moment from 'moment';
 
 const ViewPost = ({ navigation, route }) => {
   const { post } = route.params;
-  const isLiked=post?.isLiked;
+  const isLiked = post?.isLiked;
   console.log("post", post);
 
   // ✅ Get images from API response correctly
   const images = post?.images || [];
 
 
-   const formatDateTime = (createdAt) => {
-      return moment(createdAt).format('MMM D [at] hh:mm A');
-    };
+  const formatDateTime = (createdAt) => {
+    return moment(createdAt).format('MMM D [at] hh:mm A');
+  };
 
   const [imageAspectRatios, setImageAspectRatios] = useState([]);
 
@@ -70,7 +70,15 @@ const ViewPost = ({ navigation, route }) => {
 
       <ScrollView showsVerticalScrollIndicator={false} >
         <View style={styles.postHeader}>
-          <Image source={require('../../Images/NoImage.png')} />
+          <Image
+            source={
+              post.images && post.images.length > 0
+                ? { uri: post.images[0] }
+                : require("../../Images/NoImage.png")
+            }
+            style={styles.profileImage}
+          />
+
           <View style={styles.postTextContainer}>
             <Text style={styles.Text}>{post.activistName}</Text>
             <Text style={styles.date_time}>{formatDateTime(post.createdAt)}</Text>
@@ -94,8 +102,8 @@ const ViewPost = ({ navigation, route }) => {
                 </View>
                 <View style={styles.likeShareComment}>
                   <View style={styles.likeShare}>
-                  <AntDesign name={isLiked ? "heart" : "hearto"} size={20} color={isLiked ? "red" : Colors.dark} />
-                  <Text style={styles.shareText}>{post?.likes?.length} Likes</Text>
+                    <AntDesign name={isLiked ? "heart" : "hearto"} size={20} color={isLiked ? "red" : Colors.dark} />
+                    <Text style={styles.shareText}>{post?.likes?.length} Likes</Text>
                   </View>
                   <View style={styles.likeShare}>
                     <EvilIcons name="comment" size={20} color={Colors.dark} />

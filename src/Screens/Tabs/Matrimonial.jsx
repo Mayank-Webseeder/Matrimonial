@@ -155,28 +155,35 @@ const Matrimonial = ({ navigation }) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
+      setgirlsProfiles((prev) =>
+        prev.map((profile) =>
+          profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
+        )
+      );
 
+      setboysProfiles((prev) =>
+        prev.map((profile) =>
+          profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
+        )
+      );
+
+      // **Make API Request**
       const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
 
       console.log("✅ Response Data:", JSON.stringify(response?.data));
 
-      if (response.status === 200 && response.data.status === true) {
-        Toast.show({
-          type: "success",
-          text1: "Success",
-          text2: response.data.message || "Profile saved successfully!",
-          position: "top",
-          visibilityTime: 3000,
-          textStyle: { fontSize: 14, color: "green" },
-        });
-
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "Matrimonial" }],
-        });
-      } else {
+      if (response.status !== 200 || response.data.status !== true) {
         throw new Error(response.data.message || "Something went wrong!");
       }
+
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: response.data.message || "Profile saved successfully!",
+        position: "top",
+        visibilityTime: 3000,
+        textStyle: { fontSize: 14, color: "green" },
+      });
     } catch (error) {
       console.error("🚨 API Error:", error?.response?.data || error.message);
 
@@ -184,6 +191,19 @@ const Matrimonial = ({ navigation }) => {
       if (error.response?.status === 400) {
         errorMessage = error.response.data?.message || "Bad request.";
       }
+
+      // **Revert UI Update if API fails**
+      setgirlsProfiles((prev) =>
+        prev.map((profile) =>
+          profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
+        )
+      );
+
+      setboysProfiles((prev) =>
+        prev.map((profile) =>
+          profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
+        )
+      );
 
       Toast.show({
         type: "error",
@@ -194,17 +214,17 @@ const Matrimonial = ({ navigation }) => {
     }
   };
 
+
+
   const handleSearch = () => {
     if (searchQuery.trim().length > 0) {
       console.log("Searching for:", searchQuery);
-      // 🔍 Yaha API call ya search filter apply kar sakte ho
     }
   };
 
   const renderProfileCard = ({ item }) => {
-    const isPressable = partnerPreferences !== null && partnerPreferences !== undefined; // Only check global partnerPreferences
+    const isPressable = partnerPreferences !== null && partnerPreferences !== undefined;
     const isSaved = item.isSaved;
-    // console.log("isSaved",isSaved);
     return (
       <View style={styles.card}>
         <Pressable onPress={popop}>
@@ -252,11 +272,11 @@ const Matrimonial = ({ navigation }) => {
         <View style={[styles.sharecontainer, { paddingHorizontal: SW(20) }]}>
           <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
             <FontAwesome
-              name={isSaved ? "bookmark" : "bookmark-o"}
+              name={item?.isSaved ? "bookmark" : "bookmark-o"}
               size={19}
               color={Colors.dark}
             />
-            <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text>
+            <Text style={styles.iconText}>{item?.isSaved ? "Saved" : "Save"}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
@@ -274,10 +294,6 @@ const Matrimonial = ({ navigation }) => {
   };
 
   const dataToDisplay = searchMode ? profiles : (activeButton === 1 ? girlsProfiles : activeButton === 2 ? boysProfiles : null);
-
-  useEffect(() => {
-    console.log("dataToDisplay", dataToDisplay);
-  }, [])
 
   return (
     <SafeAreaView style={Globalstyles.container}>

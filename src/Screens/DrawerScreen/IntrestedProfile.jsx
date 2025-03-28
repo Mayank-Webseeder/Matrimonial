@@ -61,18 +61,39 @@ const IntrestedProfile = ({ navigation }) => {
 
   const renderItem = ({ item }, isSent) => {
     const userData = isSent ? item.toUserBioData : item.FromUserBioData;
+  
     return (
       <TouchableOpacity
         style={styles.card}
-        onPress={() =>
-          !isSent &&
-          navigation.navigate('IntrestReceivedProfilePage', {
-            userId: userData?.userId,
-            biodata: userData,
-            requestId: item?.requestId,
-            isSaved:item?.isSaved
-          })
-        }
+        onPress={() => {
+          if (item?.status === 'accepted') {
+            if (isSent) {
+              const userData = {
+                ...item.toUserBioData,
+                requestId: item?.requestId,
+                isSaved: item?.isSaved,
+                isBlur: item?.isBlur, 
+              };
+  
+              navigation.navigate("MatrimonyPeopleProfile", {
+                userDetails: userData,
+                userId: userData?.userId,
+                isSaved: userData?.isSaved,
+                isBlur: userData?.isBlur, 
+              });
+            } else {
+              navigation.navigate("IntrestReceivedProfilePage", {
+                userId: userData?.userId,
+                biodata: userData,
+                requestId: item?.requestId,
+                isSaved: item?.isSaved,
+                isBlur: item?.isBlur,
+              });
+            }
+          } else {
+            alert("Profile can only be viewed when the request is accepted.");
+          }
+        }}
       >
         <View style={styles.leftContent}>
           <Image
@@ -94,6 +115,7 @@ const IntrestedProfile = ({ navigation }) => {
       </TouchableOpacity>
     );
   };
+  
 
 
   if (isLoading) {

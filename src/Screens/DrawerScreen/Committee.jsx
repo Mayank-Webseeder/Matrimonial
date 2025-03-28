@@ -42,9 +42,10 @@ const Committee = ({ navigation }) => {
   const [isImageVisible, setImageVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
-   const showToast = _.debounce((type, text1, text2) => {
-      Toast.show({ type, text1, text2, position: "top" });
-    }, 500);
+  const showToast = _.debounce((type, text1, text2) => {
+    Toast.show({ type, text1, text2, position: "top" });
+  }, 500);
+
 
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
@@ -166,67 +167,85 @@ const Committee = ({ navigation }) => {
       </View>
     </SkeletonPlaceholder>
   );
- 
- const handleUploadButton = () => {
-     if (MyActivistProfile && MyActivistProfile._id) {
-         showToast("success", "Success", "You can fill details!");
-         setTimeout(() => {
-             setActiveButton(2);
-             navigation.navigate("CommitteeSubmissionPage");
-         }, 2000);
-     } else {
-         showToast("info", "Info", "Only activists can fill details!");
-     }
- };
- 
 
- const savedProfiles = async (_id) => {
-  if (!_id) {
-    showToast("error", "Error", "User ID not found!");
-    return;
-  }
-
-  try {
-    const token = await AsyncStorage.getItem("userToken");
-    if (!token) {
-      throw new Error("No token found");
-    }
-
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    };
-
-    const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
-
-    console.log("Response Data:", JSON.stringify(response?.data));
-    const message = response?.data?.message || "Default success message";
-
-    if (message) {
-      showToast("success", "Success", message);
-
+  const handleUploadButton = () => {
+    if (MyActivistProfile && MyActivistProfile._id) {
+      showToast("success", "Success", "You can fill details!");
       setTimeout(() => {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "Committee" }],
-        });
+        setActiveButton(2);
+        navigation.navigate("CommitteeSubmissionPage");
       }, 2000);
     } else {
-      showToast("error", "Error", "Something went wrong!");
+      showToast("info", "Info", "Only activists can fill details!");
     }
-  } catch (error) {
+  };
 
-    console.error(
-      "API Error:",
-      error?.response ? JSON.stringify(error.response.data) : error.message
+
+
+  const savedProfiles = async (_id) => {
+    if (!_id) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "User ID not found!",
+        position: "top",
+      });
+      return;
+    }
+    setCommitteeData((prevProfiles) =>
+      prevProfiles.map((profile) =>
+        profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
+      )
     );
-    showToast("error", "Error", error.response?.data?.message || "Failed to save profile!")
-  }
-};
 
-const handleShare = async () => {
-  showToast("info", "Info", "Under development");
-};
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        throw new Error("No token found");
+      }
+
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+
+      const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
+
+      console.log("Response Data:", JSON.stringify(response?.data));
+
+      if (response.status === 200 && response.data.status === true) {
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: response.data?.message || "Profile saved successfully!",
+          position: "top",
+        });
+      } else {
+        throw new Error(response.data?.message || "Something went wrong!");
+      }
+    } catch (error) {
+      console.error(
+        "API Error:",
+        error?.response ? JSON.stringify(error.response.data) : error.message
+      );
+
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error?.response?.data?.message || "Failed to save profile!",
+        position: "top",
+      });
+      setCommitteeData((prevProfiles) =>
+        prevProfiles.map((profile) =>
+          profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
+        )
+      );
+    }
+  };
+
+  const handleShare = async () => {
+    showToast("info", "Info", "Under development");
+  };
 
   const renderItem = ({ item }) => {
     const isSaved = item.isSaved || false;
@@ -247,7 +266,7 @@ const handleShare = async () => {
               images={[{ uri: selectedImage }]}
               imageIndex={0}
               visible={isImageVisible}
-              onRequestClose={() => (false)}
+              onRequestClose={() => setImageVisible(false)}
             />
           )}
 
@@ -265,9 +284,14 @@ const handleShare = async () => {
         <View style={styles.sharecontainer}>
           {/* Bookmark Button */}
           <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
-            <FontAwesome name={isSaved ? "bookmark" : "bookmark-o"} size={19} color={Colors.dark} />
-            <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text>
+            <FontAwesome
+              name={item.isSaved ? "bookmark" : "bookmark-o"}
+              size={19}
+              color={Colors.dark}
+            />
+            <Text style={styles.iconText}>{item.isSaved ? "Saved" : "Save"}</Text>
           </TouchableOpacity>
+
 
           {/* Share Button */}
           <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>

@@ -35,7 +35,7 @@ const ReportPage = ({ navigation, route }) => {
 
     setErrors(validationErrors);
 
-    return Object.keys(validationErrors).length === 0; // Return true if no errors
+    return Object.keys(validationErrors).length === 0;
   };
 
   const handleSubmit = async () => {
@@ -44,7 +44,7 @@ const ReportPage = ({ navigation, route }) => {
     }
 
     try {
-      const token = await AsyncStorage.getItem("userToken"); // ✅ Fetch Token
+      const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
 
       const payload = {
@@ -57,7 +57,7 @@ const ReportPage = ({ navigation, route }) => {
         Authorization: `Bearer ${token}`,
       };
 
-      const API_URL = `${REPORT}/${profileId}`; // ✅ Append profileId
+      const API_URL = `${REPORT}/${profileId}`;
 
       console.log("Submitting Report to:", API_URL);
       console.log("Payload:", payload);
@@ -69,12 +69,12 @@ const ReportPage = ({ navigation, route }) => {
       if (response.status === 200 && response.data.status === true) {
         Toast.show({
           type: "success",
-          text1: "Success",
-          text2: response.data.message || "Your report has been submitted successfully!",
+          text1: response.data.message1,
+          text2: response.data.message2,
         });
 
         setTimeout(() => {
-          navigation.navigate("MainApp");
+          navigation.goBack();
         }, 2000);
         return;
       }

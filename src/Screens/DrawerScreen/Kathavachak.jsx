@@ -107,57 +107,64 @@ const Kathavachak = ({ navigation }) => {
 
   const savedProfiles = async (_id) => {
     if (!_id) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "User ID not found!",
-        position: "top",
-      });
-      return;
+        Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: "User ID not found!",
+            position: "top",
+        });
+        return;
     }
+    setKathavachakData((prevProfiles) =>
+        prevProfiles.map((profile) =>
+            profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
+        )
+    );
 
     try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) {
-        throw new Error("No token found");
-      }
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) {
+            throw new Error("No token found");
+        }
 
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      };
+        const headers = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        };
 
-      const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
+        const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
 
-      console.log("Response Data:", JSON.stringify(response?.data));
+        console.log("Response Data:", JSON.stringify(response?.data));
 
-      if (response.status === 200 && response.data.status === true) {
-        Toast.show({
-          type: "success",
-          text1: "Success",
-          text2: response.data?.message || "Profile saved successfully!",
-          position: "top",
-          onHide: () => {
-            navigation.reset({
-              index: 0,
-              routes: [{ name: "Pandit" }],
+        if (response.status === 200 && response.data.status === true) {
+            Toast.show({
+                type: "success",
+                text1: "Success",
+                text2: response.data?.message || "Profile saved successfully!",
+                position: "top",
             });
-          },
-        });
-      } else {
-        throw new Error(response.data?.message || "Something went wrong!");
-      }
+        } else {
+            throw new Error(response.data?.message || "Something went wrong!");
+        }
     } catch (error) {
-      console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
+        console.error(
+            "API Error:",
+            error?.response ? JSON.stringify(error.response.data) : error.message
+        );
 
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: error?.response?.data?.message || "Failed to save profile!",
-        position: "top",
-      });
+        Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: error?.response?.data?.message || "Failed to save profile!",
+            position: "top",
+        });
+        setKathavachakData((prevProfiles) =>
+            prevProfiles.map((profile) =>
+                profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
+            )
+        );
     }
-  };
+};
 
   useFocusEffect(
     React.useCallback(() => {
@@ -232,9 +239,9 @@ const Kathavachak = ({ navigation }) => {
               <Text style={styles.text} numberOfLines={1}>{item?.residentialAddress}</Text>
             </Pressable>
             <View style={styles.sharecontainer}>
-              <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
+            <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
                 <FontAwesome
-                  name={isSaved ? "bookmark" : "bookmark-o"}
+                  name={item.isSaved ? "bookmark" : "bookmark-o"}
                   size={19}
                   color={Colors.dark}
                 />

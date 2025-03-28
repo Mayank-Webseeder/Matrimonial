@@ -133,7 +133,7 @@ const PostReview = ({ navigation, route }) => {
                     text2: `Your review has been ${isEditMode ? "updated" : "posted"} successfully!`,
                     position: "top",
                     onHide: () => {
-                        navigation.goBack(); // ✅ Toast dismiss hone ke baad navigate hoga
+                        navigation.goBack(); 
                     },
                 });
             } else {

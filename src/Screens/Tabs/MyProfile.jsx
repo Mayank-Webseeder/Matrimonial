@@ -5,7 +5,6 @@ import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/MyProfileStyle';
 import { TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { DrawerActions } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import moment from "moment";
 import Globalstyles from '../../utils/GlobalCss';
@@ -16,6 +15,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UPLOAD_PROFILE_PHOTO,DELETE_PROFILE_PHOTO } from '../../utils/BaseUrl';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
+import { DrawerActions } from '@react-navigation/native';
+
 const MyProfile = ({ navigation }) => {
     const [selectedButton, setSelectedButton] = useState('CreateBioData');
     const [modalVisible, setModalVisible] = useState(false);
@@ -143,7 +144,7 @@ const MyProfile = ({ navigation }) => {
             });
             navigation.reset({
                 index: 0,
-                routes: [{ name: 'MainApp' }],
+                routes: [{ name: 'MyProfile' }],
             });
             setModalVisible(false)
           } else {
@@ -204,7 +205,7 @@ const MyProfile = ({ navigation }) => {
                 console.log("Navigating to MainApp...");
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: 'MainApp' }],
+                    routes: [{ name: 'MyProfile' }],
                 });
             }
         } catch (error) {
@@ -249,9 +250,9 @@ const MyProfile = ({ navigation }) => {
             />
             <View style={Globalstyles.header}>
                 <View style={styles.headerContainer}>
-                    <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
-                        <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
-                    </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.getParent()?.dispatch(DrawerActions.openDrawer())}>
+    <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
+</TouchableOpacity>
                     <Text style={styles.headerText}>{capitalizeFirstLetter(profileData.username || 'NA')}</Text>
                 </View>
             </View>

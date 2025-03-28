@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef,useCallback } from 'react';
 import { View, Text, TouchableOpacity, Image, FlatList, ScrollView, SafeAreaView, StatusBar, ActivityIndicator } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -14,6 +14,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
 import { SH } from '../../utils/Dimensions';
+import { useFocusEffect } from '@react-navigation/native';
 
 const BioData = ({ navigation }) => {
   const sliderRef = useRef(null);
@@ -29,10 +30,6 @@ const BioData = ({ navigation }) => {
   const [showAllInterested, setShowAllInterested] = useState(false);
   const [showAllProfiles, setShowAllProfiles] = useState(false);
 
-
-  useEffect(() => {
-    console.log("savedProfiles", savedProfiles);
-  }, [])
   const get_all_mixed_matrimony_profiles = async () => {
     try {
       setIsLoading(true)
@@ -62,9 +59,11 @@ const BioData = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
-    get_all_mixed_matrimony_profiles();
-  }, [])
+  useFocusEffect(
+    useCallback(() => {
+      get_all_mixed_matrimony_profiles();
+    }, [])
+  );
 
   useEffect(() => {
     const interval = setInterval(() => {

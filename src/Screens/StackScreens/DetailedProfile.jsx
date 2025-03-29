@@ -402,8 +402,6 @@ const DetailedProfile = ({ navigation }) => {
       setIsLoading(true);
 
       const isUpdating = Boolean(biodata?._id);
-
-      // ✅ Validation only when creating a new profile
       if (!isUpdating) {
         const errors = validateForm(biodata);
         console.log("🚀 Validation Errors:", errors);
@@ -416,8 +414,6 @@ const DetailedProfile = ({ navigation }) => {
         }
         console.log("✅ Validation Passed. Proceeding...");
       }
-
-      // ✅ Retrieve Token
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
 
@@ -426,11 +422,9 @@ const DetailedProfile = ({ navigation }) => {
         Authorization: `Bearer ${token}`,
       };
 
-      // ✅ Construct Payload
       const payload = await constructPayload(biodata, !isUpdating);
       console.log("📩 Constructed Payload:", payload);
 
-      // ✅ API Call
       const apiCall = isUpdating ? axios.put : axios.post;
       const endpoint = isUpdating ? UPDATE_PERSONAL_DETAILS : CREATE_PERSONAL_DETAILS;
       console.log(`🔹 Calling API: ${endpoint}`);
@@ -452,7 +446,7 @@ const DetailedProfile = ({ navigation }) => {
         ToastAndroid.show(successMessage, ToastAndroid.SHORT)
         setBiodata((prev) => ({
           ...prev,
-          gender: biodata.gender,  // API ke response me na ho toh yeh use karega
+          gender: biodata.gender,  
         }));
         setIsEditing(false);
         setErrors({});

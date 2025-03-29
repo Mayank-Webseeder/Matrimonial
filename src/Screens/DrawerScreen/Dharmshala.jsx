@@ -24,8 +24,6 @@ import ImageViewing from 'react-native-image-viewing';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import Toast from 'react-native-toast-message';
 import _ from "lodash";
-import { setShouldAnimateExitingForTag } from 'react-native-reanimated/lib/typescript/core';
-
 const Dharmshala = () => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);

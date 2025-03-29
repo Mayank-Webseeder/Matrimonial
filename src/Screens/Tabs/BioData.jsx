@@ -30,6 +30,7 @@ const BioData = ({ navigation }) => {
   const [showAllInterested, setShowAllInterested] = useState(false);
   const [showAllProfiles, setShowAllProfiles] = useState(false);
 
+
   const get_all_mixed_matrimony_profiles = async () => {
     try {
       setIsLoading(true)

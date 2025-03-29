@@ -71,10 +71,10 @@ import AdvertiseWithUs from '../Screens/StackScreens/AdvertiseWithUs';
 import ShortMatrimonialProfile from '../Screens/StackScreens/ShortMatrimonialProfile';
 import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
-import NotificationDetails from '../Screens/StackScreens/NotificationDetails';
 import { initializeSocket } from '../../socket';
 import { setBioData } from '../ReduxStore/Slices/BiodataSlice';
 import AboutJs from '../Screens/StackScreens/AboutJs';
+import useNotificationListener from '../ReduxStore/Slices/useNotificationListener';
 
 const Stack = createNativeStackNavigator();
 const AppStackNavigator = createNativeStackNavigator();
@@ -281,7 +281,6 @@ const AppStack = () => (
     <AppStackNavigator.Screen name="MainApp" component={MyDrawer} />
     <AppStackNavigator.Screen name="IntrestedProfile" component={IntrestedProfile} />
     <AppStackNavigator.Screen name="Notification" component={Notification} />
-    <AppStackNavigator.Screen name="NotificationDetails" component={NotificationDetails} />
     <AppStackNavigator.Screen name="DharamsalaDetail" component={DharamsalaDetail} />
     <AppStackNavigator.Screen name="RoleRegisterForm" component={RoleRegisterForm} />
     <AppStackNavigator.Screen name="PanditDetailPage" component={PanditDetailPage} />
@@ -331,6 +330,7 @@ const AuthStack = () => (
 );
 
 const RootNavigator = () => {
+  useNotificationListener();
   const [isLoading, setIsLoading] = useState(true);
   const [initialRoute, setInitialRoute] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);

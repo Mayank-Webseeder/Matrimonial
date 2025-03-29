@@ -20,6 +20,7 @@ const IntrestedProfile = ({ navigation }) => {
 
   const fetchData = async (url, setData) => {
     try {
+      setData([])
       setIsLoading(true);
       const token = await AsyncStorage.getItem('userToken');
       if (!token) throw new Error('No token found');
@@ -74,12 +75,12 @@ const IntrestedProfile = ({ navigation }) => {
                 isSaved: item?.isSaved,
                 isBlur: item?.isBlur, 
               };
-  
               navigation.navigate("MatrimonyPeopleProfile", {
                 userDetails: userData,
                 userId: userData?.userId,
                 isSaved: userData?.isSaved,
                 isBlur: userData?.isBlur, 
+                 status:item?.status
               });
             } else {
               navigation.navigate("IntrestReceivedProfilePage", {

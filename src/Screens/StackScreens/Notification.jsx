@@ -89,7 +89,6 @@ const Notification = ({ navigation }) => {
         index: 0,
         routes: [{ name: "Notification" }],
       });
-      // navigation.navigate('NotificationDetails', { notification: notificationData })
     } catch (error) {
       console.error("Error fetching notifications:", error.response ? error.response.data : error.message);
     } finally {

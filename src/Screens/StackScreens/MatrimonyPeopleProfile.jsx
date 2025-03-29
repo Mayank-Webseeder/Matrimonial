@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator, Share, Switch, ToastAndroid } from 'react-native';
+import {
+  View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator, Share, Switch, ToastAndroid,
+  Modal, Dimensions
+} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
@@ -13,14 +16,15 @@ import axios from 'axios';
 import { MATCHED_PROFILE, SAVED_PROFILES, SEND_REQUEST, SHARED_PROFILES, VERIFY_PROFILE } from '../../utils/BaseUrl';
 import { useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import ImageViewing from 'react-native-image-viewing';
-import { SH, SW } from '../../utils/Dimensions';
+import { SF, SH, SW } from '../../utils/Dimensions';
 import Toast from 'react-native-toast-message';
+import useNotificationListener from '../../ReduxStore/Slices/useNotificationListener';
+const { width, height } = Dimensions.get("window");
 
 const MatrimonyPeopleProfile = ({ navigation }) => {
   const route = useRoute();
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
-  const { userDetails, isSaved: initialSavedState, userId } = route.params || {};
+  const { userDetails, isSaved: initialSavedState, userId, isBlur, status } = route.params || {};
   const [Save, setIsSaved] = useState(initialSavedState || false);
   const Biodata_id = userDetails?.bioDataId || null;
   const hideContact = !!(userDetails?.hideContact);
@@ -32,10 +36,36 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [loadingIntrest, setLoadingIntrest] = useState(false);
 
+
+  const [blurEnabled, setBlurEnabled] = useState(false);
+
   useEffect(() => {
-    console.log("userDetails", userId);
-  }, [])
-  
+    console.log("status", status);
+    const fetchBlurSetting = async () => {
+      try {
+        const storedValue = await AsyncStorage.getItem("blurPhotos");
+        const storedBlur = storedValue ? JSON.parse(storedValue) : true;
+
+        if (isBlur !== undefined) {
+          if (isBlur && storedBlur) {
+            setBlurEnabled(true);
+            await AsyncStorage.setItem("blurPhotos", JSON.stringify(false));
+            console.log("AsyncStorage Updated to false for this user");
+          } else {
+            setBlurEnabled(false);
+          }
+        } else {
+          setBlurEnabled(storedBlur);
+        }
+      } catch (error) {
+        console.error("Error fetching blur setting:", error);
+      }
+    };
+
+    fetchBlurSetting();
+  }, [isBlur]);
+
+
   const _id = userDetails?._id;
   // console.log("_id", User_Id);
   const personalDetails = userDetails?.personalDetails || {};
@@ -44,7 +74,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const MyprofileData = useSelector((state) => state.getBiodata);
   const [isImageVisible, setImageVisible] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
-
+  const [modalVisible, setModalVisible] = useState(false);
   const [isSwitchOn, setIsSwitchOn] = useState(isVerified);
 
   const handleToggle = async () => {
@@ -80,12 +110,9 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       console.log("Response Data:", JSON.stringify(response?.data));
 
       const message = response?.data?.message || "";
-
-      // ✅ Success Message
       if (message.toLowerCase().includes("verified")) {
         ToastAndroid.show("Matrimonial Profile Approved ✅", ToastAndroid.SHORT);
       }
-      // ❌ Disapproved Message
       else if (message.toLowerCase().includes("disapproved")) {
         ToastAndroid.show("Matrimonial Profile Disapproved ❌", ToastAndroid.SHORT);
       }
@@ -108,17 +135,16 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
     }
   };
 
-  // Available images ko filter karo jo null na ho
   const images = [
     personalDetails?.closeUpPhoto,
     !hideOptionalDetails && personalDetails?.fullPhoto,
     !hideOptionalDetails && personalDetails?.bestPhoto
-  ].filter(Boolean); // Removes null/undefined values
+  ].filter(Boolean);
 
 
   const openImageViewer = (index) => {
     setImageIndex(index);
-    setImageVisible(true);
+    setModalVisible(true);
   };
 
   // console.log("MyprofileData", MyprofileData);
@@ -155,7 +181,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
 
   const sendInterestRequest = async () => {
-    setLoadingIntrest(true); // ✅ Show Loader
+    setLoadingIntrest(true);
 
     if (!userId) {
       Toast.show({
@@ -306,37 +332,46 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ alignItems: "center" }}>
-          {/* First Image Display */}
           {images.length > 0 && (
             <TouchableOpacity onPress={() => openImageViewer(0)}>
-              <Image source={{ uri: images[0] }} style={styles.image} />
+              <Image
+                source={{ uri: images[0] }}
+                style={{ width: SW(350), height: SH(330), borderRadius: 10 }}
+                blurRadius={blurEnabled ? 10 : 0}
+              />
             </TouchableOpacity>
           )}
-
-          {/* Image Viewer Modal */}
-          <ImageViewing
-            images={images.map((img) => ({ uri: img }))}
-            imageIndex={imageIndex}
-            visible={isImageVisible}
-            onRequestClose={() => setImageVisible(false)}
-            onImageIndexChange={(index) => setImageIndex(index)}
-            FooterComponent={() => (
-              <View style={{ position: "absolute", bottom: SH(20), alignSelf: "center", flexDirection: "row" }}>
-                {images.map((_, index) => (
-                  <View
-                    key={index}
-                    style={{
-                      width: SH(8),
-                      height: SH(8),
-                      borderRadius: 4,
-                      marginHorizontal: SW(5),
-                      backgroundColor: imageIndex === index ? "white" : "gray",
-                    }}
-                  />
+          <Modal visible={modalVisible} transparent={true} animationType="fade">
+            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.8)", justifyContent: "center", alignItems: "center" }}>
+              <ScrollView
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator={false}
+                onMomentumScrollEnd={(event) => {
+                  const newIndex = Math.round(event.nativeEvent.contentOffset.x / width);
+                  setImageIndex(newIndex);
+                }}
+                style={{ width, height }}
+              >
+                {images.map((img, idx) => (
+                  <View key={idx} style={{ width, height, justifyContent: "center", alignItems: "center" }}>
+                    <Image
+                      source={{ uri: img }}
+                      style={{ width: width * 0.9, height: height * 0.8, borderRadius: 10, resizeMode: "contain" }}
+                      blurRadius={blurEnabled ? 10 : 0}
+                    />
+                  </View>
                 ))}
+              </ScrollView>
+              <View style={{ position: "absolute", top: 40, alignSelf: "center", backgroundColor: "rgba(0,0,0,0.6)", padding: 8, borderRadius: 5 }}>
+                <Text style={{ color: "white", fontSize: SF(13), fontFamily: "Poppins-Regular" }}>{imageIndex + 1} / {images.length}</Text>
               </View>
-            )}
-          />
+              <TouchableOpacity onPress={() => setModalVisible(false)} style={{ position: "absolute", top: 40, right: 20 }}>
+                <Text style={{ color: "white", fontSize: SF(13), fontFamily: "Poppins-Regular" }}>Close</Text>
+              </TouchableOpacity>
+
+            </View>
+          </Modal>
         </View>
         <View style={styles.verifiedContainer}>
           <Image
@@ -361,27 +396,22 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                 <Text style={styles.verifiedText}>Verified</Text>
               )
             ) : (
-              //  Agar profile verify nahi hai, to toggle dikhega verify karne ke liye
               <>
                 <Text style={styles.verifiedText}>Verify Profile</Text>
                 <Switch
                   value={isSwitchOn}
                   onValueChange={handleToggle}
-                  thumbColor={isSwitchOn ? "#4CAF50" : "#767577"} // Green when ON, Gray when OFF
-                  trackColor={{ false: "#f4f3f4", true: "#4CAF50" }} // Background color
+                  thumbColor={isSwitchOn ? "#4CAF50" : "#767577"} 
+                  trackColor={{ false: "#f4f3f4", true: "#4CAF50" }} 
                 />
               </>
             )
           ) : (
-            // 🚫 Non-activist ke liye sirf "Verified" text dikhana hai
             isVerified && <Text style={styles.verifiedText}>Verified</Text>
           )}
         </View>
-
-        {/* Profile Info Section */}
         <View style={styles.flexContainer}>
           <View style={styles.flex}>
-            {/* <Text style={styles.Idtext}>ID NO. :- {user?._id}</Text> */}
             <Text style={styles.Idtext}>ID NO. :- {userDetails?.bioDataId || details?.bioDataId}</Text>
             <Text style={styles.toptext}>{matchPercentage > 0 && (
               <Text style={styles.toptext}>
@@ -409,17 +439,18 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             <TouchableOpacity
               style={styles.interestedButton}
               onPress={sendInterestRequest}
-              disabled={loadingIntrest}
+              disabled={loadingIntrest || !!status}
             >
               {loadingIntrest ? (
                 <ActivityIndicator size="small" color={Colors.theme_color} />
               ) : (
-                <Text style={styles.buttonText}>Interested</Text>
+                <Text style={styles.buttonText}>{status ? status : "Interested"}</Text>
               )}
             </TouchableOpacity>
 
+
             <TouchableOpacity
-              style={[styles.iconContainer, hideContact && { opacity: 0.5 }]} // Reduce opacity when hidden
+              style={[styles.iconContainer, hideContact && { opacity: 0.5 }]}
               onPress={() => {
                 if (!hideContact && personalDetails?.contactNumber1) {
                   Linking.openURL('tel:' + personalDetails?.contactNumber1);

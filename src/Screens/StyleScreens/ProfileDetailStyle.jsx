@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
   },
   matrimonyImage: {
     width: "100%",
-    height: SH(250),
+    height: SH(350),
     borderRadius: 10,
     alignSelf: 'center',
     marginBottom: 10,

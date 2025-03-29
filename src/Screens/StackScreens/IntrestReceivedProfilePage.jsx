@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator, ToastAndroid } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator, ToastAndroid, Dimensions, Modal } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
@@ -13,13 +13,13 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MATCHED_PROFILE } from '../../utils/BaseUrl';
 import { ACCEPTED_API, REJECTED_API, SAVED_PROFILES } from '../../utils/BaseUrl';
-import ImageViewing from 'react-native-image-viewing';
-import { SH, SW } from '../../utils/Dimensions';
+import { SH, SW , SF } from '../../utils/Dimensions';
 import moment from 'moment';
 import Toast from 'react-native-toast-message';
+const { width, height } = Dimensions.get("window");
 
 const IntrestReceivedProfilePage = ({ navigation, route }) => {
-  const { userId, biodata, requestId ,isSaved: initialSavedState  } = route.params;
+  const { userId, biodata, requestId, isSaved: initialSavedState ,isBlur } = route.params;
   const [Save, setIsSaved] = useState(initialSavedState || false);
   const hideContact = !!(biodata?.hideContact || biodata?.hideContact);
   const hideOptionalDetails = !!(biodata?.hideOptionalDetails || biodata?.hideOptionalDetails)
@@ -28,25 +28,47 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   console.log(userId, biodata, requestId)
   const [loading, setLoading] = useState(true);
   const [loadingAccept, setLoadingAccept] = useState(false);
-const [loadingDecline, setLoadingDecline] = useState(false);
+  const [loadingDecline, setLoadingDecline] = useState(false);
   const [profileData, setProfileData] = useState(null);
   const MyprofileData = useSelector((state) => state.getBiodata);
-  console.log("biodata",biodata);
-  console.log("Save", Save);
-
-  const [isImageVisible, setImageVisible] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [blurEnabled, setBlurEnabled] = useState(false);
 
-  // Available images ko filter karo jo null na ho
+  useEffect(() => {
+    const fetchBlurSetting = async () => {
+      try {
+        const storedValue = await AsyncStorage.getItem("blurPhotos");
+        const storedBlur = storedValue ? JSON.parse(storedValue) : true; 
+  
+        if (isBlur !== undefined) {
+          if (isBlur && storedBlur) {
+            setBlurEnabled(true);
+            await AsyncStorage.setItem("blurPhotos", JSON.stringify(false)); 
+            console.log("AsyncStorage Updated to false for this user");
+          } else {
+            setBlurEnabled(false);
+          }
+        } else {
+          setBlurEnabled(storedBlur);
+        }
+      } catch (error) {
+        console.error("Error fetching blur setting:", error);
+      }
+    };
+  
+    fetchBlurSetting();
+  }, [isBlur]);
+  
   const images = [
     personalDetails?.closeUpPhoto,
     !hideOptionalDetails && personalDetails?.fullPhoto,
     !hideOptionalDetails && personalDetails?.bestPhoto
-  ].filter(Boolean); // Null values hata do
+  ].filter(Boolean); 
 
   const openImageViewer = (index) => {
     setImageIndex(index);
-    setImageVisible(true);
+    setModalVisible(true);
   };
 
   useEffect(() => {
@@ -92,170 +114,170 @@ const [loadingDecline, setLoadingDecline] = useState(false);
 
   const savedProfiles = async () => {
     if (!_id) {
-        Toast.show({
-            type: "error",
-            text1: "Error",
-            text2: "User ID not found!",
-        });
-        return;
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "User ID not found!",
+      });
+      return;
     }
 
     try {
       setLoading(true)
-        const token = await AsyncStorage.getItem("userToken");
-        if (!token) throw new Error("No token found");
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) throw new Error("No token found");
 
-        const headers = {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-        };
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
 
-        const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
-        console.log("Response Data:", JSON.stringify(response?.data));
+      const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
+      console.log("Response Data:", JSON.stringify(response?.data));
 
-        if (response.status === 200 && response.data.status === true) {
-            Toast.show({
-                type: "success",
-                text1: "Success",
-                text2: response.data.message || "Profile saved successfully!",
-            });
-
-            setIsSaved(response.data.message.includes("saved successfully"));
-        } else {
-            throw new Error(response.data.message || "Something went wrong");
-        }
-    } catch (error) {
-        console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
-
-        let errorMessage = "Failed to save profile!";
-        if (error.response?.status === 400) {
-            errorMessage = error.response.data?.message || "Bad request.";
-        }
-
+      if (response.status === 200 && response.data.status === true) {
         Toast.show({
-            type: "error",
-            text1: "Error",
-            text2: errorMessage,
+          type: "success",
+          text1: "Success",
+          text2: response.data.message || "Profile saved successfully!",
         });
+
+        setIsSaved(response.data.message.includes("saved successfully"));
+      } else {
+        throw new Error(response.data.message || "Something went wrong");
+      }
+    } catch (error) {
+      console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
+
+      let errorMessage = "Failed to save profile!";
+      if (error.response?.status === 400) {
+        errorMessage = error.response.data?.message || "Bad request.";
+      }
+
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: errorMessage,
+      });
     }
-    finally{
+    finally {
       setLoading(false)
     }
-};
+  };
 
-// Accept Connection Request
-const acceptConnectionRequest = async (requestId) => {
-  setLoadingAccept(true);
+  // Accept Connection Request
+  const acceptConnectionRequest = async (requestId) => {
+    setLoadingAccept(true);
     if (!requestId) return;
 
     console.log("✅ Accepting request for userId:", requestId);
 
     try {
-        const token = await AsyncStorage.getItem("userToken");
-        if (!token) {
-            Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: "User token missing!",
-            });
-            return;
-        }
-
-        const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` };
-        const response = await axios.post(`${ACCEPTED_API}/${requestId}`, {}, { headers });
-
-        console.log("🚀 Response Status:", response.status);
-
-        if (response.status === 200 && response.data.status === true) {
-            Toast.show({
-                type: "success",
-                text1: "Success",
-                text2: response.data.message || "Request accepted successfully!",
-                onHide: () => setTimeout(() => navigation.navigate("IntrestedProfile"), 1000),
-            });
-        } else {
-            throw new Error(response.data.message || "Something went wrong");
-        }
-    } catch (error) {
-        console.error("🚨 API Error:", error?.response?.data?.message || error.message);
-
-        let errorMessage = "Failed to accept request!";
-        if (error.response?.status === 400) {
-            errorMessage = error.response.data?.message || "Bad request.";
-        }
-
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
         Toast.show({
-            type: "error",
-            text1: "Error",
-            text2: errorMessage,
+          type: "error",
+          text1: "Error",
+          text2: "User token missing!",
         });
-    }
-    finally{
-      setLoadingDecline(false); 
-    }
-};
+        return;
+      }
 
-// Reject Connection Request
-const rejectConnectionRequest = async (requestId) => {
-  setLoadingDecline(true); 
+      const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` };
+      const response = await axios.post(`${ACCEPTED_API}/${requestId}`, {}, { headers });
+
+      console.log("🚀 Response Status:", response.status);
+
+      if (response.status === 200 && response.data.status === true) {
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: response.data.message || "Request accepted successfully!",
+          onHide: () => setTimeout(() => navigation.navigate("IntrestedProfile"), 1000),
+        });
+      } else {
+        throw new Error(response.data.message || "Something went wrong");
+      }
+    } catch (error) {
+      console.error("🚨 API Error:", error?.response?.data?.message || error.message);
+
+      let errorMessage = "Failed to accept request!";
+      if (error.response?.status === 400) {
+        errorMessage = error.response.data?.message || "Bad request.";
+      }
+
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: errorMessage,
+      });
+    }
+    finally {
+      setLoadingDecline(false);
+    }
+  };
+
+  // Reject Connection Request
+  const rejectConnectionRequest = async (requestId) => {
+    setLoadingDecline(true);
     if (!requestId) return;
 
     console.log("❌ Rejecting request for userId:", requestId);
 
     try {
-        const token = await AsyncStorage.getItem("userToken");
-        if (!token) {
-            Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: "User token missing!",
-            });
-            return;
-        }
-
-        const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` };
-        const response = await axios.post(`${REJECTED_API}/${requestId}`, {}, { headers });
-
-        console.log("🚀 Response Status:", response.status);
-
-        if (response.status === 200 && response.data.status === true) {
-            Toast.show({
-                type: "success",
-                text1: "Success",
-                text2: response.data.message || "Request rejected successfully!",
-                onHide: () => setTimeout(() => navigation.navigate("IntrestedProfile"), 1000),
-            });
-        } else {
-            throw new Error(response.data.message || "Something went wrong");
-        }
-    } catch (error) {
-        console.error("🚨 API Error:", error?.response?.data?.message || error.message);
-
-        let errorMessage = "Failed to reject request!";
-        if (error.response?.status === 400) {
-            errorMessage = error.response.data?.message || "Bad request.";
-        }
-
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
         Toast.show({
-            type: "error",
-            text1: "Error",
-            text2: errorMessage,
+          type: "error",
+          text1: "Error",
+          text2: "User token missing!",
         });
+        return;
+      }
+
+      const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` };
+      const response = await axios.post(`${REJECTED_API}/${requestId}`, {}, { headers });
+
+      console.log("🚀 Response Status:", response.status);
+
+      if (response.status === 200 && response.data.status === true) {
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: response.data.message || "Request rejected successfully!",
+          onHide: () => setTimeout(() => navigation.navigate("IntrestedProfile"), 1000),
+        });
+      } else {
+        throw new Error(response.data.message || "Something went wrong");
+      }
+    } catch (error) {
+      console.error("🚨 API Error:", error?.response?.data?.message || error.message);
+
+      let errorMessage = "Failed to reject request!";
+      if (error.response?.status === 400) {
+        errorMessage = error.response.data?.message || "Bad request.";
+      }
+
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: errorMessage,
+      });
     }
-    finally{
+    finally {
       setLoading(false)
     }
-};
+  };
 
 
   const handleShare = async () => {
-     Toast.show({
-       type: "info",
-       text1: "Info",
-       text2: "Under development",
-       position: "top",
-     });
-   };
+    Toast.show({
+      type: "info",
+      text1: "Info",
+      text2: "Under development",
+      position: "top",
+    });
+  };
 
   // Map API comparisonResults to UI labels
   const comparisonResults = profileData?.comparisonResults || {};
@@ -279,37 +301,46 @@ const rejectConnectionRequest = async (requestId) => {
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ alignItems: "center" }}>
-          {/* First Image Display */}
           {images.length > 0 && (
             <TouchableOpacity onPress={() => openImageViewer(0)}>
-              <Image source={{ uri: images[0] }} style={styles.image} />
+              <Image
+                source={{ uri: images[0] }}
+                style={{ width: SW(350), height: SH(330), borderRadius: 10 }}
+                blurRadius={blurEnabled ? 10 : 0}
+              />
             </TouchableOpacity>
           )}
-
-          {/* Image Viewer Modal */}
-          <ImageViewing
-            images={images.map((img) => ({ uri: img }))}
-            imageIndex={imageIndex}
-            visible={isImageVisible}
-            onRequestClose={() => setImageVisible(false)}
-            onImageIndexChange={(index) => setImageIndex(index)}
-            FooterComponent={() => (
-              <View style={{ position: "absolute", bottom: SH(20), alignSelf: "center", flexDirection: "row" }}>
-                {images.map((_, index) => (
-                  <View
-                    key={index}
-                    style={{
-                      width: SH(8),
-                      height: SH(8),
-                      borderRadius: 4,
-                      marginHorizontal: SW(5),
-                      backgroundColor: imageIndex === index ? "white" : "gray",
-                    }}
-                  />
+          <Modal visible={modalVisible} transparent={true} animationType="fade">
+            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.8)", justifyContent: "center", alignItems: "center" }}>
+              <ScrollView
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator={false}
+                onMomentumScrollEnd={(event) => {
+                  const newIndex = Math.round(event.nativeEvent.contentOffset.x / width);
+                  setImageIndex(newIndex);
+                }}
+                style={{ width, height }}
+              >
+                {images.map((img, idx) => (
+                  <View key={idx} style={{ width, height, justifyContent: "center", alignItems: "center" }}>
+                    <Image
+                      source={{ uri: img }}
+                      style={{ width: width * 0.9, height: height * 0.8, borderRadius: 10, resizeMode: "contain" }}
+                      blurRadius={blurEnabled ? 10 : 0}
+                    />
+                  </View>
                 ))}
+              </ScrollView>
+              <View style={{ position: "absolute", top: 40, alignSelf: "center", backgroundColor: "rgba(0,0,0,0.6)", padding: 8, borderRadius: 5 }}>
+                <Text style={{ color: "white", fontSize: SF(13), fontFamily: "Poppins-Regular" }}>{imageIndex + 1} / {images.length}</Text>
               </View>
-            )}
-          />
+              <TouchableOpacity onPress={() => setModalVisible(false)} style={{ position: "absolute", top: 40, right: 20 }}>
+                <Text style={{ color: "white", fontSize: SF(13), fontFamily: "Poppins-Regular" }}>Close</Text>
+              </TouchableOpacity>
+
+            </View>
+          </Modal>
         </View>
         {(biodata?.verified) && (
           <View style={styles.verifiedContainer}>
@@ -332,7 +363,7 @@ const rejectConnectionRequest = async (requestId) => {
             </Text>
           </View>
           <View style={styles.sharecontainer}>
-          <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles()}>
+            <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles()}>
               <FontAwesome
                 name={Save ? "bookmark" : "bookmark-o"}
                 size={19}
@@ -489,36 +520,36 @@ const rejectConnectionRequest = async (requestId) => {
       </ScrollView>
       <View style={styles.bottomContainer}>
         <TouchableOpacity
-            style={styles.declineButton}
-            onPress={() => rejectConnectionRequest(requestId)}
-            disabled={loadingDecline} // ✅ Disable Button When Loading
+          style={styles.declineButton}
+          onPress={() => rejectConnectionRequest(requestId)}
+          disabled={loadingDecline} // ✅ Disable Button When Loading
         >
-            {loadingDecline ? (
-                <ActivityIndicator size="small" color="#fff" /> // ✅ Show Loader
-            ) : (
-                <>
-                    <Entypo name={'cross'} color={Colors.light} size={20} />
-                    <Text style={styles.declineButtonText}>Decline</Text>
-                </>
-            )}
+          {loadingDecline ? (
+            <ActivityIndicator size="small" color="#fff" /> // ✅ Show Loader
+          ) : (
+            <>
+              <Entypo name={'cross'} color={Colors.light} size={20} />
+              <Text style={styles.declineButtonText}>Decline</Text>
+            </>
+          )}
         </TouchableOpacity>
 
         <TouchableOpacity
-            style={styles.acceptButton}
-            onPress={() => acceptConnectionRequest(requestId)}
-            disabled={loadingAccept} // ✅ Disable Button When Loading
+          style={styles.acceptButton}
+          onPress={() => acceptConnectionRequest(requestId)}
+          disabled={loadingAccept} // ✅ Disable Button When Loading
         >
-            {loadingAccept ? (
-                <ActivityIndicator size="small" color="#fff" /> // ✅ Show Loader
-            ) : (
-                <>
-                    <Entypo name={'check'} color={Colors.light} size={20} />
-                    <Text style={styles.acceptButtonText}>Accept</Text>
-                </>
-            )}
+          {loadingAccept ? (
+            <ActivityIndicator size="small" color="#fff" /> // ✅ Show Loader
+          ) : (
+            <>
+              <Entypo name={'check'} color={Colors.light} size={20} />
+              <Text style={styles.acceptButtonText}>Accept</Text>
+            </>
+          )}
         </TouchableOpacity>
-    </View>
-      <Toast/>
+      </View>
+      <Toast />
     </SafeAreaView>
   );
 };

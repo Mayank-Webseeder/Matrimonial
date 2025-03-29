@@ -35,6 +35,7 @@ const EventNews = ({ navigation }) => {
   const myprofile_id = profileData?._id || null;
   const [LikeLoading, setLikeLoading] = useState(false);
   const [commentLoading, setCommentLoading] = useState(false);
+  
   useEffect(() => {
     console.log("myprofile_id", myprofile_id);
   }, [])

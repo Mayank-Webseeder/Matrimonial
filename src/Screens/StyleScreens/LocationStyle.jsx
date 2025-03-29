@@ -134,7 +134,8 @@ const styles = StyleSheet.create({
   buttonText: {
     color: Colors.light,
     fontFamily: "Poppins-Medium",
-    fontSize: SF(13),
+    fontSize: SF(12),
+    textTransform:"capitalize"
   },
   ButtonText: {
     color: Colors.light,

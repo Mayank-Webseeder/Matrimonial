@@ -20,7 +20,6 @@ import { setActivistdata } from '../../ReduxStore/Slices/ActivistSlice';
 import { useSelector } from 'react-redux';
 import { useCallback } from 'react';
 import { setProfiledata } from '../../ReduxStore/Slices/ProfileSlice';
-import { getSocket } from '../../../socket';
 import Toast from 'react-native-toast-message';
 import { setAllNotification } from '../../ReduxStore/Slices/GetAllNotificationSlice';
 import { SF, SW, SH } from '../../utils/Dimensions';
@@ -38,8 +37,6 @@ const Home = ({ navigation }) => {
   const partnerPreferences = MyprofileData?.Biodata?.partnerPreferences || null;
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  const blurPhotos = useSelector((state) => state.privacy.blurPhotos);
   const [profiledata, setProfileData] = useState('');
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
@@ -47,7 +44,6 @@ const Home = ({ navigation }) => {
   // const profile_data = ProfileData?.profiledata || {};
   const [connReqNotification,setconnReqNotification] = useState("");
   const [eventPostNotification,seteventPostNotification] =useState("");
-
 
   const GetAll_Notification = async () => {
     setIsLoading(true);
@@ -81,35 +77,6 @@ const Home = ({ navigation }) => {
       GetAll_Notification();
     }, [])
   );
-
-  useFocusEffect(
-    useCallback(() => {
-      let isActive = true;
-  
-      const fetchAndSubscribe = async () => {
-        await fetchProfile();
-        if (isActive) {
-          if (connReqNotification) {
-            subscribeToNewMatches();
-            subscribeToConnectionRequests();
-          }
-    
-          if (eventPostNotification) {
-            subscribeToPostEvents();
-          }
-        }
-      };
-  
-      fetchAndSubscribe();
-  
-      return () => {
-        isActive = false;
-        unsubscribeFromNewMatches();
-        unsubscribeToConnectionRequests();
-        unsubscribeToPostEvents();
-      };
-    }, [connReqNotification, eventPostNotification])
-  );
   
   const getBiodata = async () => {
     try {
@@ -142,17 +109,12 @@ const Home = ({ navigation }) => {
   const handleNavigateToProfile = (item) => {
     console.log("item", item);
     if (!navigation.isFocused()) return;
-
-    // console.log("Current Partner Preferences:", mybiodata?.partnerPreferences);
-
     if (!partnerPreferences) {
-      // Partner preferences nahi hai, toh "Matrimonial" screen par bhejo
       console.log("Navigating to Matrimonial because Partner Preferences are missing");
       navigation.navigate("ShortMatrimonialProfile", {
         userDetails: item,
       });
     } else {
-      // Partner preferences hai, toh "MatrimonyPeopleProfile" screen par bhejo
       console.log("Navigating to MatrimonyPeopleProfile");
       navigation.navigate("MatrimonyPeopleProfile", {
         userDetails: item,
@@ -190,181 +152,6 @@ const Home = ({ navigation }) => {
       setIsLoading(false);
     }
   };
-
-  const subscribeToNewMatches = useCallback(async () => {
-
-    if (!connReqNotification) {
-      console.log("❌ connReqNotification disabled. Not subscribing.");
-      return;
-    }
-
-    try {
-      const socket = getSocket();
-
-      if (socket.connected) {
-        console.log("✅ Socket already connected. Listening to new events!");
-        // ToastAndroid.show("✅ Socket already connected. Listening to new events!", ToastAndroid.SHORT);
-      } else {
-        console.log("⏳ Socket not connected. Connecting...");
-        // ToastAndroid.show("🔄 Reconnecting to Socket...", ToastAndroid.SHORT);
-        socket.connect();
-      }
-
-      console.log("📡 Subscribing to events...");
-
-      // 🔥 Catch-all event listener for debugging
-      socket.onAny((event, data) => {
-        console.log(`📡 Received Event: ${event}`, data);
-      });
-
-      // 🟢 Listening for "newMatch"
-      if (connReqNotification) {
-        socket.on("newMatch", (newMatch) => {
-          console.log("🔥 New Match Received:", newMatch);
-          ToastAndroid.show(`🎉 Matched with ${newMatch.name || "someone"}!`, ToastAndroid.SHORT);
-        });
-
-        socket.on("connectionRequestResponse", (data) => {
-          console.log("✅ Connection Request Response Received:", data);
-          ToastAndroid.show(data?.message || "You have a new connection request response!", ToastAndroid.SHORT);
-        });
-      }
-
-    } catch (e) {
-      console.error("🚨 Error in subscribeToNewMatches:", e);
-      // ToastAndroid.show("❌ Error subscribing to events!", ToastAndroid.SHORT);
-    }
-  }, [connReqNotification]);
-
-  const unsubscribeFromNewMatches = useCallback(async () => {
-    try {
-      const socket = getSocket();
-      console.log("🔴 Unsubscribing from events...");
-      socket.off("newMatch");
-      socket.off("connectionRequestResponse");
-    } catch (e) {
-      console.log("🚨 Error unsubscribing:", e);
-    }
-  }, []);
-
-  const subscribeToConnectionRequests = useCallback(async () => {
-    if (!connReqNotification) {
-      console.log("❌ connReqNotification disabled. Not subscribing.");
-      return;
-    }
-    try {
-      const socket = getSocket();
-
-      if (socket.connected) {
-        console.log("✅ Socket already connected. Listening to new events!");
-        // ToastAndroid.show("✅ Socket already connected. Listening to new events!", ToastAndroid.SHORT);
-      } else {
-        console.log("⏳ Socket not connected. Connecting...");
-        // ToastAndroid.show("🔄 Reconnecting to Socket...", ToastAndroid.SHORT);
-        socket.connect();
-      }
-
-      console.log("📡 Subscribing to events...");
-      socket.onAny((event, data) => {
-        console.log(`📡 Received Event: ${event}`, data);
-      });
-
-      if (connReqNotification) {
-
-        socket.on("connectionRequest", (data) => {
-          console.log("✅ Connection Request Response Received:", data);
-
-          if (data.username) {
-            ToastAndroid.show(`You have a new connection from  ${data.username}`, ToastAndroid.SHORT);
-          } else {
-            ToastAndroid.show("You have a new connection request response!", ToastAndroid.SHORT);
-          }
-        });
-      }
-      // 🟢 Listening for "connectionRequest"
-
-    } catch (e) {
-      console.error("🚨 Error in subscribeToNewMatches:", e);
-      // ToastAndroid.show("❌ Error subscribing to events!", ToastAndroid.SHORT);
-    }
-  }, [connReqNotification]);
-
-  const unsubscribeToConnectionRequests = useCallback(async () => {
-    try {
-        const socket = getSocket();
-        console.log("🔴 Unsubscribing from events...");
-        socket.off("connectionRequest"); // Remove event listener properly
-        socket.off("connectionRequestResponse");
-    } catch (e) {
-        console.log("🚨 Error unsubscribing:", e);
-    }
-}, []);
-
-  const subscribeToPostEvents = useCallback(async () => {
-    if (!eventPostNotification) {
-      console.log("❌ Events disabled. Not subscribing.");
-      return;
-    }
-
-    try {
-      const socket = getSocket();
-
-      if (socket.connected) {
-        console.log("✅ Socket already connected. Listening to new events!");
-        // ToastAndroid.show("✅ Socket already connected. Listening to new events!", ToastAndroid.SHORT);
-      } else {
-        console.log("⏳ Socket not connected. Connecting...");
-        // ToastAndroid.show("🔄 Reconnecting to Socket...", ToastAndroid.SHORT);
-        socket.connect();
-      }
-
-      console.log("📡 Subscribing to events...");
-
-      // 🔥 Catch-all event listener for debugging
-      socket.onAny((event, data) => {
-        console.log(`📡 Received Event: ${event}`, data);
-      });
-
-      if (eventPostNotification) {
-        // 🟢 Listening for "newMatch"
-        socket.on("post-commented", (data) => {
-          console.log("💬 New Comment on Post:", data);
-          // ToastAndroid.show("Your got a new Connection!", ToastAndroid.SHORT);
-
-          if (data.commentBy.name) {
-            ToastAndroid.show(`🎉 New comment by ${data.commentBy.name} on your post!`, ToastAndroid.SHORT);
-          }
-        });
-
-        // 🟢 Listening for "connectionRequestResponse"
-        socket.on("post-liked", (data) => {
-          console.log("❤️ Post Liked:", data);
-
-          if (data.likedBy.name) {
-            ToastAndroid.show(`${data.likedBy.name} liked your post!`, ToastAndroid.SHORT);
-          } else {
-            ToastAndroid.show("liked your post!", ToastAndroid.SHORT);
-          }
-        });
-      }
-
-
-    } catch (e) {
-      console.error("🚨 Error in subscribeToNewMatches:", e);
-      // ToastAndroid.show("❌ Error subscribing to events!", ToastAndroid.SHORT);
-    }
-  }, [eventPostNotification]);
-
-  const unsubscribeToPostEvents = useCallback(async () => {
-    try {
-      const socket = getSocket();
-      console.log("🔴 Unsubscribing from events...");
-      socket.off("post-commented");
-      socket.off("post-liked");
-    } catch (e) {
-      console.log("🚨 Error unsubscribing:", e);
-    }
-  }, []);
 
   const GetAll_Biodata = async () => {
     setLoading(true)
@@ -555,8 +342,8 @@ const Home = ({ navigation }) => {
                           ? { uri: item.personalDetails.closeUpPhoto }
                           : require("../../Images/NoImage.png")
                       }
-                      style={styles.ProfileImages}
-                      blurRadius={blurPhotos ? 10 : 0}
+                      style={[styles.ProfileImages]}
+                      // blurRadius={blurEnabled ? 10 : 0}
                     />
 
                     {item.verified && (

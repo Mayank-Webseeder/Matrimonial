@@ -19,6 +19,7 @@ import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
 import ImageViewing from 'react-native-image-viewing';
 import { SH, SW } from '../../utils/Dimensions';
+
 const PanditDetailPage = ({ navigation, item, route }) => {
     const { pandit_id, isSaved: initialSavedState } = route.params || {};
     const [Save, setIsSaved] = useState(initialSavedState || false);

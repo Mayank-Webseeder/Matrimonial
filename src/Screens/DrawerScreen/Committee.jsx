@@ -124,9 +124,15 @@ const Committee = ({ navigation }) => {
       } else if (filterType === "modal") {
         const cleanedModalLocality = modalLocality.trim();
         const cleanedModalSubCaste = subcaste.trim();
-  
-        if (cleanedModalLocality) queryParams.push(`locality=${encodeURIComponent(cleanedModalLocality.toLowerCase())}`);
-        if (cleanedModalSubCaste) queryParams.push(`subCaste=${encodeURIComponent(cleanedModalSubCaste.toLowerCase())}`); // 🔥 FIXED
+
+        if (cleanedModalLocality && cleanedModalSubCaste) {
+            queryParams.push(`locality=${encodeURIComponent(cleanedModalLocality.toLowerCase())}`);
+            queryParams.push(`subCaste=${encodeURIComponent(cleanedModalSubCaste.toLowerCase())}`);
+        } else if (cleanedModalLocality) {
+            queryParams.push(`locality=${encodeURIComponent(cleanedModalLocality.toLowerCase())}`);
+        } else if (cleanedModalSubCaste) {
+            queryParams.push(`subCaste=${encodeURIComponent(cleanedModalSubCaste.toLowerCase())}`);
+        }
       }
   
 

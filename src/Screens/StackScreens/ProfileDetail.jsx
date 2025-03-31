@@ -23,6 +23,8 @@ const ProfileDetail = ({ route, navigation }) => {
     const [postloading, setPostLoading] = useState(false);
     const images = profileData?.additionalPhotos || [];
     const [visible, setVisible] = useState(false);
+    const [isImageViewVisible, setImageViewVisible] = useState(false);
+    const imageUri = profileData?.personalDetails?.closeUpPhoto;
     const profilePhoto = profileData?.profilePhoto
         ? { uri: profileData.profilePhoto }
         : require('../../Images/NoImage.png');
@@ -167,8 +169,8 @@ const ProfileDetail = ({ route, navigation }) => {
         
                 // ✅ अब Toast 100% दिखेगा
                 Toast.show({
-                    type: 'error',
-                    text1: 'Error',
+                    type: 'info',
+                    position: 'bottom',
                     text2: errorMessage,
                 });
         
@@ -196,12 +198,25 @@ const ProfileDetail = ({ route, navigation }) => {
            <ScrollView showsVerticalScrollIndicator={false}>
            {profileType === 'Biodata' && (
                 <>
-                    {profileData?.personalDetails?.closeUpPhoto && (
+                    {imageUri && (
+                <View>
+                    {/* Clickable Image */}
+                    <TouchableOpacity onPress={() => setImageViewVisible(true)}>
                         <Image
-                            source={{ uri: profileData?.personalDetails?.closeUpPhoto }}
+                            source={{ uri: imageUri }}
                             style={styles.matrimonyImage}
                         />
-                    )}
+                    </TouchableOpacity>
+
+                    {/* Full-Screen Image Viewer */}
+                    <ImageViewing
+                        images={[{ uri: imageUri }]}
+                        imageIndex={0}
+                        visible={isImageViewVisible}
+                        onRequestClose={() => setImageViewVisible(false)}
+                    />
+                </View>
+            )}
 
                     <View>
                       <View style={{display:"flex",flexDirection:"row",alignItems:"center", alignSelf: "flex-end",}}>

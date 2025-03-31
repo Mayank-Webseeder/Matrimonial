@@ -47,74 +47,63 @@ const Activist = ({ navigation }) => {
 
   const fetchActivistData = async (filterType = "search") => {
     try {
-      setLoading(true);
+        setLoading(true);
+        setActivistData([]); 
+        setError(null);
 
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) {
-        console.warn("No token found");
-        setLoading(false);
-        return;
-      }
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) throw new Error("No token found");
 
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      };
+        const headers = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        };
 
-      let queryParams = [];
+        let queryParams = [];
 
-      if (filterType === "search") {
-        const cleanedLocality = locality?.trim().toLowerCase();
-        const cleanedSubCaste = subcaste?.trim().toLowerCase();
+        if (filterType === "search") {
+            const cleanedLocality = locality.trim();
+            const cleanedSubCaste = subcaste.trim();
 
-        if (cleanedLocality) {
-          queryParams.push(`locality=${encodeURIComponent(cleanedLocality)}`);
+            if (cleanedLocality) queryParams.push(`locality=${encodeURIComponent(cleanedLocality.toLowerCase())}`);
+            if (cleanedSubCaste) queryParams.push(`subCaste=${encodeURIComponent(cleanedSubCaste.toLowerCase())}`);
+
+        } else if (filterType === "modal") {
+            const cleanedModalLocality = modalLocality.trim();
+            const cleanedModalSubCaste = subcaste.trim();
+
+            if (cleanedModalLocality && cleanedModalSubCaste) {
+                queryParams.push(`locality=${encodeURIComponent(cleanedModalLocality.toLowerCase())}`);
+                queryParams.push(`subCaste=${encodeURIComponent(cleanedModalSubCaste.toLowerCase())}`);
+            } else if (cleanedModalLocality) {
+                queryParams.push(`locality=${encodeURIComponent(cleanedModalLocality.toLowerCase())}`);
+            } else if (cleanedModalSubCaste) {
+                queryParams.push(`subCaste=${encodeURIComponent(cleanedModalSubCaste.toLowerCase())}`);
+            }
         }
-        if (cleanedSubCaste) {
-          queryParams.push(`subCaste=${encodeURIComponent(cleanedSubCaste)}`);
+
+        const url = queryParams.length > 0 ? `${GET_ACTIVIST_PROFILES}?${queryParams.join("&")}` : GET_ACTIVIST_PROFILES;
+
+        console.log("Fetching Data from:", url);
+
+        const response = await axios.get(url, { headers });
+
+        console.log("Response Data:", JSON.stringify(response.data.data));
+
+        if (response.data && response.data.data.length > 0) {
+            setActivistData(response.data.data);
+        } else {
+            setActivistData([]);
+            setError("No activist profiles found.");
         }
-      } else if (filterType === "modal") {
-        const cleanedModalLocality = modalLocality?.trim().toLowerCase();
-        const cleanedModalSubCaste = subcaste?.trim().toLowerCase();
-
-        if (cleanedModalLocality) {
-          queryParams.push(`locality=${encodeURIComponent(cleanedModalLocality)}`);
-        }
-
-        if (cleanedModalSubCaste) {
-          const isCustomSubCaste = !subCasteOptions.some(option =>
-            option.label.toLowerCase() === cleanedModalSubCaste
-          );
-
-          if (isCustomSubCaste) {
-            queryParams.push(`subCaste=${encodeURIComponent(cleanedModalSubCaste)}`);
-          }
-        }
-      }
-
-      const url = filterType === "all"
-        ? GET_ACTIVIST_PROFILES
-        : `${GET_ACTIVIST_PROFILES}?${queryParams.join("&")}`;
-
-      console.log("Fetching Data from:", url);
-
-      const response = await axios.get(url, { headers });
-
-      if (response.data?.data?.length > 0) {
-        setActivistData(response.data.data);
-        console.log("activist data ", response.data?.data);
-      } else {
-        setActivistData([]);
-        setError("No activist profiles found.");
-      }
-
     } catch (error) {
-      console.error("Error fetching activist data:", error);
-      setError(error.response?.data?.message || "Failed to fetch data. Please try again.");
+        console.error("Error fetching Activist data:", error);
+        setError(error.response ? error.response.data.message : "Failed to fetch data. Please try again.");
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
+
 
   const handleOpenFilter = () => {
     setModalVisible(true);

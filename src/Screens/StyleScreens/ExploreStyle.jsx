@@ -22,8 +22,8 @@ const styles = StyleSheet.create({
     height: SH(80)
   },
   sliderContainer: {
-    marginBottom: SH(10),
-    height: SH(200),
+    // marginBottom: SH(10),
+    height: SH(190),
   },
   sliderImage: {
     width: "100%",
@@ -36,14 +36,14 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: '#ccc',
     marginHorizontal: SW(2),
-    marginTop: SH(50)
+    marginTop: SH(60)
   },
   activeDot: {
     width: SW(25),
     height: SH(5),
     borderRadius: 4,
     backgroundColor: Colors.theme_color,
-    marginTop: SH(50)
+    marginTop: SH(60)
   },
   ProfileImage: {
     width: "97%",
@@ -79,7 +79,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: SW(10),
-    marginRight: SW(20)
+    paddingVertical:SH(10),
+    marginRight: SW(20),
+    backgroundColor:Colors.light
   },
 
   leftButtons: {

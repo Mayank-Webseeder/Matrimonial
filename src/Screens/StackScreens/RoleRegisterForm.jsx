@@ -183,7 +183,7 @@ const RoleRegisterForm = ({ navigation }) => {
         try {
             const images = await ImageCropPicker.openPicker({
                 multiple: true,
-                cropping: false,
+                cropping: true,
                 includeBase64: true,
             });
 

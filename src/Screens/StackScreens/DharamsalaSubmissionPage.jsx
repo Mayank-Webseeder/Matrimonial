@@ -126,21 +126,31 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
 
     const handleImageUpload = () => {
         ImageCropPicker.openPicker({
-            multiple: true, 
+            multiple: true,
             cropping: true,
             width: 400,
             height: 400,
             compressImageQuality: 1,
-            mediaType:"any"
+            mediaType: "photo"
         })
-        .then((image) => {
+        .then((images) => {
+            if (images.length > 4) {
+                alert("You can only upload up to 4 Dharamsala photos.");
+                return;
+            }
             setDharamsalaData((prev) => ({
                 ...prev,
-                images: [{ uri: image.path }], // ✅ Purani images hata kar nayi wali save karega
+                images: images.map(img => ({ uri: img.path })),
             }));
         })
-        .catch((err) => console.log("Crop Picker Error:", err));
+        .catch((err) => {
+            console.log("Crop Picker Error:", err);
+        });
     };
+    
+    
+    
+    
     
     
 
@@ -359,7 +369,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                 />
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                     <Text style={Globalstyles.title}>
-                        Upload Images (Max Limit 3) <Entypo name={"star"} color={"red"} size={12} />
+                        Upload Images (Max Limit 4) <Entypo name={"star"} color={"red"} size={12} />
                     </Text>
                     <TouchableOpacity style={styles.uploadButton} onPress={handleImageUpload}>
                         <Text style={styles.uploadButtonText}>

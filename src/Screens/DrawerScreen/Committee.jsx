@@ -118,17 +118,17 @@ const Committee = ({ navigation }) => {
       if (filterType === "search") {
         const cleanedLocality = locality.trim();
         const cleanedSubCaste = subcaste.trim();
+  
         if (cleanedLocality) queryParams.push(`locality=${encodeURIComponent(cleanedLocality.toLowerCase())}`);
         if (cleanedSubCaste) queryParams.push(`subCaste=${encodeURIComponent(cleanedSubCaste.toLowerCase())}`);
       } else if (filterType === "modal") {
         const cleanedModalLocality = modalLocality.trim();
         const cleanedModalSubCaste = subcaste.trim();
+  
         if (cleanedModalLocality) queryParams.push(`locality=${encodeURIComponent(cleanedModalLocality.toLowerCase())}`);
-        if (cleanedModalSubCaste) {
-          const isCustomSubCaste = !subCasteOptions.some(option => option.label.toLowerCase() === cleanedModalSubCaste.toLowerCase());
-          queryParams.push(`subCaste=${encodeURIComponent(isCustomSubCaste ? cleanedModalSubCaste : '')}`);
-        }
+        if (cleanedModalSubCaste) queryParams.push(`subCaste=${encodeURIComponent(cleanedModalSubCaste.toLowerCase())}`); // 🔥 FIXED
       }
+  
 
       const url = filterType === "all" ? GET_ALL_COMITTEE : `${GET_ALL_COMITTEE}?${queryParams.join("&")}`;
 
@@ -170,13 +170,16 @@ const Committee = ({ navigation }) => {
 
   const handleUploadButton = () => {
     if (MyActivistProfile && MyActivistProfile._id) {
-      showToast("success", "Success", "You can fill details!");
-      setTimeout(() => {
-        setActiveButton(2);
-        navigation.navigate("CommitteeSubmissionPage");
-      }, 2000);
+      navigation.navigate("CommitteeSubmissionPage");
     } else {
-      showToast("info", "Info", "Only activists can fill details!");
+      Toast.show({
+        type: "info",
+        text1: "You are not an activist!",
+        text2: "Create an activist profile if you want to upload a committee.",
+        position: "bottom",
+        visibilityTime: 4000,
+        autoHide: true,
+      });
     }
   };
 

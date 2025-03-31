@@ -42,7 +42,8 @@ const Matrimonial = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       setSearchMode(false);
-      fetchProfiles()
+      fetchProfiles();
+      setActiveButton(1)
     }, [])
   );
 
@@ -223,8 +224,6 @@ const Matrimonial = ({ navigation }) => {
   };
 
   const renderProfileCard = ({ item }) => {
-    const isPressable = partnerPreferences !== null && partnerPreferences !== undefined;
-    const isSaved = item.isSaved;
     return (
       <View style={styles.card}>
         <Pressable onPress={popop}>
@@ -312,6 +311,37 @@ const Matrimonial = ({ navigation }) => {
           <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => navigation.navigate('Notification')} />
         </View>
       </View>
+      <View style={styles.ButtonContainer}>
+              <View style={styles.leftButtons}>
+                <TouchableOpacity
+                  style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton, { width: "30%" }]}
+                  onPress={() => setActiveButton(1)}
+                >
+                  <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Girls</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.button, activeButton === 2 ? styles.activeButton : styles.inactiveButton, { width: "30%" }]}
+                  onPress={() => setActiveButton(2)}
+                >
+                  <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>Boys</Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Right Side: Set Preferences */}
+              <TouchableOpacity
+                style={[styles.button, activeButton === 3 ? styles.activeButton : styles.inactiveButton]}
+                onPress={() => {
+                  setActiveButton(3);
+                  navigation.navigate("MainPartnerPrefrence");
+                }}
+              >
+                <Text style={activeButton === 3 ? styles.activeText : styles.inactiveText}>
+                  Set Preferences
+                </Text>
+              </TouchableOpacity>
+
+            </View>
+
 
       {searchMode && (
         <View style={Globalstyles.inputContainer}>
@@ -354,40 +384,8 @@ const Matrimonial = ({ navigation }) => {
                 onSlideChange={(index) => setCurrentIndex(index)}
               />
             </View>
-            <View style={styles.ButtonContainer}>
-              <View style={styles.leftButtons}>
-                <TouchableOpacity
-                  style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton, { width: "30%" }]}
-                  onPress={() => setActiveButton(1)}
-                >
-                  <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Girls</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.button, activeButton === 2 ? styles.activeButton : styles.inactiveButton, { width: "30%" }]}
-                  onPress={() => setActiveButton(2)}
-                >
-                  <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>Boys</Text>
-                </TouchableOpacity>
-              </View>
-
-              {/* Right Side: Set Preferences */}
-              <TouchableOpacity
-                style={[styles.button, activeButton === 3 ? styles.activeButton : styles.inactiveButton]}
-                onPress={() => {
-                  setActiveButton(3);
-                  navigation.navigate("MainPartnerPrefrence");
-                }}
-              >
-                <Text style={activeButton === 3 ? styles.activeText : styles.inactiveText}>
-                  Set Preferences
-                </Text>
-              </TouchableOpacity>
-
-            </View>
-
           </>
         )}
-
         <FlatList data={dataToDisplay} renderItem={renderProfileCard} keyExtractor={(item) => item._id} scrollEnabled={false}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>

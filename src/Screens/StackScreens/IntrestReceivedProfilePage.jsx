@@ -306,7 +306,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
               <Image
                 source={{ uri: images[0] }}
                 style={{ width: SW(350), height: SH(330), borderRadius: 10 }}
-                blurRadius={blurEnabled ? 10 : 0}
+                blurRadius={blurEnabled ? 5 : 0}
               />
             </TouchableOpacity>
           )}
@@ -327,7 +327,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
                     <Image
                       source={{ uri: img }}
                       style={{ width: width * 0.9, height: height * 0.8, borderRadius: 10, resizeMode: "contain" }}
-                      blurRadius={blurEnabled ? 10 : 0}
+                      blurRadius={blurEnabled ? 5 : 0}
                     />
                   </View>
                 ))}

@@ -279,9 +279,11 @@ function MyDrawer() {
 const AppStack = () => (
   <AppStackNavigator.Navigator screenOptions={{ headerShown: false }} initialRouteName='MainApp'>
     <AppStackNavigator.Screen name="MainApp" component={MyDrawer} />
+    <AppStackNavigator.Screen name="Committee" component={Committee} />
+    <AppStackNavigator.Screen name="Dharmshala" component={Dharmshala}/>
+    <AppStackNavigator.Screen name="DharamsalaDetail" component={DharamsalaDetail} />
     <AppStackNavigator.Screen name="IntrestedProfile" component={IntrestedProfile} />
     <AppStackNavigator.Screen name="Notification" component={Notification} />
-    <AppStackNavigator.Screen name="DharamsalaDetail" component={DharamsalaDetail} />
     <AppStackNavigator.Screen name="RoleRegisterForm" component={RoleRegisterForm} />
     <AppStackNavigator.Screen name="PanditDetailPage" component={PanditDetailPage} />
     <AppStackNavigator.Screen name="KathavachakDetailsPage" component={KathavachakDetailsPage} />
@@ -314,8 +316,6 @@ const AppStack = () => (
     <AppStackNavigator.Screen name="ShortMatrimonialProfile" component={ShortMatrimonialProfile} />
     <AppStackNavigator.Screen name="Matrimonial" component={Matrimonial} />
     <AppStackNavigator.Screen name="BioData" component={BioData} />
-    <AppStackNavigator.Screen name="Dharmshala" component={Dharmshala} />
-    <AppStackNavigator.Screen name="Committee" component={Committee} />
     <AppStackNavigator.Screen name="Activist" component={Activist} />
   </AppStackNavigator.Navigator>
 );

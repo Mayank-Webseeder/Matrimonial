@@ -40,7 +40,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const [blurEnabled, setBlurEnabled] = useState(false);
 
   useEffect(() => {
-    console.log("status", status);
+    console.log("userDetails", userDetails);
     const fetchBlurSetting = async () => {
       try {
         const storedValue = await AsyncStorage.getItem("blurPhotos");
@@ -337,7 +337,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               <Image
                 source={{ uri: images[0] }}
                 style={{ width: SW(350), height: SH(330), borderRadius: 10 }}
-                blurRadius={blurEnabled ? 10 : 0}
+                blurRadius={blurEnabled ? 5 : 0}
               />
             </TouchableOpacity>
           )}
@@ -358,7 +358,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                     <Image
                       source={{ uri: img }}
                       style={{ width: width * 0.9, height: height * 0.8, borderRadius: 10, resizeMode: "contain" }}
-                      blurRadius={blurEnabled ? 10 : 0}
+                      blurRadius={blurEnabled ? 5 : 0}
                     />
                   </View>
                 ))}

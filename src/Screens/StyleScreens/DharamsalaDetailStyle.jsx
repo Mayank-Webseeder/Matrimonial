@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
   },
   sliderContainer: {
     marginBottom: SH(30),
-    // height: SH(180),
+    height: SH(190),
   },
   sliderImage: {
     width: "100%",

@@ -91,51 +91,49 @@ const Dharmshala = () => {
     );
   };
 
-
   const fetchDharamsalaData = async (filterType = "search") => {
     try {
       setLoading(true);
-      setDharamsalaData([]); // Clear old data before fetching new data
-      setError(null); // Reset error
-
+      setDharamsalaData([]); 
+      setError(null);
+  
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
-
+  
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-
+  
       let queryParams = [];
-
+  
       if (filterType === "search") {
         const cleanedLocality = locality.trim();
         const cleanedSubCaste = subcaste.trim();
+  
         if (cleanedLocality) queryParams.push(`locality=${encodeURIComponent(cleanedLocality.toLowerCase())}`);
         if (cleanedSubCaste) queryParams.push(`subCaste=${encodeURIComponent(cleanedSubCaste.toLowerCase())}`);
       } else if (filterType === "modal") {
         const cleanedModalLocality = modalLocality.trim();
         const cleanedModalSubCaste = subcaste.trim();
+  
         if (cleanedModalLocality) queryParams.push(`locality=${encodeURIComponent(cleanedModalLocality.toLowerCase())}`);
-        if (cleanedModalSubCaste) {
-          const isCustomSubCaste = !subCasteOptions.some(option => option.label.toLowerCase() === cleanedModalSubCaste.toLowerCase());
-          queryParams.push(`subCaste=${encodeURIComponent(isCustomSubCaste ? cleanedModalSubCaste : '')}`);
-        }
+        if (cleanedModalSubCaste) queryParams.push(`subCaste=${encodeURIComponent(cleanedModalSubCaste.toLowerCase())}`); // 🔥 FIXED
       }
-
+  
       const url = filterType === "all" ? GET_ALL_DHARAMSALA : `${GET_ALL_DHARAMSALA}?${queryParams.join("&")}`;
-
+  
       console.log("Fetching Data from:", url);
-
+  
       const response = await axios.get(url, { headers });
-
+  
       console.log("Response Data:", JSON.stringify(response.data.data));
-
+  
       if (response.data && response.data.data.length > 0) {
         setDharamsalaData(response.data.data);
       } else {
         setDharamsalaData([]);
-        setError("No Dharamsala profiles found."); // Set the error message when no data is found
+        setError("No Dharamsala profiles found.");
       }
     } catch (error) {
       console.error("Error fetching Dharamsala data:", error);
@@ -144,6 +142,7 @@ const Dharmshala = () => {
       setLoading(false);
     }
   };
+  
 
 
   useFocusEffect(
@@ -174,13 +173,16 @@ const Dharmshala = () => {
 
   const handleUploadButton = () => {
     if (MyActivistProfile && MyActivistProfile._id) {
-      showToast("success", "Success", "You can fill details!");
-      setTimeout(() => {
-        setActiveButton(2);
-        navigation.navigate("DharamsalaSubmissionPage");
-      }, 2000);
+      navigation.navigate("DharamsalaSubmissionPage");
     } else {
-      showToast("info", "Info", "Only activists can fill details!");
+      Toast.show({
+        type: "info",
+        text1: "You are not an activist!",
+        text2: "Create an activist profile if you want to upload Dharamsala.",
+        position: "bottom",
+        visibilityTime: 4000,
+        autoHide: true,
+      });
     }
   };
 
@@ -329,7 +331,7 @@ const Dharmshala = () => {
       {/* Fixed Header */}
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: "center" }}>
-          <TouchableOpacity onPress={() => navigation.navigate("MainApp")}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons
               name="arrow-back-ios-new"
               size={25}

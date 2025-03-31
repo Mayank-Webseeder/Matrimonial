@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, ImageBackground, TouchableOpacity, TextInput, SafeAreaView, ActivityIndicator } from "react-native";
+import { Text, View, ImageBackground, TouchableOpacity, TextInput, SafeAreaView, ActivityIndicator, ScrollView } from "react-native";
 import styles from "../StyleScreens/RegisterStyle";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Colors from "../../utils/Colors";
@@ -56,7 +56,7 @@ const ForgotScreen = ({ navigation }) => {
                console.log("OTP Response:", response.data);
        
                if (response.status === 200 && response.data.status === true) {
-                   setOtpSent(true);  // Mark OTP as sent
+                   setOtpSent(true);  
                    Toast.show({ type: "success", text1: "OTP Sent", text2: "Check your SMS for the OTP" });
                } else {
                    throw new Error(response.data.message || "OTP request failed");
@@ -75,7 +75,7 @@ const ForgotScreen = ({ navigation }) => {
        };
 
     const handleForgotPassword = async () => {
-        if (!validateFields()) return; // Validate user inputs
+        if (!validateFields()) return;
     
         setIsLoading(true);
         try {
@@ -90,23 +90,19 @@ const ForgotScreen = ({ navigation }) => {
             const response = await axios.post(FORGOT_PASSWORD, payload);
     
             console.log("Forgot Password Response:", response.data);
-    
-            // ✅ Check if the response contains a success message
             if (response.status === 200 || response.data.status === true) {
                 Toast.show({
                     type: "success",
                     text1: "Password Reset Successful",
                     text2: response.data.message || "You can now log in with your new password.",
                 });
-    
-                // ✅ Redirect user to login screen after reset
                 setTimeout(() => {
                     navigation.reset({
                         index: 0,
-                        routes: [{ name: "Login" }], // Ensure this is the correct screen name
+                        routes: [{ name: "Login" }], 
                     });
                 }, 1000);
-                return; // ✅ Exit function early
+                return; 
             }
     
             throw new Error(response.data.message || "Password reset failed.");
@@ -128,7 +124,8 @@ const ForgotScreen = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <ImageBackground
+           <ScrollView>
+           <ImageBackground
                 source={require("../../Images/LoginBackground.png")}
                 style={styles.image}
             >
@@ -199,7 +196,6 @@ const ForgotScreen = ({ navigation }) => {
                             <Text style={styles.errorText}>{errors.password}</Text>
                         )}
                     </View>
-                    {/* Continue Button */}
                     <TouchableOpacity
                         style={styles.button}
                         onPress={handleForgotPassword}
@@ -213,6 +209,7 @@ const ForgotScreen = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
             </ImageBackground>
+           </ScrollView>
             <Toast/>
         </SafeAreaView>
     );

@@ -42,21 +42,15 @@ const EventNews = ({ navigation }) => {
 
   const handlePress = async () => {
     if (MyActivistProfile && MyActivistProfile._id) {
-      Toast.show({
-        type: "info",
-        text1: "Info",
-        text2: "You can fill details!",
-        position: "top",
-      });
-      setTimeout(() => {
-        navigation.navigate("CreatePost");
-      }, 3000);
+      navigation.navigate("CreatePost");
     } else {
       Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Only activists can fill details!",
-        position: "top",
+        type: "info",
+        text1: "You are not an activist!",
+        text2: "Create an activist profile if you want to upload Event News.",
+        position: "bottom",
+        visibilityTime: 4000, 
+        autoHide: true,
       });
     }
   };

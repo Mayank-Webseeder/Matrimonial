@@ -295,8 +295,8 @@ const PartnersPreference = ({ navigation }) => {
             <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
 
                 <View style={Globalstyles.form}>
-                    <View style={styles.detail}>
-                        <Text style={styles.Formtitle}>Preferences</Text>
+                    <View style={styles.detail}>\
+                        <Text style={styles.Formtitle}>Set Your Preference </Text>
                     </View>
                     <Text style={Globalstyles.title}>Sub-Caste  </Text>
                     <TextInput

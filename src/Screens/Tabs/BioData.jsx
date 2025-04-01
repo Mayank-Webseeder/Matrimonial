@@ -168,7 +168,7 @@ const BioData = ({ navigation }) => {
 
         {MatrimonialData.length > 0 ? (
           <View style={{marginVertical:SH(5)}}>
-            <HeadingWithViewAll heading={'MATRIMONY'} headingStyle={{ color: Colors.theme_color }} />
+            <HeadingWithViewAll heading={'Your Prefernced Profiles'} headingStyle={{ color: Colors.theme_color }} />
 
             <FlatList
               // data={showAllMatrimony ? MatrimonialData : MatrimonialData.slice(0, 2)}

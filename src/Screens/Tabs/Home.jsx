@@ -119,7 +119,8 @@ const Home = ({ navigation }) => {
       navigation.navigate("MatrimonyPeopleProfile", {
         userDetails: item,
         userId: item?.userId,
-        isSaved: item?.isSaved
+        isSaved: item?.isSaved,
+        isBlur:item.isBlur
       });
     }
   };

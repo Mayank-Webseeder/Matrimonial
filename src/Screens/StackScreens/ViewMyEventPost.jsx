@@ -263,8 +263,11 @@ const ViewMyEventPost = ({ navigation, route }) => {
             <Image source={{ uri: MyActivistProfile?.profilePhoto }} style={styles.EventheaderImage} />
             </View>
             <View>
-              <Text style={styles.name}>
+              {/* <Text style={styles.name}>
                 {item.activistName} <Text style={styles.hour}>{getTimeAgo(item.createdAt)}</Text>
+              </Text> */}
+               <Text style={styles.name}>
+                {item.activistName} <Text style={styles.hour}>{MyActivistProfile?.activistId}</Text>
               </Text>
               <Text style={styles.date_time}>{formatDateTime(item.createdAt)}</Text>
             </View>

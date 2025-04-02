@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     marginHorizontal: SW(5)
   },
   headingStyle: {
-    fontSize: SF(13),
+    fontSize: SF(12),
     fontFamily: 'Poppins-Bold',
     color: Colors.black,
     textTransform:"uppercase"

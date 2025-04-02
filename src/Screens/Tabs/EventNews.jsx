@@ -35,7 +35,7 @@ const EventNews = ({ navigation }) => {
   const myprofile_id = profileData?._id || null;
   const [LikeLoading, setLikeLoading] = useState(false);
   const [commentLoading, setCommentLoading] = useState(false);
-  
+
   useEffect(() => {
     console.log("myprofile_id", myprofile_id);
   }, [])
@@ -49,7 +49,7 @@ const EventNews = ({ navigation }) => {
         text1: "You are not an activist!",
         text2: "Create an activist profile if you want to upload Event News.",
         position: "bottom",
-        visibilityTime: 4000, 
+        visibilityTime: 4000,
         autoHide: true,
       });
     }
@@ -291,6 +291,7 @@ const EventNews = ({ navigation }) => {
 
   const GetEventNews = async () => {
     try {
+      setEventData([])
       setIsLoading(true)
       const token = await AsyncStorage.getItem('userToken');
       if (!token) throw new Error('No token found');
@@ -320,6 +321,7 @@ const EventNews = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       GetEventNews();
+      setPage(1);
     }, [])
   )
 
@@ -353,35 +355,36 @@ const EventNews = ({ navigation }) => {
   };
 
 
-  useEffect(() => {
-    const fetchPostData = async () => {
-      try {
-        const token = await AsyncStorage.getItem('userToken');
-        if (!token) throw new Error('No token found');
-
-        const headers = { Authorization: `Bearer ${token}` };
-        const response = await axios.get(VIEW_EVENT, { headers });
-
-        if (response.status === 200 && response.data.status === true) {
-          const postData = response.data.data[0];
-          console.log("postData", postData);
-          // setEventData(postData)
+  useFocusEffect(
+    useCallback(() => {
+      const fetchPostData = async () => {
+        try {
+          const token = await AsyncStorage.getItem('userToken');
+          if (!token) throw new Error('No token found');
+  
+          const headers = { Authorization: `Bearer ${token}` };
+          const response = await axios.get(VIEW_EVENT, { headers });
+  
+          if (response.status === 200 && response.data.status === true) {
+            const postData = response.data.data[0];
+            console.log("postData", postData);
+          }
+        } catch (error) {
+          console.error('Error fetching post data:', error);
         }
-      } catch (error) {
-        console.error('Error fetching post data:', error);
-      }
-    };
-
-    fetchPostData();
-  }, []);
+      };
+  
+      fetchPostData();
+    }, [])
+  );
 
   const openBottomSheet = (postId, comments) => {
     console.log("commentData", commentData);
     console.log("postId", postId);
-    setSelectedPostId(postId); // Set the selected post ID
-    setCommentData(comments); // Set comments for that specific post
+    setSelectedPostId(postId); 
+    setCommentData(comments); 
     if (sheetRef.current) {
-      sheetRef.current.open(); // Open bottom sheet
+      sheetRef.current.open(); 
     }
   };
 
@@ -461,21 +464,18 @@ const EventNews = ({ navigation }) => {
 
   const renderItem = ({ item }) => {
     const isLiked = item.isLiked || null;
-    // Ensure images are properly extracted from the array
-    const images = item.images || []; // Use the 'images' array directly
+    const images = item.images || [];
 
     return (
       <View style={styles.card}>
         <View style={styles.cardheader}>
           <View style={{ display: "flex", flexDirection: 'row', alignItems: 'center' }}>
             <View>
-              {images.length > 0 && (
-                <Image source={{ uri: images[0] }} style={styles.EventheaderImage} />
-              )}
+              <Image source={{ uri: item?.activistDetails?.profilePhoto }} style={styles.EventheaderImage} />
             </View>
             <View>
               <Text style={styles.name}>
-                {item.activistName} <Text style={styles.hour}>{getTimeAgo(item.createdAt)}</Text>
+                {item.activistName} <Text style={styles.hour}>{item?.activistDetails?.activistId}</Text>
               </Text>
               <Text style={styles.date_time}>{formatDateTime(item.createdAt)}</Text>
             </View>
@@ -623,13 +623,17 @@ const EventNews = ({ navigation }) => {
         </TouchableOpacity>
       )}
 
-      <ScrollView style={styles.bottomContainer} showsVerticalScrollIndicator={false}>
-
+      <ScrollView
+        style={styles.bottomContainer}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ flexGrow: 1 }}
+      >
         <FlatList
           data={getPostsForPage()}
           renderItem={renderItem}
           keyExtractor={(item) => item._id}
           scrollEnabled={false}
+          nestedScrollEnabled={true}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
@@ -637,16 +641,13 @@ const EventNews = ({ navigation }) => {
             </View>
           }
         />
-
-        {getPostsForPage().length > 3 && (
+        {getPostsForPage().length >= 3 && (
           <TouchableOpacity style={styles.loadMoreButton} onPress={loadNextPage}>
             <Text style={styles.loadMoreText}>Load More Posts</Text>
           </TouchableOpacity>
         )}
-
-
-        {/* <Image source={require('../../Images/EventImage.png')} style={styles.bannerImage} /> */}
       </ScrollView>
+
       <Toast />
     </SafeAreaView>
   );

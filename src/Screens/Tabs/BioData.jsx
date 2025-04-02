@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef,useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, TouchableOpacity, Image, FlatList, ScrollView, SafeAreaView, StatusBar, ActivityIndicator } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -133,7 +133,7 @@ const BioData = ({ navigation }) => {
       </View>
     );
   }
-  
+
   return (
     <SafeAreaView style={Globalstyles.container}>
       <StatusBar
@@ -167,8 +167,8 @@ const BioData = ({ navigation }) => {
         </View>
 
         {MatrimonialData.length > 0 ? (
-          <View style={{marginVertical:SH(5)}}>
-            <HeadingWithViewAll heading={'Your Prefernced Profiles'} headingStyle={{ color: Colors.theme_color }} />
+          <View style={{ marginVertical: SH(5) }}>
+            <HeadingWithViewAll heading={'Your Preferenced Profiles'} headingStyle={{ color: Colors.theme_color }} />
 
             <FlatList
               // data={showAllMatrimony ? MatrimonialData : MatrimonialData.slice(0, 2)}
@@ -189,7 +189,7 @@ const BioData = ({ navigation }) => {
         )}
 
         {savedProfiles.length > 0 ? (
-          <View style={{marginVertical:SH(5)}}>
+          <View style={{ marginVertical: SH(5) }}>
             <HeadingWithViewAll heading={'Saved Profile'} headingStyle={{ color: Colors.theme_color }} />
 
             <FlatList
@@ -211,7 +211,7 @@ const BioData = ({ navigation }) => {
         )}
 
         {interestedProfiles.length > 0 ? (
-          <View style={{marginVertical:SH(5)}}>
+          <View style={{ marginVertical: SH(5) }}>
             <HeadingWithViewAll heading={'Interested Profile'} headingStyle={{ color: Colors.theme_color }} />
 
             <FlatList
@@ -232,9 +232,8 @@ const BioData = ({ navigation }) => {
           null
         )}
 
-        <Image source={require('../../Images/slider.png')} style={styles.Sliderimage} />
         {allProfiles.length > 0 ? (
-          <View style={{marginVertical:SH(5)}}>
+          <View style={{ marginVertical: SH(5) }}>
             <HeadingWithViewAll heading={'All'} headingStyle={{ color: Colors.theme_color }} />
 
             <FlatList
@@ -254,7 +253,7 @@ const BioData = ({ navigation }) => {
         ) : (
           null
         )}
-
+        <Image source={require('../../Images/slider.png')} style={styles.Sliderimage} />
       </ScrollView>
     </SafeAreaView>
   );

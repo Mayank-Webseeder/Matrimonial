@@ -16,7 +16,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import { SH, SF } from '../../utils/Dimensions';
 import { useSelector } from 'react-redux';
 import Toast from 'react-native-toast-message';
-import { GET_ALL_COMITTEE, SAVED_PROFILES } from '../../utils/BaseUrl';
+import { GET_ALL_COMITTEE, GET_COMMIITEE, SAVED_PROFILES } from '../../utils/BaseUrl';
 import axios from 'axios';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -37,10 +37,12 @@ const Committee = ({ navigation }) => {
   const [listHeight, setListHeight] = useState(0);
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
   const [committeeData, setCommitteeData] = useState([]);
+  const [MycommitteeData, setMyCommitteeData] = useState([]);
   const [modalLocality, setModalLocality] = useState('');
   const [error, setError] = useState(null);
   const [isImageVisible, setImageVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [IsLoading, setIsLoading] = useState(false);
 
   const showToast = _.debounce((type, text1, text2) => {
     Toast.show({ type, text1, text2, position: "top" });
@@ -95,15 +97,45 @@ const Committee = ({ navigation }) => {
     React.useCallback(() => {
       setLocality('');
       setSubcaste('');
-      fetchComitteeData("all"); // Fetch full list when coming back
+      fetchComitteeData("all");
+      fetchMyCommitteeData();
     }, [])
   );
+  const fetchMyCommitteeData = async () => {
+    try {
+      setIsLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
+
+      if (!token) throw new Error("Authorization token is missing");
+
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+
+      console.log("🔹 Fetching committees...");
+      const response = await axios.get(GET_COMMIITEE, { headers });
+
+      console.log("✅ Fetch Success:", response.data.data);
+
+      if (response.status === 200 && response.data.status === true) {
+        setMyCommitteeData(response.data.data);
+      } else {
+        throw new Error(response.data.message || "Failed to fetch data.");
+      }
+    } catch (error) {
+      console.error("🚨 Error fetching committee data:", error?.response?.data || error.message);
+      setMyCommitteeData([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const fetchComitteeData = async (filterType = "search") => {
     try {
       setLoading(true);
-      setCommitteeData([]); // Clear old data before fetching new data
-      setError(null); // Reset error
+      setCommitteeData([]);
+      setError(null);
 
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
@@ -118,7 +150,7 @@ const Committee = ({ navigation }) => {
       if (filterType === "search") {
         const cleanedLocality = locality.trim();
         const cleanedSubCaste = subcaste.trim();
-  
+
         if (cleanedLocality) queryParams.push(`locality=${encodeURIComponent(cleanedLocality.toLowerCase())}`);
         if (cleanedSubCaste) queryParams.push(`subCaste=${encodeURIComponent(cleanedSubCaste.toLowerCase())}`);
       } else if (filterType === "modal") {
@@ -126,15 +158,15 @@ const Committee = ({ navigation }) => {
         const cleanedModalSubCaste = subcaste.trim();
 
         if (cleanedModalLocality && cleanedModalSubCaste) {
-            queryParams.push(`locality=${encodeURIComponent(cleanedModalLocality.toLowerCase())}`);
-            queryParams.push(`subCaste=${encodeURIComponent(cleanedModalSubCaste.toLowerCase())}`);
+          queryParams.push(`locality=${encodeURIComponent(cleanedModalLocality.toLowerCase())}`);
+          queryParams.push(`subCaste=${encodeURIComponent(cleanedModalSubCaste.toLowerCase())}`);
         } else if (cleanedModalLocality) {
-            queryParams.push(`locality=${encodeURIComponent(cleanedModalLocality.toLowerCase())}`);
+          queryParams.push(`locality=${encodeURIComponent(cleanedModalLocality.toLowerCase())}`);
         } else if (cleanedModalSubCaste) {
-            queryParams.push(`subCaste=${encodeURIComponent(cleanedModalSubCaste.toLowerCase())}`);
+          queryParams.push(`subCaste=${encodeURIComponent(cleanedModalSubCaste.toLowerCase())}`);
         }
       }
-  
+
 
       const url = filterType === "all" ? GET_ALL_COMITTEE : `${GET_ALL_COMITTEE}?${queryParams.join("&")}`;
 
@@ -147,7 +179,7 @@ const Committee = ({ navigation }) => {
         setCommitteeData(response.data.data);
       } else {
         setCommitteeData([]);
-        setError("No Committee data found."); // Set an error message when no data is found
+        setError("No Committee data found."); 
       }
     } catch (error) {
       console.error("Error fetching committee data:", error);
@@ -281,7 +313,7 @@ const Committee = ({ navigation }) => {
 
           <View style={styles.leftContainer}>
             <Text style={styles.title}>{item.committeeTitle}</Text>
-            <Text style={styles.Nametext}>{item.presidentName}</Text>
+            <Text style={styles.Nametext}>President - {item.presidentName}</Text>
             <View style={styles.CityArea}>
               <Text style={styles.text}>{item.city}</Text>
               <Text style={styles.text}>{item.subCaste}</Text>
@@ -387,19 +419,30 @@ const Committee = ({ navigation }) => {
           )}
         </View>
         <View style={styles.ButtonContainer}>
-          <TouchableOpacity
-            style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton]}
-            onPress={handleOpenFilter}
-          >
-            <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Filter</Text>
-          </TouchableOpacity>
+          <View style={{ display: "flex", flexDirection: "row" }}>
+            <TouchableOpacity
+              style={[styles.button, { width: SW(80) }, activeButton === 1 ? styles.activeButton : styles.inactiveButton]}
+              onPress={handleOpenFilter}
+            >
+              <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Filter</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[styles.button, activeButton === 2 ? styles.activeButton : styles.inactiveButton]}
-            onPress={handleUploadButton}
-          >
-            <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>Upload</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, { width: SW(80) }, activeButton === 2 ? styles.activeButton : styles.inactiveButton]}
+              onPress={handleUploadButton}
+            >
+              <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>Upload</Text>
+            </TouchableOpacity>
+          </View>
+          {MycommitteeData?.length > 0 && (
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => navigation.navigate('MyUploadedCommittees', { committeeData: MycommitteeData })}
+            >
+              <Text style={[activeButton === 3 ? styles.activeText : styles.inactiveText]}>Uploaded</Text>
+            </TouchableOpacity>
+          )}
+
         </View>
 
       </View>

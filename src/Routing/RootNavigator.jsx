@@ -75,6 +75,10 @@ import { initializeSocket } from '../../socket';
 import { setBioData } from '../ReduxStore/Slices/BiodataSlice';
 import AboutJs from '../Screens/StackScreens/AboutJs';
 import useNotificationListener from '../ReduxStore/Slices/useNotificationListener';
+import MyUploadedCommittees from '../Screens/StackScreens/MyUploadedCommittees';
+import UpdateCommittee from '../Screens/StackScreens/UpdateCommittee';
+import MyuploadedDharamsala from '../Screens/StackScreens/MyuploadedDharamsala';
+import UpdateDharamsala from '../Screens/StackScreens/UpdateDharamsala';
 
 const Stack = createNativeStackNavigator();
 const AppStackNavigator = createNativeStackNavigator();
@@ -262,6 +266,8 @@ function MyDrawer() {
       <Drawer.Screen name="EventNews" component={EventNews} />
       <Drawer.Screen name="Dharmshala" component={Dharmshala} />
       <Drawer.Screen name="Committee" component={Committee} />
+      {/* <Drawer.Screen name="MyUploadedCommittees" component={MyUploadedCommittees} />
+      <Drawer.Screen name="UpdateCommittee" component={UpdateCommittee} /> */}
       <Drawer.Screen name="Activist" component={Activist} />
       <Drawer.Screen name="FeedBack" component={FeedBack} />
       <Drawer.Screen name="Jyotish" component={Jyotish} />
@@ -299,6 +305,8 @@ const AppStack = () => (
     <AppStackNavigator.Screen name="AllReviewsPage" component={AllReviewsPage} />
     <AppStackNavigator.Screen name="DharamsalaSubmissionPage" component={DharamsalaSubmissionPage} />
     <AppStackNavigator.Screen name="CommitteeSubmissionPage" component={CommitteeSubmissionPage} />
+    <AppStackNavigator.Screen name="MyUploadedCommittees" component={MyUploadedCommittees} />
+    <AppStackNavigator.Screen name="UpdateCommittee" component={UpdateCommittee} />
     <AppStackNavigator.Screen name="ActivistForm" component={ActivistForm} />
     <AppStackNavigator.Screen name="DetailedProfile" component={DetailedProfile} />
     <AppStackNavigator.Screen name="PartnersPreference" component={PartnersPreference} />
@@ -317,6 +325,8 @@ const AppStack = () => (
     <AppStackNavigator.Screen name="Matrimonial" component={Matrimonial} />
     <AppStackNavigator.Screen name="BioData" component={BioData} />
     <AppStackNavigator.Screen name="Activist" component={Activist} />
+    <AppStackNavigator.Screen name="MyuploadedDharamsala" component={MyuploadedDharamsala} />
+    <AppStackNavigator.Screen name="UpdateDharamsala" component={UpdateDharamsala} />
   </AppStackNavigator.Navigator>
 );
 

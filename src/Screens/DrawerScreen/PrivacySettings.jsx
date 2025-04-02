@@ -4,39 +4,18 @@ import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/NotificationSettingStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Globalstyles from '../../utils/GlobalCss';
-import { HIDE_CONTACT, HIDE_OPTIONAL_DETAILS, INACTIVE_ID } from '../../utils/BaseUrl';
+import { HIDE_CONTACT, HIDE_OPTIONAL_DETAILS, INACTIVE_ID,BLUR_PHOTOS } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import { DrawerActions } from '@react-navigation/native';
 
 const PrivacySettings = ({ navigation }) => {
-    const [blurPhotos, setBlurPhotos] = useState(true);
+    const [blurPhotos, setBlurPhotos] = useState(false);
     const [inactivateId, setInactivateId] = useState(false);
     const [hideContactDetails, setHideContactDetails] = useState(false);
     const [hideOptionalDetailsState, setHideOptionalDetailsState] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-
-   useEffect(() => {
-    const loadSettings = async () => {
-        try {
-            const storedBlurPhotos = await AsyncStorage.getItem("blurPhotos");
-            if (storedBlurPhotos !== null) {
-                setBlurPhotos(JSON.parse(storedBlurPhotos));
-            } else {
-                await AsyncStorage.setItem("blurPhotos", JSON.stringify(true));
-                setBlurPhotos(true); 
-            }
-            setInactivateId(false);
-            setHideContactDetails(false);
-            setHideOptionalDetailsState(false);
-
-        } catch (error) {
-            console.error("Error loading settings:", error);
-        }
-    };
-    loadSettings();
-}, []);
 
     const togglePrivacySetting = async (settingType, currentValue, setter, apiUrl) => {
         try {
@@ -50,7 +29,7 @@ const PrivacySettings = ({ navigation }) => {
             };
 
             const newValue = !currentValue;
-            setter(newValue); // Optimistically update UI
+            setter(newValue);
 
             setTimeout(async () => {
                 const response = await axios.patch(apiUrl, { status: newValue }, { headers });
@@ -81,21 +60,9 @@ const PrivacySettings = ({ navigation }) => {
                 text2: errorMessage,
             });
 
-            setter(!currentValue); // Revert UI if API fails
+            setter(!currentValue); 
         } finally {
             setTimeout(() => setIsLoading(false), 300);
-        }
-    };
-
-    const toggleBlurPhotos = async () => {
-        try {
-            const newBlurState = !blurPhotos;
-            setBlurPhotos(newBlurState);
-            await AsyncStorage.setItem("blurPhotos", JSON.stringify(newBlurState));
-
-            ToastAndroid.show(`Blur Photos ${newBlurState ? 'enabled' : 'disabled'} successfully!`, ToastAndroid.SHORT);
-        } catch (error) {
-            console.error("Error toggling blur photos:", error);
         }
     };
 
@@ -142,7 +109,7 @@ const PrivacySettings = ({ navigation }) => {
                     <Switch
                         trackColor={{ false: Colors.gray, true: Colors.gray }}
                         thumbColor={blurPhotos ? Colors.theme_color : Colors.theme_color}
-                        onValueChange={toggleBlurPhotos}
+                        onValueChange={() => togglePrivacySetting("Blur Photos", blurPhotos, setBlurPhotos, BLUR_PHOTOS)}
                         value={blurPhotos}
                         animated
                     />

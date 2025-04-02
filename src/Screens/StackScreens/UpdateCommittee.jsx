@@ -1,23 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, SafeAreaView, StatusBar, FlatList, ActivityIndicator, ToastAndroid } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, SafeAreaView, StatusBar, ActivityIndicator,FlatList } from 'react-native';
 import Colors from '../../utils/Colors';
-import { SH, SW, SF } from '../../utils/Dimensions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Entypo from 'react-native-vector-icons/Entypo';
 import Globalstyles from '../../utils/GlobalCss';
 import ImageCropPicker from 'react-native-image-crop-picker';
-import { CityData, subCasteOptions } from '../../DummyData/DropdownData';
-import Entypo from 'react-native-vector-icons/Entypo';
-import { CREATE_COMMITTEE } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
-const CommitteeSubmissionPage = ({ navigation }) => {
-    const [subCasteInput, setSubCasteInput] = useState('');
+import { SH, SW, SF } from '../../utils/Dimensions';
+import { UPDATE_COMMITTEE } from '../../utils/BaseUrl';
+import { CityData,subCasteOptions } from '../../DummyData/DropdownData';
+const UpdateCommittee = ({ navigation, route }) => {
+    const { committeeData } = route.params;
+ const [subCasteInput, setSubCasteInput] = useState('');
     const [cityInput, setCityInput] = useState('');
     const [filteredCities, setFilteredCities] = useState([]);
     const [filteredSubCaste, setFilteredSubCaste] = useState([]);
-    const [isEditing, setIsEditing] = useState(true);
-    const [isLoading,setIsLoading]=useState(false);
+    const [selectedCity, setSelectedCity] = useState('');
+    const [selectedSubCaste, setSelectedSubCaste] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
     const [CommitteeData, setCommitteeData] = useState({
         committeeTitle: '',
         presidentName: '',
@@ -28,60 +31,114 @@ const CommitteeSubmissionPage = ({ navigation }) => {
         mobileNo: ''
     });
 
-
     const handleCityInputChange = (text) => {
-        setCityInput(text);
-        if (text) {
-            const filtered = CityData.filter((item) =>
-                item?.label?.toLowerCase().includes(text.toLowerCase())
-            ).map(item => item.label);
-            setFilteredCities(filtered);
-        } else {
+            setCityInput(text);
+            if (text) {
+                const filtered = CityData.filter((item) =>
+                    item?.label?.toLowerCase().includes(text.toLowerCase())
+                ).map(item => item.label);
+                setFilteredCities(filtered);
+            } else {
+                setFilteredCities([]);
+            }
+    
+            setCommitteeData(prevDharamsalaData => ({
+                ...prevDharamsalaData,
+                city: text,
+            }));
+        };
+    
+        const handleCitySelect = (item) => {
+            setCityInput(item);
+            setCommitteeData(prevDharamsalaData => ({
+                ...prevDharamsalaData,
+                city: item,
+            }));
             setFilteredCities([]);
-        }
-
-        setCommitteeData(prevActivistData => ({
-            ...prevActivistData,
-            city: text,
-        }));
-    };
-
-    const handleCitySelect = (item) => {
-        setCityInput(item);
-        setCommitteeData(prevCommitteeData => ({
-            ...prevCommitteeData,
-            city: item,
-        }));
-        setFilteredCities([]);
-    };
-
-    const handleSubCasteInputChange = (text) => {
-        setSubCasteInput(text);
-
-        if (text) {
-            const filtered = subCasteOptions
-                .filter((item) => item?.label?.toLowerCase().includes(text.toLowerCase()))
-                .map((item) => item.label);
-
-            setFilteredSubCaste(filtered);
-        } else {
+        };
+    
+        const handleSubCasteInputChange = (text) => {
+            setSubCasteInput(text);
+    
+            if (text) {
+                const filtered = subCasteOptions
+                    .filter((item) => item?.label?.toLowerCase().includes(text.toLowerCase()))
+                    .map((item) => item.label);
+    
+                setFilteredSubCaste(filtered);
+            } else {
+                setFilteredSubCaste([]);
+            }
+            setCommitteeData((prevDharamsalaData) => ({
+                ...prevDharamsalaData,
+                subCaste: text,
+            }));
+        };
+    
+        const handleSubCasteSelect = (selectedItem) => {
+            setSubCasteInput(selectedItem);
             setFilteredSubCaste([]);
+            setCommitteeData((prevDharamsalaData) => ({
+                ...prevDharamsalaData,
+                subCaste: selectedItem,
+            }));
+        };
+    
+
+    // Function to Convert Image to Base64
+    const convertToBase64 = async (imageUri) => {
+        try {
+            if (!imageUri) return null;
+            if (imageUri.startsWith("data:image")) {
+                return imageUri;
+            }
+
+            const response = await fetch(imageUri);
+            const blob = await response.blob();
+            const mimeType = blob.type || "image/jpeg";
+
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    if (reader.result) {
+                        resolve(`data:${mimeType};base64,${reader.result.split(",")[1]}`);
+                    } else {
+                        reject("Error reading Base64 data.");
+                    }
+                };
+                reader.readAsDataURL(blob);
+            });
+        } catch (error) {
+            console.error("Error converting image to Base64:", error);
+            return null;
         }
-        setCommitteeData((prevCommitteeData) => ({
-            ...prevCommitteeData,
-            subCaste: text,
-        }));
     };
 
-    const handleSubCasteSelect = (selectedItem) => {
-        setSubCasteInput(selectedItem);
-        setFilteredSubCaste([]);
-        setCommitteeData((prevCommitteeData) => ({
-            ...prevCommitteeData,
-            subCaste: selectedItem,
-        }));
-    };
+    // Load Data & Convert Image if Available
+    useEffect(() => {
+        if (committeeData) {
+            setCommitteeData(prev => ({
+                ...prev,
+                committeeTitle: committeeData.committeeTitle || '',
+                presidentName: committeeData.presidentName || '',
+                subCaste: committeeData.subCaste || '',
+                city: committeeData.city || '',
+                area: committeeData.area || '',
+                mobileNo: committeeData.mobileNo || ''
+            }));
 
+            // Convert Existing Image to Base64
+            if (committeeData.photoUrl) {
+                convertToBase64(committeeData.photoUrl).then(base64Image => {
+                    if (base64Image) {
+                        setCommitteeData(prev => ({ ...prev, photoUrl: base64Image }));
+                    }
+                });
+            }
+        }
+    }, [committeeData]);
+
+    // Handle Image Selection
     const handleImagePick = () => {
         ImageCropPicker.openPicker({
             width: 300,
@@ -92,10 +149,9 @@ const CommitteeSubmissionPage = ({ navigation }) => {
             compressImageQuality: 1
         })
             .then(image => {
-                setCommitteeData(prev => ({
-                    ...prev,
-                    photoUrl: `data:${image.mime};base64,${image.data}`,
-                }));
+                const base64Image = `data:${image.mime};base64,${image.data}`;
+                setCommitteeData(prev => ({ ...prev, photoUrl: base64Image }));
+                console.log("Base64 Image Selected:", base64Image);
             })
             .catch(error => {
                 if (error.code !== "E_PICKER_CANCELLED") {
@@ -104,104 +160,55 @@ const CommitteeSubmissionPage = ({ navigation }) => {
             });
     };
 
-    const constructCommitteePayload = async (CommitteeData, isNew = false) => {
-        const keys = [
-            'committeeTitle', 'presidentName', 'subCaste', 'city', 'area', 'photoUrl', 'mobileNo'
-        ];
-
-        const payload = {};
-        for (const key of keys) {
-            if (CommitteeData[key] !== undefined && CommitteeData[key] !== "") {
-                payload[key] = CommitteeData[key];
-            } else if (isNew) {
-                payload[key] = "";
-            }
-        }
-
-        if (payload.dob) {
-            const parsedDate = moment(payload.dob.split("T")[0], "YYYY-MM-DD", true);
-            if (parsedDate.isValid()) {
-                payload.dob = parsedDate.format("DD/MM/YYYY");
-            } else {
-                console.error("Invalid DOB format received:", payload.dob);
-                throw new Error("Invalid DOB format. Expected format is DD/MM/YYYY.");
-            }
-        }
-
-        if (CommitteeData.photoUrl) {
-            try {
-                payload.photoUrl = await convertToBase64(CommitteeData.photoUrl);
-
-                console.log("Converted Base64 Image:", payload.photoUrl);
-            } catch (error) {
-                console.error("Base64 Conversion Error:", error);
-            }
-        }
-
-        return payload;
-    };
-
-
-    const handleCommitteeSave = async () => {
+    const handleCommitteeUpdate = async () => {
         try {
             setIsLoading(true);
-    
             const token = await AsyncStorage.getItem("userToken");
             if (!token) {
                 Toast.show({ type: "error", text1: "Error", text2: "Authorization token is missing." });
                 return;
             }
-    
-            // ✅ Construct the formatted payload before sending it to the API
-            const payload = await constructCommitteePayload(CommitteeData, true);
-            console.log("🚀 Constructed Payload:", JSON.stringify(payload));
-    
-            const headers = { 
-                "Content-Type": "application/json", 
-                Authorization: `Bearer ${token}` 
-            };
-    
-            const response = await axios.post(CREATE_COMMITTEE, payload, { headers });
-    
-            console.log("✅ API Response:", JSON.stringify(response.data));
-    
+
+            // ✅ Ensure `photoUrl` is Base64 before sending
+            if (!CommitteeData.photoUrl.startsWith("data:image/")) {
+                Toast.show({ type: "error", text1: "Error", text2: "Please select an image first." });
+                return;
+            }
+
+            // ✅ Log the full API URL and Payload
+            const apiUrl = `${UPDATE_COMMITTEE}/${committeeData._id}`;
+            console.log("API URL being hit:", apiUrl);
+            console.log("Payload being sent:", JSON.stringify(CommitteeData, null, 2));
+
+            const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` };
+            const response = await axios.patch(apiUrl, CommitteeData, { headers });
+
             if (response.status === 200) {
-                Toast.show({ type: "success", text1: "Committee Created Successfully" });
-                navigation.navigate("Committee");
-            } else {
-                Toast.show({ type: "error", text1: "Error", text2: response.data?.message || "Failed to save committee." });
+                console.log("response", JSON.stringify(response.data));
+                Toast.show({ type: "success", text1: "Committee Updated Successfully" });
+                navigation.reset({ index: 0, routes: [{ name: "Committee" }] });
             }
         } catch (error) {
-            console.error("🚨 Error Creating Committee:", error.response?.data || error.message);
-            Toast.show({ type: "error", text1: "Error", text2: "Failed to save committee data." });
+            console.error("API Error:", error.response?.data || error);
+            Toast.show({ type: "error", text1: "Error", text2: "Failed to update committee." });
         } finally {
             setIsLoading(false);
         }
     };
-    
-
 
     return (
         <SafeAreaView style={Globalstyles.container}>
-            <StatusBar
-                barStyle="dark-content"
-                backgroundColor="transparent"
-                translucent
-            />
+            <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
             <View style={Globalstyles.header}>
                 <View style={{ flexDirection: 'row', alignItems: "center" }}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <MaterialIcons
-                            name="arrow-back-ios-new"
-                            size={25}
-                            color={Colors.theme_color}
-                        />
+                        <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
-                    <Text style={Globalstyles.headerText}>Committee</Text>
+                    <Text style={Globalstyles.headerText}>Update Committees</Text>
                 </View>
             </View>
             <ScrollView style={Globalstyles.form}>
-                <Text style={styles.title}>Upload Committee Details</Text>
+                <Text style={styles.title}>Update Committee Details</Text>
 
                 <Text style={Globalstyles.title}>Committee title <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
@@ -310,19 +317,9 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     textContentType="none"
                     value={CommitteeData.mobileNo} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, mobileNo: text }))}
                 />
-
-                <TouchableOpacity
-                    style={styles.submitButton}
-                    onPress={handleCommitteeSave}
-                    disabled={isLoading}
-                >
-                    {isLoading ? (
-                        <ActivityIndicator size="large" color={Colors.light} />
-                    ) : (
-                        <Text style={styles.submitButtonText}>Submit</Text>
-                    )}
+                <TouchableOpacity style={styles.submitButton} onPress={handleCommitteeUpdate} disabled={isLoading}>
+                    {isLoading ? <ActivityIndicator size="large" color={Colors.light} /> : <Text style={styles.submitButtonText}>Submit</Text>}
                 </TouchableOpacity>
-
             </ScrollView>
             <Toast />
         </SafeAreaView>
@@ -330,84 +327,17 @@ const CommitteeSubmissionPage = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: Colors.light,
-        paddingTop: SH(25),
-        paddingHorizontal: SW(6)
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: SW(10),
-        paddingVertical: SH(10),
-        paddingLeft: 0,
-    },
-    headerText: {
-        color: Colors.theme_color,
-        fontSize: SF(15),
-        fontFamily: "Poppins-Regular",
-    },
     title: {
         fontSize: SF(15),
         fontFamily: "Poppins-Medium",
         color: Colors.theme_color,
         marginBottom: SH(20),
     },
-    label: {
-        fontSize: SF(13),
-        fontFamily: "Poppins-Medium",
-        color: Colors.dark,
-        marginBottom: SH(5),
-    },
-    imagePreviewContainer: {
-        marginVertical: SH(10),
-        width: SW(70),
-        height: SH(70),
-        borderRadius: 10
-    },
-    imageName: {
-        color: Colors.dark,
-        fontFamily: "Poppins-Regular",
-        fontSize: SF(11),
-    },
-    uploadButton: {
-        backgroundColor: Colors.theme_color,
-        paddingVertical: SW(5),
-        borderRadius: 5,
-        alignItems: 'center',
-        paddingHorizontal: SW(7)
-    },
-    uploadButtonText: {
-        color: Colors.light,
-        fontFamily: "Poppins-Medium",
-        fontSize: SF(13),
-    },
-    imagePreview: {
-        width: '100%',
-        height: SH(200),
-        borderRadius: 5,
-        marginBottom: SH(15),
-    },
-    submitButton: {
-        backgroundColor: Colors.theme_color,
-        paddingVertical: SH(5),
-        borderRadius: 5,
-        alignItems: 'center',
-        marginTop: SH(20),
-        marginBottom: SH(80)
-    },
-    submitButtonText: {
-        color: Colors.light,
-        fontSize: SF(15),
-        fontWeight: 'Poppins-Bold',
-        textTransform: "capitalize"
-    },
-    contentContainer: {
-        margin: SW(15),
-        marginTop: 0,
-    },
+    uploadButton: { backgroundColor: Colors.theme_color, paddingHorizontal: SW(5), borderRadius: 5, alignItems: 'center', alignSelf: "flex-end" },
+    uploadButtonText: { color: Colors.light, fontSize: SF(10), fontFamily: "Poppins-Medium", textAlign: "center" },
+    imagePreviewContainer: { width: SW(70), height: SH(70), borderRadius: 10, marginVertical: SH(10) },
+    submitButton: { backgroundColor: Colors.theme_color, paddingVertical: SH(5), borderRadius: 5, alignItems: 'center', marginTop: SH(20) },
+    submitButtonText: { color: Colors.light, fontSize: SF(15), fontWeight: 'Poppins-Bold', textTransform: "capitalize" }
 });
 
-export default CommitteeSubmissionPage;
+export default UpdateCommittee;

@@ -7,13 +7,14 @@ import Globalstyles from '../../utils/GlobalCss';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { CityData, subCasteOptions } from '../../DummyData/DropdownData';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { CREATE_DHARAMSALA, UPDATE_DHARAMSALA, GET_DHARAMSALA } from '../../utils/BaseUrl';
+import { UPDATE_DHARAMSALA } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import _ from "lodash";
 
-const DharamsalaSubmissionPage = ({ navigation }) => {
+const UpdateDharamsala = ({ navigation,route }) => {
+  const { DharmshalaData } = route.params;
     const [subCasteInput, setSubCasteInput] = useState('');
     const [cityInput, setCityInput] = useState('');
     const [filteredCities, setFilteredCities] = useState([]);
@@ -27,20 +28,32 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
         subCaste: '',
         city: '',
         description: '',
-        images: [],  // ✅ Ensure images is an array
+        images: [], 
         mobileNo: ''
     });
 
-    const showToast = _.debounce((type, text1, text2, onHide) => {
-        Toast.show({
-            type,
-            text1,
-            text2,
-            position: "top",
-            visibilityTime: 1000,
-            onHide,
-        });
-    }, 500);
+        useEffect(() => {DharmshalaData
+            if (DharmshalaData) {
+                setDharamsalaData(prev => ({
+                    ...prev,
+                    dharmshalaName: DharmshalaData.dharmshalaName || '',
+                    description: DharmshalaData.description || '',
+                    subCaste: DharmshalaData.subCaste || '',
+                    city: DharmshalaData.city || '',
+                    images: DharmshalaData.images || [],
+                    mobileNo: DharmshalaData.mobileNo || ''
+                }));
+    
+                if (DharmshalaData.photoUrl) {
+                    convertToBase64(DharmshalaData.photoUrl).then(base64Image => {
+                        if (base64Image) {
+                            setDharamsalaData(prev => ({ ...prev, photoUrl: base64Image }));
+                        }
+                    });
+                }
+            }
+        }, [DharmshalaData]);
+
 
     const handleCityInputChange = (text) => {
         setCityInput(text);
@@ -96,126 +109,170 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
     };
 
     const handleImageUpload = () => {
-        ImageCropPicker.openPicker({
-            multiple: true,
-            cropping: true,
-            width: 400,
-            height: 400,
-            compressImageQuality: 1,
-            mediaType: "photo"
-        })
-        .then((images) => {
-            if (images.length > 4) {
-                alert("You can only upload up to 4 Dharamsala photos.");
-                return;
-            }
-            setDharamsalaData((prev) => ({
-                ...prev,
-                images: images.map(img => ({ uri: img.path })),
-            }));
-        })
-        .catch((err) => {
-            console.log("Crop Picker Error:", err);
-        });
-    };
-    
+      ImageCropPicker.openPicker({
+          multiple: true,
+          cropping: true,
+          width: 400,
+          height: 400,
+          compressImageQuality: 1,
+          mediaType: "photo"
+      })
+      .then((images) => {
+          if (images.length > 4) {
+              alert("You can only upload up to 4 Dharamsala photos.");
+              return;
+          }
+          
+          const newImages = images.map(img => ({ uri: img.path }));
+          
+          setDharamsalaData((prev) => ({
+              ...prev,
+              images: [...prev.images, ...newImages],
+          }));
+      })
+      .catch((err) => {
+          console.log("Crop Picker Error:", err);
+      });
+  };
 
-    const convertToBase64 = async (images) => {
-        try {
-            const base64Images = await Promise.all(
-                images.map(async (image) => {
-                    if (!image.uri) return null;
+  
+  const convertToBase64 = async (images) => {
+    try {
+        console.log("Converting images to Base64:", images);
 
+        const base64Images = await Promise.all(
+            images.map(async (image) => {
+                if (!image.uri) return null;
+
+                try {
                     const response = await fetch(image.uri);
                     const blob = await response.blob();
 
                     return new Promise((resolve) => {
                         const reader = new FileReader();
-                        reader.onloadend = () => resolve(reader.result);
+                        reader.onloadend = () => {
+                            const base64String = reader.result.split(',')[1]; // Remove prefix
+                            resolve(base64String);
+                        };
                         reader.readAsDataURL(blob);
                     });
-                })
-            );
+                } catch (fetchError) {
+                    console.error("Error fetching image for Base64 conversion:", fetchError);
+                    return null;
+                }
+            })
+        );
 
-            return base64Images.filter(Boolean); // Remove any null values
-        } catch (error) {
-            console.error("Error converting image to Base64:", error);
-            return [];
-        }
-    };
+        return base64Images.filter(Boolean); // Remove null values
+    } catch (error) {
+        console.error("Error converting image to Base64:", error);
+        return [];
+    }
+};
 
-    const constructDharamsalaPayload = async (DharamsalaData, isNew = false) => {
-        const keys = ["dharmshalaName", "subCaste", "city", "description", "images", "mobileNo"];
-        const payload = {};
+  
+  const constructDharamsalaPayload = async (DharamsalaData) => {
+    try {
+        console.log("Constructing payload with data:", DharamsalaData);
 
-        for (const key of keys) {
-            if (DharamsalaData[key] !== undefined && DharamsalaData[key] !== "") {
-                payload[key] = DharamsalaData[key];
-            } else if (isNew) {
-                payload[key] = "";
-            }
-        }
+        const payload = { ...DharamsalaData };
 
         if (DharamsalaData.images.length > 0) {
-            payload.images = await convertToBase64(DharamsalaData.images);
-            console.log("Converted Base64 Images:", payload.images);
+            console.log("Processing images for payload...");
+
+            // Separate existing Cloudinary images (URLs), Base64 images, and new images
+            const existingUrls = DharamsalaData.images.filter(img => typeof img === "string" && img.startsWith("http"));
+            const existingBase64Images = DharamsalaData.images.filter(img => typeof img === "string" && img.startsWith("data:image/"));
+            const newImages = DharamsalaData.images.filter(img => img.uri); // New images to convert
+
+            console.log("Existing URLs:", existingUrls);
+            console.log("Existing Base64 Images:", existingBase64Images);
+            console.log("New images to convert:", newImages);
+
+            let base64Images = await convertToBase64(newImages);
+
+            // Convert existing Cloudinary URLs to Base64 (if required by API)
+            let cloudinaryBase64 = await convertToBase64(existingUrls.map(url => ({ uri: url })));
+
+            // Merge all images
+            payload.images = [...existingBase64Images, ...base64Images, ...cloudinaryBase64];
+
+            console.log("Final images for payload:", payload.images);
         }
 
         return payload;
-    };
+    } catch (error) {
+        console.error("Error in constructDharamsalaPayload:", error);
+        return {};
+    }
+};
 
-    const handleCreateDharamSala = async () => {
-        try {
-            setIsLoading(true);
-            const token = await AsyncStorage.getItem("userToken");
-    
-            if (!token) {
-                showToast("error", "Error", "Authorization token is missing.");
-                return;
-            }
-    
-            const headers = {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            };
-    
-            const payload = await constructDharamsalaPayload(DharamsalaData);
-            console.log("Payload:", payload);
-    
-            const response = await axios.post(CREATE_DHARAMSALA, payload, { headers });
-            console.log("Dharamsala create response:", JSON.stringify(response.data));
-    
-            if (response.status === 200 && response.data.status === true) {
-                console.log("Created Data:", JSON.stringify(response.data.data));
-    
-                showToast(
-                    "success",
-                    "Dharamsala Created Successfully",
-                    response.data.message || "Your changes have been saved!",
-                    () => {
-                        navigation.navigate("Dharmshala");
-                    }
-                );
-    
-            } else {
-                throw new Error(response.data.message || "Something went wrong");
-            }
-        } catch (error) {
-            console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
-    
-            let errorMessage = "Failed to create Dharamsala.";
-            if (error.response?.status === 400) {
-                errorMessage = error.response?.data?.message || "Bad request. Please check your input.";
-            }
-    
-            showToast("error", "Error", errorMessage);
-        } finally {
+
+
+const handleUpdateDharamSala = async () => {
+    setIsLoading(true);
+
+    try {
+        console.log("Fetching user token...");
+        const token = await AsyncStorage.getItem("userToken");
+
+        if (!token) {
+            Toast.show({
+                type: "error",
+                text1: "Authorization Error",
+                text2: "Token is missing! Please login again.",
+            });
             setIsLoading(false);
+            return;
         }
-    };
-    
-    
-    
+
+        console.log("Token found, constructing payload...");
+        const updatedData = await constructDharamsalaPayload(DharamsalaData);
+        console.log("Payload to be sent:", updatedData); // Debugging
+
+        console.log(`Sending PATCH request to ${UPDATE_DHARAMSALA}/${DharmshalaData._id}`);
+        const response = await axios.patch(
+            `${UPDATE_DHARAMSALA}/${DharmshalaData._id}`,
+            updatedData,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+
+        console.log("Response from API:", response.data); // Debugging
+
+        Toast.show({
+            type: "success",
+            text1: "Success",
+            text2: "Dharamsala Updated Successfully! 🎉",
+        });
+
+        setTimeout(() => {
+            navigation.navigate("Dharmshala");
+        }, 1500);
+    } catch (error) {
+        console.error("Update error:", error);
+        console.log("Error response:", error.response?.data);
+
+        let errorMessage = "Failed to update Dharamsala.";
+        if (error.response) {
+            errorMessage = error.response.data.message || errorMessage;
+        }
+
+        Toast.show({
+            type: "error",
+            text1: "Update Failed",
+            text2: errorMessage,
+        });
+    } finally {
+        setIsLoading(false);
+    }
+};
+
+
 
     return (
         <SafeAreaView style={Globalstyles.container}>
@@ -226,7 +283,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
             />
             <View style={Globalstyles.header}>
                 <View style={{ flexDirection: 'row' }}>
-                    <TouchableOpacity c>
+                    <TouchableOpacity>
                         <MaterialIcons
                             name="arrow-back-ios-new"
                             size={25}
@@ -344,7 +401,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
 
                 <TouchableOpacity
                     style={styles.submitButton}
-                    onPress={handleCreateDharamSala}
+                    onPress={handleUpdateDharamSala}
                     disabled={isLoading} 
                 >
                     {isLoading ? (
@@ -417,4 +474,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default DharamsalaSubmissionPage;
+export default UpdateDharamsala;

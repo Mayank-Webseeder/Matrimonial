@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     flex: 1,
     display: "flex",
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent:"space-between",
     marginVertical:SH(15)
   },
   button: {
@@ -258,7 +258,28 @@ const styles = StyleSheet.create({
     fontSize: SF(13),
     marginBottom: SH(5),
     fontFamily: "Poppins-Medium"
-  }
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.3)",
+  },
+  modalContent: {
+    position: "absolute",
+    backgroundColor: "white",
+    paddingHorizontal:SW(15),
+    paddingVertical:SH(10),
+    borderRadius:10,
+    width:SW(150),
+    elevation: 5,
+  },
+  modalOption: {
+    paddingHorizontal:SW(10),
+    paddingVertical:SH(2),
+  },
+  optionText: {
+    fontSize:SF(15),
+    fontFamily:"Poppins-Regular"
+  },
 
 });
 

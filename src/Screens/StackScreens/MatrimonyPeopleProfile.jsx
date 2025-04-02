@@ -35,37 +35,6 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const verifiedBy = userDetails?.verifiedBy;
   const [loading, setLoading] = useState(true);
   const [loadingIntrest, setLoadingIntrest] = useState(false);
-
-
-  const [blurEnabled, setBlurEnabled] = useState(false);
-
-  useEffect(() => {
-    console.log("userDetails", userDetails);
-    const fetchBlurSetting = async () => {
-      try {
-        const storedValue = await AsyncStorage.getItem("blurPhotos");
-        const storedBlur = storedValue ? JSON.parse(storedValue) : true;
-
-        if (isBlur !== undefined) {
-          if (isBlur && storedBlur) {
-            setBlurEnabled(true);
-            await AsyncStorage.setItem("blurPhotos", JSON.stringify(false));
-            console.log("AsyncStorage Updated to false for this user");
-          } else {
-            setBlurEnabled(false);
-          }
-        } else {
-          setBlurEnabled(storedBlur);
-        }
-      } catch (error) {
-        console.error("Error fetching blur setting:", error);
-      }
-    };
-
-    fetchBlurSetting();
-  }, [isBlur]);
-
-
   const _id = userDetails?._id;
   // console.log("_id", User_Id);
   const personalDetails = userDetails?.personalDetails || {};
@@ -150,7 +119,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   // console.log("MyprofileData", MyprofileData);
 
   useEffect(() => {
-    console.log("userId", userId);
+    console.log("isBlur", isBlur);
     if (userId) {
       fetchUserProfile(userId);
     }
@@ -337,7 +306,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               <Image
                 source={{ uri: images[0] }}
                 style={{ width: SW(350), height: SH(330), borderRadius: 10 }}
-                blurRadius={blurEnabled ? 5 : 0}
+                blurRadius={isBlur ? 5 : 0}
               />
             </TouchableOpacity>
           )}
@@ -358,7 +327,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                     <Image
                       source={{ uri: img }}
                       style={{ width: width * 0.9, height: height * 0.8, borderRadius: 10, resizeMode: "contain" }}
-                      blurRadius={blurEnabled ? 5 : 0}
+                      blurRadius={isBlur ? 5 : 0}
                     />
                   </View>
                 ))}
@@ -401,8 +370,8 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                 <Switch
                   value={isSwitchOn}
                   onValueChange={handleToggle}
-                  thumbColor={isSwitchOn ? "#4CAF50" : "#767577"} 
-                  trackColor={{ false: "#f4f3f4", true: "#4CAF50" }} 
+                  thumbColor={isSwitchOn ? "#4CAF50" : "#767577"}
+                  trackColor={{ false: "#f4f3f4", true: "#4CAF50" }}
                 />
               </>
             )
@@ -489,7 +458,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             {/* Right-side details */}
             {personalDetails?.currentCity && <Text style={styles.text}>{personalDetails?.currentCity}</Text>}
             {personalDetails?.occupation && <Text style={styles.text}>{personalDetails?.occupation}</Text>}
-            {personalDetails?.annualIncome && <Text style={styles.text}>{personalDetails?.annualIncome} INR </Text>}
+            {personalDetails?.annualIncome && <Text style={styles.text}>{personalDetails?.annualIncome} </Text>}
             {personalDetails?.qualification && <Text style={styles.text}>{personalDetails?.qualification}</Text>}
           </View>
         </View>
@@ -599,14 +568,23 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           </View>
         }
 
-        {matchedCount > 0 && totalCriteria > 0 && profileData?.data ? (
+        {profileData?.data ? (
           <View style={styles.flexContainer3}>
             <Text style={styles.HeadingText}>Matches</Text>
             <View style={styles.flex}>
-              <Image source={{ uri: MyprofileData?.Biodata?.personalDetails?.closeUpPhoto }} style={styles.smallImage} />
+              <Image
+                source={{ uri: profileData?.loggedInUserBiodata?.personalDetails?.closeUpPhoto }}
+                style={styles.smallImage}
+              />
+
               <Text style={styles.text}>{matchedCount}/{totalCriteria}</Text>
-              <Image source={{ uri: profileData?.data?.photoUrl?.[0] }} style={styles.smallImage} />
+
+              <Image
+                source={{ uri: profileData?.targetUserBioData?.personalDetails?.closeUpPhoto }}
+                style={styles.smallImage}
+              />
             </View>
+
 
             {/* Comparison List */}
             {Object.keys(profileData?.comparisonResults || {}).map((key, index) => (

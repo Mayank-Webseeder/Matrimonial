@@ -27,7 +27,7 @@ const IntrestedProfile = ({ navigation }) => {
 
       const headers = { 'Authorization': `Bearer ${token}` };
       const response = await axios.get(url, { headers });
-      console.log("response.data.data",JSON.stringify(response.data.data));
+      console.log("response.data.data", JSON.stringify(response.data.data));
       setData(response.data.data || []);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -39,7 +39,7 @@ const IntrestedProfile = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       fetchData(SENDER_REQUESTS, setInterestSentData);
-      fetchData(RECEIVER_REQUESTS, setInterestReceivedData);   
+      fetchData(RECEIVER_REQUESTS, setInterestReceivedData);
     }, [])
   );
 
@@ -47,7 +47,7 @@ const IntrestedProfile = ({ navigation }) => {
     <SkeletonPlaceholder>
       <View style={{ margin: SH(20) }}>
         {[...Array(4)].map((_, index) => (
-          <View key={index} style={{ flexDirection: "row", marginBottom:SH(20) }}>
+          <View key={index} style={{ flexDirection: "row", marginBottom: SH(20) }}>
             <View style={{ width: SW(80), height: SH(80), borderRadius: 40, marginRight: SW(10) }} />
             <View>
               <View style={{ width: SW(150), height: SH(20), borderRadius: 4 }} />
@@ -62,39 +62,44 @@ const IntrestedProfile = ({ navigation }) => {
 
   const renderItem = ({ item }, isSent) => {
     const userData = isSent ? item.toUserBioData : item.FromUserBioData;
-  
+
     return (
       <TouchableOpacity
         style={styles.card}
         onPress={() => {
-          if (item?.status === 'accepted') {
-            if (isSent) {
+          console.log("userData", userData);
+        
+          if (isSent) {
+            if (item?.status === "accepted") {
               const userData = {
                 ...item.toUserBioData,
                 requestId: item?.requestId,
                 isSaved: item?.isSaved,
-                isBlur: item?.isBlur, 
+                isBlur: item?.isVisible,
               };
               navigation.navigate("MatrimonyPeopleProfile", {
                 userDetails: userData,
                 userId: userData?.userId,
                 isSaved: userData?.isSaved,
-                isBlur: userData?.isBlur, 
-                 status:item?.status
+                isBlur: userData?.isVisible,
+                status: item?.status
               });
+            } else if (item?.status === "rejected") {
+              alert("This profile request has been rejected. You cannot view it.");
             } else {
-              navigation.navigate("IntrestReceivedProfilePage", {
-                userId: userData?.userId,
-                biodata: userData,
-                requestId: item?.requestId,
-                isSaved: item?.isSaved,
-                isBlur: item?.isBlur,
-              });
+              alert("Profile can only be viewed when the request is accepted.");
             }
           } else {
-            alert("Profile can only be viewed when the request is accepted.");
+            navigation.navigate("IntrestReceivedProfilePage", {
+              userId: userData?.userId,
+              biodata: userData,
+              requestId: item?.requestId,
+              isBlur: item?.isVisible,
+              status: item?.status
+            });
           }
         }}
+        
       >
         <View style={styles.leftContent}>
           <Image
@@ -114,9 +119,10 @@ const IntrestedProfile = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
       </TouchableOpacity>
+
     );
   };
-  
+
 
 
   if (isLoading) {

@@ -4,7 +4,6 @@ import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
   RepostText: {
-    backgroundColor: Colors.theme_color,
     color: Colors.light,
     paddingVertical: SH(3),
     paddingHorizontal: SW(10),
@@ -97,7 +96,6 @@ const styles = StyleSheet.create({
     fontSize: SF(15),
     fontFamily: "Poppins-Bold",
     marginBottom: SH(5),
-    color: Colors.theme_color
   },
 
   text: {

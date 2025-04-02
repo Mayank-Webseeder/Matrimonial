@@ -88,13 +88,13 @@ const CREATE_COMMITTEE = "https://api-matrimonial.webseeder.tech/api/v1/committe
 const UPDATE_COMMITTEE = "https://api-matrimonial.webseeder.tech/api/v1/committee/updateCommittee";
 const GET_COMMIITEE = "https://api-matrimonial.webseeder.tech/api/v1/committee/viewCommittee";
 const GET_ALL_COMITTEE = "https://api-matrimonial.webseeder.tech/api/v1/committee/getAllCommittee"
-
+const DELETE_COMMITTEE ="https://api-matrimonial.webseeder.tech/api/v1/committee/delete-Committee"
 // dharamsala 
 const CREATE_DHARAMSALA = "https://api-matrimonial.webseeder.tech/api/v1/dharmshala/createDharmshala";
 const UPDATE_DHARAMSALA = "https://api-matrimonial.webseeder.tech/api/v1/dharmshala/updateDharmshala";
 const GET_DHARAMSALA = "https://api-matrimonial.webseeder.tech/api/v1/dharmshala/viewDharmshala";
 const GET_ALL_DHARAMSALA = "https://api-matrimonial.webseeder.tech/api/v1/dharmshala/getAllDharmshala"
-
+const DELETE_DHARAMSALA="https://api-matrimonial.webseeder.tech/api/v1/dharmshala/delete-Dharmshala"
 // get common api for all matrimony profiles for biodata page 
 const MATRIMONY_SUMMRARY = "https://api-matrimonial.webseeder.tech/api/v1/user/getMetrimonial-Summary";
 
@@ -116,7 +116,7 @@ const ADVERTISE_WITH_US = "https://api-matrimonial.webseeder.tech/api/v1/user/ad
 const HIDE_CONTACT = "https://api-matrimonial.webseeder.tech/api/v1/settings/hide-contact";
 const HIDE_OPTIONAL_DETAILS = "https://api-matrimonial.webseeder.tech/api/v1/settings/hide-optionalDetails";
 const INACTIVE_ID = "https://api-matrimonial.webseeder.tech/api/v1/settings/set-activityStatus";
-
+const BLUR_PHOTOS="https://api-matrimonial.webseeder.tech/api/v1/settings/set-Blur"
 //notification
 const NOTIFICATION = "https://api-matrimonial.webseeder.tech/api/v1/notification/getAllNotification";
 const VIEW_NOTIFICATION = "https://api-matrimonial.webseeder.tech/api/v1/notification/seeNotification";
@@ -172,6 +172,7 @@ export {
     UPDATE_COMMITTEE,
     GET_COMMIITEE,
     GET_ALL_COMITTEE,
+    DELETE_COMMITTEE,
     PANDIT_DESCRIPTION,
     JYOTISH_DESCRIPTION,
     KATHAVACHAK_DESCRIPTION,
@@ -185,6 +186,7 @@ export {
     UPDATE_DHARAMSALA,
     GET_DHARAMSALA,
     GET_ALL_DHARAMSALA,
+    DELETE_DHARAMSALA,
     MATRIMONY_SUMMRARY,
     REPORT,
     GET_ALL_EVENT_NEWS,
@@ -199,6 +201,7 @@ export {
     HIDE_CONTACT,
     HIDE_OPTIONAL_DETAILS,
     INACTIVE_ID,
+    BLUR_PHOTOS,
     NOTIFICATION,
     VIEW_NOTIFICATION,
     SEEN_NOTIFICATION,

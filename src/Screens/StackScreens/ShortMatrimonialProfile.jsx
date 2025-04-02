@@ -120,7 +120,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                             <View style={styles.rightColumn}>
                                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.currentCity}</Text>
                                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.occupation}</Text>
-                                <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.annualIncome} INR </Text>
+                                <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.annualIncome}</Text>
                                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.qualification}</Text>
                             </View>
                         </View>

@@ -191,7 +191,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     marginVertical: SH(15),
-    marginBottom: SH(36)
+    marginBottom: SH(36),
+    justifyContent:"space-between"
   },
   button: {
     width: SW(100),

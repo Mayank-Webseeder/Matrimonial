@@ -210,6 +210,9 @@ const styles = StyleSheet.create({
         color:"gray",
         fontFamily: 'Poppins-Regular',
       },
+      bottomContainer:{
+        paddingBottom:SH(50)
+      }
 });
 
 export default styles;

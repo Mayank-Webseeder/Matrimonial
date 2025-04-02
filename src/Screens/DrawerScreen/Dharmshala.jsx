@@ -14,7 +14,7 @@ import { subCasteOptions } from '../../DummyData/DropdownData';
 import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { SH, SF, SW } from '../../utils/Dimensions';
-import { GET_ALL_DHARAMSALA, SAVED_PROFILES } from '../../utils/BaseUrl';
+import { GET_ALL_DHARAMSALA, GET_DHARAMSALA, SAVED_PROFILES } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
@@ -34,7 +34,8 @@ const Dharmshala = () => {
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [listHeight, setListHeight] = useState(0);
-  const [daramsalaData, setDharamsalaData] = useState([]);
+  const [dharamsalaData, setDharamsalaData] = useState([]);
+  const [MydharamsalaData, setMyDharamsalaData] = useState([]);
   const [modalLocality, setModalLocality] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -83,6 +84,17 @@ const Dharmshala = () => {
     return () => clearInterval(interval);
   }, [currentIndex]);
 
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocality('');
+      setSubcaste('');
+      setDharamsalaData([]);
+      fetchDharamsalaData("all");
+      GetMyDharamsalaData();
+    }, [])
+  );
+
   const SliderRenderItem = ({ item }) => {
     return (
       <View>
@@ -94,23 +106,23 @@ const Dharmshala = () => {
   const fetchDharamsalaData = async (filterType = "search") => {
     try {
       setLoading(true);
-      setDharamsalaData([]); 
+      setDharamsalaData([]);
       setError(null);
-  
+
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
-  
+
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-  
+
       let queryParams = [];
-  
+
       if (filterType === "search") {
         const cleanedLocality = locality.trim();
         const cleanedSubCaste = subcaste.trim();
-  
+
         if (cleanedLocality) queryParams.push(`locality=${encodeURIComponent(cleanedLocality.toLowerCase())}`);
         if (cleanedSubCaste) queryParams.push(`subCaste=${encodeURIComponent(cleanedSubCaste.toLowerCase())}`);
       } else if (filterType === "modal") {
@@ -118,23 +130,23 @@ const Dharmshala = () => {
         const cleanedModalSubCaste = subcaste.trim();
 
         if (cleanedModalLocality && cleanedModalSubCaste) {
-            queryParams.push(`locality=${encodeURIComponent(cleanedModalLocality.toLowerCase())}`);
-            queryParams.push(`subCaste=${encodeURIComponent(cleanedModalSubCaste.toLowerCase())}`);
+          queryParams.push(`locality=${encodeURIComponent(cleanedModalLocality.toLowerCase())}`);
+          queryParams.push(`subCaste=${encodeURIComponent(cleanedModalSubCaste.toLowerCase())}`);
         } else if (cleanedModalLocality) {
-            queryParams.push(`locality=${encodeURIComponent(cleanedModalLocality.toLowerCase())}`);
+          queryParams.push(`locality=${encodeURIComponent(cleanedModalLocality.toLowerCase())}`);
         } else if (cleanedModalSubCaste) {
-            queryParams.push(`subCaste=${encodeURIComponent(cleanedModalSubCaste.toLowerCase())}`);
+          queryParams.push(`subCaste=${encodeURIComponent(cleanedModalSubCaste.toLowerCase())}`);
         }
       }
-  
+
       const url = filterType === "all" ? GET_ALL_DHARAMSALA : `${GET_ALL_DHARAMSALA}?${queryParams.join("&")}`;
-  
+
       console.log("Fetching Data from:", url);
-  
+
       const response = await axios.get(url, { headers });
-  
+
       console.log("Response Data:", JSON.stringify(response.data.data));
-  
+
       if (response.data && response.data.data.length > 0) {
         setDharamsalaData(response.data.data);
       } else {
@@ -148,17 +160,28 @@ const Dharmshala = () => {
       setLoading(false);
     }
   };
-  
+  const GetMyDharamsalaData = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        showToast("error", "Error", "Authorization token is missing.");
+        return;
+      }
 
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      setLocality('');
-      setSubcaste('');
-      setDharamsalaData([]);
-      fetchDharamsalaData("all");
-    }, [])
-  );
+      const response = await axios.get(GET_DHARAMSALA, { headers });
+
+      if (response.status === 200 && response.data.status === true) {
+        console.log("dharamsala view data", JSON.stringify(response.data?.data))
+        setMyDharamsalaData(response.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching committee data:", error);
+    }
+  };
 
   const renderSkeleton = () => (
     <SkeletonPlaceholder>
@@ -337,7 +360,12 @@ const Dharmshala = () => {
       {/* Fixed Header */}
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: "center" }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity onPress={() => {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "MainApp" }],
+            });
+          }}>
             <MaterialIcons
               name="arrow-back-ios-new"
               size={25}
@@ -387,19 +415,30 @@ const Dharmshala = () => {
         </View>
 
         <View style={styles.ButtonContainer}>
-          <TouchableOpacity
-            style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton]}
-            onPress={handleOpenFilter}
-          >
-            <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Filter</Text>
-          </TouchableOpacity>
+          <View style={{ display: "flex", flexDirection: "row" }}>
+            <TouchableOpacity
+              style={[styles.button, { width: SW(80) }, activeButton === 1 ? styles.activeButton : styles.inactiveButton]}
+              onPress={handleOpenFilter}
+            >
+              <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Filter</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[styles.button, activeButton === 2 ? styles.activeButton : styles.inactiveButton]}
-            onPress={handleUploadButton}
-          >
-            <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>Upload</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, { width: SW(80) }, activeButton === 2 ? styles.activeButton : styles.inactiveButton]}
+              onPress={handleUploadButton}
+            >
+              <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>Upload</Text>
+            </TouchableOpacity>
+          </View>
+          {MydharamsalaData?.length > 0 && (
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => navigation.navigate('MyuploadedDharamsala', { DharmshalaData: MydharamsalaData })}
+            >
+              <Text style={[activeButton === 3 ? styles.activeText : styles.inactiveText]}>Uploaded</Text>
+            </TouchableOpacity>
+          )}
+
         </View>
       </View>
 
@@ -421,7 +460,7 @@ const Dharmshala = () => {
 
         {loading ? renderSkeleton() : (
           <FlatList
-            data={daramsalaData}
+            data={dharamsalaData}
             renderItem={renderItem}
             keyExtractor={(item) => item._id.toString()}
             scrollEnabled={false}

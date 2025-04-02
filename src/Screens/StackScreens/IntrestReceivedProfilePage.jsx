@@ -13,13 +13,13 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MATCHED_PROFILE } from '../../utils/BaseUrl';
 import { ACCEPTED_API, REJECTED_API, SAVED_PROFILES } from '../../utils/BaseUrl';
-import { SH, SW , SF } from '../../utils/Dimensions';
+import { SH, SW, SF } from '../../utils/Dimensions';
 import moment from 'moment';
 import Toast from 'react-native-toast-message';
 const { width, height } = Dimensions.get("window");
 
 const IntrestReceivedProfilePage = ({ navigation, route }) => {
-  const { userId, biodata, requestId, isSaved: initialSavedState ,isBlur } = route.params;
+  const { userId, biodata, requestId, isSaved: initialSavedState, isBlur, status } = route.params;
   const [Save, setIsSaved] = useState(initialSavedState || false);
   const hideContact = !!(biodata?.hideContact || biodata?.hideContact);
   const hideOptionalDetails = !!(biodata?.hideOptionalDetails || biodata?.hideOptionalDetails)
@@ -33,38 +33,12 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const MyprofileData = useSelector((state) => state.getBiodata);
   const [imageIndex, setImageIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
-  const [blurEnabled, setBlurEnabled] = useState(false);
 
-  useEffect(() => {
-    const fetchBlurSetting = async () => {
-      try {
-        const storedValue = await AsyncStorage.getItem("blurPhotos");
-        const storedBlur = storedValue ? JSON.parse(storedValue) : true; 
-  
-        if (isBlur !== undefined) {
-          if (isBlur && storedBlur) {
-            setBlurEnabled(true);
-            await AsyncStorage.setItem("blurPhotos", JSON.stringify(false)); 
-            console.log("AsyncStorage Updated to false for this user");
-          } else {
-            setBlurEnabled(false);
-          }
-        } else {
-          setBlurEnabled(storedBlur);
-        }
-      } catch (error) {
-        console.error("Error fetching blur setting:", error);
-      }
-    };
-  
-    fetchBlurSetting();
-  }, [isBlur]);
-  
   const images = [
     personalDetails?.closeUpPhoto,
     !hideOptionalDetails && personalDetails?.fullPhoto,
     !hideOptionalDetails && personalDetails?.bestPhoto
-  ].filter(Boolean); 
+  ].filter(Boolean);
 
   const openImageViewer = (index) => {
     setImageIndex(index);
@@ -72,6 +46,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   };
 
   useEffect(() => {
+    console.log("isBlur", isBlur);
     if (userId) {
       fetchUserProfile(userId);
     }
@@ -306,7 +281,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
               <Image
                 source={{ uri: images[0] }}
                 style={{ width: SW(350), height: SH(330), borderRadius: 10 }}
-                blurRadius={blurEnabled ? 5 : 0}
+                blurRadius={!isBlur ? 5 : 0}
               />
             </TouchableOpacity>
           )}
@@ -327,7 +302,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
                     <Image
                       source={{ uri: img }}
                       style={{ width: width * 0.9, height: height * 0.8, borderRadius: 10, resizeMode: "contain" }}
-                      blurRadius={blurEnabled ? 5 : 0}
+                      blurRadius={!isBlur ? 5 : 0}
                     />
                   </View>
                 ))}
@@ -411,7 +386,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           <View style={styles.rightContainer}>
             {personalDetails?.currentCity && <Text style={styles.text}>{personalDetails?.currentCity}</Text>}
             {personalDetails?.occupation && <Text style={styles.text}>{personalDetails?.occupation}</Text>}
-            {personalDetails?.annualIncome && <Text style={styles.text}>{personalDetails?.annualIncome} INR </Text>}
+            {personalDetails?.annualIncome && <Text style={styles.text}>{personalDetails?.annualIncome} </Text>}
             {personalDetails?.qualification && <Text style={styles.text}>{personalDetails?.qualification}</Text>}
           </View>
         </View >
@@ -493,14 +468,23 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
             </View>
           </View>
         )}
-        {matchedCount > 0 && totalCriteria > 0 && profileData?.data ? (
+        {profileData?.data ? (
           <View style={styles.flexContainer3}>
             <Text style={styles.HeadingText}>Matches</Text>
             <View style={styles.flex}>
-              <Image source={{ uri: MyprofileData?.Biodata?.personalDetails?.closeUpPhoto }} style={styles.smallImage} />
+              <Image
+                source={{ uri: profileData?.loggedInUserBiodata?.personalDetails?.closeUpPhoto }}
+                style={styles.smallImage}
+              />
+
               <Text style={styles.text}>{matchedCount}/{totalCriteria}</Text>
-              <Image source={{ uri: profileData?.data?.photoUrl?.[0] }} style={styles.smallImage} />
+
+              <Image
+                source={{ uri: profileData?.targetUserBioData?.personalDetails?.closeUpPhoto }}
+                style={styles.smallImage}
+              />
             </View>
+
 
             {/* Comparison List */}
             {Object.keys(profileData?.comparisonResults || {}).map((key, index) => (
@@ -519,35 +503,48 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
       </ScrollView>
       <View style={styles.bottomContainer}>
-        <TouchableOpacity
-          style={styles.declineButton}
-          onPress={() => rejectConnectionRequest(requestId)}
-          disabled={loadingDecline} // ✅ Disable Button When Loading
-        >
-          {loadingDecline ? (
-            <ActivityIndicator size="small" color="#fff" /> // ✅ Show Loader
-          ) : (
-            <>
-              <Entypo name={'cross'} color={Colors.light} size={20} />
-              <Text style={styles.declineButtonText}>Decline</Text>
-            </>
-          )}
-        </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.acceptButton}
-          onPress={() => acceptConnectionRequest(requestId)}
-          disabled={loadingAccept} // ✅ Disable Button When Loading
-        >
-          {loadingAccept ? (
-            <ActivityIndicator size="small" color="#fff" /> // ✅ Show Loader
-          ) : (
-            <>
-              <Entypo name={'check'} color={Colors.light} size={20} />
-              <Text style={styles.acceptButtonText}>Accept</Text>
-            </>
-          )}
-        </TouchableOpacity>
+      <TouchableOpacity
+  style={[
+    styles.declineButton,
+    (status === "rejected" || status === "accepted") && { backgroundColor: "#dbcccf" } 
+  ]}
+  onPress={() => rejectConnectionRequest(requestId)}
+  disabled={loadingDecline || status === "rejected" || status === "accepted"}
+>
+  {loadingDecline ? (
+    <ActivityIndicator size="small" color="#fff" />
+  ) : (
+    <>
+      <Entypo name={"cross"} color={Colors.light} size={20} />
+      <Text style={styles.declineButtonText}>
+        {status === "rejected" ? "Rejected" : "Decline"}
+      </Text>
+    </>
+  )}
+</TouchableOpacity>
+
+<TouchableOpacity
+  style={[
+    styles.acceptButton,
+    (status === "accepted" || status === "rejected") && { backgroundColor: "#dbcccf" } 
+  ]}
+  onPress={() => acceptConnectionRequest(requestId)}
+  disabled={loadingAccept || status === "accepted" || status === "rejected"} 
+>
+  {loadingAccept ? (
+    <ActivityIndicator size="small" color="#fff" />
+  ) : (
+    <>
+      <Entypo name={"check"} color={Colors.light} size={20} />
+      <Text style={styles.acceptButtonText}>
+        {status === "accepted" ? "Accepted" : "Accept"}
+      </Text>
+    </>
+  )}
+</TouchableOpacity>
+
+
       </View>
       <Toast />
     </SafeAreaView>

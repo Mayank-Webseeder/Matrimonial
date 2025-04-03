@@ -374,7 +374,12 @@ const Committee = ({ navigation }) => {
       {/* Fixed Header */}
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: "center" }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity onPress={() => {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "MainApp" }],
+            });
+          }}>
             <MaterialIcons
               name="arrow-back-ios-new"
               size={25}

@@ -65,7 +65,8 @@ const styles = StyleSheet.create({
 
   CityArea: {
     flexDirection: 'row',
-    alignItems:"center"
+    alignItems:"center",
+    justifyContent:"space-between"
   },
 
   sharecontainer: {
@@ -83,9 +84,12 @@ const styles = StyleSheet.create({
     marginRight: SW(10),
   },
   text: {
+    fontFamily: "Poppins-Medium",
+    fontSize: SF(13)
+  },
+  smalltext: {
     fontFamily: "Poppins-Regular",
-    fontSize: SF(12),
-    marginRight:SW(11)
+    fontSize: SF(12)
   },
   title: {
     fontFamily: "Poppins-Bold",
@@ -278,8 +282,19 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize:SF(15),
-    fontFamily:"Poppins-Regular"
+    fontFamily:"Poppins-Regular",
   },
+  updateText:{
+    fontSize:SF(15),
+    fontFamily:"Poppins-Regular",
+    textAlign:"center"
+  },
+  deleteText:{
+    fontSize:SF(15),
+    fontFamily:"Poppins-Regular",
+    textAlign:"center",
+    color:"red"
+  }
 
 });
 

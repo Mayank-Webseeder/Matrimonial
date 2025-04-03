@@ -35,6 +35,7 @@ const EventNews = ({ navigation }) => {
   const myprofile_id = profileData?._id || null;
   const [LikeLoading, setLikeLoading] = useState(false);
   const [commentLoading, setCommentLoading] = useState(false);
+  const [deletecommentLoading, setdeletecommentLoading] = useState(false);
 
   useEffect(() => {
     console.log("myprofile_id", myprofile_id);
@@ -64,20 +65,6 @@ const EventNews = ({ navigation }) => {
     });
   };
 
-  const getTimeAgo = (createdAt) => {
-    const eventTime = moment(createdAt);
-    const currentTime = moment();
-    const diffInHours = currentTime.diff(eventTime, 'hours');
-
-    if (diffInHours >= 24) {
-      const diffInDays = Math.floor(diffInHours / 24);
-      return `${diffInDays} days ago`;
-    } else {
-      return `${diffInHours} hours ago`;
-    }
-  };
-
-
   const GetTimeAgo = (date) => {
     const eventTime = moment(date);
     const currentTime = moment();
@@ -101,7 +88,16 @@ const EventNews = ({ navigation }) => {
     return moment(createdAt).format('MMM D [at] hh:mm A');
   };
 
-  const LIKE = async (postId) => {
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchPostData();
+      GetEventNews();
+      setPage(1);
+    }, [])
+  );
+
+  const LIKE = async (postId, initialLikesCount) => {
     try {
       setLikeLoading(true);
       const token = await AsyncStorage.getItem("userToken");
@@ -113,7 +109,10 @@ const EventNews = ({ navigation }) => {
       };
 
       setLikeData((prevState) => {
-        const prevLikeData = prevState[postId] || { isLiked: false, likesCount: 0 };
+        const prevLikeData = prevState[postId] || {
+          isLiked: false,
+          likesCount: initialLikesCount
+        };
 
         return {
           ...prevState,
@@ -142,8 +141,13 @@ const EventNews = ({ navigation }) => {
         text2: error?.response?.data?.message || "Failed to like event. Please try again!",
         position: "top",
       });
+
+      // Reverse the like state on error
       setLikeData((prevState) => {
-        const prevLikeData = prevState[postId] || { isLiked: false, likesCount: 0 };
+        const prevLikeData = prevState[postId] || {
+          isLiked: false,
+          likesCount: initialLikesCount
+        };
 
         return {
           ...prevState,
@@ -156,6 +160,7 @@ const EventNews = ({ navigation }) => {
           },
         };
       });
+
     } finally {
       setLikeLoading(false);
     }
@@ -183,7 +188,7 @@ const EventNews = ({ navigation }) => {
         const fetchedData = response.data;
         console.log("Updated comments:", JSON.stringify(fetchedData.comments));
 
-        setMyComment(""); // ✅ Input field clear karein
+        setMyComment("");
 
         Toast.show({
           type: "success",
@@ -219,7 +224,7 @@ const EventNews = ({ navigation }) => {
   const DELETE_COMMENT = async (postId, commentId) => {
     console.log("postId", postId, "commentId", commentId);
     try {
-      setIsLoading(true);
+      setdeletecommentLoading(true);
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) throw new Error("No token found");
@@ -260,34 +265,27 @@ const EventNews = ({ navigation }) => {
         position: "top",
       });
     } finally {
-      setIsLoading(false);
+      setdeletecommentLoading(false);
     }
   };
 
+  const fetchPostData = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
 
-  useFocusEffect(
-    useCallback(() => {
-      const fetchPostData = async () => {
-        try {
-          const token = await AsyncStorage.getItem('userToken');
-          if (!token) throw new Error('No token found');
+      const headers = { Authorization: `Bearer ${token}` };
+      const response = await axios.get(VIEW_EVENT, { headers });
 
-          const headers = { Authorization: `Bearer ${token}` };
-          const response = await axios.get(VIEW_EVENT, { headers });
-
-          if (response.status === 200 && response.data.status === true) {
-            const postData = response.data.data;
-            console.log("myeventpost", postData);
-            setMyeventpost(postData);
-          }
-        } catch (error) {
-          console.error('Error fetching post data:', error);
-        }
-      };
-
-      fetchPostData();
-    }, []) // Empty dependency array to prevent multiple re-renders
-  );
+      if (response.status === 200 && response.data.status === true) {
+        const postData = response.data.data;
+        console.log("myeventpost", postData);
+        setMyeventpost(postData);
+      }
+    } catch (error) {
+      console.error('Error fetching post data:', error);
+    }
+  };
 
   const GetEventNews = async () => {
     try {
@@ -318,13 +316,6 @@ const EventNews = ({ navigation }) => {
     }
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      GetEventNews();
-      setPage(1);
-    }, [])
-  )
-
   const getPostsForPage = () => {
     if (!Array.isArray(eventdata)) {
       console.error("eventdata is not an array:", eventdata);
@@ -354,37 +345,13 @@ const EventNews = ({ navigation }) => {
     }
   };
 
-
-  useFocusEffect(
-    useCallback(() => {
-      const fetchPostData = async () => {
-        try {
-          const token = await AsyncStorage.getItem('userToken');
-          if (!token) throw new Error('No token found');
-  
-          const headers = { Authorization: `Bearer ${token}` };
-          const response = await axios.get(VIEW_EVENT, { headers });
-  
-          if (response.status === 200 && response.data.status === true) {
-            const postData = response.data.data[0];
-            console.log("postData", postData);
-          }
-        } catch (error) {
-          console.error('Error fetching post data:', error);
-        }
-      };
-  
-      fetchPostData();
-    }, [])
-  );
-
   const openBottomSheet = (postId, comments) => {
     console.log("commentData", commentData);
     console.log("postId", postId);
-    setSelectedPostId(postId); 
-    setCommentData(comments); 
+    setSelectedPostId(postId);
+    setCommentData(comments);
     if (sheetRef.current) {
-      sheetRef.current.open(); 
+      sheetRef.current.open();
     }
   };
 
@@ -392,6 +359,10 @@ const EventNews = ({ navigation }) => {
     if (sheetRef.current) {
       sheetRef.current.close();
     }
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "EventNews" }],
+    });
   }
 
   const renderImages = (images, item) => {
@@ -487,7 +458,10 @@ const EventNews = ({ navigation }) => {
         <Text style={styles.captionText}>{item.description}</Text>
 
         <View style={styles.likeShareComment}>
-          <TouchableOpacity style={styles.likeShare} onPress={() => LIKE(item._id)}>
+          <TouchableOpacity
+            style={styles.likeShare}
+            onPress={() => LIKE(item._id, item.likes.length)}
+          >
             <AntDesign
               name={likeData[item._id]?.isLiked ? "heart" : "hearto"}
               size={20}
@@ -495,6 +469,7 @@ const EventNews = ({ navigation }) => {
             />
             <Text style={styles.shareText}>{likeData[item._id]?.likesCount ?? item.likes.length} Likes</Text>
           </TouchableOpacity>
+
 
           <TouchableOpacity style={styles.likeShare} onPress={() => openBottomSheet(item._id, item.comments)}>
             <FontAwesome5 name="comment" size={20} color="black" />
@@ -519,13 +494,12 @@ const EventNews = ({ navigation }) => {
           }}
         >
           <View style={styles.bottomSheetContent}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: SH(10) }}>
+            <View style={styles.headerContainer}>
               <Text style={styles.sheetHeader}>Comments</Text>
               <TouchableOpacity onPress={closeBottomSheet}>
                 <Entypo name={'cross'} color={Colors.dark} size={30} />
               </TouchableOpacity>
             </View>
-            {/* List of Comments */}
             <FlatList
               data={Array.isArray(commentData) ? commentData : []}
               keyExtractor={(item, index) => item?._id || index.toString()}
@@ -534,21 +508,44 @@ const EventNews = ({ navigation }) => {
                   <Text style={styles.emptyText}>No Comments Posted Yet</Text>
                 </View>
               }
+              showsVerticalScrollIndicator={false}
               renderItem={({ item }) => (
-                <View style={styles.commentContainer}>
-                  <Text style={styles.commentText}>{item?.comment}</Text>
-                  <Text style={styles.hour}>{GetTimeAgo(item?.date)}</Text>
-                  {item?.user === myprofile_id && (
-                    <TouchableOpacity onPress={() => DELETE_COMMENT(selectedPostId, item?._id)}>
-                      <Entypo name={'cross'} color={Colors.theme_color} size={15} />
+                <View style={styles.commentRow}>
+                  <Image
+                    source={
+                      item?.user?.photoUrl?.length > 0
+                        ? { uri: item.user.photoUrl[0] }
+                        : require('../../Images/NoImage.png')
+                    }
+                    style={styles.profileImage}
+                  />
+
+                  <View style={styles.commentDetails}>
+                    <View style={styles.nameTimeRow}>
+                      <Text style={styles.userName}>{item?.user?.username || "Unknown"}</Text>
+                      <Text style={styles.commentTime}>{GetTimeAgo(item?.date)}</Text>
+                    </View>
+                    <Text style={styles.commentText}>{item?.comment}</Text>
+                  </View>
+
+                  {item?.user?._id === myprofile_id && (
+                    <TouchableOpacity
+                      onPress={() => DELETE_COMMENT(selectedPostId, item?._id)}
+                      disabled={deletecommentLoading}
+                    >
+                      {deletecommentLoading ? (
+                        <Text style={{ color: Colors.theme_color, fontSize: 12 }}>Deleting...</Text>
+                      ) : (
+                        <Entypo name={'cross'} color={Colors.theme_color} size={15} />
+                      )}
                     </TouchableOpacity>
+
                   )}
                 </View>
               )}
+              contentContainerStyle={{ paddingBottom: SH(60) }}
             />
-
-            {/* Comment Input */}
-            <View style={styles.commentInputContainer}>
+            <View style={styles.fixedCommentInputContainer}>
               <TextInput
                 style={styles.input}
                 placeholder="Write a comment..."
@@ -558,14 +555,15 @@ const EventNews = ({ navigation }) => {
               />
               <TouchableOpacity
                 style={styles.postButton}
-                onPress={() => {
-                  COMMENT(selectedPostId);
-                  closeBottomSheet();
-                }}
-                disabled={!myComment.trim()}
+                onPress={() => COMMENT(selectedPostId)}
+                disabled={commentLoading || !Boolean(myComment.trim())}
               >
-                <Text style={styles.postButtonText}>Post</Text>
+                <Text style={styles.postButtonText}>
+                  {commentLoading ? "Posting..." : "Post"}
+                </Text>
               </TouchableOpacity>
+
+
             </View>
           </View>
         </RBSheet>
@@ -591,7 +589,12 @@ const EventNews = ({ navigation }) => {
       />
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: "center" }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity onPress={() => {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "MainApp" }],
+            });
+          }}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>News & Events</Text>

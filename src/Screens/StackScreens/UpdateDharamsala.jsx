@@ -109,32 +109,33 @@ const UpdateDharamsala = ({ navigation,route }) => {
     };
 
     const handleImageUpload = () => {
-      ImageCropPicker.openPicker({
-          multiple: true,
-          cropping: true,
-          width: 400,
-          height: 400,
-          compressImageQuality: 1,
-          mediaType: "photo"
-      })
-      .then((images) => {
-          if (images.length > 4) {
-              alert("You can only upload up to 4 Dharamsala photos.");
-              return;
-          }
-          
-          const newImages = images.map(img => ({ uri: img.path }));
-          
-          setDharamsalaData((prev) => ({
-              ...prev,
-              images: [...prev.images, ...newImages],
-          }));
-      })
-      .catch((err) => {
-          console.log("Crop Picker Error:", err);
-      });
-  };
-
+        ImageCropPicker.openPicker({
+            multiple: true,
+            cropping: true,
+            width: 400,
+            height: 400,
+            compressImageQuality: 1,
+            mediaType: "photo"
+        })
+        .then((images) => {
+            if (images.length > 4) {
+                alert("You can only upload up to 4 Dharamsala photos.");
+                return;
+            }
+            
+            // Purani images hatane ke liye sirf nayi images set karenge
+            const newImages = images.map(img => ({ uri: img.path }));
+    
+            setDharamsalaData((prev) => ({
+                ...prev,
+                images: newImages, // Purani images hata kar sirf nayi wali rakh rahe hain
+            }));
+        })
+        .catch((err) => {
+            console.log("Crop Picker Error:", err);
+        });
+    };
+    
   
   const convertToBase64 = async (images) => {
     try {

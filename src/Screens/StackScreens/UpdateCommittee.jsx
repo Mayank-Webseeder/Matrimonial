@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, SafeAreaView, StatusBar, ActivityIndicator,FlatList } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, FlatList } from 'react-native';
 import Colors from '../../utils/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -10,10 +10,10 @@ import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import { UPDATE_COMMITTEE } from '../../utils/BaseUrl';
-import { CityData,subCasteOptions } from '../../DummyData/DropdownData';
+import { CityData, subCasteOptions } from '../../DummyData/DropdownData';
 const UpdateCommittee = ({ navigation, route }) => {
     const { committeeData } = route.params;
- const [subCasteInput, setSubCasteInput] = useState('');
+    const [subCasteInput, setSubCasteInput] = useState('');
     const [cityInput, setCityInput] = useState('');
     const [filteredCities, setFilteredCities] = useState([]);
     const [filteredSubCaste, setFilteredSubCaste] = useState([]);
@@ -32,58 +32,58 @@ const UpdateCommittee = ({ navigation, route }) => {
     });
 
     const handleCityInputChange = (text) => {
-            setCityInput(text);
-            if (text) {
-                const filtered = CityData.filter((item) =>
-                    item?.label?.toLowerCase().includes(text.toLowerCase())
-                ).map(item => item.label);
-                setFilteredCities(filtered);
-            } else {
-                setFilteredCities([]);
-            }
-    
-            setCommitteeData(prevDharamsalaData => ({
-                ...prevDharamsalaData,
-                city: text,
-            }));
-        };
-    
-        const handleCitySelect = (item) => {
-            setCityInput(item);
-            setCommitteeData(prevDharamsalaData => ({
-                ...prevDharamsalaData,
-                city: item,
-            }));
+        setCityInput(text);
+        if (text) {
+            const filtered = CityData.filter((item) =>
+                item?.label?.toLowerCase().includes(text.toLowerCase())
+            ).map(item => item.label);
+            setFilteredCities(filtered);
+        } else {
             setFilteredCities([]);
-        };
-    
-        const handleSubCasteInputChange = (text) => {
-            setSubCasteInput(text);
-    
-            if (text) {
-                const filtered = subCasteOptions
-                    .filter((item) => item?.label?.toLowerCase().includes(text.toLowerCase()))
-                    .map((item) => item.label);
-    
-                setFilteredSubCaste(filtered);
-            } else {
-                setFilteredSubCaste([]);
-            }
-            setCommitteeData((prevDharamsalaData) => ({
-                ...prevDharamsalaData,
-                subCaste: text,
-            }));
-        };
-    
-        const handleSubCasteSelect = (selectedItem) => {
-            setSubCasteInput(selectedItem);
+        }
+
+        setCommitteeData(prevDharamsalaData => ({
+            ...prevDharamsalaData,
+            city: text,
+        }));
+    };
+
+    const handleCitySelect = (item) => {
+        setCityInput(item);
+        setCommitteeData(prevDharamsalaData => ({
+            ...prevDharamsalaData,
+            city: item,
+        }));
+        setFilteredCities([]);
+    };
+
+    const handleSubCasteInputChange = (text) => {
+        setSubCasteInput(text);
+
+        if (text) {
+            const filtered = subCasteOptions
+                .filter((item) => item?.label?.toLowerCase().includes(text.toLowerCase()))
+                .map((item) => item.label);
+
+            setFilteredSubCaste(filtered);
+        } else {
             setFilteredSubCaste([]);
-            setCommitteeData((prevDharamsalaData) => ({
-                ...prevDharamsalaData,
-                subCaste: selectedItem,
-            }));
-        };
-    
+        }
+        setCommitteeData((prevDharamsalaData) => ({
+            ...prevDharamsalaData,
+            subCaste: text,
+        }));
+    };
+
+    const handleSubCasteSelect = (selectedItem) => {
+        setSubCasteInput(selectedItem);
+        setFilteredSubCaste([]);
+        setCommitteeData((prevDharamsalaData) => ({
+            ...prevDharamsalaData,
+            subCaste: selectedItem,
+        }));
+    };
+
 
     // Function to Convert Image to Base64
     const convertToBase64 = async (imageUri) => {
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
         marginBottom: SH(20),
     },
     uploadButton: { backgroundColor: Colors.theme_color, paddingHorizontal: SW(5), borderRadius: 5, alignItems: 'center', alignSelf: "flex-end" },
-    uploadButtonText: { color: Colors.light, fontSize: SF(10), fontFamily: "Poppins-Medium", textAlign: "center" },
+    uploadButtonText: { color: Colors.light, fontSize: SF(12), fontFamily: "Poppins-Medium", textAlign: "center" },
     imagePreviewContainer: { width: SW(70), height: SH(70), borderRadius: 10, marginVertical: SH(10) },
     submitButton: { backgroundColor: Colors.theme_color, paddingVertical: SH(5), borderRadius: 5, alignItems: 'center', marginTop: SH(20) },
     submitButtonText: { color: Colors.light, fontSize: SF(15), fontWeight: 'Poppins-Bold', textTransform: "capitalize" }

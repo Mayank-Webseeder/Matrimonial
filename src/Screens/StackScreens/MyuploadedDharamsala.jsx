@@ -10,6 +10,7 @@ import axios from 'axios';
 import ImageViewing from 'react-native-image-viewing';
 import { DELETE_DHARAMSALA } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SH } from '../../utils/Dimensions';
 
 const MyuploadedDharamsala = ({ navigation, route }) => {
   const { DharmshalaData } = route.params;
@@ -100,7 +101,7 @@ const MyuploadedDharamsala = ({ navigation, route }) => {
     return (
       <View style={styles.card}
       >
-        <Pressable style={styles.cardData} onPress={() => navigation.navigate("DharamsalaDetail", { DharamsalaData: item, isSaved: isSaved, _id: item._id })} >
+        <Pressable style={styles.cardData} >
           <TouchableOpacity onPress={() => openImageViewer(item.images?.[0])}>
             <Image
               source={item.images?.[0] ? { uri: item.images?.[0] } : require('../../Images/NoImage.png')}
@@ -108,16 +109,15 @@ const MyuploadedDharamsala = ({ navigation, route }) => {
             />
           </TouchableOpacity>
 
-          {/* Image Viewer Modal */}
           {selectedImage && (
             <ImageViewing
-              images={[{ uri: selectedImage }]} // Now, it correctly updates per click
+              images={[{ uri: selectedImage }]} 
               imageIndex={0}
               visible={isImageVisible}
               onRequestClose={() => setImageVisible(false)}
             />
           )}
-          <View style={styles.leftContainer}>
+        <View style={[styles.leftContainer,{marginTop:SH(5)}]}>
             <Text style={styles.text}>{item.dharmshalaName}</Text>
             <Text style={[styles.smalltext, { fontFamily: 'Poppins-Medium' }]}>
               {item.subCaste}
@@ -165,6 +165,13 @@ const MyuploadedDharamsala = ({ navigation, route }) => {
                 }}
               >
                 <Text style={[styles.deleteText, { color: 'red' }]}>Delete</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.modalOption}
+                onPress={() => navigation.navigate("DharamsalaDetail", { DharamsalaData: item, isSaved: isSaved, _id: item._id })}
+              >
+                <Text style={[styles.updateText]}>View Details</Text>
               </TouchableOpacity>
 
             </View>

@@ -382,7 +382,7 @@ const styles = StyleSheet.create({
     uploadButtonText: {
         color: Colors.light,
         fontFamily: "Poppins-Medium",
-        fontSize: SF(13),
+        fontSize: SF(12),
     },
     imagePreview: {
         width: '100%',

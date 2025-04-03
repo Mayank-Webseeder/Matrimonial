@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, Modal } from 'react-native';
+import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, Modal, TextInput } from 'react-native';
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import styles from '../StyleScreens/EventNewsStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -12,22 +12,31 @@ import Globalstyles from '../../utils/GlobalCss';
 import moment from 'moment';
 import Toast from 'react-native-toast-message';
 import RBSheet from "react-native-raw-bottom-sheet";
-import { DELETE_EVENT } from '../../utils/BaseUrl';
+import { DELETE_EVENT, COMMENTPOST, LIKEPOST } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector } from 'react-redux';
-
+import { useFocusEffect } from '@react-navigation/native';
 const ViewMyEventPost = ({ navigation, route }) => {
   const sheetRef = useRef(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
   const [modalData, setModalData] = useState(null);
   const { events } = route.params;
-  const [commentData, setCommentData] = useState(' ');
+  const [commentData, setCommentData] = useState({});
+  const [selectedPostId, setSelectedPostId] = useState(null)
   const [page, setPage] = useState(1);
   const [IsLoading, setIsLoading] = useState(false);
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
   const postsPerPage = 3;
+  const [myComment, setMyComment] = useState("");
+  const [likeData, setLikeData] = useState({});
+  const [LikeLoading, setLikeLoading] = useState(false);
+  const [commentLoading, setCommentLoading] = useState(false);
+  const [deletecommentLoading, setdeletecommentLoading] = useState(false);
+  const ProfileData = useSelector((state) => state.profile);
+  const profileData = ProfileData?.profiledata || {};
+  const myprofile_id = profileData?._id || null;
 
   const getTimeAgo = (createdAt) => {
     const eventTime = moment(createdAt);
@@ -42,6 +51,14 @@ const ViewMyEventPost = ({ navigation, route }) => {
     }
   };
 
+  const handleShare = async () => {
+    Toast.show({
+      type: "info",
+      text1: "Info",
+      text2: "Under development",
+      position: "top",
+    });
+  };
 
   const GetTimeAgo = (date) => {
     const eventTime = moment(date);
@@ -65,6 +82,184 @@ const ViewMyEventPost = ({ navigation, route }) => {
   const formatDateTime = (createdAt) => {
     return moment(createdAt).format('MMM D [at] hh:mm A');
   };
+  useFocusEffect(
+    useCallback(() => {
+      setPage(1);
+    }, [])
+  );
+
+  const LIKE = async (postId, initialLikesCount) => {
+    try {
+      setLikeLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) throw new Error("No token found");
+
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+
+      setLikeData((prevState) => {
+        const prevLikeData = prevState[postId] || {
+          isLiked: false,
+          likesCount: initialLikesCount
+        };
+
+        return {
+          ...prevState,
+          [postId]: {
+            ...prevLikeData,
+            isLiked: !prevLikeData.isLiked,
+            likesCount: prevLikeData.isLiked
+              ? prevLikeData.likesCount - 1
+              : prevLikeData.likesCount + 1,
+          },
+        };
+      });
+
+      const response = await axios.post(LIKEPOST, { postId }, { headers });
+
+      if (!(response.status === 200 && response.data.status === true)) {
+        throw new Error(response.data.message || "Failed to like event.");
+      }
+
+    } catch (error) {
+      console.error("Error liking post:", error?.response?.data || error.message);
+
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error?.response?.data?.message || "Failed to like event. Please try again!",
+        position: "top",
+      });
+
+      // Reverse the like state on error
+      setLikeData((prevState) => {
+        const prevLikeData = prevState[postId] || {
+          isLiked: false,
+          likesCount: initialLikesCount
+        };
+
+        return {
+          ...prevState,
+          [postId]: {
+            ...prevLikeData,
+            isLiked: !prevLikeData.isLiked,
+            likesCount: prevLikeData.isLiked
+              ? prevLikeData.likesCount + 1
+              : prevLikeData.likesCount - 1,
+          },
+        };
+      });
+
+    } finally {
+      setLikeLoading(false);
+    }
+  };
+
+  const COMMENT = async (postId) => {
+    try {
+      setCommentLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) throw new Error("No token found");
+
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+
+      const payload = {
+        postId: postId,
+        comment: myComment,
+      };
+
+      const response = await axios.post(COMMENTPOST, payload, { headers });
+
+      if (response.status === 200 && response.data.status === true) {
+        const fetchedData = response.data;
+        console.log("Updated comments:", JSON.stringify(fetchedData.comments));
+
+        setMyComment("");
+
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: fetchedData.message || "Comment added successfully!",
+          position: "top",
+          onHide: () => {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "EventNews" }],
+            });
+          }
+        });
+
+      } else if (response.status === 400) {
+        throw new Error(response.data.message || "Invalid request.");
+      }
+
+    } catch (error) {
+      console.error("Error adding comment:", error?.response?.data || error.message);
+
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error?.response?.data?.message || "Failed to add comment. Please try again!",
+        position: "top",
+      });
+    } finally {
+      setCommentLoading(false);
+    }
+  };
+
+  const DELETE_COMMENT = async (postId, commentId) => {
+    console.log("postId", postId, "commentId", commentId);
+    try {
+      setdeletecommentLoading(true);
+      const token = await AsyncStorage.getItem("userToken");
+
+      if (!token) throw new Error("No token found");
+
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+
+      console.log("headers", headers);
+
+      const response = await axios.delete(
+        `https://api-matrimonial.webseeder.tech/api/v1/event/${postId}/delete-comment/${commentId}`,
+        { headers }
+      );
+
+      if (response.data) {
+        console.log("Updated comments:", JSON.stringify(response.data.comments));
+
+        setCommentData((prevComments) =>
+          prevComments.filter((comment) => comment._id !== commentId)
+        );
+
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "Comment deleted successfully!",
+          position: "top",
+        });
+      }
+    } catch (error) {
+      console.error("Error deleting comment:", error?.response?.data || error.message);
+
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error?.response?.data?.message || "Failed to delete comment. Please try again!",
+        position: "top",
+      });
+    } finally {
+      setdeletecommentLoading(false);
+    }
+  };
+
 
   const DELETE_EVENT_POST = async (postId) => {
     console.log("🗑️ Deleting Post ID:", postId);
@@ -128,6 +323,8 @@ const ViewMyEventPost = ({ navigation, route }) => {
   };
 
 
+
+
   const getPostsForPage = () => {
     if (!Array.isArray(events)) {
       console.error("eventdata is not an array:", events);
@@ -157,18 +354,24 @@ const ViewMyEventPost = ({ navigation, route }) => {
     }
   };
 
-  const openBottomSheet = (_id, comments) => {
-    console.log("commentData aara h kya ", comments);
+  const openBottomSheet = (postId, comments) => {
+    console.log("commentData", commentData);
+    console.log("postId", postId);
+    setSelectedPostId(postId);
     setCommentData(comments);
     if (sheetRef.current) {
       sheetRef.current.open();
     }
   };
-  
+
   const closeBottomSheet = () => {
     if (sheetRef.current) {
       sheetRef.current.close();
     }
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "EventNews" }],
+    });
   }
 
   const showModal = (event, item) => {
@@ -260,13 +463,13 @@ const ViewMyEventPost = ({ navigation, route }) => {
         <View style={styles.cardheader}>
           <View style={{ display: "flex", flexDirection: 'row', alignItems: 'center' }}>
             <View>
-            <Image source={{ uri: MyActivistProfile?.profilePhoto }} style={styles.EventheaderImage} />
+              <Image source={{ uri: MyActivistProfile?.profilePhoto }} style={styles.EventheaderImage} />
             </View>
             <View>
               {/* <Text style={styles.name}>
                 {item.activistName} <Text style={styles.hour}>{getTimeAgo(item.createdAt)}</Text>
               </Text> */}
-               <Text style={styles.name}>
+              <Text style={styles.name}>
                 {item.activistName} <Text style={styles.hour}>{MyActivistProfile?.activistId}</Text>
               </Text>
               <Text style={styles.date_time}>{formatDateTime(item.createdAt)}</Text>
@@ -336,19 +539,29 @@ const ViewMyEventPost = ({ navigation, route }) => {
         <Text style={styles.captionText}>{item.description}</Text>
 
         <View style={styles.likeShareComment}>
-          <TouchableOpacity style={styles.likeShare}>
-            <AntDesign name={"heart"} size={20} color={"red"} />
-            <Text style={styles.shareText}>{item.likes.length} Likes</Text>
+          <TouchableOpacity
+            style={styles.likeShare}
+            onPress={() => LIKE(item._id, item.likes.length)}
+          >
+            <AntDesign
+              name={likeData[item._id]?.isLiked ? "heart" : "hearto"}
+              size={20}
+              color={likeData[item._id]?.isLiked ? "red" : Colors.dark}
+            />
+            <Text style={styles.shareText}>{likeData[item._id]?.likesCount ?? item.likes.length} Likes</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.likeShare} onPress={() => openBottomSheet(item._id, item.comments)} >
+
+
+          <TouchableOpacity style={styles.likeShare} onPress={() => openBottomSheet(item._id, item.comments)}>
             <FontAwesome5 name="comment" size={20} color="black" />
             <Text style={styles.shareText}>{item.comments.length} Comments</Text>
           </TouchableOpacity>
 
-          <View style={styles.likeShare}>
+
+          <TouchableOpacity style={styles.likeShare} onPress={handleShare}>
             <Feather name="send" size={20} color={Colors.dark} />
             <Text style={styles.shareText}>250 Shares</Text>
-          </View>
+          </TouchableOpacity>
         </View>
         <RBSheet
           ref={sheetRef}
@@ -362,24 +575,74 @@ const ViewMyEventPost = ({ navigation, route }) => {
           }}
         >
           <View style={styles.bottomSheetContent}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginRight: SW(10) }}>
+            <View style={styles.headerContainer}>
               <Text style={styles.sheetHeader}>Comments</Text>
               <TouchableOpacity onPress={closeBottomSheet}>
-                <Entypo name={'cross'} color={Colors.dark} size={25} />
+                <Entypo name={'cross'} color={Colors.dark} size={30} />
               </TouchableOpacity>
             </View>
-            {/* List of Comments */}
             <FlatList
               data={Array.isArray(commentData) ? commentData : []}
               keyExtractor={(item, index) => item?._id || index.toString()}
+              ListEmptyComponent={
+                <View style={styles.emptyContainer}>
+                  <Text style={styles.emptyText}>No Comments Posted Yet</Text>
+                </View>
+              }
+              showsVerticalScrollIndicator={false}
               renderItem={({ item }) => (
-                <View style={styles.commentContainer}>
-                  <Text style={styles.commentText}>{item?.comment}</Text>
-                  <Text style={styles.hour}>{GetTimeAgo(item?.date)}</Text>
+                <View style={styles.commentRow}>
+                  <Image
+                    source={
+                      item?.user?.photoUrl?.length > 0
+                        ? { uri: item.user.photoUrl[0] }
+                        : require('../../Images/NoImage.png')
+                    }
+                    style={styles.profileImage}
+                  />
+
+                  <View style={styles.commentDetails}>
+                    <View style={styles.nameTimeRow}>
+                      <Text style={styles.userName}>{item?.user?.username || "Unknown"}</Text>
+                      <Text style={styles.commentTime}>{GetTimeAgo(item?.date)}</Text>
+                    </View>
+                    <Text style={styles.commentText}>{item?.comment}</Text>
+                  </View>
+                  {item?.user?._id === myprofile_id && (
+                    <TouchableOpacity
+                      onPress={() => DELETE_COMMENT(selectedPostId, item?._id)}
+                      disabled={deletecommentLoading}
+                    >
+                      {deletecommentLoading ? (
+                        <Text style={{ color: Colors.theme_color, fontSize: 12 }}>Deleting...</Text>
+                      ) : (
+                        <Entypo name={'cross'} color={Colors.theme_color} size={15} />
+                      )}
+                    </TouchableOpacity>
+
+                  )}
                 </View>
               )}
-              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: SH(60) }}
             />
+            <View style={styles.fixedCommentInputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="Write a comment..."
+                value={myComment}
+                onChangeText={setMyComment}
+                placeholderTextColor={Colors.gray}
+              />
+              <TouchableOpacity
+                style={styles.postButton}
+                onPress={() => COMMENT(selectedPostId)}
+                disabled={commentLoading || !Boolean(myComment.trim())}
+              >
+                <Text style={styles.postButtonText}>
+                  {commentLoading ? "Posting..." : "Post"}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </RBSheet>
 

@@ -46,7 +46,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: SW(5),
         paddingVertical: SH(5),
         borderRadius: 5,
-        color: Colors.theme_color
+        color: Colors.theme_color,
+        textTransform:"capitalize"
     },
     viewAll: {
         marginHorizontal: SW(10),
@@ -58,7 +59,8 @@ const styles = StyleSheet.create({
         fontSize: SF(14),
         color: Colors.theme_color,
         fontFamily: 'Poppins-Bold',
-        textAlign: "center"
+        textAlign: "center",
+        textTransform:"capitalize"
 
     },
     card: {
@@ -100,22 +102,26 @@ const styles = StyleSheet.create({
         fontSize: SF(14),
         fontFamily: 'Poppins-Bold',
         color: '#333',
+         textTransform:"capitalize"
     },
     city: {
         fontSize: SF(14),
         fontFamily: 'Poppins-Regular',
         color: '#555',
+         textTransform:"capitalize"
     },
     text: {
         fontSize: SF(13),
         fontFamily: 'Poppins-Regular',
         color: '#555',
+         textTransform:"capitalize"
     },
     subcaste: {
         fontSize: SF(13),
         fontFamily: 'Poppins-Regular',
         color: '#555',
         marginTop: 5,
+         textTransform:"capitalize"
     },
     Sliderimage: {
         width: '100%',

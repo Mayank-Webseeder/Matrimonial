@@ -34,6 +34,7 @@ const Home = ({ navigation }) => {
   const [allbiodata, setallBiodata] = useState("");
   // const [mybiodata, setMybiodata] = useState("");
   const MyprofileData = useSelector((state) => state.getBiodata);
+  const hasBiodata = Object.keys(MyprofileData?.Biodata || {}).length > 0;
   const partnerPreferences = MyprofileData?.Biodata?.partnerPreferences || null;
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -81,6 +82,7 @@ const Home = ({ navigation }) => {
   const getBiodata = async () => {
     try {
       setLoading(true)
+      setMybiodata("")
       const token = await AsyncStorage.getItem('userToken');
       if (!token) throw new Error('No token found');
 
@@ -109,8 +111,9 @@ const Home = ({ navigation }) => {
   const handleNavigateToProfile = (item) => {
     console.log("item", item);
     if (!navigation.isFocused()) return;
-    if (!partnerPreferences) {
-      console.log("Navigating to Matrimonial because Partner Preferences are missing");
+  
+    if (!hasBiodata) {
+      console.log("Navigating to ShortMatrimonialProfile because Biodata is missing");
       navigation.navigate("ShortMatrimonialProfile", {
         userDetails: item,
       });
@@ -120,7 +123,7 @@ const Home = ({ navigation }) => {
         userDetails: item,
         userId: item?.userId,
         isSaved: item?.isSaved,
-        isBlur:item.isBlur
+        isBlur: item?.isBlur
       });
     }
   };
@@ -156,6 +159,7 @@ const Home = ({ navigation }) => {
 
   const GetAll_Biodata = async () => {
     setLoading(true)
+    setallBiodata("")
     try {
       setLoading(true)
       const token = await AsyncStorage.getItem("userToken");

@@ -67,7 +67,7 @@ const Dharmshala = () => {
 
   const handleOptionSelect = (value) => {
     setSubcaste(value.label);
-    setFilteredOptions([]); // Clear suggestions after selection
+    setFilteredOptions([]); 
   };
 
   useEffect(() => {

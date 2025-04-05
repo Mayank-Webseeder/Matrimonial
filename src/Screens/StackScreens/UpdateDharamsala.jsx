@@ -243,7 +243,7 @@ const handleUpdateDharamSala = async () => {
             }
         );
 
-        console.log("Response from API:", response.data); // Debugging
+        console.log("Response from API:", response.data); 
 
         Toast.show({
             type: "success",
@@ -253,7 +253,7 @@ const handleUpdateDharamSala = async () => {
 
         setTimeout(() => {
             navigation.navigate("Dharmshala");
-        }, 1500);
+        }, 1000);
     } catch (error) {
         console.error("Update error:", error);
         console.log("Error response:", error.response?.data);
@@ -412,6 +412,7 @@ const handleUpdateDharamSala = async () => {
                     )}
                 </TouchableOpacity>
             </View>
+            <Toast/>
         </SafeAreaView>
     );
 };

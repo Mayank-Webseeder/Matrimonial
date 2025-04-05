@@ -133,8 +133,20 @@ const Matrimonial = ({ navigation }) => {
   };
 
   const popop = async () => {
-    ToastAndroid.show("Please create biodata to see full information of the this profile", ToastAndroid.SHORT);
-  }
+    ToastAndroid.show(
+      "Please create biodata to see full information of this profile",
+      ToastAndroid.SHORT
+    );
+  
+    setTimeout(() => {
+      if (!MyprofileData) {
+        navigation.navigate("MatrimonyPage");
+      } else if (!partnerPreferences) {
+        navigation.navigate("MainPartnerPrefrence");
+      }
+    }, 2000); 
+  };
+  
 
 
   const savedProfiles = async (_id) => {
@@ -224,6 +236,11 @@ const Matrimonial = ({ navigation }) => {
   };
 
   const renderProfileCard = ({ item }) => {
+
+    const formattedHeight = item?.personalDetails?.heightFeet
+    ?.replace(/\s*-\s*/, "")
+    ?.replace(/\s+/g, "");
+
     return (
       <View style={styles.card}>
         <Pressable onPress={popop}>
@@ -250,7 +267,7 @@ const Matrimonial = ({ navigation }) => {
               {/* Left Column */}
               <View style={styles.leftColumn}>
                 <Text style={[styles.text, styles.rowItem]}>
-                  {new Date().getFullYear() - new Date(item?.personalDetails?.dob).getFullYear()} Yrs. , {item?.personalDetails?.heightFeet}
+                  {new Date().getFullYear() - new Date(item?.personalDetails?.dob).getFullYear()} Yrs. , {formattedHeight}
                 </Text>
                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.subCaste}</Text>
                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.maritalStatus}</Text>
@@ -262,7 +279,7 @@ const Matrimonial = ({ navigation }) => {
               <View style={styles.rightColumn}>
                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.currentCity}</Text>
                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.occupation}</Text>
-                <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.annualIncome} INR </Text>
+                <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.annualIncome} </Text>
                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.qualification}</Text>
               </View>
             </View>
@@ -326,8 +343,6 @@ const Matrimonial = ({ navigation }) => {
                   <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>Boys</Text>
                 </TouchableOpacity>
               </View>
-
-              {/* Right Side: Set Preferences */}
               <TouchableOpacity
                 style={[styles.button, activeButton === 3 ? styles.activeButton : styles.inactiveButton]}
                 onPress={() => {

@@ -196,6 +196,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                         navigation.navigate("Dharmshala");
                     }
                 );
+                ToastAndroid.show("Dharamsala Created Successfully",ToastAndroid.SHORT);
     
             } else {
                 throw new Error(response.data.message || "Something went wrong");
@@ -214,9 +215,6 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
         }
     };
     
-    
-    
-
     return (
         <SafeAreaView style={Globalstyles.container}>
             <StatusBar
@@ -354,6 +352,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     )}
                 </TouchableOpacity>
             </View>
+            <Toast/>
         </SafeAreaView>
     );
 };

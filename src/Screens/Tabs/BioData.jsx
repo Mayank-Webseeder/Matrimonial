@@ -25,14 +25,10 @@ const BioData = ({ navigation }) => {
   const savedProfiles = all_profiles?.savedProfiles || [];
   const interestedProfiles = all_profiles?.interestedProfiles || [];
   const allProfiles = all_profiles?.allProfiles || [];
-  const [showAllSaved, setShowAllSaved] = useState(false);
-  const [showAllMatrimony, setShowAllMatrimony] = useState(false);
-  const [showAllInterested, setShowAllInterested] = useState(false);
-  const [showAllProfiles, setShowAllProfiles] = useState(false);
-
 
   const get_all_mixed_matrimony_profiles = async () => {
     try {
+      setAllprofiles({});
       setIsLoading(true)
       const token = await AsyncStorage.getItem('userToken');
       if (!token) throw new Error('No token found');
@@ -106,26 +102,32 @@ const BioData = ({ navigation }) => {
   };
 
 
-  const renderProfileData = ({ item }) => (
-    <TouchableOpacity style={styles.card} onPress={() => handleNavigateToProfile(item)}>
-      <Image style={styles.image} source={{ uri: item?.personalDetails?.closeUpPhoto }} />
+  const renderProfileData = ({ item }) => {
+    const formattedHeight = item?.personalDetails?.heightFeet
+        ?.replace(/\s*-\s*/, "")
+        ?.replace(/\s+/g, "");
 
-      <View style={styles.detailsContainer}>
-        <Text style={styles.name}>{item?.personalDetails?.fullname}</Text>
-
-        <View style={styles.row2}>
-          <Text style={styles.city}>{item?.personalDetails?.cityOrVillage}</Text>
-          <Text style={styles.text}>{item?.personalDetails?.subCaste}</Text>
+    return (
+      <TouchableOpacity style={styles.card} onPress={() => handleNavigateToProfile(item)}>
+        <Image style={styles.image} source={{ uri: item?.personalDetails?.closeUpPhoto }} />
+  
+        <View style={styles.detailsContainer}>
+          <Text style={styles.name}>{item?.personalDetails?.fullname}</Text>
+  
+          <View style={styles.row2}>
+            <Text style={styles.city}>{item?.personalDetails?.cityOrVillage}</Text>
+            <Text style={styles.text}>{item?.personalDetails?.subCaste}</Text>
+          </View>
+  
+          <View style={styles.row2}>
+            <Text style={styles.text}>Height: {formattedHeight}</Text>
+            <Text style={styles.text}>{calculateAge(item?.personalDetails?.dob)} Years</Text>
+          </View>
         </View>
-
-        <View style={styles.row2}>
-          <Text style={styles.text}>Height: {item?.personalDetails?.heightFeet} ft</Text>
-          <Text style={styles.text}>{calculateAge(item?.personalDetails?.dob)} Years</Text>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
-
+      </TouchableOpacity>
+    );
+  };
+  
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>

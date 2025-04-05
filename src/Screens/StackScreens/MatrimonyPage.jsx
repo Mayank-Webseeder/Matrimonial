@@ -15,13 +15,14 @@ import PhotoGallery from './PhotoGallery';
 import ImageViewing from 'react-native-image-viewing';
 
 
-const MatrimonyPage = ({ navigation }) => {
+const MatrimonyPage = ({ navigation,route }) => {
+    const { profileData } = route.params;
     const [activeComponent, setActiveComponent] = useState("DetailedProfile");
-    const profileData = useSelector((state) => state.profile);
+    const profile_Data = useSelector((state) => state.profile);
     console.log("profileData in myprofile", profileData);
-    const image = profileData?.profiledata?.photoUrl?.[0];
+    const image = profile_Data?.profiledata?.photoUrl?.[0];
     console.log("image", image);
-    const formattedDate = moment(profileData?.profiledata?.dob).format("DD/MM/YYYY");
+    const formattedDate = moment(profile_Data?.profiledata?.dob).format("DD/MM/YYYY");
     const MyprofileData = useSelector((state) => state.getBiodata);
     const [biodataAvailable, setBiodataAvailable] = useState(false);
     const [visible, setVisible] = useState(false);
@@ -33,6 +34,7 @@ const MatrimonyPage = ({ navigation }) => {
     };
 
     useEffect(() => {
+        console.log("profileData",profileData);
         if (MyprofileData?.Biodata) {
             setBiodataAvailable(true);
         }
@@ -45,15 +47,16 @@ const MatrimonyPage = ({ navigation }) => {
     const renderActiveComponent = () => {
         switch (activeComponent) {
             case "DetailedProfile":
-                return <DetailedProfile navigation={navigation} />;
+                return <DetailedProfile navigation={navigation} profileData={profileData} />;
             case "PartnersPreference":
-                return <PartnersPreference navigation={navigation} />;
+                return <PartnersPreference navigation={navigation} profileData={profileData} />;
             case "PhotoGallery":
-                return <PhotoGallery navigation={navigation} />;
+                return <PhotoGallery navigation={navigation} profileData={profileData} />;
             default:
                 return null;
         }
     };
+    
 
     return (
         <SafeAreaView style={Globalstyles.container}>
@@ -63,7 +66,7 @@ const MatrimonyPage = ({ navigation }) => {
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
                     </TouchableOpacity>
-                    <Text style={Globalstyles.headerText}>{profileData?.profiledata?.username || 'NA'} Profile</Text>
+                    <Text style={Globalstyles.headerText}>{profile_Data?.profiledata?.username || 'NA'} Profile</Text>
                 </View>
             </View>
             <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -82,14 +85,14 @@ const MatrimonyPage = ({ navigation }) => {
 
                     <View style={styles.userDeatil}>
                         <View>
-                            <Text style={styles.text}>{capitalizeFirstLetter(profileData?.profiledata?.username || 'NA')}</Text>
+                            <Text style={styles.text}>{capitalizeFirstLetter(profile_Data?.profiledata?.username || 'NA')}</Text>
                             <Text style={styles.text}>DOB: {formattedDate || 'NA'}</Text>
-                            <Text style={styles.text}>City: {capitalizeFirstLetter(profileData?.profiledata?.city || 'NA')}</Text>
+                            <Text style={styles.text}>City: {capitalizeFirstLetter(profile_Data?.profiledata?.city || 'NA')}</Text>
                         </View>
                         <View>
                             <Text style={styles.text}>
-                                Contact: {profileData?.profiledata?.mobileNo}</Text>
-                            <Text style={styles.text}>Gender: {capitalizeFirstLetter(profileData?.profiledata?.gender || 'NA')}</Text>
+                                Contact: {profile_Data?.profiledata?.mobileNo}</Text>
+                            <Text style={styles.text}>Gender: {capitalizeFirstLetter(profile_Data?.profiledata?.gender || 'NA')}</Text>
                         </View>
                     </View>
 

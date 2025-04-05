@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -18,7 +18,7 @@ const ReportPage = ({ navigation, route }) => {
   const [additionalDetails, setAdditionalDetails] = useState('');
   const [isFocus, setIsFocus] = useState(false);
   const [errors, setErrors] = useState({});
-
+  const [isLoading, setIsLoading] = useState(false);
   const reportOptions = [
     { label: 'Fake Profile', value: 'Fake Profile' },
     { label: 'Inappropriate Content', value: 'Inappropriate Content' },
@@ -39,11 +39,11 @@ const ReportPage = ({ navigation, route }) => {
   };
 
   const handleSubmit = async () => {
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     try {
+      setIsLoading(true); 
+
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
 
@@ -58,7 +58,6 @@ const ReportPage = ({ navigation, route }) => {
       };
 
       const API_URL = `${REPORT}/${profileId}`;
-
       console.log("Submitting Report to:", API_URL);
       console.log("Payload:", payload);
 
@@ -76,24 +75,19 @@ const ReportPage = ({ navigation, route }) => {
         setTimeout(() => {
           navigation.goBack();
         }, 2000);
-        return;
+      } else {
+        throw new Error(response.data.message || "Something went wrong");
       }
-
-      throw new Error(response.data.message || "Something went wrong");
     } catch (error) {
       console.error("🚨 Error submitting report:", error.response?.data || error.message);
 
-      let errorMessage = "Failed to submit report. Please try again later.";
-
-      if (error.response?.status === 400) {
-        errorMessage = error.response.data?.message || "Bad request.";
-      }
-
       Toast.show({
         type: "error",
-        text1: "Error",
-        text2: errorMessage,
+        text1:error.response?.data?.message1,
+        text2: error.response?.data?.message2,
       });
+    } finally {
+      setIsLoading(false);  
     }
   };
 
@@ -144,8 +138,16 @@ const ReportPage = ({ navigation, route }) => {
           textAlignVertical="top"
         />
 
-        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={styles.submitButtonText}>Submit Report</Text>
+        <TouchableOpacity
+          style={styles.submitButton}
+          onPress={handleSubmit}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <ActivityIndicator size="small" color="#ffffff" />
+          ) : (
+            <Text style={styles.submitButtonText}>Submit Report</Text>
+          )}
         </TouchableOpacity>
       </View>
       <Toast />

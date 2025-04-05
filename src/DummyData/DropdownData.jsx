@@ -183,20 +183,20 @@ export const genderData = [
 ];
 
 export const Income = [
-  { label: 'Less than ₹1 Lakh', value: '<1L' },
-  { label: '₹1 Lakh - ₹5 Lakh', value: '1L-5L' },
-  { label: '₹5 Lakh - ₹10 Lakh', value: '5L-10L' },
-  { label: '₹10 Lakh - ₹20 Lakh', value: '10L-20L' },
-  { label: 'Above ₹20 Lakh', value: '>20L' },
+  { label: 'Less than 1 Lakh INR', value: 'Less than 1 Lakh INR' },
+  { label: '1 Lakh - 5 Lakh INR', value: '1 Lakh - 5 Lakh INR' },
+  { label: '5 Lakh - 10 Lakh INR', value: '5 Lakh - 10 Lakh INR' },
+  { label: '10 Lakh - 20 Lakh INR', value: '10 Lakh - 20 Lakh INR' },
+  { label: 'Above 20 Lakh INR', value: 'Above 20 Lakh INR' },
   { label: 'No Income', value: 'No Income' },
 ]
 
 export const PartnerFamliyIncome = [
-  { label: 'Less than ₹1 Lakh', value: '<1L' },
-  { label: '₹1 Lakh - ₹5 Lakh', value: '1L-5L' },
-  { label: '₹5 Lakh - ₹10 Lakh', value: '5L-10L' },
-  { label: '₹10 Lakh - ₹20 Lakh', value: '10L-20L' },
-  { label: 'Above ₹20 Lakh', value: '>20L' },
+  { label: 'Less than 1 Lakh INR', value: 'Less than 1 Lakh INR' },
+  { label: '1 Lakh - 5 Lakh INR', value: '1 Lakh - 5 Lakh INR' },
+  { label: '5 Lakh - 10 Lakh INR', value: '5 Lakh - 10 Lakh INR' },
+  { label: '10 Lakh - 20 Lakh INR', value: '10 Lakh - 20 Lakh INR' },
+  { label: 'Above 20 Lakh INR', value: 'Above 20 Lakh INR' },
   { label: 'No Income', value: 'No Income' },
   { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
 ]
@@ -310,11 +310,11 @@ export const FamilyFinancialStatusData = [
 ];
 
 export const FamilyIncomeData = [
-  { label: 'Less than ₹1 Lakh', value: '<1L' },
-  { label: '₹1 Lakh - ₹5 Lakh', value: '1L-5L' },
-  { label: '₹5 Lakh - ₹10 Lakh', value: '5L-10L' },
-  { label: '₹10 Lakh - ₹20 Lakh', value: '10L-20L' },
-  { label: 'Above ₹20 Lakh', value: '>20L' },
+  { label: 'Less than 1 Lakh INR', value: 'Less than 1 Lakh INR' },
+  { label: '1 Lakh - 5 Lakh INR', value: '1 Lakh - 5 Lakh INR' },
+  { label: '5 Lakh - 10 Lakh INR', value: '5 Lakh - 10 Lakh INR' },
+  { label: '10 Lakh - 20 Lakh INR', value: '10 Lakh - 20 Lakh INR' },
+  { label: 'Above 20 Lakh INR', value: 'Above 20 Lakh INR' },
   { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
 ];
 

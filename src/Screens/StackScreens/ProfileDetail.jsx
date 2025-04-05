@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, ScrollView, Image, TouchableOpacity, Linking, ToastAndroid } from 'react-native';
+import { View, Text, ActivityIndicator, ScrollView, Image, TouchableOpacity, Linking, ToastAndroid ,Alert } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from '../StyleScreens/ProfileDetailStyle';
@@ -121,62 +121,47 @@ const ProfileDetail = ({ route, navigation }) => {
         ?.replace(/\s*-\s*/, "")
         ?.replace(/\s+/g, "");
 
-    const Repost = async () => {
-        setPostLoading(true);
-
-        const token = await AsyncStorage.getItem('userToken');
-        if (!token) {
-            Toast.show({
-                type: 'error',
-                text1: 'Error',
-                text2: 'No token found!',
-            });
-            setPostLoading(false);
-            return;
-        }
-
-        const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-        };
-
-        try {
-            const response = await axios.post(REPOST, {}, { headers });
-
-            console.log("✅ Repost Data:", response.data);
-
-            if (response.status === 200 && response.data.status === true) {
-                Toast.show({
-                    type: 'success',
-                    position: 'bottom',
-                    text2: response.data.message || 'Reposted successfully!',
-                });
+        const Repost = async () => {
+            setPostLoading(true);
+          
+            const token = await AsyncStorage.getItem('userToken');
+            if (!token) {
+              Alert.alert("Error", "No token found!");
+              setPostLoading(false);
+              return;
+            }
+          
+            const headers = {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            };
+          
+            try {
+              const response = await axios.post(REPOST, {}, { headers });
+          
+              console.log("✅ Repost Data:", response.data);
+          
+              if (response.status === 200 && response.data.status === true) {
+                Alert.alert("Success", response.data.message || 'Reposted successfully!');
                 fetchData();
-                // ToastAndroid.show(response.data.message || 'Reposted successfully!', ToastAndroid.SHORT);
-            } else {
+              } else {
                 throw new Error(response.data.message || 'Something went wrong!');
-            }
-        } catch (error) {
-            console.error("❌ Error fetching profile:", error?.response?.data || error);
-
-            let errorMessage = "Something went wrong. Please try again later.";
-
-            if (error?.response) {
+              }
+            } catch (error) {
+              console.error("❌ Error fetching profile:", error?.response?.data || error);
+          
+              let errorMessage = "Something went wrong. Please try again later.";
+              if (error?.response) {
                 if (error?.response?.status === 400 && error?.response?.data?.status === false) {
-                    errorMessage = error.response.data?.message || "Failed to repost. Please try again!";
+                  errorMessage = error.response.data?.message || "Failed to repost. Please try again!";
                 }
+              }
+          
+              Alert.alert("Info", errorMessage);
+            } finally {
+              setPostLoading(false);
             }
-            Toast.show({
-                type: 'info',
-                position: 'bottom',
-                text2: errorMessage,
-            });
-
-            // ToastAndroid.show(errorMessage, ToastAndroid.SHORT);
-        } finally {
-            setPostLoading(false); // Stop loading
-        }
-    };
+          };
 
 
 
@@ -223,9 +208,9 @@ const ProfileDetail = ({ route, navigation }) => {
                                     onPress={() => !postloading && Repost()}
                                 >
                                     {postloading ? <ActivityIndicator color="white" /> : "Repost"}
-                                </Text>
+                                </Text>                                 
 
-                                <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('MatrimonyPage')}>
+                                <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('MatrimonyPage', { profileData })}>
                                     <Text style={styles.editButtonText}>Edit Biodata</Text>
                                 </TouchableOpacity>
                             </View>
@@ -258,7 +243,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                             <Text style={styles.text}>{profileData.personalDetails.occupation}</Text>
                                         )}
                                         {profileData?.personalDetails?.annualIncome && (
-                                            <Text style={styles.text}>{profileData.personalDetails.annualIncome} INR</Text>
+                                            <Text style={styles.text}>{profileData.personalDetails.annualIncome}</Text>
                                         )}
                                         {profileData?.personalDetails?.qualification && (
                                             <Text style={styles.text}>{profileData.personalDetails.qualification}</Text>
@@ -383,7 +368,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                             <Text style={styles.text}>Age Range: {profileData.partnerPreferences.partnerMinAge} - {profileData.partnerPreferences.partnerMaxAge} yrs</Text>
                                         )}
                                         {profileData.partnerPreferences.partnerMinHeightFeet && profileData.partnerPreferences.partnerMaxHeightFeet && (
-                                            <Text style={styles.text}>Height Range: {profileData.partnerPreferences.partnerMinHeightFeet} - {profileData.partnerPreferences.partnerMaxHeightFeet} ft</Text>
+                                            <Text style={styles.text}>Height Range: {profileData.partnerPreferences.partnerMinHeightFeet} Min - {profileData.partnerPreferences.partnerMaxHeightFeet} Max</Text>
                                         )}
                                         {profileData.partnerPreferences.partnerIncome && (
                                             <Text style={styles.text}>Income: {profileData.partnerPreferences.partnerIncome} INR</Text>

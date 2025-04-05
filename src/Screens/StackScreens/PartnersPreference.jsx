@@ -1,4 +1,4 @@
-import { Text, View, TextInput, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, FlatList, ToastAndroid } from 'react-native'
+import { Text, View, TextInput, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, FlatList, ToastAndroid, Platform, Alert } from 'react-native'
 import React, { useState, useEffect, useCallback } from 'react'
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/PartnerPreferenceStyle';
@@ -19,7 +19,7 @@ import {
     PartnermaritalStatusData, PartnersmokingStatusData, PartnerDrinkingHabit, PartnerManglikStatusData, PartnerFamliyIncome, Income, CityData, StateData
 } from '../../DummyData/DropdownData';
 
-const PartnersPreference = ({ navigation }) => {
+const PartnersPreference = ({ navigation,profileData }) => {
     const [isEditing, setIsEditing] = useState(true);
     const [stateInput, setStateInput] = useState('');
     const [subCasteInput, setSubCasteInput] = useState('');
@@ -31,11 +31,7 @@ const PartnersPreference = ({ navigation }) => {
     const [originalBiodata, setOriginalBiodata] = useState({});
     const [selectedSubCaste, setSelectedSubCaste] = useState('');
     const [loading, setLoading] = useState(false);
-
-    // console.log("profileData", profileData);
-
-    const MyprofileData = useSelector((state) => state.getBiodata);
-    const myPartnerPreferences = MyprofileData?.Biodata?.partnerPreferences;
+    const myPartnerPreferences =profileData?.partnerPreferences;
 
     const [biodata, setBiodata] = useState({
         partnerSubCaste: '',
@@ -67,7 +63,7 @@ const PartnersPreference = ({ navigation }) => {
         if (myPartnerPreferences) {
             setBiodata((prev) => ({
                 ...prev,
-                ...myPartnerPreferences, // Spread new data from Redux
+                ...myPartnerPreferences,
             }));
         }
     }, [myPartnerPreferences]);
@@ -163,126 +159,110 @@ const PartnersPreference = ({ navigation }) => {
     const heightData = Array.from({ length: 4 }, (_, feetIndex) =>
         Array.from({ length: 12 }, (_, inchesIndex) => ({
             label: `${4 + feetIndex} ' ${inchesIndex} '' `,
-            value: `${4 + feetIndex}-${inchesIndex}`,
+            value: `${4 + feetIndex} ' ${inchesIndex} '' `,
         }))
     ).flat();
 
-    const handleSave = async () => {
-        try {
-            setLoading(true);
-            const token = await AsyncStorage.getItem("userToken");
-            if (!token) throw new Error("No token found");
-
-            const headers = {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            };
-
-            let payload = {};
-            let isUpdating = Boolean(biodata?._id); // ✅ Check if biodata exists
-
-            if (isUpdating) {
-                Object.keys(biodata).forEach((key) => {
-                    if (biodata[key] !== originalBiodata[key]) {
-                        payload[key] = biodata[key];
-                    }
-                });
-
-                if (Object.keys(payload).length === 0) {
-                    Toast.show({
-                        type: "info",
-                        text1: "No Changes Detected",
-                        text2: "You haven't made any changes.",
-                        position: "top",
-                    });
-                    setLoading(false);
-                    return;
-                }
-            } else {
-                // ✅ Creating new partner preferences
-                payload = {
-                    partnerSubCaste: biodata?.partnerSubCaste || "",
-                    partnerMinAge: biodata?.partnerMinAge || "",
-                    partnerMaxAge: biodata?.partnerMaxAge || "",
-                    partnerMinHeightFeet: biodata?.partnerMinHeightFeet || "",
-                    partnerMaxHeightFeet: biodata?.partnerMaxHeightFeet || "",
-                    partnerMaritalStatus: biodata.partnerMaritalStatus || "",
-                    partnerIncome: biodata?.partnerIncome || "",
-                    partnerOccupation: biodata?.partnerOccupation || "",
-                    partnerQualification: biodata?.partnerQualification || "",
-                    partnerDisabilities: biodata?.partnerDisabilities || "",
-                    partnerManglikStatus: biodata?.partnerManglikStatus || "",
-                    partnersLivingStatus: biodata?.partnersLivingStatus || "",
-                    partnerState: biodata?.partnerState || "",
-                    partnerCity: biodata?.partnerCity || "",
-                    partnerBodyStructure: biodata?.partnerBodyStructure || "",
-                    partnerComplexion: biodata?.partnerComplexion || "",
-                    partnerDietaryHabits: biodata?.partnerDietaryHabits || "",
-                    partnerSmokingHabits: biodata?.partnerSmokingHabits || "",
-                    partnerDrinkingHabits: biodata?.partnerDrinkingHabits || "",
-                    partnerFamilyType: biodata?.partnerFamilyType || "",
-                    partnerFamilyFinancialStatus: biodata?.partnerFamilyFinancialStatus || "",
-                    partnerFamilyIncome: biodata?.partnerFamilyIncome || "",
-                    partnerExpectations: biodata?.partnerExpectations || "",
-                };
-            }
-
-            console.log(`🔹 API Type: ${isUpdating ? "UPDATE" : "CREATE"}`);
-            console.log("Payload:", payload);
-
-            const apiCall = isUpdating ? axios.put : axios.post;
-            const endpoint = isUpdating ? UPDATE_PARTNER_PERFRENCES : CREATE_PARTNER_PERFRENCES;
-
-            console.log(`🔹 Calling API: ${endpoint}`);
-
-            const response = await apiCall(endpoint, payload, { headers });
-
-            console.log("✅ Save response:", response.data);
-
-            if (response.status === 200 && response.data.status === true) {
-                Toast.show({
-                    type: "success",
-                    text1: "Success",
-                    text2: isUpdating
-                        ? "Partner Preferences Updated Successfully!"
-                        : "Partner Preferences Created Successfully!",
-                    position: "top",
-                });
-
-                // ✅ If created successfully, update the biodata state
-                if (!isUpdating && response.data._id) {
-                    setBiodata((prev) => ({ ...prev, _id: response.data._id })); // Update _id after creation
-                    console.log("✅ New Biodata ID:", response.data._id);
-                }
-
-                setIsEditing(false);
-                setTimeout(() => {
-                    navigation.navigate("MainApp");
-                }, 1000);
-                return;
-            }
-
-            throw new Error(response.data.message || "Something went wrong");
-        } catch (error) {
-            console.error("🚨 API Error:", error.response?.data || error.message);
-
-            let errorMessage = "Something went wrong!";
-            if (error.response?.status === 400) {
-                errorMessage = error.response.data?.message || "Bad request.";
-            }
-
-            Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: errorMessage,
-                position: "top",
-            });
-        } finally {
-            setLoading(false);
+    const showMessage = (message, type = "info") => {
+        if (Platform.OS === "android") {
+          ToastAndroid.show(message, ToastAndroid.SHORT);
+        } else {
+          Alert.alert(type === "error" ? "Error" : "Info", message);
         }
-    };
-
-
+      };
+      
+      const handleSave = async () => {
+        try {
+          setLoading(true);
+          const token = await AsyncStorage.getItem("userToken");
+          if (!token) throw new Error("No token found");
+      
+          const headers = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          };
+      
+          let payload = {};
+          let isUpdating = Boolean(biodata?._id);
+      
+          if (isUpdating) {
+            Object.keys(biodata).forEach((key) => {
+              if (biodata[key] !== originalBiodata[key]) {
+                payload[key] = biodata[key];
+              }
+            });
+      
+            if (Object.keys(payload).length === 0) {
+              showMessage("You haven't made any changes.");
+              setLoading(false);
+              return;
+            }
+          } else {
+            payload = {
+              partnerSubCaste: biodata?.partnerSubCaste || "",
+              partnerMinAge: biodata?.partnerMinAge || "",
+              partnerMaxAge: biodata?.partnerMaxAge || "",
+              partnerMinHeightFeet: biodata?.partnerMinHeightFeet || "",
+              partnerMaxHeightFeet: biodata?.partnerMaxHeightFeet || "",
+              partnerMaritalStatus: biodata.partnerMaritalStatus || "",
+              partnerIncome: biodata?.partnerIncome || "",
+              partnerOccupation: biodata?.partnerOccupation || "",
+              partnerQualification: biodata?.partnerQualification || "",
+              partnerDisabilities: biodata?.partnerDisabilities || "",
+              partnerManglikStatus: biodata?.partnerManglikStatus || "",
+              partnersLivingStatus: biodata?.partnersLivingStatus || "",
+              partnerState: biodata?.partnerState || "",
+              partnerCity: biodata?.partnerCity || "",
+              partnerBodyStructure: biodata?.partnerBodyStructure || "",
+              partnerComplexion: biodata?.partnerComplexion || "",
+              partnerDietaryHabits: biodata?.partnerDietaryHabits || "",
+              partnerSmokingHabits: biodata?.partnerSmokingHabits || "",
+              partnerDrinkingHabits: biodata?.partnerDrinkingHabits || "",
+              partnerFamilyType: biodata?.partnerFamilyType || "",
+              partnerFamilyFinancialStatus: biodata?.partnerFamilyFinancialStatus || "",
+              partnerFamilyIncome: biodata?.partnerFamilyIncome || "",
+              partnerExpectations: biodata?.partnerExpectations || "",
+            };
+          }
+      
+          const apiCall = isUpdating ? axios.put : axios.post;
+          const endpoint = isUpdating ? UPDATE_PARTNER_PERFRENCES : CREATE_PARTNER_PERFRENCES;
+      
+          const response = await apiCall(endpoint, payload, { headers });
+      
+          if (response.status === 200 && response.data.status === true) {
+            const successMessage = isUpdating
+              ? "Partner Preferences Updated Successfully!"
+              : "Partner Preferences Created Successfully!";
+      
+            showMessage(successMessage);
+      
+            if (!isUpdating && response.data._id) {
+              setBiodata((prev) => ({ ...prev, _id: response.data._id }));
+            }
+      
+            setIsEditing(false);
+            setTimeout(() => {
+              navigation.navigate("MyProfile");
+            }, 1000);
+            return;
+          }
+      
+          throw new Error(response.data.message || "Something went wrong");
+        } catch (error) {
+          console.error("🚨 API Error:", error.response?.data || error.message);
+      
+          let errorMessage = "Something went wrong!";
+          if (error.response?.status === 400) {
+            errorMessage = error.response.data?.message || "Bad request.";
+          }
+      
+          showMessage(errorMessage, "error");
+        } finally {
+          setLoading(false);
+        }
+      };
+    
 
     return (
         <SafeAreaView style={Globalstyles.container}>
@@ -406,7 +386,7 @@ const PartnersPreference = ({ navigation }) => {
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerIncome: item.value })}
                             placeholder="Income"
-                            placeholderStyle={{ color: '#E7E7E7' }}
+                            placeholderStyle={{ color: '#E7E7dE7' }}
                         />
                         <Text style={Globalstyles.title}>Occupation  </Text>
                         <Dropdown

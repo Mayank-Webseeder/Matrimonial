@@ -73,6 +73,7 @@ const styles = StyleSheet.create({
     color: "green",
     fontWeight: "bold",
     fontSize: SF(11),
+     textTransform:"capitalize"
   },
   ButtonContainer: {
     flexDirection: "row",
@@ -101,7 +102,8 @@ const styles = StyleSheet.create({
   Text: {
     color: Colors.dark,
     fontFamily: "Poppins-Regular",
-    fontSize: SF(15)
+    fontSize: SF(15),
+     textTransform:"capitalize"
   },
   activeButton: {
     backgroundColor: Colors.theme_color,
@@ -112,12 +114,14 @@ const styles = StyleSheet.create({
   activeText: {
     color: 'white',
     fontFamily: "Poppins-Regular",
-    fontSize: SF(13)
+    fontSize: SF(13),
+     textTransform:"capitalize"
   },
   inactiveText: {
     color: 'black',
     fontFamily: "Poppins-Regular",
-    fontSize: SF(13)
+    fontSize: SF(13),
+     textTransform:"capitalize"
   },
 
   profileData: {
@@ -152,6 +156,7 @@ const styles = StyleSheet.create({
     fontSize: SF(13),
     flexWrap: "wrap",
     maxWidth: "100%",
+    textTransform:"capitalize",
   },
 
   rowItem: {
@@ -161,6 +166,7 @@ const styles = StyleSheet.create({
   boldText: {
     fontFamily: "Poppins-Bold",
     fontSize: SF(18),
+     textTransform:"capitalize"
   },
 
   sharecontainer: {
@@ -182,6 +188,7 @@ const styles = StyleSheet.create({
     marginTop: SH(5),
     paddingHorizontal:SW(5),
     fontFamily: "Poppins-Regular",
+     textTransform:"capitalize"
   },
   card: {
     backgroundColor: '#fff',
@@ -205,6 +212,7 @@ const styles = StyleSheet.create({
     fontSize: SF(15),
     color: Colors.gray,
     fontFamily: 'Poppins-Regular',
+     textTransform:"capitalize"
   },
 
 });

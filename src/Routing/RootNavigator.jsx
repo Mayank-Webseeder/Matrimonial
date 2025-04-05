@@ -97,7 +97,7 @@ function MyTabs() {
   const [mybiodata, setMybiodata] = useState("");
   const MyprofileData = useSelector((state) => state.getBiodata);
   const partnerPreferences = MyprofileData?.Biodata?.partnerPreferences || null;
-  
+
   const fetchProfile = async () => {
     setLoading(true);
     try {
@@ -155,6 +155,8 @@ function MyTabs() {
 
   useFocusEffect(
     useCallback(() => {
+      console.log("partnerPreferences", partnerPreferences);
+      console.log("MyprofileData", MyprofileData);
       fetchProfile();
       getBiodata();
     }, [])
@@ -235,11 +237,10 @@ function MyTabs() {
       <Tab.Screen name="Home" component={Home} options={{ tabBarLabel: 'Home' }} />
       <Tab.Screen name="Pandit" component={Pandit} options={{ tabBarLabel: 'Pandit' }} />
       <Tab.Screen
-        name={partnerPreferences ? "BioData" : "Matrimonial"}
-        component={partnerPreferences ? BioData : Matrimonial}
+        name={Object.keys(MyprofileData?.Biodata || {}).length ? "BioData" : "Matrimonial"}
+        component={Object.keys(MyprofileData?.Biodata || {}).length ? BioData : Matrimonial}
         options={{ tabBarLabel: "Matrimonial" }}
       />
-
       <Tab.Screen name="EventNews" component={EventNews} options={{ tabBarLabel: 'EventNews' }} />
       <Tab.Screen name="MyProfile" component={MyProfile} options={{ tabBarLabel: 'You' }} />
     </Tab.Navigator>
@@ -266,8 +267,6 @@ function MyDrawer() {
       <Drawer.Screen name="EventNews" component={EventNews} />
       <Drawer.Screen name="Dharmshala" component={Dharmshala} />
       <Drawer.Screen name="Committee" component={Committee} />
-      {/* <Drawer.Screen name="MyUploadedCommittees" component={MyUploadedCommittees} />
-      <Drawer.Screen name="UpdateCommittee" component={UpdateCommittee} /> */}
       <Drawer.Screen name="Activist" component={Activist} />
       <Drawer.Screen name="FeedBack" component={FeedBack} />
       <Drawer.Screen name="Jyotish" component={Jyotish} />
@@ -286,7 +285,7 @@ const AppStack = () => (
   <AppStackNavigator.Navigator screenOptions={{ headerShown: false }} initialRouteName='MainApp'>
     <AppStackNavigator.Screen name="MainApp" component={MyDrawer} />
     <AppStackNavigator.Screen name="Committee" component={Committee} />
-    <AppStackNavigator.Screen name="Dharmshala" component={Dharmshala}/>
+    <AppStackNavigator.Screen name="Dharmshala" component={Dharmshala} />
     <AppStackNavigator.Screen name="DharamsalaDetail" component={DharamsalaDetail} />
     <AppStackNavigator.Screen name="IntrestedProfile" component={IntrestedProfile} />
     <AppStackNavigator.Screen name="Notification" component={Notification} />
@@ -352,7 +351,7 @@ const RootNavigator = () => {
       console.log("Token in root file:", token);
 
       if (token && userId) {
-        initializeSocket(userId); 
+        initializeSocket(userId);
       }
 
       setInitialRoute(token ? "AppStack" : "AuthStack");

@@ -101,9 +101,6 @@ const RoleRegisterForm = ({ navigation }) => {
             console.error("Error fetching profiles:", error);
     
             if (error.response) {
-                console.error("Response Data:", error.response.data);
-                console.error("Response Status:", error.response.status);
-                console.error("Response Headers:", error.response.headers);
             } else if (error.request) {
                 console.error("No Response Received:", error.request);
             } else {

@@ -17,7 +17,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
     const [filteredCities, setFilteredCities] = useState([]);
     const [filteredSubCaste, setFilteredSubCaste] = useState([]);
     const [isEditing, setIsEditing] = useState(true);
-    const [isLoading,setIsLoading]=useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [CommitteeData, setCommitteeData] = useState({
         committeeTitle: '',
         presidentName: '',
@@ -152,24 +152,35 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                 return;
             }
     
-            // ✅ Construct the formatted payload before sending it to the API
             const payload = await constructCommitteePayload(CommitteeData, true);
             console.log("🚀 Constructed Payload:", JSON.stringify(payload));
     
-            const headers = { 
-                "Content-Type": "application/json", 
-                Authorization: `Bearer ${token}` 
+            const headers = {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
             };
     
             const response = await axios.post(CREATE_COMMITTEE, payload, { headers });
     
             console.log("✅ API Response:", JSON.stringify(response.data));
     
-            if (response.status === 200) {
-                Toast.show({ type: "success", text1: "Committee Created Successfully" });
-                navigation.navigate("Committee");
+            if (response.status === 200 || response.data.status === true) {
+                Toast.show({
+                    type: "success",
+                    text1: "Committee Created Successfully",
+                    text2: response.data.message || "Your committee profile has been saved!",
+                    visibilityTime: 2000, // Optional: Show toast for 2 seconds
+                    onHide: () => {
+                        navigation.navigate("Committee");
+                    }
+                });
+                ToastAndroid.show("Committee Created Successfully",ToastAndroid.SHORT);
             } else {
-                Toast.show({ type: "error", text1: "Error", text2: response.data?.message || "Failed to save committee." });
+                Toast.show({
+                    type: "error",
+                    text1: "Error",
+                    text2: response.data?.message || "Failed to save committee."
+                });
             }
         } catch (error) {
             console.error("🚨 Error Creating Committee:", error.response?.data || error.message);
@@ -179,6 +190,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
         }
     };
     
+
 
 
     return (

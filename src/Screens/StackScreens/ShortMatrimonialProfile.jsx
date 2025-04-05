@@ -82,6 +82,10 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
     }
 
     const renderProfileCard = ({ item }) => {
+        const formattedHeight = item?.personalDetails?.heightFeet
+        ?.replace(/\s*-\s*/, "")
+        ?.replace(/\s+/g, "");
+        
         return (
             <View style={styles.card}>
                 <Pressable onPress={popop}>
@@ -108,7 +112,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                             {/* Left Column */}
                             <View style={styles.leftColumn}>
                                 <Text style={[styles.text, styles.rowItem]}>
-                                    {new Date().getFullYear() - new Date(item?.personalDetails?.dob).getFullYear()} Yrs. , {item?.personalDetails?.heightFeet}
+                                    {new Date().getFullYear() - new Date(item?.personalDetails?.dob).getFullYear()} Yrs. , {formattedHeight}
                                 </Text>
                                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.subCaste}</Text>
                                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.maritalStatus}</Text>

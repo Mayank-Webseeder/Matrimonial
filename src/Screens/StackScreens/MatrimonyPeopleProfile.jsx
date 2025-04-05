@@ -41,6 +41,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const partnerPreferences = userDetails?.partnerPreferences || {};
   const [profileData, setProfileData] = useState([]);
   const MyprofileData = useSelector((state) => state.getBiodata);
+  const partnerPreferenceData = MyprofileData?.Biodata?.partnerPreferences || null;
   const [isImageVisible, setImageVisible] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
@@ -281,6 +282,10 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
     );
   }
 
+  const formattedHeight = personalDetails?.heightFeet
+    ?.replace(/\s*-\s*/, "")
+    ?.replace(/\s+/g, "");
+
   return (
     <SafeAreaView style={Globalstyles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
@@ -381,7 +386,10 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         </View>
         <View style={styles.flexContainer}>
           <View style={styles.flex}>
-            <Text style={styles.Idtext}>ID NO. :- {userDetails?.bioDataId || details?.bioDataId}</Text>
+            <Text style={styles.Idtext}>
+              {"ID NO. :-".toUpperCase()} {userDetails?.bioDataId || details?.bioDataId}
+            </Text>
+
             <Text style={styles.toptext}>{matchPercentage > 0 && (
               <Text style={styles.toptext}>
                 {matchPercentage}% Compatible according to your preference
@@ -413,7 +421,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               {loadingIntrest ? (
                 <ActivityIndicator size="small" color={Colors.theme_color} />
               ) : (
-                <Text style={styles.buttonText}>{status ? status : "Interested"}</Text>
+                <Text style={styles.buttonText}>{status ? status : "Send Intrest"}</Text>
               )}
             </TouchableOpacity>
 
@@ -445,7 +453,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             <Text style={styles.HeadingText}>{personalDetails?.fullname}</Text>
 
             {/* Other details */}
-            <Text style={styles.text}>{calculateAge(personalDetails.dob)} Yrs, {personalDetails?.heightFeet} </Text>
+            <Text style={styles.text}>{calculateAge(personalDetails.dob)} Yrs, {formattedHeight} </Text>
             {personalDetails?.subCaste && <Text style={styles.text}>{personalDetails?.subCaste}</Text>}
             {personalDetails?.maritalStatus && <Text style={styles.text}>{personalDetails?.maritalStatus}</Text>}
             {personalDetails?.manglikStatus && <Text style={styles.text}>{personalDetails?.manglikStatus}</Text>}
@@ -568,9 +576,15 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           </View>
         }
 
+        {profileData.length === 0 && (
+          <Text style={styles.warningText}>
+            To find better matches, please set your partner preferences.
+          </Text>
+        )}
+
         {profileData?.data ? (
           <View style={styles.flexContainer3}>
-            <Text style={styles.HeadingText}>Matches</Text>
+            <Text style={styles.HeadingText}>Your Similarities</Text>
             <View style={styles.flex}>
               <Image
                 source={{ uri: profileData?.loggedInUserBiodata?.personalDetails?.closeUpPhoto }}

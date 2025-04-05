@@ -58,7 +58,7 @@ const subscribeToEvents = (connReqNotification = true, eventPostNotification = t
 
   const showToast = (message) => {
     setTimeout(() => {
-      ToastAndroid.show(message, ToastAndroid.SHORT);
+      ToastAndroid.show(message, ToastAndroid.LONG);
     }, 100);
   };
 
@@ -90,6 +90,27 @@ const subscribeToEvents = (connReqNotification = true, eventPostNotification = t
       showToast(`${data.likedBy.name || "Someone"} liked your post!`);
     });
   }
+
+  socket.on("panditRequestApproved", (data) => {
+    console.log("💬 panditRequestApproved:", data);
+    showToast(data.message);
+  });
+
+  socket.on("kathavachakRequestApproved", (data) => {
+    console.log("💬 kathavachakRequestApproved:", data);
+    showToast(data.message);
+  });
+
+  socket.on("jyotishRequestApproved", (data) => {
+    console.log("💬 jyotishRequestApproved:", data);
+    showToast(data.message);
+  });
+
+  socket.on("activistRequestApproved", (data) => {
+    console.log("💬 activistRequestApproved:", data);
+    showToast(data.message);
+  });
+
 };
 
 const unsubscribeFromEvents = () => {
@@ -102,6 +123,10 @@ const unsubscribeFromEvents = () => {
   socket.off("connectionRequestResponse");
   socket.off("post-commented");
   socket.off("post-liked");
+  socket.off("panditRequestApproved");
+  socket.off("kathavachakRequestApproved");
+  socket.off("jyotishRequestApproved");
+  socket.off("activistRequestApproved");
 };
 
 export default useNotificationListener;

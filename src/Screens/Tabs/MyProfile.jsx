@@ -55,7 +55,7 @@ const MyProfile = ({ navigation }) => {
 
         if (profileType === "Biodata") {
             if (!isRegistered) {
-                navigation.navigate("MatrimonyPage");
+                navigation.navigate("MatrimonyPage",{ profileType });
             } else {
                 navigation.navigate("ProfileDetail", { profileType });
             }
@@ -213,7 +213,7 @@ const MyProfile = ({ navigation }) => {
                 console.log("Navigating to MainApp...");
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: 'MyProfile' }],
+                    routes: [{ name: 'MainApp' }],
                 });
             }
         } catch (error) {
@@ -225,7 +225,6 @@ const MyProfile = ({ navigation }) => {
 
             ToastAndroid.show("Upload Failed! Please try again.", ToastAndroid.SHORT);
         } finally {
-            // Stop loader after upload
             setIsLoading(false);
         }
     };

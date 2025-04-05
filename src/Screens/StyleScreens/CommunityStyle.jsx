@@ -66,7 +66,8 @@ const styles = StyleSheet.create({
   CityArea: {
     flexDirection: 'row',
     alignItems:"center",
-    justifyContent:"space-between"
+    justifyContent:"space-between",
+    marginRight:SW(5)
   },
 
   sharecontainer: {

@@ -10,7 +10,7 @@ const BiodataSlice = createSlice({
       state.Biodata = action.payload; 
     },
     resetBioData: (state) => {
-      state.Biodata = {}; // ✅ Redux store reset karein
+      state.Biodata = {}; 
     },
   },
 });

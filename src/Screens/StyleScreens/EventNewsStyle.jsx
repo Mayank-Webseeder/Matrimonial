@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
     disabledButton: {
         backgroundColor: '#ccc',
         opacity: 0.6,
-      },
+    },
     righticons: {
         flexDirection: 'row',
         alignItems: "center"
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent:"space-between"
+        justifyContent: "space-between"
     },
     image1: {
         width: SW(160),
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
         color: '#777',
         fontSize: SF(13),
         marginTop: SH(10),
-        marginLeft:SW(14)
+        marginLeft: SW(14)
     },
     captionText: {
         marginHorizontal: SW(7),
@@ -130,85 +130,87 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-Regular',
     },
     bottomSheetContent: {
-        padding: 15,
+        paddingVertical: SH(15),
+        paddingHorizontal: SW(15),
         backgroundColor: '#fff',
-        borderTopLeftRadius: 15,
-        borderTopRightRadius: 15,
-      },
-      headerContainer: {
+        borderTopLeftRadius: SH(15),
+        borderTopRightRadius: SW(15),
+    },
+    headerContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 10,
-      },
-      sheetHeader: {
-        fontSize: 18,
-        fontWeight: 'bold',
+        marginBottom: SH(10),
+    },
+    sheetHeader: {
+        fontSize: SF(18),
+        fontFamily: "Poppins-Bold",
         color: Colors.dark,
-      },
-      emptyContainer: {
+    },
+    emptyContainer: {
         alignItems: 'center',
-        paddingVertical: 20,
-      },
-      emptyText: {
+        paddingVertical: SH(20),
+    },
+    emptyText: {
         color: Colors.gray,
-        fontSize: 14,
-      },
-      commentRow: {
+        fontSize: SF(14),
+    },
+    commentRow: {
         flexDirection: 'row',
         alignItems: 'flex-start',
-        paddingVertical: 10,
+        paddingVertical: SH(10),
         borderBottomWidth: 0.5,
         borderBottomColor: Colors.lightGray,
-      },
-      profileImage: {
-        width: 40,
-        height: 40,
+    },
+    profileImage: {
+        width: SW(40),
+        height: SH(40),
         borderRadius: 20,
-        marginRight: 10,
-      },
-      commentDetails: {
+        marginRight: SW(10),
+    },
+    commentDetails: {
         flex: 1,
-      },
-      nameTimeRow: {
+    },
+    nameTimeRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 2,
-      },
-      userName: {
-        fontSize: 14,
-        fontWeight: 'bold',
+        marginBottom:SH(2),
+    },
+    userName: {
+        fontSize: SF(12),
+        fontFamily: "Poppins-Bold",
         color: Colors.black,
-        marginRight: 8,
-      },
-      commentTime: {
-        fontSize: 12,
-        color: Colors.gray,
-      },
-      commentText: {
-        fontSize: 14,
+        marginRight: SW(8),
+    },
+    commentTime: {
+        fontSize: SF(12),
+        color: "gray",
+        fontFamily: "Poppins-Regular"
+    },
+    commentText: {
+        fontSize: SF(13),
         color: Colors.dark,
-        lineHeight: 18,
-      },
-      bottomSheetContent: {
+        lineHeight: SH(18),
+    },
+    bottomSheetContent: {
         flex: 1,
         backgroundColor: "#fff",
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
-        paddingHorizontal: 16,
-        paddingTop: 10,
-      },
-      headerContainer: {
+        paddingHorizontal: SW(16),
+        paddingTop: SH(10),
+    },
+    headerContainer: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: 10,
-      },
-      sheetHeader: {
-        fontSize: 18,
-        fontWeight: "bold",
-      },
-      fixedCommentInputContainer: {
+        marginBottom: SH(10),
+    },
+    sheetHeader: {
+        fontSize: SF(18),
+        fontFamily: "poppins-Bold"
+    },
+    fixedCommentInputContainer: {
         position: "absolute",
         bottom: 0,
         left: 0,
@@ -216,31 +218,31 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         backgroundColor: "#fff",
-        paddingVertical: 10,
-        paddingHorizontal: 16,
+        paddingVertical: SH(10),
+        paddingHorizontal: SW(16),
         borderTopWidth: 1,
         borderColor: "#ddd",
-      },
-      input: {
+    },
+    input: {
         flex: 1,
         borderWidth: 1,
         borderColor: "#ddd",
         borderRadius: 25,
-        paddingHorizontal: 15,
-        paddingVertical: 8,
+        paddingHorizontal: SW(15),
+        paddingVertical: SH(8),
         backgroundColor: "#f9f9f9",
-      },
-      postButton: {
-        marginLeft: 10,
+    },
+    postButton: {
+        marginLeft: SW(10),
         backgroundColor: "#007bff",
-        paddingVertical: 8,
-        paddingHorizontal: 15,
+        paddingVertical: SH(8),
+        paddingHorizontal: SW(15),
         borderRadius: 25,
-      },
-      postButtonText: {
+    },
+    postButtonText: {
         color: "#fff",
         fontWeight: "bold",
-      }, fixedCommentInputContainer: {
+    }, fixedCommentInputContainer: {
         position: "absolute",
         bottom: 0,
         left: 0,
@@ -248,11 +250,11 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         backgroundColor: "#fff",
-        paddingVertical: 10,
-        paddingHorizontal: 16,
+        paddingVertical: SH(10),
+        paddingHorizontal: SW(16),
         borderTopWidth: 1,
         borderColor: "#ddd",
-      },
+    },
     commentInputContainer: {
         flexDirection: "row",
         alignItems: "center",
@@ -277,42 +279,42 @@ const styles = StyleSheet.create({
     },
     postButtonText: {
         color: "#fff",
-        fontWeight: "bold",
+        fontFamily: "Poppins-Bold"
     },
     modalOverlay: {
         flex: 1,
         backgroundColor: "rgba(0,0,0,0.3)", // Dim background
-      },
-      modalContent: {
+    },
+    modalContent: {
         position: "absolute",
         backgroundColor: "white",
-        paddingHorizontal:SW(15),
-        paddingVertical:SH(10),
-        borderRadius:10,
-        width:SW(150),
+        paddingHorizontal: SW(15),
+        paddingVertical: SH(10),
+        borderRadius: 10,
+        width: SW(150),
         elevation: 5,
-      },
-      modalOption: {
-        paddingHorizontal:SW(10),
-        paddingVertical:SH(2),
-      },
-      optionText: {
-        fontSize:SF(15),
-        fontFamily:"Poppins-Regular"
-      },
-      emptyContainer: {
+    },
+    modalOption: {
+        paddingHorizontal: SW(10),
+        paddingVertical: SH(2),
+    },
+    optionText: {
+        fontSize: SF(15),
+        fontFamily: "Poppins-Regular"
+    },
+    emptyContainer: {
         alignItems: 'center',
         justifyContent: 'center',
         height: SH(200),
-      },
-      emptyText: {
+    },
+    emptyText: {
         fontSize: SF(15),
-        color:"gray",
+        color: "gray",
         fontFamily: 'Poppins-Regular',
-      },
-      bottomContainer:{
-        paddingBottom:SH(50)
-      }
+    },
+    bottomContainer: {
+        paddingBottom: SH(50)
+    }
 });
 
 export default styles;

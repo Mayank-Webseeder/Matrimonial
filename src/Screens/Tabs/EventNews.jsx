@@ -367,9 +367,8 @@ const EventNews = ({ navigation }) => {
 
   const renderImages = (images, item) => {
     if (images.length === 0) {
-      return <Text style={styles.noImageText}>No images available for this post</Text>;
+      return null; 
     }
-
     if (images.length === 1) {
       return (
         <TouchableOpacity

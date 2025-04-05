@@ -260,6 +260,10 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const matchedCount = Object.values(comparisonResults).filter(value => value).length;
   const matchPercentage = totalCriteria > 0 ? Math.round((matchedCount / totalCriteria) * 100) : 0;
 
+  const formattedHeight = personalDetails?.heightFeet
+  ?.replace(/\s*-\s*/, "")
+  ?.replace(/\s+/g, "");
+
   return (
     <SafeAreaView style={Globalstyles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
@@ -281,7 +285,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
               <Image
                 source={{ uri: images[0] }}
                 style={{ width: SW(350), height: SH(330), borderRadius: 10 }}
-                blurRadius={!isBlur ? 5 : 0}
+                // blurRadius={!isBlur ? 5 : 0}
               />
             </TouchableOpacity>
           )}
@@ -302,7 +306,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
                     <Image
                       source={{ uri: img }}
                       style={{ width: width * 0.9, height: height * 0.8, borderRadius: 10, resizeMode: "contain" }}
-                      blurRadius={!isBlur ? 5 : 0}
+                      // blurRadius={!isBlur ? 5 : 0}
                     />
                   </View>
                 ))}
@@ -330,6 +334,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           <View style={styles.flex}>
             {/* <Text style={styles.Idtext}>ID NO. :- {userId}</Text> */}
             <Text style={styles.Idtext}>ID NO. :- {biodata?.bioDataId}</Text>
+             <Text style={styles.Idtext}>{"ID NO. :-".toUpperCase()} {biodata?.bioDataId}</Text>  
             <Text style={styles.toptext}>{matchPercentage > 0 && (
               <Text style={styles.toptext}>
                 {matchPercentage}% Compatible according to your preference
@@ -376,7 +381,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         <View style={styles.flexContainer1}>
           <View style={styles.leftContainer}>
             <Text style={styles.HeadingText}>{personalDetails.fullname}</Text>
-            {personalDetails?.dob && <Text style={styles.text}>{new Date().getFullYear() - new Date(personalDetails?.dob).getFullYear()} Yrs, {personalDetails?.heightFeet}</Text>}
+            {personalDetails?.dob && <Text style={styles.text}>{new Date().getFullYear() - new Date(personalDetails?.dob).getFullYear()} Yrs, {formattedHeight}</Text>}
             {personalDetails?.subCaste && <Text style={styles.text}>{personalDetails?.subCaste}</Text>}
             {personalDetails?.maritalStatus && <Text style={styles.text}>{personalDetails?.maritalStatus}</Text>}
             {personalDetails?.manglikStatus && <Text style={styles.text}>{personalDetails?.manglikStatus}</Text>}
@@ -470,7 +475,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         )}
         {profileData?.data ? (
           <View style={styles.flexContainer3}>
-            <Text style={styles.HeadingText}>Matches</Text>
+            <Text style={styles.HeadingText}>Your Similarities</Text>
             <View style={styles.flex}>
               <Image
                 source={{ uri: profileData?.loggedInUserBiodata?.personalDetails?.closeUpPhoto }}

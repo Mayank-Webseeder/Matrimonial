@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: SW(5),
     paddingVertical: SW(2),
     borderRadius: 5,
-    alignSelf:"flex-end"
+    alignSelf: "flex-end"
   },
   verifiedBadge: {
     width: SW(20),
@@ -34,7 +34,8 @@ const styles = StyleSheet.create({
     color: "green",
     fontWeight: "bold",
     fontSize: SF(13),
-    paddingHorizontal:SW(2)
+    paddingHorizontal: SW(2),
+    textTransform: "capitalize"
   },
   dot: {
     backgroundColor: Colors.light,
@@ -71,6 +72,7 @@ const styles = StyleSheet.create({
     fontSize: SF(15),
     fontFamily: "Poppins-Bold",
     marginBottom: SH(5),
+    textTransform: "capitalize"
   },
 
   text: {
@@ -78,6 +80,7 @@ const styles = StyleSheet.create({
     color: Colors.dark,
     marginBottom: SH(2),
     fontFamily: "Poppins-Regular",
+    textTransform: "capitalize"
   },
 
   flexContainer: {
@@ -97,11 +100,12 @@ const styles = StyleSheet.create({
 
   toptext: {
     fontSize: SF(10),
-    fontFamily: "Poppins-Regular"
+    fontFamily: "Poppins-Regular",
+    textTransform: "capitalize"
   },
   Idtext: {
     fontSize: SF(12),
-    fontFamily: "Poppins-Bold"
+    fontFamily: "Poppins-Bold",
   },
   flexContainer2: {
     flexDirection: "row",
@@ -124,6 +128,7 @@ const styles = StyleSheet.create({
     fontSize: SF(12),
     color: Colors.dark,
     marginTop: SH(5),
+    textTransform: "capitalize"
   },
   interestedButton: {
     backgroundColor: Colors.theme_color,
@@ -135,7 +140,8 @@ const styles = StyleSheet.create({
     color: Colors.light,
     fontFamily: "Poppins-Medium",
     fontSize: SF(12),
-    textTransform:"capitalize"
+    textTransform: "capitalize",
+
   },
   ButtonText: {
     color: Colors.light,
@@ -146,7 +152,8 @@ const styles = StyleSheet.create({
     paddingVertical: SH(5),
     marginTop: SH(10),
     borderRadius: 10,
-    marginHorizontal: SW(90)
+    marginHorizontal: SW(90),
+    textTransform: "capitalize"
   },
   smallImage: {
     width: SW(80),
@@ -169,6 +176,7 @@ const styles = StyleSheet.create({
   },
   label: {
     flex: 1,
+    textTransform: "capitalize"
   },
   icon: {
     fontSize: SF(20),
@@ -222,8 +230,18 @@ const styles = StyleSheet.create({
   },
   acceptButtonText: {
     color: "#fff", fontFamily: "Poppins-Regular",
-    fontSize: SF(15)
-  }
+    fontSize: SF(15),
+    textTransform: "capitalize"
+  },
+  warningText: {
+    color: "red",
+    fontSize: SF(14),
+    textAlign: "center",
+    marginVertical: SH(10),
+    fontFamily: "Poppins-Bold",
+    textTransform: "capitalize"
+  },
+
 });
 
 export default styles;

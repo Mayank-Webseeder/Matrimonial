@@ -1,5 +1,5 @@
 
-import { Text, View, Image, ImageBackground, TextInput, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, FlatList, ToastAndroid } from 'react-native'
+import { Text, View, Image, ImageBackground, TextInput, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, FlatList,  Platform, ToastAndroid, Alert } from 'react-native'
 import React, { useEffect, useState, useCallback } from 'react'
 import styles from '../StyleScreens/ProfileStyle';
 import { TouchableOpacity } from 'react-native';
@@ -26,10 +26,9 @@ import {
   genderData
 } from '../../DummyData/DropdownData';
 
-const DetailedProfile = ({ navigation }) => {
+const DetailedProfile = ({ navigation,profileData  }) => {
   const [isEditing, setIsEditing] = useState(true);
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const profileData = useSelector((state) => state.profile);
   const [isLoading, setIsLoading] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [stateInput, setStateInput] = useState("");
@@ -42,11 +41,9 @@ const DetailedProfile = ({ navigation }) => {
   const [filteredCitiesOrVillages, setFilteredCitiesOrVillages] = useState([]);
   const [selectedState, setSelectedState] = useState("");
   const [errors, setErrors] = useState({});
-  console.log("profileData", profileData);
-  const MyprofileData = useSelector((state) => state.getBiodata);
-  const myBiodata = MyprofileData?.Biodata?.personalDetails;
-  console.log("myBiodata", myBiodata);
-  const formattedDate = moment(profileData.dob).format("DD/MM/YYYY");
+  // const MyprofileData = useSelector((state) => state.getBiodata);
+  const myBiodata = profileData?.personalDetails;
+  console.log("myBiodata", profileData);
 
   const [biodata, setBiodata] = useState({
     subCaste: '',
@@ -75,7 +72,7 @@ const DetailedProfile = ({ navigation }) => {
     fatherOccupation: '',
     motherName: '',
     motherOccupation: '',
-    fatherIncomeAnnually: '',
+    fatherIncomeAnnually:'',
     motherIncomeAnnually: '',
     familyType: '',
     siblings: '',
@@ -107,10 +104,10 @@ const DetailedProfile = ({ navigation }) => {
       setBiodata((prev) => ({
         ...prev,
         ...myBiodata,
-        gender: MyprofileData?.Biodata?.gender, 
+        gender: profileData?.gender, 
       }));
     }
-  }, [myBiodata, MyprofileData?.Biodata?.gender]);
+  }, [myBiodata, profileData?.gender]);
 
 
   const handleTimeChange = (event, selectedDate) => {
@@ -268,7 +265,7 @@ const DetailedProfile = ({ navigation }) => {
   const heightData = Array.from({ length: 4 }, (_, feetIndex) =>
     Array.from({ length: 12 }, (_, inchesIndex) => ({
       label: `${4 + feetIndex} ' ${inchesIndex} '' `,
-      value: `${4 + feetIndex} '-${inchesIndex} '' `,
+      value: `${4 + feetIndex} ' ${inchesIndex} '' `,
     }))
   ).flat();
 
@@ -395,17 +392,25 @@ const DetailedProfile = ({ navigation }) => {
     return errors;
   };
 
+  const showMessage = (message, type = "info") => {
+    if (Platform.OS === "android") {
+      ToastAndroid.show(message, ToastAndroid.SHORT);
+    } else {
+      Alert.alert(type === "error" ? "Error" : "Success", message);
+    }
+  };
+  
   const handleSave = async () => {
     console.log("🟢 handleSave triggered");
-
+  
     try {
       setIsLoading(true);
-
+  
       const isUpdating = Boolean(biodata?._id);
       if (!isUpdating) {
         const errors = validateForm(biodata);
         console.log("🚀 Validation Errors:", errors);
-
+  
         if (Object.keys(errors).length > 0) {
           console.log("❌ Validation failed. Errors:", errors);
           setErrors(errors);
@@ -414,66 +419,59 @@ const DetailedProfile = ({ navigation }) => {
         }
         console.log("✅ Validation Passed. Proceeding...");
       }
+  
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
-
+  
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-
+  
       const payload = await constructPayload(biodata, !isUpdating);
       console.log("📩 Constructed Payload:", payload);
-
+  
       const apiCall = isUpdating ? axios.put : axios.post;
       const endpoint = isUpdating ? UPDATE_PERSONAL_DETAILS : CREATE_PERSONAL_DETAILS;
       console.log(`🔹 Calling API: ${endpoint}`);
-
+  
       const response = await apiCall(endpoint, payload, { headers });
-
+  
       console.log("✅ API Response:", response.data);
-
+  
       if (response.status === 200 && response.data.status === true) {
         const successMessage = isUpdating
           ? "Profile Updated Successfully!"
           : "Detailed Profile Created Successfully!";
-
-        Toast.show({
-          type: "success",
-          text1: "Success",
-          text2: successMessage,
-        });
-        ToastAndroid.show(successMessage, ToastAndroid.SHORT)
+  
+        showMessage(successMessage, "success");
+  
         setBiodata((prev) => ({
           ...prev,
-          gender: biodata.gender,  
+          gender: biodata.gender,
         }));
         setIsEditing(false);
         setErrors({});
-
+  
         setTimeout(() => {
-          navigation.navigate(isUpdating ? "MainApp" : "MainPartnerPrefrence");
+          navigation.navigate(isUpdating ? "MyProfile" : "MainPartnerPrefrence");
         }, 1000);
-
+  
         return;
       }
-
+  
       throw new Error(response.data.message || "Something went wrong");
-
+  
     } catch (error) {
       console.error("🚨 API Error:", error.response?.data || error.message);
-
+  
       let errorMessage = "Something went wrong!";
       if (error.response?.status === 400) {
         errorMessage = error.response.data.message || "Bad request. Please check your input.";
       }
-
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: errorMessage,
-      });
-
+  
+      showMessage(errorMessage, "error");
+  
     } finally {
       setIsLoading(false);
     }

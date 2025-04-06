@@ -41,14 +41,14 @@ const Home = ({ navigation }) => {
   const [profiledata, setProfileData] = useState('');
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
+  const [NotificationData,setNotificationData]=useState({});
   // const ProfileData = useSelector((state) => state.profile);
   // const profile_data = ProfileData?.profiledata || {};
-  const [connReqNotification,setconnReqNotification] = useState("");
-  const [eventPostNotification,seteventPostNotification] =useState("");
 
   const GetAll_Notification = async () => {
-    setIsLoading(true);
     try {
+      setIsLoading(true);
+      setNotificationData({});
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
 
@@ -59,6 +59,7 @@ const Home = ({ navigation }) => {
 
       const res = await axios.get(NOTIFICATION, { headers });
       const notificationData = res.data.data;
+      setNotificationData(notificationData);
       // console.log("notificationData", JSON.stringify(notificationData));
       dispatch(setAllNotification(notificationData));
     } catch (error) {
@@ -128,40 +129,10 @@ const Home = ({ navigation }) => {
     }
   };
 
-
-  const fetchProfile = async () => {
-    setIsLoading(true);
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
-
-      const headers = {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      };
-
-      console.log("headers in profile", headers);
-      const res = await axios.get(PROFILE_ENDPOINT, { headers });
-      const profiledata=res.data.data;
-
-      console.log("Profile Response:",profiledata);
-      setProfileData(profiledata);
-      setconnReqNotification(profiledata?.connReqNotification)
-      seteventPostNotification(profiledata?.eventPostNotification)
-      dispatch(setProfiledata(profiledata));
-
-    } catch (error) {
-      console.error("Error fetching profile:", error.response ? error.response.data : error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const GetAll_Biodata = async () => {
-    setLoading(true)
-    setallBiodata("")
     try {
       setLoading(true)
+      setallBiodata("")
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
 

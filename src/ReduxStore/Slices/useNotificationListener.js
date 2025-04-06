@@ -59,7 +59,7 @@ const subscribeToEvents = (connReqNotification = true, eventPostNotification = t
   const showToast = (message) => {
     setTimeout(() => {
       ToastAndroid.show(message, ToastAndroid.LONG);
-    }, 100);
+    }, 200);
   };
 
   if (connReqNotification) {

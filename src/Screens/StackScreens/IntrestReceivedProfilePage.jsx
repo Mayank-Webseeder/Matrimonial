@@ -333,7 +333,6 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         <View style={styles.flexContainer}>
           <View style={styles.flex}>
             {/* <Text style={styles.Idtext}>ID NO. :- {userId}</Text> */}
-            <Text style={styles.Idtext}>ID NO. :- {biodata?.bioDataId}</Text>
              <Text style={styles.Idtext}>{"ID NO. :-".toUpperCase()} {biodata?.bioDataId}</Text>  
             <Text style={styles.toptext}>{matchPercentage > 0 && (
               <Text style={styles.toptext}>

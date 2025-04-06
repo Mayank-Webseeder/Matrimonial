@@ -12,14 +12,21 @@ import { DrawerActions } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 
 const PrivacySettings = ({ navigation }) => {
-    const [blurPhotos, setBlurPhotos] = useState(false);
-    const [inactivateId, setInactivateId] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const MyprofileData = useSelector((state) => state.getBiodata);
     const hideContact = MyprofileData?.Biodata?.hideContact ?? false;
     const hideOptionalDetails = MyprofileData?.Biodata?.hideOptionalDetails ?? false;
+    const isActive = MyprofileData?.Biodata?.activityStatus === "Inactive";
+    const isBlur=MyprofileData?.Biodata?.isBlur ?? false;
+    const [inactivateId, setInactivateId] = useState(isActive);
     const [hideContactDetails, setHideContactDetails] = useState(hideContact);
     const [hideOptionalDetailsState, setHideOptionalDetailsState] = useState(hideOptionalDetails);
+    const [blurPhotos, setBlurPhotos] = useState(isBlur);
+
+    useEffect(()=>{
+        console.log("MyprofileData",JSON.stringify(MyprofileData));
+    },[])
+
     const togglePrivacySetting = async (settingType, currentValue, setter, apiUrl) => {
         try {
             setIsLoading(true);

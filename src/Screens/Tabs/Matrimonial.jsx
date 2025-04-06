@@ -55,6 +55,7 @@ const Matrimonial = ({ navigation }) => {
     }
 
     setLoading(true);
+    setProfiles([])
 
     const headers = {
       'Content-Type': 'application/json',
@@ -104,6 +105,7 @@ const Matrimonial = ({ navigation }) => {
 
   const fetchBoysFilterData = async () => {
     try {
+      setboysProfiles([])
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
 
@@ -117,6 +119,7 @@ const Matrimonial = ({ navigation }) => {
 
   const fetchGirlsFilterData = async () => {
     try {
+      setgirlsProfiles([])
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
 

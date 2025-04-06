@@ -390,7 +390,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           <View style={styles.rightContainer}>
             {personalDetails?.currentCity && <Text style={styles.text}>{personalDetails?.currentCity}</Text>}
             {personalDetails?.occupation && <Text style={styles.text}>{personalDetails?.occupation}</Text>}
-            {personalDetails?.annualIncome && <Text style={styles.text}>{personalDetails?.annualIncome} </Text>}
+            {personalDetails?.annualIncome && <Text style={[styles.text,{textTransform:"none"}]}>{personalDetails?.annualIncome} </Text>}
             {personalDetails?.qualification && <Text style={styles.text}>{personalDetails?.qualification}</Text>}
           </View>
         </View >
@@ -440,7 +440,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
             {personalDetails?.fatherOccupation && <Text style={styles.text}>Father’s Occupation: {personalDetails?.fatherOccupation}</Text>}
             {personalDetails?.motherName && <Text style={styles.text}>Mother’s Name: {personalDetails?.motherName}</Text>}
             {personalDetails?.motherOccupation && <Text style={styles.text}>Mother’s Occupation: {personalDetails?.motherOccupation}</Text>}
-            {personalDetails?.familyIncome && <Text style={styles.text}>Family Income (Annually): {personalDetails?.familyIncome}</Text>}
+            {personalDetails?.familyIncome && <Text style={[styles.text,{textTransform:"none"}]}>Family Income (Annually): {personalDetails?.familyIncome}</Text>}
             {personalDetails?.familyType && <Text style={styles.text}>Family Type: {personalDetails?.familyType}</Text>}
             {personalDetails?.siblings && <Text style={styles.text}>Siblings: {personalDetails?.siblings}</Text>}
             {!hideOptionalDetails && (

@@ -466,7 +466,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             {/* Right-side details */}
             {personalDetails?.currentCity && <Text style={styles.text}>{personalDetails?.currentCity}</Text>}
             {personalDetails?.occupation && <Text style={styles.text}>{personalDetails?.occupation}</Text>}
-            {personalDetails?.annualIncome && <Text style={styles.text}>{personalDetails?.annualIncome} </Text>}
+            {personalDetails?.annualIncome && <Text style={[styles.text,{textTransform:"none"}]}>{personalDetails?.annualIncome} </Text>}
             {personalDetails?.qualification && <Text style={styles.text}>{personalDetails?.qualification}</Text>}
           </View>
         </View>
@@ -530,7 +530,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               {personalDetails?.fatherName && <Text style={styles.text}>Father’s Name: {personalDetails.fatherName}</Text>}
               {personalDetails?.fatherOccupation && <Text style={styles.text}>Father’s Occupation: {personalDetails.fatherOccupation}</Text>}
               {personalDetails?.motherName && <Text style={styles.text}>Mother’s Name: {personalDetails.motherName}</Text>}
-              {personalDetails?.fatherIncomeAnnually && <Text style={styles.text}>Family Income: {personalDetails.fatherIncomeAnnually}</Text>}
+              {personalDetails?.fatherIncomeAnnually && <Text style={[styles.text,{textTransform:"none"}]}>Family Income: {personalDetails.fatherIncomeAnnually}</Text>}
               {personalDetails?.familyType && <Text style={styles.text}>Family Type: {personalDetails.familyType}</Text>}
               {!hideOptionalDetails && (
                 <>

@@ -264,6 +264,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: SF(13),
     fontFamily: 'Poppins-Regular',
+    textTransform:"capitalize"
   },
   servicesGrid: {
     flexDirection: 'row',

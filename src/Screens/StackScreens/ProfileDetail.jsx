@@ -243,7 +243,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                             <Text style={styles.text}>{profileData.personalDetails.occupation}</Text>
                                         )}
                                         {profileData?.personalDetails?.annualIncome && (
-                                            <Text style={styles.text}>{profileData.personalDetails.annualIncome}</Text>
+                                            <Text style={[styles.text,{textTransform:"none"}]}>{profileData.personalDetails.annualIncome}</Text>
                                         )}
                                         {profileData?.personalDetails?.qualification && (
                                             <Text style={styles.text}>{profileData.personalDetails.qualification}</Text>
@@ -292,7 +292,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                     {profileData?.personalDetails?.fatherName && <Text style={styles.text}>Father’s Name: {profileData?.personalDetails.fatherName}</Text>}
                                     {profileData?.personalDetails?.fatherOccupation && <Text style={styles.text}>Father’s Occupation: {profileData?.personalDetails.fatherOccupation}</Text>}
                                     {profileData?.personalDetails?.motherName && <Text style={styles.text}>Mother’s Name: {profileData?.personalDetails.motherName}</Text>}
-                                    {profileData?.personalDetails?.fatherIncomeAnnually && <Text style={styles.text}>Family Income: {profileData?.personalDetails.fatherIncomeAnnually}</Text>}
+                                    {profileData?.personalDetails?.fatherIncomeAnnually && <Text style={[styles.text,{textTransform:"none"}]}>Family Income: {profileData?.personalDetails.fatherIncomeAnnually}</Text>}
                                     {profileData?.personalDetails?.familyType && <Text style={styles.text}>Family Type: {profileData?.personalDetails.familyType}</Text>}
                                     {
                                         profileData?.personalDetails?.otherFamilyMemberInfo &&
@@ -371,7 +371,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                             <Text style={styles.text}>Height Range: {profileData.partnerPreferences.partnerMinHeightFeet} Min - {profileData.partnerPreferences.partnerMaxHeightFeet} Max</Text>
                                         )}
                                         {profileData.partnerPreferences.partnerIncome && (
-                                            <Text style={styles.text}>Income: {profileData.partnerPreferences.partnerIncome} INR</Text>
+                                            <Text style={[styles.text,{textTransform:"none"}]}>Income: {profileData.partnerPreferences.partnerIncome}</Text>
                                         )}
                                         {profileData.partnerPreferences.partnerOccupation && (
                                             <Text style={styles.text}>Occupation: {profileData.partnerPreferences.partnerOccupation}</Text>

@@ -92,6 +92,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                     <Image
                         source={item.personalDetails.closeUpPhoto ? { uri: item.personalDetails.closeUpPhoto } : require('../../Images/NoImage.png')}
                         style={styles.ProfileImage}
+                        blurRadius={item?.isBlur ? 5 : 0}
                     />
                     {item.verified && (
                         <View style={styles.verifiedContainer}>

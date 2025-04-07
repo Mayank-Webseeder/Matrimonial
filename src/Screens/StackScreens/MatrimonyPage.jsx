@@ -16,7 +16,7 @@ import ImageViewing from 'react-native-image-viewing';
 
 
 const MatrimonyPage = ({ navigation,route }) => {
-    const { profileData } = route.params;
+    const { profileData } = route.params || {};
     const [activeComponent, setActiveComponent] = useState("DetailedProfile");
     const profile_Data = useSelector((state) => state.profile);
     console.log("profileData in myprofile", profileData);

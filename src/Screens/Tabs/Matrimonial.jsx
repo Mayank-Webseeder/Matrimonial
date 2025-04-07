@@ -28,7 +28,6 @@ const Matrimonial = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [searchMode, setSearchMode] = useState(false);
   const MyprofileData = useSelector((state) => state.getBiodata);
-  const partnerPreferences = MyprofileData?.Biodata?.partnerPreferences || null;
 
   // console.log("MyprofileData", MyprofileData);
   useEffect(() => {
@@ -111,6 +110,7 @@ const Matrimonial = ({ navigation }) => {
 
       const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` };
       const res = await axios.get(MALE_FILTER_API, { headers });
+      console.log("res.data.Girls",JSON.stringify(res.data.feedUsers));
       setboysProfiles(res.data.feedUsers);
     } catch (error) {
       console.error("Error fetching profiles:", error.message);
@@ -125,6 +125,7 @@ const Matrimonial = ({ navigation }) => {
 
       const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` };
       const res = await axios.get(FEMALE_FILTER_API, { headers });
+      console.log("res.data.Boys",JSON.stringify(res.data.feedUsers));
       setgirlsProfiles(res.data.feedUsers);
     } catch (error) {
       console.error("Error fetching profiles:", error.message);
@@ -142,16 +143,13 @@ const Matrimonial = ({ navigation }) => {
     );
   
     setTimeout(() => {
-      if (!MyprofileData) {
+      if (!MyprofileData.Biodata || Object.keys(MyprofileData.Biodata).length === 0) {
         navigation.navigate("MatrimonyPage");
-      } else if (!partnerPreferences) {
-        navigation.navigate("MainPartnerPrefrence");
       }
-    }, 2000); 
+    }, 2000);
+    
   };
   
-
-
   const savedProfiles = async (_id) => {
     if (!_id) {
       Toast.show({
@@ -250,6 +248,7 @@ const Matrimonial = ({ navigation }) => {
           <Image
             source={item.personalDetails.closeUpPhoto ? { uri: item.personalDetails.closeUpPhoto } : require('../../Images/NoImage.png')}
             style={styles.ProfileImage}
+            blurRadius={item?.isBlur ? 5 : 0}
           />
           {item.verified && (
             <View style={styles.verifiedContainer}>

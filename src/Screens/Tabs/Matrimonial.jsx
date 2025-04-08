@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar, FlatList, Pressable, TextInput, Linking, ToastAndroid } from 'react-native';
+import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar, FlatList, Pressable, TextInput, Linking, ToastAndroid, ActivityIndicator } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -28,7 +28,7 @@ const Matrimonial = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [searchMode, setSearchMode] = useState(false);
   const MyprofileData = useSelector((state) => state.getBiodata);
-
+  const [profileLoading,setProfileLoading]=useState(false)
   // console.log("MyprofileData", MyprofileData);
   useEffect(() => {
     if (searchQuery.length > 0) {
@@ -41,12 +41,12 @@ const Matrimonial = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       setSearchMode(false);
-      fetchProfiles();
+      fetchProfiles("");
       setActiveButton(1)
     }, [])
   );
 
-  const fetchProfiles = async (query) => {
+  const fetchProfiles = async (query = "") => {
     const token = await AsyncStorage.getItem('userToken');
     if (!token) {
       Toast.show({ type: 'error', text1: 'Error', text2: 'No token found!' });
@@ -97,38 +97,53 @@ const Matrimonial = ({ navigation }) => {
     return () => clearInterval(interval);
   }, [currentIndex]);
 
-  useEffect(() => {
-    if (activeButton === 1) fetchGirlsFilterData();
-    if (activeButton === 2) fetchBoysFilterData();
-  }, [activeButton]);
+  useFocusEffect(
+    useCallback(() => {
+      if (activeButton === 1) {
+        fetchGirlsFilterData();
+      } else if (activeButton === 2) {
+        fetchBoysFilterData();
+      }
+    }, [activeButton])
+  );
 
   const fetchBoysFilterData = async () => {
     try {
       setboysProfiles([])
+      setProfileLoading(true)
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
 
       const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` };
       const res = await axios.get(MALE_FILTER_API, { headers });
-      console.log("res.data.Girls",JSON.stringify(res.data.feedUsers));
+      console.log("res.data.Girls", JSON.stringify(res.data.feedUsers));
       setboysProfiles(res.data.feedUsers);
     } catch (error) {
       console.error("Error fetching profiles:", error.message);
+      setProfileLoading(false)
+    }
+    finally{
+      setProfileLoading(false)
     }
   };
 
   const fetchGirlsFilterData = async () => {
     try {
       setgirlsProfiles([])
+      setProfileLoading(true)
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
 
       const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` };
       const res = await axios.get(FEMALE_FILTER_API, { headers });
-      console.log("res.data.Boys",JSON.stringify(res.data.feedUsers));
+      console.log("res.data.Boys", JSON.stringify(res.data.feedUsers));
       setgirlsProfiles(res.data.feedUsers);
     } catch (error) {
       console.error("Error fetching profiles:", error.message);
+      setProfileLoading(false)
+    }
+    finally{
+      setProfileLoading(false)
     }
   };
 
@@ -141,15 +156,15 @@ const Matrimonial = ({ navigation }) => {
       "Please create biodata to see full information of this profile",
       ToastAndroid.SHORT
     );
-  
+
     setTimeout(() => {
       if (!MyprofileData.Biodata || Object.keys(MyprofileData.Biodata).length === 0) {
         navigation.navigate("MatrimonyPage");
       }
     }, 2000);
-    
+
   };
-  
+
   const savedProfiles = async (_id) => {
     if (!_id) {
       Toast.show({
@@ -239,8 +254,8 @@ const Matrimonial = ({ navigation }) => {
   const renderProfileCard = ({ item }) => {
 
     const formattedHeight = item?.personalDetails?.heightFeet
-    ?.replace(/\s*-\s*/, "")
-    ?.replace(/\s+/g, "");
+      ?.replace(/\s*-\s*/, "")
+      ?.replace(/\s+/g, "");
 
     return (
       <View style={styles.card}>
@@ -281,7 +296,7 @@ const Matrimonial = ({ navigation }) => {
               <View style={styles.rightColumn}>
                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.currentCity}</Text>
                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.occupation}</Text>
-                <Text style={[styles.text, styles.rowItem,{textTransform:"none"}]}>{item?.personalDetails?.annualIncome} </Text>
+                <Text style={[styles.text, styles.rowItem, { textTransform: "none" }]}>{item?.personalDetails?.annualIncome} </Text>
                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.qualification}</Text>
               </View>
             </View>
@@ -313,6 +328,14 @@ const Matrimonial = ({ navigation }) => {
 
   const dataToDisplay = searchMode ? profiles : (activeButton === 1 ? girlsProfiles : activeButton === 2 ? boysProfiles : null);
 
+  if (profileLoading || loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color={Colors.theme_color} />
+      </View>
+    );
+  }
+  
   return (
     <SafeAreaView style={Globalstyles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
@@ -331,33 +354,33 @@ const Matrimonial = ({ navigation }) => {
         </View>
       </View>
       <View style={styles.ButtonContainer}>
-              <View style={styles.leftButtons}>
-                <TouchableOpacity
-                  style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton, { width: "30%" }]}
-                  onPress={() => setActiveButton(1)}
-                >
-                  <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Girls</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.button, activeButton === 2 ? styles.activeButton : styles.inactiveButton, { width: "30%" }]}
-                  onPress={() => setActiveButton(2)}
-                >
-                  <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>Boys</Text>
-                </TouchableOpacity>
-              </View>
-              <TouchableOpacity
-                style={[styles.button, activeButton === 3 ? styles.activeButton : styles.inactiveButton]}
-                onPress={() => {
-                  setActiveButton(3);
-                  navigation.navigate("MainPartnerPrefrence");
-                }}
-              >
-                <Text style={activeButton === 3 ? styles.activeText : styles.inactiveText}>
-                  Set Preferences
-                </Text>
-              </TouchableOpacity>
+        <View style={styles.leftButtons}>
+          <TouchableOpacity
+            style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton, { width: "30%" }]}
+            onPress={() => setActiveButton(1)}
+          >
+            <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Girls</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, activeButton === 2 ? styles.activeButton : styles.inactiveButton, { width: "30%" }]}
+            onPress={() => setActiveButton(2)}
+          >
+            <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>Boys</Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity
+          style={[styles.button, activeButton === 3 ? styles.activeButton : styles.inactiveButton]}
+          onPress={() => {
+            setActiveButton(3);
+            navigation.navigate("MainPartnerPrefrence");
+          }}
+        >
+          <Text style={activeButton === 3 ? styles.activeText : styles.inactiveText}>
+            Set Preferences
+          </Text>
+        </TouchableOpacity>
 
-            </View>
+      </View>
 
 
       {searchMode && (

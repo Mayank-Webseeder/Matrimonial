@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { View, Text, TouchableOpacity, Image, FlatList, ScrollView, SafeAreaView, StatusBar, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, Image, FlatList, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, RefreshControl } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
@@ -25,6 +25,16 @@ const BioData = ({ navigation }) => {
   const savedProfiles = all_profiles?.savedProfiles || [];
   const interestedProfiles = all_profiles?.interestedProfiles || [];
   const allProfiles = all_profiles?.allProfiles || [];
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    get_all_mixed_matrimony_profiles();
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
 
   const get_all_mixed_matrimony_profiles = async () => {
     try {
@@ -89,7 +99,10 @@ const BioData = ({ navigation }) => {
     navigation.navigate("MatrimonyPeopleProfile", {
       userDetails: item,
       userId: item?.userId,
-      isSaved: item.isSaved
+      isSaved: item.isSaved,
+      isBlur: item?.isBlur,
+      isVisible: item?.isVisible,
+      status: item?.status
     });
   };
 
@@ -104,21 +117,26 @@ const BioData = ({ navigation }) => {
 
   const renderProfileData = ({ item }) => {
     const formattedHeight = item?.personalDetails?.heightFeet
-        ?.replace(/\s*-\s*/, "")
-        ?.replace(/\s+/g, "");
+      ?.replace(/\s*-\s*/, "")
+      ?.replace(/\s+/g, "");
+    const isBlur = item?.isBlur;
+    const status = item?.status;
+    const isVisible = item?.isVisible;
+    const isBlurCondition = status === "accepted" ? !isVisible : isBlur;
 
     return (
       <TouchableOpacity style={styles.card} onPress={() => handleNavigateToProfile(item)}>
-        <Image style={styles.image} source={{ uri: item?.personalDetails?.closeUpPhoto }} />
-  
+        <Image style={styles.image} source={{ uri: item?.personalDetails?.closeUpPhoto }}
+          blurRadius={isBlurCondition ? 5 : 0} />
+
         <View style={styles.detailsContainer}>
           <Text style={styles.name}>{item?.personalDetails?.fullname}</Text>
-  
+
           <View style={styles.row2}>
             <Text style={styles.city}>{item?.personalDetails?.cityOrVillage}</Text>
             <Text style={styles.text}>{item?.personalDetails?.subCaste}</Text>
           </View>
-  
+
           <View style={styles.row2}>
             <Text style={styles.text}>Height: {formattedHeight}</Text>
             <Text style={styles.text}>{calculateAge(item?.personalDetails?.dob)} Years</Text>
@@ -127,7 +145,7 @@ const BioData = ({ navigation }) => {
       </TouchableOpacity>
     );
   };
-  
+
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -153,8 +171,9 @@ const BioData = ({ navigation }) => {
           {/* <AntDesign name={'search1'} size={20} color={Colors.theme_color} style={{ marginHorizontal: 10 }} /> */}
         </TouchableOpacity>
       </View>
-
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false} refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }>
         <View style={styles.sliderContainer}>
           <AppIntroSlider
             ref={sliderRef}

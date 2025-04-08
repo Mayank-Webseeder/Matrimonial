@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, FlatList, ScrollView, Image, SafeAreaView, StatusBar, ActivityIndicator, ToastAndroid } from "react-native";
+import { View, Text, TouchableOpacity, FlatList, ScrollView, Image, SafeAreaView, StatusBar, ActivityIndicator, ToastAndroid, RefreshControl } from "react-native";
 import React, { useState, useRef, useCallback } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -20,30 +20,36 @@ const SavedProfile = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const MyprofileData = useSelector((state) => state.getBiodata);
   const partnerPreferences = MyprofileData?.Biodata?.partnerPreferences || null;
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchSavedProfiles();
+    setTimeout(() => setRefreshing(false), 2000);
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
       fetchSavedProfiles();
     }, [])
   );
-  
+
   const fetchSavedProfiles = async () => {
     try {
       setLoading(true);
       setSavedProfiles([]);
-  
+
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         throw new Error("No token found");
       }
-  
+
       const headers = { Authorization: `Bearer ${token}` };
       const response = await axios.get(GET_SAVED__PROFILES, { headers });
-  
+
       console.log("Fetched saved profiles:", JSON.stringify(response.data?.savedProfiles));
 
       setSavedProfiles(response.data?.savedProfiles || []);
-  
+
       setTimeout(() => {
         flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
       }, 100);
@@ -53,7 +59,7 @@ const SavedProfile = ({ navigation }) => {
       setLoading(false);
     }
   };
-  
+
   const DeleteSaveProfile = async (_id) => {
     if (!_id) {
       console.warn("Invalid ID: Cannot delete profile without a valid _id");
@@ -138,19 +144,19 @@ const SavedProfile = ({ navigation }) => {
           onPress={() => {
             if (profileType === "Biodata") {
               if (!partnerPreferences) {
-                  navigation.navigate("ShortMatrimonialProfile", {
-                      userDetails: saveProfile,
-                      isSaved: true
-                  });
+                navigation.navigate("ShortMatrimonialProfile", {
+                  userDetails: saveProfile,
+                  isSaved: true
+                });
               } else {
-                  navigation.navigate("MatrimonyPeopleProfile", {
-                      userDetails: saveProfile,
-                      userId: saveProfile?.userId,
-                      isSaved: true
-                  });
+                navigation.navigate("MatrimonyPeopleProfile", {
+                  userDetails: saveProfile,
+                  userId: saveProfile?.userId,
+                  isSaved: true
+                });
               }
-          }
-           else if (profileType === "Pandit") {
+            }
+            else if (profileType === "Pandit") {
               navigation.navigate("PanditDetailPage", { pandit_id: saveProfile._id, isSaved: true });
             } else if (profileType === "Jyotish") {
               navigation.navigate("JyotishDetailsPage", { jyotish_id: saveProfile._id, isSaved: true });
@@ -224,12 +230,14 @@ const SavedProfile = ({ navigation }) => {
     );
   };
 
-  {loading ? (
-    <View style={styles.loaderContainer}>
-      <ActivityIndicator size="large" color={Colors.theme_color} />
-    </View>
-  ) : null}
-  
+  {
+    loading ? (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color={Colors.theme_color} />
+      </View>
+    ) : null
+  }
+
 
 
   return (
@@ -238,7 +246,7 @@ const SavedProfile = ({ navigation }) => {
       <View>
         <View style={Globalstyles.header}>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <TouchableOpacity  onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
+            <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
               <MaterialIcons name={"arrow-back-ios-new"} size={25} color={Colors.theme_color} />
             </TouchableOpacity>
             <Text style={Globalstyles.headerText}>Saved</Text>
@@ -286,6 +294,9 @@ const SavedProfile = ({ navigation }) => {
             columnWrapperStyle={styles.row}
             contentContainerStyle={styles.ProfileContainer}
             showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
           />
         )}
 

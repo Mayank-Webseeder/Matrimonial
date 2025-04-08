@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, Switch, TouchableOpacity, SafeAreaView, StatusBar, ToastAndroid } from 'react-native';
+import { Text, View, Switch, TouchableOpacity, SafeAreaView, StatusBar, ToastAndroid,ActivityIndicator } from 'react-native';
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/NotificationSettingStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -29,52 +29,58 @@ const PrivacySettings = ({ navigation }) => {
 
     const togglePrivacySetting = async (settingType, currentValue, setter, apiUrl) => {
         try {
-            setIsLoading(true);
-            const token = await AsyncStorage.getItem("userToken");
-            if (!token) throw new Error("No token found");
-
-            const headers = {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            };
-
-            const newValue = !currentValue;
-            setter(newValue);
-
-            setTimeout(async () => {
-                const response = await axios.patch(apiUrl, { status: newValue }, { headers });
-
-                if (response.status === 200 && response.data.status === true) {
-                    console.log("response", JSON.stringify(response.data));
-
-                    Toast.show({
-                        type: "success",
-                        text1: "Success",
-                        text2: `${settingType} ${newValue ? 'enabled' : 'disabled'} successfully!`,
-                    });
-                } else {
-                    throw new Error(response.data.message || "Something went wrong!");
-                }
-            }, 300);
-        } catch (error) {
-            console.error(`Error updating ${settingType}:`, error?.response?.data || error.message);
-
-            let errorMessage = `Failed to update ${settingType}. Please try again!`;
-            if (error.response && error.response.status === 400) {
-                errorMessage = error.response.data?.message || "Invalid request!";
-            }
-
+          const token = await AsyncStorage.getItem("userToken");
+          if (!token) throw new Error("No token found");
+      
+          const headers = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          };
+      
+          const newValue = !currentValue;
+          setter(newValue);
+      
+          const response = await axios.patch(apiUrl, { status: newValue }, { headers });
+      
+          console.log("Toggle API Response:", response.data);
+      
+          if (response.status === 200) {
             Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: errorMessage,
+              type: "success",
+              text1: "Success",
+              text2: response.data.message || `${settingType} updated successfully!`,
             });
-
-            setter(!currentValue); 
-        } finally {
-            setTimeout(() => setIsLoading(false), 300);
+          } else {
+            throw new Error(response.data.message || "Something went wrong!");
+          }
+      
+        } catch (error) {
+          console.error(`Error updating ${settingType}:`, error?.response?.data || error.message);
+      
+          let errorMessage = `Failed to update ${settingType}. Please try again!`;
+          if (error.response?.status === 400) {
+            errorMessage = error.response.data?.message || "Invalid request!";
+          }
+      
+          Toast.show({
+            type: "info",
+            text1: "Info",
+            text2: errorMessage,
+          });
+      
+          setter(currentValue); 
         }
-    };
+      };
+       
+
+    if (isLoading) {
+        return (
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <ActivityIndicator size="large" color={Colors.theme_color} />
+          </View>
+        );
+      }
+      
 
     return (
         <SafeAreaView style={Globalstyles.container}>

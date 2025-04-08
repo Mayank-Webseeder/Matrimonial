@@ -46,7 +46,7 @@ const UpdateProfile = ({ navigation }) => {
 
       console.log("✅ Profile Update Response:", JSON.stringify(response.data));
 
-      if (response.status === 200 && response.data.status === true) {
+      if (response.status === 200 || response.data.status === true) {
         Toast.show({
           type: "success",
           text1: "Success",

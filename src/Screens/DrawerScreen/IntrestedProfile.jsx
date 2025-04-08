@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, TouchableOpacity, Text, SafeAreaView, StatusBar, Image, FlatList, ScrollView, ActivityIndicator } from 'react-native';
+import { View, TouchableOpacity, Text, SafeAreaView, StatusBar, Image, FlatList, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styles from '../StyleScreens/IntrestedProfileStyle';
 import Colors from '../../utils/Colors';
@@ -17,6 +17,15 @@ const IntrestedProfile = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [interestSentData, setInterestSentData] = useState([]);
   const [interestReceivedData, setInterestReceivedData] = useState([]);
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchData(SENDER_REQUESTS, setInterestSentData);
+    fetchData(RECEIVER_REQUESTS, setInterestReceivedData);
+    setTimeout(() => setRefreshing(false), 2000);
+  }, []);
 
   const fetchData = async (url, setData) => {
     try {
@@ -62,25 +71,29 @@ const IntrestedProfile = ({ navigation }) => {
 
   const renderItem = ({ item }, isSent) => {
     const userData = isSent ? item.toUserBioData : item.FromUserBioData;
+    const isVisible = item?.isVisible;
 
     return (
       <TouchableOpacity
         style={styles.card}
         onPress={() => {
-          console.log("userData", userData);   
+          console.log("userData", userData);
+
           if (isSent) {
-            const userData = {
+            const formattedUserData = {
               ...item.toUserBioData,
               requestId: item?.requestId,
               isSaved: item?.isSaved,
-              isBlur: item?.isVisible,
-            };  
+              isBlur: item?.toUserBioData?.isBlur,
+            };
+
             navigation.navigate("MatrimonyPeopleProfile", {
-              userDetails: userData,
-              userId: userData?.userId,
-              isSaved: userData?.isSaved,
-              isBlur: userData?.isVisible,
-              status: item?.status  
+              userDetails: formattedUserData,
+              userId: formattedUserData?.userId,
+              isSaved: formattedUserData?.isSaved,
+              isVisible: isVisible,
+              isBlur: formattedUserData?.isBlur,
+              status: item?.status
             });
           } else {
             navigation.navigate("IntrestReceivedProfilePage", {
@@ -91,7 +104,7 @@ const IntrestedProfile = ({ navigation }) => {
               status: item?.status
             });
           }
-        }}     
+        }}
       >
         <View style={styles.leftContent}>
           <Image
@@ -111,7 +124,6 @@ const IntrestedProfile = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
       </TouchableOpacity>
-
     );
   };
 
@@ -128,6 +140,7 @@ const IntrestedProfile = ({ navigation }) => {
   return (
     <SafeAreaView style={Globalstyles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
+
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: "center" }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -137,34 +150,39 @@ const IntrestedProfile = ({ navigation }) => {
         </View>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View>
-          <View style={styles.ButtonContainer}>
-            {[['Interest Sent', 1], ['Interest Received', 2]].map(([label, id]) => (
-              <TouchableOpacity
-                key={id}
-                style={[styles.button, activeButton === id ? styles.activeButton : styles.inactiveButton]}
-                onPress={() => setActiveButton(id)}
-              >
-                <Text style={activeButton === id ? styles.activeText : styles.inactiveText}>{label}</Text>
-              </TouchableOpacity>
-            ))}
+      <FlatList
+        data={activeButton === 1 ? interestSentData : interestReceivedData}
+        keyExtractor={(item) => item.requestId}
+        renderItem={(item) => renderItem(item, activeButton === 1)}
+        ListHeaderComponent={
+          <View>
+            <View style={styles.ButtonContainer}>
+              {[['Interest Sent', 1], ['Interest Received', 2]].map(([label, id]) => (
+                <TouchableOpacity
+                  key={id}
+                  style={[styles.button, activeButton === id ? styles.activeButton : styles.inactiveButton]}
+                  onPress={() => setActiveButton(id)}
+                >
+                  <Text style={activeButton === id ? styles.activeText : styles.inactiveText}>{label}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
-
-          {isLoading ? (
-            renderSkeleton()
-          ) : (
-            <FlatList
-              data={activeButton === 1 ? interestSentData : interestReceivedData}
-              renderItem={(item) => renderItem(item, activeButton === 1)}
-              scrollEnabled={false}
-              keyExtractor={(item) => item.requestId}
-              ListEmptyComponent={<Text style={styles.noDataText}>No interests {activeButton === 1 ? 'sent' : 'received'}</Text>}
-            />
-          )}
-        </View>
-      </ScrollView>
+        }
+        ListEmptyComponent={
+          isLoading ? renderSkeleton() : (
+            <Text style={styles.noDataText}>
+              No interests {activeButton === 1 ? 'sent' : 'received'}
+            </Text>
+          )
+        }
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        contentContainerStyle={{ paddingBottom: 20 }}
+      />
     </SafeAreaView>
+
   );
 };
 

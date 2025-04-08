@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, FlatList, SafeAreaView, StatusBar, Image, ActivityIndicator } from 'react-native';
+import { Text, View, TouchableOpacity, FlatList, SafeAreaView, StatusBar, Image, ActivityIndicator, RefreshControl } from 'react-native';
 import React, { useEffect, useState, useCallback } from 'react';
 import styles from '../StyleScreens/NotificationsStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -20,9 +20,20 @@ const Notification = ({ navigation }) => {
   const [viewNotification, setViewnotification] = useState({});
   const [IsLoading, setIsLoading] = useState(true);
   const [showSeen, setShowSeen] = useState(false);
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
   const Notificationdata = useSelector((state) => state.GetAllNotification);
   // const NotificationDatas = Notificationdata?.AllNotification;
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    GetAll_Seen_Notification();
+    GetAll_Notification();
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
 
   const GetAll_Notification = async () => {
     setNotificationData([]);
@@ -215,6 +226,9 @@ const Notification = ({ navigation }) => {
             renderItem={showSeen ? renderSeenItem : renderItem}
             keyExtractor={(item) => item._id}
             showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
             ListEmptyComponent={
               <View style={{ alignItems: "center", marginTop: 20 }}>
                 <Text style={{ color: "gray" }}>No Notification Found yet.</Text>

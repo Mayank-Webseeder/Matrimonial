@@ -1,5 +1,5 @@
 import { Text, View, Image, ScrollView, SafeAreaView, StatusBar } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/ProfileStyle';
@@ -13,9 +13,10 @@ import DetailedProfile from './DetailedProfile';
 import PartnersPreference from './PartnersPreference';
 import PhotoGallery from './PhotoGallery';
 import ImageViewing from 'react-native-image-viewing';
+import { useFocusEffect } from '@react-navigation/native';
 
 
-const MatrimonyPage = ({ navigation,route }) => {
+const MatrimonyPage = ({ navigation, route }) => {
     const { profileData } = route.params || {};
     const [activeComponent, setActiveComponent] = useState("DetailedProfile");
     const profile_Data = useSelector((state) => state.profile);
@@ -33,12 +34,13 @@ const MatrimonyPage = ({ navigation,route }) => {
         setActiveComponent(componentName);
     };
 
-    useEffect(() => {
-        console.log("profileData",profileData);
-        if (MyprofileData?.Biodata) {
-            setBiodataAvailable(true);
-        }
-    }, [MyprofileData]);
+    useFocusEffect(
+        useCallback(() => {
+            if (MyprofileData?.Biodata) {
+                setBiodataAvailable(true);
+            }
+        }, [MyprofileData, profileData])
+    );
 
     const capitalizeFirstLetter = (text) => {
         return text ? text.charAt(0).toUpperCase() + text.slice(1) : "Unknown";
@@ -56,7 +58,7 @@ const MatrimonyPage = ({ navigation,route }) => {
                 return null;
         }
     };
-    
+
 
     return (
         <SafeAreaView style={Globalstyles.container}>

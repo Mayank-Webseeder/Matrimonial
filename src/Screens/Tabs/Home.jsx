@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, TouchableOpacity, FlatList, Image, SafeAreaView, Text, StatusBar, ActivityIndicator, ToastAndroid, Alert } from 'react-native';
+import { View, TouchableOpacity, FlatList, Image, SafeAreaView, Text, StatusBar, ActivityIndicator, ToastAndroid, Alert, RefreshControl } from 'react-native';
 import { DrawerActions } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from '../StyleScreens/HomeStyle';
@@ -24,10 +24,12 @@ import Toast from 'react-native-toast-message';
 import { setAllNotification } from '../../ReduxStore/Slices/GetAllNotificationSlice';
 import { SF, SW, SH } from '../../utils/Dimensions';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import useNotificationListener from '../../ReduxStore/Slices/useNotificationListener';
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
   const sliderRef = useRef(null);
   const [socket, setSocket] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [biodata, setBiodata] = useState("");
   const [mybiodata, setMybiodata] = useState("");
@@ -41,9 +43,26 @@ const Home = ({ navigation }) => {
   const [profiledata, setProfileData] = useState('');
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
-  const [NotificationData,setNotificationData]=useState({});
+  const [NotificationData, setNotificationData] = useState({});
+  const sections = ["dummy"];
   // const ProfileData = useSelector((state) => state.profile);
   // const profile_data = ProfileData?.profiledata || {};
+
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setNotificationData({})
+      setMybiodata("")
+      setallBiodata("")
+      setRefreshing(false);
+      getBiodata();
+      GetAll_Notification();
+      GetAll_Biodata();
+      getActivistProfile();
+    }, 2000);
+  }, []);
+
 
   const GetAll_Notification = async () => {
     try {
@@ -69,17 +88,15 @@ const Home = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
-    console.log("MyprofileData", MyprofileData)
-  }, [])
-
   useFocusEffect(
     React.useCallback(() => {
       getBiodata();
       GetAll_Notification();
+      GetAll_Biodata();
+      getActivistProfile();
     }, [])
   );
-  
+
   const getBiodata = async () => {
     try {
       setLoading(true)
@@ -112,7 +129,7 @@ const Home = ({ navigation }) => {
   const handleNavigateToProfile = (item) => {
     console.log("item", item);
     if (!navigation.isFocused()) return;
-  
+
     if (!hasBiodata) {
       console.log("Navigating to ShortMatrimonialProfile because Biodata is missing");
       navigation.navigate("ShortMatrimonialProfile", {
@@ -187,13 +204,6 @@ const Home = ({ navigation }) => {
       setIsLoading(false)
     }
   };
-
-  useFocusEffect(
-    React.useCallback(() => {
-      GetAll_Biodata();
-      getActivistProfile();
-    }, [])
-  );
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -273,131 +283,133 @@ const Home = ({ navigation }) => {
           </View>
         </TouchableOpacity>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.sliderContainer}>
-          <AppIntroSlider
-            ref={sliderRef}
-            data={slider}
-            renderItem={({ item }) => (
-              <View>
-                <Image source={item.image} style={styles.sliderImage} />
-              </View>
-            )}
-            showNextButton={false}
-            showDoneButton={false}
-            dotStyle={styles.dot}
-            activeDotStyle={styles.activeDot}
-          />
-        </View>
+      <FlatList
+        data={sections}
+        keyExtractor={(item, index) => index.toString()}
+        ListHeaderComponent={
+          <>
+            <View style={styles.sliderContainer}>
+              <AppIntroSlider
+                ref={sliderRef}
+                data={slider}
+                renderItem={({ item }) => (
+                  <Image source={item.image} style={styles.sliderImage} />
+                )}
+                showNextButton={false}
+                showDoneButton={false}
+                dotStyle={styles.dot}
+                activeDotStyle={styles.activeDot}
+              />
+            </View>
 
-
-        <View>
-          <HeadingWithViewAll
-            heading="MATRIMONY"
-            showViewAll={true}
-            onViewAllPress={() => {
-              if (partnerPreferences) {
-                navigation.navigate("BioData");
-              } else {
-                navigation.navigate("Matrimonial");
-              }
-            }}
-
-          />
-
-          {loading ? renderSkeleton() : (
-            <FlatList
-              data={allbiodata}
-              keyExtractor={(item) => item._id}
-              renderItem={({ item }) => (
-                <View style={styles.imageWrapper}>
-                  <TouchableOpacity onPress={() => handleNavigateToProfile(item)}>
-                    <Image
-                      source={
-                        item?.personalDetails?.closeUpPhoto
-                          ? { uri: item.personalDetails.closeUpPhoto }
-                          : require("../../Images/NoImage.png")
-                      }
-                      style={[styles.ProfileImages]}
-                      // blurRadius={blurEnabled ? 10 : 0}
-                    />
-
-                    {item.verified && (
-                      <View style={styles.verifiedContainer}>
+            {/* MATRIMONY */}
+            <View>
+              <HeadingWithViewAll
+                heading="MATRIMONY"
+                showViewAll={true}
+                onViewAllPress={() => {
+                  if (partnerPreferences) {
+                    navigation.navigate("BioData");
+                  } else {
+                    navigation.navigate("Matrimonial");
+                  }
+                }}
+              />
+              {loading ? renderSkeleton() : (
+                <FlatList
+                  data={allbiodata}
+                  keyExtractor={(item) => item._id}
+                  renderItem={({ item }) => (
+                    <View style={styles.imageWrapper}>
+                      <TouchableOpacity onPress={() => handleNavigateToProfile(item)}>
                         <Image
-                          source={require("../../Images/verified.png")}
-                          style={styles.verifiedBadge}
+                          source={
+                            item?.personalDetails?.closeUpPhoto
+                              ? { uri: item.personalDetails.closeUpPhoto }
+                              : require("../../Images/NoImage.png")
+                          }
+                          style={[styles.ProfileImages]}
                         />
-                        <Text style={styles.verifiedText}>Verified</Text>
-                      </View>
-                    )}
-                  </TouchableOpacity>
-                </View>
+                        {item.verified && (
+                          <View style={styles.verifiedContainer}>
+                            <Image
+                              source={require("../../Images/verified.png")}
+                              style={styles.verifiedBadge}
+                            />
+                            <Text style={styles.verifiedText}>Verified</Text>
+                          </View>
+                        )}
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  ListEmptyComponent={
+                    <View style={styles.emptyContainer}>
+                      <Text style={styles.emptyText}>No Matrimonial Profile Created Yet</Text>
+                    </View>
+                  }
+                />
               )}
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-              ListEmptyComponent={
-                <View style={styles.emptyContainer}>
-                  <Text style={styles.emptyText}>No Matrimonial Profile Created Yet</Text>
-                </View>
-              }
+            </View>
+
+            {/* PANDIT / JOYTISH / KATHAVACHAK */}
+            <View>
+              <HeadingWithViewAll heading="PANDIT / JOYTISH / KATHAVACHAK" showViewAll={false} />
+              <FlatList
+                data={Category}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={styles.CategoryContainer}
+                    onPress={() => {
+                      if (item.screen) navigation.navigate(item.screen);
+                      else console.warn("Screen not specified for this category.");
+                    }}
+                  >
+                    <Image source={item.image} style={styles.images} />
+                    <Text style={styles.text}>{item.text}</Text>
+                  </TouchableOpacity>
+                )}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+              />
+            </View>
+
+            {/* BRAHMIN COMMUNITY */}
+            <View>
+              <HeadingWithViewAll heading="BRAHMIN COMMUNITY" showViewAll={false} />
+              <FlatList
+                data={communityData}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={styles.CategoryContainer}
+                    onPress={() => {
+                      if (item.screen) navigation.navigate(item.screen);
+                      else console.warn("Screen not specified");
+                    }}
+                  >
+                    <Image source={item.image} style={styles.images} />
+                    <Text style={styles.text}>{item.text}</Text>
+                  </TouchableOpacity>
+                )}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+              />
+            </View>
+
+            {/* Bottom Image */}
+            <Image
+              source={require("../../Images/slider.png")}
+              style={Globalstyles.bottomImage}
             />
-
-          )}
-        </View>
-
-        <View>
-          <HeadingWithViewAll
-            heading="PANDIT / JOYTISH / KATHAVACHAK"
-            showViewAll={false}
-          />
-          <FlatList
-            data={Category}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <TouchableOpacity style={styles.CategoryContainer} onPress={() => {
-                if (item.screen) {
-                  navigation.navigate(item.screen);
-                } else {
-                  console.warn("Screen not specified for this category.");
-                }
-              }}
-              >
-                <Image source={item.image} style={styles.images} />
-                <Text style={styles.text}>{item.text}</Text>
-              </TouchableOpacity>
-            )}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-          />
-        </View>
-        <View>
-          <HeadingWithViewAll
-            heading="BRAHMIN COMMUNITY"
-            showViewAll={false}
-          />
-          <FlatList
-            data={communityData}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <TouchableOpacity style={styles.CategoryContainer} onPress={() => {
-                if (item.screen) {
-                  navigation.navigate(item.screen)
-                }
-                else {
-                  console.warn("Screen not specified")
-                }
-              }}>
-                <Image source={item.image} style={styles.images} />
-                <Text style={styles.text}>{item.text}</Text>
-              </TouchableOpacity>
-            )}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-          />
-        </View>
-        <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
-      </ScrollView>
+          </>
+        }
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      />
       <Toast />
     </SafeAreaView>
   );

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator, Share, Switch, ToastAndroid,
   Modal, Dimensions
@@ -10,7 +10,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/LocationStyle';
 import Globalstyles from '../../utils/GlobalCss';
-import { useRoute } from "@react-navigation/native";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
 import moment from "moment";
 import axios from 'axios';
 import { MATCHED_PROFILE, SAVED_PROFILES, SEND_REQUEST, SHARED_PROFILES, VERIFY_PROFILE } from '../../utils/BaseUrl';
@@ -18,13 +18,13 @@ import { useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SF, SH, SW } from '../../utils/Dimensions';
 import Toast from 'react-native-toast-message';
-import useNotificationListener from '../../ReduxStore/Slices/useNotificationListener';
 const { width, height } = Dimensions.get("window");
 
 const MatrimonyPeopleProfile = ({ navigation }) => {
   const route = useRoute();
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
-  const { userDetails, isSaved: initialSavedState, userId, isBlur, status } = route.params || {};
+  const { userDetails, isSaved: initialSavedState, userId, isBlur,isVisible, status } = route.params || {};
+  const isBlurCondition = status === "accepted" ? !isVisible : isBlur;
   const [Save, setIsSaved] = useState(initialSavedState || false);
   const Biodata_id = userDetails?.bioDataId || null;
   const hideContact = !!(userDetails?.hideContact);
@@ -119,12 +119,17 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
   // console.log("MyprofileData", MyprofileData);
 
-  useEffect(() => {
-    console.log("isBlur", isBlur);
-    if (userId) {
-      fetchUserProfile(userId);
-    }
-  }, [userId]);
+  useFocusEffect(
+    useCallback(() => {
+      console.log("isBlur", isBlur);
+      console.log("isVisible",isVisible);
+      console.log("status",status);
+      if (userId) {
+        fetchUserProfile(userId);
+      }
+    }, [userId, isBlur]) 
+  );
+  
 
   const fetchUserProfile = async (id) => {
     setLoading(true);
@@ -311,7 +316,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               <Image
                 source={{ uri: images[0] }}
                 style={{ width: SW(350), height: SH(330), borderRadius: 10 }}
-                blurRadius={isBlur ? 5 : 0}
+                blurRadius={isBlurCondition ? 5 : 0}
               />
             </TouchableOpacity>
           )}
@@ -332,7 +337,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                     <Image
                       source={{ uri: img }}
                       style={{ width: width * 0.9, height: height * 0.8, borderRadius: 10, resizeMode: "contain" }}
-                      blurRadius={isBlur ? 5 : 0}
+                      blurRadius={isBlurCondition ? 5 : 0}
                     />
                   </View>
                 ))}

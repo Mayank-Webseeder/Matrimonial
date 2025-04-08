@@ -34,16 +34,15 @@ const InActiveDelete = ({ navigation }) => {
                 Authorization: `Bearer ${token}`,
             };
 
-            console.log("Headers:", headers);
-
             const response = await axios.delete(DELETE_BIODATA, { headers });
 
-            console.log("✅ Response Data:", response.data);
-
             if (response.status === 200 && response.data.status === true) {
-                ToastAndroid.show("Your Biodata has been deleted successfully!", ToastAndroid.SHORT);
-
-                // ✅ Show success modal only if deletion succeeds
+                // ✅ Success
+                Toast.show({
+                    type: "success",
+                    text1: "Success",
+                    text2: "Your Biodata has been deleted successfully!",
+                });
                 setSuccessModalVisible(true);
             } else {
                 throw new Error(response.data.message || "Unexpected response from server");
@@ -54,14 +53,20 @@ const InActiveDelete = ({ navigation }) => {
 
             let errorMessage = "Failed to delete Biodata. Please try again!";
             if (error.response && error.response.status === 400) {
-                errorMessage = error.response.data.message || errorMessage; // ✅ Show API error message
+                errorMessage = error.response.data.message || errorMessage;
             }
 
-            ToastAndroid.show(errorMessage, ToastAndroid.LONG);
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: errorMessage,
+            });
+
         } finally {
             setIsLoading(false);
         }
     };
+
     const DELETE_USER_API = async () => {
         try {
             setIsLoading(true);
@@ -74,21 +79,21 @@ const InActiveDelete = ({ navigation }) => {
                 Authorization: `Bearer ${token}`,
             };
 
-            console.log("Headers:", headers);
-
             const response = await axios.delete(DELETE_USER, { headers });
 
-            console.log("✅ Response Data:", response.data);
-
             if (response.status === 200 && response.data.status === true) {
-                ToastAndroid.show("Your Account has been deleted successfully!", ToastAndroid.SHORT);
+                Toast.show({
+                    type: "success",
+                    text1: "Success",
+                    text2: "Your Account has been deleted successfully!",
+                });
 
-                // ✅ Clear storage and navigate to SignUp
                 await AsyncStorage.clear();
                 navigation.reset({
                     index: 0,
                     routes: [{ name: "AuthStack" }],
-                  });
+                });
+
             } else {
                 throw new Error(response.data.message || "Unexpected response from server");
             }
@@ -101,7 +106,12 @@ const InActiveDelete = ({ navigation }) => {
                 errorMessage = error.response.data.message || errorMessage;
             }
 
-            ToastAndroid.show(errorMessage, ToastAndroid.LONG);
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: errorMessage,
+            });
+
         } finally {
             setIsLoading(false);
         }
@@ -113,71 +123,14 @@ const InActiveDelete = ({ navigation }) => {
     };
 
     const handleConfirm = async () => {
-        setIsModalVisible(false); // Close confirmation modal
+        setIsModalVisible(false);
 
         if (actionType === 'deleteBiodata') {
-            try {
-                const response = await DELETE_BIODATA_API(); // Call API
-
-                if (response?.status === 400) {
-                    Toast.show({
-                        type: "error",
-                        text1: "Error",
-                        text2: response.data.message || "Failed to delete Biodata!",
-                    });
-                } else {
-                    Toast.show({
-                        type: "success",
-                        text1: "Success",
-                        text2: "Biodata Deleted Successfully!",
-                    });
-                }
-
-            } catch (error) {
-                console.error("❌ Error in handleConfirm:", error);
-
-                Toast.show({
-                    type: "error",
-                    text1: "Error",
-                    text2: error?.response?.data?.message || "Something went wrong!",
-                });
-            }
-        }
-        else if (actionType === 'deleteAccount') {
-            try {
-                const response = await DELETE_USER_API(); // Call API
-
-                if (response?.status === 400) {
-                    Toast.show({
-                        type: "error",
-                        text1: "Error",
-                        text2: response.data.message || "Failed to delete account!",
-                    });
-                } else {
-                    Toast.show({
-                        type: "success",
-                        text1: "Success",
-                        text2: "Account Deleted Successfully!",
-                    });
-                }
-                navigation.reset({
-                    index: 0,
-                    routes: [{ name: "AuthStack" }],
-                });
-
-            } catch (error) {
-                console.error("❌ Error in handleConfirm:", error);
-
-                Toast.show({
-                    type: "error",
-                    text1: "Error",
-                    text2: error?.response?.data?.message || "Something went wrong!",
-                });
-            }
+            await DELETE_BIODATA_API();
+        } else if (actionType === 'deleteAccount') {
+            await DELETE_USER_API();
         }
     };
-
-
 
     const closeSuccessModal = () => {
         setSuccessModalVisible(false);
@@ -199,7 +152,7 @@ const InActiveDelete = ({ navigation }) => {
             <Text style={styles.Text}>Do you really want to Inactivate or Delete your Profile?</Text>
 
             <View style={styles.optionsContainer}>
-            {Profiledata?.isMatrimonial && (
+                {Profiledata?.isMatrimonial && (
                     <TouchableOpacity
                         style={styles.optionButton}
                         onPress={() => handleAction('inactivate')}
@@ -254,7 +207,7 @@ const InActiveDelete = ({ navigation }) => {
                     </View>
                 </View>
             </Modal>
-            <Toast/>
+            <Toast />
         </SafeAreaView>
     );
 };

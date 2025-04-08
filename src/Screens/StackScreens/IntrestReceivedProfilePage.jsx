@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator, ToastAndroid, Dimensions, Modal } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -16,6 +16,7 @@ import { ACCEPTED_API, REJECTED_API, SAVED_PROFILES } from '../../utils/BaseUrl'
 import { SH, SW, SF } from '../../utils/Dimensions';
 import moment from 'moment';
 import Toast from 'react-native-toast-message';
+import { useFocusEffect } from '@react-navigation/native';
 const { width, height } = Dimensions.get("window");
 
 const IntrestReceivedProfilePage = ({ navigation, route }) => {
@@ -45,12 +46,13 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
     setModalVisible(true);
   };
 
-  useEffect(() => {
-    console.log("isBlur", isBlur);
-    if (userId) {
-      fetchUserProfile(userId);
-    }
-  }, [userId]);
+  useFocusEffect(
+    useCallback(() => {
+      if (userId) {
+        fetchUserProfile(userId);
+      }
+    }, [userId])
+  );
 
   const fetchUserProfile = async (id) => {
     setLoading(true);

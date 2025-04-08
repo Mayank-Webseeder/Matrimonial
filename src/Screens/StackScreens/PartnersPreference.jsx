@@ -386,7 +386,7 @@ const PartnersPreference = ({ navigation,profileData }) => {
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerIncome: item.value })}
                             placeholder="Income"
-                            placeholderStyle={{ color: '#E7E7dE7' }}
+                            placeholderStyle={{ color: '#E7E7E7' }}
                         />
                         <Text style={Globalstyles.title}>Occupation  </Text>
                         <Dropdown

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Modal, ToastAndroid } from 'react-native';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
 import Colors from '../../utils/Colors';
@@ -14,23 +14,37 @@ import { resetsetActivistdata } from '../../ReduxStore/Slices/ActivistSlice';
 import { resetAllBiodata } from '../../ReduxStore/Slices/GetAllBiodataSlice';
 import { reseAllNotification } from '../../ReduxStore/Slices/GetAllNotificationSlice';
 import { resetProfiledata } from '../../ReduxStore/Slices/ProfileSlice';
+
 const CustomDrawer = (props) => {
   const dispatch = useDispatch();
   const { navigation } = props;
   const [openDropdown, setOpenDropdown] = useState(null);
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
-
   const ProfileData = useSelector((state) => state.profile);
   const isMatrimonial = ProfileData?.profiledata?.isMatrimonial || false;
   const image = ProfileData?.profiledata?.photoUrl?.[0];
   const name = ProfileData?.profiledata?.username || 'userName';
   const Id = ProfileData?.profiledata?.userId || 'user id';
+  const isBiodataExpired = ProfileData?.profiledata?.serviceSubscriptions?.some(
+    (sub) => sub.serviceType === "Biodata" && sub.status === "Expired"
+  );
+  const showPartnersPreference = isMatrimonial || isBiodataExpired;
+  const showInterestedProfile = isMatrimonial && !isBiodataExpired;
+
+
+  useEffect(() => {
+    console.log("isBiodataExpired", isBiodataExpired);
+  }, [])
 
   const menuItems = [
-    ...(isMatrimonial ? [
-      { title: 'Partners Preference', screen: 'MainPartnerPrefrence' },
-      { title: 'Interested Profile', screen: 'Interested Profile' }
-    ] : []),
+    ...(showPartnersPreference
+      ? [{ title: 'Partners Preference', screen: 'MainPartnerPrefrence' }]
+      : []
+    ),
+    ...(showInterestedProfile
+      ? [{ title: 'Interested Profile', screen: 'Interested Profile' }]
+      : []
+    ),
     { title: 'Saved Profile', screen: 'Saved Profile' },
     { title: 'Pandit/Jyotish' },
     { title: 'Event/News', screen: 'EventNews' },

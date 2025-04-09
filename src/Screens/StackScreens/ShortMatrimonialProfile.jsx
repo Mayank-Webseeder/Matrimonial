@@ -12,10 +12,14 @@ import Globalstyles from '../../utils/GlobalCss';
 import Toast from 'react-native-toast-message';
 import { SAVED_PROFILES } from '../../utils/BaseUrl';
 import { SW } from '../../utils/Dimensions';
+import { useSelector } from 'react-redux';
 
 const ShortMatrimonialProfile = ({ navigation, route }) => {
     const { userDetails, isSaved: initialSavedState } = route.params;
     const [Save, setIsSaved] = useState(initialSavedState || false);
+    const ProfileData = useSelector((state) => state.profile);
+    const profile_data = ProfileData?.profiledata || {};
+    const MyprofileData = useSelector((state) => state.getBiodata);
 
     useEffect(() => {
         console.log("userDetails", userDetails);
@@ -78,14 +82,41 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
 
 
     const popop = async () => {
-        ToastAndroid.show("Please create biodata to see full information of the this profile", ToastAndroid.SHORT);
-    }
+        const isBiodataExpired = profile_data?.serviceSubscriptions?.some(
+            (sub) => sub.serviceType === "Biodata" && sub.status === "Expired"
+        );
+
+        const isBiodataEmpty = !MyprofileData.Biodata || Object.keys(MyprofileData.Biodata).length === 0;
+
+        if (isBiodataEmpty) {
+            ToastAndroid.show(
+                "Please create biodata to see full information of this profile",
+                ToastAndroid.SHORT
+            );
+
+            setTimeout(() => {
+                navigation.navigate("MatrimonyPage");
+            }, 2000);
+        } else if (isBiodataExpired) {
+            ToastAndroid.show(
+                "Please activate your subscription to see full information of this profile",
+                ToastAndroid.SHORT
+            );
+
+            setTimeout(() => {
+                navigation.navigate("BuySubscription");
+            }, 2000);
+        } else {
+            // Everything is fine
+            navigation.navigate("MatrimonyPage");
+        }
+    };
 
     const renderProfileCard = ({ item }) => {
         const formattedHeight = item?.personalDetails?.heightFeet
-        ?.replace(/\s*-\s*/, "")
-        ?.replace(/\s+/g, "");
-        
+            ?.replace(/\s*-\s*/, "")
+            ?.replace(/\s+/g, "");
+
         return (
             <View style={styles.card}>
                 <Pressable onPress={popop}>
@@ -125,7 +156,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                             <View style={styles.rightColumn}>
                                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.currentCity}</Text>
                                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.occupation}</Text>
-                                <Text style={[styles.text, styles.rowItem,{textTransform:"none"}]}>{item?.personalDetails?.annualIncome}</Text>
+                                <Text style={[styles.text, styles.rowItem, { textTransform: "none" }]}>{item?.personalDetails?.annualIncome}</Text>
                                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.qualification}</Text>
                             </View>
                         </View>

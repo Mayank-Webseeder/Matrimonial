@@ -52,7 +52,14 @@ const DetailedProfile = ({ navigation, profileData }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [trialLoading, setTrialLoading] = useState(false);
   const [buyLoading, setBuyLoading] = useState(false);
+  const ProfileData = useSelector((state) => state.profile);
+  const profile_data = ProfileData?.profiledata || {};
+  const [buyingPlanId, setBuyingPlanId] = useState(null);
+  const [TrialPlanId, setTrialPlanId] = useState(null);
 
+  useEffect(() => {
+    console.log("profile_data", JSON.stringify(profile_data));
+  })
 
   const [biodata, setBiodata] = useState({
     subCaste: '',
@@ -124,169 +131,6 @@ const DetailedProfile = ({ navigation, profileData }) => {
       }
     } catch (error) {
       console.error('Failed to fetch plans:', error);
-    }
-  };
-
-  const handleFreeTrial = async (plan) => {
-    try {
-      setTrialLoading(true)
-      const payload = {
-        serviceType: plan.profileType,
-        trialPeriod: String(plan.trialPeriod),
-      };
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
-
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      };
-      console.log("payload", payload);
-
-      const response = await axios.post(
-        'https://api-matrimonial.webseeder.tech/api/v1/subscription/setTrial',
-        payload, { headers }
-      );
-
-      if (response.data?.status) {
-        Alert.alert('Free Trial Started', response.data.message || `Trial started for ${plan.profileType}`);
-      } else {
-        throw new Error(response.data?.message || 'Something went wrong!');
-      }
-      setModalVisible(false)
-
-    } catch (error) {
-      console.error('Error starting trial:', error?.response?.data || error.message);
-
-      Alert.alert(
-        'Failed to Start Trial',
-        error?.response?.data?.message || 'Please try again later.'
-      );
-    }
-    setTrialLoading(false)
-  };
-
-  const handleBuyNow = async (plan) => {
-    try {
-      setBuyLoading(true)
-      const token = await AsyncStorage.getItem("userToken");
-      const userId = await AsyncStorage.getItem("userId");
-
-      if (!token || !userId) throw new Error("Missing user token or ID");
-
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      };
-
-      const keyResponse = await axios.get(
-        "https://api-matrimonial.webseeder.tech/api/v1/subscription/getRazorPayKey",
-        { headers }
-      );
-
-      const razorpayKey = keyResponse.data?.key;
-      if (!razorpayKey) throw new Error("Failed to fetch Razorpay Key");
-
-      const payload = {
-        userId,
-        selectedServices: [
-          {
-            profileType: plan.profileType,
-          },
-        ],
-      };
-      console.log("📦 [Payload to /buy]:", payload);
-
-      const orderResponse = await axios.post(
-        "https://api-matrimonial.webseeder.tech/api/v1/subscription/buy",
-        payload,
-        { headers }
-      );
-
-      console.log("🧾 [Order API Response]:", orderResponse.data);
-
-      let orderId, amount, currency;
-
-      // Case 1: New order created
-      if (orderResponse.data?.razorpayOrder) {
-        const razorpayOrder = orderResponse.data.razorpayOrder;
-        orderId = razorpayOrder.id;
-        amount = razorpayOrder.amount;
-        currency = razorpayOrder.currency;
-      }
-      // Case 2: Old subscription exists (and message says 'Subscription created...')
-      else if (orderResponse.data?.razorpayOrderId) {
-        orderId = orderResponse.data.razorpayOrderId;
-        amount = orderResponse.data.services?.[0]?.amount * 100 || 50000;
-        currency = "INR";
-      }
-
-      if (!orderId || !amount || !currency) {
-        throw new Error("Incomplete Razorpay order data received from server");
-      }
-
-      const options = {
-        description: `Subscription for ${plan.profileType}`,
-        image: 'https://yourapp.com/logo.png',
-        currency,
-        key: razorpayKey,
-        amount,
-        name: 'Matrimonial',
-        order_id: orderId,
-        theme: { color: '#3399cc' },
-      };
-
-      RazorpayCheckout.open(options)
-        .then(async (paymentData) => {
-          console.log("💸 [Payment Success]:", paymentData);
-
-          const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = paymentData;
-
-          if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
-            Alert.alert("Error", "Missing payment details from Razorpay.");
-            return;
-          }
-
-          const verifyPayload = {
-            razorpay_payment_id: razorpay_payment_id,
-            razorpay_order_id: razorpay_order_id,
-            razorpay_signature: razorpay_signature,
-          };
-
-          console.log("📨 [Payload to /verifyPayment]:", verifyPayload);
-
-          try {
-            const verifyResponse = await axios.post(
-              "https://api-matrimonial.webseeder.tech/api/v1/subscription/verifyPayment",
-              verifyPayload,
-              { headers }
-            );
-
-            console.log("✅ [Verify Payment Response]:", verifyResponse.data);
-
-            if (verifyResponse.data?.status) {
-              Alert.alert("Success", "Payment verified and subscription activated!");
-            } else {
-              Alert.alert("Warning", verifyResponse.data?.message || "Verification failed!");
-            }
-
-          } catch (verifyError) {
-            console.error("❌ [Verification Error]:", verifyError.response?.data || verifyError.message);
-            Alert.alert("Error", "Payment done, but verification failed.");
-          }
-        })
-        .catch((error) => {
-          console.log("❌ [Payment Failed]:", error);
-          Alert.alert("Payment Failed", error.description || "Try again later.");
-        });
-
-    } catch (error) {
-      console.error("❌ [Error in buying subscription]:", error?.response?.data || error.message);
-      Alert.alert(
-        "Failed to Buy Subscription",
-        error?.response?.data?.message || error.message || "Please try again later."
-      );
-      setBuyLoading(false)
     }
   };
 
@@ -668,10 +512,217 @@ const DetailedProfile = ({ navigation, profileData }) => {
         error.response?.message ||
         error.message ||
         "Something went wrong!";
-
       showMessage(errorMessage, "error");
+
+      setTimeout(() => {
+        openModal();
+      }, 1000);
+
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleFreeTrial = async (plan) => {
+    try {
+      setTrialLoading(true);
+      setTrialPlanId(plan._id)
+      const payload = {
+        serviceType: plan.profileType,
+        trialPeriod: String(plan.trialPeriod),
+      };
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) throw new Error("No token found");
+
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+
+      console.log("payload", payload);
+
+      const response = await axios.post(
+        'https://api-matrimonial.webseeder.tech/api/v1/subscription/setTrial',
+        payload,
+        { headers }
+      );
+
+      if (response.data?.status) {
+        Alert.alert(
+          'Free Trial Started',
+          response.data.message || `Trial started for ${plan.profileType}`,
+          [
+            {
+              text: "OK",
+              onPress: () => {
+                setModalVisible(false);
+                handleSave();
+              },
+            },
+          ]
+        );
+      } else {
+        throw new Error(response.data?.message || 'Something went wrong!');
+      }
+
+    } catch (err) {
+      const errorMessage = err?.response?.data?.message || err.message || 'Please try again later.';
+      console.error('Error starting trial:', err?.response?.data || err.message);
+
+      Alert.alert(
+        'Failed to Start Trial',
+        errorMessage,
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              if (errorMessage === "Trial already requested or activated for Biodata") {
+                setModalVisible(false);
+                handleSave(); // ✅ Still proceed
+              }
+            }
+          }
+        ]
+      );
+    } finally {
+      setTrialLoading(false);
+      setTrialPlanId(null)
+    }
+  };
+
+
+  const handleBuyNow = async (plan) => {
+    try {
+      setBuyLoading(true)
+      setBuyingPlanId(plan._id)
+      const token = await AsyncStorage.getItem("userToken");
+      const userId = await AsyncStorage.getItem("userId");
+
+      if (!token || !userId) throw new Error("Missing user token or ID");
+
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+
+      const keyResponse = await axios.get(
+        "https://api-matrimonial.webseeder.tech/api/v1/subscription/getRazorPayKey",
+        { headers }
+      );
+
+      const razorpayKey = keyResponse.data?.key;
+      if (!razorpayKey) throw new Error("Failed to fetch Razorpay Key");
+
+      const payload = {
+        userId,
+        selectedServices: [
+          {
+            profileType: plan.profileType,
+          },
+        ],
+      };
+      console.log("📦 [Payload to /buy]:", payload);
+
+      const orderResponse = await axios.post(
+        "https://api-matrimonial.webseeder.tech/api/v1/subscription/buy",
+        payload,
+        { headers }
+      );
+
+      console.log("🧾 [Order API Response]:", orderResponse.data);
+
+      let orderId, amount, currency;
+
+      // Case 1: New order created
+      if (orderResponse.data?.razorpayOrder) {
+        const razorpayOrder = orderResponse.data.razorpayOrder;
+        orderId = razorpayOrder.id;
+        amount = razorpayOrder.amount;
+        currency = razorpayOrder.currency;
+      }
+      // Case 2: Old subscription exists (and message says 'Subscription created...')
+      else if (orderResponse.data?.razorpayOrderId) {
+        orderId = orderResponse.data.razorpayOrderId;
+        amount = orderResponse.data.services?.[0]?.amount * 100 || 50000;
+        currency = "INR";
+      }
+
+      if (!orderId || !amount || !currency) {
+        throw new Error("Incomplete Razorpay order data received from server");
+      }
+
+      const options = {
+        description: `Subscription for ${plan.profileType}`,
+        image: 'https://yourapp.com/logo.png',
+        currency,
+        key: razorpayKey,
+        amount,
+        name: 'Matrimonial',
+        order_id: orderId,
+        theme: { color: '#3399cc' },
+      };
+
+      RazorpayCheckout.open(options)
+        .then(async (paymentData) => {
+          console.log("💸 [Payment Success]:", paymentData);
+
+          const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = paymentData;
+
+          if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
+            Alert.alert("Error", "Missing payment details from Razorpay.");
+            return;
+          }
+
+          const verifyPayload = {
+            razorpay_payment_id: razorpay_payment_id,
+            razorpay_order_id: razorpay_order_id,
+            razorpay_signature: razorpay_signature,
+          };
+
+          console.log("📨 [Payload to /verifyPayment]:", verifyPayload);
+
+          try {
+            const verifyResponse = await axios.post(
+              "https://api-matrimonial.webseeder.tech/api/v1/subscription/verifyPayment",
+              verifyPayload,
+              { headers }
+            );
+
+            console.log("✅ [Verify Payment Response]:", verifyResponse.data);
+
+            if (verifyResponse.data?.status) {
+              Alert.alert("Success", "Payment verified and subscription activated!", [
+                {
+                  text: "OK",
+                  onPress: () => {
+                    setModalVisible(false);
+                    handleSave();
+                  },
+                },
+              ]);
+            }
+            else {
+              Alert.alert("Warning", verifyResponse.data?.message || "Verification failed!");
+            }
+
+          } catch (verifyError) {
+            console.error("❌ [Verification Error]:", verifyError.response?.data || verifyError.message);
+            Alert.alert("Error", "Payment done, but verification failed.");
+          }
+        })
+        .catch((error) => {
+          console.log("❌ [Payment Failed]:", error);
+          Alert.alert("Payment Failed", error.description || "Try again later.");
+        });
+
+    } catch (error) {
+      console.error("❌ [Error in buying subscription]:", error?.response?.data || error.message);
+      Alert.alert(
+        "Failed to Buy Subscription",
+        error?.response?.data?.message || error.message || "Please try again later."
+      );
+      setBuyLoading(false)
+      setBuyingPlanId(false)
     }
   };
 
@@ -1466,12 +1517,12 @@ const DetailedProfile = ({ navigation, profileData }) => {
           </TouchableOpacity>
 
           {/* subscription part  */}
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.trialButton}
             onPress={openModal}
           >
-            <Text style={styles.trialText}>Show Plans</Text>
-          </TouchableOpacity>
+            <Text style={styles.trialText}>Show All Plans</Text>
+          </TouchableOpacity> */}
 
           <Modal visible={modalVisible} animationType="slide" transparent={true}>
             <View style={styles.modalOverlay}>
@@ -1489,12 +1540,12 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
                           <View style={styles.buttonRowAligned}>
                             <TouchableOpacity style={styles.trialButton} onPress={() => handleFreeTrial(plan)}>
-                              {trialLoading ? 'Starting...' : 'Start Free Trial'}
+                              <Text style={styles.trialText}>{TrialPlanId === plan._id ? 'Starting...' : 'Start Free Trial'}</Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity style={styles.buyButton} onPress={() => handleBuyNow(plan)}>
                               <Text style={styles.buyButtonText}>
-                                {buyLoading ? 'Buying...' : 'Buy Now'}
+                                {buyingPlanId === plan._id ? 'Buying...' : 'Buy Now'}
                               </Text>
                             </TouchableOpacity>
                           </View>

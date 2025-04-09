@@ -4,7 +4,17 @@ import { ToastAndroid } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { PROFILE_ENDPOINT } from "../../utils/BaseUrl";
-import { getSocket,initializeSocket } from "../../../socket";
+import { getSocket } from "../../../socket";
+
+
+const waitForSocketConnection = (callback, interval = 100) => {
+  const socket = getSocket();
+  if (socket && socket.connected) {
+    callback();
+  } else {
+    setTimeout(() => waitForSocketConnection(callback, interval), interval);
+  }
+};
 
 const useNotificationListener = () => {
   useFocusEffect(
@@ -22,11 +32,16 @@ const useNotificationListener = () => {
           const profileData = res.data.data;
           console.log("Profile Data:", profileData);
 
-          if (!profileData) return;
-          initializeSocket(profileData.id); 
-
-          if (isActive && (profileData.connReqNotification || profileData.eventPostNotification)) {
-            subscribeToEvents(profileData.connReqNotification, profileData.eventPostNotification);
+          if (
+            isActive &&
+            (profileData.connReqNotification || profileData.eventPostNotification)
+          ) {
+            waitForSocketConnection(() => {
+              subscribeToEvents(
+                profileData.connReqNotification,
+                profileData.eventPostNotification
+              );
+            });
           }
         } catch (error) {
           console.error("Error fetching profile:", error.response ? error.response.data : error.message);

@@ -79,6 +79,7 @@ import MyUploadedCommittees from '../Screens/StackScreens/MyUploadedCommittees';
 import UpdateCommittee from '../Screens/StackScreens/UpdateCommittee';
 import MyuploadedDharamsala from '../Screens/StackScreens/MyuploadedDharamsala';
 import UpdateDharamsala from '../Screens/StackScreens/UpdateDharamsala';
+import BuySubscription from '../Screens/StackScreens/BuySubscription';
 
 const Stack = createNativeStackNavigator();
 const AppStackNavigator = createNativeStackNavigator();
@@ -90,13 +91,18 @@ function MyTabs() {
   const dispatch = useDispatch();
   const [profiledata, setProfileData] = useState('');
   const ProfileData = useSelector((state) => state.profile);
-  const profileData = ProfileData?.profiledata || {};
-  const image = profileData?.photoUrl?.[0];
+  const profile_data = ProfileData?.profiledata || {};
+  const image = profile_data?.photoUrl?.[0];
   const [isLoading, setLoading] = useState(true);
   const [biodata, setBiodata] = useState("");
   const [mybiodata, setMybiodata] = useState("");
   const MyprofileData = useSelector((state) => state.getBiodata);
   const partnerPreferences = MyprofileData?.Biodata?.partnerPreferences || null;
+
+
+  useEffect(() => {
+    console.log("profileData in root file ", JSON.stringify(profile_data));
+  }, [])
 
   const fetchProfile = async () => {
     setLoading(true);
@@ -168,6 +174,12 @@ function MyTabs() {
   //   return <LoadingScreen />;
   // }
 
+  const isBiodataExpired = profile_data?.serviceSubscriptions?.some(
+    (sub) => sub.serviceType === "Biodata" && sub.status === "Expired"
+  );
+
+  const isBiodataEmpty = Object.keys(MyprofileData?.Biodata || {}).length === 0;
+
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -237,8 +249,8 @@ function MyTabs() {
       <Tab.Screen name="Home" component={Home} options={{ tabBarLabel: 'Home' }} />
       <Tab.Screen name="Pandit" component={Pandit} options={{ tabBarLabel: 'Pandit' }} />
       <Tab.Screen
-        name={Object.keys(MyprofileData?.Biodata || {}).length ? "BioData" : "Matrimonial"}
-        component={Object.keys(MyprofileData?.Biodata || {}).length ? BioData : Matrimonial}
+        name={isBiodataExpired || isBiodataEmpty ? "Matrimonial" : "BioData"}
+        component={isBiodataExpired || isBiodataEmpty ? Matrimonial : BioData}
         options={{ tabBarLabel: "Matrimonial" }}
       />
       <Tab.Screen name="EventNews" component={EventNews} options={{ tabBarLabel: 'EventNews' }} />
@@ -326,6 +338,7 @@ const AppStack = () => (
     <AppStackNavigator.Screen name="Activist" component={Activist} />
     <AppStackNavigator.Screen name="MyuploadedDharamsala" component={MyuploadedDharamsala} />
     <AppStackNavigator.Screen name="UpdateDharamsala" component={UpdateDharamsala} />
+    <AppStackNavigator.Screen name="BuySubscription" component={BuySubscription} />
   </AppStackNavigator.Navigator>
 );
 

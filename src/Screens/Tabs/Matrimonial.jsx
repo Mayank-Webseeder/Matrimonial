@@ -20,16 +20,29 @@ import { SW } from '../../utils/Dimensions';
 const Matrimonial = ({ navigation }) => {
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [activeButton, setActiveButton] = useState(1);
+  const MyprofileData = useSelector((state) => state.getBiodata);
+  const gender = MyprofileData?.Biodata?.gender || null;
+
+  const [activeButton, setActiveButton] = useState(() => {
+    if (gender?.toLowerCase() === "male") return 1;   // Girls button
+    if (gender?.toLowerCase() === "female") return 2; // Boys button
+    return 0; // both buttons show, nothing selected
+  });
   const [boysProfiles, setboysProfiles] = useState([]);
   const [girlsProfiles, setgirlsProfiles] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchMode, setSearchMode] = useState(false);
-  const MyprofileData = useSelector((state) => state.getBiodata);
-  const [profileLoading,setProfileLoading]=useState(false)
-  // console.log("MyprofileData", MyprofileData);
+  const [profileLoading, setProfileLoading] = useState(false);
+  const ProfileData = useSelector((state) => state.profile);
+  const profile_data = ProfileData?.profiledata || {};
+
+  useEffect(() => {
+    console.log("MyprofileData", MyprofileData);
+    console.log("gender", gender);
+  }, [])
+
   useEffect(() => {
     if (searchQuery.length > 0) {
       fetchProfiles(searchQuery);
@@ -42,7 +55,6 @@ const Matrimonial = ({ navigation }) => {
     useCallback(() => {
       setSearchMode(false);
       fetchProfiles("");
-      setActiveButton(1)
     }, [])
   );
 
@@ -122,7 +134,7 @@ const Matrimonial = ({ navigation }) => {
       console.error("Error fetching profiles:", error.message);
       setProfileLoading(false)
     }
-    finally{
+    finally {
       setProfileLoading(false)
     }
   };
@@ -142,7 +154,7 @@ const Matrimonial = ({ navigation }) => {
       console.error("Error fetching profiles:", error.message);
       setProfileLoading(false)
     }
-    finally{
+    finally {
       setProfileLoading(false)
     }
   };
@@ -152,17 +164,34 @@ const Matrimonial = ({ navigation }) => {
   };
 
   const popop = async () => {
-    ToastAndroid.show(
-      "Please create biodata to see full information of this profile",
-      ToastAndroid.SHORT
+    const isBiodataExpired = profile_data?.serviceSubscriptions?.some(
+      (sub) => sub.serviceType === "Biodata" && sub.status === "Expired"
     );
 
-    setTimeout(() => {
-      if (!MyprofileData.Biodata || Object.keys(MyprofileData.Biodata).length === 0) {
-        navigation.navigate("MatrimonyPage");
-      }
-    }, 2000);
+    const isBiodataEmpty = !MyprofileData.Biodata || Object.keys(MyprofileData.Biodata).length === 0;
 
+    if (isBiodataEmpty) {
+      ToastAndroid.show(
+        "Please create biodata to see full information of this profile",
+        ToastAndroid.SHORT
+      );
+
+      setTimeout(() => {
+        navigation.navigate("MatrimonyPage");
+      }, 2000);
+    } else if (isBiodataExpired) {
+      ToastAndroid.show(
+        "Please activate your subscription to see full information of this profile",
+        ToastAndroid.SHORT
+      );
+
+      setTimeout(() => {
+        navigation.navigate("BuySubscription");
+      }, 2000);
+    } else {
+      // User has valid Biodata and active subscription
+      navigation.navigate("MatrimonyPage");
+    }
   };
 
   const savedProfiles = async (_id) => {
@@ -335,7 +364,7 @@ const Matrimonial = ({ navigation }) => {
       </View>
     );
   }
-  
+
   return (
     <SafeAreaView style={Globalstyles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
@@ -355,18 +384,57 @@ const Matrimonial = ({ navigation }) => {
       </View>
       <View style={styles.ButtonContainer}>
         <View style={styles.leftButtons}>
-          <TouchableOpacity
-            style={[styles.button, activeButton === 1 ? styles.activeButton : styles.inactiveButton, { width: "30%" }]}
-            onPress={() => setActiveButton(1)}
-          >
-            <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>Girls</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.button, activeButton === 2 ? styles.activeButton : styles.inactiveButton, { width: "30%" }]}
-            onPress={() => setActiveButton(2)}
-          >
-            <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>Boys</Text>
-          </TouchableOpacity>
+          {gender?.toLowerCase() === "male" ? (
+            <TouchableOpacity
+              style={[
+                styles.button,
+                styles.activeButton,
+                { width: "36%" },
+              ]}
+              onPress={() => setActiveButton(1)}
+            >
+              <Text style={styles.activeText}>Girls</Text>
+            </TouchableOpacity>
+          ) : gender?.toLowerCase() === "female" ? (
+            <TouchableOpacity
+              style={[
+                styles.button,
+                styles.activeButton,
+                { width: "36%" },
+              ]}
+              onPress={() => setActiveButton(2)}
+            >
+              <Text style={styles.activeText}>Boys</Text>
+            </TouchableOpacity>
+          ) : (
+            <>
+              <TouchableOpacity
+                style={[
+                  styles.button,
+                  activeButton === 1 ? styles.activeButton : styles.inactiveButton,
+                  { width: "30%" },
+                ]}
+                onPress={() => setActiveButton(1)}
+              >
+                <Text style={activeButton === 1 ? styles.activeText : styles.inactiveText}>
+                  Girls
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.button,
+                  activeButton === 2 ? styles.activeButton : styles.inactiveButton,
+                  { width: "30%" },
+                ]}
+                onPress={() => setActiveButton(2)}
+              >
+                <Text style={activeButton === 2 ? styles.activeText : styles.inactiveText}>
+                  Boys
+                </Text>
+              </TouchableOpacity>
+            </>
+          )}
         </View>
         <TouchableOpacity
           style={[styles.button, activeButton === 3 ? styles.activeButton : styles.inactiveButton]}

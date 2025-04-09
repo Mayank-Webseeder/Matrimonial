@@ -25,6 +25,7 @@ import { setAllNotification } from '../../ReduxStore/Slices/GetAllNotificationSl
 import { SF, SW, SH } from '../../utils/Dimensions';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import useNotificationListener from '../../ReduxStore/Slices/useNotificationListener';
+
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
   const sliderRef = useRef(null);
@@ -36,11 +37,16 @@ const Home = ({ navigation }) => {
   const [allbiodata, setallBiodata] = useState("");
   // const [mybiodata, setMybiodata] = useState("");
   const MyprofileData = useSelector((state) => state.getBiodata);
+  const ProfileData = useSelector((state) => state.profile);
+  const isBiodataMissing = Object.keys(MyprofileData?.Biodata || {}).length > 0;
+  const isBiodataExpired = ProfileData?.profiledata?.serviceSubscriptions?.some(
+    (sub) => sub.serviceType === "Biodata" && sub.status === "Expired"
+  );
+
   const hasBiodata = Object.keys(MyprofileData?.Biodata || {}).length > 0;
   const partnerPreferences = MyprofileData?.Biodata?.partnerPreferences || null;
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [profiledata, setProfileData] = useState('');
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
   const [NotificationData, setNotificationData] = useState({});
@@ -130,12 +136,13 @@ const Home = ({ navigation }) => {
     console.log("item", item);
     if (!navigation.isFocused()) return;
 
-    if (!hasBiodata) {
-      console.log("Navigating to ShortMatrimonialProfile because Biodata is missing");
+    if (!isBiodataMissing || isBiodataExpired) {
+      console.log("Navigating to ShortMatrimonialProfile because Biodata is missing or expired");
       navigation.navigate("ShortMatrimonialProfile", {
         userDetails: item,
       });
-    } else {
+    }
+     else {
       console.log("Navigating to MatrimonyPeopleProfile");
       navigation.navigate("MatrimonyPeopleProfile", {
         userDetails: item,

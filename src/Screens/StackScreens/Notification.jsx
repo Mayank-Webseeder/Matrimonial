@@ -13,6 +13,7 @@ import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { useSelector } from 'react-redux';
 import { setAllNotification } from '../../ReduxStore/Slices/GetAllNotificationSlice';
 import { useDispatch } from 'react-redux';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Notification = ({ navigation }) => {
   const [NotificationData, setNotificationData] = useState([]);
@@ -135,13 +136,11 @@ const Notification = ({ navigation }) => {
 
   const renderItem = ({ item }) => {
     const photoUrl = Array.isArray(item?.relatedData?.photoUrl)
-      ? item.relatedData.photoUrl[0] // Get the first URL if it's an array
+      ? item.relatedData.photoUrl[0]
       : item?.relatedData?.photoUrl;
     return (
       <TouchableOpacity style={styles.card} onPress={() => VIEW_Notification(item._id)}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          {/* Notification Image */}
-
           <Image
             source={{ uri: photoUrl }}
             style={styles.notificationImage}
@@ -180,7 +179,6 @@ const Notification = ({ navigation }) => {
   return (
     <SafeAreaView style={Globalstyles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
-
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <TouchableOpacity onPress={() => navigation.navigate("MainApp")}>
@@ -231,7 +229,8 @@ const Notification = ({ navigation }) => {
             }
             ListEmptyComponent={
               <View style={{ alignItems: "center", marginTop: 20 }}>
-                <Text style={{ color: "gray" }}>No Notification Found yet.</Text>
+                <Ionicons name={'notifications-circle-sharp'} color={Colors.theme_color} size={100} />
+                <Text style={{ color: "gray", fontWeight: '600', fontSize: SF(15),fontFamily:"Poppins-Bold" }}>Notifications will appear here</Text>
               </View>
             }
           />

@@ -89,13 +89,13 @@ const Drawer = createDrawerNavigator();
 
 function MyTabs() {
   const dispatch = useDispatch();
-  const [profiledata, setProfileData] = useState('');
+  const [profiledata, setProfileData] = useState({});
   const ProfileData = useSelector((state) => state.profile);
   const profile_data = ProfileData?.profiledata || {};
   const image = profile_data?.photoUrl?.[0];
   const [isLoading, setLoading] = useState(true);
-  const [biodata, setBiodata] = useState("");
-  const [mybiodata, setMybiodata] = useState("");
+  const [biodata, setBiodata] = useState({});
+  const [mybiodata, setMybiodata] = useState({});
   const MyprofileData = useSelector((state) => state.getBiodata);
   const partnerPreferences = MyprofileData?.Biodata?.partnerPreferences || null;
 
@@ -106,6 +106,7 @@ function MyTabs() {
 
   const fetchProfile = async () => {
     setLoading(true);
+    setProfileData({});
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
@@ -132,6 +133,7 @@ function MyTabs() {
 
   const getBiodata = async () => {
     try {
+      setMybiodata({})
       setLoading(true)
       const token = await AsyncStorage.getItem('userToken');
       if (!token) throw new Error('No token found');
@@ -289,12 +291,13 @@ function MyDrawer() {
       <Drawer.Screen name="PrivacySettings" component={PrivacySettings} />
       <Drawer.Screen name="InActiveDelete" component={InActiveDelete} />
       <Drawer.Screen name="AboutJs" component={AboutJs} />
+      <Drawer.Screen name="MyProfile" component={MyProfile} />
     </Drawer.Navigator>
   );
 }
 
 const AppStack = () => (
-  <AppStackNavigator.Navigator screenOptions={{ headerShown: false }} initialRouteName='MainApp'>
+  <AppStackNavigator.Navigator screenOptions={{ headerShown: false }} initialRouteName="MainApp">
     <AppStackNavigator.Screen name="MainApp" component={MyDrawer} />
     <AppStackNavigator.Screen name="Committee" component={Committee} />
     <AppStackNavigator.Screen name="Dharmshala" component={Dharmshala} />

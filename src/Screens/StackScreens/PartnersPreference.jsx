@@ -243,7 +243,10 @@ const PartnersPreference = ({ navigation,profileData }) => {
       
             setIsEditing(false);
             setTimeout(() => {
-              navigation.navigate("MyProfile");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "MyProfile" }],
+                  });
             }, 1000);
             return;
           }
@@ -275,7 +278,7 @@ const PartnersPreference = ({ navigation,profileData }) => {
             <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
 
                 <View style={Globalstyles.form}>
-                    <View style={styles.detail}>\
+                    <View style={styles.detail}>
                         <Text style={styles.Formtitle}>Set Your Preference </Text>
                     </View>
                     <Text style={Globalstyles.title}>Sub-Caste  </Text>
@@ -388,7 +391,7 @@ const PartnersPreference = ({ navigation,profileData }) => {
                             placeholder="Income"
                             placeholderStyle={{ color: '#E7E7E7' }}
                         />
-                        <Text style={Globalstyles.title}>Occupation  </Text>
+                        <Text style={Globalstyles.title}>Occupation </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={PartnerOccupationData}

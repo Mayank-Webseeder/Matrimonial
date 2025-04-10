@@ -12,6 +12,8 @@ import { DELETE_SAVED_PROFILE, GET_SAVED__PROFILES } from "../../utils/BaseUrl";
 import { DrawerActions, useFocusEffect } from '@react-navigation/native';
 import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { SH, SF, SW } from "../../utils/Dimensions";
 
 const SavedProfile = ({ navigation }) => {
   const flatListRef = useRef(null);
@@ -98,8 +100,6 @@ const SavedProfile = ({ navigation }) => {
           text1: "Success",
           text2: "Saved profile deleted successfully!",
         });
-
-        // ✅ Refresh saved profiles after deletion
         fetchSavedProfiles();
       } else {
         throw new Error(response.data.message || "Something went wrong!");
@@ -280,8 +280,17 @@ const SavedProfile = ({ navigation }) => {
           <ActivityIndicator size="large" color={Colors.theme_color} style={{ marginTop: 20 }} />
         ) : getFilteredData() === null ? (
           <View style={styles.noDataContainer}>
-            <Text style={styles.noDataText}>
-              {`No ${activeCategory} profiles saved yet`}
+            <FontAwesome
+              name="user-circle"
+              size={60}
+              color={Colors.theme_color}
+              style={{ marginBottom: SH(10) }}
+            />
+            <Text style={[styles.noDataText, { fontFamily: "POppins-Bold", fontSize: SF(16) }]}>
+              No {activeCategory} profiles saved yet
+            </Text>
+            <Text style={{ color: 'gray', textAlign: 'center', marginTop: SH(5), paddingHorizontal: SW(20), fontFamily: "POppins-Medium" }}>
+              Your saved profiles will appear here. You can easily revisit them anytime!
             </Text>
           </View>
         ) : (

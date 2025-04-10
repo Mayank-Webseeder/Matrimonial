@@ -35,7 +35,7 @@ const Home = ({ navigation }) => {
   const [biodata, setBiodata] = useState("");
   const [mybiodata, setMybiodata] = useState("");
   const [allbiodata, setallBiodata] = useState("");
-  // const [mybiodata, setMybiodata] = useState("");
+   const [profiledata, setProfileData] = useState({});
   const MyprofileData = useSelector((state) => state.getBiodata);
   const ProfileData = useSelector((state) => state.profile);
   const isBiodataMissing = Object.keys(MyprofileData?.Biodata || {}).length > 0;
@@ -66,6 +66,7 @@ const Home = ({ navigation }) => {
       GetAll_Notification();
       GetAll_Biodata();
       getActivistProfile();
+      fetchProfile();
     }, 2000);
   }, []);
 
@@ -100,8 +101,32 @@ const Home = ({ navigation }) => {
       GetAll_Notification();
       GetAll_Biodata();
       getActivistProfile();
+      fetchProfile();
     }, [])
   );
+
+  const fetchProfile = async () => {
+    setProfileData({});
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) throw new Error("No token found");
+
+      const headers = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      };
+
+      console.log("headers in profile", headers);
+      const res = await axios.get(PROFILE_ENDPOINT, { headers });
+      console.log("API Response:", res.data);
+
+      setProfileData(res.data.data);
+      dispatch(setProfiledata(res.data.data)); 
+
+    } catch (error) {
+      console.error("Error fetching profile:", error.response ? error.response.data : error.message);
+    }
+  };
 
   const getBiodata = async () => {
     try {
@@ -132,6 +157,7 @@ const Home = ({ navigation }) => {
       setLoading(false)
     }
   };
+
   const handleNavigateToProfile = (item) => {
     console.log("item", item);
     if (!navigation.isFocused()) return;

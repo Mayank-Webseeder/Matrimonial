@@ -24,10 +24,11 @@ const Matrimonial = ({ navigation }) => {
   const gender = MyprofileData?.Biodata?.gender || null;
 
   const [activeButton, setActiveButton] = useState(() => {
-    if (gender?.toLowerCase() === "male") return 1;   // Girls button
-    if (gender?.toLowerCase() === "female") return 2; // Boys button
-    return 0; // both buttons show, nothing selected
+    if (gender?.toLowerCase() === "male") return 1; 
+    if (gender?.toLowerCase() === "female") return 2; 
+    return 0; 
   });
+
   const [boysProfiles, setboysProfiles] = useState([]);
   const [girlsProfiles, setgirlsProfiles] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -55,8 +56,16 @@ const Matrimonial = ({ navigation }) => {
     useCallback(() => {
       setSearchMode(false);
       fetchProfiles("");
+      fetchGirlsFilterData();
+      fetchBoysFilterData();
     }, [])
   );
+
+  useEffect(() => {
+    if (activeButton === 1) fetchGirlsFilterData();
+    else if (activeButton === 2) fetchBoysFilterData();
+  }, [activeButton]);
+  
 
   const fetchProfiles = async (query = "") => {
     const token = await AsyncStorage.getItem('userToken');

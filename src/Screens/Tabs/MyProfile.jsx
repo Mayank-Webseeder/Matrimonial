@@ -1,5 +1,5 @@
 import { Text, View, Image, SafeAreaView, StatusBar, Modal, PermissionsAndroid, Platform, FlatList, ActivityIndicator, ToastAndroid } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/MyProfileStyle';
@@ -12,21 +12,26 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { UPLOAD_PROFILE_PHOTO, DELETE_PROFILE_PHOTO } from '../../utils/BaseUrl';
+import { UPLOAD_PROFILE_PHOTO, DELETE_PROFILE_PHOTO, PROFILE_ENDPOINT } from '../../utils/BaseUrl';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
-import { DrawerActions } from '@react-navigation/native';
+import { DrawerActions, useFocusEffect } from '@react-navigation/native';
 import ImageViewing from 'react-native-image-viewing';
+import { setProfiledata } from '../../ReduxStore/Slices/ProfileSlice';
+import { useDispatch } from 'react-redux';
 
 const MyProfile = ({ navigation }) => {
+    const dispatch = useDispatch();
     const [selectedButton, setSelectedButton] = useState('CreateBioData');
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
+    const [profiledata, setProfileData] = useState({});
     const ProfileData = useSelector((state) => state.profile);
     const profileData = ProfileData?.profiledata || {};
     const [selectedProfile, setSelectedProfile] = useState('');
     const [fetchProfileDetails, setFetchProfileDetails] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [ProfileLoading, setProfileLoading] = useState(false);
     const image = profileData?.photoUrl?.[0];
     const [isLoading, setIsLoading] = useState(false);
     // console.log("profileData", profileData);
@@ -38,6 +43,37 @@ const MyProfile = ({ navigation }) => {
             uri: selectedImage ? selectedImage : image ? image : null,
         },
     ];
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchProfile();
+        }, [])
+    );
+
+    const fetchProfile = async () => {
+        setProfileLoading(true);
+        try {
+            const token = await AsyncStorage.getItem("userToken");
+            if (!token) throw new Error("No token found");
+
+            const headers = {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            };
+
+            console.log("headers in profile", headers);
+            const res = await axios.get(PROFILE_ENDPOINT, { headers });
+            console.log("API Response:", res.data);
+
+            setProfileData(res.data.data); // ✅ State update karo
+            dispatch(setProfiledata(res.data.data)); // Redux update karo
+
+        } catch (error) {
+            console.error("Error fetching profile:", error.response ? error.response.data : error.message);
+        } finally {
+            setProfileLoading(false);
+        }
+    };
 
     const handlePress = async (profileType) => {
         setSelectedButton(profileType);
@@ -55,7 +91,7 @@ const MyProfile = ({ navigation }) => {
 
         if (profileType === "Biodata") {
             if (!isRegistered) {
-                navigation.navigate("MatrimonyPage",{ profileType });
+                navigation.navigate("MatrimonyPage", { profileType });
             } else {
                 navigation.navigate("ProfileDetail", { profileType });
             }
@@ -248,6 +284,14 @@ const MyProfile = ({ navigation }) => {
             });
     };
 
+    if (ProfileLoading) {
+        return (
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                <ActivityIndicator size="large" color={Colors.theme_color} />
+            </View>
+        );
+    }
+
     return (
         <SafeAreaView style={Globalstyles.container}>
             <StatusBar
@@ -257,7 +301,10 @@ const MyProfile = ({ navigation }) => {
             />
             <View style={Globalstyles.header}>
                 <View style={styles.headerContainer}>
-                    <TouchableOpacity onPress={() => navigation.getParent()?.dispatch(DrawerActions.openDrawer())}>
+                    <TouchableOpacity onPress={() => navigation.reset({
+                        index: 0,
+                        routes: [{ name: "MainApp" }],
+                    })}>
                         <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
                     </TouchableOpacity>
                     <Text style={styles.headerText}>{capitalizeFirstLetter(profileData.username || 'NA')}</Text>

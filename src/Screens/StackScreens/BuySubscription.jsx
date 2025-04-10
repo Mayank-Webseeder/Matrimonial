@@ -8,7 +8,7 @@ import RazorpayCheckout from 'react-native-razorpay';
 import { SW, SH, SF } from '../../utils/Dimensions';
 import Colors from '../../utils/Colors';
 import axios from 'axios';
-
+import Toast from 'react-native-toast-message';
 const BuySubscription = ({ navigation }) => {
   const [buyLoading, setBuyLoading] = useState(false);
   const [plans, setPlans] = useState([]);
@@ -139,17 +139,28 @@ const BuySubscription = ({ navigation }) => {
 
             console.log("✅ [Verify Payment Response]:", verifyResponse.data);
 
-            if (verifyResponse.data?.status) {
-              Alert.alert("Success", "Payment verified and subscription activated!", [
-                {
-                  text: "OK",
-                  onPress: () => {
-                    navigation.navigate("MainApp");
-                  },
-                },
-              ]);
-            }
-            else {
+            if (verifyResponse.data?.success) {
+              const message = verifyResponse.data?.message || "Subscription activated successfully";
+
+              // Show toast
+              Toast.show({
+                type: 'success',
+                text1: 'Success',
+                text2: message,
+                visibilityTime: 3000,
+                position: 'top', // or 'bottom'
+              });
+
+              console.log("✅ Subscription activated, navigating to MainApp");
+
+              // Small delay to let toast show
+              setTimeout(() => {
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'MainApp' }],
+                });
+              }, 1500); // 1.5 seconds delay
+            } else {
               Alert.alert("Warning", verifyResponse.data?.message || "Verification failed!");
             }
 
@@ -171,6 +182,13 @@ const BuySubscription = ({ navigation }) => {
       );
       setBuyLoading(false)
       setBuyingPlanId(null);
+    }
+    finally {
+      setBuyLoading(false)
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'MainApp' }],
+      });
     }
   };
 
@@ -205,7 +223,7 @@ const BuySubscription = ({ navigation }) => {
           ))}
         </View>
       </ScrollView>
-
+      <Toast />
     </View>
   )
 }

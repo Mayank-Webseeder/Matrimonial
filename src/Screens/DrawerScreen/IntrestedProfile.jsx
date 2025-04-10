@@ -9,8 +9,10 @@ import { RECEIVER_REQUESTS, SENDER_REQUESTS } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import profileImage from '../../Images/NoImage.png';
 import { useFocusEffect } from '@react-navigation/native';
-import { SH, SW } from '../../utils/Dimensions';
+import { SF, SH, SW } from '../../utils/Dimensions';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons  from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const IntrestedProfile = ({ navigation }) => {
   const [activeButton, setActiveButton] = useState(1);
@@ -171,9 +173,31 @@ const IntrestedProfile = ({ navigation }) => {
         }
         ListEmptyComponent={
           isLoading ? renderSkeleton() : (
-            <Text style={styles.noDataText}>
-              No interests {activeButton === 1 ? 'sent' : 'received'}
-            </Text>
+            <View style={{ alignItems: "center", marginTop:SH(50) }}>
+              {
+                activeButton === 1 ? (
+                  <MaterialCommunityIcons
+                    name="send-circle"
+                    size={60}
+                    color={Colors.theme_color}
+                  />
+                ) : (
+                  <Ionicons
+                    name="heart-circle-outline"
+                    size={60}
+                    color={Colors.theme_color}
+                  />
+                )
+              }
+              <Text style={[styles.noDataText, { fontFamily:"Poppins-Medium", fontSize:SF(17) }]}>
+                {activeButton === 1 ? 'No Interests Sent' : 'No Interests Received'}
+              </Text>
+              <Text style={{ color: 'gray', textAlign: 'center', paddingHorizontal:SH(20) ,fontFamily:"Poppins-Medium" }}>
+                {activeButton === 1
+                  ? "Profiles you've shown interest in will appear here."
+                  : "You'll see profiles here who are interested in you."}
+              </Text>
+            </View>
           )
         }
         refreshControl={

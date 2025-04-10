@@ -35,15 +35,13 @@ const Home = ({ navigation }) => {
   const [biodata, setBiodata] = useState("");
   const [mybiodata, setMybiodata] = useState("");
   const [allbiodata, setallBiodata] = useState("");
-   const [profiledata, setProfileData] = useState({});
+  const [profiledata, setProfileData] = useState({});
   const MyprofileData = useSelector((state) => state.getBiodata);
   const ProfileData = useSelector((state) => state.profile);
   const isBiodataMissing = Object.keys(MyprofileData?.Biodata || {}).length > 0;
   const isBiodataExpired = ProfileData?.profiledata?.serviceSubscriptions?.some(
     (sub) => sub.serviceType === "Biodata" && sub.status === "Expired"
   );
-
-  const hasBiodata = Object.keys(MyprofileData?.Biodata || {}).length > 0;
   const partnerPreferences = MyprofileData?.Biodata?.partnerPreferences || null;
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -54,6 +52,21 @@ const Home = ({ navigation }) => {
   // const ProfileData = useSelector((state) => state.profile);
   // const profile_data = ProfileData?.profiledata || {};
 
+
+  useEffect(() => {
+    if (isBiodataExpired) {
+      Alert.alert(
+        "Subscription Expired",
+        "Your biodata subscription has expired. Please buy a subscription to show your profile.",
+        [
+          {
+            text: "OK",
+            style: "default"
+          }
+        ]
+      );
+    }
+  }, [isBiodataExpired]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -121,7 +134,7 @@ const Home = ({ navigation }) => {
       console.log("API Response:", res.data);
 
       setProfileData(res.data.data);
-      dispatch(setProfiledata(res.data.data)); 
+      dispatch(setProfiledata(res.data.data));
 
     } catch (error) {
       console.error("Error fetching profile:", error.response ? error.response.data : error.message);
@@ -168,7 +181,7 @@ const Home = ({ navigation }) => {
         userDetails: item,
       });
     }
-     else {
+    else {
       console.log("Navigating to MatrimonyPeopleProfile");
       navigation.navigate("MatrimonyPeopleProfile", {
         userDetails: item,

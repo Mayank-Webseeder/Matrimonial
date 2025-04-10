@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, ScrollView, Image, TouchableOpacity, Linking, ToastAndroid ,Alert } from 'react-native';
+import { View, Text, ActivityIndicator, ScrollView, Image, TouchableOpacity, Linking, ToastAndroid, Alert } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from '../StyleScreens/ProfileDetailStyle';
@@ -30,6 +30,27 @@ const ProfileDetail = ({ route, navigation }) => {
         ? { uri: profileData.profilePhoto }
         : require('../../Images/NoImage.png');
 
+    const ProfileData = useSelector((state) => state.profile);
+    const profile_data = ProfileData?.profiledata || {};
+
+    const isBiodataExpired = profile_data?.serviceSubscriptions?.some(
+        (sub) => sub.serviceType === "Biodata" && sub.status === "Expired"
+    );
+
+    useEffect(() => {
+        if (isBiodataExpired) {
+            Alert.alert(
+                "Subscription Expired",
+                "Your biodata subscription has expired. Please buy a subscription to show your profile.",
+                [
+                    {
+                        text: "OK",
+                        style: "default"
+                    }
+                ]
+            );
+        }
+    }, [isBiodataExpired]);
 
     const fetchData = async () => {
         try {
@@ -54,9 +75,9 @@ const ProfileDetail = ({ route, navigation }) => {
 
     useFocusEffect(
         useCallback(() => {
-          fetchData();
+            fetchData();
         }, [])
-      );
+    );
 
     if (loading) {
         return (
@@ -121,47 +142,47 @@ const ProfileDetail = ({ route, navigation }) => {
         ?.replace(/\s*-\s*/, "")
         ?.replace(/\s+/g, "");
 
-        const Repost = async () => {
-            setPostLoading(true);
-          
-            const token = await AsyncStorage.getItem('userToken');
-            if (!token) {
-              Alert.alert("Error", "No token found!");
-              setPostLoading(false);
-              return;
-            }
-          
-            const headers = {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`,
-            };
-          
-            try {
-              const response = await axios.post(REPOST, {}, { headers });
-          
-              console.log("✅ Repost Data:", response.data);
-          
-              if (response.status === 200 && response.data.status === true) {
+    const Repost = async () => {
+        setPostLoading(true);
+
+        const token = await AsyncStorage.getItem('userToken');
+        if (!token) {
+            Alert.alert("Error", "No token found!");
+            setPostLoading(false);
+            return;
+        }
+
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        };
+
+        try {
+            const response = await axios.post(REPOST, {}, { headers });
+
+            console.log("✅ Repost Data:", response.data);
+
+            if (response.status === 200 && response.data.status === true) {
                 Alert.alert("Success", response.data.message || 'Reposted successfully!');
                 fetchData();
-              } else {
+            } else {
                 throw new Error(response.data.message || 'Something went wrong!');
-              }
-            } catch (error) {
-              console.error("❌ Error fetching profile:", error?.response?.data || error);
-          
-              let errorMessage = "Something went wrong. Please try again later.";
-              if (error?.response) {
-                if (error?.response?.status === 400 && error?.response?.data?.status === false) {
-                  errorMessage = error.response.data?.message || "Failed to repost. Please try again!";
-                }
-              }
-          
-              Alert.alert("Info", errorMessage);
-            } finally {
-              setPostLoading(false);
             }
-          };
+        } catch (error) {
+            console.error("❌ Error fetching profile:", error?.response?.data || error);
+
+            let errorMessage = "Something went wrong. Please try again later.";
+            if (error?.response) {
+                if (error?.response?.status === 400 && error?.response?.data?.status === false) {
+                    errorMessage = error.response.data?.message || "Failed to repost. Please try again!";
+                }
+            }
+
+            Alert.alert("Info", errorMessage);
+        } finally {
+            setPostLoading(false);
+        }
+    };
 
 
 
@@ -199,20 +220,36 @@ const ProfileDetail = ({ route, navigation }) => {
                         )}
 
                         <View>
-                            <View style={{ display: "flex", flexDirection: "row", alignItems: "center", alignSelf: "flex-end", }}>
-                                <Text
-                                    style={[
-                                        styles.RepostText,
-                                        { backgroundColor: profileData?.repostStatus === "Yes" ? "red" : "green" }
-                                    ]}
-                                    onPress={() => !postloading && Repost()}
-                                >
-                                    {postloading ? <ActivityIndicator color="white" /> : "Repost"}
-                                </Text>                                 
+                            <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+                                <View>
+                                    {isBiodataExpired ? (
+                                        <TouchableOpacity
+                                            style={styles.editButton}
+                                            onPress={() => navigation.navigate("BuySubscription")}
+                                        >
+                                            <Text style={styles.editButtonText}>Buy Subscription</Text>
+                                        </TouchableOpacity>
+                                    ) : (
+                                        <TouchableOpacity style={[styles.editButton, { backgroundColor: "#c4f2e4" }]} disabled={true}>
+                                            <Text style={[styles.editButtonText, { color: "green" }]}>Subscription Active</Text>
+                                        </TouchableOpacity>
+                                    )}
+                                </View>
+                                <View style={{ display: "flex", flexDirection: "row", alignItems: "center", alignSelf: "flex-end", }}>
+                                    <Text
+                                        style={[
+                                            styles.RepostText,
+                                            { backgroundColor: profileData?.repostStatus === "Yes" ? "red" : "green" }
+                                        ]}
+                                        onPress={() => !postloading && Repost()}
+                                    >
+                                        {postloading ? <ActivityIndicator color="white" /> : "Repost"}
+                                    </Text>
 
-                                <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('MatrimonyPage', { profileData })}>
-                                    <Text style={styles.editButtonText}>Edit Biodata</Text>
-                                </TouchableOpacity>
+                                    <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('MatrimonyPage', { profileData })}>
+                                        <Text style={styles.editButtonText}>Edit Biodata</Text>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                             <View>
                                 <View style={styles.flexContainer1}>
@@ -243,7 +280,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                             <Text style={styles.text}>{profileData.personalDetails.occupation}</Text>
                                         )}
                                         {profileData?.personalDetails?.annualIncome && (
-                                            <Text style={[styles.text,{textTransform:"none"}]}>{profileData.personalDetails.annualIncome}</Text>
+                                            <Text style={[styles.text, { textTransform: "none" }]}>{profileData.personalDetails.annualIncome}</Text>
                                         )}
                                         {profileData?.personalDetails?.qualification && (
                                             <Text style={styles.text}>{profileData.personalDetails.qualification}</Text>
@@ -292,7 +329,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                     {profileData?.personalDetails?.fatherName && <Text style={styles.text}>Father’s Name: {profileData?.personalDetails.fatherName}</Text>}
                                     {profileData?.personalDetails?.fatherOccupation && <Text style={styles.text}>Father’s Occupation: {profileData?.personalDetails.fatherOccupation}</Text>}
                                     {profileData?.personalDetails?.motherName && <Text style={styles.text}>Mother’s Name: {profileData?.personalDetails.motherName}</Text>}
-                                    {profileData?.personalDetails?.fatherIncomeAnnually && <Text style={[styles.text,{textTransform:"none"}]}>Family Income: {profileData?.personalDetails.fatherIncomeAnnually}</Text>}
+                                    {profileData?.personalDetails?.fatherIncomeAnnually && <Text style={[styles.text, { textTransform: "none" }]}>Family Income: {profileData?.personalDetails.fatherIncomeAnnually}</Text>}
                                     {profileData?.personalDetails?.familyType && <Text style={styles.text}>Family Type: {profileData?.personalDetails.familyType}</Text>}
                                     {
                                         profileData?.personalDetails?.otherFamilyMemberInfo &&
@@ -371,7 +408,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                             <Text style={styles.text}>Height Range: {profileData.partnerPreferences.partnerMinHeightFeet} Min - {profileData.partnerPreferences.partnerMaxHeightFeet} Max</Text>
                                         )}
                                         {profileData.partnerPreferences.partnerIncome && (
-                                            <Text style={[styles.text,{textTransform:"none"}]}>Income: {profileData.partnerPreferences.partnerIncome}</Text>
+                                            <Text style={[styles.text, { textTransform: "none" }]}>Income: {profileData.partnerPreferences.partnerIncome}</Text>
                                         )}
                                         {profileData.partnerPreferences.partnerOccupation && (
                                             <Text style={styles.text}>Occupation: {profileData.partnerPreferences.partnerOccupation}</Text>

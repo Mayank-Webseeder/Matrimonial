@@ -17,7 +17,7 @@ import { useSelector } from 'react-redux';
 import RBSheet from "react-native-raw-bottom-sheet";
 import Entypo from 'react-native-vector-icons/Entypo';
 import Toast from 'react-native-toast-message';
-
+import Ionicons from 'react-native-vector-icons/Ionicons';
 const EventNews = ({ navigation }) => {
   const sheetRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -367,7 +367,7 @@ const EventNews = ({ navigation }) => {
 
   const renderImages = (images, item) => {
     if (images.length === 0) {
-      return null; 
+      return null;
     }
     if (images.length === 1) {
       return (
@@ -639,8 +639,22 @@ const EventNews = ({ navigation }) => {
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>No Event & News Posted Yet</Text>
+              <Ionicons
+                name={'newspaper'}
+                size={60}
+                color={Colors.theme_color}
+                style={{ marginBottom: SH(10) }}
+              />
+              <Text style={[styles.emptyText, { fontFamily: "POppins-Bold", fontSize: SF(16) }]}>
+                No Event & News Posted Yet
+              </Text>
+              <Text style={{ color: 'gray', textAlign: 'center', marginTop: SH(5), paddingHorizontal: SW(20), fontFamily: "POppins-Medium" }}>
+                Events or news uploaded by Activists will be shown here.
+              </Text>
             </View>
+            // <View style={styles.emptyContainer}>
+            //   <Text style={styles.emptyText}>No Event & News Posted Yet</Text>
+            // </View>
           }
         />
         {getPostsForPage().length >= 3 && (

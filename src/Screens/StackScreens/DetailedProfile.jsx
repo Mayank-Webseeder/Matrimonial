@@ -690,16 +690,22 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
             console.log("✅ [Verify Payment Response]:", verifyResponse.data);
 
-            if (verifyResponse.data?.status) {
-              Alert.alert("Success", "Payment verified and subscription activated!", [
-                {
-                  text: "OK",
-                  onPress: () => {
-                    setModalVisible(false);
-                    handleSave();
+            if (verifyResponse.status === 200 || verifyResponse.data?.status) {
+              Alert.alert(
+                "Success",
+                verifyResponse.data?.message || "Payment verified successfully!",
+                [
+                  {
+                    text: "OK",
+                    onPress: () => {
+                      setModalVisible(false);
+                      setTimeout(() => {
+                        handleSave();
+                      }, 300);
+                    },
                   },
-                },
-              ]);
+                ]
+              );
             }
             else {
               Alert.alert("Warning", verifyResponse.data?.message || "Verification failed!");
@@ -716,17 +722,17 @@ const DetailedProfile = ({ navigation, profileData }) => {
         });
 
     } catch (error) {
-      console.error("❌ [Error in buying subscription]:", error?.response?.data || error.message);
+      const errorMsg = error?.response?.data?.message || error.message || "Please try again later.";
+
+      console.error("❌ [Error in buying subscription]:", error?.response?.data || error.message); 
       Alert.alert(
-        "Failed to Buy Subscription",
-        error?.response?.data?.message || error.message || "Please try again later."
+        "Subscription Info",
+        errorMsg
       );
       setBuyLoading(false)
       setBuyingPlanId(false)
     }
   };
-
-
 
   const handleInputChange = (field, value) => {
     setBiodata((prev) => ({

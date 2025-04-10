@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Alert } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Globalstyles from '../../utils/GlobalCss';
@@ -13,6 +13,7 @@ const BuySubscription = ({ navigation }) => {
   const [buyLoading, setBuyLoading] = useState(false);
   const [plans, setPlans] = useState([]);
   const [buyingPlanId, setBuyingPlanId] = useState(null);
+  const [plansLoading, setPlansLoading] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -23,6 +24,7 @@ const BuySubscription = ({ navigation }) => {
 
   const fetchPlans = async () => {
     try {
+      setPlansLoading(true)
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
 
@@ -37,6 +39,10 @@ const BuySubscription = ({ navigation }) => {
       }
     } catch (error) {
       console.error('Failed to fetch plans:', error);
+      setPlansLoading(false)
+    }
+    finally {
+      setPlansLoading(false)
     }
   };
 
@@ -139,27 +145,16 @@ const BuySubscription = ({ navigation }) => {
 
             console.log("✅ [Verify Payment Response]:", verifyResponse.data);
 
-            if (verifyResponse.data?.success) {
-              const message = verifyResponse.data?.message || "Subscription activated successfully";
-
-              // Show toast
-              Toast.show({
-                type: 'success',
-                text1: 'Success',
-                text2: message,
-                visibilityTime: 3000,
-                position: 'top', // or 'bottom'
-              });
-
-              console.log("✅ Subscription activated, navigating to MainApp");
-
-              // Small delay to let toast show
-              setTimeout(() => {
-                navigation.reset({
-                  index: 0,
-                  routes: [{ name: 'MainApp' }],
-                });
-              }, 1500); // 1.5 seconds delay
+            if (verifyResponse.status === 200 || verifyResponse.data?.status) {
+              Alert.alert("Success",
+                verifyResponse.data?.message || "Payment verified successfully!", [
+                {
+                  text: "OK",
+                  onPress: () => {
+                    navigation.navigate("MyProfile");
+                  },
+                },
+              ]);
             } else {
               Alert.alert("Warning", verifyResponse.data?.message || "Verification failed!");
             }
@@ -175,10 +170,12 @@ const BuySubscription = ({ navigation }) => {
         });
 
     } catch (error) {
+      const errorMsg = error?.response?.data?.message || error.message || "Please try again later.";
+
       console.error("❌ [Error in buying subscription]:", error?.response?.data || error.message);
       Alert.alert(
-        "Failed to Buy Subscription",
-        error?.response?.data?.message || error.message || "Please try again later."
+        "Subscription Info",
+        errorMsg
       );
       setBuyLoading(false)
       setBuyingPlanId(null);
@@ -192,6 +189,14 @@ const BuySubscription = ({ navigation }) => {
     }
   };
 
+  // if(plansLoading){
+  //   return (
+  //     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+  //       <ActivityIndicator size="large" color={Colors.theme_color} />
+  //     </View>
+  //   );
+  // }
+
   return (
     <View style={Globalstyles.container}>
       <View style={Globalstyles.header}>
@@ -204,23 +209,32 @@ const BuySubscription = ({ navigation }) => {
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.cardContainer}>
-          {plans.map((plan) => (
-            <View key={plan._id} style={styles.card}>
-              <Text style={styles.title}>{plan.profileType}</Text>
-              <Text style={styles.Text}>Trial Period: {plan.trialPeriod} days</Text>
-              <Text style={styles.Text}>Duration: {plan.duration} months</Text>
-              <Text style={styles.Text}>Amount: ₹{plan.amount}</Text>
-              <View style={{ flex: 1, justifyContent: 'space-between' }}>
-                <Text style={styles.description}>{plan.description}</Text>
-                <TouchableOpacity style={styles.buyButton} onPress={() => handleBuyNow(plan)}>
-                  <Text style={styles.buyButtonText}>
-                    {buyingPlanId === plan._id ? "Buying..." : "Active Now"}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-
+          {plansLoading ? (
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: SH(20) }}>
+              <ActivityIndicator size="large" color={Colors.theme_color} />
             </View>
-          ))}
+          ) : (
+            plans.map((plan) => (
+              <View key={plan._id} style={styles.card}>
+                <Text style={styles.title}>{plan.profileType}</Text>
+                <Text style={styles.Text}>Trial Period: {plan.trialPeriod} days</Text>
+                <Text style={styles.Text}>Duration: {plan.duration} months</Text>
+                <Text style={styles.Text}>Amount: ₹{plan.amount}</Text>
+
+                <View style={{ flex: 1, justifyContent: 'space-between' }}>
+                  <Text style={styles.description}>{plan.description}</Text>
+                  <TouchableOpacity
+                    style={styles.buyButton}
+                    onPress={() => handleBuyNow(plan)}
+                  >
+                    <Text style={styles.buyButtonText}>
+                      {buyingPlanId === plan._id ? "Buying..." : "Active Now"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ))
+          )}
         </View>
       </ScrollView>
       <Toast />

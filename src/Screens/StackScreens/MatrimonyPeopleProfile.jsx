@@ -23,7 +23,7 @@ const { width, height } = Dimensions.get("window");
 const MatrimonyPeopleProfile = ({ navigation }) => {
   const route = useRoute();
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
-  const { userDetails, isSaved: initialSavedState, userId, isBlur,isVisible, status } = route.params || {};
+  const { userDetails, isSaved: initialSavedState, userId, isBlur, isVisible, status } = route.params || {};
   const isBlurCondition = status === "accepted" ? !isVisible : isBlur;
   const [Save, setIsSaved] = useState(initialSavedState || false);
   const Biodata_id = userDetails?.bioDataId || null;
@@ -122,14 +122,14 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       console.log("isBlur", isBlur);
-      console.log("isVisible",isVisible);
-      console.log("status",status);
+      console.log("isVisible", isVisible);
+      console.log("status", status);
       if (userId) {
         fetchUserProfile(userId);
       }
-    }, [userId, isBlur]) 
+    }, [userId, isBlur])
   );
-  
+
 
   const fetchUserProfile = async (id) => {
     setLoading(true);
@@ -352,26 +352,27 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             </View>
           </Modal>
         </View>
-        <View style={styles.verifiedContainer}>
-          <Image
-            source={require("../../Images/verified.png")}
-            style={styles.verifiedBadge}
-          />
-          {isActivist ? (
-            isVerified ? (
+        {isActivist && (
+          <View style={styles.verifiedContainer}>
+            {isVerified && (
+              <Image
+                source={require("../../Images/verified.png")}
+                style={styles.verifiedBadge}
+              />
+            )}
+
+            {isVerified ? (
               verifiedBy === activistId ? (
-                //  Agar current activist ne verify kiya hai, to toggle bhi dikhega (disapprove karne ke liye)
                 <>
                   <Text style={styles.verifiedText}>Verified</Text>
                   <Switch
                     value={isSwitchOn}
                     onValueChange={handleToggle}
-                    thumbColor={isSwitchOn ? "#4CAF50" : "#767577"} // Green when ON, Gray when OFF
-                    trackColor={{ false: "#f4f3f4", true: "#4CAF50" }} // Background color
+                    thumbColor={isSwitchOn ? "#4CAF50" : "#767577"}
+                    trackColor={{ false: "#f4f3f4", true: "#4CAF50" }}
                   />
                 </>
               ) : (
-                // Agar kisi aur activist ne verify kiya hai, to sirf "Verified" likha aaye (toggle nahi)
                 <Text style={styles.verifiedText}>Verified</Text>
               )
             ) : (
@@ -384,11 +385,10 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                   trackColor={{ false: "#f4f3f4", true: "#4CAF50" }}
                 />
               </>
-            )
-          ) : (
-            isVerified && <Text style={styles.verifiedText}>Verified</Text>
-          )}
-        </View>
+            )}
+          </View>
+        )}
+
         <View style={styles.flexContainer}>
           <View style={styles.flex}>
             <Text style={styles.Idtext}>
@@ -471,7 +471,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             {/* Right-side details */}
             {personalDetails?.currentCity && <Text style={styles.text}>{personalDetails?.currentCity}</Text>}
             {personalDetails?.occupation && <Text style={styles.text}>{personalDetails?.occupation}</Text>}
-            {personalDetails?.annualIncome && <Text style={[styles.text,{textTransform:"none"}]}>{personalDetails?.annualIncome} </Text>}
+            {personalDetails?.annualIncome && <Text style={[styles.text, { textTransform: "none" }]}>{personalDetails?.annualIncome} </Text>}
             {personalDetails?.qualification && <Text style={styles.text}>{personalDetails?.qualification}</Text>}
           </View>
         </View>
@@ -535,7 +535,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               {personalDetails?.fatherName && <Text style={styles.text}>Father’s Name: {personalDetails.fatherName}</Text>}
               {personalDetails?.fatherOccupation && <Text style={styles.text}>Father’s Occupation: {personalDetails.fatherOccupation}</Text>}
               {personalDetails?.motherName && <Text style={styles.text}>Mother’s Name: {personalDetails.motherName}</Text>}
-              {personalDetails?.fatherIncomeAnnually && <Text style={[styles.text,{textTransform:"none"}]}>Family Income: {personalDetails.fatherIncomeAnnually}</Text>}
+              {personalDetails?.fatherIncomeAnnually && <Text style={[styles.text, { textTransform: "none" }]}>Family Income: {personalDetails.fatherIncomeAnnually}</Text>}
               {personalDetails?.familyType && <Text style={styles.text}>Family Type: {personalDetails.familyType}</Text>}
               {!hideOptionalDetails && (
                 <>

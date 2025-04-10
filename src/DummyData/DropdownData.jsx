@@ -208,7 +208,7 @@ export const FamilyType = [
 ]
 
 export const CookingStatus = [
-  { label: 'yes', value: 'Yes' },
+  { label: 'Yes', value: 'Yes' },
   { label: 'No', value: 'No' },
 ]
 

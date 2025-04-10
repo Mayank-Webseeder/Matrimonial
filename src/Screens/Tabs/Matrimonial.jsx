@@ -24,11 +24,11 @@ const Matrimonial = ({ navigation }) => {
   const gender = MyprofileData?.Biodata?.gender || null;
 
   const [activeButton, setActiveButton] = useState(() => {
-    if (gender?.toLowerCase() === "male") return 1; 
+    if (gender?.toLowerCase() === "male") return 1;  
     if (gender?.toLowerCase() === "female") return 2; 
-    return 0; 
+    return 1; 
   });
-
+  
   const [boysProfiles, setboysProfiles] = useState([]);
   const [girlsProfiles, setgirlsProfiles] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -118,16 +118,11 @@ const Matrimonial = ({ navigation }) => {
     return () => clearInterval(interval);
   }, [currentIndex]);
 
-  useFocusEffect(
-    useCallback(() => {
-      if (activeButton === 1) {
-        fetchGirlsFilterData();
-      } else if (activeButton === 2) {
-        fetchBoysFilterData();
-      }
-    }, [activeButton])
-  );
-
+  useEffect(() => {
+    if (activeButton === 1) fetchGirlsFilterData();
+    else if (activeButton === 2) fetchBoysFilterData();
+  }, [activeButton]);
+  
   const fetchBoysFilterData = async () => {
     try {
       setboysProfiles([])

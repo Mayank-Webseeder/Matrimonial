@@ -80,6 +80,9 @@ import UpdateCommittee from '../Screens/StackScreens/UpdateCommittee';
 import MyuploadedDharamsala from '../Screens/StackScreens/MyuploadedDharamsala';
 import UpdateDharamsala from '../Screens/StackScreens/UpdateDharamsala';
 import BuySubscription from '../Screens/StackScreens/BuySubscription';
+import PanditRegister from '../Screens/StackScreens/PanditRegister';
+import JyotishRegister from '../Screens/StackScreens/JyotishRegister';
+import KathavachakRegister from '../Screens/StackScreens/KathavachakRegister';
 
 const Stack = createNativeStackNavigator();
 const AppStackNavigator = createNativeStackNavigator();
@@ -342,6 +345,9 @@ const AppStack = () => (
     <AppStackNavigator.Screen name="MyuploadedDharamsala" component={MyuploadedDharamsala} />
     <AppStackNavigator.Screen name="UpdateDharamsala" component={UpdateDharamsala} />
     <AppStackNavigator.Screen name="BuySubscription" component={BuySubscription} />
+    <AppStackNavigator.Screen name="PanditRegister" component={PanditRegister} />
+    <AppStackNavigator.Screen name="JyotishRegister" component={JyotishRegister} />
+    <AppStackNavigator.Screen name="KathavachakRegister" component={KathavachakRegister} />
   </AppStackNavigator.Navigator>
 );
 

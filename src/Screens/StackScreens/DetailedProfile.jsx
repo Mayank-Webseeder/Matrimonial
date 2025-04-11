@@ -125,7 +125,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
         Authorization: `Bearer ${token}`,
       };
 
-      const response = await axios.get('https://api-matrimonial.webseeder.tech/api/v1/user/getPlans', { headers });
+      const response = await axios.get('https://api-matrimonial.webseeder.tech/api/v1/user/getPlans/Biodata', { headers });
       if (response.data?.status) {
         setPlans(response.data.plans);
       }
@@ -306,8 +306,8 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
   const heightData = Array.from({ length: 4 }, (_, feetIndex) =>
     Array.from({ length: 12 }, (_, inchesIndex) => ({
-      label: `${4 + feetIndex} ' ${inchesIndex} '' `,
-      value: `${4 + feetIndex} ' ${inchesIndex} '' `,
+      label: `${4 + feetIndex}' ${inchesIndex}'' `,
+      value: `${4 + feetIndex}' ${inchesIndex}'' `,
     }))
   ).flat();
 
@@ -748,17 +748,16 @@ const DetailedProfile = ({ navigation, profileData }) => {
         backgroundColor="transparent"
         translucent
       />
-
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
 
         <View style={Globalstyles.form}>
           <View style={styles.detail}>
-            <Text style={styles.Formtitle}>Personal Details</Text>
+            <Text style={styles.Formtitle}>Create Biodata</Text>
           </View>
           <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
           <TextInput
             style={Globalstyles.input}
-            value={biodata?.subCaste} // `myBiodata?.subCaste` ki jagah `subCasteInput` use karein
+            value={biodata?.subCaste} 
             onChangeText={handleSubCasteInputChange}
             placeholder="Type your sub caste"
             placeholderTextColor={Colors.gray}

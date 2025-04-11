@@ -102,7 +102,8 @@ const BioData = ({ navigation }) => {
       isSaved: item.isSaved,
       isBlur: item?.isBlur,
       isVisible: item?.isVisible,
-      status: item?.status
+      status: item?.status,
+      requestId: item?.requestId,
     });
   };
 
@@ -126,6 +127,41 @@ const BioData = ({ navigation }) => {
 
     return (
       <TouchableOpacity style={styles.card} onPress={() => handleNavigateToProfile(item)}>
+        <Image style={styles.image} source={{ uri: item?.personalDetails?.closeUpPhoto }}
+          blurRadius={isBlurCondition ? 5 : 0} />
+
+        <View style={styles.detailsContainer}>
+          <Text style={styles.name}>{item?.personalDetails?.fullname}</Text>
+
+          <View style={styles.row2}>
+            <Text style={styles.city}>{item?.personalDetails?.cityOrVillage}</Text>
+            <Text style={styles.text}>{item?.personalDetails?.subCaste}</Text>
+          </View>
+
+          <View style={styles.row2}>
+            <Text style={styles.text}>Height: {formattedHeight}</Text>
+            <Text style={styles.text}>{calculateAge(item?.personalDetails?.dob)} Years</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  const IntrestProfileData = ({ item }) => {
+    const formattedHeight = item?.personalDetails?.heightFeet
+      ?.replace(/\s*-\s*/, "")
+      ?.replace(/\s+/g, "");
+    const isBlur = item?.isBlur;
+    const status = item?.status;
+    const isVisible = item?.isVisible;
+    const isBlurCondition = status === "accepted" ? !isVisible : isBlur;
+
+    return (
+      <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("IntrestReceivedProfilePage", {
+        userId: item?.userId,
+        requestId: item?.requestId,
+        biodata: item
+      })}>
         <Image style={styles.image} source={{ uri: item?.personalDetails?.closeUpPhoto }}
           blurRadius={isBlurCondition ? 5 : 0} />
 
@@ -238,7 +274,7 @@ const BioData = ({ navigation }) => {
             <FlatList
               // data={showAllInterested ? interestedProfiles : interestedProfiles.slice(0, 2)}
               data={interestedProfiles}
-              renderItem={renderProfileData}
+              renderItem={IntrestProfileData}
               keyExtractor={(item) => item._id}
               contentContainerStyle={styles.ProfileContainer}
               showsHorizontalScrollIndicator={false}

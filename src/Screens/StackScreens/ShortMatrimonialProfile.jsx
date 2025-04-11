@@ -144,7 +144,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                             {/* Left Column */}
                             <View style={styles.leftColumn}>
                                 <Text style={[styles.text, styles.rowItem]}>
-                                    {new Date().getFullYear() - new Date(item?.personalDetails?.dob).getFullYear()} Yrs. , {formattedHeight}
+                                    {new Date().getFullYear() - new Date(item?.personalDetails?.dob).getFullYear()} Yrs, {formattedHeight} 
                                 </Text>
                                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.subCaste}</Text>
                                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.maritalStatus}</Text>

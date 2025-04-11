@@ -13,7 +13,7 @@ import Globalstyles from '../../utils/GlobalCss';
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import moment from "moment";
 import axios from 'axios';
-import { MATCHED_PROFILE, SAVED_PROFILES, SEND_REQUEST, SHARED_PROFILES, VERIFY_PROFILE } from '../../utils/BaseUrl';
+import { DELETE_SEND_REQUEST, MATCHED_PROFILE, SAVED_PROFILES, SEND_REQUEST, SHARED_PROFILES, VERIFY_PROFILE } from '../../utils/BaseUrl';
 import { useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SF, SH, SW } from '../../utils/Dimensions';
@@ -23,7 +23,7 @@ const { width, height } = Dimensions.get("window");
 const MatrimonyPeopleProfile = ({ navigation }) => {
   const route = useRoute();
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
-  const { userDetails, isSaved: initialSavedState, userId, isBlur, isVisible, status } = route.params || {};
+  const { userDetails, isSaved: initialSavedState, userId, isBlur, isVisible, status, requestId } = route.params || {};
   const isBlurCondition = status === "accepted" ? !isVisible : isBlur;
   const [Save, setIsSaved] = useState(initialSavedState || false);
   const Biodata_id = userDetails?.bioDataId || null;
@@ -35,6 +35,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const verifiedBy = userDetails?.verifiedBy;
   const [loading, setLoading] = useState(true);
   const [loadingIntrest, setLoadingIntrest] = useState(false);
+  const [intrestLoading, setIntrestLoading] = useState(false);
   const _id = userDetails?._id;
   // console.log("_id", User_Id);
   const personalDetails = userDetails?.personalDetails || {};
@@ -57,6 +58,61 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       setIsSwitchOn(true);
     } else if (responseMessage.includes("disapproved")) {
       setIsSwitchOn(false);
+    }
+  };
+
+  const DeleteIntrest = async (requestId) => {
+    setIntrestLoading(true);
+    if (!requestId) return;
+
+    console.log("✅ Accepting request for userId:", requestId);
+
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "User token missing!",
+        });
+        return;
+      }
+
+      const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` };
+      const response = await axios.delete(`${DELETE_SEND_REQUEST}/${requestId}`, { headers });
+
+      console.log("🚀 Response Status:", response.status);
+
+      if (response.status === 200 && response.data.status === true) {
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: response.data.message || "Intrest Deleted successfully!",
+          onHide: () => {
+            setTimeout(() => {
+              navigation.goBack();
+            }, 500);
+          }
+        });
+      } else {
+        throw new Error(response.data.message || "Something went wrong");
+      }
+    } catch (error) {
+      console.error("🚨 API Error:", error?.response?.data?.message || error.message);
+
+      let errorMessage = "Failed to delete intrest!";
+      if (error.response?.status === 400) {
+        errorMessage = error.response.data?.message || "Bad request.";
+      }
+
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: errorMessage,
+      });
+    }
+    finally {
+      setIntrestLoading(false);
     }
   };
 
@@ -132,6 +188,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
 
   const fetchUserProfile = async (id) => {
+    console.log("id", id);
     setLoading(true);
     const token = await AsyncStorage.getItem('userToken');
     if (!token) throw new Error('No token found');
@@ -194,7 +251,11 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           position: "top",
           visibilityTime: 2000,
           autoHide: true,
-          onHide: () => setTimeout(() => navigation.navigate("IntrestedProfile"), 2000)
+          onHide: () => {
+            setTimeout(() => {
+              navigation.goBack();
+            }, 500);
+          }
         });
       } else {
         throw new Error("Unexpected response from server!");
@@ -212,8 +273,6 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       setLoadingIntrest(false); // ✅ Hide Loader
     }
   };
-
-
 
   const savedProfiles = async () => {
     if (!_id) {
@@ -417,19 +476,19 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               <Text style={styles.iconText}>Share</Text>
             </TouchableOpacity>
 
-
             <TouchableOpacity
               style={styles.interestedButton}
-              onPress={sendInterestRequest}
-              disabled={loadingIntrest || !!status}
+              onPress={requestId ? () => DeleteIntrest(requestId) : sendInterestRequest}
+              disabled={requestId ? intrestLoading : loadingIntrest}
             >
-              {loadingIntrest ? (
+              {(requestId ? intrestLoading : loadingIntrest) ? (
                 <ActivityIndicator size="small" color={Colors.theme_color} />
               ) : (
-                <Text style={styles.buttonText}>{status ? status : "Send Intrest"}</Text>
+                <Text style={styles.buttonText}>
+                  {requestId ? "Delete Interest" : status ? status : "Send Interest"}
+                </Text>
               )}
             </TouchableOpacity>
-
 
             <TouchableOpacity
               style={[styles.iconContainer, hideContact && { opacity: 0.5 }]}

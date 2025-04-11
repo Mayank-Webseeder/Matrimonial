@@ -15,8 +15,10 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { resetBioData } from "../../ReduxStore/Slices/BiodataSlice";
 import { useDispatch } from "react-redux";
+import { initializeSocket } from "../../../socket";
+
 const Register = ({ navigation }) => {
-    const dispatch= useDispatch();
+    const dispatch = useDispatch();
     const [selectedDate, setSelectedDate] = useState(null);
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [cityInput, setCityInput] = useState('');
@@ -95,13 +97,13 @@ const Register = ({ navigation }) => {
             Toast.show({ type: "error", text1: "Invalid Number", text2: "Enter a valid 10-digit mobile number" });
             return;
         }
-    
+
         try {
             setIsOtpLoading(true);
             const response = await axios.post(OTP_ENDPOINT, { mobileNo: mobileNumber });
-    
+
             console.log("OTP Response:", response.data);
-    
+
             if (response.status === 200 && response.data.status === true) {
                 setOtpSent(true);  // Mark OTP as sent
                 Toast.show({ type: "success", text1: "OTP Sent", text2: "Check your SMS for the OTP" });
@@ -110,7 +112,7 @@ const Register = ({ navigation }) => {
             }
         } catch (error) {
             console.error("OTP Error:", error);
-    
+
             if (error.response?.status === 400) {
                 Toast.show({ type: "error", text1: "Invalid Request", text2: error.response.data.message || "Mobile number is required" });
             } else {
@@ -120,21 +122,21 @@ const Register = ({ navigation }) => {
             setIsOtpLoading(false);
         }
     };
-    
+
     const handleSignup = async () => {
         if (!validateFields()) return;
-    
+
         if (!otp || otp.length !== 6) {
             Toast.show({ type: "error", text1: "Invalid OTP", text2: "Please enter the correct OTP." });
             return;
         }
-    
+
         setIsLoading(true);
         try {
             const formattedDate = selectedDate
                 ? `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, "0")}-${selectedDate.getDate().toString().padStart(2, "0")}`
                 : null;
-    
+
             const payload = {
                 username: fullName.trim(),
                 dob: formattedDate,
@@ -145,25 +147,34 @@ const Register = ({ navigation }) => {
                 mobileNo: mobileNumber.trim(),
                 otp: otp.trim(),
             };
-    
+
             console.log("SignUp Payload:", payload);
             const response = await axios.post(SIGNUP_ENDPOINT, payload);
             console.log("Signup Response:", response.data);
             const RegisterData = response.data;
-    
+
             if (response.status === 200 && response.data.status === true) {
                 // ✅ Redux store reset karein (purana biodata remove ho jaye)
                 dispatch(resetBioData());
-    
+
                 // ✅ Token store karein
                 const token = RegisterData?.user?.token || null;
-                if (token) {
+                const userId = RegisterData?.user?.user?.id;
+                if (token && userId) {
                     await AsyncStorage.setItem("userToken", token);
+                    await AsyncStorage.setItem("userId", userId);
                     console.log("Token saved:", token);
                 } else {
                     console.warn("Token is missing in response, skipping storage.");
                 }
-    
+
+                try {
+                    initializeSocket(userId);
+                    console.log(`✅ Socket initialized successfully for user: ${userId}`);
+                } catch (socketError) {
+                    console.error("🚨 Socket Initialization Failed:", socketError);
+                }
+
                 Toast.show({
                     type: "success",
                     text1: "Sign Up Successful",
@@ -179,7 +190,7 @@ const Register = ({ navigation }) => {
             }
         } catch (error) {
             console.error("Sign Up Error:", error);
-    
+
             if (error.response?.status === 400) {
                 Toast.show({
                     type: "error",
@@ -197,7 +208,7 @@ const Register = ({ navigation }) => {
             setIsLoading(false);
         }
     };
-    
+
 
     const handleDateChange = (event, date) => {
         if (date && date !== selectedDate) {
@@ -436,7 +447,7 @@ const Register = ({ navigation }) => {
                     onChange={handleDateChange}
                 />
             )}
-            <Toast/>
+            <Toast />
         </SafeAreaView>
     );
 };

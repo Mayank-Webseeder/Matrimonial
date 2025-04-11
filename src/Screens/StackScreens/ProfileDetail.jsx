@@ -256,7 +256,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                     {/* Left Container */}
                                     <View style={styles.leftContainer}>
                                         <Text style={styles.HeadingText}>{profileData?.personalDetails?.fullname}</Text>
-                                        <Text style={styles.text}>{calculateAge(profileData?.personalDetails?.dob)} Yrs, {formattedHeight}</Text>
+                                        <Text style={styles.text}>{calculateAge(profileData?.personalDetails?.dob)} Yrs, {formattedHeight} </Text>
                                         {profileData?.personalDetails?.subCaste && (
                                             <Text style={styles.text}>{profileData.personalDetails.subCaste}</Text>
                                         )}

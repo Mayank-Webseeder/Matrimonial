@@ -21,6 +21,7 @@ const Notification = ({ navigation }) => {
   const [viewNotification, setViewnotification] = useState({});
   const [IsLoading, setIsLoading] = useState(true);
   const [showSeen, setShowSeen] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const dispatch = useDispatch();
   const Notificationdata = useSelector((state) => state.GetAllNotification);
   // const NotificationDatas = Notificationdata?.AllNotification;
@@ -141,11 +142,19 @@ const Notification = ({ navigation }) => {
     return (
       <TouchableOpacity style={styles.card} onPress={() => VIEW_Notification(item._id)}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Image
-            source={{ uri: photoUrl }}
-            style={styles.notificationImage}
-            onError={(e) => console.log("Image Load Error:", e.nativeEvent.error)}
-          />
+        <Image
+  source={
+    imageError || !photoUrl
+      ? require('../../Images/NoImage.png')
+      : { uri: photoUrl }
+  }
+  style={styles.notificationImage}
+  onError={() => {
+    console.log("Image Load Error");
+    setImageError(true);
+  }}
+/>
+
           <View style={{ marginLeft: SW(10) }}>
             <Text style={styles.name}>{item.relatedData.username || item?.relatedData?.likedBy?.name || item?.relatedData?.commentBy?.name}</Text>
             <Text style={styles.message}>{item?.message}</Text>

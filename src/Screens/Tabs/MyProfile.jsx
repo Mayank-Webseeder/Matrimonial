@@ -75,9 +75,41 @@ const MyProfile = ({ navigation }) => {
         }
     };
 
+    // ye pehle wala function h comment krle 
+    // const handlePress = async (profileType) => {
+    //     setSelectedButton(profileType);
+
+    //     const keyMap = {
+    //         Biodata: "isMatrimonial",
+    //         Jyotish: "isJyotish",
+    //         Kathavachak: "isKathavachak",
+    //         Pandit: "isPandit",
+    //         Activist: "isActivist",
+    //     };
+
+    //     const isRegistered = profileData?.[keyMap[profileType]];
+    //     console.log("isRegistered:", isRegistered);
+
+    //     if (profileType === "Biodata") {
+    //         if (!isRegistered) {
+    //             navigation.navigate("MatrimonyPage", { profileType });
+    //         } else {
+    //             navigation.navigate("ProfileDetail", { profileType });
+    //         }
+    //         return;
+    //     }
+    //     if (!isRegistered) {
+    //         navigation.navigate("RoleRegisterForm", { profileType });
+    //         return;
+    //     }
+    //     await fetchProfilesDetails(profileType);
+    //     navigation.navigate("ProfileDetail", { profileType });
+    // };
+
+    // ye abhi wala h aleg aleg page par bhajne h ke liye 
     const handlePress = async (profileType) => {
         setSelectedButton(profileType);
-
+    
         const keyMap = {
             Biodata: "isMatrimonial",
             Jyotish: "isJyotish",
@@ -85,25 +117,33 @@ const MyProfile = ({ navigation }) => {
             Pandit: "isPandit",
             Activist: "isActivist",
         };
-
+    
+        const registrationScreens = {
+            Biodata: "MatrimonyPage",
+            Jyotish: "JyotishRegister",
+            Kathavachak: "KathavachakRegister",
+            Pandit: "PanditRegister",
+        };
+    
         const isRegistered = profileData?.[keyMap[profileType]];
-        console.log("isRegistered:", isRegistered);
-
-        if (profileType === "Biodata") {
-            if (!isRegistered) {
-                navigation.navigate("MatrimonyPage", { profileType });
+    
+        if (!isRegistered) {
+            const screen = registrationScreens[profileType];
+            if (screen) {
+                navigation.navigate(screen, { profileType });
             } else {
-                navigation.navigate("ProfileDetail", { profileType });
+                navigation.navigate("RoleRegisterForm", { profileType }); 
             }
             return;
         }
-        if (!isRegistered) {
-            navigation.navigate("RoleRegisterForm", { profileType });
-            return;
+    
+        if (profileType !== "Biodata") {
+            await fetchProfilesDetails(profileType);
         }
-        await fetchProfilesDetails(profileType);
+    
         navigation.navigate("ProfileDetail", { profileType });
     };
+    
 
     const fetchProfilesDetails = async (profileType) => {
         try {

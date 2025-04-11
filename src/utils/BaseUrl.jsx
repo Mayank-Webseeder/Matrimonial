@@ -34,6 +34,7 @@ const ACCEPTED_API = "https://api-matrimonial.webseeder.tech/api/v1/connectionRe
 // Sender end  
 const SENDER_REQUESTS = "https://api-matrimonial.webseeder.tech/api/v1/connectionRequest/request/sent" // get
 const SEND_REQUEST = "https://api-matrimonial.webseeder.tech/api/v1/connectionRequest/send/interested" // ID PASS KRNA H
+const DELETE_SEND_REQUEST="https://api-matrimonial.webseeder.tech/api/v1/connectionRequest/delete/connection";
 
 // pandit api's
 const CREATE_PANDIT = "https://api-matrimonial.webseeder.tech/api/v1/pandit/createPandit";
@@ -213,5 +214,6 @@ export {
     UPDATE_JYOTISH_REVIEW,
     UPDATE_KATHAVACHAK_REVIEW,
     DELETE_PROFILE_PHOTO,
-    DELETE_USER
+    DELETE_USER,
+    DELETE_SEND_REQUEST
 }

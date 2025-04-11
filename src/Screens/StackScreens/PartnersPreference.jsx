@@ -31,7 +31,8 @@ const PartnersPreference = ({ navigation,profileData }) => {
     const [originalBiodata, setOriginalBiodata] = useState({});
     const [selectedSubCaste, setSelectedSubCaste] = useState('');
     const [loading, setLoading] = useState(false);
-    const myPartnerPreferences =profileData?.partnerPreferences;
+    const MyprofileData = useSelector((state) => state.getBiodata);
+    const myPartnerPreferences = profileData?.partnerPreferences || MyprofileData?.Biodata?.partnerPreferences;
 
     const [biodata, setBiodata] = useState({
         partnerSubCaste: '',
@@ -158,8 +159,8 @@ const PartnersPreference = ({ navigation,profileData }) => {
 
     const heightData = Array.from({ length: 4 }, (_, feetIndex) =>
         Array.from({ length: 12 }, (_, inchesIndex) => ({
-            label: `${4 + feetIndex} ' ${inchesIndex} '' `,
-            value: `${4 + feetIndex} ' ${inchesIndex} '' `,
+            label: `${4 + feetIndex}' ${inchesIndex}'' `,
+            value: `${4 + feetIndex}' ${inchesIndex}'' `,
         }))
     ).flat();
 

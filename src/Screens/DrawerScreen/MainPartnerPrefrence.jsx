@@ -109,7 +109,7 @@ const MainPartnerPrefrence = ({ navigation }) => {
                                 size={20}
                             />
                         </View>
-                        <Text style={styles.logotext}>Detailed Profile</Text>
+                        <Text style={styles.logotext}>Biodata Details</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity

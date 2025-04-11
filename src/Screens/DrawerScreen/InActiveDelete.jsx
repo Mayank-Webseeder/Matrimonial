@@ -7,10 +7,13 @@ import Globalstyles from '../../utils/GlobalCss';
 import { DELETE_BIODATA, DELETE_USER } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { DrawerActions } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
+import { resetBioData } from '../../ReduxStore/Slices/BiodataSlice';
+
 const InActiveDelete = ({ navigation }) => {
+     const dispatch = useDispatch();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [actionType, setActionType] = useState('');
     const [successModalVisible, setSuccessModalVisible] = useState(false);
@@ -44,6 +47,7 @@ const InActiveDelete = ({ navigation }) => {
                     text2: "Your Biodata has been deleted successfully!",
                 });
                 setSuccessModalVisible(true);
+                dispatch(resetBioData());
             } else {
                 throw new Error(response.data.message || "Unexpected response from server");
             }

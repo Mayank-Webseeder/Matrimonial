@@ -9,7 +9,9 @@ import { SW, SH, SF } from '../../utils/Dimensions';
 import Colors from '../../utils/Colors';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
-const BuySubscription = ({ navigation }) => {
+const BuySubscription = ({ navigation,route}) => {
+  const { serviceType } = route.params;
+  console.log("Service Type:", serviceType); 
   const [buyLoading, setBuyLoading] = useState(false);
   const [plans, setPlans] = useState([]);
   const [buyingPlanId, setBuyingPlanId] = useState(null);
@@ -33,7 +35,7 @@ const BuySubscription = ({ navigation }) => {
         Authorization: `Bearer ${token}`,
       };
 
-      const response = await axios.get('https://api-matrimonial.webseeder.tech/api/v1/user/getPlans', { headers });
+      const response = await axios.get(`https://api-matrimonial.webseeder.tech/api/v1/user/getPlans/${serviceType}`, { headers });
       if (response.data?.status) {
         setPlans(response.data.plans);
       }

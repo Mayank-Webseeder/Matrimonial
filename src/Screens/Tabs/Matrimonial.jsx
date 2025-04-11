@@ -42,6 +42,7 @@ const Matrimonial = ({ navigation }) => {
   useEffect(() => {
     console.log("MyprofileData", MyprofileData);
     console.log("gender", gender);
+    console.log("profile_data",profile_data);
   }, [])
 
   useEffect(() => {
@@ -190,7 +191,7 @@ const Matrimonial = ({ navigation }) => {
       );
 
       setTimeout(() => {
-        navigation.navigate("BuySubscription");
+        navigation.navigate("BuySubscription", { serviceType: "Biodata" });
       }, 2000);
     } else {
       // User has valid Biodata and active subscription
@@ -285,10 +286,9 @@ const Matrimonial = ({ navigation }) => {
   };
 
   const renderProfileCard = ({ item }) => {
-
     const formattedHeight = item?.personalDetails?.heightFeet
-      ?.replace(/\s*-\s*/, "")
-      ?.replace(/\s+/g, "");
+    ?.replace(/\s*-\s*/, "")
+    ?.replace(/\s+/g, "");
 
     return (
       <View style={styles.card}>
@@ -317,7 +317,7 @@ const Matrimonial = ({ navigation }) => {
               {/* Left Column */}
               <View style={styles.leftColumn}>
                 <Text style={[styles.text, styles.rowItem]}>
-                  {new Date().getFullYear() - new Date(item?.personalDetails?.dob).getFullYear()} Yrs. , {formattedHeight}
+                  {new Date().getFullYear() - new Date(item?.personalDetails?.dob).getFullYear()} Yrs, {formattedHeight} 
                 </Text>
                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.subCaste}</Text>
                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.maritalStatus}</Text>

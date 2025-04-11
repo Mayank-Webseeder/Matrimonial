@@ -5,21 +5,20 @@ import styles from '../StyleScreens/IntrestedProfileStyle';
 import Colors from '../../utils/Colors';
 import Globalstyles from '../../utils/GlobalCss';
 import axios from 'axios';
-import { RECEIVER_REQUESTS, SENDER_REQUESTS } from '../../utils/BaseUrl';
+import { DELETE_SEND_REQUEST, RECEIVER_REQUESTS, SENDER_REQUESTS } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import profileImage from '../../Images/NoImage.png';
 import { useFocusEffect } from '@react-navigation/native';
 import { SF, SH, SW } from '../../utils/Dimensions';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcons  from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const IntrestedProfile = ({ navigation }) => {
   const [activeButton, setActiveButton] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [interestSentData, setInterestSentData] = useState([]);
   const [interestReceivedData, setInterestReceivedData] = useState([]);
-
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = useCallback(() => {
@@ -74,6 +73,8 @@ const IntrestedProfile = ({ navigation }) => {
   const renderItem = ({ item }, isSent) => {
     const userData = isSent ? item.toUserBioData : item.FromUserBioData;
     const isVisible = item?.isVisible;
+    const status = item?.status;
+
 
     return (
       <TouchableOpacity
@@ -95,7 +96,8 @@ const IntrestedProfile = ({ navigation }) => {
               isSaved: formattedUserData?.isSaved,
               isVisible: isVisible,
               isBlur: formattedUserData?.isBlur,
-              status: item?.status
+              status: item?.status,
+              requestId:item?.requestId
             });
           } else {
             navigation.navigate("IntrestReceivedProfilePage", {
@@ -122,7 +124,11 @@ const IntrestedProfile = ({ navigation }) => {
         </View>
         <TouchableOpacity style={styles.Statusbutton}>
           <Text style={styles.StatusbuttonText}>
-            {item?.status ? item.status.charAt(0).toUpperCase() + item.status.slice(1) : 'Unknown'}
+            {status === 'interested'
+              ? 'Pending'
+              : status
+                ? status.charAt(0).toUpperCase() + status.slice(1)
+                : 'Unknown'}
           </Text>
         </TouchableOpacity>
       </TouchableOpacity>
@@ -173,7 +179,7 @@ const IntrestedProfile = ({ navigation }) => {
         }
         ListEmptyComponent={
           isLoading ? renderSkeleton() : (
-            <View style={{ alignItems: "center", marginTop:SH(50) }}>
+            <View style={{ alignItems: "center", marginTop: SH(50) }}>
               {
                 activeButton === 1 ? (
                   <MaterialCommunityIcons
@@ -189,10 +195,10 @@ const IntrestedProfile = ({ navigation }) => {
                   />
                 )
               }
-              <Text style={[styles.noDataText, { fontFamily:"Poppins-Medium", fontSize:SF(17) }]}>
+              <Text style={[styles.noDataText, { fontFamily: "Poppins-Medium", fontSize: SF(17) }]}>
                 {activeButton === 1 ? 'No Interests Sent' : 'No Interests Received'}
               </Text>
-              <Text style={{ color: 'gray', textAlign: 'center', paddingHorizontal:SH(20) ,fontFamily:"Poppins-Medium" }}>
+              <Text style={{ color: 'gray', textAlign: 'center', paddingHorizontal: SH(20), fontFamily: "Poppins-Medium" }}>
                 {activeButton === 1
                   ? "Profiles you've shown interest in will appear here."
                   : "You'll see profiles here who are interested in you."}

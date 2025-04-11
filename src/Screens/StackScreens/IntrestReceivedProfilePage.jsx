@@ -26,14 +26,17 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const hideOptionalDetails = !!(biodata?.hideOptionalDetails || biodata?.hideOptionalDetails)
   const _id = biodata?._id;
   const personalDetails = biodata?.personalDetails;
-  console.log(userId, biodata, requestId)
   const [loading, setLoading] = useState(true);
   const [loadingAccept, setLoadingAccept] = useState(false);
   const [loadingDecline, setLoadingDecline] = useState(false);
-  const [profileData, setProfileData] = useState(null);
+  const [profileData, setProfileData] = useState([]);
   const MyprofileData = useSelector((state) => state.getBiodata);
   const [imageIndex, setImageIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
+
+  useEffect(() => {
+    console.log("userId", userId);
+  }, [])
 
   const images = [
     personalDetails?.closeUpPhoto,
@@ -71,23 +74,35 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         setProfileData(response.data);
       }
     } catch (error) {
-      console.error("Error fetching profile:", error);
+      console.error("❌ Error fetching profile");
+
+      if (error.response) {
+        console.error("🔻 Server Error:");
+        console.error("Status Code:", error.response.status);
+        console.error("Message:", error.response.data?.message || "No message");
+        console.error("Data:", error.response.data);
+      } else if (error.request) {
+        console.error("📡 No response received from server.");
+        console.error("Request Details:", error.request);
+      } else {
+        console.error("⚠️ Error Message:", error.message);
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color={Colors.theme_color} />
-      </View>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+  //       <ActivityIndicator size="large" color={Colors.theme_color} />
+  //     </View>
+  //   );
+  // }
 
-  if (!profileData) {
-    return <Text style={{ padding: 20 }}>No Data Available</Text>;
-  }
+  // if (!profileData) {
+  //   return <Text style={{ padding: 20 }}>No Data Available</Text>;
+  // }
 
   const savedProfiles = async () => {
     if (!_id) {
@@ -263,8 +278,8 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const matchPercentage = totalCriteria > 0 ? Math.round((matchedCount / totalCriteria) * 100) : 0;
 
   const formattedHeight = personalDetails?.heightFeet
-  ?.replace(/\s*-\s*/, "")
-  ?.replace(/\s+/g, "");
+    ?.replace(/\s*-\s*/, "")
+    ?.replace(/\s+/g, "");
 
   return (
     <SafeAreaView style={Globalstyles.container}>
@@ -287,7 +302,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
               <Image
                 source={{ uri: images[0] }}
                 style={{ width: SW(350), height: SH(330), borderRadius: 10 }}
-                // blurRadius={!isBlur ? 5 : 0}
+              // blurRadius={!isBlur ? 5 : 0}
               />
             </TouchableOpacity>
           )}
@@ -308,7 +323,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
                     <Image
                       source={{ uri: img }}
                       style={{ width: width * 0.9, height: height * 0.8, borderRadius: 10, resizeMode: "contain" }}
-                      // blurRadius={!isBlur ? 5 : 0}
+                    // blurRadius={!isBlur ? 5 : 0}
                     />
                   </View>
                 ))}
@@ -335,7 +350,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         <View style={styles.flexContainer}>
           <View style={styles.flex}>
             {/* <Text style={styles.Idtext}>ID NO. :- {userId}</Text> */}
-             <Text style={styles.Idtext}>{"ID NO. :-".toUpperCase()} {biodata?.bioDataId}</Text>  
+            <Text style={styles.Idtext}>{"ID NO. :-".toUpperCase()} {biodata?.bioDataId}</Text>
             <Text style={styles.toptext}>{matchPercentage > 0 && (
               <Text style={styles.toptext}>
                 {matchPercentage}% Compatible according to your preference
@@ -382,7 +397,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         <View style={styles.flexContainer1}>
           <View style={styles.leftContainer}>
             <Text style={styles.HeadingText}>{personalDetails.fullname}</Text>
-            {personalDetails?.dob && <Text style={styles.text}>{new Date().getFullYear() - new Date(personalDetails?.dob).getFullYear()} Yrs, {formattedHeight}</Text>}
+            {personalDetails?.dob && <Text style={styles.text}>{new Date().getFullYear() - new Date(personalDetails?.dob).getFullYear()} Yrs, {formattedHeight} </Text>}
             {personalDetails?.subCaste && <Text style={styles.text}>{personalDetails?.subCaste}</Text>}
             {personalDetails?.maritalStatus && <Text style={styles.text}>{personalDetails?.maritalStatus}</Text>}
             {personalDetails?.manglikStatus && <Text style={styles.text}>{personalDetails?.manglikStatus}</Text>}
@@ -392,7 +407,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           <View style={styles.rightContainer}>
             {personalDetails?.currentCity && <Text style={styles.text}>{personalDetails?.currentCity}</Text>}
             {personalDetails?.occupation && <Text style={styles.text}>{personalDetails?.occupation}</Text>}
-            {personalDetails?.annualIncome && <Text style={[styles.text,{textTransform:"none"}]}>{personalDetails?.annualIncome} </Text>}
+            {personalDetails?.annualIncome && <Text style={[styles.text, { textTransform: "none" }]}>{personalDetails?.annualIncome} </Text>}
             {personalDetails?.qualification && <Text style={styles.text}>{personalDetails?.qualification}</Text>}
           </View>
         </View >
@@ -442,7 +457,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
             {personalDetails?.fatherOccupation && <Text style={styles.text}>Father’s Occupation: {personalDetails?.fatherOccupation}</Text>}
             {personalDetails?.motherName && <Text style={styles.text}>Mother’s Name: {personalDetails?.motherName}</Text>}
             {personalDetails?.motherOccupation && <Text style={styles.text}>Mother’s Occupation: {personalDetails?.motherOccupation}</Text>}
-            {personalDetails?.familyIncome && <Text style={[styles.text,{textTransform:"none"}]}>Family Income (Annually): {personalDetails?.familyIncome}</Text>}
+            {personalDetails?.familyIncome && <Text style={[styles.text, { textTransform: "none" }]}>Family Income (Annually): {personalDetails?.familyIncome}</Text>}
             {personalDetails?.familyType && <Text style={styles.text}>Family Type: {personalDetails?.familyType}</Text>}
             {personalDetails?.siblings && <Text style={styles.text}>Siblings: {personalDetails?.siblings}</Text>}
             {!hideOptionalDetails && (
@@ -474,6 +489,12 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
             </View>
           </View>
         )}
+        {!profileData?.data && (
+          <Text style={styles.warningText}>
+            To find better matches, please set your partner preferences.
+          </Text>
+        )}
+
         {profileData?.data ? (
           <View style={styles.flexContainer3}>
             <Text style={styles.HeadingText}>Your Similarities</Text>
@@ -510,45 +531,45 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
       </ScrollView>
       <View style={styles.bottomContainer}>
 
-      <TouchableOpacity
-  style={[
-    styles.declineButton,
-    (status === "rejected" || status === "accepted") && { backgroundColor: "#dbcccf" } 
-  ]}
-  onPress={() => rejectConnectionRequest(requestId)}
-  disabled={loadingDecline || status === "rejected" || status === "accepted"}
->
-  {loadingDecline ? (
-    <ActivityIndicator size="small" color="#fff" />
-  ) : (
-    <>
-      <Entypo name={"cross"} color={Colors.light} size={20} />
-      <Text style={styles.declineButtonText}>
-        {status === "rejected" ? "Rejected" : "Decline"}
-      </Text>
-    </>
-  )}
-</TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.declineButton,
+            (status === "rejected" || status === "accepted") && { backgroundColor: "#dbcccf" }
+          ]}
+          onPress={() => rejectConnectionRequest(requestId)}
+          disabled={loadingDecline || status === "rejected" || status === "accepted"}
+        >
+          {loadingDecline ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <>
+              <Entypo name={"cross"} color={Colors.light} size={20} />
+              <Text style={styles.declineButtonText}>
+                {status === "rejected" ? "Rejected" : "Decline"}
+              </Text>
+            </>
+          )}
+        </TouchableOpacity>
 
-<TouchableOpacity
-  style={[
-    styles.acceptButton,
-    (status === "accepted" || status === "rejected") && { backgroundColor: "#dbcccf" } 
-  ]}
-  onPress={() => acceptConnectionRequest(requestId)}
-  disabled={loadingAccept || status === "accepted" || status === "rejected"} 
->
-  {loadingAccept ? (
-    <ActivityIndicator size="small" color="#fff" />
-  ) : (
-    <>
-      <Entypo name={"check"} color={Colors.light} size={20} />
-      <Text style={styles.acceptButtonText}>
-        {status === "accepted" ? "Accepted" : "Accept"}
-      </Text>
-    </>
-  )}
-</TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.acceptButton,
+            (status === "accepted" || status === "rejected") && { backgroundColor: "#dbcccf" }
+          ]}
+          onPress={() => acceptConnectionRequest(requestId)}
+          disabled={loadingAccept || status === "accepted" || status === "rejected"}
+        >
+          {loadingAccept ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <>
+              <Entypo name={"check"} color={Colors.light} size={20} />
+              <Text style={styles.acceptButtonText}>
+                {status === "accepted" ? "Accepted" : "Accept"}
+              </Text>
+            </>
+          )}
+        </TouchableOpacity>
 
 
       </View>

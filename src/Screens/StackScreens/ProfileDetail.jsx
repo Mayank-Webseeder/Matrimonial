@@ -225,7 +225,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                     {isBiodataExpired ? (
                                         <TouchableOpacity
                                             style={styles.editButton}
-                                            onPress={() => navigation.navigate("BuySubscription")}
+                                            onPress={() => navigation.navigate("BuySubscription",{ serviceType: profileType })}
                                         >
                                             <Text style={styles.editButtonText}>Buy Subscription</Text>
                                         </TouchableOpacity>

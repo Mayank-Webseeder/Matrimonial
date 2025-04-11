@@ -102,9 +102,8 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                 "Please activate your subscription to see full information of this profile",
                 ToastAndroid.SHORT
             );
-
             setTimeout(() => {
-                navigation.navigate("BuySubscription");
+                navigation.navigate("BuySubscription", { serviceType: "Biodata" });
             }, 2000);
         } else {
             // Everything is fine

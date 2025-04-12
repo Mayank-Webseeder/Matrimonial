@@ -7,7 +7,7 @@ import React, { useEffect, useState, useCallback } from 'react'
 import styles from '../StyleScreens/ProfileStyle';
 import { TouchableOpacity } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
-import { CREATE_PERSONAL_DETAILS, UPDATE_PERSONAL_DETAILS } from '../../utils/BaseUrl';
+import { CREATE_PERSONAL_DETAILS, FREE_TRIAL, MATRIMONIALFETCH_PLAN, PAID_URL, PAYMENT_VERIFICATION, RAZORPAY, UPDATE_PERSONAL_DETAILS } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -125,7 +125,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
         Authorization: `Bearer ${token}`,
       };
 
-      const response = await axios.get('https://api-matrimonial.webseeder.tech/api/v1/user/getPlans/Biodata', { headers });
+      const response = await axios.get(MATRIMONIALFETCH_PLAN, { headers });
       if (response.data?.status) {
         setPlans(response.data.plans);
       }
@@ -371,7 +371,6 @@ const DetailedProfile = ({ navigation, profileData }) => {
     }
   };
 
-
   const constructPayload = async (biodata, isNew = false) => {
     const keys = [
       "subCaste", "gender", "fullname", "dob", "placeofbirth", "maritalStatus",
@@ -542,7 +541,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
       console.log("payload", payload);
 
       const response = await axios.post(
-        'https://api-matrimonial.webseeder.tech/api/v1/subscription/setTrial',
+        FREE_TRIAL,
         payload,
         { headers }
       );
@@ -590,7 +589,6 @@ const DetailedProfile = ({ navigation, profileData }) => {
     }
   };
 
-
   const handleBuyNow = async (plan) => {
     try {
       setBuyLoading(true)
@@ -606,7 +604,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
       };
 
       const keyResponse = await axios.get(
-        "https://api-matrimonial.webseeder.tech/api/v1/subscription/getRazorPayKey",
+        RAZORPAY,
         { headers }
       );
 
@@ -615,16 +613,12 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
       const payload = {
         userId,
-        selectedServices: [
-          {
-            profileType: plan.profileType,
-          },
-        ],
+        profileType: plan.profileType
       };
       console.log("📦 [Payload to /buy]:", payload);
 
       const orderResponse = await axios.post(
-        "https://api-matrimonial.webseeder.tech/api/v1/subscription/buy",
+        PAID_URL,
         payload,
         { headers }
       );
@@ -683,7 +677,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
           try {
             const verifyResponse = await axios.post(
-              "https://api-matrimonial.webseeder.tech/api/v1/subscription/verifyPayment",
+              PAYMENT_VERIFICATION,
               verifyPayload,
               { headers }
             );
@@ -724,7 +718,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
     } catch (error) {
       const errorMsg = error?.response?.data?.message || error.message || "Please try again later.";
 
-      console.error("❌ [Error in buying subscription]:", error?.response?.data || error.message); 
+      console.error("❌ [Error in buying subscription]:", error?.response?.data || error.message);
       Alert.alert(
         "Subscription Info",
         errorMsg
@@ -757,7 +751,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
           <TextInput
             style={Globalstyles.input}
-            value={biodata?.subCaste} 
+            value={biodata?.subCaste}
             onChangeText={handleSubCasteInputChange}
             placeholder="Type your sub caste"
             placeholderTextColor={Colors.gray}
@@ -1520,15 +1514,6 @@ const DetailedProfile = ({ navigation, profileData }) => {
               </Text>
             )}
           </TouchableOpacity>
-
-          {/* subscription part  */}
-          {/* <TouchableOpacity
-            style={styles.trialButton}
-            onPress={openModal}
-          >
-            <Text style={styles.trialText}>Show All Plans</Text>
-          </TouchableOpacity> */}
-
           <Modal visible={modalVisible} animationType="slide" transparent={true}>
             <View style={styles.modalOverlay}>
               <View style={styles.modalContent}>
@@ -1567,7 +1552,6 @@ const DetailedProfile = ({ navigation, profileData }) => {
               </View>
             </View>
           </Modal>
-
         </View>
       </ScrollView>
     </SafeAreaView>

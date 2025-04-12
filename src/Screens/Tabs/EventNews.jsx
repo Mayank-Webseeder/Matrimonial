@@ -9,7 +9,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { useFocusEffect } from '@react-navigation/native';
 import { SW, SH, SF } from '../../utils/Dimensions';
 import Globalstyles from '../../utils/GlobalCss';
-import { GET_ALL_EVENT_NEWS, LIKEPOST, COMMENTPOST, VIEW_EVENT } from '../../utils/BaseUrl';
+import { GET_ALL_EVENT_NEWS, LIKEPOST, COMMENTPOST, VIEW_EVENT, BASE_URL } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import moment from 'moment';
@@ -237,7 +237,7 @@ const EventNews = ({ navigation }) => {
       console.log("headers", headers);
 
       const response = await axios.delete(
-        `https://api-matrimonial.webseeder.tech/api/v1/event/${postId}/delete-comment/${commentId}`,
+        `${BASE_URL}/event/${postId}/delete-comment/${commentId}`,
         { headers }
       );
 

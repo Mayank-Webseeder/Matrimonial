@@ -12,7 +12,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { UPLOAD_PROFILE_PHOTO, DELETE_PROFILE_PHOTO, PROFILE_ENDPOINT } from '../../utils/BaseUrl';
+import { UPLOAD_PROFILE_PHOTO, DELETE_PROFILE_PHOTO, PROFILE_ENDPOINT, PROFILE_TYPE } from '../../utils/BaseUrl';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import { DrawerActions, useFocusEffect } from '@react-navigation/native';
@@ -151,7 +151,7 @@ const MyProfile = ({ navigation }) => {
             setSelectedProfile(profileType);
             const token = await AsyncStorage.getItem('userToken');
             const response = await axios.get(
-                `https://api-matrimonial.webseeder.tech/api/v1/user/profiles/${profileType}`,
+                `${PROFILE_TYPE}/${profileType}`,
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 }

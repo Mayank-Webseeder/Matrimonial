@@ -12,7 +12,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Globalstyles from '../../utils/GlobalCss';
 import { SH, SW } from '../../utils/Dimensions';
 import ImageViewing from 'react-native-image-viewing';
-import { REPOST } from '../../utils/BaseUrl';
+import { PROFILE_TYPE, REPOST } from '../../utils/BaseUrl';
 import Toast from 'react-native-toast-message';
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
@@ -56,7 +56,7 @@ const ProfileDetail = ({ route, navigation }) => {
         try {
             const token = await AsyncStorage.getItem('userToken');
             const response = await axios.get(
-                `https://api-matrimonial.webseeder.tech/api/v1/user/profiles/${profileType}`,
+                `${PROFILE_TYPE}/${profileType}`,
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 }

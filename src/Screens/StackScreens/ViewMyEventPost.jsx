@@ -12,7 +12,7 @@ import Globalstyles from '../../utils/GlobalCss';
 import moment from 'moment';
 import Toast from 'react-native-toast-message';
 import RBSheet from "react-native-raw-bottom-sheet";
-import { DELETE_EVENT, COMMENTPOST, LIKEPOST } from '../../utils/BaseUrl';
+import { DELETE_EVENT, COMMENTPOST, LIKEPOST, BASE_URL } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector } from 'react-redux';
@@ -228,7 +228,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
       console.log("headers", headers);
 
       const response = await axios.delete(
-        `https://api-matrimonial.webseeder.tech/api/v1/event/${postId}/delete-comment/${commentId}`,
+        `${BASE_URL}/event/${postId}/delete-comment/${commentId}`,
         { headers }
       );
 

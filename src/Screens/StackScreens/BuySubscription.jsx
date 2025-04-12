@@ -9,9 +9,11 @@ import { SW, SH, SF } from '../../utils/Dimensions';
 import Colors from '../../utils/Colors';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
-const BuySubscription = ({ navigation,route}) => {
+import { FETCH_PLANS, PAID_URL, PAYMENT_VERIFICATION, RAZORPAY } from '../../utils/BaseUrl';
+
+const BuySubscription = ({ navigation, route }) => {
   const { serviceType } = route.params;
-  console.log("Service Type:", serviceType); 
+  console.log("Service Type:", serviceType);
   const [buyLoading, setBuyLoading] = useState(false);
   const [plans, setPlans] = useState([]);
   const [buyingPlanId, setBuyingPlanId] = useState(null);
@@ -35,7 +37,7 @@ const BuySubscription = ({ navigation,route}) => {
         Authorization: `Bearer ${token}`,
       };
 
-      const response = await axios.get(`https://api-matrimonial.webseeder.tech/api/v1/user/getPlans/${serviceType}`, { headers });
+      const response = await axios.get(`${FETCH_PLANS}/${serviceType}`, { headers });
       if (response.data?.status) {
         setPlans(response.data.plans);
       }
@@ -63,7 +65,7 @@ const BuySubscription = ({ navigation,route}) => {
       };
 
       const keyResponse = await axios.get(
-        "https://api-matrimonial.webseeder.tech/api/v1/subscription/getRazorPayKey",
+        RAZORPAY,
         { headers }
       );
 
@@ -72,16 +74,12 @@ const BuySubscription = ({ navigation,route}) => {
 
       const payload = {
         userId,
-        selectedServices: [
-          {
-            profileType: plan.profileType,
-          },
-        ],
+        profileType: plan.profileType
       };
       console.log("📦 [Payload to /buy]:", payload);
 
       const orderResponse = await axios.post(
-        "https://api-matrimonial.webseeder.tech/api/v1/subscription/buy",
+        PAID_URL,
         payload,
         { headers }
       );
@@ -140,7 +138,7 @@ const BuySubscription = ({ navigation,route}) => {
 
           try {
             const verifyResponse = await axios.post(
-              "https://api-matrimonial.webseeder.tech/api/v1/subscription/verifyPayment",
+              PAYMENT_VERIFICATION,
               verifyPayload,
               { headers }
             );

@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from '../StyleScreens/ExploreStyle';
 import Colors from '../../utils/Colors';
 import Globalstyles from '../../utils/GlobalCss';
-import { FEMALE_FILTER_API, MALE_FILTER_API, SAVED_PROFILES } from '../../utils/BaseUrl';
+import { FEMALE_FILTER_API, GET_ALL_BIODATA_PROFILES, MALE_FILTER_API, SAVED_PROFILES } from '../../utils/BaseUrl';
 import { slider } from '../../DummyData/DummyData';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import { useFocusEffect } from '@react-navigation/native';
@@ -85,7 +85,7 @@ const Matrimonial = ({ navigation }) => {
 
     try {
       const queryString = new URLSearchParams({ searchTerm: query }).toString();
-      const finalURL = `https://api-matrimonial.webseeder.tech/api/v1/user/feed?${queryString}`;
+      const finalURL = `${GET_ALL_BIODATA_PROFILES}?${queryString}`;
 
       console.log("🛠 Final API URL:", finalURL);
       const finalResponse = await axios.get(finalURL, { headers });

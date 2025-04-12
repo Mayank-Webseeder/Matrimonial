@@ -1,131 +1,146 @@
+
+// const BASE_URL = "https://api-matrimonial.webseeder.tech/api/v1";
+const BASE_URL = "https://matrimonial-backend-oikh.onrender.com/api/v1";
+
 // auth api's
-const SIGNUP_ENDPOINT = "https://api-matrimonial.webseeder.tech/api/v1/user/signUp";
-const LOGIN_ENDPOINT = "https://api-matrimonial.webseeder.tech/api/v1/user/signIn";
-const OTP_ENDPOINT = "https://api-matrimonial.webseeder.tech/api/v1/user/sendOTP";
-const FORGOT_PASSWORD = "https://api-matrimonial.webseeder.tech/api/v1/user/forgotPassword";
-const CHANGE_PASSWORD = "https://api-matrimonial.webseeder.tech/api/v1/user/changePassword";
-const FEEDBACK = "https://api-matrimonial.webseeder.tech/api/v1/user/create-feedback";
+const SIGNUP_ENDPOINT = `${BASE_URL}/user/signUp`;
+const LOGIN_ENDPOINT = `${BASE_URL}/user/signIn`;
+const OTP_ENDPOINT = `${BASE_URL}/user/sendOTP`;
+const FORGOT_PASSWORD = `${BASE_URL}/user/forgotPassword`;
+const CHANGE_PASSWORD = `${BASE_URL}/user/changePassword`;
+const FEEDBACK = `${BASE_URL}/user/create-feedback`;
 
 // report 
-const REPORT = "https://api-matrimonial.webseeder.tech/api/v1/report/createReport";
+const REPORT = `${BASE_URL}/report/createReport`;
+
 // profile's apis
-const PROFILE_ENDPOINT = "https://api-matrimonial.webseeder.tech/api/v1/user/view";
-const UPLOAD_PROFILE_PHOTO = "https://api-matrimonial.webseeder.tech/api/v1/user/updateProfileImage";
-const UPDATE_PROFILE = "https://api-matrimonial.webseeder.tech/api/v1/user/updateProfile";
-const DELETE_USER="https://api-matrimonial.webseeder.tech/api/v1/user/deleteUser";
-const DELETE_PROFILE_PHOTO="https://api-matrimonial.webseeder.tech/api/v1/user/delete-profileImage";
+const PROFILE_ENDPOINT = `${BASE_URL}/user/view`;
+const UPLOAD_PROFILE_PHOTO = `${BASE_URL}/user/updateProfileImage`;
+const UPDATE_PROFILE = `${BASE_URL}/user/updateProfile`;
+const DELETE_USER = `${BASE_URL}/user/deleteUser`;
+const DELETE_PROFILE_PHOTO = `${BASE_URL}/user/delete-profileImage`;
+const PROFILE_TYPE=`${BASE_URL}/user/profiles`;
 
 // biodata api's
-const CREATE_PERSONAL_DETAILS = "https://api-matrimonial.webseeder.tech/api/v1/biodata/createPersonalDetails";
-const UPDATE_PERSONAL_DETAILS = "https://api-matrimonial.webseeder.tech/api/v1/biodata/updatePersonalDetails";
-const CREATE_PARTNER_PERFRENCES = "https://api-matrimonial.webseeder.tech/api/v1/biodata/createPartnerPreferences";
-const UPDATE_PARTNER_PERFRENCES = "https://api-matrimonial.webseeder.tech/api/v1/biodata/updatePartnerPreferences";
-const GET_BIODATA = "https://api-matrimonial.webseeder.tech/api/v1/biodata/getBiodata";
-const GET_ALL_BIODATA_PROFILES = "https://api-matrimonial.webseeder.tech/api/v1/user/feed";
-const REPOST = "https://api-matrimonial.webseeder.tech/api/v1/biodata/repostBiodata"
-const DELETE_BIODATA = "https://api-matrimonial.webseeder.tech/api/v1/biodata/deleteBioData"
-// send & received profiles api's 
-// matched profile
-const MATCHED_PROFILE = "https://api-matrimonial.webseeder.tech/api/v1/user/profile";
-// Receiver end 
-const RECEIVER_REQUESTS = "https://api-matrimonial.webseeder.tech/api/v1/connectionRequest/request/recieved"; // get
-const REJECTED_API = "https://api-matrimonial.webseeder.tech/api/v1/connectionRequest/review/rejected";
-const ACCEPTED_API = "https://api-matrimonial.webseeder.tech/api/v1/connectionRequest/review/accepted";
-// Sender end  
-const SENDER_REQUESTS = "https://api-matrimonial.webseeder.tech/api/v1/connectionRequest/request/sent" // get
-const SEND_REQUEST = "https://api-matrimonial.webseeder.tech/api/v1/connectionRequest/send/interested" // ID PASS KRNA H
-const DELETE_SEND_REQUEST="https://api-matrimonial.webseeder.tech/api/v1/connectionRequest/delete/connection";
+const CREATE_PERSONAL_DETAILS = `${BASE_URL}/biodata/createPersonalDetails`;
+const UPDATE_PERSONAL_DETAILS = `${BASE_URL}/biodata/updatePersonalDetails`;
+const CREATE_PARTNER_PERFRENCES = `${BASE_URL}/biodata/createPartnerPreferences`;
+const UPDATE_PARTNER_PERFRENCES = `${BASE_URL}/biodata/updatePartnerPreferences`;
+const GET_BIODATA = `${BASE_URL}/biodata/getBiodata`;
+const GET_ALL_BIODATA_PROFILES = `${BASE_URL}/user/feed`;
+const REPOST = `${BASE_URL}/biodata/repostBiodata`;
+const DELETE_BIODATA = `${BASE_URL}/biodata/deleteBioData`;
 
-// pandit api's
-const CREATE_PANDIT = "https://api-matrimonial.webseeder.tech/api/v1/pandit/createPandit";
-const GET_ALL_PANDIT_DATA = "https://api-matrimonial.webseeder.tech/api/v1/pandit/getAllPandit";
-const PANDIT_REVIEW = "https://api-matrimonial.webseeder.tech/api/v1/pandit/addReviewRating";
-const PANDIT_DESCRIPTION = "https://api-matrimonial.webseeder.tech/api/v1/pandit/panditProfileData";
-const VIEW_PANDIT = "https://api-matrimonial.webseeder.tech/api/v1/pandit/viewPandit";
-const UPDATE_PANDIT = "https://api-matrimonial.webseeder.tech/api/v1/user/update-serviceProfile/Pandit";
-const UPDATE_PANDIT_REVIEW = "https://api-matrimonial.webseeder.tech/api/v1/pandit/update-reviewRating";
+// send & received profiles APIs
+const MATCHED_PROFILE = `${BASE_URL}/user/profile`;
+const RECEIVER_REQUESTS = `${BASE_URL}/connectionRequest/request/recieved`;
+const REJECTED_API = `${BASE_URL}/connectionRequest/review/rejected`;
+const ACCEPTED_API = `${BASE_URL}/connectionRequest/review/accepted`;
+const SENDER_REQUESTS = `${BASE_URL}/connectionRequest/request/sent`;
+const SEND_REQUEST = `${BASE_URL}/connectionRequest/send/interested`;
+const DELETE_SEND_REQUEST = `${BASE_URL}/connectionRequest/delete/connection`;
+// pandit APIs
+const CREATE_PANDIT = `${BASE_URL}/pandit/createPandit`;
+const GET_ALL_PANDIT_DATA = `${BASE_URL}/pandit/getAllPandit`;
+const PANDIT_REVIEW = `${BASE_URL}/pandit/addReviewRating`;
+const PANDIT_DESCRIPTION = `${BASE_URL}/pandit/panditProfileData`;
+const VIEW_PANDIT = `${BASE_URL}/pandit/viewPandit`;
+const UPDATE_PANDIT = `${BASE_URL}/user/update-serviceProfile/Pandit`;
+const UPDATE_PANDIT_REVIEW = `${BASE_URL}/pandit/update-reviewRating`;
 
-// jyotish api's
-const CREATE_JYOTISH = "https://api-matrimonial.webseeder.tech/api/v1/jyotish/createJyotish";
-const GET_ALL_JYOTISH = "https://api-matrimonial.webseeder.tech/api/v1/jyotish/getAllJyotish";
-const JYOTISH_REVIEW = "https://api-matrimonial.webseeder.tech/api/v1/jyotish/addReviewRating";
-const JYOTISH_DESCRIPTION = "https://api-matrimonial.webseeder.tech/api/v1/jyotish/jyotishProfileData";
-const VIEW_JYOTISH = "https://api-matrimonial.webseeder.tech/api/v1/jyotish/viewJyotish";
-const UPDATE_JYOTISH = "https://api-matrimonial.webseeder.tech/api/v1/user/update-serviceProfile/Jyotish";
-const UPDATE_JYOTISH_REVIEW = "https://api-matrimonial.webseeder.tech/api/v1/jyotish/update-reviewRating";
+// jyotish APIs
+const CREATE_JYOTISH = `${BASE_URL}/jyotish/createJyotish`;
+const GET_ALL_JYOTISH = `${BASE_URL}/jyotish/getAllJyotish`;
+const JYOTISH_REVIEW = `${BASE_URL}/jyotish/addReviewRating`;
+const JYOTISH_DESCRIPTION = `${BASE_URL}/jyotish/jyotishProfileData`;
+const VIEW_JYOTISH = `${BASE_URL}/jyotish/viewJyotish`;
+const UPDATE_JYOTISH = `${BASE_URL}/user/update-serviceProfile/Jyotish`;
+const UPDATE_JYOTISH_REVIEW = `${BASE_URL}/jyotish/update-reviewRating`;
 
-// pandit api's
-const CREATE_KATHAVACHAK = "https://api-matrimonial.webseeder.tech/api/v1/kathavachak/createKathavachak";
-const GET_ALL_KATHAVACHAK = "https://api-matrimonial.webseeder.tech/api/v1/kathavachak/getAllKathavachak";
-const KATHAVACHAK_REVIEW = "https://api-matrimonial.webseeder.tech/api/v1/kathavachak/addReviewRating";
-const KATHAVACHAK_DESCRIPTION = "https://api-matrimonial.webseeder.tech/api/v1/kathavachak/kathavachakProfileData";
-const VIEW_KATHAVACHAK = "https://api-matrimonial.webseeder.tech/api/v1/kathavachak/viewKathavachak";
-const UPDATE_KATHAVACHAK = "https://api-matrimonial.webseeder.tech/api/v1/user/update-serviceProfile/Kathavachak";
-const UPDATE_KATHAVACHAK_REVIEW ="https://api-matrimonial.webseeder.tech/api/v1/kathavachak/update-reviewRating";
+// kathavachak APIs
+const CREATE_KATHAVACHAK = `${BASE_URL}/kathavachak/createKathavachak`;
+const GET_ALL_KATHAVACHAK = `${BASE_URL}/kathavachak/getAllKathavachak`;
+const KATHAVACHAK_REVIEW = `${BASE_URL}/kathavachak/addReviewRating`;
+const KATHAVACHAK_DESCRIPTION = `${BASE_URL}/kathavachak/kathavachakProfileData`;
+const VIEW_KATHAVACHAK = `${BASE_URL}/kathavachak/viewKathavachak`;
+const UPDATE_KATHAVACHAK = `${BASE_URL}/user/update-serviceProfile/Kathavachak`;
+const UPDATE_KATHAVACHAK_REVIEW = `${BASE_URL}/kathavachak/update-reviewRating`;
 
-// search api is directly integrate 
-// filters API's
-const SET_PREFRENCE_FILTER_API = "https://api-matrimonial.webseeder.tech/api/v1/user/getMatchProfiles";
-const MALE_FILTER_API = "https://api-matrimonial.webseeder.tech/api/v1/user/feed?gender=male";
-const FEMALE_FILTER_API = "https://api-matrimonial.webseeder.tech/api/v1/user/feed?gender=female";
+// filters APIs
+const SET_PREFRENCE_FILTER_API = `${BASE_URL}/user/getMatchProfiles`;
+const MALE_FILTER_API = `${BASE_URL}/user/feed?gender=male`;
+const FEMALE_FILTER_API = `${BASE_URL}/user/feed?gender=female`;
 
-// saved api's 
-const SAVED_PROFILES = "https://api-matrimonial.webseeder.tech/api/v1/saved/save-profile";
-const GET_SAVED__PROFILES = "https://api-matrimonial.webseeder.tech/api/v1/saved/getSavedProfiles";
-const DELETE_SAVED_PROFILE = "https://api-matrimonial.webseeder.tech/api/v1/saved/deleteSavedProfiles";
+// saved APIs
+const SAVED_PROFILES = `${BASE_URL}/saved/save-profile`;
+const GET_SAVED__PROFILES = `${BASE_URL}/saved/getSavedProfiles`;
+const DELETE_SAVED_PROFILE = `${BASE_URL}/saved/deleteSavedProfiles`;
 
-// share api's 
-const SHARED_PROFILES = "https://api-matrimonial.webseeder.tech/api/v1/user/share-bioDataprofile"
+// share
+const SHARED_PROFILES = `${BASE_URL}/user/share-bioDataprofile`;
 
-// activist 
-const CREATE_ACTIVIST = "https://api-matrimonial.webseeder.tech/api/v1/activist/createActivist";
-const GET_ACTIVIST = "https://api-matrimonial.webseeder.tech/api/v1/activist/viewActivist";
-const UPDATE_ACTIVIST = "https://api-matrimonial.webseeder.tech/api/v1/activist/updateActivist";
-const GET_ACTIVIST_PROFILES = "https://api-matrimonial.webseeder.tech/api/v1/activist/getAllActivist";
-const VERIFY_PROFILE = "https://api-matrimonial.webseeder.tech/api/v1/activist/verify-metrimonialProfile";
+// activist APIs
+const CREATE_ACTIVIST = `${BASE_URL}/activist/createActivist`;
+const GET_ACTIVIST = `${BASE_URL}/activist/viewActivist`;
+const UPDATE_ACTIVIST = `${BASE_URL}/activist/updateActivist`;
+const GET_ACTIVIST_PROFILES = `${BASE_URL}/activist/getAllActivist`;
+const VERIFY_PROFILE = `${BASE_URL}/activist/verify-metrimonialProfile`;
 
-// committes
-const CREATE_COMMITTEE = "https://api-matrimonial.webseeder.tech/api/v1/committee/createCommittee";
-const UPDATE_COMMITTEE = "https://api-matrimonial.webseeder.tech/api/v1/committee/updateCommittee";
-const GET_COMMIITEE = "https://api-matrimonial.webseeder.tech/api/v1/committee/viewCommittee";
-const GET_ALL_COMITTEE = "https://api-matrimonial.webseeder.tech/api/v1/committee/getAllCommittee"
-const DELETE_COMMITTEE ="https://api-matrimonial.webseeder.tech/api/v1/committee/delete-Committee"
-// dharamsala 
-const CREATE_DHARAMSALA = "https://api-matrimonial.webseeder.tech/api/v1/dharmshala/createDharmshala";
-const UPDATE_DHARAMSALA = "https://api-matrimonial.webseeder.tech/api/v1/dharmshala/updateDharmshala";
-const GET_DHARAMSALA = "https://api-matrimonial.webseeder.tech/api/v1/dharmshala/viewDharmshala";
-const GET_ALL_DHARAMSALA = "https://api-matrimonial.webseeder.tech/api/v1/dharmshala/getAllDharmshala"
-const DELETE_DHARAMSALA="https://api-matrimonial.webseeder.tech/api/v1/dharmshala/delete-Dharmshala"
-// get common api for all matrimony profiles for biodata page 
-const MATRIMONY_SUMMRARY = "https://api-matrimonial.webseeder.tech/api/v1/user/getMetrimonial-Summary";
+// committee APIs
+const CREATE_COMMITTEE = `${BASE_URL}/committee/createCommittee`;
+const UPDATE_COMMITTEE = `${BASE_URL}/committee/updateCommittee`;
+const GET_COMMIITEE = `${BASE_URL}/committee/viewCommittee`;
+const GET_ALL_COMITTEE = `${BASE_URL}/committee/getAllCommittee`;
+const DELETE_COMMITTEE = `${BASE_URL}/committee/delete-Committee`;
 
-// event & news 
-const GET_ALL_EVENT_NEWS = "https://api-matrimonial.webseeder.tech/api/v1/event/getAllEventsPost";
-const VIEW_EVENT = "https://api-matrimonial.webseeder.tech/api/v1/event/viewPost";
-const CREATE_EVENT_NEWS = "https://api-matrimonial.webseeder.tech/api/v1/event/createEventPost";
-const UPDATE_EVENT_NEWS = "https://api-matrimonial.webseeder.tech/api/v1/event/updateEventPost";
-const LIKEPOST = "https://api-matrimonial.webseeder.tech/api/v1/event/like";
-const COMMENTPOST = "https://api-matrimonial.webseeder.tech/api/v1/event/comment";
-const DELETE_EVENT = "https://api-matrimonial.webseeder.tech/api/v1/event/delete-eventPost";
-// delete comments also done 
+// dharamsala APIs
+const CREATE_DHARAMSALA = `${BASE_URL}/dharmshala/createDharmshala`;
+const UPDATE_DHARAMSALA = `${BASE_URL}/dharmshala/updateDharmshala`;
+const GET_DHARAMSALA = `${BASE_URL}/dharmshala/viewDharmshala`;
+const GET_ALL_DHARAMSALA = `${BASE_URL}/dharmshala/getAllDharmshala`;
+const DELETE_DHARAMSALA = `${BASE_URL}/dharmshala/delete-Dharmshala`;
 
-// advertise with us 
+// summary
+const MATRIMONY_SUMMRARY = `${BASE_URL}/user/getMetrimonial-Summary`;
 
-const ADVERTISE_WITH_US = "https://api-matrimonial.webseeder.tech/api/v1/user/advertise-WithUs";
+// events & news
+const GET_ALL_EVENT_NEWS = `${BASE_URL}/event/getAllEventsPost`;
+const VIEW_EVENT = `${BASE_URL}/event/viewPost`;
+const CREATE_EVENT_NEWS = `${BASE_URL}/event/createEventPost`;
+const UPDATE_EVENT_NEWS = `${BASE_URL}/event/updateEventPost`;
+const LIKEPOST = `${BASE_URL}/event/like`;
+const COMMENTPOST = `${BASE_URL}/event/comment`;
+const DELETE_EVENT = `${BASE_URL}/event/delete-eventPost`;
 
-// privacy settings api
-const HIDE_CONTACT = "https://api-matrimonial.webseeder.tech/api/v1/settings/hide-contact";
-const HIDE_OPTIONAL_DETAILS = "https://api-matrimonial.webseeder.tech/api/v1/settings/hide-optionalDetails";
-const INACTIVE_ID = "https://api-matrimonial.webseeder.tech/api/v1/settings/set-activityStatus";
-const BLUR_PHOTOS="https://api-matrimonial.webseeder.tech/api/v1/settings/set-Blur"
-//notification
-const NOTIFICATION = "https://api-matrimonial.webseeder.tech/api/v1/notification/getAllNotification";
-const VIEW_NOTIFICATION = "https://api-matrimonial.webseeder.tech/api/v1/notification/seeNotification";
-const SEEN_NOTIFICATION = "https://api-matrimonial.webseeder.tech/api/v1/notification/getAllNotification?seen=true";
+// advertise with us
+const ADVERTISE_WITH_US = `${BASE_URL}/user/advertise-WithUs`;
 
-// notification seetings api
-const CONNECTION_REQUEST_HANDLE_API = "https://api-matrimonial.webseeder.tech/api/v1/settings/set-connReqNotification";
-const EVENT_NEWS_NOTIFICATION_HANDLE_API = "https://api-matrimonial.webseeder.tech/api/v1/settings/set-eventPostNotification";
+// privacy settings
+const HIDE_CONTACT = `${BASE_URL}/settings/hide-contact`;
+const HIDE_OPTIONAL_DETAILS = `${BASE_URL}/settings/hide-optionalDetails`;
+const INACTIVE_ID = `${BASE_URL}/settings/set-activityStatus`;
+const BLUR_PHOTOS = `${BASE_URL}/settings/set-Blur`;
+
+// notifications
+const NOTIFICATION = `${BASE_URL}/notification/getAllNotification`;
+const VIEW_NOTIFICATION = `${BASE_URL}/notification/seeNotification`;
+const SEEN_NOTIFICATION = `${BASE_URL}/notification/getAllNotification?seen=true`;
+
+// notification settings
+const CONNECTION_REQUEST_HANDLE_API = `${BASE_URL}/settings/set-connReqNotification`;
+const EVENT_NEWS_NOTIFICATION_HANDLE_API = `${BASE_URL}/settings/set-eventPostNotification`;
+
+// subscriptions
+
+const MATRIMONIALFETCH_PLAN=`${BASE_URL}/user/getPlans/Biodata`;
+const PANDIT_PLANS=`${BASE_URL}/user/getPlans/Pandit`;
+const JYOISH_PLANS=`${BASE_URL}/user/getPlans/Jyotish`;
+const KATHAVACHAK_PLANS=`${BASE_URL}/user/getPlans/Kathavachak`;
+const FETCH_PLANS=`${BASE_URL}/user/getPlans`;
+const RAZORPAY=`${BASE_URL}/subscription/getRazorPayKey`;
+const FREE_TRIAL=`${BASE_URL}/subscription/setTrial`;
+const PAYMENT_VERIFICATION=`${BASE_URL}/subscription/verifyPayment`;
+const PAID_URL=`${BASE_URL}/subscription/buy`;
 
 export {
     SIGNUP_ENDPOINT,
@@ -215,5 +230,16 @@ export {
     UPDATE_KATHAVACHAK_REVIEW,
     DELETE_PROFILE_PHOTO,
     DELETE_USER,
-    DELETE_SEND_REQUEST
+    DELETE_SEND_REQUEST,
+    MATRIMONIALFETCH_PLAN,
+    PANDIT_PLANS,
+    JYOISH_PLANS,
+    KATHAVACHAK_PLANS,
+    FETCH_PLANS,
+    PAID_URL,
+    FREE_TRIAL,
+    PAYMENT_VERIFICATION,
+    RAZORPAY,
+    PROFILE_TYPE,
+    BASE_URL
 }

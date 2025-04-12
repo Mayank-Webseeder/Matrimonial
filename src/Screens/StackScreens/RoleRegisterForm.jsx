@@ -9,7 +9,7 @@ import Globalstyles from '../../utils/GlobalCss';
 import { subCasteOptions, StateData, CityData, panditServices, jyotishServices, kathavachakServices, ExperienceData } from '../../DummyData/DropdownData';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { CREATE_JYOTISH, CREATE_KATHAVACHAK, CREATE_PANDIT } from '../../utils/BaseUrl';
+import { CREATE_JYOTISH, CREATE_KATHAVACHAK, CREATE_PANDIT, PROFILE_TYPE } from '../../utils/BaseUrl';
 import { Dropdown } from 'react-native-element-dropdown';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -75,7 +75,7 @@ const RoleRegisterForm = ({ navigation }) => {
                 return;
             }
     
-            const apiUrl = `https://api-matrimonial.webseeder.tech/api/v1/user/profiles/${profileType}`;
+            const apiUrl = `${PROFILE_TYPE}/${profileType}`;
     
             console.log("API Request:");
             console.log("URL:", apiUrl);

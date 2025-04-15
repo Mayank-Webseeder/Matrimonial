@@ -4,7 +4,6 @@ import styles from '../StyleScreens/RoleRegisterStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
 import { Checkbox } from 'react-native-paper';
-import Toast from 'react-native-toast-message';
 import Globalstyles from '../../utils/GlobalCss';
 import { subCasteOptions, StateData, CityData, panditServices, jyotishServices, kathavachakServices, ExperienceData } from '../../DummyData/DropdownData';
 import axios from 'axios';
@@ -13,6 +12,7 @@ import { UPDATE_PANDIT, UPDATE_JYOTISH, UPDATE_KATHAVACHAK } from '../../utils/B
 import { Dropdown } from 'react-native-element-dropdown';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { SH, SW } from '../../utils/Dimensions';
+import { showMessage } from 'react-native-flash-message';
 
 const UpdateProfileDetails = ({ navigation, route }) => {
     const [stateInput, setStateInput] = useState('');
@@ -270,10 +270,10 @@ const UpdateProfileDetails = ({ navigation, route }) => {
         };
 
         if (!profileType || !roleApiMapping[profileType]) {
-            Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: "Invalid profile type selected.",
+            showMessage({
+                type: "danger",
+                message: "Error",
+                description: "Invalid profile type selected.",
             });
             setIsLoading(false);
             return;
@@ -338,10 +338,11 @@ const UpdateProfileDetails = ({ navigation, route }) => {
             console.log("response", JSON.stringify(response.data))
 
             if (response.status === 200 || response.data.status === true) {
-                Toast.show({
+                showMessage({
                     type: "success",
-                    text1: "Success!",
-                    text2: `Successfully updated profile for ${profileType}.`,
+                    message: "Success!",
+                    description: `Successfully updated profile for ${profileType}.`,
+                    icon: "success"
                 });
 
                 setTimeout(() => {
@@ -357,16 +358,18 @@ const UpdateProfileDetails = ({ navigation, route }) => {
             console.error("Error:", error);
 
             if (error.response?.status === 400) {
-                Toast.show({
-                    type: "error",
-                    text1: "Update Failed",
-                    text2: error.response.data.message || "Invalid request. Please check your input.",
+                showMessage({
+                    type: "danger",
+                    message: "Update Failed",
+                    description: error.response.data.message || "Invalid request. Please check your input.",
+                    icon: "danger"
                 });
             } else {
-                Toast.show({
-                    type: "error",
-                    text1: "Error",
-                    text2: error.message || "Something went wrong. Please try again.",
+                showMessage({
+                    type: "danger",
+                    message: "Error",
+                    description: error.message || "Something went wrong. Please try again.",
+                    icon: "danger"
                 });
             }
         } finally {
@@ -619,7 +622,6 @@ const UpdateProfileDetails = ({ navigation, route }) => {
 
                 </View>
             </ScrollView>
-            <Toast />
         </SafeAreaView>
     );
 };

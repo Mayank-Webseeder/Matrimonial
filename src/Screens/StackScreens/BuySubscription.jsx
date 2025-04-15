@@ -8,7 +8,6 @@ import RazorpayCheckout from 'react-native-razorpay';
 import { SW, SH, SF } from '../../utils/Dimensions';
 import Colors from '../../utils/Colors';
 import axios from 'axios';
-import Toast from 'react-native-toast-message';
 import { FETCH_PLANS, PAID_URL, PAYMENT_VERIFICATION, RAZORPAY } from '../../utils/BaseUrl';
 
 const BuySubscription = ({ navigation, route }) => {
@@ -237,7 +236,6 @@ const BuySubscription = ({ navigation, route }) => {
           )}
         </View>
       </ScrollView>
-      <Toast />
     </View>
   )
 }

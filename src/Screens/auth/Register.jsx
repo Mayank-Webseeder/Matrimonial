@@ -7,7 +7,6 @@ import { Dropdown } from 'react-native-element-dropdown';
 import Colors from "../../utils/Colors";
 import axios from "axios";
 import { SIGNUP_ENDPOINT, OTP_ENDPOINT } from "../../utils/BaseUrl";
-import Toast from "react-native-toast-message";
 import { CityData, genderData } from "../../DummyData/DropdownData";
 import Globalstyles from "../../utils/GlobalCss";
 import ImageCropPicker from 'react-native-image-crop-picker';
@@ -16,6 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { resetBioData } from "../../ReduxStore/Slices/BiodataSlice";
 import { useDispatch } from "react-redux";
 import { initializeSocket } from "../../../socket";
+import { showMessage } from "react-native-flash-message";
 
 const Register = ({ navigation }) => {
     const dispatch = useDispatch();
@@ -94,7 +94,7 @@ const Register = ({ navigation }) => {
 
     const handleSendOtp = async () => {
         if (!/^\d{10}$/.test(mobileNumber)) {
-            Toast.show({ type: "error", text1: "Invalid Number", text2: "Enter a valid 10-digit mobile number" });
+            showMessage({ type: "error", message: "Invalid Number", description: "Enter a valid 10-digit mobile number" });
             return;
         }
 
@@ -104,9 +104,9 @@ const Register = ({ navigation }) => {
 
             console.log("OTP Response:", response.data);
 
-            if (response.status === 200 && response.data.status === true) {
+            if (response.status === 200 || response.data.status === true) {
                 setOtpSent(true);  // Mark OTP as sent
-                Toast.show({ type: "success", text1: "OTP Sent", text2: "Check your SMS for the OTP" });
+                showMessage({ type: "success", message: "OTP Sent", description: "Check your SMS for the OTP",icon:"success" });
             } else {
                 throw new Error(response.data.message || "OTP request failed");
             }
@@ -114,9 +114,9 @@ const Register = ({ navigation }) => {
             console.error("OTP Error:", error);
 
             if (error.response?.status === 400) {
-                Toast.show({ type: "error", text1: "Invalid Request", text2: error.response.data.message || "Mobile number is required" });
+                showMessage({ type: "danger", message: "Invalid Request", description: error.response.data.message || "Mobile number is required",icon:"danger" });
             } else {
-                Toast.show({ type: "error", text1: "OTP Error", text2: error.message || "Failed to send OTP. Try again." });
+                showMessage({ type:"danger", message: "OTP Error", description: error.message || "Failed to send OTP. Try again.",icon:"danger" });
             }
         } finally {
             setIsOtpLoading(false);
@@ -127,7 +127,7 @@ const Register = ({ navigation }) => {
         if (!validateFields()) return;
 
         if (!otp || otp.length !== 6) {
-            Toast.show({ type: "error", text1: "Invalid OTP", text2: "Please enter the correct OTP." });
+            showMessage({ type: "danger", message: "Invalid OTP", description: "Please enter the correct OTP.",icon:"danger" });
             return;
         }
 
@@ -175,10 +175,11 @@ const Register = ({ navigation }) => {
                     console.error("🚨 Socket Initialization Failed:", socketError);
                 }
 
-                Toast.show({
+                showMessage({
                     type: "success",
-                    text1: "Sign Up Successful",
-                    text2: "You have successfully signed up!",
+                    message: "Sign Up Successful",
+                    description: "You have successfully signed up!",
+                    icon:"success",
                     onHide: () =>
                         navigation.reset({
                             index: 0,
@@ -192,16 +193,18 @@ const Register = ({ navigation }) => {
             console.error("Sign Up Error:", error);
 
             if (error.response?.status === 400) {
-                Toast.show({
-                    type: "error",
-                    text1: "Invalid Request",
-                    text2: error.response.data.message || "Please check your input.",
+                showMessage({
+                    type: "danger",
+                    message: "Invalid Request",
+                    description: error.response.data.message || "Please check your input.",
+                    icon:"danger"
                 });
             } else {
-                Toast.show({
-                    type: "error",
-                    text1: "Sign Up Error",
-                    text2: error.message || "An error occurred. Please try again.",
+                showMessage({
+                    type: "danger",
+                    message: "Sign Up Error",
+                    description: error.message || "An error occurred. Please try again.",
+                    icon:"danger"
                 });
             }
         } finally {
@@ -447,7 +450,6 @@ const Register = ({ navigation }) => {
                     onChange={handleDateChange}
                 />
             )}
-            <Toast />
         </SafeAreaView>
     );
 };

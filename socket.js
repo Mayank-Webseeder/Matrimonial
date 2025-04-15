@@ -1,5 +1,5 @@
 
-import { ToastAndroid } from "react-native";
+import { showMessage } from "react-native-flash-message";
 import io from "socket.io-client";
 
 const SOCKET_URL = "https://api-matrimonial.webseeder.tech"
@@ -8,9 +8,10 @@ let socket = null;
 
 export const initializeSocket = (userId) => {
     if (!socket) {  // 🔹 Only initialize if socket is not already connected
-        socket = io(SOCKET_URL, {
+        const socket = io(SOCKET_URL, {
+            transports: ['websocket'],
             auth: { userId }
-        });
+          });
 
         socket.on("connect", () => {
             console.log("✅ Socket connected:", socket.id);
@@ -30,7 +31,12 @@ export const initializeSocket = (userId) => {
 
 export const getSocket = () => {
     if (!socket) {
-        // ToastAndroid.show("Socket not initialized!", ToastAndroid.SHORT);
+        showMessage({
+            type: "info",
+            message: "Socket not initialized!",
+            icon: "info"
+        })
+
         throw new Error("Socket not initialized");
     }
     return socket;
@@ -40,7 +46,11 @@ export const disconnectSocket = () => {
     if (socket) {
         socket.disconnect();
         console.log("🚫 Socket disconnected");
-        ToastAndroid.show("Socket disconnected!", ToastAndroid.SHORT);
+        showMessage({
+            type: "info",
+            message: "Socket disconnected!",
+            icon: "info"
+        })
         socket = null;
     }
 };

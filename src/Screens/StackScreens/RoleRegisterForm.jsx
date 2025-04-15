@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, SafeAreaView, StatusBar, FlatList, ActivityIndicator, ToastAndroid } from 'react-native';
+import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, SafeAreaView, StatusBar, FlatList, ActivityIndicator } from 'react-native';
 import styles from '../StyleScreens/RoleRegisterStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
 import { Checkbox } from 'react-native-paper';
-import Toast from 'react-native-toast-message';
 import Globalstyles from '../../utils/GlobalCss';
 import { subCasteOptions, StateData, CityData, panditServices, jyotishServices, kathavachakServices, ExperienceData } from '../../DummyData/DropdownData';
 import axios from 'axios';
@@ -14,6 +13,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector } from 'react-redux';
+import { showMessage } from 'react-native-flash-message';
 
 const RoleRegisterForm = ({ navigation }) => {
     const [stateInput, setStateInput] = useState('');
@@ -60,46 +60,46 @@ const RoleRegisterForm = ({ navigation }) => {
     const fetchProfilesDetails = async () => {
         try {
             setIsLoading(true);
-    
+
             const token = await AsyncStorage.getItem('userToken');
-    
+
             // ✅ **Select first TRUE category (Only Pandit, Jyotish, Kathavachak)**
             let profileType = null;
             if (profileData.isPandit) profileType = "Pandit";
             else if (profileData.isJyotish) profileType = "Jyotish";
             else if (profileData.isKathavachak) profileType = "Kathavachak";
-    
+
             if (!profileType) {
                 console.log("❌ No valid profileType found.");
                 setIsLoading(false);
                 return;
             }
-    
+
             const apiUrl = `${PROFILE_TYPE}/${profileType}`;
-    
+
             console.log("API Request:");
             console.log("URL:", apiUrl);
             console.log("Headers:", { Authorization: `Bearer ${token}` });
-    
+
             const response = await axios.get(apiUrl, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-    
+
             console.log("Full API Response:", JSON.stringify(response.data));
-    
+
             // ✅ **Filter out Activist profiles**
             if (response.data?.data?.profileType === "Activist") {
                 console.log("❌ Skipping Activist Profile");
                 setIsLoading(false);
                 return;
             }
-    
+
             setFetchProfileDetails(response.data.data);
             console.log("Selected Profile Data:", response.data.data);
-    
+
         } catch (error) {
             console.error("Error fetching profiles:", error);
-    
+
             if (error.response) {
             } else if (error.request) {
                 console.error("No Response Received:", error.request);
@@ -110,12 +110,12 @@ const RoleRegisterForm = ({ navigation }) => {
             setIsLoading(false);
         }
     };
-    
+
     useEffect(() => {
         console.log("profileData:", JSON.stringify(profileData, null, 2));
         fetchProfilesDetails();
     }, []);
-    
+
 
     const roleOptions = [
         { label: 'Pandit', value: 'Pandit' },
@@ -207,41 +207,41 @@ const RoleRegisterForm = ({ navigation }) => {
     };
 
     const OPTIONAL_FIELDS = [
-        "residentialAddress", "additionalPhotos", "experience", "websiteUrl", 
-        "facebookUrl", "youtubeUrl", "instagramUrl", "whatsapp","description","aadharNo"
+        "residentialAddress", "additionalPhotos", "experience", "websiteUrl",
+        "facebookUrl", "youtubeUrl", "instagramUrl", "whatsapp", "description", "aadharNo"
     ];
-    
+
     const validateForm = (data) => {
         let errors = {};
-    
+
         if (!data) return errors; // Ensure data exists to avoid undefined errors
-    
+
         const allFields = Object.keys(data);
-    
+
         // Get mandatory fields (all except optional ones)
         const MANDATORY_FIELDS = allFields.filter(field => !OPTIONAL_FIELDS.includes(field));
-    
+
         MANDATORY_FIELDS.forEach((field) => {
             if (!data[field] || String(data[field]).trim() === "") {
                 errors[field] = `${field} is required`;
             }
         });
-    
+
         return errors;
     };
-    
+
     const handleSubmit = async () => {
         try {
-            console.log("Submitting..."); 
+            console.log("Submitting...");
             setIsLoading(true);
-            console.log("Loader Started..."); 
-    
+            console.log("Loader Started...");
+
             const roleApiMapping = {
                 Pandit: CREATE_PANDIT,
                 Jyotish: CREATE_JYOTISH,
                 Kathavachak: CREATE_KATHAVACHAK
             };
-    
+
             const commonPayload = {
                 mobileNo: RoleRegisterData?.mobileNo || fetchProfileDetails?.mobileNo,
                 residentialAddress: RoleRegisterData?.residentialAddress || fetchProfileDetails?.residentialAddress || "",
@@ -261,86 +261,85 @@ const RoleRegisterForm = ({ navigation }) => {
                 whatsapp: RoleRegisterData?.whatsapp,
                 status: "pending"
             };
-    
+
             const errors = validateForm(commonPayload);
             console.log("Validation Errors:", errors);
-    
+
             if (Object.keys(errors).length > 0) {
                 setErrors(errors);
                 setIsLoading(false);
                 return;
             }
-    
+
             const token = await AsyncStorage.getItem("userToken");
             if (!token) throw new Error("Authorization token is missing.");
             console.log("Token found:", token);
-    
+
             const headers = {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`,
             };
-    
+
             if (!selectedRoles || selectedRoles.length === 0) {
                 throw new Error("No roles selected!");
             }
             console.log("Selected Roles:", selectedRoles);
-    
+
             // ✅ Use Promise.all() to wait for all requests
             const requests = selectedRoles.map(async (role) => {
                 const url = roleApiMapping[role];
-    
+
                 const filteredServices = Object.keys(checked).filter(service =>
                     servicesOptions[role].some(option => option.value === service) && checked[service]
                 );
-    
+
                 const payload = {
                     ...commonPayload,
                     [`${role.toLowerCase()}Services`]: filteredServices,
                 };
-    
+
                 console.log(`Sending Payload for ${role}:`, payload);
-    
+
                 const response = await axios.post(url, payload, { headers });
                 console.log(`Response for ${role}:`, response.data);
-    
-                Toast.show({
+
+                showMessage({
                     type: 'success',
-                    text1: 'Success!',
-                    text2: `Successfully registered for ${role}.`,
+                    message: 'Success!',
+                    description: `Successfully registered for ${role}.`,
+                    icon:"success"
                 });
-    
-                ToastAndroid.show(`Successfully registered for ${role}`, ToastAndroid.SHORT);
             });
-    
+
             // ✅ Wait for all API requests to complete
             await Promise.all(requests);
-    
+
             // ✅ Navigate only after all requests are successful
             console.log("All roles registered successfully! Navigating...");
             await AsyncStorage.removeItem('RoleRegisterData');
-    
+
             setTimeout(() => {
                 navigation.navigate("MainApp");
             }, 2000);
-    
+
         } catch (error) {
             console.error('Error:', error.response?.data || error.message);
-    
-            Toast.show({
-                type: 'error',
-                text1: 'Error',
-                text2: error.response?.data?.message || 'Something went wrong!',
+
+            showMessage({
+                type: 'danger',
+                message: 'Error',
+                description: error.response?.data?.message || 'Something went wrong!',
+                icon:"danger"
             });
-    
-            ToastAndroid.show(error.response?.data?.message || "Something went wrong!", ToastAndroid.SHORT);
+
         } finally {
             console.log("Loader Stopped!");
             setIsLoading(false);
         }
     };
-    
-    
-    
+
+
+
 
 
     const handleStateInputChange = (text) => {
@@ -450,10 +449,11 @@ const RoleRegisterForm = ({ navigation }) => {
         if (!tempUrlData[type] || urlPatterns[type].test(tempUrlData[type])) {
             setRoleRegisterData((prev) => ({ ...prev, [type]: tempUrlData[type] }));
         } else {
-            Toast.show({
-                type: "error",
-                text1: "Invalid URL",
-                text2: `Please enter a valid ${type.replace("Url", "")} link.`,
+            showMessage({
+                type: "info",
+                message: "Invalid URL",
+                description: `Please enter a valid ${type.replace("Url", "")} link.`,
+                icon:"info"
             });
         }
     };
@@ -758,7 +758,6 @@ const RoleRegisterForm = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
             </ScrollView>
-            <Toast />
         </SafeAreaView>
     );
 };

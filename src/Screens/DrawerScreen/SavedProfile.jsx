@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, FlatList, ScrollView, Image, SafeAreaView, StatusBar, ActivityIndicator, ToastAndroid, RefreshControl } from "react-native";
+import { View, Text, TouchableOpacity, FlatList, ScrollView, Image, SafeAreaView, StatusBar, ActivityIndicator, RefreshControl } from "react-native";
 import React, { useState, useRef, useCallback } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -10,10 +10,10 @@ import HeadingWithViewAll from "../../Components/HeadingWithViewAll";
 import Globalstyles from "../../utils/GlobalCss";
 import { DELETE_SAVED_PROFILE, GET_SAVED__PROFILES } from "../../utils/BaseUrl";
 import { DrawerActions, useFocusEffect } from '@react-navigation/native';
-import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { SH, SF, SW } from "../../utils/Dimensions";
+import { showMessage } from "react-native-flash-message";
 
 const SavedProfile = ({ navigation }) => {
   const flatListRef = useRef(null);
@@ -65,10 +65,10 @@ const SavedProfile = ({ navigation }) => {
   const DeleteSaveProfile = async (_id) => {
     if (!_id) {
       console.warn("Invalid ID: Cannot delete profile without a valid _id");
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Profile ID is missing!",
+     showMessage({
+        type: "danger",
+        message: "Error",
+        description: "Profile ID is missing!",
       });
       return;
     }
@@ -95,10 +95,11 @@ const SavedProfile = ({ navigation }) => {
       if (response.status === 200 && response.data.status === true) {
         console.log("Profile deleted successfully:", response.data);
 
-        Toast.show({
+       showMessage({
           type: "success",
-          text1: "Success",
-          text2: "Saved profile deleted successfully!",
+          message: "Success",
+          description: "Saved profile deleted successfully!",
+          icon:"success"
         });
         fetchSavedProfiles();
       } else {
@@ -112,10 +113,11 @@ const SavedProfile = ({ navigation }) => {
         errorMessage = error.response.data?.message || "Invalid request!";
       }
 
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: errorMessage,
+     showMessage({
+        type: "danger",
+        message: "Error",
+        description: errorMessage,
+        icon:"danger"
       });
     } finally {
       setLoading(false);
@@ -310,7 +312,6 @@ const SavedProfile = ({ navigation }) => {
         )}
 
       </View>
-      <Toast />
     </SafeAreaView>
   );
 };

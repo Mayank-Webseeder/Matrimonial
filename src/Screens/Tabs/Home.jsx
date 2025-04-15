@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, TouchableOpacity, FlatList, Image, SafeAreaView, Text, StatusBar, ActivityIndicator, ToastAndroid, Alert, RefreshControl } from 'react-native';
+import { View, TouchableOpacity, FlatList, Image, SafeAreaView, Text, StatusBar, ActivityIndicator, Alert, RefreshControl } from 'react-native';
 import { DrawerActions } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from '../StyleScreens/HomeStyle';
@@ -20,11 +20,9 @@ import { setActivistdata } from '../../ReduxStore/Slices/ActivistSlice';
 import { useSelector } from 'react-redux';
 import { useCallback } from 'react';
 import { setProfiledata } from '../../ReduxStore/Slices/ProfileSlice';
-import Toast from 'react-native-toast-message';
 import { setAllNotification } from '../../ReduxStore/Slices/GetAllNotificationSlice';
 import { SF, SW, SH } from '../../utils/Dimensions';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
-import useNotificationListener from '../../ReduxStore/Slices/useNotificationListener';
 
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -38,10 +36,22 @@ const Home = ({ navigation }) => {
   const [profiledata, setProfileData] = useState({});
   const MyprofileData = useSelector((state) => state.getBiodata);
   const ProfileData = useSelector((state) => state.profile);
+  const profile_data = ProfileData?.profiledata || {};
   const isBiodataMissing = Object.keys(MyprofileData?.Biodata || {}).length > 0;
-  const isBiodataExpired = ProfileData?.profiledata?.serviceSubscriptions?.some(
+  const isBiodataExpired = profile_data?.serviceSubscriptions?.some(
     (sub) => sub.serviceType === "Biodata" && sub.status === "Expired"
   );
+
+  const isPanditExpired = profile_data?.serviceSubscriptions?.some(
+    (sub) => sub.serviceType === "Pandit" && sub.status === "Expired"
+  );
+  const isJyotishExpired = profile_data?.serviceSubscriptions?.some(
+    (sub) => sub.serviceType === "Jyotish" && sub.status === "Expired"
+  );
+  const isKathavachakExpired = profile_data?.serviceSubscriptions?.some(
+    (sub) => sub.serviceType === "Kathavachak" && sub.status === "Expired"
+  );
+
   const partnerPreferences = MyprofileData?.Biodata?.partnerPreferences || null;
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -54,19 +64,22 @@ const Home = ({ navigation }) => {
 
 
   useEffect(() => {
-    if (isBiodataExpired) {
+    const expiredServices = [];
+
+    if (isBiodataExpired) expiredServices.push('Biodata');
+    if (isPanditExpired) expiredServices.push('Pandit');
+    if (isJyotishExpired) expiredServices.push('Jyotish');
+    if (isKathavachakExpired) expiredServices.push('Kathavachak');
+
+    if (expiredServices.length > 0) {
       Alert.alert(
-        "Subscription Expired",
-        "Your biodata subscription has expired. Please buy a subscription to show your profile.",
-        [
-          {
-            text: "OK",
-            style: "default"
-          }
-        ]
+        'Subscription Expired',
+        `Your ${expiredServices.join(', ')} subscription(s) have expired. Please renew to continue using the services.`,
+        [{ text: 'OK', style: 'default' }]
       );
     }
-  }, [isBiodataExpired]);
+  }, [isBiodataExpired, isPanditExpired, isJyotishExpired, isKathavachakExpired]);
+
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -131,7 +144,7 @@ const Home = ({ navigation }) => {
 
       console.log("headers in profile", headers);
       const res = await axios.get(PROFILE_ENDPOINT, { headers });
-      console.log("API Response:",JSON.stringify(res.data));
+      console.log("API Response:", JSON.stringify(res.data));
 
       setProfileData(res.data.data);
       dispatch(setProfiledata(res.data.data));
@@ -456,7 +469,6 @@ const Home = ({ navigation }) => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       />
-      <Toast />
     </SafeAreaView>
   );
 };

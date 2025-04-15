@@ -6,10 +6,10 @@ import Globalstyles from "../../utils/GlobalCss";
 import Colors from "../../utils/Colors";
 import styles from "../StyleScreens/AdvertiseWithUsStyle";
 import { ImageBackground } from "react-native";
-import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { ADVERTISE_WITH_US } from "../../utils/BaseUrl";
+import { showMessage } from "react-native-flash-message";
 
 const AdvertiseWithUs = ({ navigation }) => {
     const [firstName, setFirstName] = useState("");
@@ -44,10 +44,11 @@ const AdvertiseWithUs = ({ navigation }) => {
 
             // ✅ Ensure response is successful
             if (response.status === 200 && response.data.status === true) {
-                Toast.show({
+               showMessage({
                     type: 'success',
-                    text1: 'Success',
-                    text2: response.data.message || 'Your Advertise Request has been submitted successfully!',
+                    message: 'Success',
+                    description: response.data.message || 'Your Advertise Request has been submitted successfully!',
+                    icon:"success"
                 });
 
                 setTimeout(() => {
@@ -67,10 +68,11 @@ const AdvertiseWithUs = ({ navigation }) => {
                 errorMessage = error.response.data?.message || "Invalid request!";
             }
 
-            Toast.show({
-                type: 'error',
-                text1: 'Error',
-                text2: errorMessage,
+           showMessage({
+                type: 'danger',
+                message: 'Error',
+                description: errorMessage,
+                icon:"danger"
             });
 
         }
@@ -195,7 +197,6 @@ const AdvertiseWithUs = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
             </ScrollView>
-            <Toast />
         </SafeAreaView>
     );
 };

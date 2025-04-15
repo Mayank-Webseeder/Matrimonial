@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Modal, ToastAndroid } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -8,12 +8,12 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector, useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { disconnectSocket } from '../../../socket';
-import Toast from 'react-native-toast-message';
 import { resetBioData } from '../../ReduxStore/Slices/BiodataSlice';
 import { resetsetActivistdata } from '../../ReduxStore/Slices/ActivistSlice';
 import { resetAllBiodata } from '../../ReduxStore/Slices/GetAllBiodataSlice';
 import { reseAllNotification } from '../../ReduxStore/Slices/GetAllNotificationSlice';
 import { resetProfiledata } from '../../ReduxStore/Slices/ProfileSlice';
+import { showMessage } from 'react-native-flash-message';
 
 const CustomDrawer = (props) => {
   const dispatch = useDispatch();
@@ -57,6 +57,7 @@ const CustomDrawer = (props) => {
     { title: 'About Us', screen: 'AboutJs' },
     { title: 'Feedback/Suggestion', screen: 'FeedBack' },
     { title: 'Share App' },
+    {title:'SubscriptionHistory', screen: 'SubscriptionHistory'},
   ];
 
   const panditOptions = [
@@ -116,13 +117,13 @@ const CustomDrawer = (props) => {
 
 
   const handleShare = async () => {
-    // Toast.show({
-    //   type: "info",
-    //   text1: "Info",
-    //   text2: "Under development",
-    //   position: "top",
-    // });
-    ToastAndroid.show("under development", ToastAndroid.SHORT)
+    showMessage({
+      message: 'Info',
+      description: 'Under development',
+      type: 'info',
+      icon: 'info',
+      duration: 3000,
+    });
   };
 
   return (
@@ -281,7 +282,6 @@ const CustomDrawer = (props) => {
           </View>
         </View>
       </Modal>
-      <Toast />
     </DrawerContentScrollView>
   );
 };
@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
 
   drawerButton: {
     marginVertical: SH(1),
-    paddingVertical: SH(11),
+    paddingVertical: SH(10.3),
     paddingHorizontal: SW(10),
     borderRadius: 5,
     backgroundColor: '#c4a5b0',

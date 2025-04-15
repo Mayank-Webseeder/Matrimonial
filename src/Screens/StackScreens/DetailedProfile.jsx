@@ -1,7 +1,7 @@
 
 import {
-  Text, View, Image, ImageBackground, TextInput, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, FlatList, Platform, ToastAndroid, Alert,
-  Modal
+  Text, View, Image, ImageBackground, TextInput, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, FlatList,
+  Modal,Alert
 } from 'react-native'
 import React, { useEffect, useState, useCallback } from 'react'
 import styles from '../StyleScreens/ProfileStyle';
@@ -11,7 +11,6 @@ import { CREATE_PERSONAL_DETAILS, FREE_TRIAL, MATRIMONIALFETCH_PLAN, PAID_URL, P
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import Toast from 'react-native-toast-message';
 import { useSelector } from 'react-redux';
 import moment from "moment";
 import Globalstyles from '../../utils/GlobalCss';
@@ -30,6 +29,7 @@ import {
   MotherOccupationData,
   genderData
 } from '../../DummyData/DropdownData';
+import { showMessage } from 'react-native-flash-message';
 
 const DetailedProfile = ({ navigation, profileData }) => {
   const [isEditing, setIsEditing] = useState(true);
@@ -433,13 +433,6 @@ const DetailedProfile = ({ navigation, profileData }) => {
     return errors;
   };
 
-  const showMessage = (message, type = "info") => {
-    if (Platform.OS === "android") {
-      ToastAndroid.show(message, ToastAndroid.SHORT);
-    } else {
-      Alert.alert(type === "error" ? "Error" : "Success", message);
-    }
-  };
 
   const handleSave = async () => {
     console.log("🟢 handleSave triggered");
@@ -480,12 +473,17 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
       console.log("✅ API Response:", response.data);
 
-      if (response.status === 200 && response.data.status === true) {
+      if (response.status === 200 || response.data.status === true) {
         const successMessage = isUpdating
           ? "Profile Updated Successfully!"
           : "Detailed Profile Created Successfully!";
 
-        showMessage(successMessage, "success");
+        showMessage({
+          message: successMessage,
+          type: "success",
+          duration: 3000,
+          icon:"success"
+        });
 
         setBiodata((prev) => ({
           ...prev,
@@ -511,7 +509,12 @@ const DetailedProfile = ({ navigation, profileData }) => {
         error.response?.message ||
         error.message ||
         "Something went wrong!";
-      showMessage(errorMessage, "error");
+      showMessage({
+        message: errorMessage,
+        type: 'danger',
+        icon: 'danger',
+        duration: 3000, // Display for 3 seconds
+      });
 
       setTimeout(() => {
         openModal();

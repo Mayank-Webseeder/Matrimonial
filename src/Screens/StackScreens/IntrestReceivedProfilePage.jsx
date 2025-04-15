@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator, ToastAndroid, Dimensions, Modal } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator, Dimensions, Modal } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
@@ -15,8 +15,8 @@ import { MATCHED_PROFILE } from '../../utils/BaseUrl';
 import { ACCEPTED_API, REJECTED_API, SAVED_PROFILES } from '../../utils/BaseUrl';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import moment from 'moment';
-import Toast from 'react-native-toast-message';
 import { useFocusEffect } from '@react-navigation/native';
+import { showMessage } from 'react-native-flash-message';
 const { width, height } = Dimensions.get("window");
 
 const IntrestReceivedProfilePage = ({ navigation, route }) => {
@@ -106,10 +106,10 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
 
   const savedProfiles = async () => {
     if (!_id) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "User ID not found!",
+      showMessage({
+        type: "danger",
+        message: "Error",
+        description: "User ID not found!",
       });
       return;
     }
@@ -128,10 +128,11 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
       console.log("Response Data:", JSON.stringify(response?.data));
 
       if (response.status === 200 && response.data.status === true) {
-        Toast.show({
+        showMessage({
           type: "success",
-          text1: "Success",
-          text2: response.data.message || "Profile saved successfully!",
+          message: "Success",
+          description: response.data.message || "Profile saved successfully!",
+          icon: "success"
         });
 
         setIsSaved(response.data.message.includes("saved successfully"));
@@ -146,10 +147,11 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         errorMessage = error.response.data?.message || "Bad request.";
       }
 
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: errorMessage,
+      showMessage({
+        type: "danger",
+        message: "Error",
+        description: errorMessage,
+        icon: "danger"
       });
     }
     finally {
@@ -167,10 +169,10 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: "User token missing!",
+        showMessage({
+          type: "danger",
+          message: "Error",
+          description: "User token missing!",
         });
         return;
       }
@@ -181,12 +183,13 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
       console.log("🚀 Response Status:", response.status);
 
       if (response.status === 200 && response.data.status === true) {
-        Toast.show({
+        showMessage({
           type: "success",
-          text1: "Success",
-          text2: response.data.message || "Request accepted successfully!",
-          onHide: () => setTimeout(() => navigation.navigate("IntrestedProfile"), 1000),
+          message: "Success",
+          description: response.data.message || "Request accepted successfully!",
+          icon: "success",
         });
+        setTimeout(() => navigation.navigate("IntrestedProfile"), 1000)
       } else {
         throw new Error(response.data.message || "Something went wrong");
       }
@@ -198,10 +201,11 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         errorMessage = error.response.data?.message || "Bad request.";
       }
 
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: errorMessage,
+      showMessage({
+        type: "danger",
+        message: "Error",
+        description: errorMessage,
+        icon: "danger"
       });
     }
     finally {
@@ -219,10 +223,10 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: "User token missing!",
+        showMessage({
+          type: "danger",
+          message: "Error",
+          description: "User token missing!",
         });
         return;
       }
@@ -233,12 +237,13 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
       console.log("🚀 Response Status:", response.status);
 
       if (response.status === 200 && response.data.status === true) {
-        Toast.show({
+        showMessage({
           type: "success",
-          text1: "Success",
-          text2: response.data.message || "Request rejected successfully!",
-          onHide: () => setTimeout(() => navigation.navigate("IntrestedProfile"), 1000),
+          message: "Success",
+          description: response.data.message || "Request rejected successfully!",
+          icon: "success"
         });
+        setTimeout(() => navigation.navigate("IntrestedProfile"), 1000)
       } else {
         throw new Error(response.data.message || "Something went wrong");
       }
@@ -250,10 +255,11 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         errorMessage = error.response.data?.message || "Bad request.";
       }
 
-      Toast.show({
+      showMessage({
         type: "error",
-        text1: "Error",
-        text2: errorMessage,
+        message: "Error",
+        description: errorMessage,
+        icon: "danger"
       });
     }
     finally {
@@ -263,11 +269,11 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
 
 
   const handleShare = async () => {
-    Toast.show({
+    showMessage({
       type: "info",
-      text1: "Info",
-      text2: "Under development",
-      position: "top",
+      message: "Info",
+      description: "Under development",
+      icon: "info"
     });
   };
 
@@ -573,7 +579,6 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
 
 
       </View>
-      <Toast />
     </SafeAreaView>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, StatusBar, SafeAreaView, FlatList, ActivityIndicator, ToastAndroid } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, StatusBar, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
 import Colors from '../../utils/Colors';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -10,11 +10,11 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import { UPDATE_DHARAMSALA } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import Toast from 'react-native-toast-message';
 import _ from "lodash";
+import { showMessage } from 'react-native-flash-message';
 
-const UpdateDharamsala = ({ navigation,route }) => {
-  const { DharmshalaData } = route.params;
+const UpdateDharamsala = ({ navigation, route }) => {
+    const { DharmshalaData } = route.params;
     const [subCasteInput, setSubCasteInput] = useState('');
     const [cityInput, setCityInput] = useState('');
     const [filteredCities, setFilteredCities] = useState([]);
@@ -28,31 +28,32 @@ const UpdateDharamsala = ({ navigation,route }) => {
         subCaste: '',
         city: '',
         description: '',
-        images: [], 
+        images: [],
         mobileNo: ''
     });
 
-        useEffect(() => {DharmshalaData
-            if (DharmshalaData) {
-                setDharamsalaData(prev => ({
-                    ...prev,
-                    dharmshalaName: DharmshalaData.dharmshalaName || '',
-                    description: DharmshalaData.description || '',
-                    subCaste: DharmshalaData.subCaste || '',
-                    city: DharmshalaData.city || '',
-                    images: DharmshalaData.images || [],
-                    mobileNo: DharmshalaData.mobileNo || ''
-                }));
-    
-                if (DharmshalaData.photoUrl) {
-                    convertToBase64(DharmshalaData.photoUrl).then(base64Image => {
-                        if (base64Image) {
-                            setDharamsalaData(prev => ({ ...prev, photoUrl: base64Image }));
-                        }
-                    });
-                }
+    useEffect(() => {
+        DharmshalaData
+        if (DharmshalaData) {
+            setDharamsalaData(prev => ({
+                ...prev,
+                dharmshalaName: DharmshalaData.dharmshalaName || '',
+                description: DharmshalaData.description || '',
+                subCaste: DharmshalaData.subCaste || '',
+                city: DharmshalaData.city || '',
+                images: DharmshalaData.images || [],
+                mobileNo: DharmshalaData.mobileNo || ''
+            }));
+
+            if (DharmshalaData.photoUrl) {
+                convertToBase64(DharmshalaData.photoUrl).then(base64Image => {
+                    if (base64Image) {
+                        setDharamsalaData(prev => ({ ...prev, photoUrl: base64Image }));
+                    }
+                });
             }
-        }, [DharmshalaData]);
+        }
+    }, [DharmshalaData]);
 
 
     const handleCityInputChange = (text) => {
@@ -117,161 +118,163 @@ const UpdateDharamsala = ({ navigation,route }) => {
             compressImageQuality: 1,
             mediaType: "photo"
         })
-        .then((images) => {
-            if (images.length > 4) {
-                alert("You can only upload up to 4 Dharamsala photos.");
+            .then((images) => {
+                if (images.length > 4) {
+                    alert("You can only upload up to 4 Dharamsala photos.");
+                    return;
+                }
+
+                // Purani images hatane ke liye sirf nayi images set karenge
+                const newImages = images.map(img => ({ uri: img.path }));
+
+                setDharamsalaData((prev) => ({
+                    ...prev,
+                    images: newImages, // Purani images hata kar sirf nayi wali rakh rahe hain
+                }));
+            })
+            .catch((err) => {
+                console.log("Crop Picker Error:", err);
+            });
+    };
+
+
+    const convertToBase64 = async (images) => {
+        try {
+            console.log("Converting images to Base64:", images);
+
+            const base64Images = await Promise.all(
+                images.map(async (image) => {
+                    if (!image.uri) return null;
+
+                    try {
+                        const response = await fetch(image.uri);
+                        const blob = await response.blob();
+
+                        return new Promise((resolve) => {
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                                const base64String = reader.result.split(',')[1]; // Remove prefix
+                                resolve(base64String);
+                            };
+                            reader.readAsDataURL(blob);
+                        });
+                    } catch (fetchError) {
+                        console.error("Error fetching image for Base64 conversion:", fetchError);
+                        return null;
+                    }
+                })
+            );
+
+            return base64Images.filter(Boolean); // Remove null values
+        } catch (error) {
+            console.error("Error converting image to Base64:", error);
+            return [];
+        }
+    };
+
+
+    const constructDharamsalaPayload = async (DharamsalaData) => {
+        try {
+            console.log("Constructing payload with data:", DharamsalaData);
+
+            const payload = { ...DharamsalaData };
+
+            if (DharamsalaData.images.length > 0) {
+                console.log("Processing images for payload...");
+
+                // Separate existing Cloudinary images (URLs), Base64 images, and new images
+                const existingUrls = DharamsalaData.images.filter(img => typeof img === "string" && img.startsWith("http"));
+                const existingBase64Images = DharamsalaData.images.filter(img => typeof img === "string" && img.startsWith("data:image/"));
+                const newImages = DharamsalaData.images.filter(img => img.uri); // New images to convert
+
+                console.log("Existing URLs:", existingUrls);
+                console.log("Existing Base64 Images:", existingBase64Images);
+                console.log("New images to convert:", newImages);
+
+                let base64Images = await convertToBase64(newImages);
+
+                // Convert existing Cloudinary URLs to Base64 (if required by API)
+                let cloudinaryBase64 = await convertToBase64(existingUrls.map(url => ({ uri: url })));
+
+                // Merge all images
+                payload.images = [...existingBase64Images, ...base64Images, ...cloudinaryBase64];
+
+                console.log("Final images for payload:", payload.images);
+            }
+
+            return payload;
+        } catch (error) {
+            console.error("Error in constructDharamsalaPayload:", error);
+            return {};
+        }
+    };
+
+
+
+    const handleUpdateDharamSala = async () => {
+        setIsLoading(true);
+
+        try {
+            console.log("Fetching user token...");
+            const token = await AsyncStorage.getItem("userToken");
+
+            if (!token) {
+                showMessage({
+                    type: "danger",
+                    message: "Authorization Error",
+                    description: "Token is missing! Please login again.",
+                });
+                setIsLoading(false);
                 return;
             }
-            
-            // Purani images hatane ke liye sirf nayi images set karenge
-            const newImages = images.map(img => ({ uri: img.path }));
-    
-            setDharamsalaData((prev) => ({
-                ...prev,
-                images: newImages, // Purani images hata kar sirf nayi wali rakh rahe hain
-            }));
-        })
-        .catch((err) => {
-            console.log("Crop Picker Error:", err);
-        });
-    };
-    
-  
-  const convertToBase64 = async (images) => {
-    try {
-        console.log("Converting images to Base64:", images);
 
-        const base64Images = await Promise.all(
-            images.map(async (image) => {
-                if (!image.uri) return null;
+            console.log("Token found, constructing payload...");
+            const updatedData = await constructDharamsalaPayload(DharamsalaData);
+            console.log("Payload to be sent:", updatedData); // Debugging
 
-                try {
-                    const response = await fetch(image.uri);
-                    const blob = await response.blob();
-
-                    return new Promise((resolve) => {
-                        const reader = new FileReader();
-                        reader.onloadend = () => {
-                            const base64String = reader.result.split(',')[1]; // Remove prefix
-                            resolve(base64String);
-                        };
-                        reader.readAsDataURL(blob);
-                    });
-                } catch (fetchError) {
-                    console.error("Error fetching image for Base64 conversion:", fetchError);
-                    return null;
+            console.log(`Sending PATCH request to ${UPDATE_DHARAMSALA}/${DharmshalaData._id}`);
+            const response = await axios.patch(
+                `${UPDATE_DHARAMSALA}/${DharmshalaData._id}`,
+                updatedData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
                 }
-            })
-        );
+            );
 
-        return base64Images.filter(Boolean); // Remove null values
-    } catch (error) {
-        console.error("Error converting image to Base64:", error);
-        return [];
-    }
-};
+            console.log("Response from API:", response.data);
 
-  
-  const constructDharamsalaPayload = async (DharamsalaData) => {
-    try {
-        console.log("Constructing payload with data:", DharamsalaData);
-
-        const payload = { ...DharamsalaData };
-
-        if (DharamsalaData.images.length > 0) {
-            console.log("Processing images for payload...");
-
-            // Separate existing Cloudinary images (URLs), Base64 images, and new images
-            const existingUrls = DharamsalaData.images.filter(img => typeof img === "string" && img.startsWith("http"));
-            const existingBase64Images = DharamsalaData.images.filter(img => typeof img === "string" && img.startsWith("data:image/"));
-            const newImages = DharamsalaData.images.filter(img => img.uri); // New images to convert
-
-            console.log("Existing URLs:", existingUrls);
-            console.log("Existing Base64 Images:", existingBase64Images);
-            console.log("New images to convert:", newImages);
-
-            let base64Images = await convertToBase64(newImages);
-
-            // Convert existing Cloudinary URLs to Base64 (if required by API)
-            let cloudinaryBase64 = await convertToBase64(existingUrls.map(url => ({ uri: url })));
-
-            // Merge all images
-            payload.images = [...existingBase64Images, ...base64Images, ...cloudinaryBase64];
-
-            console.log("Final images for payload:", payload.images);
-        }
-
-        return payload;
-    } catch (error) {
-        console.error("Error in constructDharamsalaPayload:", error);
-        return {};
-    }
-};
-
-
-
-const handleUpdateDharamSala = async () => {
-    setIsLoading(true);
-
-    try {
-        console.log("Fetching user token...");
-        const token = await AsyncStorage.getItem("userToken");
-
-        if (!token) {
-            Toast.show({
-                type: "error",
-                text1: "Authorization Error",
-                text2: "Token is missing! Please login again.",
+            showMessage({
+                type: "success",
+                message: "Success",
+                description: "Dharamsala Updated Successfully! 🎉",
+                icon: "success"
             });
-            setIsLoading(false);
-            return;
-        }
 
-        console.log("Token found, constructing payload...");
-        const updatedData = await constructDharamsalaPayload(DharamsalaData);
-        console.log("Payload to be sent:", updatedData); // Debugging
+            setTimeout(() => {
+                navigation.navigate("Dharmshala");
+            }, 1000);
+        } catch (error) {
+            console.error("Update error:", error);
+            console.log("Error response:", error.response?.data);
 
-        console.log(`Sending PATCH request to ${UPDATE_DHARAMSALA}/${DharmshalaData._id}`);
-        const response = await axios.patch(
-            `${UPDATE_DHARAMSALA}/${DharmshalaData._id}`,
-            updatedData,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
+            let errorMessage = "Failed to update Dharamsala.";
+            if (error.response) {
+                errorMessage = error.response.data.message || errorMessage;
             }
-        );
 
-        console.log("Response from API:", response.data); 
-
-        Toast.show({
-            type: "success",
-            text1: "Success",
-            text2: "Dharamsala Updated Successfully! 🎉",
-        });
-
-        setTimeout(() => {
-            navigation.navigate("Dharmshala");
-        }, 1000);
-    } catch (error) {
-        console.error("Update error:", error);
-        console.log("Error response:", error.response?.data);
-
-        let errorMessage = "Failed to update Dharamsala.";
-        if (error.response) {
-            errorMessage = error.response.data.message || errorMessage;
+            showMessage({
+                type: "danger",
+                message: "Update Failed",
+                description: errorMessage,
+                icon: "danger"
+            });
+        } finally {
+            setIsLoading(false);
         }
-
-        Toast.show({
-            type: "error",
-            text1: "Update Failed",
-            text2: errorMessage,
-        });
-    } finally {
-        setIsLoading(false);
-    }
-};
+    };
 
 
 
@@ -403,7 +406,7 @@ const handleUpdateDharamSala = async () => {
                 <TouchableOpacity
                     style={styles.submitButton}
                     onPress={handleUpdateDharamSala}
-                    disabled={isLoading} 
+                    disabled={isLoading}
                 >
                     {isLoading ? (
                         <ActivityIndicator size="large" color={Colors.light} />
@@ -412,7 +415,6 @@ const handleUpdateDharamSala = async () => {
                     )}
                 </TouchableOpacity>
             </View>
-            <Toast/>
         </SafeAreaView>
     );
 };

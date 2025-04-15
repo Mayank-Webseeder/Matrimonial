@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar, FlatList, Pressable, TextInput, Linking, ToastAndroid } from 'react-native';
+import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar, FlatList, Pressable, TextInput, Linking } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -9,10 +9,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from '../StyleScreens/ExploreStyle';
 import Colors from '../../utils/Colors';
 import Globalstyles from '../../utils/GlobalCss';
-import Toast from 'react-native-toast-message';
 import { SAVED_PROFILES } from '../../utils/BaseUrl';
 import { SW } from '../../utils/Dimensions';
 import { useSelector } from 'react-redux';
+import { showMessage } from 'react-native-flash-message';
 
 const ShortMatrimonialProfile = ({ navigation, route }) => {
     const { userDetails, isSaved: initialSavedState } = route.params;
@@ -24,9 +24,15 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
     useEffect(() => {
         console.log("userDetails", userDetails);
     }, [])
+
     const savedProfiles = async (_id) => {
         if (!_id) {
-            ToastAndroid.show("Error: User ID not found!", ToastAndroid.SHORT);
+            showMessage({
+                message: 'Error',
+                description: 'User ID not found!',
+                type: 'danger',
+                duration: 3000,
+            });
             return;
         }
 
@@ -48,14 +54,27 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
             console.log("Response Data:", JSON.stringify(response?.data));
 
             if (response?.data?.message) {
-                ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+                showMessage({
+                    message: 'Success',
+                    description: response.data.message,
+                    type: "success",
+                    duration: 3000,
+                    icon: "success"
+                });
+
                 if (response.data.message === "Profile saved successfully.") {
                     setIsSaved(true);
                 } else {
                     setIsSaved(false);
                 }
             } else {
-                ToastAndroid.show("Something went wrong!", ToastAndroid.SHORT);
+                showMessage({
+                    message: 'Error',
+                    description: 'Something went wrong!',
+                    type: 'danger',
+                    duration: 3000,
+                    icon: "danger"
+                });
             }
         } catch (error) {
             console.error(
@@ -63,51 +82,49 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                 error?.response ? JSON.stringify(error.response.data) : error.message
             );
 
-            ToastAndroid.show(
-                error.response?.data?.message || "Failed to save profile!",
-                ToastAndroid.SHORT
-            );
+            showMessage({
+                message: 'Error',
+                description: error.response?.data?.message || "Failed to save profile!",
+                type: 'danger',
+                duration: 3000,
+            });
         }
     };
 
     const handleShare = async () => {
-        Toast.show({
+        showMessage({
             type: "info",
             text1: "Info",
             text2: "Under development",
-            position: "top",
+            icon: "info"
         });
-        ToastAndroid.show("Under development", ToastAndroid.SHORT)
     };
-
 
     const popop = async () => {
         const isBiodataExpired = profile_data?.serviceSubscriptions?.some(
-            (sub) => sub.serviceType === "Biodata" && sub.status === "Expired"
+            (sub) => sub.serviceType === 'Biodata' && sub.status === 'Expired'
         );
 
         const isBiodataEmpty = !MyprofileData.Biodata || Object.keys(MyprofileData.Biodata).length === 0;
 
         if (isBiodataEmpty) {
-            ToastAndroid.show(
-                "Please create biodata to see full information of this profile",
-                ToastAndroid.SHORT
-            );
-
-            setTimeout(() => {
-                navigation.navigate("MatrimonyPage");
-            }, 2000);
+            showMessage({
+                message: 'Biodata Missing',
+                description: 'Please create biodata to see full information of this profile.',
+                type: 'warning',
+                duration: 3000,
+            });
+            navigation.navigate('MatrimonyPage')
         } else if (isBiodataExpired) {
-            ToastAndroid.show(
-                "Please activate your subscription to see full information of this profile",
-                ToastAndroid.SHORT
-            );
-            setTimeout(() => {
-                navigation.navigate("BuySubscription", { serviceType: "Biodata" });
-            }, 2000);
+            showMessage({
+                message: 'Subscription Expired',
+                description: 'Please activate your subscription to see full information of this profile.',
+                type: 'warning',
+                duration: 3000,
+                onPress: () => navigation.navigate('BuySubscription', { serviceType: 'Biodata' }),
+            });
         } else {
-            // Everything is fine
-            navigation.navigate("MatrimonyPage");
+            navigation.navigate('MatrimonyPage');
         }
     };
 
@@ -143,7 +160,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                             {/* Left Column */}
                             <View style={styles.leftColumn}>
                                 <Text style={[styles.text, styles.rowItem]}>
-                                    {new Date().getFullYear() - new Date(item?.personalDetails?.dob).getFullYear()} Yrs, {formattedHeight} 
+                                    {new Date().getFullYear() - new Date(item?.personalDetails?.dob).getFullYear()} Yrs, {formattedHeight}
                                 </Text>
                                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.subCaste}</Text>
                                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.maritalStatus}</Text>
@@ -210,7 +227,6 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                 />
 
             </ScrollView>
-            <Toast />
         </SafeAreaView>
     );
 };

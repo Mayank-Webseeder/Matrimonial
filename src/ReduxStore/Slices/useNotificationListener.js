@@ -1,11 +1,11 @@
 import { useEffect, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { ToastAndroid } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { PROFILE_ENDPOINT } from "../../utils/BaseUrl";
 import { getSocket } from "../../../socket";
 
+import { showMessage } from "react-native-flash-message";
 
 const waitForSocketConnection = (callback, interval = 100) => {
   const socket = getSocket();
@@ -71,10 +71,13 @@ const subscribeToEvents = (connReqNotification = true, eventPostNotification = t
     console.log(`📡 Received Event: ${event}`, data);
   });
 
-  const showToast = (message) => {
-    setTimeout(() => {
-      ToastAndroid.show(message, ToastAndroid.LONG);
-    }, 200);
+  const showToast = (message, type = "success") => {
+    showMessage({
+      message,
+      type,
+      duration: 3000,
+      icon: type,
+    });
   };
 
   if (connReqNotification) {

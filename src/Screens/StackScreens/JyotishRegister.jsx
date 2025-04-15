@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, SafeAreaView, StatusBar, FlatList, ActivityIndicator, ToastAndroid, Modal } from 'react-native';
+import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, SafeAreaView, StatusBar, FlatList, ActivityIndicator, Modal, Alert } from 'react-native';
 import styles from '../StyleScreens/RoleRegisterStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
 import { Checkbox } from 'react-native-paper';
-import Toast from 'react-native-toast-message';
 import Globalstyles from '../../utils/GlobalCss';
 import { subCasteOptions, StateData, CityData, panditServices, jyotishServices, kathavachakServices, ExperienceData } from '../../DummyData/DropdownData';
 import axios from 'axios';
@@ -14,6 +13,8 @@ import { Dropdown } from 'react-native-element-dropdown';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector } from 'react-redux';
+import RazorpayCheckout from 'react-native-razorpay';
+import { showMessage } from 'react-native-flash-message';
 
 const JyotishRegister = ({ navigation }) => {
     const [stateInput, setStateInput] = useState('');
@@ -311,29 +312,39 @@ const JyotishRegister = ({ navigation }) => {
             const response = await axios.post(CREATE_JYOTISH, payload, { headers });
             console.log("Response:", JSON.stringify(response.data));
 
-            Toast.show({
-                type: 'success',
-                text1: 'Success!',
-                text2: 'Registered as Jyotish',
+            showMessage({
+                message: "Success!",
+                description: "Registered as Jyotish",
+                type: "success",
+                icon: "success",
+                duration: 3000,
             });
 
             await AsyncStorage.removeItem("RoleRegisterData");
 
             setTimeout(() => {
-                navigation.navigate("MainApp");
+                navigation.navigate("MyProfile");
             }, 2000);
 
         } catch (error) {
-            console.error("❌ Error:", error.response?.data || error.message);
-            Toast.show({
-                type: 'error',
-                text1: 'Error',
-                text2: error.response?.data?.message || 'Something went wrong!',
+            const errorMessage =
+                error?.response?.data?.message ||
+                error?.response?.message ||
+                error?.message ||
+                "Something went wrong!";
+
+            console.error("❌ Error:", errorMessage);
+
+            showMessage({
+                message: "Error",
+                description: errorMessage,
+                type: "danger",
+                icon: "danger",
+                duration: 5000,
             });
-            ToastAndroid.show(error.response?.data?.message || "Something went wrong!", ToastAndroid.SHORT);
             setTimeout(() => {
                 openModal();
-            }, 1000);
+            }, 5000);
         } finally {
             console.log("Loader Stopped!");
             setIsLoading(false);
@@ -423,7 +434,7 @@ const JyotishRegister = ({ navigation }) => {
             };
 
             const keyResponse = await axios.get(
-               RAZORPAY,
+                RAZORPAY,
                 { headers }
             );
 
@@ -432,12 +443,12 @@ const JyotishRegister = ({ navigation }) => {
 
             const payload = {
                 userId,
-                profileType:plan.profileType
+                profileType: plan.profileType
             };
             console.log("📦 [Payload to /buy]:", payload);
 
             const orderResponse = await axios.post(
-               PAID_URL,
+                PAID_URL,
                 payload,
                 { headers }
             );
@@ -496,7 +507,7 @@ const JyotishRegister = ({ navigation }) => {
 
                     try {
                         const verifyResponse = await axios.post(
-                           PAYMENT_VERIFICATION,
+                            PAYMENT_VERIFICATION,
                             verifyPayload,
                             { headers }
                         );
@@ -655,10 +666,10 @@ const JyotishRegister = ({ navigation }) => {
         if (!tempUrlData[type] || urlPatterns[type].test(tempUrlData[type])) {
             setRoleRegisterData((prev) => ({ ...prev, [type]: tempUrlData[type] }));
         } else {
-            Toast.show({
+           showMessage({
                 type: "error",
-                text1: "Invalid URL",
-                text2: `Please enter a valid ${type.replace("Url", "")} link.`,
+                message: "Invalid URL",
+                description: `Please enter a valid ${type.replace("Url", "")} link.`,
             });
         }
     };
@@ -803,7 +814,7 @@ const JyotishRegister = ({ navigation }) => {
 
 
                     {/* Role Selection with Checkboxes */}
-                    <Text style={Globalstyles.title}>Select Jyotish Services</Text>
+                    <Text style={Globalstyles.title}>Select Jyotish Services <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <View style={styles.checkboxContainer}>
                         {roleOptions.map(role => (
                             <View key={role.value} style={styles.checkboxItem}>
@@ -1001,7 +1012,6 @@ const JyotishRegister = ({ navigation }) => {
                     </Modal>
                 </View>
             </ScrollView>
-            <Toast />
         </SafeAreaView>
     );
 };

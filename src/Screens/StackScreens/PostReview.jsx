@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Toast from 'react-native-toast-message';
 import { View, Text, TextInput, TouchableOpacity, StatusBar, SafeAreaView, ActivityIndicator } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -19,6 +18,7 @@ import {
     UPDATE_JYOTISH_REVIEW,
     UPDATE_KATHAVACHAK_REVIEW
 } from '../../utils/BaseUrl';
+import { showMessage } from 'react-native-flash-message';
 
 const PostReview = ({ navigation, route }) => {
     const [description, setDescription] = useState('');
@@ -127,21 +127,19 @@ const PostReview = ({ navigation, route }) => {
 
             // ✅ Check if response is successful
             if (response.status === 200 || response.data.status === true) {
-                Toast.show({
+               showMessage({
                     type: "success",
-                    text1: "Success",
-                    text2: `Your review has been ${isEditMode ? "updated" : "posted"} successfully!`,
-                    position: "top",
-                    onHide: () => {
-                        navigation.goBack(); 
-                    },
+                    message: "Success",
+                    description: `Your review has been ${isEditMode ? "updated" : "posted"} successfully!`,
+                    icon:"success"
                 });
+                navigation.goBack(); 
             } else {
-                Toast.show({
-                    type: "error",
-                    text1: "Error",
-                    text2: "Failed to post/update the review. Please try again.",
-                    position: "top",
+               showMessage({
+                    type: "danger",
+                    message: "Error",
+                    description: "Failed to post/update the review. Please try again.",
+                    icon:"danger"
                 });
             }
         } catch (error) {
@@ -149,19 +147,17 @@ const PostReview = ({ navigation, route }) => {
             console.error("❌ Error posting review:", error);
             const errorMessage = error.response?.data?.message || "An error occurred while posting the review.";
 
-            Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: errorMessage,
-                position: "top",
+           showMessage({
+                type: "danger",
+                message: "Error",
+                description: errorMessage,
+                icon:"danger"
             });
         }
         finally {
             setIsLoading(false)
         }
     };
-
-
 
 
     const renderStars = () => {
@@ -217,7 +213,6 @@ const PostReview = ({ navigation, route }) => {
                         </TouchableOpacity>
                 }
             </View>
-            <Toast/>
         </SafeAreaView>
     );
 };

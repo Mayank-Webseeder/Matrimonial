@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, TouchableOpacity, Modal, SafeAreaView, StatusBar, ToastAndroid } from 'react-native';
+import { Text, View, TouchableOpacity, Modal, SafeAreaView, StatusBar } from 'react-native';
 import Colors from '../../utils/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styles from '../StyleScreens/InactiveDeleteStyle';
@@ -9,8 +9,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector } from 'react-redux';
 import { DrawerActions } from '@react-navigation/native';
-import Toast from 'react-native-toast-message';
 import { resetBioData } from '../../ReduxStore/Slices/BiodataSlice';
+import { showMessage } from 'react-native-flash-message';
 
 const InActiveDelete = ({ navigation }) => {
      const dispatch = useDispatch();
@@ -41,10 +41,11 @@ const InActiveDelete = ({ navigation }) => {
 
             if (response.status === 200 && response.data.status === true) {
                 // ✅ Success
-                Toast.show({
+                showMessage({
                     type: "success",
-                    text1: "Success",
-                    text2: "Your Biodata has been deleted successfully!",
+                    message: "Success",
+                    description: "Your Biodata has been deleted successfully!",
+                    icon:"success"
                 });
                 setSuccessModalVisible(true);
                 dispatch(resetBioData());
@@ -60,10 +61,11 @@ const InActiveDelete = ({ navigation }) => {
                 errorMessage = error.response.data.message || errorMessage;
             }
 
-            Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: errorMessage,
+            showMessage({
+                type: "danger",
+                message: "Error",
+                description: errorMessage,
+                icon:"danger"
             });
 
         } finally {
@@ -86,10 +88,11 @@ const InActiveDelete = ({ navigation }) => {
             const response = await axios.delete(DELETE_USER, { headers });
 
             if (response.status === 200 && response.data.status === true) {
-                Toast.show({
+                showMessage({
                     type: "success",
-                    text1: "Success",
-                    text2: "Your Account has been deleted successfully!",
+                    message: "Success",
+                    description: "Your Account has been deleted successfully!",
+                    icon:"success"
                 });
 
                 await AsyncStorage.clear();
@@ -110,10 +113,11 @@ const InActiveDelete = ({ navigation }) => {
                 errorMessage = error.response.data.message || errorMessage;
             }
 
-            Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: errorMessage,
+            showMessage({
+                type: "danger",
+                message: "Error",
+                description: errorMessage,
+                icon:"danger"
             });
 
         } finally {
@@ -211,7 +215,6 @@ const InActiveDelete = ({ navigation }) => {
                     </View>
                 </View>
             </Modal>
-            <Toast />
         </SafeAreaView>
     );
 };

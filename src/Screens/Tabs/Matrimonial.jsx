@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar, FlatList, Pressable, TextInput, Linking, ToastAndroid, ActivityIndicator } from 'react-native';
+import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar, FlatList, Pressable, TextInput, Linking, ActivityIndicator } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -14,8 +14,8 @@ import { slider } from '../../DummyData/DummyData';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import { useFocusEffect } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
-import Toast from 'react-native-toast-message';
 import { SW } from '../../utils/Dimensions';
+import { showMessage } from 'react-native-flash-message';
 
 const Matrimonial = ({ navigation }) => {
   const sliderRef = useRef(null);
@@ -24,11 +24,11 @@ const Matrimonial = ({ navigation }) => {
   const gender = MyprofileData?.Biodata?.gender || null;
 
   const [activeButton, setActiveButton] = useState(() => {
-    if (gender?.toLowerCase() === "male") return 1;  
-    if (gender?.toLowerCase() === "female") return 2; 
-    return 1; 
+    if (gender?.toLowerCase() === "male") return 1;
+    if (gender?.toLowerCase() === "female") return 2;
+    return 1;
   });
-  
+
   const [boysProfiles, setboysProfiles] = useState([]);
   const [girlsProfiles, setgirlsProfiles] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -42,7 +42,7 @@ const Matrimonial = ({ navigation }) => {
   useEffect(() => {
     console.log("MyprofileData", MyprofileData);
     console.log("gender", gender);
-    console.log("profile_data",profile_data);
+    console.log("profile_data", profile_data);
   }, [])
 
   useEffect(() => {
@@ -66,12 +66,12 @@ const Matrimonial = ({ navigation }) => {
     if (activeButton === 1) fetchGirlsFilterData();
     else if (activeButton === 2) fetchBoysFilterData();
   }, [activeButton]);
-  
+
 
   const fetchProfiles = async (query = "") => {
     const token = await AsyncStorage.getItem('userToken');
     if (!token) {
-      Toast.show({ type: 'error', text1: 'Error', text2: 'No token found!' });
+      showMessage({ type: 'error', message: 'Error', description: 'No token found!' });
       return;
     }
 
@@ -123,7 +123,7 @@ const Matrimonial = ({ navigation }) => {
     if (activeButton === 1) fetchGirlsFilterData();
     else if (activeButton === 2) fetchBoysFilterData();
   }, [activeButton]);
-  
+
   const fetchBoysFilterData = async () => {
     try {
       setboysProfiles([])
@@ -165,7 +165,12 @@ const Matrimonial = ({ navigation }) => {
   };
 
   const handleShare = async () => {
-    ToastAndroid.show("Under development", ToastAndroid.SHORT);
+    showMessage({
+      message: "Info",
+      description: "Under development",
+      type: "info",
+      duration: 3000,
+    });
   };
 
   const popop = async () => {
@@ -176,36 +181,40 @@ const Matrimonial = ({ navigation }) => {
     const isBiodataEmpty = !MyprofileData.Biodata || Object.keys(MyprofileData.Biodata).length === 0;
 
     if (isBiodataEmpty) {
-      ToastAndroid.show(
-        "Please create biodata to see full information of this profile",
-        ToastAndroid.SHORT
-      );
+      showMessage({
+        message: "Create Biodata",
+        description: "Please create biodata to see full information of this profile.",
+        type: "info",
+        duration: 3000,
+      });
 
       setTimeout(() => {
         navigation.navigate("MatrimonyPage");
       }, 2000);
     } else if (isBiodataExpired) {
-      ToastAndroid.show(
-        "Please activate your subscription to see full information of this profile",
-        ToastAndroid.SHORT
-      );
+      showMessage({
+        message: "Subscription Required",
+        description: "Please activate your subscription to see full information of this profile.",
+        type: "info",
+        icon: "info",
+        duration: 3000,
+      });
 
       setTimeout(() => {
         navigation.navigate("BuySubscription", { serviceType: "Biodata" });
       }, 2000);
     } else {
-      // User has valid Biodata and active subscription
       navigation.navigate("MatrimonyPage");
     }
   };
 
   const savedProfiles = async (_id) => {
     if (!_id) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "User ID not found!",
-        position: "top",
+      showMessage({
+        type: "danger",
+        message: "Error",
+        description: "User ID not found!",
+        icon: "info"
       });
       return;
     }
@@ -239,13 +248,12 @@ const Matrimonial = ({ navigation }) => {
         throw new Error(response.data.message || "Something went wrong!");
       }
 
-      Toast.show({
+      showMessage({
         type: "success",
-        text1: "Success",
-        text2: response.data.message || "Profile saved successfully!",
-        position: "top",
+        message: "Success",
+        description: response.data.message || "Profile saved successfully!",
         visibilityTime: 3000,
-        textStyle: { fontSize: 14, color: "green" },
+        icon: "success"
       });
     } catch (error) {
       console.error("🚨 API Error:", error?.response?.data || error.message);
@@ -268,11 +276,11 @@ const Matrimonial = ({ navigation }) => {
         )
       );
 
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: errorMessage,
-        position: "top",
+      showMessage({
+        type: "danger",
+        message: "Error",
+        description: errorMessage,
+        icon: "danger"
       });
     }
   };
@@ -287,8 +295,8 @@ const Matrimonial = ({ navigation }) => {
 
   const renderProfileCard = ({ item }) => {
     const formattedHeight = item?.personalDetails?.heightFeet
-    ?.replace(/\s*-\s*/, "")
-    ?.replace(/\s+/g, "");
+      ?.replace(/\s*-\s*/, "")
+      ?.replace(/\s+/g, "");
 
     return (
       <View style={styles.card}>
@@ -317,7 +325,7 @@ const Matrimonial = ({ navigation }) => {
               {/* Left Column */}
               <View style={styles.leftColumn}>
                 <Text style={[styles.text, styles.rowItem]}>
-                  {new Date().getFullYear() - new Date(item?.personalDetails?.dob).getFullYear()} Yrs, {formattedHeight} 
+                  {new Date().getFullYear() - new Date(item?.personalDetails?.dob).getFullYear()} Yrs, {formattedHeight}
                 </Text>
                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.subCaste}</Text>
                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.maritalStatus}</Text>
@@ -505,7 +513,6 @@ const Matrimonial = ({ navigation }) => {
             </View>
           } />
       </ScrollView>
-      <Toast />
     </SafeAreaView>
   );
 };

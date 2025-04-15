@@ -83,6 +83,7 @@ import BuySubscription from '../Screens/StackScreens/BuySubscription';
 import PanditRegister from '../Screens/StackScreens/PanditRegister';
 import JyotishRegister from '../Screens/StackScreens/JyotishRegister';
 import KathavachakRegister from '../Screens/StackScreens/KathavachakRegister';
+import SubscriptionHistory from '../Screens/DrawerScreen/SubscriptionHistory';
 
 const Stack = createNativeStackNavigator();
 const AppStackNavigator = createNativeStackNavigator();
@@ -294,6 +295,7 @@ function MyDrawer() {
       <Drawer.Screen name="InActiveDelete" component={InActiveDelete} />
       <Drawer.Screen name="AboutJs" component={AboutJs} />
       <Drawer.Screen name="MyProfile" component={MyProfile} />
+      <Drawer.Screen name="SubscriptionHistory" component={SubscriptionHistory} />
     </Drawer.Navigator>
   );
 }

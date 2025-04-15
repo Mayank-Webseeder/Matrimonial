@@ -20,7 +20,8 @@ import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { SH, SW } from '../../utils/Dimensions';
 import { useFocusEffect } from '@react-navigation/native';
 import ImageViewing from 'react-native-image-viewing';
-import Toast from 'react-native-toast-message';
+import { showMessage } from 'react-native-flash-message';
+import { useSelector } from 'react-redux';
 
 const Jyotish = ({ navigation }) => {
   const sliderRef = useRef(null);
@@ -36,6 +37,8 @@ const Jyotish = ({ navigation }) => {
   const [modalLocality, setModalLocality] = useState('');
   const [isImageVisible, setImageVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const ProfileData = useSelector((state) => state.profile);
+  const profile_data = ProfileData?.profiledata || {};
 
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
@@ -108,64 +111,66 @@ const Jyotish = ({ navigation }) => {
 
   const savedProfiles = async (_id) => {
     if (!_id) {
-        Toast.show({
-            type: "error",
-            text1: "Error",
-            text2: "User ID not found!",
-            position: "top",
-        });
-        return;
+      showMessage({
+        type: "danger",
+        message: "Error",
+        description: "User ID not found!",
+        position: "top",
+        icon:"danger"
+      });
+      return;
     }
     setJyotishData((prevProfiles) =>
-        prevProfiles.map((profile) =>
-            profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
-        )
+      prevProfiles.map((profile) =>
+        profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
+      )
     );
 
     try {
-        const token = await AsyncStorage.getItem("userToken");
-        if (!token) {
-            throw new Error("No token found");
-        }
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        throw new Error("No token found");
+      }
 
-        const headers = {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-        };
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
 
-        const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
+      const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
 
-        console.log("Response Data:", JSON.stringify(response?.data));
+      console.log("Response Data:", JSON.stringify(response?.data));
 
-        if (response.status === 200 && response.data.status === true) {
-            Toast.show({
-                type: "success",
-                text1: "Success",
-                text2: response.data?.message || "Profile saved successfully!",
-                position: "top",
-            });
-        } else {
-            throw new Error(response.data?.message || "Something went wrong!");
-        }
-    } catch (error) {
-        console.error(
-            "API Error:",
-            error?.response ? JSON.stringify(error.response.data) : error.message
-        );
-
-        Toast.show({
-            type: "error",
-            text1: "Error",
-            text2: error?.response?.data?.message || "Failed to save profile!",
-            position: "top",
+      if (response.status === 200 && response.data.status === true) {
+        showMessage({
+          type: "success",
+          message: "Success",
+          description: response.data?.message || "Profile saved successfully!",
+          position: "top",
+          icon: "success"
         });
-        setJyotishData((prevProfiles) =>
-            prevProfiles.map((profile) =>
-                profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
-            )
-        );
+      } else {
+        throw new Error(response.data?.message || "Something went wrong!");
+      }
+    } catch (error) {
+      console.error(
+        "API Error:",
+        error?.response ? JSON.stringify(error.response.data) : error.message
+      );
+      showMessage({
+        type: "danger",
+        message: "Error",
+        description: error?.response?.data?.message || "Failed to save profile!",
+        position: "top",
+        icon: "danger"
+      });
+      setJyotishData((prevProfiles) =>
+        prevProfiles.map((profile) =>
+          profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
+        )
+      );
     }
-};
+  };
 
 
   useFocusEffect(
@@ -198,13 +203,18 @@ const Jyotish = ({ navigation }) => {
   );
 
   const handleShare = async () => {
-    Toast.show({
+    showMessage({
+      message: "Under development",
       type: "info",
-      text1: "Info",
-      text2: "Under development",
-      position: "top",
+      duration: 3000,
+      icon: "info",
     });
   };
+
+  const isExpired = profile_data.serviceSubscriptions?.some(
+    sub => sub.serviceType === 'Jyotish' && sub.status === 'Expired'
+  );
+
 
   const renderItem = ({ item }) => {
     const rating = item.averageRating || 0;
@@ -230,7 +240,22 @@ const Jyotish = ({ navigation }) => {
           )}
           <View>
             <Pressable style={styles.leftContainer}
-              onPress={() => navigation.navigate('JyotishDetailsPage', { jyotish_id: item._id, isSaved: isSaved })}>
+              onPress={() => {
+                if (isExpired) {
+                  showMessage({
+                    message: 'Subscription Required',
+                    description: "This Jyotish's profile is currently unavailable. Please subscribe to access it.",
+                    type: 'info',
+                    icon: 'info',
+                    duration: 3000,
+                  });
+                  navigation.navigate('BuySubscription', { serviceType: 'Jyotish' })
+                } else {
+                  navigation.navigate('JyotishDetailsPage', {
+                    jyotish_id: item._id, isSaved: isSaved
+                  });
+                }
+              }}>
               <Text style={styles.name}>{item?.fullName}</Text>
               <Text style={styles.text}>ID : {item?.jyotishId}</Text>
               <View style={styles.rating}>
@@ -426,7 +451,6 @@ const Jyotish = ({ navigation }) => {
           </View>
         </View>
       </Modal>
-      <Toast />
     </SafeAreaView>
   );
 };

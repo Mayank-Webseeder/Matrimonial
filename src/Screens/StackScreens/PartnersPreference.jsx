@@ -1,4 +1,4 @@
-import { Text, View, TextInput, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, FlatList, ToastAndroid, Platform, Alert } from 'react-native'
+import { Text, View, TextInput, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, FlatList } from 'react-native'
 import React, { useState, useEffect, useCallback } from 'react'
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/PartnerPreferenceStyle';
@@ -9,7 +9,6 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Globalstyles from '../../utils/GlobalCss';
 import { useSelector } from 'react-redux';
-import Toast from 'react-native-toast-message';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -18,8 +17,9 @@ import {
     FamilyFinancialStatusData, PartnersLiveinData, BodyStructureData, ComplexionData, PartnerQualificationData, PartnerDietHabit, Disabilities, subCasteOptions,
     PartnermaritalStatusData, PartnersmokingStatusData, PartnerDrinkingHabit, PartnerManglikStatusData, PartnerFamliyIncome, Income, CityData, StateData
 } from '../../DummyData/DropdownData';
+import { showMessage } from 'react-native-flash-message';
 
-const PartnersPreference = ({ navigation,profileData }) => {
+const PartnersPreference = ({ navigation, profileData }) => {
     const [isEditing, setIsEditing] = useState(true);
     const [stateInput, setStateInput] = useState('');
     const [subCasteInput, setSubCasteInput] = useState('');
@@ -164,109 +164,111 @@ const PartnersPreference = ({ navigation,profileData }) => {
         }))
     ).flat();
 
-    const showMessage = (message, type = "info") => {
-        if (Platform.OS === "android") {
-          ToastAndroid.show(message, ToastAndroid.SHORT);
-        } else {
-          Alert.alert(type === "error" ? "Error" : "Info", message);
-        }
-      };
-      
-      const handleSave = async () => {
+    const handleSave = async () => {
         try {
-          setLoading(true);
-          const token = await AsyncStorage.getItem("userToken");
-          if (!token) throw new Error("No token found");
-      
-          const headers = {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          };
-      
-          let payload = {};
-          let isUpdating = Boolean(biodata?._id);
-      
-          if (isUpdating) {
-            Object.keys(biodata).forEach((key) => {
-              if (biodata[key] !== originalBiodata[key]) {
-                payload[key] = biodata[key];
-              }
-            });
-      
-            if (Object.keys(payload).length === 0) {
-              showMessage("You haven't made any changes.");
-              setLoading(false);
-              return;
-            }
-          } else {
-            payload = {
-              partnerSubCaste: biodata?.partnerSubCaste || "",
-              partnerMinAge: biodata?.partnerMinAge || "",
-              partnerMaxAge: biodata?.partnerMaxAge || "",
-              partnerMinHeightFeet: biodata?.partnerMinHeightFeet || "",
-              partnerMaxHeightFeet: biodata?.partnerMaxHeightFeet || "",
-              partnerMaritalStatus: biodata.partnerMaritalStatus || "",
-              partnerIncome: biodata?.partnerIncome || "",
-              partnerOccupation: biodata?.partnerOccupation || "",
-              partnerQualification: biodata?.partnerQualification || "",
-              partnerDisabilities: biodata?.partnerDisabilities || "",
-              partnerManglikStatus: biodata?.partnerManglikStatus || "",
-              partnersLivingStatus: biodata?.partnersLivingStatus || "",
-              partnerState: biodata?.partnerState || "",
-              partnerCity: biodata?.partnerCity || "",
-              partnerBodyStructure: biodata?.partnerBodyStructure || "",
-              partnerComplexion: biodata?.partnerComplexion || "",
-              partnerDietaryHabits: biodata?.partnerDietaryHabits || "",
-              partnerSmokingHabits: biodata?.partnerSmokingHabits || "",
-              partnerDrinkingHabits: biodata?.partnerDrinkingHabits || "",
-              partnerFamilyType: biodata?.partnerFamilyType || "",
-              partnerFamilyFinancialStatus: biodata?.partnerFamilyFinancialStatus || "",
-              partnerFamilyIncome: biodata?.partnerFamilyIncome || "",
-              partnerExpectations: biodata?.partnerExpectations || "",
+            setLoading(true);
+            const token = await AsyncStorage.getItem("userToken");
+            if (!token) throw new Error("No token found");
+
+            const headers = {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
             };
-          }
-      
-          const apiCall = isUpdating ? axios.put : axios.post;
-          const endpoint = isUpdating ? UPDATE_PARTNER_PERFRENCES : CREATE_PARTNER_PERFRENCES;
-      
-          const response = await apiCall(endpoint, payload, { headers });
-      
-          if (response.status === 200 && response.data.status === true) {
-            const successMessage = isUpdating
-              ? "Partner Preferences Updated Successfully!"
-              : "Partner Preferences Created Successfully!";
-      
-            showMessage(successMessage);
-      
-            if (!isUpdating && response.data._id) {
-              setBiodata((prev) => ({ ...prev, _id: response.data._id }));
+
+            let payload = {};
+            let isUpdating = Boolean(biodata?._id);
+
+            if (isUpdating) {
+                Object.keys(biodata).forEach((key) => {
+                    if (biodata[key] !== originalBiodata[key]) {
+                        payload[key] = biodata[key];
+                    }
+                });
+
+                if (Object.keys(payload).length === 0) {
+                    setLoading(false);
+                    return;
+                }
+            } else {
+                payload = {
+                    partnerSubCaste: biodata?.partnerSubCaste || "",
+                    partnerMinAge: biodata?.partnerMinAge || "",
+                    partnerMaxAge: biodata?.partnerMaxAge || "",
+                    partnerMinHeightFeet: biodata?.partnerMinHeightFeet || "",
+                    partnerMaxHeightFeet: biodata?.partnerMaxHeightFeet || "",
+                    partnerMaritalStatus: biodata.partnerMaritalStatus || "",
+                    partnerIncome: biodata?.partnerIncome || "",
+                    partnerOccupation: biodata?.partnerOccupation || "",
+                    partnerQualification: biodata?.partnerQualification || "",
+                    partnerDisabilities: biodata?.partnerDisabilities || "",
+                    partnerManglikStatus: biodata?.partnerManglikStatus || "",
+                    partnersLivingStatus: biodata?.partnersLivingStatus || "",
+                    partnerState: biodata?.partnerState || "",
+                    partnerCity: biodata?.partnerCity || "",
+                    partnerBodyStructure: biodata?.partnerBodyStructure || "",
+                    partnerComplexion: biodata?.partnerComplexion || "",
+                    partnerDietaryHabits: biodata?.partnerDietaryHabits || "",
+                    partnerSmokingHabits: biodata?.partnerSmokingHabits || "",
+                    partnerDrinkingHabits: biodata?.partnerDrinkingHabits || "",
+                    partnerFamilyType: biodata?.partnerFamilyType || "",
+                    partnerFamilyFinancialStatus: biodata?.partnerFamilyFinancialStatus || "",
+                    partnerFamilyIncome: biodata?.partnerFamilyIncome || "",
+                    partnerExpectations: biodata?.partnerExpectations || "",
+                };
             }
-      
-            setIsEditing(false);
-            setTimeout(() => {
-                navigation.reset({
-                    index: 0,
-                    routes: [{ name: "MyProfile" }],
-                  });
-            }, 1000);
-            return;
-          }
-      
-          throw new Error(response.data.message || "Something went wrong");
+
+            const apiCall = isUpdating ? axios.put : axios.post;
+            const endpoint = isUpdating ? UPDATE_PARTNER_PERFRENCES : CREATE_PARTNER_PERFRENCES;
+
+            const response = await apiCall(endpoint, payload, { headers });
+
+            if (response.status === 200 && response.data.status === true) {
+                const successMessage = isUpdating
+                    ? "Partner Preferences Updated Successfully!"
+                    : "Partner Preferences Created Successfully!";
+
+                showMessage({
+                    message: successMessage,
+                    type: 'success',
+                    duration: 3000,
+                    icon:"success"
+                });
+
+                if (!isUpdating && response.data._id) {
+                    setBiodata((prev) => ({ ...prev, _id: response.data._id }));
+                }
+
+                setIsEditing(false);
+                setTimeout(() => {
+                    navigation.reset({
+                        index: 0,
+                        routes: [{ name: "MyProfile" }],
+                    });
+                }, 1000);
+                return;
+            }
+
+            throw new Error(response.data.message || "Something went wrong");
         } catch (error) {
-          console.error("🚨 API Error:", error.response?.data || error.message);
-      
-          let errorMessage = "Something went wrong!";
-          if (error.response?.status === 400) {
-            errorMessage = error.response.data?.message || "Bad request.";
-          }
-      
-          showMessage(errorMessage, "error");
+            console.error("🚨 API Error:", error.response?.data || error.message);
+
+            let errorMessage = "Something went wrong!";
+            if (error.response?.status === 400) {
+                errorMessage = error.response.data?.message || "Bad request.";
+            }
+
+            showMessage({
+                message: errorMessage,
+                type: 'danger',
+                icon: 'danger',
+                duration: 3000,
+                icon:"danger"
+            });
         } finally {
-          setLoading(false);
+            setLoading(false);
         }
-      };
-    
+    };
+
 
     return (
         <SafeAreaView style={Globalstyles.container}>
@@ -621,7 +623,6 @@ const PartnersPreference = ({ navigation,profileData }) => {
                     </View>
                 </View>
             </ScrollView>
-            <Toast />
         </SafeAreaView>
     )
 }

@@ -10,13 +10,13 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { SW, SH, SF } from '../../utils/Dimensions';
 import Globalstyles from '../../utils/GlobalCss';
 import moment from 'moment';
-import Toast from 'react-native-toast-message';
 import RBSheet from "react-native-raw-bottom-sheet";
 import { DELETE_EVENT, COMMENTPOST, LIKEPOST, BASE_URL } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
+import { showMessage } from 'react-native-flash-message';
 const ViewMyEventPost = ({ navigation, route }) => {
   const sheetRef = useRef(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -52,11 +52,11 @@ const ViewMyEventPost = ({ navigation, route }) => {
   };
 
   const handleShare = async () => {
-    Toast.show({
+    showMessage({
       type: "info",
-      text1: "Info",
-      text2: "Under development",
-      position: "top",
+      message: "Info",
+      message: "Under development",
+      icon: "info"
     });
   };
 
@@ -126,11 +126,11 @@ const ViewMyEventPost = ({ navigation, route }) => {
     } catch (error) {
       console.error("Error liking post:", error?.response?.data || error.message);
 
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: error?.response?.data?.message || "Failed to like event. Please try again!",
-        position: "top",
+      showMessage({
+        type: "danger",
+        message: "Error",
+        message: error?.response?.data?.message || "Failed to like event. Please try again!",
+        icon: "danger"
       });
 
       // Reverse the like state on error
@@ -181,11 +181,10 @@ const ViewMyEventPost = ({ navigation, route }) => {
 
         setMyComment("");
 
-        Toast.show({
+        showMessage({
           type: "success",
-          text1: "Success",
-          text2: fetchedData.message || "Comment added successfully!",
-          position: "top",
+          message: "Success",
+          message: fetchedData.message || "Comment added successfully!",
           onHide: () => {
             navigation.reset({
               index: 0,
@@ -201,11 +200,11 @@ const ViewMyEventPost = ({ navigation, route }) => {
     } catch (error) {
       console.error("Error adding comment:", error?.response?.data || error.message);
 
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: error?.response?.data?.message || "Failed to add comment. Please try again!",
-        position: "top",
+      showMessage({
+        type: "danger",
+        message: "Error",
+        message: error?.response?.data?.message || "Failed to add comment. Please try again!",
+        position: "danger",
       });
     } finally {
       setCommentLoading(false);
@@ -239,21 +238,21 @@ const ViewMyEventPost = ({ navigation, route }) => {
           prevComments.filter((comment) => comment._id !== commentId)
         );
 
-        Toast.show({
+        showMessage({
           type: "success",
-          text1: "Success",
-          text2: "Comment deleted successfully!",
+          message: "Success",
+          message: "Comment deleted successfully!",
           position: "top",
         });
       }
     } catch (error) {
       console.error("Error deleting comment:", error?.response?.data || error.message);
 
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: error?.response?.data?.message || "Failed to delete comment. Please try again!",
-        position: "top",
+      showMessage({
+        type: "danger",
+        message: "Error",
+        message: error?.response?.data?.message || "Failed to delete comment. Please try again!",
+        icon: "danger"
       });
     } finally {
       setdeletecommentLoading(false);
@@ -282,11 +281,11 @@ const ViewMyEventPost = ({ navigation, route }) => {
       console.log("✅ Delete Response:", response.data);
 
       if (response.status === 200 && response.data.status === true) {
-        Toast.show({
+        showMessage({
           type: "success",
-          text1: "Success",
-          text2: "Event post deleted successfully!",
-          position: "top",
+          message: "Success",
+          message: "Event post deleted successfully!",
+          icon: "success"
         });
 
         // ✅ Close modal if used
@@ -311,11 +310,10 @@ const ViewMyEventPost = ({ navigation, route }) => {
         errorMessage = error.response.data?.message || "Bad request.";
       }
 
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: errorMessage,
-        position: "top",
+      showMessage({
+        type: "danger",
+        message: "Error",
+        message: errorMessage,
       });
     } finally {
       setIsLoading(false);
@@ -696,7 +694,6 @@ const ViewMyEventPost = ({ navigation, route }) => {
 
         {/* <Image source={require('../../Images/EventImage.png')} style={styles.bannerImage} /> */}
       </ScrollView>
-      <Toast />
     </SafeAreaView>
   );
 };

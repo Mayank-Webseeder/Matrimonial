@@ -22,8 +22,9 @@ import { useSelector } from 'react-redux';
 import { useNavigation } from "@react-navigation/native";
 import ImageViewing from 'react-native-image-viewing';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
-import Toast from 'react-native-toast-message';
 import _ from "lodash";
+import { showMessage } from 'react-native-flash-message';
+
 const Dharmshala = () => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
@@ -42,11 +43,6 @@ const Dharmshala = () => {
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
   const [isImageVisible, setImageVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
-
-
-  const showToast = _.debounce((type, text1, text2) => {
-    Toast.show({ type, text1, text2, position: "top" });
-  }, 500);
 
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
@@ -67,7 +63,7 @@ const Dharmshala = () => {
 
   const handleOptionSelect = (value) => {
     setSubcaste(value.label);
-    setFilteredOptions([]); 
+    setFilteredOptions([]);
   };
 
   useEffect(() => {
@@ -164,7 +160,13 @@ const Dharmshala = () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        showToast("error", "Error", "Authorization token is missing.");
+        showMessage({
+          message: 'warning',
+          description: 'Authorization token is missing.',
+          type: 'warning',
+          icon: 'warning',
+          duration: 4000,
+        });
         return;
       }
 
@@ -204,10 +206,10 @@ const Dharmshala = () => {
     if (MyActivistProfile && MyActivistProfile._id) {
       navigation.navigate("DharamsalaSubmissionPage");
     } else {
-      Toast.show({
+      showMessage({
         type: "info",
-        text1: "You are not an activist!",
-        text2: "Create an activist profile if you want to upload Dharamsala.",
+        message: "You are not an activist!",
+        description: "Create an activist profile if you want to upload Dharamsala.",
         position: "bottom",
         visibilityTime: 4000,
         autoHide: true,
@@ -218,11 +220,11 @@ const Dharmshala = () => {
 
   const savedProfiles = async (_id) => {
     if (!_id) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "User ID not found!",
-        position: "top",
+      showMessage({
+        type: "danger",
+        message: "Error",
+        description: "User ID not found!",
+        icon: "danger"
       });
       return;
     }
@@ -248,11 +250,11 @@ const Dharmshala = () => {
       console.log("Response Data:", JSON.stringify(response?.data));
 
       if (response.status === 200 && response.data.status === true) {
-        Toast.show({
+        showMessage({
           type: "success",
-          text1: "Success",
-          text2: response.data?.message || "Profile saved successfully!",
-          position: "top",
+          message: "Success",
+          description: response.data?.message || "Profile saved successfully!",
+          icon: "success"
         });
       } else {
         throw new Error(response.data?.message || "Something went wrong!");
@@ -263,11 +265,11 @@ const Dharmshala = () => {
         error?.response ? JSON.stringify(error.response.data) : error.message
       );
 
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: error?.response?.data?.message || "Failed to save profile!",
-        position: "top",
+      showMessage({
+        type: "danger",
+        message: "Error",
+        description: error?.response?.data?.message || "Failed to save profile!",
+        icon: "danger"
       });
       setDharamsalaData((prevProfiles) =>
         prevProfiles.map((profile) =>
@@ -278,7 +280,13 @@ const Dharmshala = () => {
   };
 
   const handleShare = async () => {
-    showToast("info", "Info", "Under development");
+    showMessage({
+      message: 'Info',
+      description: 'Under development',
+      type: 'info',
+      icon: 'info',
+      duration: 3000,
+    });
   };
 
   const renderItem = ({ item }) => {
@@ -557,7 +565,6 @@ const Dharmshala = () => {
           </View>
         </View>
       </Modal>
-      <Toast />
     </SafeAreaView>
   );
 };

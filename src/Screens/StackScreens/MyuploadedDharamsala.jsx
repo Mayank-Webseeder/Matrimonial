@@ -5,12 +5,12 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styles from '../StyleScreens/CommunityStyle';
 import Colors from '../../utils/Colors';
 import Globalstyles from '../../utils/GlobalCss';
-import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import ImageViewing from 'react-native-image-viewing';
 import { DELETE_DHARAMSALA } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SH } from '../../utils/Dimensions';
+import { showMessage } from 'react-native-flash-message';
 
 const MyuploadedDharamsala = ({ navigation, route }) => {
   const { DharmshalaData } = route.params;
@@ -46,15 +46,15 @@ const MyuploadedDharamsala = ({ navigation, route }) => {
       console.log("✅ Delete Response:", response.data);
 
       if (response.status === 200 && response.data.status === true) {
-        Toast.show({
+        showMessage({
           type: "success",
-          text1: "Success",
-          text2: "dharamsala deleted successfully!",
-          position: "top",
+          message: "Success",
+          description: "dharamsala deleted successfully!",
+          icon: "success"
         });
 
-        setModalVisible(false);  
-        setSelectedItem(null);  
+        setModalVisible(false);
+        setSelectedItem(null);
         if (navigation && navigation.navigate) {
           navigation.reset({ index: 0, routes: [{ name: "Dharmshala" }] });
         } else {
@@ -73,11 +73,11 @@ const MyuploadedDharamsala = ({ navigation, route }) => {
         errorMessage = error.response.data?.message || "Bad request.";
       }
 
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: errorMessage,
-        position: "top",
+      showMessage({
+        type: "danger",
+        message: "Error",
+        description: errorMessage,
+        icon: "danger"
       });
     } finally {
       setIsLoading(false);  // Hide loading indicator
@@ -111,13 +111,13 @@ const MyuploadedDharamsala = ({ navigation, route }) => {
 
           {selectedImage && (
             <ImageViewing
-              images={[{ uri: selectedImage }]} 
+              images={[{ uri: selectedImage }]}
               imageIndex={0}
               visible={isImageVisible}
               onRequestClose={() => setImageVisible(false)}
             />
           )}
-        <View style={[styles.leftContainer,{marginTop:SH(5)}]}>
+          <View style={[styles.leftContainer, { marginTop: SH(5) }]}>
             <Text style={styles.text}>{item.dharmshalaName}</Text>
             <Text style={[styles.smalltext, { fontFamily: 'Poppins-Medium' }]}>
               {item.subCaste}
@@ -207,7 +207,6 @@ const MyuploadedDharamsala = ({ navigation, route }) => {
           }
         />
       </ScrollView>
-      <Toast />
     </SafeAreaView>
   );
 };

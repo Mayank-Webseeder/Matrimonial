@@ -7,9 +7,8 @@ import Colors from '../../utils/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from '../StyleScreens/ReportPageStyle';
-import Globalstyles from '../../utils/GlobalCss';
-import Toast from 'react-native-toast-message';
 import { REPORT } from '../../utils/BaseUrl';
+import { showMessage } from 'react-native-flash-message';
 
 const ReportPage = ({ navigation, route }) => {
   const { profileId } = route.params || {};
@@ -66,10 +65,11 @@ const ReportPage = ({ navigation, route }) => {
       console.log("Response:", JSON.stringify(response.data));
 
       if (response.status === 200 && response.data.status === true) {
-        Toast.show({
+       showMessage({
           type: "success",
-          text1: response.data.message1,
-          text2: response.data.message2,
+          message: response.data.message1,
+          description: response.data.message2,
+          icon:"success"
         });
 
         setTimeout(() => {
@@ -81,10 +81,11 @@ const ReportPage = ({ navigation, route }) => {
     } catch (error) {
       console.error("🚨 Error submitting report:", error.response?.data || error.message);
 
-      Toast.show({
-        type: "error",
-        text1:error.response?.data?.message1,
-        text2: error.response?.data?.message2,
+     showMessage({
+        type: "danger",
+        message:error.response?.data?.message1,
+        description: error.response?.data?.message2,
+        icon:"danger"
       });
     } finally {
       setIsLoading(false);  
@@ -150,7 +151,6 @@ const ReportPage = ({ navigation, route }) => {
           )}
         </TouchableOpacity>
       </View>
-      <Toast />
     </View>
   );
 };

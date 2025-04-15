@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-  View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator, Share, Switch, ToastAndroid,
+  View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator, Share, Switch,
   Modal, Dimensions
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -17,7 +17,7 @@ import { DELETE_SEND_REQUEST, MATCHED_PROFILE, SAVED_PROFILES, SEND_REQUEST, SHA
 import { useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SF, SH, SW } from '../../utils/Dimensions';
-import Toast from 'react-native-toast-message';
+import { showMessage } from 'react-native-flash-message';
 const { width, height } = Dimensions.get("window");
 
 const MatrimonyPeopleProfile = ({ navigation }) => {
@@ -70,10 +70,10 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
-        Toast.show({
+        showMessage({
           type: "error",
-          text1: "Error",
-          text2: "User token missing!",
+          message: "Error",
+          description: "User token missing!",
         });
         return;
       }
@@ -84,16 +84,15 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       console.log("🚀 Response Status:", response.status);
 
       if (response.status === 200 && response.data.status === true) {
-        Toast.show({
+        showMessage({
           type: "success",
-          text1: "Success",
-          text2: response.data.message || "Intrest Deleted successfully!",
-          onHide: () => {
-            setTimeout(() => {
-              navigation.goBack();
-            }, 500);
-          }
+          message: "Success",
+          description: response.data.message || "Intrest Deleted successfully!",
+          icon: "success"
         });
+        setTimeout(() => {
+          navigation.goBack();
+        }, 500);
       } else {
         throw new Error(response.data.message || "Something went wrong");
       }
@@ -105,10 +104,11 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         errorMessage = error.response.data?.message || "Bad request.";
       }
 
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: errorMessage,
+      showMessage({
+        type: "danger",
+        message: "Error",
+        description: errorMessage,
+        icon: "danger"
       });
     }
     finally {
@@ -118,7 +118,12 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
   const VerifiedProfiles = async (Biodata_id) => {
     if (!Biodata_id) {
-      ToastAndroid.show("Error: User ID not found!", ToastAndroid.SHORT);
+      showMessage({
+        message: "Error: User ID not found!",
+        type: "danger",
+        icon: "danger",
+        duration: 3000,
+      });
       return "";
     }
 
@@ -137,14 +142,28 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
       const message = response?.data?.message || "";
       if (message.toLowerCase().includes("verified")) {
-        ToastAndroid.show("Matrimonial Profile Approved ✅", ToastAndroid.SHORT);
+        showMessage({
+          message: "Matrimonial Profile Approved ✅",
+          type: "success",
+          icon: "success",
+          duration: 3000,
+        });
       }
       else if (message.toLowerCase().includes("disapproved")) {
-        ToastAndroid.show("Matrimonial Profile Disapproved ❌", ToastAndroid.SHORT);
+        showMessage({
+          message: "Matrimonial Profile Disapproved ❌",
+          type: "danger",
+          icon: "danger",
+          duration: 3000,
+        });
       }
-      // ⚠️ Default Message (Agar kuch match nahi hota)
       else {
-        ToastAndroid.show(message, ToastAndroid.SHORT);
+        showMessage({
+          message: message,
+          type: "success",
+          icon: "success",
+          duration: 3000,
+        });
       }
 
       return message;
@@ -153,10 +172,12 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         "API Error:",
         error?.response ? JSON.stringify(error.response.data) : error.message
       );
-      ToastAndroid.show(
-        error.response?.data?.message || "Failed to send interest!",
-        ToastAndroid.LONG
-      );
+      showMessage({
+        message: error.response?.data?.message,
+        type: "danger",
+        icon: "danger",
+        duration: 3000,
+      });
       return "";
     }
   };
@@ -216,10 +237,10 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
     setLoadingIntrest(true);
 
     if (!userId) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "User ID not found!",
+      showMessage({
+        type: "danger",
+        message: "Error",
+        description: "User ID not found!",
         position: "top",
         visibilityTime: 3000,
         autoHide: true
@@ -244,10 +265,10 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       console.log("Response Data:", JSON.stringify(response?.data));
 
       if (response.status === 200 && response.data.status === true) {
-        Toast.show({
+        showMessage({
           type: "success",
-          text1: "Success",
-          text2: response.data.message,
+          message: "Success",
+          description: response.data.message,
           position: "top",
           visibilityTime: 2000,
           autoHide: true,
@@ -263,11 +284,11 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
     } catch (error) {
       console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
 
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: error.response?.data?.message || "Failed to send interest!",
-        position: "top",
+      showMessage({
+        type: "danger",
+        message: "Error",
+        description: error.response?.data?.message || "Failed to send interest!",
+        icon: "danger"
       });
     } finally {
       setLoadingIntrest(false); // ✅ Hide Loader
@@ -276,7 +297,12 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
   const savedProfiles = async () => {
     if (!_id) {
-      ToastAndroid.show("Error: User ID not found!", ToastAndroid.SHORT);
+      showMessage({
+        message: "Error: User ID not found!",
+        type: "danger",
+        icon: "danger",
+        duration: 3000,
+      });
       return;
     }
 
@@ -298,30 +324,46 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       console.log("Response Data:", JSON.stringify(response?.data));
 
       if (response?.data?.message) {
-        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+          showMessage({
+          message:response.data.message,
+          type:"success",
+          icon: "success",
+          duration: 3000,
+        });
         if (response.data.message === "Profile saved successfully.") {
           setIsSaved(true);
         } else {
           setIsSaved(false);
         }
       } else {
-        ToastAndroid.show("Something went wrong!", ToastAndroid.SHORT);
+        showMessage({
+          message:"Something went wrong!",
+          type:"danger",
+          icon: "danger",
+          duration: 3000,
+        });
       }
     } catch (error) {
       console.error(
         "API Error:",
         error?.response ? JSON.stringify(error.response.data) : error.message
       );
-
-      ToastAndroid.show(
-        error.response?.data?.message || "Failed to save profile!",
-        ToastAndroid.SHORT
-      );
+      showMessage({
+        message: error.response?.data?.message,
+        type:"danger",
+        icon: "danger",
+        duration: 3000,
+      });
     }
   };
 
   const shareProfiles = async () => {
-    ToastAndroid.show("Under development", ToastAndroid.SHORT);
+    showMessage({
+      message:"Under development",
+      type:"info",
+      icon: "info",
+      duration: 3000,
+    });
   };
 
   // Map API comparisonResults to UI labels
@@ -679,7 +721,6 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         ) : null}
         <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
       </ScrollView>
-      <Toast />
     </SafeAreaView>
   );
 };

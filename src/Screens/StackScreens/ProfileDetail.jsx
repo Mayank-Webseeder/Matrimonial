@@ -13,9 +13,9 @@ import Globalstyles from '../../utils/GlobalCss';
 import { SH, SW } from '../../utils/Dimensions';
 import ImageViewing from 'react-native-image-viewing';
 import { PROFILE_TYPE, REPOST } from '../../utils/BaseUrl';
-import Toast from 'react-native-toast-message';
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
+import { showMessage } from 'react-native-flash-message';
 
 const ProfileDetail = ({ route, navigation }) => {
     const { profileType } = route.params;
@@ -37,20 +37,35 @@ const ProfileDetail = ({ route, navigation }) => {
         (sub) => sub.serviceType === "Biodata" && sub.status === "Expired"
     );
 
+    const panditStatus = profile_data?.serviceSubscriptions?.find(
+        (sub) => sub.serviceType === 'Pandit'
+    )?.status;
+
+    const JyotishStatus = profile_data?.serviceSubscriptions?.find(
+        (sub) => sub.serviceType === 'Jyotish'
+    )?.status;
+
+    const KathavachakStatus = profile_data?.serviceSubscriptions?.find(
+        (sub) => sub.serviceType === 'Kathavachak'
+    )?.status;
+
     useEffect(() => {
-        if (isBiodataExpired) {
+        const expiredServices = [];
+
+        if (isBiodataExpired) expiredServices.push('Biodata');
+        if (panditStatus === 'Expired') expiredServices.push('Pandit');
+        if (JyotishStatus === 'Expired') expiredServices.push('Jyotish');
+        if (KathavachakStatus === 'Expired') expiredServices.push('Kathavachak');
+
+        if (expiredServices.length > 0) {
             Alert.alert(
-                "Subscription Expired",
-                "Your biodata subscription has expired. Please buy a subscription to show your profile.",
-                [
-                    {
-                        text: "OK",
-                        style: "default"
-                    }
-                ]
+                'Subscription Expired',
+                `Your ${expiredServices.join(', ')} subscription(s) have expired. Please renew to continue using the services.`,
+                [{ text: 'OK', style: 'default' }]
             );
         }
-    }, [isBiodataExpired]);
+    }, [isBiodataExpired, panditStatus, JyotishStatus, KathavachakStatus]);
+
 
     const fetchData = async () => {
         try {
@@ -106,8 +121,14 @@ const ProfileDetail = ({ route, navigation }) => {
         }
     };
 
-    const showToast = (message) => {
-        ToastAndroid.show(message, ToastAndroid.SHORT);
+    const showMessages = (message) => {
+        showMessage({
+            type: 'info',
+            message: message,
+            visibilityTime: 3000,
+            autoHide: true,
+            icon: "info"
+        });
     };
 
     const renderImages = (images) => {
@@ -225,7 +246,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                     {isBiodataExpired ? (
                                         <TouchableOpacity
                                             style={styles.editButton}
-                                            onPress={() => navigation.navigate("BuySubscription",{ serviceType: profileType })}
+                                            onPress={() => navigation.navigate("BuySubscription", { serviceType: profileType })}
                                         >
                                             <Text style={styles.editButtonText}>Buy Subscription</Text>
                                         </TouchableOpacity>
@@ -467,12 +488,41 @@ const ProfileDetail = ({ route, navigation }) => {
                             </View>
                         </View>
                         <View style={styles.contentContainer}>
-                            <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('UpdateProfileDetails', { profileData, profileType })}>
-                                <Text style={styles.editButtonText}>Edit Profile</Text>
-                            </TouchableOpacity>
+                            <View style={{ flex: 1, display: "flex", flexDirection: "row", justifyContent: "space-between", marginVertical: SH(5) }}>
+                                {panditStatus === 'Expired' ? (
+                                    <TouchableOpacity
+                                        style={styles.editButton}
+                                        onPress={() => navigation.navigate('BuySubscription', { serviceType: profileType })}
+                                    >
+                                        <Text style={styles.editButtonText}>Buy Subscription</Text>
+                                    </TouchableOpacity>
+                                ) : panditStatus === 'Pending' ? (
+                                    <TouchableOpacity
+                                        style={[styles.editButton, { backgroundColor: '#c4f2e4' }]}
+                                        disabled={true}
+                                    >
+                                        <Text style={[styles.editButtonText, { color: "red" }]}>Subscription Pending</Text>
+                                    </TouchableOpacity>
+                                ) : (
+                                    <TouchableOpacity
+                                        style={[styles.editButton, { backgroundColor: '#c4f2e4' }]}
+                                        disabled={true}
+                                    >
+                                        <Text style={[styles.editButtonText, { color: 'green' }]}>Subscription Active</Text>
+                                    </TouchableOpacity>
+                                )}
+
+                                <TouchableOpacity style={[styles.editButton]} onPress={() => navigation.navigate('UpdateProfileDetails', { profileData, profileType })}>
+                                    <Text style={styles.editButtonText}>Edit Profile</Text>
+                                </TouchableOpacity>
+                            </View>
                             <View style={styles.section}>
-                                <Text style={styles.sectionTitle}>Description</Text>
-                                <Text style={styles.text}>{profileData?.description}</Text>
+                                {profileData?.description ? (
+                                    <>
+                                        <Text style={styles.sectionTitle}>Description</Text>
+                                        <Text style={styles.text}>{profileData.description}</Text>
+                                    </>
+                                ) : null}
                             </View>
                             <View style={styles.section}>
                                 <Text style={styles.sectionTitle}>Services List</Text>
@@ -555,23 +605,23 @@ const ProfileDetail = ({ route, navigation }) => {
                             {renderImages(images)}
                         </View>
                         <View style={styles.socialIcons}>
-                            <TouchableOpacity onPress={() => profileData?.websiteUrl ? openLink(profileData.websiteUrl, "Website") : showToast("Website link not available")}>
+                            <TouchableOpacity onPress={() => profileData?.websiteUrl ? openLink(profileData.websiteUrl, "Website") : showMessages("Website link not available")}>
                                 <Image source={require('../../Images/website.png')} style={styles.websiteIcon} />
                             </TouchableOpacity>
 
-                            <TouchableOpacity onPress={() => profileData?.youtubeUrl ? openLink(profileData.youtubeUrl, "YouTube") : showToast("YouTube link not available")}>
+                            <TouchableOpacity onPress={() => profileData?.youtubeUrl ? openLink(profileData.youtubeUrl, "YouTube") : showMessages("YouTube link not available")}>
                                 <MaterialCommunityIcons name="youtube" size={30} color="#FF0000" />
                             </TouchableOpacity>
 
-                            <TouchableOpacity onPress={() => profileData?.whatsapp ? openLink(profileData.whatsapp, "WhatsApp") : showToast("WhatsApp link not available")}>
+                            <TouchableOpacity onPress={() => profileData?.whatsapp ? openLink(profileData.whatsapp, "WhatsApp") : showMessages("WhatsApp link not available")}>
                                 <FontAwesome5 name="whatsapp" size={30} color="#25D366" />
                             </TouchableOpacity>
 
-                            <TouchableOpacity onPress={() => profileData?.facebookUrl ? openLink(profileData.facebookUrl, "Facebook") : showToast("Facebook link not available")}>
+                            <TouchableOpacity onPress={() => profileData?.facebookUrl ? openLink(profileData.facebookUrl, "Facebook") : showMessages("Facebook link not available")}>
                                 <FontAwesome5 name="facebook" size={30} color="#3b5998" />
                             </TouchableOpacity>
 
-                            <TouchableOpacity onPress={() => profileData?.instagramUrl ? openLink(profileData.instagramUrl, "Instagram") : showToast("Instagram link not available")}>
+                            <TouchableOpacity onPress={() => profileData?.instagramUrl ? openLink(profileData.instagramUrl, "Instagram") : showMessages("Instagram link not available")}>
                                 <FontAwesome5 name="instagram" size={30} color="#E4405F" />
                             </TouchableOpacity>
                         </View>
@@ -616,12 +666,40 @@ const ProfileDetail = ({ route, navigation }) => {
                             </View>
                         </View>
                         <View style={styles.contentContainer}>
-                            <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('UpdateProfileDetails', { profileData, profileType })}>
-                                <Text style={styles.editButtonText}>Edit Profile</Text>
-                            </TouchableOpacity>
+                            <View style={{ flex: 1, display: "flex", flexDirection: "row", justifyContent: "space-between", marginVertical: SH(5) }}>
+                                {KathavachakStatus === 'Expired' ? (
+                                    <TouchableOpacity
+                                        style={styles.editButton}
+                                        onPress={() => navigation.navigate('BuySubscription', { serviceType: profileType })}
+                                    >
+                                        <Text style={styles.editButtonText}>Buy Subscription</Text>
+                                    </TouchableOpacity>
+                                ) : KathavachakStatus === 'Pending' ? (
+                                    <TouchableOpacity
+                                        style={[styles.editButton, { backgroundColor: '#c4f2e4' }]}
+                                        disabled={true}
+                                    >
+                                        <Text style={[styles.editButtonText, { color: "red" }]}>Subscription Pending</Text>
+                                    </TouchableOpacity>
+                                ) : (
+                                    <TouchableOpacity
+                                        style={[styles.editButton, { backgroundColor: '#c4f2e4' }]}
+                                        disabled={true}
+                                    >
+                                        <Text style={[styles.editButtonText, { color: 'green' }]}>Subscription Active</Text>
+                                    </TouchableOpacity>
+                                )}
+                                <TouchableOpacity style={[styles.editButton]} onPress={() => navigation.navigate('UpdateProfileDetails', { profileData, profileType })}>
+                                    <Text style={styles.editButtonText}>Edit Profile</Text>
+                                </TouchableOpacity>
+                            </View>
                             <View style={styles.section}>
-                                <Text style={styles.sectionTitle}>Description</Text>
-                                <Text style={styles.text}>{profileData?.description}</Text>
+                                {profileData?.description ? (
+                                    <>
+                                        <Text style={styles.sectionTitle}>Description</Text>
+                                        <Text style={styles.text}>{profileData.description}</Text>
+                                    </>
+                                ) : null}
                             </View>
                             <View style={styles.section}>
                                 <Text style={styles.sectionTitle}>Services List</Text>
@@ -703,23 +781,23 @@ const ProfileDetail = ({ route, navigation }) => {
                             {renderImages(images)}
                         </View>
                         <View style={styles.socialIcons}>
-                            <TouchableOpacity onPress={() => profileData?.websiteUrl ? openLink(profileData.websiteUrl, "Website") : showToast("Website link not available")}>
+                            <TouchableOpacity onPress={() => profileData?.websiteUrl ? openLink(profileData.websiteUrl, "Website") : showMessages("Website link not available")}>
                                 <Image source={require('../../Images/website.png')} style={styles.websiteIcon} />
                             </TouchableOpacity>
 
-                            <TouchableOpacity onPress={() => profileData?.youtubeUrl ? openLink(profileData.youtubeUrl, "YouTube") : showToast("YouTube link not available")}>
+                            <TouchableOpacity onPress={() => profileData?.youtubeUrl ? openLink(profileData.youtubeUrl, "YouTube") : showMessages("YouTube link not available")}>
                                 <MaterialCommunityIcons name="youtube" size={30} color="#FF0000" />
                             </TouchableOpacity>
 
-                            <TouchableOpacity onPress={() => profileData?.whatsapp ? openLink(profileData.whatsapp, "WhatsApp") : showToast("WhatsApp link not available")}>
+                            <TouchableOpacity onPress={() => profileData?.whatsapp ? openLink(profileData.whatsapp, "WhatsApp") : showMessages("WhatsApp link not available")}>
                                 <FontAwesome5 name="whatsapp" size={30} color="#25D366" />
                             </TouchableOpacity>
 
-                            <TouchableOpacity onPress={() => profileData?.facebookUrl ? openLink(profileData.facebookUrl, "Facebook") : showToast("Facebook link not available")}>
+                            <TouchableOpacity onPress={() => profileData?.facebookUrl ? openLink(profileData.facebookUrl, "Facebook") : showMessages("Facebook link not available")}>
                                 <FontAwesome5 name="facebook" size={30} color="#3b5998" />
                             </TouchableOpacity>
 
-                            <TouchableOpacity onPress={() => profileData?.instagramUrl ? openLink(profileData.instagramUrl, "Instagram") : showToast("Instagram link not available")}>
+                            <TouchableOpacity onPress={() => profileData?.instagramUrl ? openLink(profileData.instagramUrl, "Instagram") : showMessages("Instagram link not available")}>
                                 <FontAwesome5 name="instagram" size={30} color="#E4405F" />
                             </TouchableOpacity>
                         </View>
@@ -763,12 +841,40 @@ const ProfileDetail = ({ route, navigation }) => {
                             </View>
                         </View>
                         <View style={styles.contentContainer}>
-                            <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('UpdateProfileDetails', { profileData, profileType })}>
-                                <Text style={styles.editButtonText}>Edit Profile</Text>
-                            </TouchableOpacity>
+                            <View style={{ flex: 1, display: "flex", flexDirection: "row", justifyContent: "space-between", marginVertical: SH(5) }}>
+                                {JyotishStatus === 'Expired' ? (
+                                    <TouchableOpacity
+                                        style={styles.editButton}
+                                        onPress={() => navigation.navigate('BuySubscription', { serviceType: profileType })}
+                                    >
+                                        <Text style={styles.editButtonText}>Buy Subscription</Text>
+                                    </TouchableOpacity>
+                                ) : JyotishStatus === 'Pending' ? (
+                                    <TouchableOpacity
+                                        style={[styles.editButton, { backgroundColor: '#c4f2e4' }]}
+                                        disabled={true}
+                                    >
+                                        <Text style={[styles.editButtonText, { color: "red" }]}>Subscription Pending</Text>
+                                    </TouchableOpacity>
+                                ) : (
+                                    <TouchableOpacity
+                                        style={[styles.editButton, { backgroundColor: '#c4f2e4' }]}
+                                        disabled={true}
+                                    >
+                                        <Text style={[styles.editButtonText, { color: 'green' }]}>Subscription Active</Text>
+                                    </TouchableOpacity>
+                                )}
+                                <TouchableOpacity style={[styles.editButton]} onPress={() => navigation.navigate('UpdateProfileDetails', { profileData, profileType })}>
+                                    <Text style={styles.editButtonText}>Edit Profile</Text>
+                                </TouchableOpacity>
+                            </View>
                             <View style={styles.section}>
-                                <Text style={styles.sectionTitle}>Description</Text>
-                                <Text style={styles.text}>{profileData?.description}</Text>
+                                {profileData?.description ? (
+                                    <>
+                                        <Text style={styles.sectionTitle}>Description</Text>
+                                        <Text style={styles.text}>{profileData.description}</Text>
+                                    </>
+                                ) : null}
                             </View>
                             <View style={styles.section}>
                                 <Text style={styles.sectionTitle}>Services List</Text>
@@ -850,23 +956,23 @@ const ProfileDetail = ({ route, navigation }) => {
                             {renderImages(images)}
                         </View>
                         <View style={styles.socialIcons}>
-                            <TouchableOpacity onPress={() => profileData?.websiteUrl ? openLink(profileData.websiteUrl, "Website") : showToast("Website link not available")}>
+                            <TouchableOpacity onPress={() => profileData?.websiteUrl ? openLink(profileData.websiteUrl, "Website") : showMessages("Website link not available")}>
                                 <Image source={require('../../Images/website.png')} style={styles.websiteIcon} />
                             </TouchableOpacity>
 
-                            <TouchableOpacity onPress={() => profileData?.youtubeUrl ? openLink(profileData.youtubeUrl, "YouTube") : showToast("YouTube link not available")}>
+                            <TouchableOpacity onPress={() => profileData?.youtubeUrl ? openLink(profileData.youtubeUrl, "YouTube") : showMessages("YouTube link not available")}>
                                 <MaterialCommunityIcons name="youtube" size={30} color="#FF0000" />
                             </TouchableOpacity>
 
-                            <TouchableOpacity onPress={() => profileData?.whatsapp ? openLink(profileData.whatsapp, "WhatsApp") : showToast("WhatsApp link not available")}>
+                            <TouchableOpacity onPress={() => profileData?.whatsapp ? openLink(profileData.whatsapp, "WhatsApp") : showMessages("WhatsApp link not available")}>
                                 <FontAwesome5 name="whatsapp" size={30} color="#25D366" />
                             </TouchableOpacity>
 
-                            <TouchableOpacity onPress={() => profileData?.facebookUrl ? openLink(profileData.facebookUrl, "Facebook") : showToast("Facebook link not available")}>
+                            <TouchableOpacity onPress={() => profileData?.facebookUrl ? openLink(profileData.facebookUrl, "Facebook") : showMessages("Facebook link not available")}>
                                 <FontAwesome5 name="facebook" size={30} color="#3b5998" />
                             </TouchableOpacity>
 
-                            <TouchableOpacity onPress={() => profileData?.instagramUrl ? openLink(profileData.instagramUrl, "Instagram") : showToast("Instagram link not available")}>
+                            <TouchableOpacity onPress={() => profileData?.instagramUrl ? openLink(profileData.instagramUrl, "Instagram") : showMessages("Instagram link not available")}>
                                 <FontAwesome5 name="instagram" size={30} color="#E4405F" />
                             </TouchableOpacity>
                         </View>
@@ -874,7 +980,6 @@ const ProfileDetail = ({ route, navigation }) => {
                     </ScrollView>
                 )}
             </ScrollView>
-            <Toast />
         </View>
     );
 };

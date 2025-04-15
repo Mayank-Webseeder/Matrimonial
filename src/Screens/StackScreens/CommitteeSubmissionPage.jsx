@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, SafeAreaView, StatusBar, FlatList, ActivityIndicator, ToastAndroid } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, SafeAreaView, StatusBar, FlatList, ActivityIndicator } from 'react-native';
 import Colors from '../../utils/Colors';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -10,7 +10,8 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import { CREATE_COMMITTEE } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import Toast from 'react-native-toast-message';
+import { showMessage } from 'react-native-flash-message';
+
 const CommitteeSubmissionPage = ({ navigation }) => {
     const [subCasteInput, setSubCasteInput] = useState('');
     const [cityInput, setCityInput] = useState('');
@@ -148,7 +149,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
     
             const token = await AsyncStorage.getItem("userToken");
             if (!token) {
-                Toast.show({ type: "error", text1: "Error", text2: "Authorization token is missing." });
+               showMessage({ type: "danger", message: "Error", description: "Authorization token is missing." });
                 return;
             }
     
@@ -165,34 +166,30 @@ const CommitteeSubmissionPage = ({ navigation }) => {
             console.log("✅ API Response:", JSON.stringify(response.data));
     
             if (response.status === 200 || response.data.status === true) {
-                Toast.show({
+               showMessage({
                     type: "success",
-                    text1: "Committee Created Successfully",
-                    text2: response.data.message || "Your committee profile has been saved!",
-                    visibilityTime: 2000, // Optional: Show toast for 2 seconds
-                    onHide: () => {
-                        navigation.navigate("Committee");
-                    }
+                    message: "Committee Created Successfully",
+                    description: response.data.message || "Your committee profile has been saved!",
+                    visibilityTime: 2000,
+                    icon:"success",
                 });
-                ToastAndroid.show("Committee Created Successfully",ToastAndroid.SHORT);
+                navigation.navigate("Committee");
             } else {
-                Toast.show({
-                    type: "error",
-                    text1: "Error",
-                    text2: response.data?.message || "Failed to save committee."
+               showMessage({
+                    type: "danger",
+                    message: "Error",
+                    description: response.data?.message || "Failed to save committee.",
+                    icon:"danger"
                 });
             }
         } catch (error) {
             console.error("🚨 Error Creating Committee:", error.response?.data || error.message);
-            Toast.show({ type: "error", text1: "Error", text2: "Failed to save committee data." });
+           showMessage({ type: "danger", message: "Error", description: "Failed to save committee data." ,icon:"danger"});
         } finally {
             setIsLoading(false);
         }
     };
     
-
-
-
     return (
         <SafeAreaView style={Globalstyles.container}>
             <StatusBar
@@ -336,7 +333,6 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                 </TouchableOpacity>
 
             </ScrollView>
-            <Toast />
         </SafeAreaView>
     );
 };

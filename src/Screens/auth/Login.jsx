@@ -7,9 +7,9 @@ import { LOGIN_ENDPOINT } from "../../utils/BaseUrl";
 import Colors from "../../utils/Colors";
 import { useDispatch } from "react-redux";
 import { setLoginData } from "../../ReduxStore/Slices/authSlice";
-import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { initializeSocket } from "../../../socket";
+import { showMessage } from "react-native-flash-message";
 
 const Login = ({ navigation }) => {
 
@@ -76,12 +76,12 @@ const Login = ({ navigation }) => {
                     console.error("🚨 Socket Initialization Failed:", socketError);
                 }
     
-                Toast.show({
+               showMessage({
                     type: "success",
-                    text1: "Login Successful",
-                    text2: "You have logged in!",
-                    position: "top",
+                    message: "Login Successful",
+                    description: "You have logged in!",
                     visibilityTime: 1000,
+                    icon:"success",
                     textStyle: { fontSize: 14, color: "white" },
                     onHide: () => {
                         console.log("🟢 Navigating to AppStack...");
@@ -93,14 +93,13 @@ const Login = ({ navigation }) => {
                 });
             } else {
                 console.log("❌ Login failed: Invalid credentials.");
-                Toast.show({
-                    type: "error",
-                    text1: "Login Failed",
-                    text2: LoginData.message || "Invalid credentials. Please try again.",
-                    position: "top",
+              showMessage({
+                    type: "danger",
+                    message: "Login Failed",
+                    description: LoginData.message || "Invalid credentials. Please try again.",
                     visibilityTime: 2000,
                     textStyle: { fontSize: 14, color: "white" },
-                    backgroundColor: "red",
+                    icon:"danger"
                 });
             }
         } catch (error) {
@@ -108,21 +107,19 @@ const Login = ({ navigation }) => {
     
             if (error.response?.status === 400) {
                 console.error("❌ Unauthorized:", error.response.data);
-                Toast.show({
+              showMessage({
                     type: "error",
-                    text1: "Unauthorized",
-                    text2: error.response.data.message || "Invalid mobile number or password.",
-                    position: "top",
+                    message: "Unauthorized",
+                    description: error.response.data.message || "Invalid mobile number or password.",
                     visibilityTime: 2000,
                     textStyle: { fontSize: 14, color: "white" },
                     backgroundColor: "red",
                 });
             } else {
-                Toast.show({
-                    type: "error",
-                    text1: "Error",
-                    text2: "Something went wrong. Please try again.",
-                    position: "top",
+                showMessage({
+                    type: "danger",
+                    message: "Error",
+                    description: "Something went wrong. Please try again.",
                     visibilityTime: 2000,
                     textStyle: { fontSize: 14, color: "white" },
                     backgroundColor: "red",
@@ -210,7 +207,6 @@ const Login = ({ navigation }) => {
 
                 </ScrollView>
             </ImageBackground>
-            <Toast />
         </SafeAreaView>
     );
 };

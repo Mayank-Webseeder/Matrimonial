@@ -8,8 +8,8 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { EVENT_NEWS_NOTIFICATION_HANDLE_API, CONNECTION_REQUEST_HANDLE_API } from "../../utils/BaseUrl";
 import { useSelector } from "react-redux";
-import Toast from "react-native-toast-message";
 import { DrawerActions } from "@react-navigation/native";
+import { showMessage } from "react-native-flash-message";
 
 const NotificationSettings = ({ navigation }) => {
   const ProfileData = useSelector((state) => state.profile);
@@ -39,10 +39,11 @@ const NotificationSettings = ({ navigation }) => {
       const response = await axios.patch(CONNECTION_REQUEST_HANDLE_API, {}, { headers });
 
       if (response.status === 200 && response.data.status) {
-        Toast.show({
+        showMessage({
           type: "success",
-          text1: "Success",
-          text2: response.data.message || "Setting updated successfully!",
+          message: "Success",
+          description: response.data.message || "Setting updated successfully!",
+          icon:"success"
         });
       } else {
         throw new Error(response.data.message || "Something went wrong!");
@@ -56,10 +57,11 @@ const NotificationSettings = ({ navigation }) => {
         errorMessage = error.response.data?.message || "Invalid request!";
       }
 
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: errorMessage,
+      showMessage({
+        type: "danger",
+        message: "Error",
+        description: errorMessage,
+        icon:"danger"
       });
     } finally {
       setLoadingProfileInterest(false);
@@ -79,10 +81,11 @@ const NotificationSettings = ({ navigation }) => {
       const response = await axios.patch(EVENT_NEWS_NOTIFICATION_HANDLE_API, {}, { headers });
 
       if (response.status === 200 && response.data.status === true) {
-        Toast.show({
+        showMessage({
           type: "success",
-          text1: "Success",
-          text2: response.data.message || "Notification updated successfully!",
+          message: "Success",
+          description: response.data.message || "Notification updated successfully!",
+          icon:"success"
         });
       } else {
         throw new Error(response.data.message || "Something went wrong!");
@@ -96,10 +99,11 @@ const NotificationSettings = ({ navigation }) => {
         errorMessage = error.response.data?.message || "Invalid request!";
       }
 
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: errorMessage,
+      showMessage({
+        type: "danger",
+        message: "Error",
+        description: errorMessage,
+        icon:"danger"
       });
     } finally {
       setLoadingNewsEvents(false);
@@ -143,7 +147,6 @@ const NotificationSettings = ({ navigation }) => {
           />
         </View>
       </View>
-      <Toast />
     </SafeAreaView>
   );
 };

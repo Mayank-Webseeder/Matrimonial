@@ -16,8 +16,8 @@ import moment from 'moment';
 import { useSelector } from 'react-redux';
 import RBSheet from "react-native-raw-bottom-sheet";
 import Entypo from 'react-native-vector-icons/Entypo';
-import Toast from 'react-native-toast-message';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { showMessage } from 'react-native-flash-message';
 const EventNews = ({ navigation }) => {
   const sheetRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -45,11 +45,10 @@ const EventNews = ({ navigation }) => {
     if (MyActivistProfile && MyActivistProfile._id) {
       navigation.navigate("CreatePost");
     } else {
-      Toast.show({
+      showMessage({
         type: "info",
-        text1: "You are not an activist!",
-        text2: "Create an activist profile if you want to upload Event News.",
-        position: "bottom",
+        message: "You are not an activist!",
+        description: "Create an activist profile if you want to upload Event News.",
         visibilityTime: 4000,
         autoHide: true,
       });
@@ -57,11 +56,10 @@ const EventNews = ({ navigation }) => {
   };
 
   const handleShare = async () => {
-    Toast.show({
+    showMessage({
       type: "info",
-      text1: "Info",
-      text2: "Under development",
-      position: "top",
+      message: "Info",
+      description: "Under development",
     });
   };
 
@@ -135,11 +133,10 @@ const EventNews = ({ navigation }) => {
     } catch (error) {
       console.error("Error liking post:", error?.response?.data || error.message);
 
-      Toast.show({
+      showMessage({
         type: "error",
-        text1: "Error",
-        text2: error?.response?.data?.message || "Failed to like event. Please try again!",
-        position: "top",
+        message: "Error",
+        description: error?.response?.data?.message || "Failed to like event. Please try again!",
       });
 
       // Reverse the like state on error
@@ -190,19 +187,15 @@ const EventNews = ({ navigation }) => {
 
         setMyComment("");
 
-        Toast.show({
+        showMessage({
           type: "success",
-          text1: "Success",
-          text2: fetchedData.message || "Comment added successfully!",
-          position: "top",
-          onHide: () => {
-            navigation.reset({
-              index: 0,
-              routes: [{ name: "EventNews" }],
-            });
-          }
+          message: "Success",
+          description: fetchedData.message || "Comment added successfully!",
         });
-
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "EventNews" }],
+        });
       } else if (response.status === 400) {
         throw new Error(response.data.message || "Invalid request.");
       }
@@ -210,11 +203,10 @@ const EventNews = ({ navigation }) => {
     } catch (error) {
       console.error("Error adding comment:", error?.response?.data || error.message);
 
-      Toast.show({
+      showMessage({
         type: "error",
-        text1: "Error",
-        text2: error?.response?.data?.message || "Failed to add comment. Please try again!",
-        position: "top",
+        message: "Error",
+        description: error?.response?.data?.message || "Failed to add comment. Please try again!",
       });
     } finally {
       setCommentLoading(false);
@@ -248,21 +240,21 @@ const EventNews = ({ navigation }) => {
           prevComments.filter((comment) => comment._id !== commentId)
         );
 
-        Toast.show({
+        showMessage({
           type: "success",
-          text1: "Success",
-          text2: "Comment deleted successfully!",
-          position: "top",
+          message: "Success",
+          description: "Comment deleted successfully!",
+          icon: "success"
         });
       }
     } catch (error) {
       console.error("Error deleting comment:", error?.response?.data || error.message);
 
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: error?.response?.data?.message || "Failed to delete comment. Please try again!",
-        position: "top",
+      showMessage({
+        type: "danger",
+        message: "Error",
+        description: error?.response?.data?.message || "Failed to delete comment. Please try again!",
+        icon: "danger"
       });
     } finally {
       setdeletecommentLoading(false);
@@ -663,8 +655,6 @@ const EventNews = ({ navigation }) => {
           </TouchableOpacity>
         )}
       </ScrollView>
-
-      <Toast />
     </SafeAreaView>
   );
 };

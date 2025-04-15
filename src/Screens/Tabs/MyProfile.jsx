@@ -1,4 +1,4 @@
-import { Text, View, Image, SafeAreaView, StatusBar, Modal, PermissionsAndroid, Platform, FlatList, ActivityIndicator, ToastAndroid } from 'react-native';
+import { Text, View, Image, SafeAreaView, StatusBar, Modal, PermissionsAndroid, Platform, FlatList, ActivityIndicator } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Colors from '../../utils/Colors';
@@ -14,11 +14,11 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UPLOAD_PROFILE_PHOTO, DELETE_PROFILE_PHOTO, PROFILE_ENDPOINT, PROFILE_TYPE } from '../../utils/BaseUrl';
 import axios from 'axios';
-import Toast from 'react-native-toast-message';
 import { DrawerActions, useFocusEffect } from '@react-navigation/native';
 import ImageViewing from 'react-native-image-viewing';
 import { setProfiledata } from '../../ReduxStore/Slices/ProfileSlice';
 import { useDispatch } from 'react-redux';
+import { showMessage } from 'react-native-flash-message';
 
 const MyProfile = ({ navigation }) => {
     const dispatch = useDispatch();
@@ -63,7 +63,7 @@ const MyProfile = ({ navigation }) => {
 
             console.log("headers in profile", headers);
             const res = await axios.get(PROFILE_ENDPOINT, { headers });
-            console.log("API Response:", res.data);
+            console.log("API Response:", JSON.stringify(res.data));
 
             setProfileData(res.data.data); // ✅ State update karo
             dispatch(setProfiledata(res.data.data)); // Redux update karo
@@ -109,7 +109,7 @@ const MyProfile = ({ navigation }) => {
     // ye abhi wala h aleg aleg page par bhajne h ke liye 
     const handlePress = async (profileType) => {
         setSelectedButton(profileType);
-    
+
         const keyMap = {
             Biodata: "isMatrimonial",
             Jyotish: "isJyotish",
@@ -117,33 +117,33 @@ const MyProfile = ({ navigation }) => {
             Pandit: "isPandit",
             Activist: "isActivist",
         };
-    
+
         const registrationScreens = {
             Biodata: "MatrimonyPage",
             Jyotish: "JyotishRegister",
             Kathavachak: "KathavachakRegister",
             Pandit: "PanditRegister",
         };
-    
+
         const isRegistered = profileData?.[keyMap[profileType]];
-    
+
         if (!isRegistered) {
             const screen = registrationScreens[profileType];
             if (screen) {
                 navigation.navigate(screen, { profileType });
             } else {
-                navigation.navigate("RoleRegisterForm", { profileType }); 
+                navigation.navigate("RoleRegisterForm", { profileType });
             }
             return;
         }
-    
+
         if (profileType !== "Biodata") {
             await fetchProfilesDetails(profileType);
         }
-    
+
         navigation.navigate("ProfileDetail", { profileType });
     };
-    
+
 
     const fetchProfilesDetails = async (profileType) => {
         try {
@@ -204,10 +204,10 @@ const MyProfile = ({ navigation }) => {
             const token = await AsyncStorage.getItem("userToken");
 
             if (!token) {
-                Toast.show({
-                    type: "error",
-                    text1: "Error",
-                    text2: "Authorization token is missing.",
+                showMessage({
+                    type: "danger",
+                    message: "Error",
+                    description: "Authorization token is missing.",
                 });
                 return;
             }
@@ -221,10 +221,11 @@ const MyProfile = ({ navigation }) => {
 
             if (response.status === 200 && response.data.status === true) {
                 console.log(" delete response", JSON.stringify(response.data));
-                Toast.show({
+                showMessage({
                     type: "success",
-                    text1: "Profile Photo Deleted Successfully",
-                    text2: response.data.message || "Your profile photo has been removed.",
+                    message: "Profile Photo Deleted Successfully",
+                    description: response.data.message || "Your profile photo has been removed.",
+                    icon:"success"
                 });
                 navigation.reset({
                     index: 0,
@@ -236,10 +237,11 @@ const MyProfile = ({ navigation }) => {
             }
         } catch (error) {
             console.error("Error deleting profile photo:", error?.response?.data || error.message);
-            Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: "Failed to delete profile photo.",
+           showMessage({
+                type: "danger",
+                message: "Error",
+                description: "Failed to delete profile photo.",
+                icon:"danger"
             });
         } finally {
             setIsLoading(false);
@@ -271,39 +273,51 @@ const MyProfile = ({ navigation }) => {
     const upload_profile_image = async (base64Data) => {
         console.log("Base64 Image Data:", base64Data);
         try {
-            const token = await AsyncStorage.getItem("userToken");
-            if (!token) throw new Error("Authorization token is missing.");
-
-            const headers = {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
-            };
-
-            const response = await axios.put(UPLOAD_PROFILE_PHOTO, { photoUrl: base64Data }, { headers });
-            console.log("Profile image updated successfully:", response.data);
-            const message = response?.data?.message;
-
-            if (message === "Profile image updated successfully.") {
-                ToastAndroid.show("Profile Updated! Your image has been successfully uploaded.", ToastAndroid.SHORT);
-
-                console.log("Navigating to MainApp...");
-                navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'MainApp' }],
-                });
-            }
+          const token = await AsyncStorage.getItem("userToken");
+          if (!token) throw new Error("Authorization token is missing.");
+      
+          const headers = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          };
+      
+          const response = await axios.put(UPLOAD_PROFILE_PHOTO, { photoUrl: base64Data }, { headers });
+          console.log("Profile image updated successfully:", response.data);
+          const message = response?.data?.message;
+      
+          if (message === "Profile image updated successfully.") {
+            showMessage({
+              message: "Profile Updated!",
+              description: "Your image has been successfully uploaded.",
+              type: "success",
+              duration: 3000,
+              icon:"success"
+            });
+      
+            console.log("Navigating to MainApp...");
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "MainApp" }],
+            });
+          }
         } catch (error) {
-            if (error.response) {
-                console.error("API Error:", error.response.data);
-            } else {
-                console.error("Error uploading profile image:", error.message);
-            }
-
-            ToastAndroid.show("Upload Failed! Please try again.", ToastAndroid.SHORT);
+          if (error.response) {
+            console.error("API Error:", error.response.data);
+          } else {
+            console.error("Error uploading profile image:", error.message);
+          }
+      
+          showMessage({
+            message: "Upload Failed!",
+            description: "Please try again.",
+            type: "danger",
+            duration: 3000,
+            icon:"danger"
+          });
         } finally {
-            setIsLoading(false);
+          setIsLoading(false);
         }
-    };
+      };
 
 
     const handleCameraCapture = () => {
@@ -472,7 +486,6 @@ const MyProfile = ({ navigation }) => {
                     </View>
                 </View>
             </Modal>
-            <Toast />
         </SafeAreaView>
     );
 };

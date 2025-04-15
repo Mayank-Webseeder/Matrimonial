@@ -32,6 +32,7 @@
     "react-native": "0.76.5",
     "react-native-app-intro-slider": "^4.0.4",
     "react-native-element-dropdown": "^2.12.2",
+    "react-native-flash-message": "^0.4.2",
     "react-native-gesture-handler": "^2.21.2",
     "react-native-image-crop-picker": "^0.42.0",
     "react-native-image-viewing": "^0.2.2",
@@ -48,7 +49,6 @@
     "react-native-screens": "4.2.0",
     "react-native-skeleton-placeholder": "^5.2.4",
     "react-native-swiper": "^1.6.0",
-    "react-native-toast-message": "^2.2.1",
     "react-native-vector-icons": "^10.2.0",
     "react-redux": "^9.2.0",
     "socket.io-client": "^4.8.1"

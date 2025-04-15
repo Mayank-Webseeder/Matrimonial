@@ -7,9 +7,9 @@ import Globalstyles from '../../utils/GlobalCss';
 import { CHANGE_PASSWORD } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import Toast from 'react-native-toast-message';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { DrawerActions, useFocusEffect } from '@react-navigation/native';
+import { showMessage } from 'react-native-flash-message';
 
 const ChangePassword = ({ navigation }) => {
   const [oldPassword, setOldPassword] = useState('');
@@ -39,13 +39,13 @@ const ChangePassword = ({ navigation }) => {
   const handleChangePassword = async () => {
     if (!oldPassword || !newPassword || !confirmPassword) {
       setPasswordError("All fields are required!");
-      Toast.show({ type: 'error', text1: 'Validation Error', text2: 'All fields are required!' });
+     showMessage({ type: 'danger', message: 'Validation Error', description: 'All fields are required!',icon:"danger" });
       return;
     }
 
     if (newPassword !== confirmPassword) {
       setPasswordError("Passwords do not match!");
-      Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Passwords do not match!' });
+     showMessage({ type:"danger", message: 'Validation Error', description: 'Passwords do not match!' });
       return;
     }
 
@@ -55,7 +55,7 @@ const ChangePassword = ({ navigation }) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) {
-        Toast.show({ type: 'error', text1: 'Authentication Error', text2: 'No token found! Please log in again.' });
+       showMessage({ type:"danger", message: 'Authentication Error', description: 'No token found! Please log in again.' });
         setLoading(false);
         return;
       }
@@ -70,10 +70,10 @@ const ChangePassword = ({ navigation }) => {
       setLoading(false);
 
       if (response.status === 200 && response.data.status === true) {
-        Toast.show({ type: 'success', text1: 'Success', text2: 'Password changed successfully!' });
+       showMessage({ type: 'success', message: 'Success', description: 'Password changed successfully!',icon:"success" });
         setIsModalVisible(true);
       } else {
-        Toast.show({ type: 'error', text1: 'Error', text2: response.data.message || "Something went wrong!" });
+       showMessage({ type: 'danger', message: 'Error', description: response.data.message || "Something went wrong!" , icon:"danger" });
       }
 
     } catch (error) {
@@ -81,10 +81,10 @@ const ChangePassword = ({ navigation }) => {
 
       if (error.response && error.response.status === 400) {
         console.log("❌ API Error Response:", error.response.data);
-        Toast.show({ type: 'error', text1: 'Error', text2: error.response.data.message || "Error changing password!" });
+       showMessage({ type:"danger", message: 'Error', description: error.response.data.message || "Error changing password!" });
       } else {
         console.log("❌ Network Error:", error);
-        Toast.show({ type: 'error', text1: 'Network Error', text2: 'Please try again.' });
+       showMessage({ type:"danger", message: 'Network Error', description: 'Please try again.',icon:"danger" });
       }
     }
   };
@@ -178,7 +178,6 @@ const ChangePassword = ({ navigation }) => {
           </View>
         </View>
       </Modal>
-      <Toast />
     </SafeAreaView>
   );
 };

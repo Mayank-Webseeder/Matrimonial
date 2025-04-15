@@ -7,10 +7,10 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Globalstyles from '../../utils/GlobalCss';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { useSelector } from 'react-redux';
-import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { CREATE_EVENT_NEWS } from '../../utils/BaseUrl';
+import { showMessage } from 'react-native-flash-message';
 
 const CreatePost = ({ navigation, route }) => {
     const MyActivistProfile = useSelector((state) => state.activist.activist_data);
@@ -73,15 +73,12 @@ const CreatePost = ({ navigation, route }) => {
             console.log("Event response:", JSON.stringify(response.data));
 
             if (response.status === 200 && response.data.status === true) {
-                Toast.show({
+                showMessage({
                     type: 'success',
-                    text1: 'Success',
-                    text2: response.data.message || 'Your event has been created successfully!',
-                    position: "top",
-                    onHide: () => {
-                        navigation.navigate('EventNews'); // ✅ Navigate after toast hides
-                    }
+                    message: 'Success',
+                    description: response.data.message || 'Your event has been created successfully!',
                 });
+                navigation.navigate('EventNews');
             } else {
                 throw new Error(response.data.message || "Unexpected response from server");
             }
@@ -100,10 +97,11 @@ const CreatePost = ({ navigation, route }) => {
                 }
             }
 
-            Toast.show({
-                type: 'error',
-                text1: 'Error',
-                text2: errorMessage,
+            showMessage({
+                type: 'danger',
+                message: 'Error',
+                description: errorMessage,
+                icon: "danger"
             });
 
         } finally {
@@ -192,7 +190,6 @@ const CreatePost = ({ navigation, route }) => {
                     <Text style={styles.PostText}>Submit Post</Text>
                 )}
             </TouchableOpacity>
-            <Toast />
         </SafeAreaView>
     )
 }

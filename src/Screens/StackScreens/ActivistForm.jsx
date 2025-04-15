@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, TextInput, TouchableOpacity, SafeAreaView, ScrollView, FlatList, Image, ActivityIndicator, ToastAndroid } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, SafeAreaView, ScrollView, FlatList, Image, ActivityIndicator } from 'react-native';
 
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/ActivistFormStyle';
@@ -11,10 +11,10 @@ import { subCasteOptions, StateData, CityData } from '../../DummyData/DropdownDa
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CREATE_ACTIVIST, UPDATE_ACTIVIST } from '../../utils/BaseUrl';
-import Toast from 'react-native-toast-message';
 import Entypo from 'react-native-vector-icons/Entypo';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
+import { showMessage } from 'react-native-flash-message';
 export default function ActivistForm({ navigation }) {
   const [subCasteInput, setSubCasteInput] = useState('');
   const [stateInput, setStateInput] = useState('');
@@ -272,10 +272,10 @@ export default function ActivistForm({ navigation }) {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: "Authorization token is missing.",
+       showMessage({
+          type: "danger",
+          message: "Error",
+          description: "Authorization token is missing.",
         });
         return;
       }
@@ -296,15 +296,12 @@ export default function ActivistForm({ navigation }) {
       const response = await apiCall(endpoint, payload, { headers });
       console.log("API Response:", response.data);
       if (response.status === 200 && response.data.status === true) {
-        Toast.show({
+       showMessage({
           type: "success",
-          text1: ActivistData?._id ? "Activist Profile Updated Successfully" : "Your activist approval request is on its way! Stay tuned.",
-          text2: response.data.message || "Your changes have been saved!",
+          message: ActivistData?._id ? "Activist Profile Updated Successfully" : "Your activist approval request is on its way! Stay tuned.",
+          description: response.data.message || "Your changes have been saved!",
+          icon:"success"
         });
-        ToastAndroid.show(
-          ActivistData?._id ? "Activist Profile Updated Successfully" : "Your activist approval request is on its way! Stay tuned.",
-          ToastAndroid.SHORT
-        );
 
         setIsEditing(false);
 
@@ -330,10 +327,11 @@ export default function ActivistForm({ navigation }) {
         errorMessage = error.response.data?.message || "Invalid request!";
       }
 
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: errorMessage,
+     showMessage({
+        type: "danger",
+        message: "Error",
+        description: errorMessage,
+        icon:"danger"
       });
 
     } finally {
@@ -579,7 +577,6 @@ const handleRemoveActivistId = (index) => {
           )}
         </TouchableOpacity>
       </ScrollView>
-      <Toast />
     </SafeAreaView>
   );
 }

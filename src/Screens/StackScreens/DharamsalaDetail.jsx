@@ -11,8 +11,8 @@ import Globalstyles from '../../utils/GlobalCss';
 import { SAVED_PROFILES } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Toast from 'react-native-toast-message';
 import { SF, SH, SW } from '../../utils/Dimensions';
+import { showMessage } from 'react-native-flash-message';
 const { width, height } = Dimensions.get("window");
 
 const DharamsalaDetail = ({ navigation, route }) => {
@@ -60,26 +60,25 @@ const DharamsalaDetail = ({ navigation, route }) => {
   );
 
   const handleShare = async () => {
-    Toast.show({
+    showMessage({
       type: "info",
-      text1: "Info",
-      text2: "Under development",
-      position: "top",
+      message: "Info",
+      description: "Under development",
+      icon:"info"
     });
   };
 
   const savedProfiles = async () => {
     if (!_id) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "User ID not found!",
-        position: "top",
+      showMessage({
+        type: "danger",
+        message: "Error",
+        description: "User ID not found!",
       });
       return;
     }
 
-    setIsSaved((prev) => !prev); // Optimistic UI Update
+    setIsSaved((prev) => !prev);
 
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -98,11 +97,10 @@ const DharamsalaDetail = ({ navigation, route }) => {
 
       // ✅ Ensure response is successful
       if (response.status === 200 && response.data.status === true) {
-        Toast.show({
+        showMessage({
           type: "success",
-          text1: "Success",
-          text2: response.data.message || "Profile saved successfully!",
-          position: "top",
+          message: "Success",
+          description: response.data.message || "Profile saved successfully!",
         });
 
         // ✅ Update state correctly based on success message
@@ -114,11 +112,11 @@ const DharamsalaDetail = ({ navigation, route }) => {
       // ❌ Rollback State If API Fails
       setIsSaved((prev) => !prev);
 
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: error.response?.data?.message || "Something went wrong!",
-        position: "top",
+      showMessage({
+        type: "danger",
+        message: "Error",
+        description: error.response?.data?.message || "Something went wrong!",
+        icon:"danger"
       });
     }
   };
@@ -242,7 +240,6 @@ const DharamsalaDetail = ({ navigation, route }) => {
         <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
 
       </ScrollView>
-      <Toast />
     </SafeAreaView>
   );
 };

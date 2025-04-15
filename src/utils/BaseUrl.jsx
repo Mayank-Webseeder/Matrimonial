@@ -1,6 +1,6 @@
 
-// const BASE_URL = "https://api-matrimonial.webseeder.tech/api/v1";
-const BASE_URL = "https://matrimonial-backend-oikh.onrender.com/api/v1";
+const BASE_URL = "https://api-matrimonial.webseeder.tech/api/v1";
+// const BASE_URL = "https://matrimonial-backend-oikh.onrender.com/api/v1";
 
 // auth api's
 const SIGNUP_ENDPOINT = `${BASE_URL}/user/signUp`;

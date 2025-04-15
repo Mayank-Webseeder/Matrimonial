@@ -8,9 +8,9 @@ import Globalstyles from '../../utils/GlobalCss';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { useSelector } from 'react-redux';
 import { UPDATE_EVENT_NEWS } from '../../utils/BaseUrl';
-import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { showMessage } from 'react-native-flash-message';
 
 const UpdateEventPost = ({ navigation, route }) => {
     const { eventData: initialEventData } = route.params;
@@ -107,10 +107,11 @@ const UpdateEventPost = ({ navigation, route }) => {
             console.log("✅ Event Updated Response:", JSON.stringify(response.data));
 
             if (response.status === 200 && response.data.status === true) {
-                Toast.show({
+                showMessage({
                     type: "success",
-                    text1: "Success",
-                    text2: response.data.message || "Event updated successfully!",
+                    message: "Success",
+                    description: response.data.message || "Event updated successfully!",
+                    icon: "success"
                 });
 
                 setTimeout(() => navigation.navigate("EventNews"), 2000);
@@ -126,10 +127,11 @@ const UpdateEventPost = ({ navigation, route }) => {
                 errorMessage = error.response.data?.message || "Bad request.";
             }
 
-            Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: errorMessage,
+            showMessage({
+                type: "danger",
+                message: "Error",
+                description: errorMessage,
+                icon: "danger"
             });
         } finally {
             setLoading(false); // Stop Loader
@@ -222,7 +224,6 @@ const UpdateEventPost = ({ navigation, route }) => {
                     <Text style={styles.PostText}>Update Post</Text>
                 )}
             </TouchableOpacity>
-            <Toast />
         </SafeAreaView>
     );
 };

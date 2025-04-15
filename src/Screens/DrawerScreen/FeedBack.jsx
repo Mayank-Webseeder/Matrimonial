@@ -8,7 +8,7 @@ import Colors from '../../utils/Colors';
 import { FEEDBACK } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import Toast from 'react-native-toast-message';
+import { showMessage } from 'react-native-flash-message';
 
 const FeedBack = ({ navigation }) => {
   const [rating, setRating] = useState(0);
@@ -35,10 +35,11 @@ const FeedBack = ({ navigation }) => {
         console.log("✅ Feedback Response:", JSON.stringify(response.data));
 
         if (response.status === 200 && response.data.status === true) {
-            Toast.show({
+           showMessage({
                 type: 'success',
-                text1: 'Success',
-                text2: response.data.message || 'Your Feedback has been submitted successfully!',
+                message: 'Success',
+                description: response.data.message || 'Your Feedback has been submitted successfully!',
+                icon:"success"
             });
 
             setTimeout(() => {
@@ -57,10 +58,11 @@ const FeedBack = ({ navigation }) => {
             errorMessage = error.response.data.message || errorMessage; // ✅ Show API error message
         }
 
-        Toast.show({
-            type: 'error',
-            text1: 'Error',
-            text2: errorMessage,
+        showMessage({
+            type: 'danger',
+            message: 'Error',
+            description: errorMessage,
+            icon:"danger"
         });
     }
 };
@@ -120,7 +122,6 @@ const FeedBack = ({ navigation }) => {
           <Text style={styles.submitText}>Submit FeedBack</Text>
         </TouchableOpacity>
       </View>
-      <Toast />
     </SafeAreaView>
   )
 }

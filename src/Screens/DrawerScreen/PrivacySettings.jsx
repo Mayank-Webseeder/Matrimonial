@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, Switch, TouchableOpacity, SafeAreaView, StatusBar, ToastAndroid,ActivityIndicator } from 'react-native';
+import { Text, View, Switch, TouchableOpacity, SafeAreaView, StatusBar,ActivityIndicator } from 'react-native';
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/NotificationSettingStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -7,9 +7,9 @@ import Globalstyles from '../../utils/GlobalCss';
 import { HIDE_CONTACT, HIDE_OPTIONAL_DETAILS, INACTIVE_ID,BLUR_PHOTOS } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import Toast from 'react-native-toast-message';
 import { DrawerActions } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
+import { showMessage } from 'react-native-flash-message';
 
 const PrivacySettings = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState(false);
@@ -45,10 +45,11 @@ const PrivacySettings = ({ navigation }) => {
           console.log("Toggle API Response:", response.data);
       
           if (response.status === 200) {
-            Toast.show({
+           showMessage({
               type: "success",
-              text1: "Success",
-              text2: response.data.message || `${settingType} updated successfully!`,
+              message: "Success",
+              description: response.data.message || `${settingType} updated successfully!`,
+              icon:"success"
             });
           } else {
             throw new Error(response.data.message || "Something went wrong!");
@@ -62,10 +63,11 @@ const PrivacySettings = ({ navigation }) => {
             errorMessage = error.response.data?.message || "Invalid request!";
           }
       
-          Toast.show({
-            type: "info",
-            text1: "Info",
-            text2: errorMessage,
+         showMessage({
+            type: "danger",
+            message: "Info",
+            description: errorMessage,
+            icon:"danger"
           });
       
           setter(currentValue); 
@@ -143,7 +145,6 @@ const PrivacySettings = ({ navigation }) => {
                     />
                 </View>
             </View>
-            <Toast/>
         </SafeAreaView>
     );
 };

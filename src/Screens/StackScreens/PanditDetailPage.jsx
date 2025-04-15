@@ -1,4 +1,4 @@
-import { Text, View, Image, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Linking, ToastAndroid, ActivityIndicator } from 'react-native';
+import { Text, View, Image, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Linking, ActivityIndicator } from 'react-native';
 import React, { useState, useCallback } from 'react';
 import styles from '../StyleScreens/PanditDetailPageStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -13,12 +13,12 @@ import Globalstyles from '../../utils/GlobalCss';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { PANDIT_DESCRIPTION, SAVED_PROFILES } from '../../utils/BaseUrl';
-import Toast from 'react-native-toast-message';
 import moment from "moment";
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
 import ImageViewing from 'react-native-image-viewing';
 import { SH, SW } from '../../utils/Dimensions';
+import { showMessage } from 'react-native-flash-message';
 
 const PanditDetailPage = ({ navigation, item, route }) => {
     const { pandit_id, isSaved: initialSavedState } = route.params || {};
@@ -47,20 +47,20 @@ const PanditDetailPage = ({ navigation, item, route }) => {
     const fetchPanditProfile = async () => {
         setLoading(true)
         if (!pandit_id) {
-            Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: "Pandit ID not found!",
+            showMessage({
+                type: "danger",
+                message: "Error",
+                description: "Pandit ID not found!",
             });
             return;
         }
 
         const token = await AsyncStorage.getItem('userToken');
         if (!token) {
-            Toast.show({
-                type: "error",
-                text1: "Authentication Error",
-                text2: "No token found. Please log in again.",
+            showMessage({
+                type: "danger",
+                message: "Authentication Error",
+                description: "No token found. Please log in again.",
             });
             return;
         }
@@ -79,19 +79,19 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 setMyRatings(response.data.data.ratings.filter(rating => rating.userId._id === my_id));
                 setOtherRatings(response.data.data.ratings.filter(rating => rating.userId._id !== my_id));
             } else {
-                Toast.show({
-                    type: "error",
-                    text1: "No Profile Found",
-                    text2: response.data.message || "Something went wrong!",
+                showMessage({
+                    type: "danger",
+                    message: "No Profile Found",
+                    description: response.data.message || "Something went wrong!",
                 });
             }
         } catch (error) {
             setLoading(false)
             console.error("Error fetching profile:", error);
-            Toast.show({
-                type: "error",
-                text1: "Network Error",
-                text2: "Failed to load profile data",
+            showMessage({
+                type: "danger",
+                message: "Network Error",
+                description: "Failed to load profile data",
             });
         } finally {
             setLoading(false);
@@ -100,11 +100,10 @@ const PanditDetailPage = ({ navigation, item, route }) => {
 
     const savedProfiles = async () => {
         if (!pandit_id) {
-            Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: "User ID not found!",
-                position: "top",
+            showMessage({
+                type: "danger",
+                message: "Error",
+                description: "User ID not found!",
             });
             return;
         }
@@ -127,11 +126,11 @@ const PanditDetailPage = ({ navigation, item, route }) => {
             console.log("Response Data:", response?.data);
     
             if (response.status === 200 && response.data.status === true) { // ✅ Corrected check
-                Toast.show({
+                showMessage({
                     type: "success",
-                    text1: "Success",
-                    text2: response.data.message || "Profile saved successfully!",
-                    position: "top",
+                    message: "Success",
+                    description: response.data.message || "Profile saved successfully!",
+                    icon:"success"
                 });
     
                 // ✅ API response ke hisaab se state update karo
@@ -150,11 +149,11 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 errorMessage = error.response.data?.message || "Bad request.";
             }
     
-            Toast.show({
+            showMessage({
                 type: "error",
-                text1: "Error",
-                text2: errorMessage,
-                position: "top",
+                message: "Error",
+                description: errorMessage,
+                icon:"danger"
             });
         }
     };
@@ -170,10 +169,16 @@ const PanditDetailPage = ({ navigation, item, route }) => {
         }
     };
 
-    const showToast = (message) => {
-        ToastAndroid.show(message, ToastAndroid.SHORT);
-    };
-
+    const showMessages = (message) => {
+           showMessage({
+             type: 'info',
+             message: message,
+             visibilityTime: 3000,
+             autoHide: true,
+             icon:"info"
+           });
+         };
+         
     const renderImages = (images) => {
         if (!images || images.length === 0) {
             return <Text style={styles.noReviewsText}>No images available for this post</Text>;
@@ -206,13 +211,12 @@ const PanditDetailPage = ({ navigation, item, route }) => {
     };
 
     const handleShare = async () => {
-        Toast.show({
+        showMessage({
             type: "info",
-            text1: "Info",
-            text2: "Under development",
-            position: "top",
+            message: "Info",
+            description: "Under development",
+            icon:"info"
         })
-        ToastAndroid.show("Under development",ToastAndroid.SHORT)
     };
 
 
@@ -280,8 +284,12 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 </View>
 
                 <View style={styles.contentContainer}>
-                    <Text style={styles.sectionTitle}>Description</Text>
-                    <Text style={styles.text}>{profileData?.description}</Text>
+                {profileData?.description ? (
+  <>
+    <Text style={styles.sectionTitle}>Description</Text>
+    <Text style={styles.text}>{profileData.description}</Text>
+  </>
+) : null}
                     <View style={styles.sharecontainer}>
     <TouchableOpacity 
         style={[styles.iconContainer, my_id === profileData?.userId]} 
@@ -469,29 +477,28 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                     {renderImages(images)}
                 </View>
                 <View style={styles.socialIcons}>
-                    <TouchableOpacity onPress={() => profileData?.websiteUrl ? openLink(profileData.websiteUrl, "Website") : showToast("Website link not available")}>
+                    <TouchableOpacity onPress={() => profileData?.websiteUrl ? openLink(profileData.websiteUrl, "Website") : showMessages("Website link not available")}>
                         <Image source={require('../../Images/website.png')} style={styles.websiteIcon} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => profileData?.youtubeUrl ? openLink(profileData.youtubeUrl, "YouTube") : showToast("YouTube link not available")}>
+                    <TouchableOpacity onPress={() => profileData?.youtubeUrl ? openLink(profileData.youtubeUrl, "YouTube") : showMessages("YouTube link not available")}>
                         <MaterialCommunityIcons name="youtube" size={30} color="#FF0000" />
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => profileData?.whatsapp ? openLink(profileData.whatsapp, "WhatsApp") : showToast("WhatsApp link not available")}>
+                    <TouchableOpacity onPress={() => profileData?.whatsapp ? openLink(profileData.whatsapp, "WhatsApp") : showMessages("WhatsApp link not available")}>
                         <FontAwesome5 name="whatsapp" size={30} color="#25D366" />
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => profileData?.facebookUrl ? openLink(profileData.facebookUrl, "Facebook") : showToast("Facebook link not available")}>
+                    <TouchableOpacity onPress={() => profileData?.facebookUrl ? openLink(profileData.facebookUrl, "Facebook") : showMessages("Facebook link not available")}>
                         <FontAwesome5 name="facebook" size={30} color="#3b5998" />
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => profileData?.instagramUrl ? openLink(profileData.instagramUrl, "Instagram") : showToast("Instagram link not available")}>
+                    <TouchableOpacity onPress={() => profileData?.instagramUrl ? openLink(profileData.instagramUrl, "Instagram") : showMessages("Instagram link not available")}>
                         <FontAwesome5 name="instagram" size={30} color="#E4405F" />
                     </TouchableOpacity>
                 </View>
                 <Image source={require('../../Images/slider.png')} style={styles.Bottomimage} />
             </ScrollView>
-            <Toast />
         </SafeAreaView>
     );
 };

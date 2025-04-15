@@ -5,11 +5,11 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styles from '../StyleScreens/CommunityStyle';
 import Colors from '../../utils/Colors';
 import Globalstyles from '../../utils/GlobalCss';
-import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import ImageViewing from 'react-native-image-viewing';
 import { DELETE_COMMITTEE } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { showMessage } from 'react-native-flash-message';
 
 const MyUploadedCommittees = ({ navigation, route }) => {
     const { committeeData } = route.params;
@@ -44,12 +44,12 @@ const MyUploadedCommittees = ({ navigation, route }) => {
 
             console.log("✅ Delete Response:", response.data);
 
-            if (response.status === 200 && response.data.status === true) {
-                Toast.show({
+            if (response.status === 200 || response.data.status === true) {
+                showMessage({
                     type: "success",
-                    text1: "Success",
-                    text2: "Committee deleted successfully!",
-                    position: "top",
+                    message: "Success",
+                    description: "Committee deleted successfully!",
+                    icon: "success"
                 });
 
                 setModalVisible(false);  // Close modal
@@ -74,11 +74,11 @@ const MyUploadedCommittees = ({ navigation, route }) => {
                 errorMessage = error.response.data?.message || "Bad request.";
             }
 
-            Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: errorMessage,
-                position: "top",
+            showMessage({
+                type: "danger",
+                message: "Error",
+                description: errorMessage,
+                icon: "danger"
             });
         } finally {
             setIsLoading(false);  // Hide loading indicator
@@ -204,7 +204,6 @@ const MyUploadedCommittees = ({ navigation, route }) => {
                     }
                 />
             </ScrollView>
-            <Toast />
         </SafeAreaView>
     );
 };

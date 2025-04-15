@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, ToastAndroid } from "react-native";
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, StatusBar, SafeAreaView } from "react-native";
 import React, { useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
@@ -10,7 +10,7 @@ import { UPDATE_PROFILE } from "../../utils/BaseUrl";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSelector } from "react-redux";
-import Toast from "react-native-toast-message";
+import { showMessage } from "react-native-flash-message";
 
 const UpdateProfile = ({ navigation }) => {
   const ProfileData = useSelector((state) => state.profile);
@@ -47,11 +47,11 @@ const UpdateProfile = ({ navigation }) => {
       console.log("✅ Profile Update Response:", JSON.stringify(response.data));
 
       if (response.status === 200 || response.data.status === true) {
-        Toast.show({
+        showMessage({
           type: "success",
-          text1: "Success",
-          text2: "Profile Updated Successfully!",
-          position: "top",
+          message: "Success",
+          description: "Profile Updated Successfully!",
+          icon: "none"
         });
 
         navigation.navigate("MainApp");
@@ -66,11 +66,11 @@ const UpdateProfile = ({ navigation }) => {
         errorMessage = error.response.data.message;
       }
 
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: errorMessage,
-        position: "top",
+      showMessage({
+        type: "danger",
+        message: "Error",
+        description: errorMessage,
+        icon: "danger"
       });
     }
   };
@@ -164,7 +164,6 @@ const UpdateProfile = ({ navigation }) => {
           <Text style={styles.updateButtonText}>Update Profile</Text>
         </TouchableOpacity>
       </ScrollView>
-      <Toast />
     </SafeAreaView>
   );
 };

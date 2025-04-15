@@ -4,8 +4,8 @@ import RootNavigator from './src/Routing/RootNavigator';
 import { NavigationContainer } from '@react-navigation/native';
 import store from './src/ReduxStore/Store';
 import { Provider } from 'react-redux';
-import Toast from 'react-native-toast-message';
 import InternetCheck from './src/Components/CheckInternet';
+import FlashMessage from "react-native-flash-message";
 const linking = {
   prefixes: ["https://yourwebsite.com"],
   config: {
@@ -32,8 +32,8 @@ const App = () => {
       <NavigationContainer linking={linking}>
         <RootNavigator />
       </NavigationContainer>
-      <InternetCheck />
-      <Toast/>
+      <InternetCheck/>
+      <FlashMessage position="bottom" />
     </Provider>
   );
 };

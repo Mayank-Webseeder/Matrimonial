@@ -15,7 +15,6 @@ import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { SH, SF } from '../../utils/Dimensions';
 import { useSelector } from 'react-redux';
-import Toast from 'react-native-toast-message';
 import { GET_ALL_COMITTEE, GET_COMMIITEE, SAVED_PROFILES } from '../../utils/BaseUrl';
 import axios from 'axios';
 import { useFocusEffect } from '@react-navigation/native';
@@ -24,6 +23,7 @@ import ImageViewing from 'react-native-image-viewing';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { SW } from '../../utils/Dimensions';
 import _ from "lodash";
+import { showMessage } from 'react-native-flash-message';
 
 const Committee = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -43,11 +43,6 @@ const Committee = ({ navigation }) => {
   const [isImageVisible, setImageVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [IsLoading, setIsLoading] = useState(false);
-
-  const showToast = _.debounce((type, text1, text2) => {
-    Toast.show({ type, text1, text2, position: "top" });
-  }, 500);
-
 
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
@@ -179,7 +174,7 @@ const Committee = ({ navigation }) => {
         setCommitteeData(response.data.data);
       } else {
         setCommitteeData([]);
-        setError("No Committee data found."); 
+        setError("No Committee data found.");
       }
     } catch (error) {
       console.error("Error fetching committee data:", error);
@@ -210,13 +205,14 @@ const Committee = ({ navigation }) => {
     if (MyActivistProfile && MyActivistProfile._id) {
       navigation.navigate("CommitteeSubmissionPage");
     } else {
-      Toast.show({
+      showMessage({
         type: "info",
-        text1: "You are not an activist!",
-        text2: "Create an activist profile if you want to upload a committee.",
-        position: "bottom",
+        message: "You are not an activist!",
+        description: "Create an activist profile if you want to upload a committee.",
+        position: "top",
         visibilityTime: 4000,
         autoHide: true,
+        icon:"info"
       });
     }
   };
@@ -225,11 +221,11 @@ const Committee = ({ navigation }) => {
 
   const savedProfiles = async (_id) => {
     if (!_id) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "User ID not found!",
-        position: "top",
+      showMessage({
+        type: "danger",
+        message: "Error",
+        description: "User ID not found!",
+        icon:"danger"
       });
       return;
     }
@@ -255,11 +251,11 @@ const Committee = ({ navigation }) => {
       console.log("Response Data:", JSON.stringify(response?.data));
 
       if (response.status === 200 && response.data.status === true) {
-        Toast.show({
+        showMessage({
           type: "success",
-          text1: "Success",
-          text2: response.data?.message || "Profile saved successfully!",
-          position: "top",
+          message: "Success",
+          description: response.data?.message || "Profile saved successfully!",
+          icon:"success"
         });
       } else {
         throw new Error(response.data?.message || "Something went wrong!");
@@ -270,11 +266,11 @@ const Committee = ({ navigation }) => {
         error?.response ? JSON.stringify(error.response.data) : error.message
       );
 
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: error?.response?.data?.message || "Failed to save profile!",
-        position: "top",
+      showMessage({
+        type: "danger",
+        message: "Error",
+        description: error?.response?.data?.message || "Failed to save profile!",
+        icon:"danger"
       });
       setCommitteeData((prevProfiles) =>
         prevProfiles.map((profile) =>
@@ -285,7 +281,13 @@ const Committee = ({ navigation }) => {
   };
 
   const handleShare = async () => {
-    showToast("info", "Info", "Under development");
+    showMessage({
+      message: 'Info',
+      description: 'Under development',
+      type: 'info',
+      icon: 'info',
+      duration: 3000,
+    });
   };
 
   const renderItem = ({ item }) => {
@@ -566,7 +568,6 @@ const Committee = ({ navigation }) => {
           </View>
         </View>
       </Modal>
-      <Toast />
     </SafeAreaView>
   );
 };

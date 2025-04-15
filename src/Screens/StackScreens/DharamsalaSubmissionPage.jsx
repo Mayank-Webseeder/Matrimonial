@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, StatusBar, SafeAreaView, FlatList, ActivityIndicator, ToastAndroid } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, StatusBar, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
 import Colors from '../../utils/Colors';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -7,11 +7,11 @@ import Globalstyles from '../../utils/GlobalCss';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { CityData, subCasteOptions } from '../../DummyData/DropdownData';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { CREATE_DHARAMSALA, UPDATE_DHARAMSALA, GET_DHARAMSALA } from '../../utils/BaseUrl';
+import { CREATE_DHARAMSALA} from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import Toast from 'react-native-toast-message';
 import _ from "lodash";
+import { showMessage } from 'react-native-flash-message';
 
 const DharamsalaSubmissionPage = ({ navigation }) => {
     const [subCasteInput, setSubCasteInput] = useState('');
@@ -31,14 +31,13 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
         mobileNo: ''
     });
 
-    const showToast = _.debounce((type, text1, text2, onHide) => {
-        Toast.show({
+    const showToast = _.debounce((type, message, description, icon) => {
+        showMessage({
             type,
-            text1,
-            text2,
-            position: "top",
+            message,
+            description,
             visibilityTime: 1000,
-            onHide,
+            icon
         });
     }, 500);
 
@@ -104,21 +103,21 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
             compressImageQuality: 1,
             mediaType: "photo"
         })
-        .then((images) => {
-            if (images.length > 4) {
-                alert("You can only upload up to 4 Dharamsala photos.");
-                return;
-            }
-            setDharamsalaData((prev) => ({
-                ...prev,
-                images: images.map(img => ({ uri: img.path })),
-            }));
-        })
-        .catch((err) => {
-            console.log("Crop Picker Error:", err);
-        });
+            .then((images) => {
+                if (images.length > 4) {
+                    alert("You can only upload up to 4 Dharamsala photos.");
+                    return;
+                }
+                setDharamsalaData((prev) => ({
+                    ...prev,
+                    images: images.map(img => ({ uri: img.path })),
+                }));
+            })
+            .catch((err) => {
+                console.log("Crop Picker Error:", err);
+            });
     };
-    
+
 
     const convertToBase64 = async (images) => {
         try {
@@ -168,53 +167,50 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
         try {
             setIsLoading(true);
             const token = await AsyncStorage.getItem("userToken");
-    
+
             if (!token) {
-                showToast("error", "Error", "Authorization token is missing.");
+                showToast("danger", "Error", "Authorization token is missing.");
                 return;
             }
-    
+
             const headers = {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             };
-    
+
             const payload = await constructDharamsalaPayload(DharamsalaData);
             console.log("Payload:", payload);
-    
+
             const response = await axios.post(CREATE_DHARAMSALA, payload, { headers });
             console.log("Dharamsala create response:", JSON.stringify(response.data));
-    
+
             if (response.status === 200 && response.data.status === true) {
                 console.log("Created Data:", JSON.stringify(response.data.data));
-    
+
                 showToast(
                     "success",
                     "Dharamsala Created Successfully",
                     response.data.message || "Your changes have been saved!",
-                    () => {
-                        navigation.navigate("Dharmshala");
-                    }
+                    "success"
                 );
-                ToastAndroid.show("Dharamsala Created Successfully",ToastAndroid.SHORT);
-    
+                navigation.navigate("Dharmshala");
             } else {
                 throw new Error(response.data.message || "Something went wrong");
             }
         } catch (error) {
             console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
-    
+
             let errorMessage = "Failed to create Dharamsala.";
             if (error.response?.status === 400) {
                 errorMessage = error.response?.data?.message || "Bad request. Please check your input.";
             }
-    
-            showToast("error", "Error", errorMessage);
+
+            showToast("danger", "Error", errorMessage, "danger");
         } finally {
             setIsLoading(false);
         }
     };
-    
+
     return (
         <SafeAreaView style={Globalstyles.container}>
             <StatusBar
@@ -343,7 +339,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                 <TouchableOpacity
                     style={styles.submitButton}
                     onPress={handleCreateDharamSala}
-                    disabled={isLoading} 
+                    disabled={isLoading}
                 >
                     {isLoading ? (
                         <ActivityIndicator size="large" color={Colors.light} />
@@ -352,7 +348,6 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     )}
                 </TouchableOpacity>
             </View>
-            <Toast/>
         </SafeAreaView>
     );
 };

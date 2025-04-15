@@ -7,10 +7,11 @@ import Globalstyles from '../../utils/GlobalCss';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import Toast from 'react-native-toast-message';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import { UPDATE_COMMITTEE } from '../../utils/BaseUrl';
 import { CityData, subCasteOptions } from '../../DummyData/DropdownData';
+import { showMessage } from 'react-native-flash-message';
+
 const UpdateCommittee = ({ navigation, route }) => {
     const { committeeData } = route.params;
     const [subCasteInput, setSubCasteInput] = useState('');
@@ -165,17 +166,13 @@ const UpdateCommittee = ({ navigation, route }) => {
             setIsLoading(true);
             const token = await AsyncStorage.getItem("userToken");
             if (!token) {
-                Toast.show({ type: "error", text1: "Error", text2: "Authorization token is missing." });
+                showMessage({ type: "danger", message: "Error", description: "Authorization token is missing." });
                 return;
             }
-
-            // ✅ Ensure `photoUrl` is Base64 before sending
             if (!CommitteeData.photoUrl.startsWith("data:image/")) {
-                Toast.show({ type: "error", text1: "Error", text2: "Please select an image first." });
+                showMessage({ type: "error", message: "Error", description: "Please select an image first." });
                 return;
             }
-
-            // ✅ Log the full API URL and Payload
             const apiUrl = `${UPDATE_COMMITTEE}/${committeeData._id}`;
             console.log("API URL being hit:", apiUrl);
             console.log("Payload being sent:", JSON.stringify(CommitteeData, null, 2));
@@ -185,12 +182,12 @@ const UpdateCommittee = ({ navigation, route }) => {
 
             if (response.status === 200) {
                 console.log("response", JSON.stringify(response.data));
-                Toast.show({ type: "success", text1: "Committee Updated Successfully" });
+                showMessage({ type: "success", message: "Committee Updated Successfully", icon: "success" });
                 navigation.reset({ index: 0, routes: [{ name: "Committee" }] });
             }
         } catch (error) {
             console.error("API Error:", error.response?.data || error);
-            Toast.show({ type: "error", text1: "Error", text2: "Failed to update committee." });
+            showMessage({ type: "danger", message: "Error", description: "Failed to update committee.", icon: "danger" });
         } finally {
             setIsLoading(false);
         }
@@ -321,7 +318,6 @@ const UpdateCommittee = ({ navigation, route }) => {
                     {isLoading ? <ActivityIndicator size="large" color={Colors.light} /> : <Text style={styles.submitButtonText}>Submit</Text>}
                 </TouchableOpacity>
             </ScrollView>
-            <Toast />
         </SafeAreaView>
     );
 };

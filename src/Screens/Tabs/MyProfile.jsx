@@ -206,8 +206,7 @@ const MyProfile = ({ navigation }) => {
             if (!token) {
                 showMessage({
                     type: "danger",
-                    message: "Error",
-                    description: "Authorization token is missing.",
+                    message: "Authorization token is missing.",
                 });
                 return;
             }
@@ -239,8 +238,7 @@ const MyProfile = ({ navigation }) => {
             console.error("Error deleting profile photo:", error?.response?.data || error.message);
            showMessage({
                 type: "danger",
-                message: "Error",
-                description: "Failed to delete profile photo.",
+                message: "Failed to delete profile photo.",
                 icon:"danger"
             });
         } finally {

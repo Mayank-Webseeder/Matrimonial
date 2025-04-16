@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, StatusBar,Image } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, StatusBar, Image } from 'react-native';
 import styles from '../StyleScreens/AllReviewsPageStyle';
 import { Rating } from 'react-native-ratings';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
 import Globalstyles from '../../utils/GlobalCss';
-import { SH,SW } from '../../utils/Dimensions';
+import { SH, SW } from '../../utils/Dimensions';
 import moment from 'moment';
 const AllReviewsPage = ({ route, navigation }) => {
     const { reviews } = route.params;

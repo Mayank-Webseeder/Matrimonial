@@ -262,7 +262,6 @@ const PartnersPreference = ({ navigation, profileData }) => {
                 type: 'danger',
                 icon: 'danger',
                 duration: 3000,
-                icon:"danger"
             });
         } finally {
             setLoading(false);

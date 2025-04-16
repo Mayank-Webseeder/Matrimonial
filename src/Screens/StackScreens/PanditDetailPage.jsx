@@ -49,8 +49,8 @@ const PanditDetailPage = ({ navigation, item, route }) => {
         if (!pandit_id) {
             showMessage({
                 type: "danger",
-                message: "Error",
-                description: "Pandit ID not found!",
+                message: "Pandit ID not found!",
+                icon:"danger"
             });
             return;
         }
@@ -213,8 +213,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
     const handleShare = async () => {
         showMessage({
             type: "info",
-            message: "Info",
-            description: "Under development",
+            message:"Under development",
             icon:"info"
         })
     };

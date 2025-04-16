@@ -209,7 +209,6 @@ const Committee = ({ navigation }) => {
         type: "info",
         message: "You are not an activist!",
         description: "Create an activist profile if you want to upload a committee.",
-        position: "top",
         visibilityTime: 4000,
         autoHide: true,
         icon:"info"
@@ -282,8 +281,7 @@ const Committee = ({ navigation }) => {
 
   const handleShare = async () => {
     showMessage({
-      message: 'Info',
-      description: 'Under development',
+      message: 'Under development',
       type: 'info',
       icon: 'info',
       duration: 3000,

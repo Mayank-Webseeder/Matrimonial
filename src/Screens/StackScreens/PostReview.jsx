@@ -137,8 +137,7 @@ const PostReview = ({ navigation, route }) => {
             } else {
                showMessage({
                     type: "danger",
-                    message: "Error",
-                    description: "Failed to post/update the review. Please try again.",
+                    message: "Failed to post/update the review. Please try again.",
                     icon:"danger"
                 });
             }
@@ -149,8 +148,7 @@ const PostReview = ({ navigation, route }) => {
 
            showMessage({
                 type: "danger",
-                message: "Error",
-                description: errorMessage,
+                message:errorMessage,
                 icon:"danger"
             });
         }

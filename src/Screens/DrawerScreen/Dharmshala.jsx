@@ -281,8 +281,7 @@ const Dharmshala = () => {
 
   const handleShare = async () => {
     showMessage({
-      message: 'Info',
-      description: 'Under development',
+      message: 'Under development',
       type: 'info',
       icon: 'info',
       duration: 3000,

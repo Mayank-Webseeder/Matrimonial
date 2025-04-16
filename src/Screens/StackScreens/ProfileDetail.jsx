@@ -50,22 +50,38 @@ const ProfileDetail = ({ route, navigation }) => {
     )?.status;
 
     useEffect(() => {
-        const expiredServices = [];
+        let isExpired = false;
+        let expiredServiceName = '';
 
-        if (isBiodataExpired) expiredServices.push('Biodata');
-        if (panditStatus === 'Expired') expiredServices.push('Pandit');
-        if (JyotishStatus === 'Expired') expiredServices.push('Jyotish');
-        if (KathavachakStatus === 'Expired') expiredServices.push('Kathavachak');
+        switch (profileType) {
+            case 'Biodata':
+                isExpired = isBiodataExpired;
+                expiredServiceName = 'Biodata';
+                break;
+            case 'Pandit':
+                isExpired = panditStatus === 'Expired';
+                expiredServiceName = 'Pandit';
+                break;
+            case 'Jyotish':
+                isExpired = JyotishStatus === 'Expired';
+                expiredServiceName = 'Jyotish';
+                break;
+            case 'Kathavachak':
+                isExpired = KathavachakStatus === 'Expired';
+                expiredServiceName = 'Kathavachak';
+                break;
+            default:
+                break;
+        }
 
-        if (expiredServices.length > 0) {
+        if (isExpired) {
             Alert.alert(
                 'Subscription Expired',
-                `Your ${expiredServices.join(', ')} subscription(s) have expired. Please renew to continue using the services.`,
+                `Your ${expiredServiceName} subscription has expired. Please renew to continue using the service.`,
                 [{ text: 'OK', style: 'default' }]
             );
         }
-    }, [isBiodataExpired, panditStatus, JyotishStatus, KathavachakStatus]);
-
+    }, [profileType, isBiodataExpired, panditStatus, JyotishStatus, KathavachakStatus]);
 
     const fetchData = async () => {
         try {
@@ -251,8 +267,8 @@ const ProfileDetail = ({ route, navigation }) => {
                                             <Text style={styles.editButtonText}>Buy Subscription</Text>
                                         </TouchableOpacity>
                                     ) : (
-                                        <TouchableOpacity style={[styles.editButton, { backgroundColor: "#c4f2e4" }]} disabled={true}>
-                                            <Text style={[styles.editButtonText, { color: "green" }]}>Subscription Active</Text>
+                                        <TouchableOpacity style={[styles.editButton, { backgroundColor: "#04AA6D" }]} disabled={true}>
+                                            <Text style={[styles.editButtonText, { color: "#fff" }]}>Subscription Active</Text>
                                         </TouchableOpacity>
                                     )}
                                 </View>
@@ -683,10 +699,10 @@ const ProfileDetail = ({ route, navigation }) => {
                                     </TouchableOpacity>
                                 ) : (
                                     <TouchableOpacity
-                                        style={[styles.editButton, { backgroundColor: '#c4f2e4' }]}
+                                        style={[styles.editButton, { backgroundColor: '#04AA6D' }]}
                                         disabled={true}
                                     >
-                                        <Text style={[styles.editButtonText, { color: 'green' }]}>Subscription Active</Text>
+                                        <Text style={[styles.editButtonText, { color: '#fff' }]}>Subscription Active</Text>
                                     </TouchableOpacity>
                                 )}
                                 <TouchableOpacity style={[styles.editButton]} onPress={() => navigation.navigate('UpdateProfileDetails', { profileData, profileType })}>
@@ -858,10 +874,10 @@ const ProfileDetail = ({ route, navigation }) => {
                                     </TouchableOpacity>
                                 ) : (
                                     <TouchableOpacity
-                                        style={[styles.editButton, { backgroundColor: '#c4f2e4' }]}
+                                        style={[styles.editButton, { backgroundColor: '#04AA6D' }]}
                                         disabled={true}
                                     >
-                                        <Text style={[styles.editButtonText, { color: 'green' }]}>Subscription Active</Text>
+                                        <Text style={[styles.editButtonText, { color: '#fff' }]}>Subscription Active</Text>
                                     </TouchableOpacity>
                                 )}
                                 <TouchableOpacity style={[styles.editButton]} onPress={() => navigation.navigate('UpdateProfileDetails', { profileData, profileType })}>

@@ -327,8 +327,7 @@ const RoleRegisterForm = ({ navigation }) => {
 
             showMessage({
                 type: 'danger',
-                message: 'Error',
-                description: error.response?.data?.message || 'Something went wrong!',
+                message:error.response?.data?.message || 'Something went wrong!',
                 icon:"danger"
             });
 

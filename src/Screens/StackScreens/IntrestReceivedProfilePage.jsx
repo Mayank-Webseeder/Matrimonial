@@ -108,8 +108,8 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
     if (!_id) {
       showMessage({
         type: "danger",
-        message: "Error",
-        description: "User ID not found!",
+        message: "User ID not found!",
+        icon:"danger"
       });
       return;
     }
@@ -189,7 +189,9 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           description: response.data.message || "Request accepted successfully!",
           icon: "success",
         });
-        setTimeout(() => navigation.navigate("IntrestedProfile"), 1000)
+        setTimeout(() => {
+          navigation.goBack();
+        }, 500);
       } else {
         throw new Error(response.data.message || "Something went wrong");
       }
@@ -243,7 +245,9 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           description: response.data.message || "Request rejected successfully!",
           icon: "success"
         });
-        setTimeout(() => navigation.navigate("IntrestedProfile"), 1000)
+        setTimeout(() => {
+          navigation.goBack();
+        }, 500);
       } else {
         throw new Error(response.data.message || "Something went wrong");
       }

@@ -71,7 +71,7 @@ const Matrimonial = ({ navigation }) => {
   const fetchProfiles = async (query = "") => {
     const token = await AsyncStorage.getItem('userToken');
     if (!token) {
-      showMessage({ type: 'error', message: 'Error', description: 'No token found!' });
+      showMessage({ type: 'error', message: 'No token found!' });
       return;
     }
 

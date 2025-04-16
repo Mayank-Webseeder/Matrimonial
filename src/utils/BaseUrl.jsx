@@ -141,6 +141,7 @@ const RAZORPAY=`${BASE_URL}/subscription/getRazorPayKey`;
 const FREE_TRIAL=`${BASE_URL}/subscription/setTrial`;
 const PAYMENT_VERIFICATION=`${BASE_URL}/subscription/verifyPayment`;
 const PAID_URL=`${BASE_URL}/subscription/buy`;
+const SUBSCRIPTION_HISTORY=`${BASE_URL}/subscription/history`;
 
 export {
     SIGNUP_ENDPOINT,
@@ -241,5 +242,6 @@ export {
     PAYMENT_VERIFICATION,
     RAZORPAY,
     PROFILE_TYPE,
-    BASE_URL
+    BASE_URL,
+    SUBSCRIPTION_HISTORY
 }

@@ -28,9 +28,9 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
     const savedProfiles = async (_id) => {
         if (!_id) {
             showMessage({
-                message: 'Error',
-                description: 'User ID not found!',
+                message: 'User ID not found!',
                 type: 'danger',
+                icon:"danger",
                 duration: 3000,
             });
             return;
@@ -69,8 +69,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                 }
             } else {
                 showMessage({
-                    message: 'Error',
-                    description: 'Something went wrong!',
+                    message: 'Something went wrong!',
                     type: 'danger',
                     duration: 3000,
                     icon: "danger"
@@ -83,8 +82,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
             );
 
             showMessage({
-                message: 'Error',
-                description: error.response?.data?.message || "Failed to save profile!",
+                message:error.response?.data?.message || "Failed to save profile!",
                 type: 'danger',
                 duration: 3000,
             });
@@ -94,8 +92,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
     const handleShare = async () => {
         showMessage({
             type: "info",
-            text1: "Info",
-            text2: "Under development",
+            message: "Under development",
             icon: "info"
         });
     };

@@ -16,6 +16,7 @@ const waitForSocketConnection = (callback, interval = 100) => {
   }
 };
 
+
 const useNotificationListener = () => {
   useFocusEffect(
     useCallback(() => {
@@ -24,18 +25,19 @@ const useNotificationListener = () => {
       const fetchAndSubscribe = async () => {
         try {
           const token = await AsyncStorage.getItem("userToken");
-          if (!token) throw new Error("No token found");
+          if (!token) throw new Error("No token");
 
-          const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` };
+          const headers = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          };
           const res = await axios.get(PROFILE_ENDPOINT, { headers });
 
           const profileData = res.data.data;
-          console.log("Profile Data:", profileData);
+          console.log("profileData.connReqNotification",profileData.connReqNotification,
+                "profileData.eventPostNotification",profileData.eventPostNotification)
 
-          if (
-            isActive &&
-            (profileData.connReqNotification || profileData.eventPostNotification)
-          ) {
+          if (isActive && (profileData.connReqNotification || profileData.eventPostNotification)) {
             waitForSocketConnection(() => {
               subscribeToEvents(
                 profileData.connReqNotification,
@@ -44,7 +46,7 @@ const useNotificationListener = () => {
             });
           }
         } catch (error) {
-          console.error("Error fetching profile:", error.response ? error.response.data : error.message);
+          console.error("🔴 Profile fetch error:", error.message);
         }
       };
 
@@ -58,15 +60,12 @@ const useNotificationListener = () => {
   );
 };
 
-const subscribeToEvents = (connReqNotification = true, eventPostNotification = true) => {
-  const socket = getSocket(); 
+const subscribeToEvents = (connReq = true, eventPost = true) => {
+  const socket = getSocket();
+  console.log("📡 Subscribing to socket events...");
 
-  if (!socket) {
-    console.error("❌ Socket not initialized!");
-    return;
-  }
+  socket.offAny(); // 👈 Important to prevent duplication
 
-  console.log("📡 Subscribing to events...");
   socket.onAny((event, data) => {
     console.log(`📡 Received Event: ${event}`, data);
   });
@@ -80,71 +79,29 @@ const subscribeToEvents = (connReqNotification = true, eventPostNotification = t
     });
   };
 
-  if (connReqNotification) {
-    socket.on("newMatch", (newMatch) => {
-      console.log("🔥 New Match Received:", newMatch);
-      showToast(`🎉 Matched with ${newMatch.name || "someone"}!`);
-    });
-
-    socket.on("connectionRequest", (data) => {
-      console.log("🔔 Connection Request:", data);
-      showToast(`You have a new connection from ${data.username || "someone"}`);
-    });
-
-    socket.on("connectionRequestResponse", (data) => {
-      console.log("✅ Connection Request Response Received:", data);
-      showToast(data?.message || "You have a new connection request response!");
-    });
+  if (connReq) {
+    socket.on("newMatch", (data) => showToast(`🎉 Matched with ${data.name || "someone"}`));
+    socket.on("connectionRequest", (data) => showToast(`New request from ${data.username}`));
+    socket.on("connectionRequestResponse", (data) => showToast(data.message));
   }
 
-  if (eventPostNotification) {
-    socket.on("post-commented", (data) => {
-      console.log("💬 New Comment on Post:", data);
-      showToast(`🎉 New comment by ${data.commentBy.name || "someone"}!`);
-    });
-
-    socket.on("post-liked", (data) => {
-      console.log("❤️ Post Liked:", data);
-      showToast(`${data.likedBy.name || "Someone"} liked your post!`);
-    });
+  if (eventPost) {
+    socket.on("post-commented", (data) => showToast(`New comment by ${data.commentBy.name}`));
+    socket.on("post-liked", (data) => showToast(`${data.likedBy.name} liked your post!`));
   }
 
-  socket.on("panditRequestApproved", (data) => {
-    console.log("💬 panditRequestApproved:", data);
-    showToast(data.message);
-  });
-
-  socket.on("kathavachakRequestApproved", (data) => {
-    console.log("💬 kathavachakRequestApproved:", data);
-    showToast(data.message);
-  });
-
-  socket.on("jyotishRequestApproved", (data) => {
-    console.log("💬 jyotishRequestApproved:", data);
-    showToast(data.message);
-  });
-
-  socket.on("activistRequestApproved", (data) => {
-    console.log("💬 activistRequestApproved:", data);
-    showToast(data.message);
-  });
-
+  socket.on("panditRequestApproved", (data) => showToast(data.message));
+  socket.on("kathavachakRequestApproved", (data) => showToast(data.message));
+  socket.on("jyotishRequestApproved", (data) => showToast(data.message));
+  socket.on("activistRequestApproved", (data) => showToast(data.message));
 };
 
 const unsubscribeFromEvents = () => {
   const socket = getSocket();
   if (!socket) return;
 
-  console.log("🔴 Unsubscribing from events...");
-  socket.off("newMatch");
-  socket.off("connectionRequest");
-  socket.off("connectionRequestResponse");
-  socket.off("post-commented");
-  socket.off("post-liked");
-  socket.off("panditRequestApproved");
-  socket.off("kathavachakRequestApproved");
-  socket.off("jyotishRequestApproved");
-  socket.off("activistRequestApproved");
+  console.log("🔴 Unsubscribing from socket events...");
+  socket.offAny();
 };
 
 export default useNotificationListener;

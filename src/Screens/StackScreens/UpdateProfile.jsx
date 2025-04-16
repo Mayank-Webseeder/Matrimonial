@@ -68,8 +68,7 @@ const UpdateProfile = ({ navigation }) => {
 
       showMessage({
         type: "danger",
-        message: "Error",
-        description: errorMessage,
+        message: errorMessage,
         icon: "danger"
       });
     }

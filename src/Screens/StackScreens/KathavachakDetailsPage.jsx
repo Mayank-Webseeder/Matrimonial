@@ -51,8 +51,8 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
         if (!kathavachak_id) {
             showMessage({
                 type: "danger",
-                message: "Error",
-                description: "Jyotish ID not found!",
+                message:"Jyotish ID not found!",
+                icon:"danger"
             });
             return;
         }
@@ -153,8 +153,8 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
 
             showMessage({
                 type: "danger",
-                message: "Error",
-                description: errorMessage,
+                message:errorMessage,
+                icon:"danger"
             });
         }
     };

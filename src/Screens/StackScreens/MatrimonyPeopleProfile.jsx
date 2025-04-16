@@ -72,8 +72,8 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       if (!token) {
         showMessage({
           type: "error",
-          message: "Error",
-          description: "User token missing!",
+          message: "User token missing!",
+          icon:"danger"
         });
         return;
       }
@@ -106,8 +106,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
       showMessage({
         type: "danger",
-        message: "Error",
-        description: errorMessage,
+        message:errorMessage,
         icon: "danger"
       });
     }
@@ -241,7 +240,6 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         type: "danger",
         message: "Error",
         description: "User ID not found!",
-        position: "top",
         visibilityTime: 3000,
         autoHide: true
       });
@@ -269,7 +267,6 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           type: "success",
           message: "Success",
           description: response.data.message,
-          position: "top",
           visibilityTime: 2000,
           autoHide: true,
           onHide: () => {

@@ -9,6 +9,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from '../StyleScreens/ReportPageStyle';
 import { REPORT } from '../../utils/BaseUrl';
 import { showMessage } from 'react-native-flash-message';
+import Globalstyles from '../../utils/GlobalCss';
 
 const ReportPage = ({ navigation, route }) => {
   const { profileId } = route.params || {};

@@ -47,8 +47,7 @@ const MyUploadedCommittees = ({ navigation, route }) => {
             if (response.status === 200 || response.data.status === true) {
                 showMessage({
                     type: "success",
-                    message: "Success",
-                    description: "Committee deleted successfully!",
+                    message: "Committee deleted successfully!",
                     icon: "success"
                 });
 
@@ -76,8 +75,7 @@ const MyUploadedCommittees = ({ navigation, route }) => {
 
             showMessage({
                 type: "danger",
-                message: "Error",
-                description: errorMessage,
+                message:errorMessage,
                 icon: "danger"
             });
         } finally {

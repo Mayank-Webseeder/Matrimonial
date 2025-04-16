@@ -8,7 +8,7 @@ import Colors from "../../utils/Colors";
 import { useDispatch } from "react-redux";
 import { setLoginData } from "../../ReduxStore/Slices/authSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { initializeSocket } from "../../../socket";
+import { getSocket, initializeSocket } from "../../../socket";
 import { showMessage } from "react-native-flash-message";
 
 const Login = ({ navigation }) => {
@@ -29,85 +29,84 @@ const Login = ({ navigation }) => {
         return Object.keys(newErrors).length === 0;
     };
 
+    const checkSocketReadyAndNavigate = async () => {
+        const socket = getSocket();
+        if (socket && socket.connected) {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "AppStack" }],
+          });
+        } else {
+          console.log("⏳ Waiting for socket to connect...");
+          setTimeout(checkSocketReadyAndNavigate, 200); 
+        }
+      };
+
     const handleLogin = async () => {
         if (!validateFields()) {
             return;
         }
         setLoading(true);
-    
+
         try {
             const payload = {
                 mobileNo: mobileNumber.trim(),
                 password: password.trim(),
             };
-    
+
             console.log("📤 Login payload:", payload);
-    
+
             const response = await axios.post(LOGIN_ENDPOINT, payload);
             const LoginData = response.data;
             console.log("🔑 LoginData:", LoginData);
-    
+
             // ✅ Debugging Response Status
             console.log("🟢 Response Status:", response.status);
             console.log("🟢 Response Data Success:", response.data.success);
-    
+
             if (response.status === 200 && response.data.status === true) {
                 // ✅ Extract and store token & userId
                 const token = LoginData?.user?.token;
                 const userId = LoginData?.user?.user?.id;
-    
+
                 if (!token || !userId) {
                     throw new Error("❌ Invalid response structure");
                 }
-    
+
                 await AsyncStorage.setItem("userToken", token);
                 await AsyncStorage.setItem("userId", userId);
-    
+
                 console.log("🔐 Token Saved:", token);
                 console.log("🆔 User ID Saved:", userId);
-    
+
                 dispatch(setLoginData(LoginData));
-    
-                // ✅ Initialize Socket after login
-                try {
-                    initializeSocket(userId);
-                    console.log(`✅ Socket initialized successfully for user: ${userId}`);
-                } catch (socketError) {
-                    console.error("🚨 Socket Initialization Failed:", socketError);
-                }
-    
-               showMessage({
+
+                showMessage({
                     type: "success",
                     message: "Login Successful",
                     description: "You have logged in!",
                     visibilityTime: 1000,
-                    icon:"success",
+                    icon: "success",
                     textStyle: { fontSize: 14, color: "white" },
-                    onHide: () => {
-                        console.log("🟢 Navigating to AppStack...");
-                        navigation.reset({
-                            index: 0,
-                            routes: [{ name: "AppStack" }],
-                        });
-                    },
+                    onHide:checkSocketReadyAndNavigate
                 });
             } else {
                 console.log("❌ Login failed: Invalid credentials.");
-              showMessage({
+                showMessage({
                     type: "danger",
                     message: "Login Failed",
                     description: LoginData.message || "Invalid credentials. Please try again.",
                     visibilityTime: 2000,
                     textStyle: { fontSize: 14, color: "white" },
-                    icon:"danger"
+                    icon: "danger"
                 });
             }
         } catch (error) {
             console.error("🚨 Login Error:", error);
-    
+
             if (error.response?.status === 400) {
                 console.error("❌ Unauthorized:", error.response.data);
-              showMessage({
+                showMessage({
                     type: "error",
                     message: "Unauthorized",
                     description: error.response.data.message || "Invalid mobile number or password.",

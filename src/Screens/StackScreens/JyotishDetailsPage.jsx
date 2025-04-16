@@ -51,8 +51,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
         if (!jyotish_id) {
             showMessage({
                 type: "error",
-                message: "Error",
-                description: "Jyotish ID not found!",
+                message: "Jyotish ID not found!",
             });
             return;
         }
@@ -61,8 +60,8 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
         if (!token) {
             showMessage({
                 type: "danger",
-                message: "Authentication Error",
-                description: "No token found. Please log in again.",
+                message: "No token found. Please log in again.",
+                icon:"danger"
             });
             return;
         }
@@ -104,14 +103,13 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
         if (!jyotish_id) {
             showMessage({
                 type: "danger",
-                message: "Error",
-                description: "User ID not found!",
-                position: "top",
+                message: "User ID not found!",
+                icon:"danger"
             });
             return;
         }
 
-        setIsSaved((prev) => !prev); // ✅ Optimistic UI Update
+        setIsSaved((prev) => !prev); 
 
         try {
             const token = await AsyncStorage.getItem("userToken");
@@ -131,9 +129,8 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
             if (response.status === 200 && response.data.status === true) {
                 showMessage({
                     type: "success",
-                    message: "Success",
-                    description: response.data.message || "Profile saved successfully!",
-                    position: "top",
+                    message:response.data.message || "Profile saved successfully!",
+                    icon:"success"
                 });
 
                 // ✅ API response ke hisaab se state update karo
@@ -154,9 +151,8 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
 
             showMessage({
                 type: "danger",
-                message: "Error",
-                description: errorMessage,
-                position: "top",
+                message:errorMessage,
+                icon:"danger"
             });
         }
     };
@@ -214,9 +210,8 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
     const handleShare = async () => {
         showMessage({
             type: "info",
-            message: "Info",
-            description: "Under development",
-            position: "top",
+            message: "Under development",
+            icon:"info"
         });
     };
 

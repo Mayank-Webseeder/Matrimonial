@@ -336,8 +336,7 @@ const JyotishRegister = ({ navigation }) => {
             console.error("❌ Error:", errorMessage);
 
             showMessage({
-                message: "Error",
-                description: errorMessage,
+                message:errorMessage,
                 type: "danger",
                 icon: "danger",
                 duration: 5000,

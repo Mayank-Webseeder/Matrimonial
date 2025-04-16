@@ -130,7 +130,7 @@ export const PartnerManglikStatusData = [
 ];
 
 export const LivingData = [
-  { label: 'yes', value: 'yes' },
+  { label: 'Yes', value: 'Yes' },
   { label: 'No', value: 'No' },
 ]
 
@@ -227,29 +227,29 @@ export const PartnerDietHabit = [
 ]
 
 export const smokingStatusData = [
-  { label: 'yes', value: 'Yes' },
+  { label: 'Yes', value: 'Yes' },
   { label: 'No', value: 'No' },
 ]
 
 export const PartnersmokingStatusData = [
-  { label: 'yes', value: 'Yes' },
+  { label: 'Yes', value: 'Yes' },
   { label: 'No', value: 'No' },
   { label: 'Doesn’t Matter', value: 'Doesn’t Matter' }
 ]
 
 export const DrinkingHabit = [
-  { label: 'yes', value: 'Yes' },
+  { label: 'Yes', value: 'Yes' },
   { label: 'No', value: 'No' },
   { label: 'Occasionally', value: 'Occasionally' },
 ]
 
 export const TobacooHabit = [
-  { label: 'yes', value: 'Yes' },
+  { label: 'Yes', value: 'Yes' },
   { label: 'No', value: 'No' },
 ]
 
 export const PartnerDrinkingHabit = [
-  { label: 'yes', value: 'Yes' },
+  { label: 'Yes', value: 'Yes' },
   { label: 'No', value: 'No' },
   { label: 'Occasionally', value: 'Occasionally' },
   { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },

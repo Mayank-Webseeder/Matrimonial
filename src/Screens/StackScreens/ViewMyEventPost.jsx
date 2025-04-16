@@ -202,9 +202,8 @@ const ViewMyEventPost = ({ navigation, route }) => {
 
       showMessage({
         type: "danger",
-        message: "Error",
         message: error?.response?.data?.message || "Failed to add comment. Please try again!",
-        position: "danger",
+        icon: "danger",
       });
     } finally {
       setCommentLoading(false);

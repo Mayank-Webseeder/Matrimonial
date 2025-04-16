@@ -7,7 +7,6 @@ import { SH, SW, SF } from '../../utils/Dimensions';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector, useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { disconnectSocket } from '../../../socket';
 import { resetBioData } from '../../ReduxStore/Slices/BiodataSlice';
 import { resetsetActivistdata } from '../../ReduxStore/Slices/ActivistSlice';
 import { resetAllBiodata } from '../../ReduxStore/Slices/GetAllBiodataSlice';
@@ -75,14 +74,12 @@ const CustomDrawer = (props) => {
 
   const handleLogout = async () => {
     try {
-      disconnectSocket(); // ✅ Socket disconnect karo
-
       await AsyncStorage.removeItem("userToken");
       await AsyncStorage.removeItem("userId");
-      await AsyncStorage.getItem("profileInterest");
-      await AsyncStorage.getItem("newsEvents");
+      await AsyncStorage.removeItem("profileInterest");
+      await AsyncStorage.removeItem("newsEvents");
 
-      dispatch(resetBioData()); // ✅ Redux store clear karo
+      dispatch(resetBioData()); 
       dispatch(resetsetActivistdata());
       dispatch(resetAllBiodata());
       dispatch(reseAllNotification());
@@ -118,8 +115,7 @@ const CustomDrawer = (props) => {
 
   const handleShare = async () => {
     showMessage({
-      message: 'Info',
-      description: 'Under development',
+      message: 'Under development',
       type: 'info',
       icon: 'info',
       duration: 3000,

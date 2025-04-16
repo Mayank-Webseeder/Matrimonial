@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
         borderRadius: 75,
     },
     imagePlaceholder: {
-        color: Colors.gray,
+        color:"gray",
         fontSize: SF(15),
         textDecorationLine: 'underline',
     },

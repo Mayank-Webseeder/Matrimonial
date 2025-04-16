@@ -299,6 +299,8 @@ const PanditRegister = ({ navigation }) => {
                 )
             };
 
+            console.log("commonPayload",JSON.stringify(payload))
+
             const response = await axios.post(CREATE_PANDIT, payload, { headers });
             console.log("Response:", JSON.stringify(response.data));
 
@@ -326,8 +328,7 @@ const PanditRegister = ({ navigation }) => {
             console.error("❌ Error:", errorMessage);
 
             showMessage({
-                message: "Error",
-                description: errorMessage,
+                message:errorMessage,
                 type: "danger",
                 icon: "danger",
                 duration: 5000,

@@ -1,111 +1,147 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { DrawerActions } from '@react-navigation/native';
+import { DrawerActions, useFocusEffect } from '@react-navigation/native';
 import Globalstyles from '../../utils/GlobalCss';
 import Colors from '../../utils/Colors';
 import { SF, SH, SW } from '../../utils/Dimensions';
+import { SUBSCRIPTION_HISTORY } from '../../utils/BaseUrl';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 const SubscriptionHistory = ({ navigation }) => {
     const [activeTab, setActiveTab] = useState('Pandit');
+    const [subscriptionData, setSubscriptionData] = useState([]);
+    const [IsLoading, setIsLoading] = useState(false);
 
-    const userData = {
-        serviceSubscriptions: [
-            {
-                serviceType: 'Pandit',
-                subscriptionType: 'Paid',
-                startDate: '2025-01-01T00:00:00.000Z',
-                endDate: '2025-04-01T00:00:00.000Z',
-                status: 'Active',
-                trialPeriod: 0,
-                duration: 3,
-                amount: 1000,
-                discountApplied: 100,
-                promocode: 'NEWYEAR2025',
-                paymentDate: '2025-01-01T10:00:00.000Z',
-            },
-            {
-                serviceType: 'Jyotish',
-                subscriptionType: 'Trial',
-                startDate: '2024-11-01T00:00:00.000Z',
-                endDate: '2024-11-15T00:00:00.000Z',
-                status: 'Expired',
-                trialPeriod: 14,
-                duration: 0,
-                amount: 800,
-                discountApplied: 0,
-                promocode: null,
-                paymentDate: '2024-11-01T10:00:00.000Z',
-            },
-            {
-                serviceType: 'Biodata',
-                subscriptionType: 'Trial',
-                startDate: '2024-11-01T00:00:00.000Z',
-                endDate: '2024-11-15T00:00:00.000Z',
-                status: 'Expired',
-                trialPeriod: 14,
-                duration: 0,
-                amount: 800,
-                discountApplied: 0,
-                promocode: null,
-                paymentDate: '2024-11-01T10:00:00.000Z',
-            },
-            // Add more subscriptions as needed
-        ],
+    useFocusEffect(useCallback(() => {
+        GetsubscriptionHistory();
+    }, []))
+
+    const GetsubscriptionHistory = async () => {
+        try {
+            setIsLoading(true);
+            setSubscriptionData([]);
+            const token = await AsyncStorage.getItem("userToken");
+            if (!token) throw new Error("No token found");
+
+            const headers = {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            };
+
+            const res = await axios.get(SUBSCRIPTION_HISTORY, { headers });
+
+            const allSubscriptions = res.data.data.map(item => ({
+                service: item.service,
+                paymentDetails: item.paymentDetails,
+                paymentDate: item.paymentDate,
+                discountApplied: item.discountApplied,
+                razorpayOrderId: item.razorpayOrderId,
+            }));
+
+            console.log("allSubscriptions", JSON.stringify(allSubscriptions));
+            setSubscriptionData(allSubscriptions);
+        } catch (error) {
+            console.error("Error fetching subscriptions:", error.response ? error.response.data : error.message);
+        } finally {
+            setIsLoading(false);
+        }
     };
+
+
+
 
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'short', day: 'numeric' };
         return new Date(dateString).toLocaleDateString(undefined, options);
     };
 
-    const filteredData = userData.serviceSubscriptions.filter(
-        (item) => item.serviceType === activeTab
+    const filteredData = subscriptionData.filter(
+        (item) => item.service.serviceType === activeTab
     );
 
     const renderItem = ({ item }) => {
         const {
-            subscriptionType,
-            amount,
-            duration,
-            trialPeriod,
-            status,
-            startDate,
-            endDate,
+            service: {
+                serviceType,
+                amount,
+                duration,
+                trialPeriod,
+                status,
+                startDate,
+                endDate,
+                isTrial
+            },
             paymentDate,
-            promocode,
-            discountApplied,
+            paymentDetails,
         } = item;
 
         const isExpired = status === 'Expired';
 
         return (
-            <View style={[styles.card, isExpired && styles.expiredCard, !isExpired && styles.ActiveCard]}>
-                <View style={styles.cardHeader}>
-                    <Text style={styles.statusText}>
-                        Status: <Text style={{ color: isExpired ? 'red' : 'green' }}>{status}</Text>
-                    </Text>
-                    <Text style={styles.typeText}>Type: {subscriptionType}</Text>
+            <View style={[styles.card]}>
+                <View style={styles.cardHeaderRow}>
+                    {status && (
+                        <Text
+                            style={[
+                                styles.statusText,
+                                {
+                                    backgroundColor: isExpired ? '#f44336' : '#04AA6D',
+                                    color: "white",
+                                    paddingHorizontal: SW(5),
+                                    paddingTop: SH(2),
+                                    borderRadius: 5,
+                                    alignSelf: 'flex-start',
+                                    textAlign: "center",
+                                    fontSize:SF(11)
+                                },
+                            ]}
+                        >
+                            {status}
+                        </Text>
+                    )}
+                    {amount !== undefined && (
+                        <Text style={styles.amountText}>₹{amount}</Text>
+                    )}
+                </View>
+                <View style={styles.cardRow}>
+                    {(duration || isTrial) && (
+                        <Text style={styles.durationText}>
+                            Duration - {isTrial ? `${trialPeriod} days (Trial)` : `${duration} months`}
+                        </Text>
+                    )}
+                    {paymentDate && (
+                        <Text style={styles.dateText}>Payment: {formatDate(paymentDate)}</Text>
+                    )}
                 </View>
 
-                <View style={styles.cardBody}>
-                    <Text style={styles.amountText}>Amount: ₹{amount}</Text>
-                    <Text style={styles.durationText}>
-                        Duration: {subscriptionType === 'Trial' ? `${trialPeriod} days (Trial)` : `${duration} months`}
-                    </Text>
-                    <Text style={styles.dateText}>Start Date: {formatDate(startDate)}</Text>
-                    <Text style={styles.dateText}>End Date: {formatDate(endDate)}</Text>
-                    <Text style={styles.dateText}>Payment Date: {formatDate(paymentDate)}</Text>
+                {/* Bottom Row: Start & End Date */}
+                <View style={styles.cardRow}>
+                    {startDate && (
+                        <Text style={styles.dateText}>From: {formatDate(startDate)}</Text>
+                    )}
+                    {endDate && (
+                        <Text style={styles.dateText}>To: {formatDate(endDate)}</Text>
+                    )}
                 </View>
 
-                {isExpired && (
-                    <TouchableOpacity style={styles.buyButton} onPress={() => {/* Navigate to subscription purchase */ }}>
-                        <Text style={styles.buyButtonText}>Buy Subscription</Text>
+                {isExpired && serviceType && (
+                    <TouchableOpacity
+                        style={styles.buyButton}
+                        onPress={() => {
+                            navigation.navigate('BuySubscription', { serviceType: serviceType });
+                        }}
+                    >
+                        <Text style={styles.buyButtonText}>Renew</Text>
                     </TouchableOpacity>
                 )}
+
             </View>
         );
+
     };
+
 
 
     const tabs = ['Pandit', 'Jyotish', 'Kathavachak', 'Biodata'];
@@ -177,8 +213,8 @@ const styles = StyleSheet.create({
     },
     tabButton: {
         paddingVertical: SH(8),
-        paddingHorizontal: SW(16),
-        borderRadius: 20,
+        paddingHorizontal: SW(19),
+        borderRadius: 5,
         backgroundColor: '#e0e0e0',
     },
     activeTabButton: {
@@ -201,27 +237,25 @@ const styles = StyleSheet.create({
     card: {
         backgroundColor: '#ffffff',
         paddingVertical: SH(16),
-        paddingHorizontal: SW(16),
+        paddingHorizontal: SW(10),
         borderRadius: 10,
-        marginBottom: SH(12),
-        elevation: 3,
+        marginBottom: SH(5),
+        elevation: 5,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
     },
-    expiredCard: {
-        borderWidth: 1,
-        borderColor: 'red',
-    },
-    ActiveCard: {
-        borderWidth: 1,
-        borderColor: 'green',
-    },
-    cardHeader: {
+    cardHeaderRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: SH(8),
+        alignItems: 'center',
+        marginBottom: SH(5),
+    },
+    cardRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginVertical: SH(2),
     },
     statusText: {
         fontSize: SF(14),
@@ -231,13 +265,9 @@ const styles = StyleSheet.create({
         fontSize: SF(14),
         fontFamily: 'Poppins-Regular',
     },
-    cardBody: {
-        marginBottom: SH(12),
-    },
     amountText: {
         fontSize: SF(16),
         fontFamily: 'Poppins-Bold',
-        marginBottom: SH(4),
     },
     durationText: {
         fontSize: SF(14),
@@ -264,13 +294,15 @@ const styles = StyleSheet.create({
     },
     buyButton: {
         backgroundColor: Colors.theme_color,
-        paddingVertical: SH(10),
+        paddingVertical: SH(2),
         borderRadius: 6,
         alignItems: 'center',
+        alignSelf: "flex-end",
+        paddingHorizontal: SW(10)
     },
     buyButtonText: {
         color: '#fff',
-        fontSize: SF(14),
-        fontFamily: 'Poppins-Bold',
+        fontSize: SF(12),
+        fontFamily: 'Poppins-Medium',
     },
 });

@@ -115,7 +115,6 @@ const Kathavachak = ({ navigation }) => {
         type: "danger",
         message: "Error",
         description: "User ID not found!",
-        position: "top",
       });
       return;
     }
@@ -143,9 +142,7 @@ const Kathavachak = ({ navigation }) => {
       if (response.status === 200 || response.data.status === true) {
         showMessage({
           type: "success",
-          message: "Success",
-          description: response.data?.message || "Profile saved successfully!",
-          position: "top",
+          message: response.data?.message || "Profile saved successfully!",
           icon: "success"
         });
       } else {
@@ -159,9 +156,7 @@ const Kathavachak = ({ navigation }) => {
 
       showMessage({
         type: "danger",
-        message: "Error",
-        description: error?.response?.data?.message || "Failed to save profile!",
-        position: "top",
+        message: error?.response?.data?.message || "Failed to save profile!",
         icon: "danger"
       });
       setKathavachakData((prevProfiles) =>
@@ -202,10 +197,10 @@ const Kathavachak = ({ navigation }) => {
 
   const handleShare = async () => {
     showMessage({
+      message: "Under development",
       type: "info",
-      message: "Info",
-      description: "Under development",
-      position: "top",
+      duration: 3000,
+      icon: "info",
     });
   };
 

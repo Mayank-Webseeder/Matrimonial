@@ -255,10 +255,9 @@ const Pandit = ({ navigation }) => {
             />
           </TouchableOpacity>
 
-          {/* Image Viewer Modal */}
           {selectedImage && (
             <ImageViewing
-              images={[{ uri: selectedImage }]} // Now, it correctly updates per click
+              images={[{ uri: selectedImage }]}
               imageIndex={0}
               visible={isImageVisible}
               onRequestClose={() => setImageVisible(false)}

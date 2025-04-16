@@ -58,8 +58,8 @@ const EventNews = ({ navigation }) => {
   const handleShare = async () => {
     showMessage({
       type: "info",
-      message: "Info",
-      description: "Under development",
+      message: "Under development",
+      icon:"info"
     });
   };
 

@@ -129,8 +129,7 @@ const UpdateEventPost = ({ navigation, route }) => {
 
             showMessage({
                 type: "danger",
-                message: "Error",
-                description: errorMessage,
+                message: errorMessage,
                 icon: "danger"
             });
         } finally {

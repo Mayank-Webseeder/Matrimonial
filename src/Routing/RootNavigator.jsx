@@ -71,10 +71,8 @@ import AdvertiseWithUs from '../Screens/StackScreens/AdvertiseWithUs';
 import ShortMatrimonialProfile from '../Screens/StackScreens/ShortMatrimonialProfile';
 import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
-import { initializeSocket } from '../../socket';
 import { setBioData } from '../ReduxStore/Slices/BiodataSlice';
 import AboutJs from '../Screens/StackScreens/AboutJs';
-import useNotificationListener from '../ReduxStore/Slices/useNotificationListener';
 import MyUploadedCommittees from '../Screens/StackScreens/MyUploadedCommittees';
 import UpdateCommittee from '../Screens/StackScreens/UpdateCommittee';
 import MyuploadedDharamsala from '../Screens/StackScreens/MyuploadedDharamsala';
@@ -84,6 +82,7 @@ import PanditRegister from '../Screens/StackScreens/PanditRegister';
 import JyotishRegister from '../Screens/StackScreens/JyotishRegister';
 import KathavachakRegister from '../Screens/StackScreens/KathavachakRegister';
 import SubscriptionHistory from '../Screens/DrawerScreen/SubscriptionHistory';
+import { SocketProvider } from '../Socket/socketContext';
 
 const Stack = createNativeStackNavigator();
 const AppStackNavigator = createNativeStackNavigator();
@@ -362,21 +361,14 @@ const AuthStack = () => (
 );
 
 const RootNavigator = () => {
-  useNotificationListener();
   const [isLoading, setIsLoading] = useState(true);
   const [initialRoute, setInitialRoute] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+  
   useEffect(() => {
     const checkUserToken = async () => {
       const token = await AsyncStorage.getItem("userToken");
       const userId = await AsyncStorage.getItem("userId");
       console.log("Token in root file:", token);
-
-      if (token && userId) {
-        initializeSocket(userId);
-      }
-
       setInitialRoute(token ? "AppStack" : "AuthStack");
       setIsLoading(false);
     };
@@ -390,10 +382,12 @@ const RootNavigator = () => {
   }
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={initialRoute}>
+   <SocketProvider>
+     <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={initialRoute}>
       <Stack.Screen name="AuthStack" component={AuthStack} />
       <Stack.Screen name="AppStack" component={AppStack} />
     </Stack.Navigator>
+   </SocketProvider>
   );
 };
 

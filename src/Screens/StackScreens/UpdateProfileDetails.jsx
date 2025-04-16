@@ -272,8 +272,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
         if (!profileType || !roleApiMapping[profileType]) {
             showMessage({
                 type: "danger",
-                message: "Error",
-                description: "Invalid profile type selected.",
+                message: "Invalid profile type selected.",
             });
             setIsLoading(false);
             return;

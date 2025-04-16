@@ -62,8 +62,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
   const handleShare = async () => {
     showMessage({
       type: "info",
-      message: "Info",
-      description: "Under development",
+      message: "Under development",
       icon:"info"
     });
   };

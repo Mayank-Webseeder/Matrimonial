@@ -126,7 +126,7 @@ const SubscriptionHistory = ({ navigation }) => {
                     )}
                 </View>
 
-                {isExpired && serviceType && (
+                {/* {isExpired && serviceType && (
                     <TouchableOpacity
                         style={styles.buyButton}
                         onPress={() => {
@@ -135,7 +135,7 @@ const SubscriptionHistory = ({ navigation }) => {
                     >
                         <Text style={styles.buyButtonText}>Renew</Text>
                     </TouchableOpacity>
-                )}
+                )} */}
 
             </View>
         );

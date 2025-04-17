@@ -8,7 +8,6 @@ import Colors from "../../utils/Colors";
 import { useDispatch } from "react-redux";
 import { setLoginData } from "../../ReduxStore/Slices/authSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getSocket, initializeSocket } from "../../../socket";
 import { showMessage } from "react-native-flash-message";
 
 const Login = ({ navigation }) => {
@@ -28,19 +27,6 @@ const Login = ({ navigation }) => {
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
-
-    const checkSocketReadyAndNavigate = async () => {
-        const socket = getSocket();
-        if (socket && socket.connected) {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: "AppStack" }],
-          });
-        } else {
-          console.log("⏳ Waiting for socket to connect...");
-          setTimeout(checkSocketReadyAndNavigate, 200); 
-        }
-      };
 
     const handleLogin = async () => {
         if (!validateFields()) {
@@ -76,6 +62,8 @@ const Login = ({ navigation }) => {
                 await AsyncStorage.setItem("userToken", token);
                 await AsyncStorage.setItem("userId", userId);
 
+                // initializeSocket(userId);
+
                 console.log("🔐 Token Saved:", token);
                 console.log("🆔 User ID Saved:", userId);
 
@@ -88,7 +76,13 @@ const Login = ({ navigation }) => {
                     visibilityTime: 1000,
                     icon: "success",
                     textStyle: { fontSize: 14, color: "white" },
-                    onHide:checkSocketReadyAndNavigate
+                    onHide: () => {
+                        console.log("🟢 Navigating to AppStack...");
+                        navigation.reset({
+                            index: 0,
+                            routes: [{ name: "AppStack" }],
+                        });
+                    },
                 });
             } else {
                 console.log("❌ Login failed: Invalid credentials.");

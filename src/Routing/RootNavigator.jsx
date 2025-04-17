@@ -121,7 +121,7 @@ function MyTabs() {
 
       console.log("headers in profile", headers);
       const res = await axios.get(PROFILE_ENDPOINT, { headers });
-      console.log("API Response:",JSON.stringify(res.data));
+      console.log("API Response:", JSON.stringify(res.data));
       setProfileData(res.data.data); // ✅ State update karo
       dispatch(setProfiledata(res.data.data)); // Redux update karo
 
@@ -363,7 +363,7 @@ const AuthStack = () => (
 const RootNavigator = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [initialRoute, setInitialRoute] = useState('');
-  
+
   useEffect(() => {
     const checkUserToken = async () => {
       const token = await AsyncStorage.getItem("userToken");

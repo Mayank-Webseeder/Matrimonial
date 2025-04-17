@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useRef, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { showMessage } from "react-native-flash-message";
 import { initializeSocket, getSocket, disconnectSocket } from "../../socket";
@@ -7,7 +7,7 @@ const SocketContext = createContext();
 export const useSocket = () => useContext(SocketContext);
 
 export const SocketProvider = ({ children }) => {
-  const socketRef = useRef(null);
+  const [socket, setSocket] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,11 +27,12 @@ export const SocketProvider = ({ children }) => {
 
         const activeSocket = getSocket();
         if (activeSocket) {
-          socketRef.current = activeSocket;
+          setSocket(activeSocket);
           console.log("✅ Socket successfully initialized.");
         } else {
           console.error("❌ Failed to get active socket after initialization.");
         }
+
       } catch (error) {
         console.error("🚨 Error initializing socket:", error);
       } finally {
@@ -45,24 +46,19 @@ export const SocketProvider = ({ children }) => {
     return () => {
       console.log("🔌 Cleaning up socket connection...");
       disconnectSocket();
-      socketRef.current = null;
+      setSocket(null);
     };
   }, []);
 
   useEffect(() => {
-    if (loading) return;
-
-    const socket = socketRef.current;
     if (!socket) {
       console.warn("⚠️ No socket to bind events to.");
       return;
     }
 
     console.log("📡 Binding all socket events...");
-    console.log("🔍 Current Socket ID:", socket.id);
 
     const showToast = (message, type = "success") => {
-      console.log("🔔 showToast called with:", message, type);
       showMessage({
         message,
         type,
@@ -71,68 +67,70 @@ export const SocketProvider = ({ children }) => {
       });
     };
 
+    // First, remove all previous listeners
     socket.offAny();
     socket.removeAllListeners();
 
+    // Log every incoming event
     socket.onAny((event, data) => {
-      console.log(`📥 Received event: '${event}'`, data);
+      console.log(`📥 Received event: '${event}' with data:`, data);
     });
 
-    // Match Notifications
+    // Connection Events
     socket.on("newMatch", (data) => {
-      console.log("📩 Event Triggered: newMatch", data);
+      console.log("📩 newMatch:", data);
       showToast(`🎉 Matched with ${data?.name || "someone"}`);
     });
 
     socket.on("connectionRequest", (data) => {
-      console.log("📩 Event Triggered: connectionRequest", data);
+      console.log("📩 connectionRequest:", data);
       showToast(`New request from ${data?.username}`);
     });
 
     socket.on("connectionRequestResponse", (data) => {
-      console.log("📩 Event Triggered: connectionRequestResponse", data);
+      console.log("📩 connectionRequestResponse:", data);
       showToast(data?.message);
     });
 
     // Post Events
     socket.on("post-commented", (data) => {
-      console.log("📩 Event Triggered: post-commented", data);
+      console.log("📩 post-commented:", data);
       showToast(`New comment by ${data?.commentBy?.name}`);
     });
 
     socket.on("post-liked", (data) => {
-      console.log("📩 Event Triggered: post-liked", data);
+      console.log("📩 post-liked:", data);
       showToast(`${data?.likedBy?.name} liked your post!`);
     });
 
     // Approval Events
     socket.on("panditRequestApproved", (data) => {
-      console.log("📩 Event Triggered: panditRequestApproved", data);
+      console.log("📩 panditRequestApproved:", data);
       showToast(data?.message);
     });
 
     socket.on("kathavachakRequestApproved", (data) => {
-      console.log("📩 Event Triggered: kathavachakRequestApproved", data);
+      console.log("📩 kathavachakRequestApproved:", data);
       showToast(data?.message);
     });
 
     socket.on("jyotishRequestApproved", (data) => {
-      console.log("📩 Event Triggered: jyotishRequestApproved", data);
+      console.log("📩 jyotishRequestApproved:", data);
       showToast(data?.message);
     });
 
     socket.on("activistRequestApproved", (data) => {
-      console.log("📩 Event Triggered: activistRequestApproved", data);
+      console.log("📩 activistRequestApproved:", data);
       showToast(data?.message);
     });
 
-    // Cleanup on unmount
+    // Cleanup
     return () => {
       console.log("🧹 Cleaning up socket event listeners...");
       socket.offAny();
       socket.removeAllListeners();
     };
-  }, [loading]);
+  }, [socket]);
 
   if (loading) {
     console.log("⏳ Waiting for socket setup...");
@@ -140,7 +138,7 @@ export const SocketProvider = ({ children }) => {
   }
 
   return (
-    <SocketContext.Provider value={socketRef.current}>
+    <SocketContext.Provider value={socket}>
       {children}
     </SocketContext.Provider>
   );

@@ -1,100 +1,73 @@
-import io from 'socket.io-client';
-import { showMessage } from 'react-native-flash-message';
-import { Platform } from 'react-native';
+import io from "socket.io-client";
+import { showMessage } from "react-native-flash-message";
 
-const SOCKET_URL = 'https://api-matrimonial.webseeder.tech';
+const SOCKET_URL = "https://api-matrimonial.webseeder.tech";
 
 let socket = null;
 
 export const initializeSocket = (userId) => {
-  console.log("🟡 initializeSocket called with userId:", userId);
-
   if (socket) {
-    console.log("🔌 Existing socket found. Disconnecting...");
+    console.log("🔁 Re-initializing socket...");
     socket.disconnect();
-    socket = null;
   }
 
+  console.log("🔄 Initializing socket with userId:", userId);
+
   socket = io(SOCKET_URL, {
+    transports: ["websocket"],
     auth: { userId },
-    transports: ['websocket'],
-    forceNew: true,
-    jsonp: false,
   });
 
-  socket.on('connect', () => {
-    console.log('✅ Connected to Socket server');
-    console.log('🔗 Socket ID:', socket.id);
-    console.log('📡 Socket Connected:', socket.connected);
+  socket.on("connect", () => {
+    console.log("✅ Socket connected:", socket.id);
   });
 
-  socket.on('disconnect', (reason) => {
-    console.log('⚠️ Disconnected from the socket server. Reason:', reason);
+  socket.on("disconnect", (reason) => {
+    console.log("⚠️ Socket disconnected. Reason:", reason);
   });
 
-  socket.on('connect_error', (err) => {
-    console.error('❌ Socket connection error:', err);
-    showMessage({
-      message: 'Connection error',
-      description: 'Unable to connect to the server.',
-      type: 'danger',
-    });
+  socket.on("connect_error", (error) => {
+    console.error("🚨 Socket connection error:", error.message);
   });
 
+  // Log ALL incoming events
   socket.onAny((event, data) => {
-    console.log(`📥 Event Received -> '${event}':`, data);
+    console.log(`📥 Incoming Event [${event}]:`, data);
   });
 
-  // 🔁 Optional Heartbeat for Debugging
-  setInterval(() => {
-    if (socket && socket.connected) {
-      console.log("💓 Socket is alive with ID:", socket.id);
-    } else {
-      console.warn("💀 Socket is NOT connected.");
-    }
-  }, 10000);
-};
-
-export const isSocketConnected = () => {
-  const connected = socket && socket.connected;
-  console.log("🔍 isSocketConnected:", connected);
-  return connected;
+  // OPTIONAL: Confirm emit events
+  const originalEmit = socket.emit;
+  socket.emit = (...args) => {
+    console.log(`📤 Emitting Event [${args[0]}]:`, args[1]);
+    originalEmit.apply(socket, args);
+  };
 };
 
 export const getSocket = () => {
   if (!socket) {
-    console.error("❌ getSocket called but socket is not initialized.");
-    throw new Error('Socket not initialized');
+    console.error("❌ Tried to get socket but it's not initialized");
+    throw new Error("❌ Socket not initialized");
   }
-  console.log("✅ getSocket: returning active socket instance.");
   return socket;
+};
+
+export const isSocketConnected = () => {
+  const connected = socket && socket.connected;
+  console.log(`📡 Socket connected status: ${connected}`);
+  return connected;
 };
 
 export const disconnectSocket = () => {
   if (socket) {
-    console.log("🛑 disconnectSocket: Disconnecting socket...");
+    console.log("🚫 Manually disconnecting socket...");
     socket.disconnect();
     socket = null;
-    console.log('✅ Socket disconnected and set to null.');
+    showMessage({
+      type: "info",
+      message: "Socket disconnected",
+      icon: "info",
+    });
   } else {
-    console.log("ℹ️ disconnectSocket called but socket already null.");
-  }
-};
-
-export const handleAppStateChange = (nextAppState) => {
-  console.log("📲 App State Changed:", nextAppState);
-  if (nextAppState === 'background' || nextAppState === 'inactive') {
-    console.log("🌙 App in background/inactive. Disconnecting socket...");
-    disconnectSocket();
-  } else if (nextAppState === 'active') {
-    console.log("🌞 App is active again.");
-    if (!socket) {
-      console.log("🔄 Re-initializing socket after coming back to foreground.");
-      // You should re-pass userId from context or global state here
-      // For now, logging warning
-      console.warn("⚠️ Cannot reinitialize socket: userId missing.");
-    } else {
-      console.log("🔌 Socket already initialized.");
-    }
+    console.log("❗ Attempted to disconnect, but socket is null");
   }
 };

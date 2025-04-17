@@ -1,5 +1,5 @@
-import { StyleSheet,AppState } from 'react-native';
-import React, {useEffect} from 'react';
+import { StyleSheet } from 'react-native';
+import React, {} from 'react';
 import RootNavigator from './src/Routing/RootNavigator';
 import { NavigationContainer } from '@react-navigation/native';
 import store from './src/ReduxStore/Store';
@@ -7,8 +7,6 @@ import { Provider } from 'react-redux';
 import InternetCheck from './src/Components/CheckInternet';
 import FlashMessage from "react-native-flash-message";
 import { SocketProvider } from './src/Socket/socketContext';
-import { handleAppStateChange } from './socket';
-
 const linking = {
   prefixes: ["https://yourwebsite.com"],
   config: {
@@ -29,13 +27,6 @@ const linking = {
 };
 
 const App = () => {
-  useEffect(() => {
-    const appStateListener = AppState.addEventListener('change', handleAppStateChange);
-
-    return () => {
-      appStateListener.remove();
-    };
-  }, []);
   return (
     <SocketProvider>
       <Provider store={store}>

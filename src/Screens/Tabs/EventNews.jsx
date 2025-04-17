@@ -38,6 +38,7 @@ const EventNews = ({ navigation }) => {
   const [deletecommentLoading, setdeletecommentLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [deletingCommentId, setDeletingCommentId] = useState(null);
+  const [eventList, setEventList] = useState([]);
 
   useEffect(() => {
     console.log("myprofile_id", myprofile_id);
@@ -107,7 +108,7 @@ const EventNews = ({ navigation }) => {
     }, [])
   );
 
-  const LIKE = async (postId, initialLikesCount) => {
+  const LIKE = async (postId) => {
     try {
       setLikeLoading(true);
       const token = await AsyncStorage.getItem("userToken");
@@ -118,58 +119,34 @@ const EventNews = ({ navigation }) => {
         Authorization: `Bearer ${token}`,
       };
 
-      setLikeData((prevState) => {
-        const prevLikeData = prevState[postId] || {
-          isLiked: false,
-          likesCount: initialLikesCount
-        };
-
-        return {
-          ...prevState,
-          [postId]: {
-            ...prevLikeData,
-            isLiked: !prevLikeData.isLiked,
-            likesCount: prevLikeData.isLiked
-              ? prevLikeData.likesCount - 1
-              : prevLikeData.likesCount + 1,
-          },
-        };
-      });
-
       const response = await axios.post(LIKEPOST, { postId }, { headers });
 
-      if (!(response.status === 200 && response.data.status === true)) {
+      if (!(response.status === 200 || response.data.status === true)) {
         throw new Error(response.data.message || "Failed to like event.");
       }
 
+      console.log("liked data", JSON.stringify(response.data));
+
+      const { isLiked } = response.data.event;
+      const { likesCount } = response.data;
+
+      console.log("isLiked", isLiked, "likesCount", likesCount);
+
+      setLikeData((prev) => ({
+        ...prev,
+        [postId]: {
+          isLiked,
+          likesCount,
+        },
+      }));
+
     } catch (error) {
       console.error("Error liking post:", error?.response?.data || error.message);
-
       showMessage({
         type: "error",
         message: "Error",
-        description: error?.response?.data?.message || "Failed to like event. Please try again!",
+        description: error?.response?.data?.message || "Failed to like event.",
       });
-
-      // Reverse the like state on error
-      setLikeData((prevState) => {
-        const prevLikeData = prevState[postId] || {
-          isLiked: false,
-          likesCount: initialLikesCount
-        };
-
-        return {
-          ...prevState,
-          [postId]: {
-            ...prevLikeData,
-            isLiked: !prevLikeData.isLiked,
-            likesCount: prevLikeData.isLiked
-              ? prevLikeData.likesCount + 1
-              : prevLikeData.likesCount - 1,
-          },
-        };
-      });
-
     } finally {
       setLikeLoading(false);
     }
@@ -195,9 +172,20 @@ const EventNews = ({ navigation }) => {
 
       if (response.status === 200 && response.data.status === true) {
         const fetchedData = response.data;
-        console.log("Updated comments:", JSON.stringify(fetchedData.comments));
+        console.log("Updated comments:", JSON.stringify(fetchedData.event.comments));
 
-        setMyComment("");
+        // Set the comments data to state after successful comment addition
+        const fetchedComments = response.data.event.comments;
+        setCommentData(fetchedComments);
+        setMyComment(""); // Clear the comment input field
+
+        setEventList((prevList) =>
+          prevList.map((post) =>
+            post._id === postId
+              ? { ...post, comments: fetchedComments } // replace with updated comments array
+              : post
+          )
+        );
 
         showMessage({
           type: "success",
@@ -244,6 +232,14 @@ const EventNews = ({ navigation }) => {
           prevComments.filter((comment) => comment._id !== commentId)
         );
 
+        setEventList((prevList) =>
+          prevList.map((post) =>
+            post._id === postId
+              ? { ...post, comments: post.comments.filter((comment) => comment._id !== commentId) }
+              : post
+          )
+        );
+
         showMessage({
           type: "success",
           message: "Success",
@@ -262,7 +258,7 @@ const EventNews = ({ navigation }) => {
         icon: "danger",
       });
     } finally {
-      setDeletingCommentId(null); // reset after completion
+      setDeletingCommentId(null);
     }
   };
 
@@ -357,10 +353,11 @@ const EventNews = ({ navigation }) => {
     if (sheetRef.current) {
       sheetRef.current.close();
     }
-    // navigation.reset({
-    //   index: 0,
-    //   routes: [{ name: "EventNews" }],
-    // });
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "EventNews" }],
+    });
+
   }
 
   const renderImages = (images, item) => {
@@ -431,7 +428,11 @@ const EventNews = ({ navigation }) => {
   };
 
   const renderItem = ({ item }) => {
-    const isLiked = item.isLiked || null;
+    const likeInfo = likeData[item._id] || {
+      isLiked: item.isLiked,
+      likesCount: item.likes?.length || 0,
+    };
+    console.log("likeInfo", likeInfo);
     const images = item.images || [];
 
     return (
@@ -457,14 +458,16 @@ const EventNews = ({ navigation }) => {
         <View style={styles.likeShareComment}>
           <TouchableOpacity
             style={styles.likeShare}
-            onPress={() => LIKE(item._id, item.likes.length)}
+            onPress={() => LIKE(item._id)}
           >
             <AntDesign
-              name={likeData[item._id]?.isLiked ? "heart" : "hearto"}
+              name={likeInfo.isLiked ? "heart" : "hearto"}
               size={20}
-              color={likeData[item._id]?.isLiked ? "red" : Colors.dark}
+              color={likeInfo.isLiked ? "red" : Colors.dark}
             />
-            <Text style={styles.shareText}>{likeData[item._id]?.likesCount ?? item.likes.length} Likes</Text>
+            <Text style={styles.shareText}>
+              {likeInfo.likesCount} Likes
+            </Text>
           </TouchableOpacity>
 
 

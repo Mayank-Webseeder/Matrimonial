@@ -28,15 +28,15 @@ const linking = {
 
 const App = () => {
   return (
-    <SocketProvider>
       <Provider store={store}>
+        <SocketProvider>
         <NavigationContainer linking={linking}>
           <RootNavigator />
         </NavigationContainer>
         <InternetCheck />
         <FlashMessage position="bottom" />
+        </SocketProvider>
       </Provider>
-    </SocketProvider>
   );
 };
 

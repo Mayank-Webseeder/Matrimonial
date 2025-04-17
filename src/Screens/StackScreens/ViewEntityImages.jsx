@@ -61,14 +61,14 @@ const ViewEntityImages = ({ navigation, route }) => {
             <ScrollView showsVerticalScrollIndicator={false}>
                 {/* Profile Info */}
                 <View style={styles.postHeader}>
-                <Image
-    source={entityDetails?.profilePhoto
-        ? { uri: entityDetails.profilePhoto }
-        : require('../../Images/NoImage.png')
-    }
-    style={styles.profilePhoto}
-    resizeMode="cover"
-/>
+                    <Image
+                        source={entityDetails?.profilePhoto
+                            ? { uri: entityDetails.profilePhoto }
+                            : require('../../Images/NoImage.png')
+                        }
+                        style={styles.profilePhoto}
+                        resizeMode="cover"
+                    />
 
 
                     <View style={styles.postTextContainer}>

@@ -10,11 +10,25 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: "center"
     },
-    postHeader: {
-        flexDirection: "row",
-        paddingHorizontal: SW(10),
+    card: {
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        overflow: 'hidden',
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
+        marginHorizontal: SW(10),
+        marginVertical: SH(10),
+        marginBottom: SH(3),
+        paddingHorizontal: SW(5),
         paddingVertical: SH(5),
-        alignItems: "center"
+    },
+    postHeader: {
+        display: "flex",
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: "space-between"
     },
     postTextContainer: {
         marginHorizontal: SW(10)
@@ -54,11 +68,26 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginBottom: SH(10)
     },
-    profilePhoto: {
+    EventheaderImage: {
         width: SW(50),
         height: SH(50),
-        borderRadius: 50
-    }
+        borderRadius: 30,
+    },
+    name: {
+        fontSize: SF(13),
+        fontFamily: 'Poppins-Bold',
+        marginLeft: SW(10),
+    },
+    date_time: {
+        fontSize: SF(12),
+        fontFamily: 'Poppins-Regular',
+        marginLeft: SW(10),
+    },
+    hour: {
+        color: 'gray',
+        fontSize: SF(12),
+        fontFamily: 'Poppins-Regular',
+    },
 
 })
 

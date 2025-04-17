@@ -8,11 +8,14 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styles from '../StyleScreens/ViewPostStyle';
 import Globalstyles from '../../utils/GlobalCss';
 import moment from 'moment';
+import { showMessage } from 'react-native-flash-message';
+import { useSelector } from 'react-redux';
 
 const ViewPost = ({ navigation, route }) => {
   const { post } = route.params;
+  const MyActivistProfile = useSelector((state) => state.activist.activist_data);
   const isLiked = post?.isLiked;
-  console.log("post", post);
+  console.log("post", JSON.stringify(post));
 
   // ✅ Get images from API response correctly
   const images = post?.images || [];
@@ -23,6 +26,14 @@ const ViewPost = ({ navigation, route }) => {
   };
 
   const [imageAspectRatios, setImageAspectRatios] = useState([]);
+
+  const handleShare = async () => {
+      showMessage({
+        type: "info",
+        message: "Under development",
+        icon: "info"
+      });
+    };
 
   useEffect(() => {
     const fetchAspectRatios = async () => {
@@ -58,7 +69,6 @@ const ViewPost = ({ navigation, route }) => {
           <Text style={Globalstyles.headerText}>{post.activistName}'s Post</Text>
         </View>
         <View style={styles.righticons}>
-          <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} />
           <AntDesign
             name={'bells'}
             size={25}
@@ -69,19 +79,21 @@ const ViewPost = ({ navigation, route }) => {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} >
-        <View style={styles.postHeader}>
-          <Image
-            source={
-              post.images && post.images.length > 0
-                ? { uri: post.images[0] }
-                : require("../../Images/NoImage.png")
-            }
-            style={styles.profileImage}
-          />
-
-          <View style={styles.postTextContainer}>
-            <Text style={styles.Text}>{post.activistName}</Text>
-            <Text style={styles.date_time}>{formatDateTime(post.createdAt)}</Text>
+       <View style={styles.card}>
+       <View style={styles.postHeader}>
+        <View style={{ display: "flex", flexDirection: 'row', alignItems: 'center' }}>
+            <View>
+              <Image source={{ uri: MyActivistProfile?.profilePhoto }} style={styles.EventheaderImage} />
+            </View>
+            <View>
+              {/* <Text style={styles.name}>
+                {item.activistName} <Text style={styles.hour}>{getTimeAgo(item.createdAt)}</Text>
+              </Text> */}
+              <Text style={styles.name}>
+                {MyActivistProfile?.activistId} <Text style={styles.hour}>{MyActivistProfile?.activistId}</Text>
+              </Text>
+              <Text style={styles.date_time}>{formatDateTime(post.createdAt)}</Text>
+            </View>
           </View>
         </View>
 
@@ -92,7 +104,7 @@ const ViewPost = ({ navigation, route }) => {
         {images.length > 0 && (
           <View>
             {images.map((image, index) => (
-              <View key={index} style={styles.card}>
+              <View key={index} >
                 <View>
                   <Image
                     source={{ uri: image }}
@@ -109,15 +121,16 @@ const ViewPost = ({ navigation, route }) => {
                     <EvilIcons name="comment" size={20} color={Colors.dark} />
                     <Text style={styles.shareText}>{post?.comments?.length} Comments</Text>
                   </View>
-                  <View style={styles.likeShare}>
+                  <TouchableOpacity style={styles.likeShare} onPress={handleShare}>
                     <Feather name="send" size={20} color={Colors.dark} />
                     <Text style={styles.shareText}>250 Shares</Text>
-                  </View>
+                  </TouchableOpacity>
                 </View>
               </View>
             ))}
           </View>
         )}
+       </View>
       </ScrollView>
     </SafeAreaView>
   );

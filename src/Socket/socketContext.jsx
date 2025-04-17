@@ -67,7 +67,6 @@ export const SocketProvider = ({ children }) => {
       });
     };
 
-    // First, remove all previous listeners
     socket.offAny();
     socket.removeAllListeners();
 

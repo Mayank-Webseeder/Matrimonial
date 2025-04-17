@@ -1,4 +1,4 @@
-import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, RefreshControl } from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 import { slider } from '../../DummyData/DummyData';
 import { Image } from 'react-native';
@@ -24,6 +24,7 @@ import ImageViewing from 'react-native-image-viewing';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import _ from "lodash";
 import { showMessage } from 'react-native-flash-message';
+import { useCallback } from 'react';
 
 const Dharmshala = () => {
   const navigation = useNavigation();
@@ -43,6 +44,7 @@ const Dharmshala = () => {
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
   const [isImageVisible, setImageVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+ const [refreshing, setRefreshing] = useState(false);
 
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
@@ -90,6 +92,19 @@ const Dharmshala = () => {
       GetMyDharamsalaData();
     }, [])
   );
+
+const onRefresh = useCallback(() => {
+  setRefreshing(true);
+  setTimeout(() => {
+    setRefreshing(false);
+    setLocality('');
+    setSubcaste('');
+    setDharamsalaData([]);
+    fetchDharamsalaData("all");
+    GetMyDharamsalaData();
+  }, 2000);
+}, []);
+  
 
   const SliderRenderItem = ({ item }) => {
     return (
@@ -450,7 +465,9 @@ const Dharmshala = () => {
       </View>
 
       {/* Scrollable Content */}
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false}  refreshControl={
+    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+  }>
         {/* Image Slider */}
         <View style={styles.sliderContainer}>
           <AppIntroSlider

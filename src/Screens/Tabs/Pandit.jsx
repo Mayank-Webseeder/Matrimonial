@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, SafeAreaView, StatusBar, Linking, Pressable,
-  ScrollView, Share
+  ScrollView, Share, RefreshControl
 } from 'react-native';
 import { slider } from '../../DummyData/DummyData';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -42,6 +42,7 @@ const Pandit = ({ navigation }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const ProfileData = useSelector((state) => state.profile);
   const profile_data = ProfileData?.profiledata || {};
+  const [refreshing, setRefreshing] = useState(false);
 
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
@@ -210,6 +211,21 @@ const Pandit = ({ navigation }) => {
     }, [])
   );
 
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+      setLocality('');
+      setModalLocality('')
+      setRating(' ')
+      setExperience(' ')
+      setServices('')
+      setPanditData([]);
+      fetchPanditData("all");
+    }, 2000);
+  }, []);
+
   const renderSkeleton = () => (
     <SkeletonPlaceholder>
       <View style={{ margin: SH(20) }}>
@@ -370,7 +386,9 @@ const Pandit = ({ navigation }) => {
         </View>
       </View>
       <ScrollView
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={false} refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
         <View style={Globalstyles.sliderContainer}>
           <AppIntroSlider

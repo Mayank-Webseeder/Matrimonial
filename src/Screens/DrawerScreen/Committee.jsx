@@ -1,6 +1,6 @@
 
-import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable } from 'react-native';
-import React, { useState, useRef, useEffect } from 'react';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, RefreshControl } from 'react-native';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { slider } from '../../DummyData/DummyData';
 import { Image } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -43,6 +43,19 @@ const Committee = ({ navigation }) => {
   const [isImageVisible, setImageVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [IsLoading, setIsLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+      setLocality('');
+      setSubcaste('');
+      fetchComitteeData("all");
+      fetchMyCommitteeData();
+    }, 2000);
+  }, []);
 
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
@@ -211,7 +224,7 @@ const Committee = ({ navigation }) => {
         description: "Create an activist profile if you want to upload a committee.",
         visibilityTime: 4000,
         autoHide: true,
-        icon:"info"
+        icon: "info"
       });
     }
   };
@@ -224,7 +237,7 @@ const Committee = ({ navigation }) => {
         type: "danger",
         message: "Error",
         description: "User ID not found!",
-        icon:"danger"
+        icon: "danger"
       });
       return;
     }
@@ -254,7 +267,7 @@ const Committee = ({ navigation }) => {
           type: "success",
           message: "Success",
           description: response.data?.message || "Profile saved successfully!",
-          icon:"success"
+          icon: "success"
         });
       } else {
         throw new Error(response.data?.message || "Something went wrong!");
@@ -269,7 +282,7 @@ const Committee = ({ navigation }) => {
         type: "danger",
         message: "Error",
         description: error?.response?.data?.message || "Failed to save profile!",
-        icon:"danger"
+        icon: "danger"
       });
       setCommitteeData((prevProfiles) =>
         prevProfiles.map((profile) =>
@@ -451,7 +464,9 @@ const Committee = ({ navigation }) => {
         </View>
 
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false} refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }>
         <View style={styles.sliderContainer}>
           <AppIntroSlider
             ref={sliderRef}

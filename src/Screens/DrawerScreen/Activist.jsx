@@ -1,4 +1,4 @@
-import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, Linking, SafeAreaView, StatusBar, ActivityIndicator, ScrollView } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, Linking, SafeAreaView, StatusBar, ActivityIndicator, ScrollView, RefreshControl } from 'react-native';
 import React, { useState, useCallback } from 'react';
 import { Image } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -30,6 +30,7 @@ const Activist = ({ navigation }) => {
   const [isImageVisible, setImageVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
+  const [refreshing, setRefreshing] = useState(false);
 
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
@@ -45,64 +46,75 @@ const Activist = ({ navigation }) => {
     }, [])
   );
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+      setLocality('');
+      setSubcaste('');
+      setError(null);
+      fetchActivistData("all");
+    }, 2000);
+  }, []);
+
   const fetchActivistData = async (filterType = "search") => {
     try {
-        setLoading(true);
-        setActivistData([]); 
-        setError(null);
+      setLoading(true);
+      setActivistData([]);
+      setError(null);
 
-        const token = await AsyncStorage.getItem("userToken");
-        if (!token) throw new Error("No token found");
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) throw new Error("No token found");
 
-        const headers = {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-        };
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
 
-        let queryParams = [];
+      let queryParams = [];
 
-        if (filterType === "search") {
-            const cleanedLocality = locality.trim();
-            const cleanedSubCaste = subcaste.trim();
+      if (filterType === "search") {
+        const cleanedLocality = locality.trim();
+        const cleanedSubCaste = subcaste.trim();
 
-            if (cleanedLocality) queryParams.push(`locality=${encodeURIComponent(cleanedLocality.toLowerCase())}`);
-            if (cleanedSubCaste) queryParams.push(`subCaste=${encodeURIComponent(cleanedSubCaste.toLowerCase())}`);
+        if (cleanedLocality) queryParams.push(`locality=${encodeURIComponent(cleanedLocality.toLowerCase())}`);
+        if (cleanedSubCaste) queryParams.push(`subCaste=${encodeURIComponent(cleanedSubCaste.toLowerCase())}`);
 
-        } else if (filterType === "modal") {
-            const cleanedModalLocality = modalLocality.trim();
-            const cleanedModalSubCaste = subcaste.trim();
+      } else if (filterType === "modal") {
+        const cleanedModalLocality = modalLocality.trim();
+        const cleanedModalSubCaste = subcaste.trim();
 
-            if (cleanedModalLocality && cleanedModalSubCaste) {
-                queryParams.push(`locality=${encodeURIComponent(cleanedModalLocality.toLowerCase())}`);
-                queryParams.push(`subCaste=${encodeURIComponent(cleanedModalSubCaste.toLowerCase())}`);
-            } else if (cleanedModalLocality) {
-                queryParams.push(`locality=${encodeURIComponent(cleanedModalLocality.toLowerCase())}`);
-            } else if (cleanedModalSubCaste) {
-                queryParams.push(`subCaste=${encodeURIComponent(cleanedModalSubCaste.toLowerCase())}`);
-            }
+        if (cleanedModalLocality && cleanedModalSubCaste) {
+          queryParams.push(`locality=${encodeURIComponent(cleanedModalLocality.toLowerCase())}`);
+          queryParams.push(`subCaste=${encodeURIComponent(cleanedModalSubCaste.toLowerCase())}`);
+        } else if (cleanedModalLocality) {
+          queryParams.push(`locality=${encodeURIComponent(cleanedModalLocality.toLowerCase())}`);
+        } else if (cleanedModalSubCaste) {
+          queryParams.push(`subCaste=${encodeURIComponent(cleanedModalSubCaste.toLowerCase())}`);
         }
+      }
 
-        const url = queryParams.length > 0 ? `${GET_ACTIVIST_PROFILES}?${queryParams.join("&")}` : GET_ACTIVIST_PROFILES;
+      const url = queryParams.length > 0 ? `${GET_ACTIVIST_PROFILES}?${queryParams.join("&")}` : GET_ACTIVIST_PROFILES;
 
-        console.log("Fetching Data from:", url);
+      console.log("Fetching Data from:", url);
 
-        const response = await axios.get(url, { headers });
+      const response = await axios.get(url, { headers });
 
-        console.log("Response Data:", JSON.stringify(response.data.data));
+      console.log("Response Data:", JSON.stringify(response.data.data));
 
-        if (response.data && response.data.data.length > 0) {
-            setActivistData(response.data.data);
-        } else {
-            setActivistData([]);
-            setError("No activist profiles found.");
-        }
+      if (response.data && response.data.data.length > 0) {
+        setActivistData(response.data.data);
+      } else {
+        setActivistData([]);
+        setError("No activist profiles found.");
+      }
     } catch (error) {
-        console.error("Error fetching Activist data:", error);
-        setError(error.response ? error.response.data.message : "Failed to fetch data. Please try again.");
+      console.error("Error fetching Activist data:", error);
+      setError(error.response ? error.response.data.message : "Failed to fetch data. Please try again.");
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
 
 
   const handleOpenFilter = () => {
@@ -259,6 +271,9 @@ const Activist = ({ navigation }) => {
             scrollEnabled={false}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.ActivistDataList}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
                 <Text style={styles.emptyText}>No activist Data Available</Text>

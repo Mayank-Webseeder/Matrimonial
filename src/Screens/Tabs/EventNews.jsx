@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, TextInput, ActivityIndicator } from 'react-native';
+import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, TextInput, ActivityIndicator, RefreshControl } from 'react-native';
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import styles from '../StyleScreens/EventNewsStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -36,10 +36,22 @@ const EventNews = ({ navigation }) => {
   const [LikeLoading, setLikeLoading] = useState(false);
   const [commentLoading, setCommentLoading] = useState(false);
   const [deletecommentLoading, setdeletecommentLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [deletingCommentId, setDeletingCommentId] = useState(null);
 
   useEffect(() => {
     console.log("myprofile_id", myprofile_id);
   }, [])
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+      fetchPostData();
+      GetEventNews();
+      setPage(1);
+    }, 2000);
+  }, []);
 
   const handlePress = async () => {
     if (MyActivistProfile && MyActivistProfile._id) {
@@ -59,7 +71,7 @@ const EventNews = ({ navigation }) => {
     showMessage({
       type: "info",
       message: "Under development",
-      icon:"info"
+      icon: "info"
     });
   };
 
@@ -192,10 +204,6 @@ const EventNews = ({ navigation }) => {
           message: "Success",
           description: fetchedData.message || "Comment added successfully!",
         });
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "EventNews" }],
-        });
       } else if (response.status === 400) {
         throw new Error(response.data.message || "Invalid request.");
       }
@@ -216,9 +224,9 @@ const EventNews = ({ navigation }) => {
   const DELETE_COMMENT = async (postId, commentId) => {
     console.log("postId", postId, "commentId", commentId);
     try {
-      setdeletecommentLoading(true);
-      const token = await AsyncStorage.getItem("userToken");
+      setDeletingCommentId(commentId);
 
+      const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
 
       const headers = {
@@ -226,16 +234,12 @@ const EventNews = ({ navigation }) => {
         Authorization: `Bearer ${token}`,
       };
 
-      console.log("headers", headers);
-
       const response = await axios.delete(
         `${BASE_URL}/event/${postId}/delete-comment/${commentId}`,
         { headers }
       );
 
       if (response.data) {
-        console.log("Updated comments:", JSON.stringify(response.data.comments));
-
         setCommentData((prevComments) =>
           prevComments.filter((comment) => comment._id !== commentId)
         );
@@ -244,22 +248,24 @@ const EventNews = ({ navigation }) => {
           type: "success",
           message: "Success",
           description: "Comment deleted successfully!",
-          icon: "success"
+          icon: "success",
         });
       }
     } catch (error) {
       console.error("Error deleting comment:", error?.response?.data || error.message);
-
       showMessage({
         type: "danger",
         message: "Error",
-        description: error?.response?.data?.message || "Failed to delete comment. Please try again!",
-        icon: "danger"
+        description:
+          error?.response?.data?.message ||
+          "Failed to delete comment. Please try again!",
+        icon: "danger",
       });
     } finally {
-      setdeletecommentLoading(false);
+      setDeletingCommentId(null); // reset after completion
     }
   };
+
 
   const fetchPostData = async () => {
     try {
@@ -351,10 +357,10 @@ const EventNews = ({ navigation }) => {
     if (sheetRef.current) {
       sheetRef.current.close();
     }
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "EventNews" }],
-    });
+    // navigation.reset({
+    //   index: 0,
+    //   routes: [{ name: "EventNews" }],
+    // });
   }
 
   const renderImages = (images, item) => {
@@ -522,16 +528,18 @@ const EventNews = ({ navigation }) => {
                   {item?.user?._id === myprofile_id && (
                     <TouchableOpacity
                       onPress={() => DELETE_COMMENT(selectedPostId, item?._id)}
-                      disabled={deletecommentLoading}
+                      disabled={deletingCommentId === item?._id}
                     >
-                      {deletecommentLoading ? (
-                        <Text style={{ color: Colors.theme_color, fontSize: 12 }}>Deleting...</Text>
+                      {deletingCommentId === item?._id ? (
+                        <Text style={{ color: Colors.theme_color, fontSize: 12 }}>
+                          Deleting...
+                        </Text>
                       ) : (
-                        <Entypo name={'cross'} color={Colors.theme_color} size={15} />
+                        <Entypo name={"cross"} color={Colors.theme_color} size={15} />
                       )}
                     </TouchableOpacity>
-
                   )}
+
                 </View>
               )}
               contentContainerStyle={{ paddingBottom: SH(60) }}
@@ -629,6 +637,9 @@ const EventNews = ({ navigation }) => {
           scrollEnabled={false}
           nestedScrollEnabled={true}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Ionicons

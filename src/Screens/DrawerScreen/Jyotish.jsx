@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, RefreshControl } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -39,7 +39,7 @@ const Jyotish = ({ navigation }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const ProfileData = useSelector((state) => state.profile);
   const profile_data = ProfileData?.profiledata || {};
-
+ const [refreshing, setRefreshing] = useState(false);
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
     setImageVisible(true);
@@ -179,6 +179,19 @@ const Jyotish = ({ navigation }) => {
     }, [])
   );
 
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+      setLocality('');
+      setModalLocality('')
+      setRating(' ')
+      setExperience(' ')
+      setServices('')
+      JyotishDataAPI("all");
+    }, 2000);
+  }, []);
 
   const renderSkeleton = () => (
     <SkeletonPlaceholder>
@@ -332,7 +345,9 @@ const Jyotish = ({ navigation }) => {
           )}
         </View>
       </View>
-      <ScrollView showsHorizontalScrollIndicator={false}>
+      <ScrollView showsHorizontalScrollIndicator={false} refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }>
         <View style={Globalstyles.sliderContainer}>
           <AppIntroSlider
             ref={sliderRef}

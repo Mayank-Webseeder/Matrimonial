@@ -1,5 +1,5 @@
-import { Text, View, TouchableOpacity, Image, FlatList, SafeAreaView, StatusBar } from 'react-native';
-import React from 'react';
+import { Text, View, TouchableOpacity, Image, FlatList, SafeAreaView, StatusBar, RefreshControl } from 'react-native';
+import React, { useState, useEffect } from 'react';
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -8,8 +8,18 @@ import styles from '../StyleScreens/SuccessStoriesStyle';
 import { SuccessStoriesData } from '../../DummyData/DummyData';
 import Globalstyles from '../../utils/GlobalCss';
 import { DrawerActions } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 
 const SuccessStories = ({ navigation }) => {
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
   const renderStars = (rating) => {
     const stars = [];
     for (let i = 1; i <= rating; i++) {
@@ -41,10 +51,10 @@ const SuccessStories = ({ navigation }) => {
 
   return (
     <SafeAreaView style={Globalstyles.container}>
-      <StatusBar 
-        barStyle="dark-content" 
-        backgroundColor="transparent" 
-        translucent 
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="transparent"
+        translucent
       />
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -71,6 +81,9 @@ const SuccessStories = ({ navigation }) => {
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
     </SafeAreaView>
   );

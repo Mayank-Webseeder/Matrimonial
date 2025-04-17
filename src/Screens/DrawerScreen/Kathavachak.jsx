@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable ,RefreshControl } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -37,7 +37,7 @@ const Kathavachak = ({ navigation }) => {
   const [modalLocality, setModalLocality] = useState('');
   const [isImageVisible, setImageVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
-
+ const [refreshing, setRefreshing] = useState(false);
   const ProfileData = useSelector((state) => state.profile);
   const profile_data = ProfileData?.profiledata || {};
 
@@ -178,6 +178,23 @@ const Kathavachak = ({ navigation }) => {
       KathavachakDataAPI("all");
     }, [])
   );
+
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+      setLocality('');
+      setModalLocality('')
+      setRating(' ')
+      setExperience(' ')
+      setServices('')
+      setKathavachakData([]);
+      KathavachakDataAPI("all");
+    }, 2000);
+  }, []);
+
+
   const renderSkeleton = () => (
     <SkeletonPlaceholder>
       <View style={{ margin: SH(20) }}>
@@ -328,7 +345,9 @@ const Kathavachak = ({ navigation }) => {
           )}
         </View>
       </View>
-      <ScrollView showsHorizontalScrollIndicator={false}>
+      <ScrollView showsHorizontalScrollIndicator={false} refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }>
         <View style={Globalstyles.sliderContainer}>
           <AppIntroSlider
             ref={sliderRef}

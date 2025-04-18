@@ -28,15 +28,13 @@ const linking = {
 
 const App = () => {
   return (
-      <Provider store={store}>
-        <SocketProvider>
-        <NavigationContainer linking={linking}>
-          <RootNavigator />
-        </NavigationContainer>
-        <InternetCheck />
-        <FlashMessage position="bottom" />
-        </SocketProvider>
-      </Provider>
+    <Provider store={store}>
+    <NavigationContainer linking={linking}>
+      <RootNavigator />
+      <InternetCheck />
+      <FlashMessage position="bottom" />
+    </NavigationContainer>
+  </Provider>
   );
 };
 

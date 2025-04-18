@@ -20,7 +20,7 @@ import { setActivistdata } from '../../ReduxStore/Slices/ActivistSlice';
 import { useSelector } from 'react-redux';
 import { useCallback } from 'react';
 import { setProfiledata } from '../../ReduxStore/Slices/ProfileSlice';
-import { setAllNotification } from '../../ReduxStore/Slices/GetAllNotificationSlice';
+import { reseAllNotification, setAllNotification } from '../../ReduxStore/Slices/GetAllNotificationSlice';
 import { SF, SW, SH } from '../../utils/Dimensions';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 
@@ -103,23 +103,30 @@ const Home = ({ navigation }) => {
       setNotificationData({});
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
-
+  
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-
+  
       const res = await axios.get(NOTIFICATION, { headers });
       const notificationData = res.data.data;
-      setNotificationData(notificationData);
-      // console.log("notificationData", JSON.stringify(notificationData));
-      dispatch(setAllNotification(notificationData));
+  
+      if (notificationData && notificationData.length > 0) {
+        setNotificationData(notificationData);
+        dispatch(setAllNotification(notificationData));
+      } else {
+        setNotificationData({});
+        dispatch(reseAllNotification());
+      }
     } catch (error) {
       console.error("Error fetching notifications:", error.response ? error.response.data : error.message);
+      dispatch(reseAllNotification());
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   useFocusEffect(
     React.useCallback(() => {
@@ -197,10 +204,10 @@ const Home = ({ navigation }) => {
     else {
       console.log("Navigating to MatrimonyPeopleProfile");
       navigation.navigate("MatrimonyPeopleProfile", {
-        userDetails: item,
+        // userDetails: item,
         userId: item?.userId,
-        isSaved: item?.isSaved,
-        isBlur: item?.isBlur
+        // isSaved: item?.isSaved,
+        // isBlur: item?.isBlur
       });
     }
   };
@@ -220,7 +227,7 @@ const Home = ({ navigation }) => {
       console.log("headers in profile", headers);
       const res = await axios.get(GET_ALL_BIODATA_PROFILES, { headers });
       const biodata = res.data.feedUsers;
-      // console.log("res.data.feedUsers", JSON.stringify(res.data.feedUsers))
+      console.log("res.data.feedUsers", JSON.stringify(res.data.feedUsers))
       setallBiodata(biodata);
       // console.log("biodata", biodata);
       dispatch(setAllBiodata(biodata));

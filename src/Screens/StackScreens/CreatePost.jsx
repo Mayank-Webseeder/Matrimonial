@@ -25,25 +25,20 @@ const CreatePost = ({ navigation, route }) => {
 
     const handleImageUpload = () => {
         ImageCropPicker.openPicker({
-            multiple: true,  // Multiple image selection
+            multiple: true,
             cropping: true,
             width: 400,
             height: 400,
-            includeBase64: true, // Get base64 directly
+            includeBase64: true,
             compressImageQuality: 1
         }).then(images => {
             const newPhotos = images.map(image => image.data); // Only store base64
-            addPhotos(newPhotos);
+            if (newPhotos.length <= 5) {
+                setPhotos(newPhotos); // Replace old photos with new ones
+            } else {
+                alert('You can only upload up to 5 photos.');
+            }
         }).catch(err => console.log('Crop Picker Error:', err));
-    };
-
-
-    const addPhotos = (newPhotos) => {
-        if (photos.length + newPhotos.length <= 5) {
-            setPhotos(prevPhotos => [...prevPhotos, ...newPhotos]);
-        } else {
-            alert('You can only upload up to 5 photos.');
-        }
     };
 
     const handleSubmit = async () => {
@@ -85,6 +80,7 @@ const CreatePost = ({ navigation, route }) => {
 
         } catch (error) {
             console.error('Error submitting event:', error);
+            console.error('Error submitting event:', error.response.data.message);
 
             let errorMessage = 'Failed to create event. Please try again later.';
 

@@ -78,6 +78,7 @@ const DELETE_SAVED_PROFILE = `${BASE_URL}/saved/deleteSavedProfiles`;
 
 // share
 const SHARED_PROFILES = `${BASE_URL}/user/share-bioDataprofile`;
+const SUCESS_STORIES=`${BASE_URL}/user/get-successStories`;
 
 // activist APIs
 const CREATE_ACTIVIST = `${BASE_URL}/activist/createActivist`;
@@ -243,5 +244,6 @@ export {
     RAZORPAY,
     PROFILE_TYPE,
     BASE_URL,
-    SUBSCRIPTION_HISTORY
+    SUBSCRIPTION_HISTORY,
+    SUCESS_STORIES
 }

@@ -91,21 +91,21 @@ const IntrestedProfile = ({ navigation }) => {
             };
 
             navigation.navigate("MatrimonyPeopleProfile", {
-              userDetails: formattedUserData,
+              // userDetails: formattedUserData,
               userId: formattedUserData?.userId,
-              isSaved: formattedUserData?.isSaved,
+              // isSaved: formattedUserData?.isSaved,
               isVisible: isVisible,
-              isBlur: formattedUserData?.isBlur,
-              status: item?.status,
-              requestId:item?.requestId
+              // isBlur: formattedUserData?.isBlur,
+              // status: item?.status,
+              // requestId:item?.requestId
             });
           } else {
             navigation.navigate("IntrestReceivedProfilePage", {
               userId: userData?.userId,
-              biodata: userData,
-              requestId: item?.requestId,
-              isBlur: item?.isVisible,
-              status: item?.status
+              // biodata: userData,
+              // requestId: item?.requestId,
+              // isBlur: item?.isVisible,
+              // status: item?.status
             });
           }
         }}

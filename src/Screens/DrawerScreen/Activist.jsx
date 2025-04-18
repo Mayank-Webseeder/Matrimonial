@@ -8,7 +8,7 @@ import Colors from '../../utils/Colors';
 import { subCasteOptions } from '../../DummyData/DropdownData';
 import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { SH, SW } from '../../utils/Dimensions';
+import { SH, SW, SF } from '../../utils/Dimensions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { GET_ACTIVIST_PROFILES } from '../../utils/BaseUrl';
@@ -30,6 +30,8 @@ const Activist = ({ navigation }) => {
   const [isImageVisible, setImageVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
+  const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
+  const notificationCount = notifications ? notifications.length : 0;
   const [refreshing, setRefreshing] = useState(false);
 
   const openImageViewer = (imageUri) => {
@@ -213,7 +215,32 @@ const Activist = ({ navigation }) => {
             </TouchableOpacity>
             <Text style={Globalstyles.headerText}>Activist</Text>
           </View>
-          <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => navigation.navigate('Notification')} />
+          <TouchableOpacity style={{ position: 'relative' }} onPress={() => navigation.navigate('Notification')}>
+            <AntDesign
+              name="bells"
+              size={25}
+              color={Colors.theme_color}
+            />
+            {notificationCount > 0 && (
+              <View
+                style={{
+                  position: "absolute",
+                  right: -5,
+                  top: -5,
+                  width: SW(16),
+                  height: SW(16),
+                  borderRadius: SW(16) / 2,
+                  backgroundColor: "red",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: 'white', fontSize: SF(9), fontFamily: "Poppins-Bold" }}>
+                  {notificationCount}
+                </Text>
+              </View>
+            )}
+          </TouchableOpacity>
         </View>
         <View>
           <View style={styles.searchbar}>

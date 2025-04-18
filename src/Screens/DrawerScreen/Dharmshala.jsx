@@ -44,7 +44,9 @@ const Dharmshala = () => {
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
   const [isImageVisible, setImageVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
- const [refreshing, setRefreshing] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
+  const notificationCount = notifications ? notifications.length : 0;
 
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
@@ -93,18 +95,18 @@ const Dharmshala = () => {
     }, [])
   );
 
-const onRefresh = useCallback(() => {
-  setRefreshing(true);
-  setTimeout(() => {
-    setRefreshing(false);
-    setLocality('');
-    setSubcaste('');
-    setDharamsalaData([]);
-    fetchDharamsalaData("all");
-    GetMyDharamsalaData();
-  }, 2000);
-}, []);
-  
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+      setLocality('');
+      setSubcaste('');
+      setDharamsalaData([]);
+      fetchDharamsalaData("all");
+      GetMyDharamsalaData();
+    }, 2000);
+  }, []);
+
 
   const SliderRenderItem = ({ item }) => {
     return (
@@ -397,14 +399,32 @@ const onRefresh = useCallback(() => {
           <Text style={Globalstyles.headerText}>Dharmshala</Text>
         </View>
         <View style={styles.righticons}>
-          <AntDesign
-            name={'bells'}
-            size={25}
-            color={Colors.theme_color}
-            onPress={() => {
-              navigation.navigate('Notification');
-            }}
-          />
+          <TouchableOpacity style={{ position: 'relative' }} onPress={() => navigation.navigate('Notification')}>
+            <AntDesign
+              name="bells"
+              size={25}
+              color={Colors.theme_color}
+            />
+            {notificationCount > 0 && (
+              <View
+                style={{
+                  position: "absolute",
+                  right: -5,
+                  top: -5,
+                  width: SW(16),
+                  height: SW(16),
+                  borderRadius: SW(16) / 2,
+                  backgroundColor: "red",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: 'white', fontSize: SF(9), fontFamily: "Poppins-Bold" }}>
+                  {notificationCount}
+                </Text>
+              </View>
+            )}
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -465,9 +485,9 @@ const onRefresh = useCallback(() => {
       </View>
 
       {/* Scrollable Content */}
-      <ScrollView showsVerticalScrollIndicator={false}  refreshControl={
-    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-  }>
+      <ScrollView showsVerticalScrollIndicator={false} refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }>
         {/* Image Slider */}
         <View style={styles.sliderContainer}>
           <AppIntroSlider

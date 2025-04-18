@@ -14,7 +14,7 @@ import { slider } from '../../DummyData/DummyData';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import { useFocusEffect } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
-import { SW } from '../../utils/Dimensions';
+import { SW, SF, SH } from '../../utils/Dimensions';
 import { showMessage } from 'react-native-flash-message';
 
 const Matrimonial = ({ navigation }) => {
@@ -38,6 +38,8 @@ const Matrimonial = ({ navigation }) => {
   const [profileLoading, setProfileLoading] = useState(false);
   const ProfileData = useSelector((state) => state.profile);
   const profile_data = ProfileData?.profiledata || {};
+  const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
+  const notificationCount = notifications ? notifications.length : 0;
 
   useEffect(() => {
     console.log("MyprofileData", MyprofileData);
@@ -391,7 +393,32 @@ const Matrimonial = ({ navigation }) => {
           <TouchableOpacity onPress={() => setSearchMode(!searchMode)}>
             <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} />
           </TouchableOpacity>
-          <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => navigation.navigate('Notification')} />
+          <TouchableOpacity onPress={() => navigation.navigate('Notification')}>
+            <AntDesign
+              name="bells"
+              size={25}
+              color={Colors.theme_color}
+            />
+            {notificationCount > 0 && (
+              <View
+                style={{
+                  position: "absolute",
+                  right: -5,
+                  top: -5,
+                  width: SW(16),
+                  height: SW(16),
+                  borderRadius: SW(16) / 2,
+                  backgroundColor: "red",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: 'white', fontSize: SF(9), fontFamily: "Poppins-Bold" }}>
+                  {notificationCount}
+                </Text>
+              </View>
+            )}
+          </TouchableOpacity>
         </View>
       </View>
       <View style={styles.ButtonContainer}>

@@ -20,16 +20,21 @@ import { showMessage } from 'react-native-flash-message';
 const { width, height } = Dimensions.get("window");
 
 const IntrestReceivedProfilePage = ({ navigation, route }) => {
-  const { userId, biodata, requestId, isSaved: initialSavedState, isBlur, status } = route.params;
-  const [Save, setIsSaved] = useState(initialSavedState || false);
-  const hideContact = !!(biodata?.hideContact || biodata?.hideContact);
-  const hideOptionalDetails = !!(biodata?.hideOptionalDetails || biodata?.hideOptionalDetails)
-  const _id = biodata?._id;
-  const personalDetails = biodata?.personalDetails;
+  const { userId } = route.params;
   const [loading, setLoading] = useState(true);
   const [loadingAccept, setLoadingAccept] = useState(false);
   const [loadingDecline, setLoadingDecline] = useState(false);
   const [profileData, setProfileData] = useState([]);
+   const [userData, setUserData] = useState({});
+   const [Save, setIsSaved] = useState(initialSavedState || false);
+   const hideContact = !!(userData?.hideContact || userData?.hideContact);
+   const hideOptionalDetails = !!(userData?.hideOptionalDetails || userData?.hideOptionalDetails)
+   const _id = userData?._id;
+   const personalDetails = userData?.personalDetails;
+   const initialSavedState=profileData?.isSaved;
+  const status=profileData?.requestStatus;
+  const requestId=profileData?.requestId;
+  const isBlur=userData?.isBlur;
   const MyprofileData = useSelector((state) => state.getBiodata);
   const [imageIndex, setImageIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
@@ -72,6 +77,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
       console.log("response", JSON.stringify(response.data))
       if (response.data.status) {
         setProfileData(response.data);
+        setUserData(response?.data?.targetUserBioData)
       }
     } catch (error) {
       console.error("❌ Error fetching profile");
@@ -91,6 +97,13 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
       setLoading(false);
     }
   };
+  if (loading) {
+      return (
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+          <ActivityIndicator size="large" color={Colors.theme_color} />
+        </View>
+      );
+    }
 
   // if (loading) {
   //   return (
@@ -348,7 +361,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
             </View>
           </Modal>
         </View>
-        {(biodata?.verified) && (
+        {(userData?.verified) && (
           <View style={styles.verifiedContainer}>
             <Image
               source={require("../../Images/verified.png")}
@@ -360,7 +373,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         <View style={styles.flexContainer}>
           <View style={styles.flex}>
             {/* <Text style={styles.Idtext}>ID NO. :- {userId}</Text> */}
-            <Text style={styles.Idtext}>{"ID NO. :-".toUpperCase()} {biodata?.bioDataId}</Text>
+            <Text style={styles.Idtext}>{"ID NO. :-".toUpperCase()} {userData?.bioDataId}</Text>
             <Text style={styles.toptext}>{matchPercentage > 0 && (
               <Text style={styles.toptext}>
                 {matchPercentage}% Compatible according to your preference
@@ -499,13 +512,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
             </View>
           </View>
         )}
-        {!profileData?.data && (
-          <Text style={styles.warningText}>
-            To find better matches, please set your partner preferences.
-          </Text>
-        )}
-
-        {profileData?.data ? (
+        {Object.keys(profileData?.comparisonResults || {}).length > 0 ? (
           <View style={styles.flexContainer3}>
             <Text style={styles.HeadingText}>Your Similarities</Text>
             <View style={styles.flex}>
@@ -513,18 +520,15 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
                 source={{ uri: profileData?.loggedInUserBiodata?.personalDetails?.closeUpPhoto }}
                 style={styles.smallImage}
               />
-
               <Text style={styles.text}>{matchedCount}/{totalCriteria}</Text>
-
               <Image
                 source={{ uri: profileData?.targetUserBioData?.personalDetails?.closeUpPhoto }}
                 style={styles.smallImage}
               />
             </View>
 
-
             {/* Comparison List */}
-            {Object.keys(profileData?.comparisonResults || {}).map((key, index) => (
+            {Object.keys(profileData?.comparisonResults).map((key, index) => (
               <View key={index} style={styles.flexContainer5}>
                 <Text style={styles.label}>{key.replace(/([A-Z])/g, " $1").trim()}</Text>
                 {profileData.comparisonResults[key] ? (
@@ -535,8 +539,11 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
               </View>
             ))}
           </View>
-        ) : null}
-
+        ) : (
+          <Text style={styles.warningText}>
+            To find better matches, please set your partner preferences.
+          </Text>
+        )}
         <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
       </ScrollView>
       <View style={styles.bottomContainer}>

@@ -83,29 +83,145 @@ const Notification = ({ navigation }) => {
     }
   };
 
-  const VIEW_Notification = async (_id) => {
-    setIsLoading(true);
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+  const VIEW_Notification = (notification) => {
+    // Logging the entire notification object for inspection
+    console.log("📬 Received notification object:", JSON.stringify(notification, null, 2));
 
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      };
+    const { notificationType, _id, userId } = notification;
 
-      const res = await axios.patch(`${VIEW_NOTIFICATION}/${_id}`, {}, { headers });
-      const notificationData = res.data.data;
-      console.log("notificationData", JSON.stringify(notificationData));
-      setViewnotification(notificationData);
-      navigation.reset({
-        index: 0,
-        routes: [{ name: "Notification" }],
-      });
-    } catch (error) {
-      console.error("Error fetching notifications:", error.response ? error.response.data : error.message);
-    } finally {
-      setIsLoading(false);
+    // Check if _id exists
+    if (!_id) {
+      console.warn("❌ Notification ID is missing!", { _id });
+      return;
+    }
+
+    // Check if userId exists
+    if (!userId) {
+      console.warn("❌ User ID is missing!", { userId });
+      return;
+    }
+
+    // Logging the details of the notification
+    console.log("✅ Notification Details - Type:", notificationType, "ID:", _id, "User ID:", userId);
+
+    // Navigate based on the notification type
+    switch (notificationType) {
+      case 'comment':
+      case 'like':
+        console.log("🚀 Navigating to EventNews with ID:", _id, "User ID:", userId);
+        navigation.navigate('EventNews', { id: _id, userId });
+        break;
+
+      case 'activistApproved':
+        console.log("🚀 Navigating to Activist with ID:", _id, "User ID:", userId);
+        navigation.navigate('Activist', { id: _id, userId });
+        break;
+
+      case 'connectionRequestResponse':
+        console.log("🚀 Navigating to MatrimonyPeopleProfile with ID:", notification._id, "User ID:", notification.relatedData.toUserId);
+        navigation.navigate('MatrimonyPeopleProfile', {
+          id: notification._id,
+          userId: notification?.relatedData?.toUserId,
+        });
+        break;
+
+      case 'connectionRequest':
+        console.log("📩 Navigating to IntrestReceivedProfilePage with ID:", notification._id, "User ID:", notification.relatedData.fromUserId);
+        navigation.navigate('IntrestReceivedProfilePage', {
+          id: notification._id,
+          userId: notification?.relatedData?.fromUserId, // 👈 correct key
+        });
+        break;
+
+      case 'kathavachakApproved':
+        console.log("🚀 Navigating to KathavachakDetailsPage with kathavachak_id:", notification?.relatedData?.kathavachakId, "User ID:", userId);
+        navigation.navigate('KathavachakDetailsPage', { kathavachak_id: notification?.relatedData?.kathavachakId, userId });
+        break;
+
+      case 'jyotishApproved':
+        console.log("🚀 Navigating to JyotishDetailsPage with jyotish_id:", notification?.relatedData?.jyotishId, "User ID:", userId);
+        navigation.navigate('JyotishDetailsPage', { jyotish_id: notification?.relatedData?.jyotishId, userId });
+        break;
+
+      case 'panditApproved':
+        console.log("🚀 Navigating to PanditDetailPage with pandit_id:", notification?.relatedData?.panditId, "User ID:", userId);
+        navigation.navigate('PanditDetailPage', { pandit_id: notification?.relatedData?.panditId, userId });
+        break;
+
+      default:
+        console.log('⚠️ Unknown notification type:', notificationType);
+    }
+
+    // Mark the notification as seen
+    setTimeout(async () => {
+      try {
+        console.log("📤 Marking notification as seen for ID:", _id);
+
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) throw new Error("No token found");
+
+        const headers = {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        };
+
+        const res = await axios.patch(`${VIEW_NOTIFICATION}/${_id}`, {}, { headers });
+
+        console.log("✅ Notification marked as seen:", res.data.data);
+      } catch (error) {
+        console.error("❌ Error marking notification as seen:", error.response ? error.response.data : error.message);
+      }
+    }, 500);
+  };
+
+
+  const handleNavigation = (notification) => {
+    console.log("notification", JSON.stringify(notification))
+    const { notificationType, _id, userId } = notification;
+
+    switch (notificationType) {
+      case 'comment':
+      case 'like':
+        navigation.navigate('EventNews', { id: _id, userId });
+        break;
+
+      case 'activistApproved':
+        navigation.navigate('Activist', { id: _id, userId });
+        break;
+
+      case 'connectionRequestResponse':
+        console.log("🚀 Navigating to MatrimonyPeopleProfile with ID:", notification._id, "User ID:", notification.relatedData.toUserId);
+        navigation.navigate('MatrimonyPeopleProfile', {
+          id: notification._id,
+          userId: notification?.relatedData?.toUserId,
+        });
+        break;
+
+      case 'connectionRequest':
+        console.log("📩 Navigating to IntrestReceivedProfilePage with ID:", notification._id, "User ID:", notification.relatedData.fromUserId);
+        navigation.navigate('IntrestReceivedProfilePage', {
+          id: notification._id,
+          userId: notification?.relatedData?.fromUserId, // 👈 correct key
+        });
+        break;
+
+      case 'kathavachakApproved':
+        console.log("🚀 Navigating to KathavachakDetailsPage with kathavachak_id:", notification?.relatedData?.kathavachakId, "User ID:", userId);
+        navigation.navigate('KathavachakDetailsPage', { kathavachak_id: notification?.relatedData?.kathavachakId, userId });
+        break;
+
+      case 'jyotishApproved':
+        console.log("🚀 Navigating to JyotishDetailsPage with jyotish_id:", notification?.relatedData?.jyotishId, "User ID:", userId);
+        navigation.navigate('JyotishDetailsPage', { jyotish_id: notification?.relatedData?.jyotishId, userId });
+        break;
+
+      case 'panditApproved':
+        console.log("🚀 Navigating to PanditDetailPage with pandit_id:", notification?.relatedData?.panditId, "User ID:", userId);
+        navigation.navigate('PanditDetailPage', { pandit_id: notification?.relatedData?.panditId, userId });
+        break;
+
+      default:
+        console.log('Unknown notification type:', notificationType);
     }
   };
 
@@ -140,20 +256,20 @@ const Notification = ({ navigation }) => {
       ? item.relatedData.photoUrl[0]
       : item?.relatedData?.photoUrl;
     return (
-      <TouchableOpacity style={styles.card} onPress={() => VIEW_Notification(item._id)}>
+      <TouchableOpacity style={styles.card} onPress={() => VIEW_Notification(item)}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-        <Image
-  source={
-    imageError || !photoUrl
-      ? require('../../Images/NoImage.png')
-      : { uri: photoUrl }
-  }
-  style={styles.notificationImage}
-  onError={() => {
-    console.log("Image Load Error");
-    setImageError(true);
-  }}
-/>
+          <Image
+            source={
+              imageError || !photoUrl
+                ? require('../../Images/AppLogo.jpg')
+                : { uri: photoUrl }
+            }
+            style={styles.notificationImage}
+            onError={() => {
+              console.log("Image Load Error");
+              setImageError(true);
+            }}
+          />
 
           <View style={{ marginLeft: SW(10) }}>
             <Text style={styles.name}>{item.relatedData.username || item?.relatedData?.likedBy?.name || item?.relatedData?.commentBy?.name}</Text>
@@ -169,12 +285,20 @@ const Notification = ({ navigation }) => {
       ? item.relatedData.photoUrl[0]
       : item?.relatedData?.photoUrl;
     return (
-      <TouchableOpacity style={styles.card}>
+      <TouchableOpacity style={styles.card}
+        onPress={() => handleNavigation(item)}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Image
-            source={{ uri: photoUrl }}
+            source={
+              imageError || !photoUrl
+                ? require('../../Images/AppLogo.jpg')
+                : { uri: photoUrl }
+            }
             style={styles.notificationImage}
-            onError={(e) => console.log("Image Load Error:", e.nativeEvent.error)}
+            onError={() => {
+              console.log("Image Load Error");
+              setImageError(true);
+            }}
           />
           <View style={{ marginLeft: 10 }}>
             <Text style={styles.name}>{item.relatedData.username || item.relatedData.likedBy?.name || item.relatedData.commentBy?.name}</Text>
@@ -196,14 +320,12 @@ const Notification = ({ navigation }) => {
           <Text style={Globalstyles.headerText}>Notifications</Text>
         </View>
       </View>
-
       <View style={{ flex: 1 }}>
         {/* Toggle Buttons */}
         <View style={{ flexDirection: "row", justifyContent: "space-around", marginVertical: 10 }}>
           <TouchableOpacity
             onPress={() => setShowSeen(false)}
             style={{
-              width:SW(150),
               paddingVertical: SH(10),
               paddingHorizontal: (10),
               backgroundColor: !showSeen ? Colors.theme_color : "lightgray",
@@ -215,9 +337,8 @@ const Notification = ({ navigation }) => {
           <TouchableOpacity
             onPress={() => setShowSeen(true)}
             style={{
-              width:SW(150),
               paddingVertical: SH(10),
-              paddingHorizontal: (10),
+              paddingHorizontal: (13),
               backgroundColor: showSeen ? Colors.theme_color : "lightgray",
               borderRadius: 5,
             }}
@@ -241,7 +362,7 @@ const Notification = ({ navigation }) => {
             ListEmptyComponent={
               <View style={{ alignItems: "center", marginTop: 20 }}>
                 <Ionicons name={'notifications-circle-sharp'} color={Colors.theme_color} size={100} />
-                <Text style={{ color: "gray", fontWeight: '600', fontSize: SF(15),fontFamily:"Poppins-Bold" }}>Notifications will appear here</Text>
+                <Text style={{ color: "gray", fontWeight: '600', fontSize: SF(15), fontFamily: "Poppins-Bold" }}>Notifications will appear here</Text>
               </View>
             }
           />

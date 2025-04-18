@@ -22,31 +22,37 @@ const { width, height } = Dimensions.get("window");
 
 const MatrimonyPeopleProfile = ({ navigation }) => {
   const route = useRoute();
-  const MyActivistProfile = useSelector((state) => state.activist.activist_data);
-  const { userDetails, isSaved: initialSavedState, userId, isBlur, isVisible, status, requestId } = route.params || {};
-  const isBlurCondition = status === "accepted" ? !isVisible : isBlur;
-  const [Save, setIsSaved] = useState(initialSavedState || false);
-  const Biodata_id = userDetails?.bioDataId || null;
-  const hideContact = !!(userDetails?.hideContact);
-  const hideOptionalDetails = !!(userDetails?.hideOptionalDetails)
-  const isActivist = MyActivistProfile?._id;
-  const activistId = MyActivistProfile?._id;
-  const isVerified = userDetails?.verified;
-  const verifiedBy = userDetails?.verifiedBy;
+  const { userId } = route.params || {};
   const [loading, setLoading] = useState(true);
   const [loadingIntrest, setLoadingIntrest] = useState(false);
   const [intrestLoading, setIntrestLoading] = useState(false);
-  const _id = userDetails?._id;
-  // console.log("_id", User_Id);
-  const personalDetails = userDetails?.personalDetails || {};
-  const partnerPreferences = userDetails?.partnerPreferences || {};
+  const MyActivistProfile = useSelector((state) => state.activist.activist_data);
   const [profileData, setProfileData] = useState([]);
+  const [userData, setUserData] = useState({});
   const MyprofileData = useSelector((state) => state.getBiodata);
   const partnerPreferenceData = MyprofileData?.Biodata?.partnerPreferences || null;
   const [isImageVisible, setImageVisible] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [isSwitchOn, setIsSwitchOn] = useState(isVerified);
+  const _id = userData?._id;
+  const Biodata_id = userData?.bioDataId || null;
+  const hideContact = !!(userData?.hideContact);
+  const hideOptionalDetails = !!(userData?.hideOptionalDetails)
+  const isActivist = MyActivistProfile?._id;
+  const activistId = MyActivistProfile?._id;
+  const isVerified = userData?.verified;
+  const verifiedBy = userData?.verifiedBy;
+  // console.log("_id", User_Id);
+  const personalDetails = userData?.personalDetails || {};
+  const partnerPreferences = userData?.partnerPreferences || {};
+  const initialSavedState = profileData?.isSaved;
+  const status = profileData?.requestStatus;
+  const requestId = profileData?.requestId;
+  const isVisible = profileData?.isVisible;
+  const isBlur = userData?.isBlur;
+  const isBlurCondition = status === "accepted" ? !isVisible : isBlur;
+  const [Save, setIsSaved] = useState(initialSavedState || false);
 
   const handleToggle = async () => {
     const newValue = !isSwitchOn;
@@ -73,7 +79,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         showMessage({
           type: "error",
           message: "User token missing!",
-          icon:"danger"
+          icon: "danger"
         });
         return;
       }
@@ -106,7 +112,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
       showMessage({
         type: "danger",
-        message:errorMessage,
+        message: errorMessage,
         icon: "danger"
       });
     }
@@ -197,15 +203,19 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
   useFocusEffect(
     useCallback(() => {
-      console.log("isBlur", isBlur);
-      console.log("isVisible", isVisible);
-      console.log("status", status);
+      console.log("====== Profile Data Debug ======");
+      console.log("isVerified:", userData?.verified);
+      console.log("verifiedBy:", userData?.verifiedBy);
+      console.log("initialSavedState:", profileData?.isSaved);
+      console.log("status:", profileData?.requestStatus);
+      console.log("requestId:", profileData?.requestId);
+      console.log("isBlur:", userData?.isBlur);
+      console.log("userId:", userData?.userId);
       if (userId) {
         fetchUserProfile(userId);
       }
     }, [userId, isBlur])
   );
-
 
   const fetchUserProfile = async (id) => {
     console.log("id", id);
@@ -223,6 +233,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       console.log("response", JSON.stringify(response.data))
       if (response.data.status) {
         setProfileData(response.data);
+        setUserData(response?.data?.targetUserBioData)
       }
     } catch (error) {
       console.error("Error fetching profile:", error);
@@ -321,9 +332,9 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       console.log("Response Data:", JSON.stringify(response?.data));
 
       if (response?.data?.message) {
-          showMessage({
-          message:response.data.message,
-          type:"success",
+        showMessage({
+          message: response.data.message,
+          type: "success",
           icon: "success",
           duration: 3000,
         });
@@ -334,8 +345,8 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         }
       } else {
         showMessage({
-          message:"Something went wrong!",
-          type:"danger",
+          message: "Something went wrong!",
+          type: "danger",
           icon: "danger",
           duration: 3000,
         });
@@ -347,7 +358,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       );
       showMessage({
         message: error.response?.data?.message,
-        type:"danger",
+        type: "danger",
         icon: "danger",
         duration: 3000,
       });
@@ -356,8 +367,8 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
   const shareProfiles = async () => {
     showMessage({
-      message:"Under development",
-      type:"info",
+      message: "Under development",
+      type: "info",
       icon: "info",
       duration: 3000,
     });
@@ -490,7 +501,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         <View style={styles.flexContainer}>
           <View style={styles.flex}>
             <Text style={styles.Idtext}>
-              {"ID NO. :-".toUpperCase()} {userDetails?.bioDataId || details?.bioDataId}
+              {"ID NO. :-".toUpperCase()} {userData?.bioDataId}
             </Text>
 
             <Text style={styles.toptext}>{matchPercentage > 0 && (
@@ -524,7 +535,15 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                 <ActivityIndicator size="small" color={Colors.theme_color} />
               ) : (
                 <Text style={styles.buttonText}>
-                  {requestId ? "Delete Interest" : status ? status : "Send Interest"}
+                  {(status === "accepted" || status === "rejected") ? (
+                    <Text style={[styles.buttonText, { color: '#fff' }]}>
+                      {status.charAt(0).toUpperCase() + status.slice(1)}
+                    </Text>
+                  ) : (
+                    <Text style={styles.buttonText}>
+                        {requestId ? "Delete Interest" : status ? status : "Send Interest"}
+                      </Text>
+                  )}
                 </Text>
               )}
             </TouchableOpacity>
@@ -679,13 +698,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           </View>
         }
 
-        {profileData.length === 0 && (
-          <Text style={styles.warningText}>
-            To find better matches, please set your partner preferences.
-          </Text>
-        )}
-
-        {profileData?.data ? (
+        {Object.keys(profileData?.comparisonResults || {}).length > 0 ? (
           <View style={styles.flexContainer3}>
             <Text style={styles.HeadingText}>Your Similarities</Text>
             <View style={styles.flex}>
@@ -693,18 +706,15 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                 source={{ uri: profileData?.loggedInUserBiodata?.personalDetails?.closeUpPhoto }}
                 style={styles.smallImage}
               />
-
               <Text style={styles.text}>{matchedCount}/{totalCriteria}</Text>
-
               <Image
                 source={{ uri: profileData?.targetUserBioData?.personalDetails?.closeUpPhoto }}
                 style={styles.smallImage}
               />
             </View>
 
-
             {/* Comparison List */}
-            {Object.keys(profileData?.comparisonResults || {}).map((key, index) => (
+            {Object.keys(profileData?.comparisonResults).map((key, index) => (
               <View key={index} style={styles.flexContainer5}>
                 <Text style={styles.label}>{key.replace(/([A-Z])/g, " $1").trim()}</Text>
                 {profileData.comparisonResults[key] ? (
@@ -715,7 +725,12 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               </View>
             ))}
           </View>
-        ) : null}
+        ) : (
+          <Text style={styles.warningText}>
+            To find better matches, please set your partner preferences.
+          </Text>
+        )}
+
         <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
       </ScrollView>
     </SafeAreaView>

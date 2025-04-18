@@ -299,7 +299,7 @@ function MyDrawer() {
   );
 }
 
-const AppStack = () => (
+export const AppStack = () => (
   <AppStackNavigator.Navigator screenOptions={{ headerShown: false }} initialRouteName="MainApp">
     <AppStackNavigator.Screen name="MainApp" component={MyDrawer} />
     <AppStackNavigator.Screen name="Committee" component={Committee} />
@@ -351,13 +351,19 @@ const AppStack = () => (
   </AppStackNavigator.Navigator>
 );
 
-const AuthStack = () => (
+export const AuthStack = () => (
   <AuthStackNavigator.Navigator screenOptions={{ headerShown: false }} initialRouteName='Splash'>
     <AuthStackNavigator.Screen name="Splash" component={Splash} />
     <AuthStackNavigator.Screen name="Register" component={Register} />
     <AuthStackNavigator.Screen name="Login" component={Login} />
     <AuthStackNavigator.Screen name="ForgotScreen" component={ForgotScreen} />
   </AuthStackNavigator.Navigator>
+);
+
+const WrappedAppStack = () => (
+  <SocketProvider>
+    <AppStack />
+  </SocketProvider>
 );
 
 const RootNavigator = () => {
@@ -383,9 +389,10 @@ const RootNavigator = () => {
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={initialRoute}>
-      <Stack.Screen name="AuthStack" component={AuthStack} />
-      <Stack.Screen name="AppStack" component={AppStack} />
-    </Stack.Navigator>
+    <Stack.Screen name="AuthStack" component={AuthStack} />
+    <Stack.Screen name="AppStack" component={WrappedAppStack} />
+  </Stack.Navigator>
+  
   );
 };
 

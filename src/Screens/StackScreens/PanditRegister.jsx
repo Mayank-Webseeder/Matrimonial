@@ -335,7 +335,7 @@ const PanditRegister = ({ navigation }) => {
             });
             setTimeout(() => {
                 openModal();
-            }, 5000);
+            }, 1000);
         } finally {
             console.log("Loader Stopped!");
             setIsLoading(false);

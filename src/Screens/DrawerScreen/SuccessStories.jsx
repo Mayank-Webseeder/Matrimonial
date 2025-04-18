@@ -1,5 +1,5 @@
 import { Text, View, TouchableOpacity, Image, FlatList, SafeAreaView, StatusBar, RefreshControl } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -9,15 +9,42 @@ import { SuccessStoriesData } from '../../DummyData/DummyData';
 import Globalstyles from '../../utils/GlobalCss';
 import { DrawerActions } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/native';
+import { SUCESS_STORIES } from '../../utils/BaseUrl';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
+import { SH,SW,SF } from '../../utils/Dimensions';
 
 const SuccessStories = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
+  const [stories, setStories] = useState([]);
+  const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
+  const notificationCount = notifications ? notifications.length : 0;
 
-  const onRefresh = React.useCallback(() => {
+  useFocusEffect(useCallback(() => {
+    fetchSuccessStories();
+  }, []));
+
+  const fetchSuccessStories = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) throw new Error("No token found");
+
+      const headers = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      };
+
+      const res = await axios.get(SUCESS_STORIES, { headers });
+      setStories(res.data.data); // Store stories in state
+    } catch (error) {
+      console.error("Error fetching success stories:", error.response ? error.response.data : error.message);
+    }
+  };
+
+  const onRefresh = useCallback(() => {
     setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 2000);
+    fetchSuccessStories().finally(() => setRefreshing(false));
   }, []);
 
   const renderStars = (rating) => {
@@ -36,26 +63,20 @@ const SuccessStories = ({ navigation }) => {
     return stars;
   };
 
-  const renderItem = ({ item }) => {
-    return (
-      <View style={styles.storyCard}>
-        <Image source={item.image} style={styles.storyImage} />
-        <View style={styles.textContainer}>
-          <Text style={styles.storyName}>{item.name}</Text>
-          <Text style={styles.storyDescription}>{item.description}</Text>
-          <View style={styles.ratingContainer}>{renderStars(item.rating)}</View>
-        </View>
+  const renderItem = ({ item }) => (
+    <View style={styles.storyCard}>
+      <Image source={{ uri: item.photoUrl }} style={styles.storyImage} />
+      <View style={styles.textContainer}>
+        <Text style={styles.storyName}>{item.groomName} ❤️ {item.brideName}</Text>
+        <Text style={styles.storyDescription}>{item.thought}</Text>
+        <View style={styles.ratingContainer}>{renderStars(item.rating)}</View>
       </View>
-    );
-  };
+    </View>
+  );
 
   return (
     <SafeAreaView style={Globalstyles.container}>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor="transparent"
-        translucent
-      />
+      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
@@ -64,22 +85,39 @@ const SuccessStories = ({ navigation }) => {
           <Text style={Globalstyles.headerText}>Success Stories</Text>
         </View>
         <View style={styles.righticons}>
-          <TouchableOpacity onPress={() => navigation.navigate('PostSuccessStories')}>
-            <Text style={styles.postText}>Post</Text>
+        <TouchableOpacity style={{ position: 'relative' }} onPress={() => navigation.navigate('Notification')}>
+            <AntDesign
+              name="bells"
+              size={25}
+              color={Colors.theme_color}
+            />
+            {notificationCount > 0 && (
+              <View
+                style={{
+                  position: "absolute",
+                  right: -5,
+                  top: -5,
+                  width: SW(16),
+                  height: SW(16),
+                  borderRadius: SW(16) / 2,
+                  backgroundColor: "red",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: 'white', fontSize: SF(9), fontFamily: "Poppins-Bold" }}>
+                  {notificationCount}
+                </Text>
+              </View>
+            )}
           </TouchableOpacity>
-          <AntDesign
-            name={'bells'}
-            size={25}
-            color={Colors.theme_color}
-            onPress={() => navigation.navigate('Notification')}
-          />
         </View>
       </View>
 
       <FlatList
-        data={SuccessStoriesData}
+        data={stories}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item._id}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -88,5 +126,6 @@ const SuccessStories = ({ navigation }) => {
     </SafeAreaView>
   );
 };
+
 
 export default SuccessStories;

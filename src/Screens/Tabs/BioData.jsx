@@ -13,9 +13,9 @@ import { MATRIMONY_SUMMRARY } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
-import { SH } from '../../utils/Dimensions';
+import { SH, SW, SF } from '../../utils/Dimensions';
 import { useFocusEffect } from '@react-navigation/native';
-
+import { useSelector } from 'react-redux';
 const BioData = ({ navigation }) => {
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -25,7 +25,8 @@ const BioData = ({ navigation }) => {
   const savedProfiles = all_profiles?.savedProfiles || [];
   const interestedProfiles = all_profiles?.interestedProfiles || [];
   const allProfiles = all_profiles?.allProfiles || [];
-
+  const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
+  const notificationCount = notifications ? notifications.length : 0;
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = useCallback(() => {
@@ -97,13 +98,13 @@ const BioData = ({ navigation }) => {
 
   const handleNavigateToProfile = (item) => {
     navigation.navigate("MatrimonyPeopleProfile", {
-      userDetails: item,
+      // userDetails: item,
       userId: item?.userId,
-      isSaved: item.isSaved,
-      isBlur: item?.isBlur,
-      isVisible: item?.isVisible,
-      status: item?.status,
-      requestId: item?.requestId,
+      // isSaved: item.isSaved,
+      // isBlur: item?.isBlur,
+      // isVisible: item?.isVisible,
+      // status: item?.status,
+      // requestId: item?.requestId,
     });
   };
 
@@ -159,8 +160,8 @@ const BioData = ({ navigation }) => {
     return (
       <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("IntrestReceivedProfilePage", {
         userId: item?.userId,
-        requestId: item?.requestId,
-        biodata: item
+        // requestId: item?.requestId,
+        // biodata: item
       })}>
         <Image style={styles.image} source={{ uri: item?.personalDetails?.closeUpPhoto }}
           blurRadius={isBlurCondition ? 5 : 0} />
@@ -202,9 +203,31 @@ const BioData = ({ navigation }) => {
           <MaterialIcons name={'arrow-back-ios-new'} size={25} color={Colors.theme_color} onPress={() => navigation.goBack()} />
           <Text style={Globalstyles.headerText}>Matrimony</Text>
         </View>
-        <TouchableOpacity style={styles.righticons} onPress={() => navigation.navigate("Notification")}>
-          <AntDesign name={'bells'} size={25} color={Colors.theme_color} />
-          {/* <AntDesign name={'search1'} size={20} color={Colors.theme_color} style={{ marginHorizontal: 10 }} /> */}
+        <TouchableOpacity onPress={() => navigation.navigate('Notification')}>
+          <AntDesign
+            name="bells"
+            size={25}
+            color={Colors.theme_color}
+          />
+          {notificationCount > 0 && (
+            <View
+              style={{
+                position: "absolute",
+                right: -5,
+                top: -5,
+                width: SW(16),
+                height: SW(16),
+                borderRadius: SW(16) / 2,
+                backgroundColor: "red",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ color: 'white', fontSize: SF(9), fontFamily: "Poppins-Bold" }}>
+                {notificationCount}
+              </Text>
+            </View>
+          )}
         </TouchableOpacity>
       </View>
       <ScrollView showsVerticalScrollIndicator={false} refreshControl={

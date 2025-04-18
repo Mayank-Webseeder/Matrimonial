@@ -17,7 +17,7 @@ import { slider } from '../../DummyData/DummyData';
 import { GET_ALL_KATHAVACHAK, SAVED_PROFILES } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
-import { SH, SW } from '../../utils/Dimensions';
+import { SH, SW  ,SF} from '../../utils/Dimensions';
 import { useFocusEffect } from '@react-navigation/native';
 import ImageViewing from 'react-native-image-viewing';
 import { showMessage } from 'react-native-flash-message';
@@ -38,6 +38,8 @@ const Kathavachak = ({ navigation }) => {
   const [isImageVisible, setImageVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
  const [refreshing, setRefreshing] = useState(false);
+   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
+     const notificationCount = notifications ? notifications.length : 0;
   const ProfileData = useSelector((state) => state.profile);
   const profile_data = ProfileData?.profiledata || {};
 
@@ -312,7 +314,32 @@ const Kathavachak = ({ navigation }) => {
           <Text style={Globalstyles.headerText}>Kathavachak</Text>
         </View>
         <View style={styles.headerContainer}>
-          <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => navigation.navigate('Notification')} />
+        <TouchableOpacity style={{ position: 'relative' }} onPress={() => navigation.navigate('Notification')}>
+            <AntDesign
+              name="bells"
+              size={25}
+              color={Colors.theme_color}
+            />
+            {notificationCount > 0 && (
+              <View
+                style={{
+                  position: "absolute",
+                  right: -5,
+                  top: -5,
+                  width: SW(16),
+                  height: SW(16),
+                  borderRadius: SW(16) / 2,
+                  backgroundColor: "red",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: 'white', fontSize: SF(9), fontFamily: "Poppins-Bold" }}>
+                  {notificationCount}
+                </Text>
+              </View>
+            )}
+          </TouchableOpacity>
         </View>
       </View>
       <View style={styles.ButtonContainer}>

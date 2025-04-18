@@ -94,7 +94,7 @@ const SubscriptionHistory = ({ navigation }) => {
                                     borderRadius: 5,
                                     alignSelf: 'flex-start',
                                     textAlign: "center",
-                                    fontSize:SF(11)
+                                    fontSize: SF(11)
                                 },
                             ]}
                         >
@@ -125,17 +125,6 @@ const SubscriptionHistory = ({ navigation }) => {
                         <Text style={styles.dateText}>To: {formatDate(endDate)}</Text>
                     )}
                 </View>
-
-                {/* {isExpired && serviceType && (
-                    <TouchableOpacity
-                        style={styles.buyButton}
-                        onPress={() => {
-                            navigation.navigate('BuySubscription', { serviceType: serviceType });
-                        }}
-                    >
-                        <Text style={styles.buyButtonText}>Renew</Text>
-                    </TouchableOpacity>
-                )} */}
 
             </View>
         );

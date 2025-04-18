@@ -513,7 +513,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
         message: errorMessage,
         type: 'danger',
         icon: 'danger',
-        duration: 3000, // Display for 3 seconds
+        duration: 3000,
       });
 
       setTimeout(() => {

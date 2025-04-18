@@ -159,6 +159,14 @@ export const SocketProvider = ({ children }) => {
       showToast(data?.message);
     });
 
+    // socket.on("user-notification", (data) => {
+    //   showToast(data?.message);
+    // });
+
+    // socket.on("eventCreation-notification", (data) => {
+    //   showToast(data?.message);
+    // });
+
     return () => {
       console.log("🧹 Cleaning up socket event listeners...");
       socket.offAny();

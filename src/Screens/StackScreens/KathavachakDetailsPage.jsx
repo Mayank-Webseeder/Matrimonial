@@ -17,7 +17,7 @@ import moment from "moment";
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
 import ImageViewing from 'react-native-image-viewing';
-import { SH, SW } from '../../utils/Dimensions';
+import { SH, SW, SF } from '../../utils/Dimensions';
 import { showMessage } from 'react-native-flash-message';
 
 
@@ -34,6 +34,8 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
     const [myRatings, setMyRatings] = useState([]);
     const [otherRatings, setOtherRatings] = useState([]);
     const [visible, setVisible] = useState(false);
+    const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
+    const notificationCount = notifications ? notifications.length : 0;
 
     const profilePhoto = profileData?.profilePhoto
         ? { uri: profileData.profilePhoto }
@@ -51,8 +53,8 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
         if (!kathavachak_id) {
             showMessage({
                 type: "danger",
-                message:"Jyotish ID not found!",
-                icon:"danger"
+                message: "Jyotish ID not found!",
+                icon: "danger"
             });
             return;
         }
@@ -153,8 +155,8 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
 
             showMessage({
                 type: "danger",
-                message:errorMessage,
-                icon:"danger"
+                message: errorMessage,
+                icon: "danger"
             });
         }
     };
@@ -240,8 +242,32 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                     <Text style={Globalstyles.headerText}>{profileData?.fullName}</Text>
                 </View>
                 <View style={styles.righticons}>
-                    {/* <AntDesign name={'search1'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} /> */}
-                    <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />
+                    <TouchableOpacity style={{ position: 'relative' }} onPress={() => navigation.navigate('Notification')}>
+                        <AntDesign
+                            name="bells"
+                            size={25}
+                            color={Colors.theme_color}
+                        />
+                        {notificationCount > 0 && (
+                            <View
+                                style={{
+                                    position: "absolute",
+                                    right: -5,
+                                    top: -5,
+                                    width: SW(16),
+                                    height: SW(16),
+                                    borderRadius: SW(16) / 2,
+                                    backgroundColor: "red",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                }}
+                            >
+                                <Text style={{ color: 'white', fontSize: SF(9), fontFamily: "Poppins-Bold" }}>
+                                    {notificationCount}
+                                </Text>
+                            </View>
+                        )}
+                    </TouchableOpacity>
                 </View>
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>

@@ -23,6 +23,8 @@ const SavedProfile = ({ navigation }) => {
   const MyprofileData = useSelector((state) => state.getBiodata);
   const partnerPreferences = MyprofileData?.Biodata?.partnerPreferences || null;
   const [refreshing, setRefreshing] = useState(false);
+  const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
+  const notificationCount = notifications ? notifications.length : 0;
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchSavedProfiles();
@@ -65,7 +67,7 @@ const SavedProfile = ({ navigation }) => {
   const DeleteSaveProfile = async (_id) => {
     if (!_id) {
       console.warn("Invalid ID: Cannot delete profile without a valid _id");
-     showMessage({
+      showMessage({
         type: "danger",
         message: "Error",
         description: "Profile ID is missing!",
@@ -95,11 +97,11 @@ const SavedProfile = ({ navigation }) => {
       if (response.status === 200 && response.data.status === true) {
         console.log("Profile deleted successfully:", response.data);
 
-       showMessage({
+        showMessage({
           type: "success",
           message: "Success",
           description: "Saved profile deleted successfully!",
-          icon:"success"
+          icon: "success"
         });
         fetchSavedProfiles();
       } else {
@@ -113,11 +115,11 @@ const SavedProfile = ({ navigation }) => {
         errorMessage = error.response.data?.message || "Invalid request!";
       }
 
-     showMessage({
+      showMessage({
         type: "danger",
         message: "Error",
         description: errorMessage,
-        icon:"danger"
+        icon: "danger"
       });
     } finally {
       setLoading(false);
@@ -255,7 +257,32 @@ const SavedProfile = ({ navigation }) => {
           </View>
           <View style={styles.righticons}>
             {/* <AntDesign name={"search1"} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} /> */}
-            <AntDesign name={"bells"} size={25} color={Colors.theme_color} onPress={() => navigation.navigate("Notification")} />
+            <TouchableOpacity onPress={() => navigation.navigate('Notification')}>
+              <AntDesign
+                name="bells"
+                size={25}
+                color={Colors.theme_color}
+              />
+              {notificationCount > 0 && (
+                <View
+                  style={{
+                    position: "absolute",
+                    right: -5,
+                    top: -5,
+                    width: SW(16),
+                    height: SW(16),
+                    borderRadius: SW(16) / 2,
+                    backgroundColor: "red",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Text style={{ color: 'white', fontSize: SF(9), fontFamily: "Poppins-Bold" }}>
+                    {notificationCount}
+                  </Text>
+                </View>
+              )}
+            </TouchableOpacity>
           </View>
         </View>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>

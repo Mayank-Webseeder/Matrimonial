@@ -526,7 +526,7 @@ const Dharmshala = () => {
         animationType="slide"
         onRequestClose={handleCloseFilter}
       >
-        <View style={styles.modalOverlay}>
+        <SafeAreaView style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.Filterheader}>
               <TouchableOpacity onPress={handleCloseFilter} style={{ flexDirection: 'row' }}>
@@ -599,7 +599,7 @@ const Dharmshala = () => {
               </TouchableOpacity>
             </View>
           </View>
-        </View>
+        </SafeAreaView>
       </Modal>
     </SafeAreaView>
   );

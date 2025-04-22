@@ -413,7 +413,7 @@ const Kathavachak = ({ navigation }) => {
         animationType="slide"
         onRequestClose={handleCloseFilter}
       >
-        <View style={styles.modalOverlay}>
+        <SafeAreaView style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.Filterheader}>
               <TouchableOpacity onPress={handleCloseFilter} style={{ flexDirection: 'row' }}>
@@ -486,7 +486,7 @@ const Kathavachak = ({ navigation }) => {
             </View>
 
           </View>
-        </View>
+        </SafeAreaView>
       </Modal>
     </SafeAreaView>
   );

@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: SW(10),
         // paddingVertical: SH(5),
         borderWidth: 1,
-        borderRadius:10,
+        borderRadius: 10,
         marginHorizontal: SW(25),
         color: Colors.dark,
         marginBottom: SH(20),
@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
     passwordInput: {
         flex: 1,
         color: Colors.dark,
+        paddingVertical: Platform.OS === 'ios' ? SH(10) : 0,
     },
     errorText: {
         color: "red",

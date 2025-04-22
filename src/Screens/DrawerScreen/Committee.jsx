@@ -522,8 +522,8 @@ const Committee = ({ navigation }) => {
         animationType="slide"
         onRequestClose={handleCloseFilter}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+        <SafeAreaView style={styles.modalOverlay}>
+          <SafeAreaView style={styles.modalContent}>
             <View style={styles.Filterheader}>
               <TouchableOpacity onPress={handleCloseFilter} style={{ flexDirection: 'row' }}>
                 <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
@@ -598,8 +598,8 @@ const Committee = ({ navigation }) => {
                 </View>
               </TouchableOpacity>
             </View>
-          </View>
-        </View>
+          </SafeAreaView>
+        </SafeAreaView>
       </Modal>
     </SafeAreaView>
   );

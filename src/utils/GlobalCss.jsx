@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import { SH, SW, SF } from "./Dimensions";
 import Colors from "./Colors";
 
@@ -74,7 +74,9 @@ const Globalstyles = StyleSheet.create({
     shadowRadius: 4,
   },
   input1: {
-    color: Colors.dark, display: "flex", flexDirection: "row", alignItems: "center"
+    color: Colors.dark, display: "flex", flexDirection: "row", alignItems: "center",
+    paddingVertical: Platform.OS === 'ios' ? SH(7) : 0,
+
   },
   inputContainer: {
     flexDirection: "row",

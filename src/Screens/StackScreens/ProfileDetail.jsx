@@ -306,6 +306,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                         {profileData?.personalDetails?.disabilities && (
                                             <Text style={styles.text}>Disability: {profileData.personalDetails.disabilities}</Text>
                                         )}
+                                        {profileData?.personalDetails?.profileCreatedBy && <Text style={styles.text}>Profile created by: {profileData?.personalDetails?.profileCreatedBy}</Text>}
                                     </View>
 
                                     {/* Right Container */}
@@ -353,6 +354,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                     <View style={styles.flexContainer4}>
                                         {profileData?.personalDetails?.currentCity && <Text style={styles.text}>Currently in: {profileData?.personalDetails?.currentCity}</Text>}
                                         {profileData?.personalDetails?.livingStatus && <Text style={styles.text}>Living with family: {profileData?.personalDetails?.livingStatus}</Text>}
+                                        {profileData?.personalDetails?.familyType && <Text style={styles.text}>familyType: {profileData?.personalDetails?.familyType}</Text>}
                                     </View>
                                 </View>
                             </View>
@@ -366,12 +368,13 @@ const ProfileDetail = ({ route, navigation }) => {
                                     {profileData?.personalDetails?.fatherName && <Text style={styles.text}>Father’s Name: {profileData?.personalDetails.fatherName}</Text>}
                                     {profileData?.personalDetails?.fatherOccupation && <Text style={styles.text}>Father’s Occupation: {profileData?.personalDetails.fatherOccupation}</Text>}
                                     {profileData?.personalDetails?.motherName && <Text style={styles.text}>Mother’s Name: {profileData?.personalDetails.motherName}</Text>}
-                                    {profileData?.personalDetails?.fatherIncomeAnnually && <Text style={[styles.text, { textTransform: "none" }]}>Family Income: {profileData?.personalDetails.fatherIncomeAnnually}</Text>}
+                                    {profileData?.personalDetails?.fatherIncomeAnnually && <Text style={[styles.text, { textTransform: "none" }]}>Father Income: {profileData?.personalDetails.fatherIncomeAnnually}</Text>}
+                                    {profileData?.personalDetails?.motherIncomeAnnually && <Text style={[styles.text, { textTransform: "none" }]}>Mother Income: {profileData?.personalDetails.motherIncomeAnnually}</Text>}
                                     {profileData?.personalDetails?.familyType && <Text style={styles.text}>Family Type: {profileData?.personalDetails.familyType}</Text>}
                                     {
                                         profileData?.personalDetails?.otherFamilyMemberInfo &&
                                         <View>
-                                            <Text style={styles.HeadingText}>About My family</Text>
+                                            <Text style={styles.HeadingText}>Family's other Details</Text>
                                             <Text style={styles.text}>{profileData?.personalDetails.otherFamilyMemberInfo}</Text>
                                         </View>
 
@@ -388,22 +391,46 @@ const ProfileDetail = ({ route, navigation }) => {
                                     {profileData?.personalDetails?.contactNumber1 && <Text style={styles.text}>Mobile No. 1: {profileData?.personalDetails.contactNumber1}</Text>}
                                     {profileData?.personalDetails?.contactNumber2 && <Text style={styles.text}>Mobile No. 2: {profileData?.personalDetails.contactNumber2}</Text>}
                                 </View>
+                                <View>
+                                    <Text style={styles.HeadingText}></Text>
+                                    {profileData?.personalDetails?.cityOrVillage && <Text style={styles.text}>{profileData?.personalDetails.cityOrVillage}</Text>}
+                                    {profileData?.personalDetails?.state && <Text style={styles.text}>{profileData?.personalDetails.state}</Text>}
+                                </View>
                             </View>
                         )}
 
                         {/* Other Details */}
-                        {profileData?.personalDetails?.knowCooking && (
-                            <View style={styles.flexContainer1}>
-                                <View>
-                                    <Text style={styles.HeadingText}>Other Details:</Text>
-                                    {profileData?.personalDetails?.knowCooking && <Text style={styles.text}>Cooking: {profileData?.personalDetails.knowCooking}</Text>}
-                                    {profileData?.personalDetails?.dietaryHabit && <Text style={styles.text}>Diet: {profileData?.personalDetails.dietaryHabit}</Text>}
-                                    {profileData?.personalDetails?.smokingHabit && <Text style={styles.text}>Smoke: {profileData?.personalDetails.smokingHabit}</Text>}
-                                    {profileData?.personalDetails?.drinkingHabit && <Text style={styles.text}>Drinking: {profileData?.personalDetails.drinkingHabit}</Text>}
-                                    {profileData?.personalDetails?.tobaccoHabits && <Text style={styles.text}>Tobacco: {profileData?.personalDetails.tobaccoHabits}</Text>}
+                        {(profileData?.personalDetails?.dietaryHabit ||
+                            profileData?.personalDetails?.smokingHabit ||
+                            profileData?.personalDetails?.drinkingHabit ||
+                            profileData?.personalDetails?.tobaccoHabits ||
+                            profileData?.personalDetails?.hobbies ||
+                            profileData?.personalDetails?.knowCooking) && (
+                                <View style={styles.flexContainer1}>
+                                    <View>
+                                        <Text style={styles.HeadingText}>Other Details:</Text>
+                                        {profileData?.personalDetails?.knowCooking && (
+                                            <Text style={styles.text}>Cooking: {profileData?.personalDetails.knowCooking}</Text>
+                                        )}
+                                        {profileData?.personalDetails?.dietaryHabit && (
+                                            <Text style={styles.text}>Diet: {profileData?.personalDetails.dietaryHabit}</Text>
+                                        )}
+                                        {profileData?.personalDetails?.smokingHabit && (
+                                            <Text style={styles.text}>Smoke: {profileData?.personalDetails.smokingHabit}</Text>
+                                        )}
+                                        {profileData?.personalDetails?.drinkingHabit && (
+                                            <Text style={styles.text}>Drinking: {profileData?.personalDetails.drinkingHabit}</Text>
+                                        )}
+                                        {profileData?.personalDetails?.tobaccoHabits && (
+                                            <Text style={styles.text}>Tobacco: {profileData?.personalDetails.tobaccoHabits}</Text>
+                                        )}
+                                        {profileData?.personalDetails?.hobbies && (
+                                            <Text style={styles.text}>Hobby: {profileData?.personalDetails?.hobbies}</Text>
+                                        )}
+                                    </View>
                                 </View>
-                            </View>
-                        )}
+                            )}
+
                         {profileData?.partnerPreferences && Object.keys(profileData.partnerPreferences).length > 0 && (
                             <View style={styles.flexContainer1}>
                                 <Text style={styles.HeadingText}>My PartnerPreferences</Text>
@@ -412,54 +439,50 @@ const ProfileDetail = ({ route, navigation }) => {
                                 <View style={[styles.flexContainer1, { borderWidth: 0, paddingHorizontal: 0, paddingVertical: 0 }]}>
 
                                     {/* Left Column */}
-                                    <View style={styles.column}>
-                                        {profileData.partnerPreferences.partnerBodyStructure && (
-                                            <Text style={styles.text}>Body Structure: {profileData.partnerPreferences.partnerBodyStructure}</Text>
-                                        )}
-                                        {profileData.partnerPreferences.partnerDietaryHabits && (
-                                            <Text style={styles.text}>Diet: {profileData.partnerPreferences.partnerDietaryHabits}</Text>
-                                        )}
-                                        {profileData.partnerPreferences.partnerSmokingHabits && (
-                                            <Text style={styles.text}>Smoke: {profileData.partnerPreferences.partnerSmokingHabits}</Text>
-                                        )}
-                                        {profileData.partnerPreferences.partnerDrinkingHabits && (
-                                            <Text style={styles.text}>Drinking: {profileData.partnerPreferences.partnerDrinkingHabits}</Text>
-                                        )}
-                                        {profileData.partnerPreferences.partnerDisabilities && (
-                                            <Text style={styles.text}>Disabilities: {profileData.partnerPreferences.partnerDisabilities}</Text>
-                                        )}
-                                        {profileData.partnerPreferences.partnerManglikStatus && (
-                                            <Text style={styles.text}>{profileData.partnerPreferences.partnerManglikStatus}</Text>
-                                        )}
-                                        {profileData.partnerPreferences.partnerFamilyType && (
-                                            <Text style={styles.text}>Family Type: {profileData.partnerPreferences.partnerFamilyType}</Text>
-                                        )}
-                                    </View>
+                                    {profileData.partnerPreferences.partnerBodyStructure && (
+                                        <Text style={styles.text}>Body Structure: {profileData.partnerPreferences.partnerBodyStructure}</Text>
+                                    )}
+                                    {profileData.partnerPreferences.partnerDietaryHabits && (
+                                        <Text style={styles.text}>Diet: {profileData.partnerPreferences.partnerDietaryHabits}</Text>
+                                    )}
+                                    {profileData.partnerPreferences.partnerSmokingHabits && (
+                                        <Text style={styles.text}>Smoke: {profileData.partnerPreferences.partnerSmokingHabits}</Text>
+                                    )}
+                                    {profileData.partnerPreferences.partnerDrinkingHabits && (
+                                        <Text style={styles.text}>Drinking: {profileData.partnerPreferences.partnerDrinkingHabits}</Text>
+                                    )}
+                                    {profileData.partnerPreferences.partnerDisabilities && (
+                                        <Text style={styles.text}>Disabilities: {profileData.partnerPreferences.partnerDisabilities}</Text>
+                                    )}
+                                    {profileData.partnerPreferences.partnerManglikStatus && (
+                                        <Text style={styles.text}>{profileData.partnerPreferences.partnerManglikStatus}</Text>
+                                    )}
+                                    {profileData.partnerPreferences.partnerFamilyType && (
+                                        <Text style={styles.text}>Family Type: {profileData.partnerPreferences.partnerFamilyType}</Text>
+                                    )}
 
                                     {/* Right Column */}
-                                    <View style={styles.column}>
-                                        {profileData.partnerPreferences.partnerMinAge && profileData.partnerPreferences.partnerMaxAge && (
-                                            <Text style={styles.text}>Age Range: {profileData.partnerPreferences.partnerMinAge} - {profileData.partnerPreferences.partnerMaxAge} yrs</Text>
-                                        )}
-                                        {profileData.partnerPreferences.partnerMinHeightFeet && profileData.partnerPreferences.partnerMaxHeightFeet && (
-                                            <Text style={styles.text}>Height Range: {profileData.partnerPreferences.partnerMinHeightFeet} Min - {profileData.partnerPreferences.partnerMaxHeightFeet} Max</Text>
-                                        )}
-                                        {profileData.partnerPreferences.partnerIncome && (
-                                            <Text style={[styles.text, { textTransform: "none" }]}>Income: {profileData.partnerPreferences.partnerIncome}</Text>
-                                        )}
-                                        {profileData.partnerPreferences.partnerOccupation && (
-                                            <Text style={styles.text}>Occupation: {profileData.partnerPreferences.partnerOccupation}</Text>
-                                        )}
-                                        {profileData.partnerPreferences.partnerQualification && (
-                                            <Text style={styles.text}>Qualification: {profileData.partnerPreferences.partnerQualification}</Text>
-                                        )}
-                                        {profileData.partnerPreferences.partnerState && (
-                                            <Text style={styles.text}>State: {profileData.partnerPreferences.partnerState}</Text>
-                                        )}
-                                        {profileData.partnerPreferences.partnerCity && (
-                                            <Text style={styles.text}>City: {profileData.partnerPreferences.partnerCity}</Text>
-                                        )}
-                                    </View>
+                                    {profileData.partnerPreferences.partnerMinAge && profileData.partnerPreferences.partnerMaxAge && (
+                                        <Text style={styles.text}>Age Range: {profileData.partnerPreferences.partnerMinAge} - {profileData.partnerPreferences.partnerMaxAge} yrs</Text>
+                                    )}
+                                    {profileData.partnerPreferences.partnerMinHeightFeet && profileData.partnerPreferences.partnerMaxHeightFeet && (
+                                        <Text style={styles.text}>Height Range: {profileData.partnerPreferences.partnerMinHeightFeet} Min - {profileData.partnerPreferences.partnerMaxHeightFeet} Max</Text>
+                                    )}
+                                    {profileData.partnerPreferences.partnerIncome && (
+                                        <Text style={[styles.text, { textTransform: "none" }]}>Income: {profileData.partnerPreferences.partnerIncome}</Text>
+                                    )}
+                                    {profileData.partnerPreferences.partnerOccupation && (
+                                        <Text style={styles.text}>Occupation: {profileData.partnerPreferences.partnerOccupation}</Text>
+                                    )}
+                                    {profileData.partnerPreferences.partnerQualification && (
+                                        <Text style={styles.text}>Qualification: {profileData.partnerPreferences.partnerQualification}</Text>
+                                    )}
+                                    {profileData.partnerPreferences.partnerState && (
+                                        <Text style={styles.text}>State: {profileData.partnerPreferences.partnerState}</Text>
+                                    )}
+                                    {profileData.partnerPreferences.partnerCity && (
+                                        <Text style={styles.text}>City: {profileData.partnerPreferences.partnerCity}</Text>
+                                    )}
 
                                 </View>
                             </View>

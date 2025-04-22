@@ -48,8 +48,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',
     shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 5,
     elevation: 3,
     marginHorizontal: SW(10),
     marginVertical: SH(7),
@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
     paddingHorizontal:SW(15),
     paddingVertical:SH(10),
     borderRadius:10,
-    width:SW(150),
+    width:"100%",
     elevation: 5,
   },
   modalOption: {

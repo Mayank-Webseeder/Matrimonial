@@ -25,16 +25,16 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const [loadingAccept, setLoadingAccept] = useState(false);
   const [loadingDecline, setLoadingDecline] = useState(false);
   const [profileData, setProfileData] = useState([]);
-   const [userData, setUserData] = useState({});
-   const [Save, setIsSaved] = useState(initialSavedState || false);
-   const hideContact = !!(userData?.hideContact || userData?.hideContact);
-   const hideOptionalDetails = !!(userData?.hideOptionalDetails || userData?.hideOptionalDetails)
-   const _id = userData?._id;
-   const personalDetails = userData?.personalDetails;
-   const initialSavedState=profileData?.isSaved;
-  const status=profileData?.requestStatus;
-  const requestId=profileData?.requestId;
-  const isBlur=userData?.isBlur;
+  const [userData, setUserData] = useState({});
+  const [Save, setIsSaved] = useState(initialSavedState || false);
+  const hideContact = !!(userData?.hideContact || userData?.hideContact);
+  const hideOptionalDetails = !!(userData?.hideOptionalDetails || userData?.hideOptionalDetails)
+  const _id = userData?._id;
+  const personalDetails = userData?.personalDetails;
+  const initialSavedState = profileData?.isSaved;
+  const status = profileData?.requestStatus;
+  const requestId = profileData?.requestId;
+  const isBlur = userData?.isBlur;
   const MyprofileData = useSelector((state) => state.getBiodata);
   const [imageIndex, setImageIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
@@ -59,6 +59,9 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
       if (userId) {
         fetchUserProfile(userId);
       }
+
+      setLoadingAccept(false);
+      setLoadingDecline(false);
     }, [userId])
   );
 
@@ -98,12 +101,12 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
     }
   };
   if (loading) {
-      return (
-        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color={Colors.theme_color} />
-        </View>
-      );
-    }
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color={Colors.theme_color} />
+      </View>
+    );
+  }
 
   // if (loading) {
   //   return (
@@ -122,7 +125,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
       showMessage({
         type: "danger",
         message: "User ID not found!",
-        icon:"danger"
+        icon: "danger"
       });
       return;
     }
@@ -222,9 +225,10 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         description: errorMessage,
         icon: "danger"
       });
+      setLoadingAccept(false);
     }
     finally {
-      setLoadingDecline(false);
+      setLoadingAccept(false);
     }
   };
 
@@ -278,9 +282,10 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         description: errorMessage,
         icon: "danger"
       });
+      setLoadingDecline(false);
     }
     finally {
-      setLoading(false)
+      setLoadingDecline(false)
     }
   };
 
@@ -425,7 +430,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
             {personalDetails?.maritalStatus && <Text style={styles.text}>{personalDetails?.maritalStatus}</Text>}
             {personalDetails?.manglikStatus && <Text style={styles.text}>{personalDetails?.manglikStatus}</Text>}
             {personalDetails?.disabilities && <Text style={styles.text}>Disability: {personalDetails?.disabilities}</Text>}
-            {/* {personalDetails?.profileCreatedBy && <Text style={styles.text}>Profile created by: {personalDetails?.profileCreatedBy}</Text>} */}
+            {personalDetails?.profileCreatedBy && <Text style={styles.text}>Profile created by: {personalDetails?.profileCreatedBy}</Text>}
           </View>
           <View style={styles.rightContainer}>
             {personalDetails?.currentCity && <Text style={styles.text}>{personalDetails?.currentCity}</Text>}
@@ -469,8 +474,9 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
             )}
             {personalDetails?.complexion && <Text style={styles.text}>Complexion: {personalDetails?.complexion}</Text>}
             {personalDetails?.weight && <Text style={styles.text}>Weight: {personalDetails?.weight}</Text>}
-            {personalDetails?.livingStatus && <Text style={styles.text}>Currently Living city: {personalDetails?.livingStatus}</Text>}
-            {personalDetails?.familyType && <Text style={styles.text}>Living with family: {personalDetails?.familyType}</Text>}
+            {personalDetails?.currentCity && <Text style={styles.text}>Currently in: {personalDetails?.currentCity}</Text>}
+            {personalDetails?.livingStatus && <Text style={styles.text}>Living with family: {personalDetails?.livingStatus}</Text>}
+            {personalDetails?.familyType && <Text style={styles.text}>familyType: {personalDetails?.familyType}</Text>}
           </View>
         </View>
         <View style={styles.flexContainer1}>
@@ -480,12 +486,13 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
             {personalDetails?.fatherOccupation && <Text style={styles.text}>Father’s Occupation: {personalDetails?.fatherOccupation}</Text>}
             {personalDetails?.motherName && <Text style={styles.text}>Mother’s Name: {personalDetails?.motherName}</Text>}
             {personalDetails?.motherOccupation && <Text style={styles.text}>Mother’s Occupation: {personalDetails?.motherOccupation}</Text>}
-            {personalDetails?.familyIncome && <Text style={[styles.text, { textTransform: "none" }]}>Family Income (Annually): {personalDetails?.familyIncome}</Text>}
+            {personalDetails?.fatherIncomeAnnually && <Text style={[styles.text, { textTransform: "none" }]}>Father Income: {personalDetails.fatherIncomeAnnually}</Text>}
+            {personalDetails?.motherIncomeAnnually && <Text style={[styles.text, { textTransform: "none" }]}>Mother Income: {personalDetails.motherIncomeAnnually}</Text>}
             {personalDetails?.familyType && <Text style={styles.text}>Family Type: {personalDetails?.familyType}</Text>}
             {personalDetails?.siblings && <Text style={styles.text}>Siblings: {personalDetails?.siblings}</Text>}
             {!hideOptionalDetails && (
               <>
-                <Text style={styles.HeadingText}>About My family</Text>
+                <Text style={styles.HeadingText}>Family's other Details</Text>
                 {personalDetails?.otherFamilyMemberInfo && <Text style={styles.text}>Other Family Members: {personalDetails.otherFamilyMemberInfo}</Text>}
               </>
             )}
@@ -498,6 +505,12 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
               {personalDetails?.contactNumber1 && <Text style={styles.text}>Mobile No. 1: {personalDetails.contactNumber1}</Text>}
               {personalDetails?.contactNumber2 && <Text style={styles.text}>Mobile No. 2: {personalDetails.contactNumber2}</Text>}
             </View>
+
+            <View>
+              <Text style={styles.HeadingText}></Text>
+              {personalDetails?.cityOrVillage && <Text style={styles.text}>{personalDetails.cityOrVillage}</Text>}
+              {personalDetails?.state && <Text style={styles.text}>{personalDetails.state}</Text>}
+            </View>
           </View>
         )}
         {!hideOptionalDetails && personalDetails?.knowCooking && (
@@ -509,6 +522,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
               {personalDetails?.smokingHabit && <Text style={styles.text}>Smoke: {personalDetails.smokingHabit}</Text>}
               {personalDetails?.drinkingHabit && <Text style={styles.text}>Drinking: {personalDetails.drinkingHabit}</Text>}
               {personalDetails?.tobaccoHabits && <Text style={styles.text}>Tobacco: {personalDetails.tobaccoHabits}</Text>}
+              {personalDetails?.hobbies && <Text style={styles.text}>hobby: {personalDetails.hobbies}</Text>}
             </View>
           </View>
         )}

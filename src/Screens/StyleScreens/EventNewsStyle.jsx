@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         overflow: 'hidden',
         shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 }, // ✅ Required for iOS
         shadowOpacity: 0.1,
         shadowRadius: 5,
         elevation: 3,

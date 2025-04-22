@@ -211,6 +211,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       console.log("requestId:", profileData?.requestId);
       console.log("isBlur:", userData?.isBlur);
       console.log("userId:", userData?.userId);
+      console.log("userData?.personalDetails",userData?.personalDetails);
       if (userId) {
         fetchUserProfile(userId);
       }
@@ -541,7 +542,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                     </Text>
                   ) : (
                     <Text style={styles.buttonText}>
-                        {requestId ? "Delete Interest" : status ? status : "Send Interest"}
+                        {requestId ? "Cancel Interest" : status ? status : "Send Interest"}
                       </Text>
                   )}
                 </Text>
@@ -580,16 +581,16 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             {personalDetails?.maritalStatus && <Text style={styles.text}>{personalDetails?.maritalStatus}</Text>}
             {personalDetails?.manglikStatus && <Text style={styles.text}>{personalDetails?.manglikStatus}</Text>}
             {personalDetails?.disabilities && <Text style={styles.text}>Disability: {personalDetails?.disabilities}</Text>}
-            {/* {personalDetails?.profileCreatedBy && <Text style={styles.text}>Profile Created By: {personalDetails?.profileCreatedBy}</Text>} */}
+            {personalDetails?.profileCreatedBy && <Text style={styles.text}>Profile Created By: {personalDetails?.profileCreatedBy}</Text>}
           </View>
 
           {/** Right Container */}
           <View style={styles.rightContainer}>
             {/* Right-side details */}
             {personalDetails?.currentCity && <Text style={styles.text}>{personalDetails?.currentCity}</Text>}
-            {personalDetails?.occupation && <Text style={styles.text}>{personalDetails?.occupation}</Text>}
-            {personalDetails?.annualIncome && <Text style={[styles.text, { textTransform: "none" }]}>{personalDetails?.annualIncome} </Text>}
-            {personalDetails?.qualification && <Text style={styles.text}>{personalDetails?.qualification}</Text>}
+            {personalDetails?.occupation && <Text style={[styles.text, { textTransform: "none" }]}>{personalDetails?.occupation}</Text>}
+            {personalDetails?.fatherIncome && <Text style={[styles.text, { textTransform: "none" }]}>{personalDetails?.fatherIncome} </Text>}
+            {personalDetails?.qualification && <Text style={[styles.text, { textTransform: "none" }]}>{personalDetails?.qualification}</Text>}
           </View>
         </View>
 
@@ -639,6 +640,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               <View style={styles.flexContainer2}>
                 {personalDetails?.currentCity && <Text style={styles.text}>Currently in: {personalDetails?.currentCity}</Text>}
                 {personalDetails?.livingStatus && <Text style={styles.text}>Living with family: {personalDetails?.livingStatus}</Text>}
+                 {personalDetails?.familyType && <Text style={styles.text}>familyType: {personalDetails?.familyType}</Text>}
               </View>
             </View>
           </View>
@@ -652,12 +654,13 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               {personalDetails?.fatherName && <Text style={styles.text}>Father’s Name: {personalDetails.fatherName}</Text>}
               {personalDetails?.fatherOccupation && <Text style={styles.text}>Father’s Occupation: {personalDetails.fatherOccupation}</Text>}
               {personalDetails?.motherName && <Text style={styles.text}>Mother’s Name: {personalDetails.motherName}</Text>}
-              {personalDetails?.fatherIncomeAnnually && <Text style={[styles.text, { textTransform: "none" }]}>Family Income: {personalDetails.fatherIncomeAnnually}</Text>}
+              {personalDetails?.fatherIncomeAnnually && <Text style={[styles.text, { textTransform: "none" }]}>Father Income: {personalDetails.fatherIncomeAnnually}</Text>}
+              {personalDetails?.motherIncomeAnnually && <Text style={[styles.text, { textTransform: "none" }]}>Mother Income: {personalDetails.motherIncomeAnnually}</Text>}
               {personalDetails?.familyType && <Text style={styles.text}>Family Type: {personalDetails.familyType}</Text>}
               {!hideOptionalDetails && (
                 <>
-                  <Text style={styles.HeadingText}>About My family</Text>
-                  {personalDetails?.otherFamilyMemberInfo && <Text style={styles.text}>Other Family Members: {personalDetails.otherFamilyMemberInfo}</Text>}
+                  <Text style={styles.HeadingText}>Family's other Details</Text>
+                  {personalDetails?.otherFamilyMemberInfo && <Text style={styles.text}>{personalDetails.otherFamilyMemberInfo}</Text>}
                 </>
               )}
             </View>
@@ -672,6 +675,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               {personalDetails?.contactNumber1 && <Text style={styles.text}>Mobile No. 1: {personalDetails.contactNumber1}</Text>}
               {personalDetails?.contactNumber2 && <Text style={styles.text}>Mobile No. 2: {personalDetails.contactNumber2}</Text>}
             </View>
+            r
           </View>
         )}
 
@@ -685,6 +689,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               {personalDetails?.smokingHabit && <Text style={styles.text}>Smoke: {personalDetails.smokingHabit}</Text>}
               {personalDetails?.drinkingHabit && <Text style={styles.text}>Drinking: {personalDetails.drinkingHabit}</Text>}
               {personalDetails?.tobaccoHabits && <Text style={styles.text}>Tobacco: {personalDetails.tobaccoHabits}</Text>}
+              {personalDetails?.hobbies && <Text style={styles.text}>hobby: {personalDetails.hobbies}</Text>}
             </View>
           </View>
         )}

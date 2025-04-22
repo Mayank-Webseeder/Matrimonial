@@ -353,10 +353,7 @@ const MyProfile = ({ navigation }) => {
             />
             <View style={Globalstyles.header}>
                 <View style={styles.headerContainer}>
-                    <TouchableOpacity onPress={() => navigation.reset({
-                        index: 0,
-                        routes: [{ name: "MainApp" }],
-                    })}>
+                    <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
                         <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
                     </TouchableOpacity>
                     <Text style={styles.headerText}>{capitalizeFirstLetter(profileData.username || 'NA')}</Text>

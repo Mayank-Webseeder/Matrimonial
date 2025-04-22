@@ -58,11 +58,6 @@ const PanditRegister = ({ navigation }) => {
         whatsapp: ''
     });
 
-    useEffect(() => {
-        console.log("profileData:", JSON.stringify(profileData, null, 2));
-        fetchProfilesDetails();
-    }, []);
-
     const fetchPlans = async () => {
         try {
             const token = await AsyncStorage.getItem("userToken");
@@ -136,6 +131,22 @@ const PanditRegister = ({ navigation }) => {
         console.log("profileData:", JSON.stringify(profileData, null, 2));
         fetchProfilesDetails();
     }, []);
+
+    useEffect(() => {
+        if (fetchProfileDetails) {
+            setRoleRegisterData(prev => ({
+                ...prev,
+                mobileNo: fetchProfileDetails.mobileNo || "",
+                fullName: fetchProfileDetails.fullName || "",
+                state: fetchProfileDetails.state || "",
+                city: fetchProfileDetails.city || "",
+                subCaste: fetchProfileDetails.subCaste || "",
+                aadharNo: fetchProfileDetails.aadharNo || "",
+                residentialAddress: fetchProfileDetails.residentialAddress || "",
+                description: fetchProfileDetails.description || "",
+            }));
+        }
+    }, [fetchProfileDetails]);
 
 
     const roleOptions = [
@@ -264,23 +275,23 @@ const PanditRegister = ({ navigation }) => {
             };
 
             const commonPayload = {
-                mobileNo: RoleRegisterData?.mobileNo || fetchProfileDetails?.mobileNo,
-                residentialAddress: RoleRegisterData?.residentialAddress || fetchProfileDetails?.residentialAddress || "",
-                aadharNo: RoleRegisterData?.aadharNo || fetchProfileDetails?.aadharNo || "",
-                fullName: RoleRegisterData?.fullName || fetchProfileDetails?.fullName,
-                state: RoleRegisterData?.state || fetchProfileDetails?.state,
-                city: RoleRegisterData?.city || fetchProfileDetails?.city,
-                subCaste: RoleRegisterData?.subCaste || fetchProfileDetails?.subCaste,
-                profilePhoto: RoleRegisterData?.profilePhoto,
-                additionalPhotos: RoleRegisterData?.additionalPhotos,
-                experience: RoleRegisterData?.experience ? String(RoleRegisterData.experience) : "",
-                description: RoleRegisterData?.description || fetchProfileDetails?.description || "",
-                websiteUrl: RoleRegisterData?.websiteUrl,
-                facebookUrl: RoleRegisterData?.facebookUrl,
-                youtubeUrl: RoleRegisterData?.youtubeUrl,
-                instagramUrl: RoleRegisterData?.instagramUrl,
-                whatsapp: RoleRegisterData?.whatsapp,
-                status: "pending"
+                mobileNo: RoleRegisterData.mobileNo,
+                residentialAddress: RoleRegisterData.residentialAddress,
+                aadharNo: RoleRegisterData.aadharNo,
+                fullName: RoleRegisterData.fullName,
+                state: RoleRegisterData.state,
+                city: RoleRegisterData.city,
+                subCaste: RoleRegisterData.subCaste,
+                profilePhoto: RoleRegisterData.profilePhoto,
+                additionalPhotos: RoleRegisterData.additionalPhotos,
+                experience: RoleRegisterData.experience ? String(RoleRegisterData.experience) : "",
+                description: RoleRegisterData.description,
+                websiteUrl: RoleRegisterData.websiteUrl,
+                facebookUrl: RoleRegisterData.facebookUrl,
+                youtubeUrl: RoleRegisterData.youtubeUrl,
+                instagramUrl: RoleRegisterData.instagramUrl,
+                whatsapp: RoleRegisterData.whatsapp,
+                status: "pending",
             };
 
             const errors = validateForm(commonPayload);
@@ -299,7 +310,7 @@ const PanditRegister = ({ navigation }) => {
                 )
             };
 
-            console.log("commonPayload",JSON.stringify(payload))
+            console.log("commonPayload", JSON.stringify(payload))
 
             const response = await axios.post(CREATE_PANDIT, payload, { headers });
             console.log("Response:", JSON.stringify(response.data));
@@ -321,14 +332,15 @@ const PanditRegister = ({ navigation }) => {
         } catch (error) {
             const errorMessage =
                 error?.response?.data?.message ||
-                error?.response?.message ||
+                error?.response?.error
+            error?.response?.message ||
                 error?.message ||
                 "Something went wrong!";
 
             console.error("❌ Error:", errorMessage);
 
             showMessage({
-                message:errorMessage,
+                message: errorMessage,
                 type: "danger",
                 icon: "danger",
                 duration: 5000,
@@ -682,7 +694,7 @@ const PanditRegister = ({ navigation }) => {
                     {/* <Text style={styles.editText}>Edit Details</Text> */}
                     <Text style={Globalstyles.title}>Name <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput style={Globalstyles.input}
-                        value={RoleRegisterData?.fullName || fetchProfileDetails?.fullName || ''}
+                        value={RoleRegisterData?.fullName}
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, fullName: text }))}
                         placeholder='Enter Your Full Name'
                         placeholderTextColor={Colors.gray}
@@ -693,7 +705,7 @@ const PanditRegister = ({ navigation }) => {
 
                     <Text style={Globalstyles.title}>Mobile No. <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput style={Globalstyles.input}
-                        value={RoleRegisterData?.mobileNo || fetchProfileDetails?.mobileNo || ''}
+                        value={RoleRegisterData?.mobileNo}
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, mobileNo: text }))}
                         keyboardType="phone-pad"
                         placeholder="Enter Your Mobile No." maxLength={10}
@@ -706,7 +718,7 @@ const PanditRegister = ({ navigation }) => {
                     <Text style={Globalstyles.title}>State <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput
                         style={Globalstyles.input}
-                        value={RoleRegisterData?.state || fetchProfileDetails?.state || ''} // `biodata?.state` ki jagah `stateInput` use karein
+                        value={RoleRegisterData?.state} // `biodata?.state` ki jagah `stateInput` use karein
                         onChangeText={handleStateInputChange}
                         placeholder="Type your State"
                         placeholderTextColor={Colors.gray}
@@ -732,7 +744,7 @@ const PanditRegister = ({ navigation }) => {
                     <Text style={Globalstyles.title}>Village / City <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput
                         style={Globalstyles.input}
-                        value={RoleRegisterData?.city || fetchProfileDetails?.city || ''}
+                        value={RoleRegisterData?.city}
                         onChangeText={handleCityInputChange}
                         placeholder="Enter your city"
                         placeholderTextColor={Colors.gray}
@@ -757,7 +769,7 @@ const PanditRegister = ({ navigation }) => {
 
                     <Text style={Globalstyles.title}>Area</Text>
                     <TextInput style={Globalstyles.input}
-                        value={RoleRegisterData?.residentialAddress || fetchProfileDetails?.residentialAddress || ''}
+                        value={RoleRegisterData?.residentialAddress}
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, residentialAddress: text }))}
                         placeholder='Enter Your Area'
                         placeholderTextColor={Colors.gray}
@@ -767,7 +779,7 @@ const PanditRegister = ({ navigation }) => {
 
                     <Text style={Globalstyles.title}>Aadhar No. </Text>
                     <TextInput style={Globalstyles.input}
-                        value={RoleRegisterData?.aadharNo || fetchProfileDetails?.aadharNo || ''}
+                        value={RoleRegisterData?.aadharNo}
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, aadharNo: text }))}
                         placeholder='Enter Your Aadhar No.'
                         placeholderTextColor={Colors.gray}
@@ -778,7 +790,7 @@ const PanditRegister = ({ navigation }) => {
                     <Text style={Globalstyles.title}>Sub Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput
                         style={Globalstyles.input}
-                        value={RoleRegisterData?.subCaste || fetchProfileDetails?.subCaste || ''} // `myBiodata?.subCaste` ki jagah `subCasteInput` use karein
+                        value={RoleRegisterData?.subCaste} // `myBiodata?.subCaste` ki jagah `subCasteInput` use karein
                         onChangeText={handleSubCasteInputChange}
                         placeholder="Type your sub caste"
                         placeholderTextColor={Colors.gray}
@@ -865,7 +877,7 @@ const PanditRegister = ({ navigation }) => {
                     {errors.profilePhoto && <Text style={styles.errorText}>{errors.profilePhoto}</Text>}
 
                     <Text style={Globalstyles.title}>Add Description</Text>
-                    <TextInput style={Globalstyles.textInput} value={RoleRegisterData.description || fetchProfileDetails?.description || ''}
+                    <TextInput style={Globalstyles.textInput} value={RoleRegisterData.description}
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, description: text }))}
                         textAlignVertical='top' placeholder="Add Your Description"
                         placeholderTextColor={Colors.gray} multiline={true}

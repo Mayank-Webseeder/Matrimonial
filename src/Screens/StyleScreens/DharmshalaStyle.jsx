@@ -49,13 +49,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',
     shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
-    elevation: 3,
+    elevation: 3, // ✅ Android only
     marginHorizontal: SW(10),
     marginVertical: SH(7),
     marginBottom: SH(3),
-    paddingVertical: SH(3)
+    paddingVertical: SH(3),
   },
   cardData: {
     flexDirection: "row"

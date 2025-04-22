@@ -43,7 +43,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     marginHorizontal: SW(6),
     marginVertical: SH(6),
-    shadowColor: Colors.dark,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 }, // ✅ Required for iOS
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,

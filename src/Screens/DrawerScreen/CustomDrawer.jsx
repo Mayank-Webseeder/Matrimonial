@@ -73,6 +73,7 @@ const CustomDrawer = (props) => {
   ];
 
   const handleLogout = async () => {
+    console.log('logout function')
     try {
       await AsyncStorage.removeItem("userToken");
       await AsyncStorage.removeItem("userId");

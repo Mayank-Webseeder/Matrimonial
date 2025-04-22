@@ -375,12 +375,16 @@ const RootNavigator = () => {
       const token = await AsyncStorage.getItem("userToken");
       const userId = await AsyncStorage.getItem("userId");
       console.log("Token in root file:", token);
+  
       setInitialRoute(token ? "AppStack" : "AuthStack");
-      setIsLoading(false);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 2000);
     };
-
+  
     checkUserToken();
   }, []);
+  
 
 
   if (isLoading) {

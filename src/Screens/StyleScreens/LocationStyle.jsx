@@ -44,16 +44,50 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light,
   },
   flexContainer1: {
+    // flexDirection: "row",
+    // flexWrap: "wrap",
+    // justifyContent: "space-between",
+    // paddingHorizontal: SW(10),
+    // paddingVertical: SH(10),
+    // // borderColor: Colors.gray,
+    // // borderWidth: 1,
+    // borderRadius: 10,
+    // width: "100%",
+    // marginVertical: SH(5),
+    // shadowColor: '#000',
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.1,
+    // shadowRadius: 5,
+    // elevation: 5,
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
+    paddingHorizontal: SW(8),
+    paddingVertical: SH(10),
+    borderRadius: 10,
+    width: "99%",
+    marginVertical: SH(5),
+    backgroundColor: "#fff", // Ensure background for shadow to show properly
+    marginHorizontal: SW(2),
+    // Updated shadow
+    shadowColor: Colors.theme_color,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  detailbox: {
     paddingHorizontal: SW(10),
     paddingVertical: SH(10),
-    borderColor: Colors.gray,
-    borderWidth: 1,
+    shadowColor: Colors.theme_color,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 4,
     borderRadius: 10,
-    width: "100%",
+    width: "99%",
     marginVertical: SH(5),
+    backgroundColor: "#fff",
   },
 
   leftContainer: {
@@ -71,7 +105,6 @@ const styles = StyleSheet.create({
   HeadingText: {
     fontSize: SF(15),
     fontFamily: "Poppins-Bold",
-    marginBottom: SH(5),
     textTransform: "capitalize"
   },
 
@@ -86,10 +119,15 @@ const styles = StyleSheet.create({
   flexContainer: {
     paddingHorizontal: SW(10),
     paddingVertical: SH(10),
-    borderColor: Colors.gray,
-    borderWidth: 1,
+    shadowColor: Colors.theme_color,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 4,
     borderRadius: 10,
-
+    backgroundColor: "#fff",
+    marginTop: SH(10),
+    width: "99%"
   },
   flex: {
     flexDirection: "row",
@@ -108,10 +146,10 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Bold",
   },
   flexContainer2: {
+    width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
-    width: "100%",
+
   },
   sharecontainer: {
     flexDirection: 'row',
@@ -126,7 +164,7 @@ const styles = StyleSheet.create({
   },
   iconText: {
     fontSize: SF(12),
-    color: Colors.dark,
+    color: Colors.theme_color,
     marginTop: SH(5),
     textTransform: "capitalize"
   },
@@ -162,12 +200,17 @@ const styles = StyleSheet.create({
     borderRadius: 50
   },
   flexContainer3: {
-    borderColor: Colors.gray,
-    borderWidth: 1,
+    shadowColor: Colors.theme_color,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 4,
+    backgroundColor: "#fff",
     borderRadius: 10,
     marginVertical: SH(5),
     paddingHorizontal: SW(10),
-    paddingVertical: SH(10)
+    paddingVertical: SH(10),
+    width: "99%"
   },
   flexContainer4: {
     width: "100%",

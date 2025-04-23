@@ -58,6 +58,9 @@ const Home = ({ navigation }) => {
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
   const [NotificationData, setNotificationData] = useState({});
+  
+    const isBiodataEmpty = Object.keys(MyprofileData?.Biodata || {}).length === 0;
+  
   const sections = ["dummy"];
   // const ProfileData = useSelector((state) => state.profile);
   // const profile_data = ProfileData?.profiledata || {};
@@ -374,7 +377,7 @@ const Home = ({ navigation }) => {
                 heading="MATRIMONY"
                 showViewAll={true}
                 onViewAllPress={() => {
-                  if (partnerPreferences) {
+                  if (isBiodataEmpty && isBiodataExpired) {
                     navigation.navigate("BioData");
                   } else {
                     navigation.navigate("Matrimonial");

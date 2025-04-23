@@ -76,8 +76,6 @@ const Matrimonial = ({ navigation }) => {
       showMessage({ type: 'error', message: 'No token found!' });
       return;
     }
-
-    setLoading(true);
     setProfiles([])
 
     const headers = {
@@ -96,8 +94,6 @@ const Matrimonial = ({ navigation }) => {
       setProfiles(finalResponse.data.feedUsers || []);
     } catch (error) {
       console.error("❌ Error fetching profiles:", error.response?.data || error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -287,11 +283,9 @@ const Matrimonial = ({ navigation }) => {
     }
   };
 
-
-
   const handleSearch = () => {
     if (searchQuery.trim().length > 0) {
-      console.log("Searching for:", searchQuery);
+      fetchProfiles(searchQuery.trim());
     }
   };
 
@@ -338,9 +332,9 @@ const Matrimonial = ({ navigation }) => {
               {/* Right Column */}
               <View style={styles.rightColumn}>
                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.currentCity}</Text>
-                <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.occupation}</Text>
+                <Text style={[styles.text, styles.rowItem, { textTransform: "none" }]}>{item?.personalDetails?.occupation}</Text>
                 <Text style={[styles.text, styles.rowItem, { textTransform: "none" }]}>{item?.personalDetails?.annualIncome} </Text>
-                <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.qualification}</Text>
+                <Text style={[styles.text, styles.rowItem, { textTransform: "none" }]}>{item?.personalDetails?.qualification}</Text>
               </View>
             </View>
           </View>
@@ -496,13 +490,16 @@ const Matrimonial = ({ navigation }) => {
             style={{ color: "#000" }}
             placeholder="Search by Name, ID, Occupation, City"
             value={searchQuery}
-            onChangeText={setSearchQuery}
+            onChangeText={(text) => {
+              setSearchQuery(text);
+              if (!searchMode) setSearchMode(true);
+            }}
             autoFocus
             placeholderTextColor={Colors.gray}
-            onSubmitEditing={handleSearch}
           />
           {searchQuery.length > 0 ? (
-            <AntDesign name={'close'} size={20} color={'gray'} onPress={() => {
+            <View>
+              <AntDesign name={'close'} size={20} color={'gray'} onPress={() => {
               setSearchQuery('');
               navigation.reset({
                 index: 0,
@@ -510,6 +507,7 @@ const Matrimonial = ({ navigation }) => {
               });
             }}
             />
+            </View>
           ) : (
             <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => setSearchMode(!searchMode)} />
           )}

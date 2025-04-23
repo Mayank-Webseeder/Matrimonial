@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   },
   verifiedContainer: {
     position: "absolute",
-    top: SH(230),
+    top: SH(250),
     left: SW(257),
     flexDirection: "row",
     alignItems: "center",

@@ -85,6 +85,9 @@ const SuccessStories = ({ navigation }) => {
           <Text style={Globalstyles.headerText}>Success Stories</Text>
         </View>
         <View style={styles.righticons}>
+        <TouchableOpacity onPress={() => navigation.navigate('PostSuccessStories')}>
+            <Text style={styles.postText}>Post</Text>
+          </TouchableOpacity>
         <TouchableOpacity style={{ position: 'relative' }} onPress={() => navigation.navigate('Notification')}>
             <AntDesign
               name="bells"

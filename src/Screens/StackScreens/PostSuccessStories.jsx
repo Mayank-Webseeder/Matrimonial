@@ -6,24 +6,110 @@ import Colors from '../../utils/Colors';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import Globalstyles from '../../utils/GlobalCss';
 import ImageCropPicker from 'react-native-image-crop-picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { ScrollView } from 'react-native';
+import { showMessage } from 'react-native-flash-message';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { POST_SUCESS_sTORY } from '../../utils/BaseUrl';
 
 const PostSuccessStories = ({ navigation }) => {
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
     const [gromname, setGromname] = useState('');
     const [bridename, setBridename] = useState('');
+    const [groomBiodataId, setGroomBiodataId] = useState('');
+    const [brideBiodataId, setBrideBiodataId] = useState('');
     const [selectedImage, setSelectedImage] = useState(null);
-    const [selectedImageName, setSelectedImageName] = useState("Upload Image");
-    const handleSubmit = () => {
-        if (!rating || !comment || photos.length === 0) {
-            alert('Please provide a rating, comment, and upload a photo before submitting.');
-        } else {
-            console.log({
-                rating,
-                comment,
-                photo: photos[0]?.uri,
+    const [weddingDate, setWeddingDate] = useState('');
+    const [showDatePicker, setShowDatePicker] = useState(false);
+
+
+    const handleSubmit = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userToken'); // ✅ Fetch Token
+            if (!token) throw new Error('No token found');
+
+            if (!gromname || !bridename || !rating || !groomBiodataId || !brideBiodataId) {
+                showMessage({
+                    type: 'warning',
+                    message: 'Missing Fields',
+                    description: 'Please fill all fields and upload a photo before submitting.',
+                    icon: 'warning',
+                });
+                return;
+            }
+
+            const payload = {
+                groomName: gromname,
+                groomBiodataId: groomBiodataId,
+                brideName: bridename,
+                brideBiodataId: brideBiodataId,
+                thought: comment,
+                rating: rating,
+                photoUrl: selectedImage,
+                weddingDate: weddingDate,
+            };
+
+            const headers = {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            };
+
+            console.log('Payload:', payload);
+            console.log("headers", headers);
+
+            const response = await axios.post(
+                POST_SUCESS_sTORY,
+                payload,
+                { headers }
+            );
+
+            console.log("✅ Success Story Response:", JSON.stringify(response.data));
+
+            if (response.status === 200 && response.data.status === true) {
+                showMessage({
+                    type: 'success',
+                    message: 'Success',
+                    description: response.data.message || 'Your success story has been submitted!',
+                    icon: "success"
+                });
+
+                setTimeout(() => {
+                    navigation.navigate('MainApp');
+                }, 2000);
+            } else {
+                throw new Error(response.data.message || "Something went wrong!");
+            }
+
+        } catch (error) {
+            console.error('❌ Error submitting success story:', error.response?.data?.message);
+        
+            let errorMessage = 'Failed to submit success story. Please try again later.';
+        
+            if (error.response?.data?.message) {
+                errorMessage = error.response.data.message;
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+        
+            showMessage({
+                type: 'danger',
+                message: errorMessage,
+                icon: "danger"
             });
-            alert('Success story submitted!');
+        }
+    };
+
+    const formatDate = (date) => {
+        const d = new Date(date);
+        return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`;
+    };
+
+    const onChangeDate = (event, selectedDate) => {
+        setShowDatePicker(Platform.OS === 'ios');
+        if (selectedDate) {
+            setWeddingDate(formatDate(selectedDate));
         }
     };
 
@@ -32,13 +118,11 @@ const PostSuccessStories = ({ navigation }) => {
             width: 300,
             height: 250,
             cropping: true,
-            compressImageQuality: 1
+            compressImageQuality: 1,
+            includeBase64: true,
         })
             .then(image => {
-                setSelectedImage(image.path);
-                const imageName = image.path.split('/').pop();
-                setSelectedImageName(imageName);
-                console.log('Selected Image:', image);
+                setSelectedImage(`data:${image.mime};base64,${image.data}`);
             })
             .catch(error => {
                 console.error('Image Picking Error:', error);
@@ -78,59 +162,108 @@ const PostSuccessStories = ({ navigation }) => {
                 </View>
             </View>
 
-            <View style={Globalstyles.form}>
-                <Text style={styles.Text}>Post Your Success Story</Text>
-                <Text style={styles.description}>Share your experience in scaling</Text>
-                <View style={styles.ratingContainer}>
-                    {renderStars()}
-                </View>
-                <Text style={Globalstyles.title}>Groom name</Text>
-                <TextInput
-                    style={Globalstyles.input}
-                    placeholder="Enter groom name"
-                    multiline={true}
-                    value={gromname}
-                    onChangeText={setGromname}
-                    placeholderTextColor={Colors.gray}
-                    autoComplete="off"
-                    textContentType="none"
-
-                />
-                <Text style={Globalstyles.title}>Bride name</Text>
-                <TextInput
-                    style={Globalstyles.input}
-                    placeholder="Enter Bride name"
-                    multiline={true}
-                    value={bridename}
-                    onChangeText={setBridename}
-                    placeholderTextColor={Colors.gray}
-                    autoComplete="off"
-                    textContentType="none"
-                />
-                <TextInput
-                    style={Globalstyles.textInput}
-                    placeholder="Add your thoughts..."
-                    multiline={true}
-                    value={comment}
-                    onChangeText={setComment}
-                    placeholderTextColor={Colors.gray} textAlignVertical='top'
-                    autoComplete="off"
-                    textContentType="none"
-                />
-                <Text style={Globalstyles.title}>Upload your one couple picture</Text>
-                <TouchableOpacity style={styles.uploadButton} onPress={handleImagePick}>
-                    <Text style={styles.uploadText}>{selectedImage ? 'Change Image' : 'Upload Image'}</Text>
-                </TouchableOpacity>
-                {selectedImage && (
-                    <View style={styles.photosContainer}>
-                        <Text style={Globalstyles.title}>Uploaded Image</Text>
-                        <Text style={styles.imageName}>{selectedImageName}</Text>
+            <ScrollView showsVerticalScrollIndicator={false}>
+                <View style={Globalstyles.form}>
+                    <Text style={styles.Text}>Post Your Success Story</Text>
+                    <Text style={styles.description}>Share your experience in scaling</Text>
+                    <View style={styles.ratingContainer}>
+                        {renderStars()}
                     </View>
-                )}
-                <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-                    <Text style={styles.submitText}>Post Story</Text>
-                </TouchableOpacity>
-            </View>
+                    <Text style={Globalstyles.title}>Groom name <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                    <TextInput
+                        style={Globalstyles.input}
+                        placeholder="Enter groom name"
+                        multiline={true}
+                        value={gromname}
+                        onChangeText={setGromname}
+                        placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none"
+
+                    />
+                    <Text style={Globalstyles.title}>Groom Biodata ID  <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                    <TextInput
+                        style={Globalstyles.input}
+                        placeholder="Enter Groom Biodata ID"
+                        multiline={true}
+                        value={groomBiodataId}
+                        onChangeText={setGroomBiodataId}
+                        placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none"
+
+                    />
+                    <Text style={Globalstyles.title}>Bride name  <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                    <TextInput
+                        style={Globalstyles.input}
+                        placeholder="Enter Bride name"
+                        multiline={true}
+                        value={bridename}
+                        onChangeText={setBridename}
+                        placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none"
+                    />
+                    <Text style={Globalstyles.title}>Bride Biodata ID  <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                    <TextInput
+                        style={Globalstyles.input}
+                        placeholder="Enter Bride Biodata ID"
+                        multiline={true}
+                        value={brideBiodataId}
+                        onChangeText={setBrideBiodataId}
+                        placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none"
+                    />
+                    <Text style={Globalstyles.title}>Wedding Date</Text>
+                    <TouchableOpacity
+                        style={Globalstyles.input}
+                        onPress={() => setShowDatePicker(true)}
+                    >
+                        <Text style={{ color: weddingDate ? '#000' : Colors.gray }}>
+                            {weddingDate || 'Select Wedding Date'}
+                        </Text>
+                    </TouchableOpacity>
+
+                    {showDatePicker && (
+                        <DateTimePicker
+                            value={new Date()}
+                            mode="date"
+                            display="default"
+                            onChange={onChangeDate}
+                            maximumDate={new Date()}
+                        />
+                    )}
+                    <Text style={Globalstyles.title}>Your thoughts <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                    <TextInput
+                        style={Globalstyles.textInput}
+                        placeholder="Add your thoughts..."
+                        multiline={true}
+                        value={comment}
+                        onChangeText={setComment}
+                        placeholderTextColor={Colors.gray} textAlignVertical='top'
+                        autoComplete="off"
+                        textContentType="none"
+                    />
+                    <Text style={Globalstyles.title}>Upload your one couple picture</Text>
+                    <TouchableOpacity style={styles.uploadButton} onPress={handleImagePick}>
+                        <Text style={styles.uploadText}>{selectedImage ? 'Change Image' : 'Upload Image'}</Text>
+                    </TouchableOpacity>
+                    {selectedImage && (
+                        <View style={styles.photosContainer}>
+                            <Text style={Globalstyles.title}>Uploaded Image</Text>
+                            <Image
+                                source={{ uri: selectedImage }}
+                                style={{ width: SW(100), height: SH(100), borderRadius: 10 }}
+                                resizeMode="cover"
+                            />
+                        </View>
+                    )}
+                    <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+                        <Text style={styles.submitText}>Post Story</Text>
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
         </SafeAreaView>
     );
 };

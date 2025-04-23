@@ -5,7 +5,6 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import styles from '../StyleScreens/SuccessStoriesStyle';
-import { SuccessStoriesData } from '../../DummyData/DummyData';
 import Globalstyles from '../../utils/GlobalCss';
 import { DrawerActions } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/native';
@@ -36,6 +35,7 @@ const SuccessStories = ({ navigation }) => {
       };
 
       const res = await axios.get(SUCESS_STORIES, { headers });
+      console.log("sucess story data ",JSON.stringify(res.data.data))
       setStories(res.data.data); // Store stories in state
     } catch (error) {
       console.error("Error fetching success stories:", error.response ? error.response.data : error.message);
@@ -124,6 +124,28 @@ const SuccessStories = ({ navigation }) => {
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        ListEmptyComponent={
+          <View style={styles.noDataContainer}>
+            <FontAwesome
+              name="heart"
+              size={60}
+              color={Colors.theme_color}
+              style={{ marginBottom: SH(10) }}
+            />
+            <Text style={[styles.noDataText, { fontFamily: "POppins-Bold", fontSize: SF(16) }]}>
+              No success stories yet
+            </Text>
+            <Text style={{
+              color: 'gray',
+              textAlign: 'center',
+              marginTop: SH(5),
+              paddingHorizontal: SW(20),
+              fontFamily: "POppins-Medium"
+            }}>
+              Once couples share their stories, they will be displayed here to inspire others.
+            </Text>
+          </View>
         }
       />
     </SafeAreaView>

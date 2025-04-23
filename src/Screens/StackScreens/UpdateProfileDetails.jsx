@@ -554,10 +554,10 @@ const UpdateProfileDetails = ({ navigation, route }) => {
 
 
                     <View style={styles.photopickContainer}>
-                        <Text style={styles.title}>Photos (Up to 5)</Text>
+                        <Text style={styles.smalltitle}>Photos (Up to 5)</Text>
 
                         {/* Crop Picker Button */}
-                        <TouchableOpacity style={styles.PickPhotoButton} onPress={handleAdditionalPhotosPick}>
+                        <TouchableOpacity style={[styles.PickPhotoButton]} onPress={handleAdditionalPhotosPick}>
                             <Text style={styles.PickPhotoText}>Pick & Crop Photo</Text>
                         </TouchableOpacity>
                     </View>

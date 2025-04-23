@@ -16,9 +16,12 @@ const styles = StyleSheet.create({
     width: SW(350), height: SH(270), borderRadius: 10, resizeMode: "cover"
   },
   verifiedContainer: {
+    position: "absolute",
+    top: SH(295),
+    left: SW(210),
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "white",
+    backgroundColor: "#e3e6e4",
     paddingHorizontal: SW(5),
     paddingVertical: SW(2),
     borderRadius: 5,

@@ -443,7 +443,7 @@ const ProfileDetail = ({ route, navigation }) => {
                         )}
 
                         {profileData?.partnerPreferences && Object.keys(profileData.partnerPreferences).length > 0 && (
-                            <View style={styles.flexContainer1}>
+                            <View style={styles.detailbox}>
                                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
                                     <MaterialCommunityIcons name="account-search" size={25} color={Colors.theme_color} />
                                     <Text style={[styles.HeadingText, { marginLeft: 8 }]}>My Partner Preferences</Text>

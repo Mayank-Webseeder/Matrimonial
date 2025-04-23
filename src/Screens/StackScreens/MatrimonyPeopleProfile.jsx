@@ -463,29 +463,75 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             </View>
           </Modal>
         </View>
-        {isActivist && (
-          <View style={styles.verifiedContainer}>
-            {isVerified && (
-              <Image
-                source={require("../../Images/verified.png")}
-                style={styles.verifiedBadge}
-              />
-            )}
+        {/* {isActivist ? (
+  <View style={styles.verifiedContainer}>
+    {isVerified && (
+      <Image
+        source={require("../../Images/verified.png")}
+        style={styles.verifiedBadge}
+      />
+    )}
 
+    {isVerified ? (
+      verifiedBy === activistId ? (
+        <>
+          <Text style={styles.verifiedText}>Verified</Text>
+          <Switch
+            value={isSwitchOn}
+            onValueChange={handleToggle}
+            thumbColor={isSwitchOn ? "#4CAF50" : "#767577"}
+            trackColor={{ false: "#f4f3f4", true: "#4CAF50" }}
+          />
+        </>
+      ) : (
+        <Text style={styles.verifiedText}>Verified</Text>
+      )
+    ) : (
+      <>
+        <Text style={styles.verifiedText}>Verify Profile</Text>
+        <Switch
+          value={isSwitchOn}
+          onValueChange={handleToggle}
+          thumbColor={isSwitchOn ? "#4CAF50" : "#767577"}
+          trackColor={{ false: "#f4f3f4", true: "#4CAF50" }}
+        />
+      </>
+    )}
+  </View>
+) : (
+  isVerified && (
+    <View style={[styles.verifiedContainer,{top: SH(300),
+      left: SW(270)}]}>
+      <Image
+        source={require("../../Images/verified.png")}
+        style={styles.verifiedBadge}
+      />
+      <Text style={styles.verifiedText}>Verified</Text>
+    </View>
+  )
+)} */}
+
+        {isActivist ? (
+          <View style={styles.verifiedContainer}>
             {isVerified ? (
-              verifiedBy === activistId ? (
-                <>
-                  <Text style={styles.verifiedText}>Verified</Text>
+              <>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: "flex-end", paddingHorizontal: SW(6), paddingVertical: SH(3) }}>
+                  <Image
+                    source={require("../../Images/verified.png")}
+                    style={styles.verifiedBadge}
+                  />
+                  <Text style={styles.verifiedText}>Already Verified</Text>
+                </View>
+
+                {verifiedBy === activistId && (
                   <Switch
                     value={isSwitchOn}
                     onValueChange={handleToggle}
                     thumbColor={isSwitchOn ? "#4CAF50" : "#767577"}
                     trackColor={{ false: "#f4f3f4", true: "#4CAF50" }}
                   />
-                </>
-              ) : (
-                <Text style={styles.verifiedText}>Verified</Text>
-              )
+                )}
+              </>
             ) : (
               <>
                 <Text style={styles.verifiedText}>Verify Profile</Text>
@@ -498,7 +544,20 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               </>
             )}
           </View>
+        ) : (
+          isVerified && (
+            <View style={[styles.verifiedContainer, { top: SH(300), left: SW(270) }]}>
+              <Image
+                source={require("../../Images/verified.png")}
+                style={styles.verifiedBadge}
+              />
+              <Text style={styles.verifiedText}>Verified</Text>
+            </View>
+          )
         )}
+
+
+
 
         <View style={styles.flexContainer}>
           <View style={styles.flex}>

@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
     righticons: {
         flexDirection: 'row',
         alignItems: "center",
-        marginRight:SW(10)
+        marginRight: SW(10)
     },
     postText: {
         fontSize: SF(13),
@@ -38,8 +38,22 @@ const styles = StyleSheet.create({
     },
     ratingContainer: {
         flexDirection: 'row',
-        marginTop:SH(5),
-      },
+        marginTop: SH(5),
+    },
+    noDataContainer: {
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: SH(20),
+    },
+    noDataText: {
+        fontSize: SF(16),
+        color: "gray",
+        fontWeight: "bold",
+    },
+    uploadedImage:{
+        width: SW(100), height: SH(100), borderRadius: 10
+    }
+
 
 
 })

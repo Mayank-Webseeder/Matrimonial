@@ -79,6 +79,7 @@ const DELETE_SAVED_PROFILE = `${BASE_URL}/saved/deleteSavedProfiles`;
 // share
 const SHARED_PROFILES = `${BASE_URL}/user/share-bioDataprofile`;
 const SUCESS_STORIES=`${BASE_URL}/user/get-successStories`;
+const POST_SUCESS_sTORY=`${BASE_URL}/user/create-successStory`;
 
 // activist APIs
 const CREATE_ACTIVIST = `${BASE_URL}/activist/createActivist`;
@@ -245,5 +246,6 @@ export {
     PROFILE_TYPE,
     BASE_URL,
     SUBSCRIPTION_HISTORY,
-    SUCESS_STORIES
+    SUCESS_STORIES,
+    POST_SUCESS_sTORY
 }

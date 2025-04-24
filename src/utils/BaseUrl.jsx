@@ -1,3 +1,4 @@
+import { BaseRouter } from "@react-navigation/native";
 
 const BASE_URL = "https://api-matrimonial.webseeder.tech/api/v1";
 // const BASE_URL = "https://matrimonial-backend-oikh.onrender.com/api/v1";
@@ -80,6 +81,8 @@ const DELETE_SAVED_PROFILE = `${BASE_URL}/saved/deleteSavedProfiles`;
 const SHARED_PROFILES = `${BASE_URL}/user/share-bioDataprofile`;
 const SUCESS_STORIES=`${BASE_URL}/user/get-successStories`;
 const POST_SUCESS_sTORY=`${BASE_URL}/user/create-successStory`;
+const MY_SUCCESS_STORY=`${BASE_URL}/user/get-successStories?myStory=true`;
+const DELETE_SUCCESS_STORY=`${BASE_URL}/user/delete-successStory`;
 
 // activist APIs
 const CREATE_ACTIVIST = `${BASE_URL}/activist/createActivist`;
@@ -247,5 +250,7 @@ export {
     BASE_URL,
     SUBSCRIPTION_HISTORY,
     SUCESS_STORIES,
-    POST_SUCESS_sTORY
+    POST_SUCESS_sTORY,
+    MY_SUCCESS_STORY,
+    DELETE_SUCCESS_STORY
 }

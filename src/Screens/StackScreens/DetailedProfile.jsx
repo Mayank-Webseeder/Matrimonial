@@ -165,8 +165,8 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
   const handleImageSelection = (field) => {
     ImageCropPicker.openPicker({
-      width: 400,
-      height: 400,
+      width: 2000,
+      height: 3000,
       cropping: true,
       includeBase64: true,
       mediaType: "photo",

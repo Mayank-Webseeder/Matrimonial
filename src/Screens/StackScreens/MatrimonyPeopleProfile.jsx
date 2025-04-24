@@ -19,7 +19,7 @@ import { useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SF, SH, SW } from '../../utils/Dimensions';
 import { showMessage } from 'react-native-flash-message';
-const { width, height } = Dimensions.get("window");
+const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 
 const MatrimonyPeopleProfile = ({ navigation }) => {
   const route = useRoute();
@@ -426,40 +426,74 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             <TouchableOpacity onPress={() => openImageViewer(0)}>
               <Image
                 source={{ uri: images[0] }}
-                style={{ width: SW(350), height: SH(330), borderRadius: 10 }}
+                style={{ width: SW(370), height: SH(350), borderRadius: 10, resizeMode: "cover" }}
                 blurRadius={isBlurCondition ? 5 : 0}
               />
             </TouchableOpacity>
           )}
-          <Modal visible={modalVisible} transparent={true} animationType="fade">
-            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.8)", justifyContent: "center", alignItems: "center" }}>
+          <Modal visible={modalVisible} transparent animationType="fade">
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: 'rgba(0,0,0,0.8)',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
               <ScrollView
                 horizontal
                 pagingEnabled
                 showsHorizontalScrollIndicator={false}
-                onMomentumScrollEnd={(event) => {
-                  const newIndex = Math.round(event.nativeEvent.contentOffset.x / width);
-                  setImageIndex(newIndex);
-                }}
-                style={{ width, height }}
+                onMomentumScrollEnd={(e) =>
+                  setImageIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W))
+                }
+                contentOffset={{ x: imageIndex * SCREEN_W, y: 0 }}   // current slide
+                style={{ width: SCREEN_W, height: SCREEN_H }}
               >
-                {images.map((img, idx) => (
-                  <View key={idx} style={{ width, height, justifyContent: "center", alignItems: "center" }}>
+                {images.map((uri, idx) => (
+                  <View
+                    key={idx}
+                    style={{
+                      width: SCREEN_W,
+                      height: SCREEN_H,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
                     <Image
-                      source={{ uri: img }}
-                      style={{ width: width * 0.9, height: height * 0.8, borderRadius: 10, resizeMode: "contain" }}
+                      source={{ uri }}
+                      resizeMode="contain"            // या "cover" अगर crop चाहिये
+                      style={{ width: '100%', height: '100%' }}
                       blurRadius={isBlurCondition ? 5 : 0}
                     />
                   </View>
                 ))}
               </ScrollView>
-              <View style={{ position: "absolute", top: 40, alignSelf: "center", backgroundColor: "rgba(0,0,0,0.6)", padding: 8, borderRadius: 5 }}>
-                <Text style={{ color: "white", fontSize: SF(13), fontFamily: "Poppins-Regular" }}>{imageIndex + 1} / {images.length}</Text>
-              </View>
-              <TouchableOpacity onPress={() => setModalVisible(false)} style={{ position: "absolute", top: 40, right: 20 }}>
-                <Text style={{ color: "white", fontSize: SF(13), fontFamily: "Poppins-Regular" }}>Close</Text>
-              </TouchableOpacity>
 
+              {/* index badge */}
+              <View
+                style={{
+                  position: 'absolute',
+                  top: SH(40),
+                  alignSelf: 'center',
+                  backgroundColor: 'rgba(0,0,0,0.6)',
+                  paddingHorizontal: SW(8),
+                  paddingVertical: SH(8),
+                  borderRadius: 5,
+                }}
+              >
+                <Text style={{ color: '#fff' }}>
+                  {imageIndex + 1} / {images.length}
+                </Text>
+              </View>
+
+              {/* close button */}
+              <TouchableOpacity
+                onPress={() => setModalVisible(false)}
+                style={{ position: 'absolute', top: 40, right: 20 }}
+              >
+                <Text style={{ color: '#fff' }}>Close</Text>
+              </TouchableOpacity>
             </View>
           </Modal>
         </View>
@@ -515,12 +549,12 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           <View style={styles.verifiedContainer}>
             {isVerified ? (
               <>
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: "flex-end", paddingHorizontal: SW(6), paddingVertical: SH(3) }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: "flex-end" }}>
                   <Image
                     source={require("../../Images/verified.png")}
                     style={styles.verifiedBadge}
                   />
-                  <Text style={styles.verifiedText}>Already Verified</Text>
+                  <Text style={[styles.verifiedText, { paddingHorizontal: SW(5), paddingVertical: SH(3) }]}> Already Verified</Text>
                 </View>
 
                 {verifiedBy === activistId && (
@@ -546,7 +580,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           </View>
         ) : (
           isVerified && (
-            <View style={[styles.verifiedContainer, { top: SH(300), left: SW(270) }]}>
+            <View style={[styles.verifiedContainer, { top: SH(320), left: SW(275), width: SW(80) }]}>
               <Image
                 source={require("../../Images/verified.png")}
                 style={styles.verifiedBadge}
@@ -709,9 +743,9 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                 </View>
 
                 <View style={styles.flexContainer2}>
-                  {personalDetails?.currentCity && (
+                  {/* {personalDetails?.currentCity && (
                     <Text style={styles.text}>Currently in: {personalDetails?.currentCity}</Text>
-                  )}
+                  )} */}
                   {personalDetails?.livingStatus && (
                     <Text style={styles.text}>Living with family: {personalDetails?.livingStatus}</Text>
                   )}

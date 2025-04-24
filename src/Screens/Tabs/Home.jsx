@@ -377,10 +377,10 @@ const Home = ({ navigation }) => {
                 heading="MATRIMONY"
                 showViewAll={true}
                 onViewAllPress={() => {
-                  if (isBiodataEmpty && isBiodataExpired) {
-                    navigation.navigate("BioData");
+                  if (isBiodataExpired || isBiodataEmpty) {
+                    navigation.navigate('Matrimonial');
                   } else {
-                    navigation.navigate("Matrimonial");
+                    navigation.navigate('BioData');
                   }
                 }}
               />

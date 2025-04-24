@@ -18,25 +18,36 @@ const UpdateEventPost = ({ navigation, route }) => {
     const MyActivistProfile = useSelector((state) => state.activist.activist_data);
     const [eventData, setEventData] = useState(initialEventData || { title: '', description: '', images: [] });
     const [photos, setPhotos] = useState([]);
-
+    const MAX_PHOTOS = 5;
+    
     // useEffect(() => {
     //     console.log("eventData", eventData);
     // }, [eventData]);
 
     const handleImageUpload = () => {
         ImageCropPicker.openPicker({
-            multiple: true,
-            cropping: true,
-            width: 400,
-            height: 400,
-            includeBase64: true,
-            compressImageQuality: 1
-        }).then(images => {
-            const newPhotos = images.map(image => `data:image/jpeg;base64,${image.data}`);
-            setPhotos(newPhotos); // Purani images hata kar sirf naye images set ho rahi hain
-            setEventData(prev => ({ ...prev, images: [] })); // Backend wali images hata do
-        }).catch(err => console.log('Crop Picker Error:', err));
-    };
+          multiple: true,
+          cropping: true,
+          width: 400,
+          height: 400,
+          includeBase64: true,
+          compressImageQuality: 1,
+        })
+          .then((images) => {
+            const newPhotos = images.map(
+              (img) => `data:image/jpeg;base64,${img.data}` // keep data‑URI prefix
+            );
+      
+            if (newPhotos.length > MAX_PHOTOS) {
+              alert(`You can only upload up to ${MAX_PHOTOS} photos.`);
+              return;                  
+            }
+      
+            setPhotos(newPhotos);      
+            setEventData((prev) => ({ ...prev, images: [] }));
+          })
+          .catch((err) => console.log('Crop Picker Error:', err));
+      };
 
     const convertToBase64 = async (imageUri) => {
         try {

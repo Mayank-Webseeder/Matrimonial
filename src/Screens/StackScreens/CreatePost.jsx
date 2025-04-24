@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { CREATE_EVENT_NEWS } from '../../utils/BaseUrl';
 import { showMessage } from 'react-native-flash-message';
+import {launchImageLibrary} from 'react-native-image-picker';
 
 const CreatePost = ({ navigation, route }) => {
     const MyActivistProfile = useSelector((state) => state.activist.activist_data);
@@ -23,24 +24,50 @@ const CreatePost = ({ navigation, route }) => {
         console.log("MyActivistProfile", MyActivistProfile)
     })
 
-    const handleImageUpload = () => {
-        ImageCropPicker.openPicker({
-            multiple: true,
-            cropping: true,
-            width: 400,
-            height: 400,
-            includeBase64: true,
-            compressImageQuality: 1
-        }).then(images => {
-            const newPhotos = images.map(image => image.data); // Only store base64
-            if (newPhotos.length <= 5) {
-                setPhotos(newPhotos); // Replace old photos with new ones
-            } else {
-                alert('You can only upload up to 5 photos.');
-            }
-        }).catch(err => console.log('Crop Picker Error:', err));
-    };
+    const pickerOptions = {
+        selectionLimit: 5,        
+        mediaType: 'photo',       
+        includeBase64: true,     
+        maxWidth: 400,           
+        maxHeight: 400,
+        quality: 1,              
+      };
 
+    // const handleImageUpload = () => {
+    //     ImageCropPicker.openPicker({
+    //       multiple: true,
+    //       maxFiles: 5,          // 🔒 hard limit inside the picker
+    //       cropping: true,
+    //       width: 400,
+    //       height: 400,
+    //       includeBase64: true,
+    //       compressImageQuality: 1,
+    //     })
+    //       .then((images) => {
+    //         // images.length is guaranteed ≤ 5
+    //         const newPhotos = images.map((img) => img.data); // base64 only
+    //         setPhotos(newPhotos);
+    //       })
+    //       .catch((err) => console.log('Crop Picker Error:', err));
+    //   };
+
+    const handleImageUpload = () => {
+        launchImageLibrary(pickerOptions, (response) => {
+          if (response.didCancel) return;                 // user backed out
+          if (response.errorCode) {
+            console.log('ImagePicker Error:', response.errorMessage);
+            return;
+          }
+      
+          // response.assets is an array (max 5 because of selectionLimit)
+          const newPhotos = response.assets.map(
+            (asset) => asset.base64                       // plain base64
+          );
+      
+          setPhotos(newPhotos);                           // overwrite old photos
+        });
+      };
+      
     const handleSubmit = async () => {
         try {
             setLoading(true);

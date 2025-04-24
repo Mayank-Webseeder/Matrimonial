@@ -15,6 +15,8 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector } from 'react-redux';
 import RazorpayCheckout from 'react-native-razorpay';
 import { showMessage } from "react-native-flash-message";
+import { launchImageLibrary } from 'react-native-image-picker';
+
 
 const KathavachakRegister = ({ navigation }) => {
     const [stateInput, setStateInput] = useState('');
@@ -217,35 +219,75 @@ const KathavachakRegister = ({ navigation }) => {
 
 
     // Additional Photos Picker
-    const handleAdditionalPhotosPick = async () => {
-        try {
-            const images = await ImageCropPicker.openPicker({
-                multiple: true,
-                cropping: true,
-                includeBase64: true,
-            });
+    // const handleAdditionalPhotosPick = async () => {
+    //     try {
+    //         const images = await ImageCropPicker.openPicker({
+    //             multiple: true,
+    //             cropping: true,
+    //             includeBase64: true,
+    //         });
 
-            if (!images || images.length === 0) {
-                console.error("No images selected!");
-                return;
-            }
+    //         if (!images || images.length === 0) {
+    //             console.error("No images selected!");
+    //             return;
+    //         }
 
-            setRoleRegisterData(prevData => {
-                const newPhotos = images.map(img => `data:${img.mime};base64,${img.data}`);
-                const updatedPhotos = [...prevData.additionalPhotos, ...newPhotos];
+    //         setRoleRegisterData(prevData => {
+    //             const newPhotos = images.map(img => `data:${img.mime};base64,${img.data}`);
+    //             const updatedPhotos = [...prevData.additionalPhotos, ...newPhotos];
 
-                if (updatedPhotos.length <= 5) {
-                    return { ...prevData, additionalPhotos: updatedPhotos };
-                } else {
-                    alert('You can only upload up to 5 additional photos.');
-                    return prevData;
-                }
-            });
+    //             if (updatedPhotos.length <= 5) {
+    //                 return { ...prevData, additionalPhotos: updatedPhotos };
+    //             } else {
+    //                 alert('You can only upload up to 5 additional photos.');
+    //                 return prevData;
+    //             }
+    //         });
 
-        } catch (err) {
-            console.log("Additional Photos Picker Error:", err);
-        }
+    //     } catch (err) {
+    //         console.log("Additional Photos Picker Error:", err);
+    //     }
+    // };
+
+    const ADDL_LIMIT = 5;                // max extra photos
+    
+    const pickerOpts = {
+      selectionLimit: ADDL_LIMIT,        // gallery stops user at 5
+      mediaType: 'photo',
+      includeBase64: true,               // we still need base‑64
+      maxWidth: 400,                     // optional resize
+      maxHeight: 400,
+      quality: 1,
     };
+    
+     const handleAdditionalPhotosPick = () => {
+            launchImageLibrary(pickerOpts, (response) => {
+              if (response.didCancel) return;                            // user aborted
+              if (response.errorCode) {
+                console.log('ImagePicker Error:', response.errorMessage);
+                return;
+              }
+          
+              const incoming = response.assets ?? [];
+          
+              setRoleRegisterData((prev) => {
+                // Convert each asset to data‑URI just like before
+                const newPhotos = incoming.map(
+                  (img) => `data:${img.type};base64,${img.base64}`
+                );
+          
+                const updated = [...prev.additionalPhotos, ...newPhotos];
+          
+                if (updated.length > ADDL_LIMIT) {
+                  Alert.alert(`You can only upload up to ${ADDL_LIMIT} additional photos.`);
+                  return prev;                                           // refuse update
+                }
+          
+                return { ...prev, additionalPhotos: updated };
+              });
+            });
+          };
+
 
     const OPTIONAL_FIELDS = [
         "residentialAddress", "additionalPhotos", "experience", "websiteUrl",

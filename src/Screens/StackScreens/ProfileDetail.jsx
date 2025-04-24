@@ -351,25 +351,40 @@ const ProfileDetail = ({ route, navigation }) => {
                         </View>
 
                         {/* About Me Section */}
-                        {profileData?.personalDetails?.aboutMe && (
-                            <View style={styles.flexContainer1}>
-                                <View>
-                                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
-                                        <MaterialCommunityIcons name="account-box-outline" size={25} color={Colors.theme_color} />
-                                        <Text style={styles.HeadingText}> About Me</Text>
-                                    </View>
-                                    <Text style={styles.text}>{profileData?.personalDetails?.aboutMe}</Text>
-                                    <View style={styles.flexContainer4}>
-                                        {profileData?.personalDetails?.complexion && <Text style={styles.text}>Completion: {profileData?.personalDetails?.complexion}</Text>}
-                                        {profileData?.personalDetails?.weight && <Text style={styles.text}>Weight: {profileData?.personalDetails?.weight} kg </Text>}
-                                    </View>
-                                    <View style={styles.flexContainer4}>
-                                        {profileData?.personalDetails?.currentCity && <Text style={styles.text}>Currently in: {profileData?.personalDetails?.currentCity}</Text>}
-                                        {profileData?.personalDetails?.livingStatus && <Text style={styles.text}>Living with family: {profileData?.personalDetails?.livingStatus}</Text>}
+                        {(profileData?.personalDetails &&
+                            (profileData?.personalDetails?.aboutMe ||
+                                profileData?.personalDetails?.complexion ||
+                                profileData?.personalDetails?.weight ||
+                                profileData?.personalDetails?.livingStatus)) && (
+                                <View style={styles.flexContainer1}>
+                                    <View>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
+                                            <MaterialCommunityIcons name="account-box-outline" size={25} color={Colors.theme_color} />
+                                            <Text style={styles.HeadingText}> About Me</Text>
+                                        </View>
+
+                                        {profileData?.personalDetails?.aboutMe && (
+                                            <Text style={styles.text}>{profileData?.personalDetails?.aboutMe}</Text>
+                                        )}
+
+                                        <View style={styles.flexContainer4}>
+                                            {profileData?.personalDetails?.complexion && (
+                                                <Text style={styles.text}>Complexion: {profileData?.personalDetails?.complexion}</Text>
+                                            )}
+                                            {profileData?.personalDetails?.weight && (
+                                                <Text style={styles.text}>Weight: {profileData?.personalDetails?.weight} kg</Text>
+                                            )}
+                                        </View>
+
+                                        <View style={styles.flexContainer4}>
+                                            {profileData?.personalDetails?.livingStatus && (
+                                                <Text style={styles.text}>Living with family: {profileData?.personalDetails?.livingStatus}</Text>
+                                            )}
+                                        </View>
                                     </View>
                                 </View>
-                            </View>
-                        )}
+                            )}
+
 
                         {/* Family Section */}
                         {profileData?.personalDetails?.fatherName && (

@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 5,
         elevation: 3,
-        marginHorizontal: SW(10),
+        marginHorizontal: SW(3),
         marginVertical: SH(10),
         marginBottom: SH(3),
         paddingHorizontal: SW(5),
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: "space-between"
+        // justifyContent: "space-between"
     },
     postTextContainer: {
         marginHorizontal: SW(10)

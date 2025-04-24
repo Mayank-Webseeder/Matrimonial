@@ -11,11 +11,11 @@ const styles = StyleSheet.create({
   },
   sliderContainer: {
     marginBottom: SH(30),
-    height: SH(190),
+    height: SH(260),
   },
   sliderImage: {
     width: "100%",
-    height: SH(190),
+    height: SH(260),
     resizeMode: 'cover',
   },
   dot: {
@@ -44,12 +44,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: SW(10),
     paddingVertical: SH(15),
     borderRadius: 20,
-    marginBottom: SH(10)
+    marginBottom: SH(10),
   },
   descriptionText: {
     fontSize: SF(13),
     color: Colors.dark,
-    marginVertical: SH(5),
+    marginVertical: SH(10),
     fontFamily: 'Poppins-Bold',
   },
   sharecontainer: {
@@ -65,14 +65,13 @@ const styles = StyleSheet.create({
     marginHorizontal: SW(10),
   },
   smalltext: {
-    fontFamily: "Poppins-Regular",
-    fontSize: SF(12)
+    fontFamily: "Poppins-Bold",
+    fontSize: SF(15)
   },
 
   iconText: {
     fontSize: SF(13),
     color: Colors.dark,
-    marginTop: SH(5),
     marginLeft: SW(4)
   },
   Button: {
@@ -105,7 +104,7 @@ const styles = StyleSheet.create({
   },
   descriptionText: {
     fontSize: SF(13),
-    fontWeight: 'Poppins-Bold',
+    fontFamily: 'Poppins-Regular',
     marginBottom: SH(10),
     color: Colors.dark,
   },

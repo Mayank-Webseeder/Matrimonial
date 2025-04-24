@@ -17,15 +17,16 @@ const styles = StyleSheet.create({
   },
   verifiedContainer: {
     position: "absolute",
-    top: SH(295),
-    left: SW(210),
+    top: SH(315),
+    left: SW(222),
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#e3e6e4",
     paddingHorizontal: SW(5),
     paddingVertical: SW(2),
     borderRadius: 5,
-    alignSelf: "flex-end"
+    alignSelf: "flex-end",
+    width:SW(130)
   },
   verifiedBadge: {
     width: SW(20),

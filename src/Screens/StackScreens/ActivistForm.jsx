@@ -56,12 +56,12 @@ export default function ActivistForm({ navigation }) {
         width: 300,
         height: 300,
         cropping: true,
-        includeBase64: true, // ✅ Base64 directly from picker
+        includeBase64: true,
         mediaType: "any",
         compressImageQuality: 1,
       });
 
-      console.log("📷 Selected Image:", image); // Debugging
+      console.log("📷 Selected Image:", image);
 
       if (!image.data) {
         console.error("❌ Base64 data is missing!");
@@ -312,7 +312,7 @@ export default function ActivistForm({ navigation }) {
             _id: response.data.data._id,
           }));
         }
-        navigation.navigate("MainApp")
+        navigation.goBack();
         return; // ✅ Success case handled
       }
 

@@ -66,7 +66,7 @@ const ViewEntityImages = ({ navigation, route }) => {
                             ? { uri: entityDetails.profilePhoto }
                             : require('../../Images/NoImage.png')
                         }
-                        style={styles.profilePhoto}
+                        style={styles.profileImage}
                         resizeMode="cover"
                     />
 
@@ -79,9 +79,9 @@ const ViewEntityImages = ({ navigation, route }) => {
                 </View>
 
                 {/* Images */}
-                <View style={{ marginVertical: SH(10), marginHorizontal: SW(10) }}>
+                <View style={{ marginVertical: SH(10) }}>
                     {images.map((image, index) => (
-                        <TouchableOpacity key={index} style={styles.card} onPress={() => { setSelectedImageIndex(index); setVisible(true); }}>
+                        <TouchableOpacity key={index}  onPress={() => { setSelectedImageIndex(index); setVisible(true); }}>
                             <Image
                                 source={typeof image === 'string' ? { uri: image } : image}
                                 style={[styles.image, { aspectRatio: imageAspectRatios[index] || 1 }]}

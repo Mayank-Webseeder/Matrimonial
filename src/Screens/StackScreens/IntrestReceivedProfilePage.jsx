@@ -482,7 +482,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
             )}
             {personalDetails?.complexion && <Text style={styles.text}>Complexion: {personalDetails?.complexion}</Text>}
             {personalDetails?.weight && <Text style={styles.text}>Weight: {personalDetails?.weight}</Text>}
-            {personalDetails?.currentCity && <Text style={styles.text}>Currently in: {personalDetails?.currentCity}</Text>}
+            {/* {personalDetails?.currentCity && <Text style={styles.text}>Currently in: {personalDetails?.currentCity}</Text>} */}
             {personalDetails?.livingStatus && <Text style={styles.text}>Living with family: {personalDetails?.livingStatus}</Text>}
           </View>
         </View>

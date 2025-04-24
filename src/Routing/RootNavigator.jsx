@@ -83,6 +83,7 @@ import JyotishRegister from '../Screens/StackScreens/JyotishRegister';
 import KathavachakRegister from '../Screens/StackScreens/KathavachakRegister';
 import SubscriptionHistory from '../Screens/DrawerScreen/SubscriptionHistory';
 import { SocketProvider } from '../Socket/socketContext';
+import MySuccessStory from '../Screens/DrawerScreen/MySuccessStory';
 
 const Stack = createNativeStackNavigator();
 const AppStackNavigator = createNativeStackNavigator();
@@ -295,6 +296,7 @@ function MyDrawer() {
       <Drawer.Screen name="AboutJs" component={AboutJs} />
       <Drawer.Screen name="MyProfile" component={MyProfile} />
       <Drawer.Screen name="SubscriptionHistory" component={SubscriptionHistory} />
+      <Drawer.Screen name="MySuccessStory" component={MySuccessStory} />
     </Drawer.Navigator>
   );
 }
@@ -348,6 +350,7 @@ export const AppStack = () => (
     <AppStackNavigator.Screen name="PanditRegister" component={PanditRegister} />
     <AppStackNavigator.Screen name="JyotishRegister" component={JyotishRegister} />
     <AppStackNavigator.Screen name="KathavachakRegister" component={KathavachakRegister} />
+    <AppStackNavigator.Screen name="MySuccessStory" component={MySuccessStory} />
   </AppStackNavigator.Navigator>
 );
 

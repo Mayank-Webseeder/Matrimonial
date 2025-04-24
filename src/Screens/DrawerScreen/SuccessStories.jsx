@@ -8,21 +8,29 @@ import styles from '../StyleScreens/SuccessStoriesStyle';
 import Globalstyles from '../../utils/GlobalCss';
 import { DrawerActions } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/native';
-import { SUCESS_STORIES } from '../../utils/BaseUrl';
+import { SUCESS_STORIES, MY_SUCCESS_STORY } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import { SH,SW,SF } from '../../utils/Dimensions';
+import { SH, SW, SF } from '../../utils/Dimensions';
+import ImageViewing from 'react-native-image-viewing';
 
 const SuccessStories = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [stories, setStories] = useState([]);
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
+  const [viewerVisible, setViewerVisible] = useState(false);
+  const [currentImg, setCurrentImg] = useState(null);
+  const [myStory, setMyStory] = useState(null);
+  const [loadingMyStory, setLoadingMyStory] = useState(true);
 
-  useFocusEffect(useCallback(() => {
-    fetchSuccessStories();
-  }, []));
+  useFocusEffect(
+    useCallback(() => {
+      fetchSuccessStories();
+      fetchMySuccessStory();
+    }, [])
+  );
 
   const fetchSuccessStories = async () => {
     try {
@@ -35,10 +43,37 @@ const SuccessStories = ({ navigation }) => {
       };
 
       const res = await axios.get(SUCESS_STORIES, { headers });
-      console.log("sucess story data ",JSON.stringify(res.data.data))
-      setStories(res.data.data); // Store stories in state
+      console.log("sucess story data ", JSON.stringify(res.data.data))
+      setStories(res.data.data);
     } catch (error) {
       console.error("Error fetching success stories:", error.response ? error.response.data : error.message);
+    }
+  };
+
+  const fetchMySuccessStory = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      };
+      const res = await axios.get(MY_SUCCESS_STORY, { headers });
+
+      if (res.data.data && res.data.data.length > 0) {
+        setMyStory(res.data.data[0]);
+      } else {
+        setMyStory(null);
+      }
+    } catch (err) {
+      console.log(
+        'Error fetching my success story:',
+        err.response ? err.response.data : err.message
+      );
+      setMyStory(null);
+    } finally {
+      setLoadingMyStory(false);
     }
   };
 
@@ -63,16 +98,87 @@ const SuccessStories = ({ navigation }) => {
     return stars;
   };
 
-  const renderItem = ({ item }) => (
-    <View style={styles.storyCard}>
-      <Image source={{ uri: item.photoUrl }} style={styles.storyImage} />
-      <View style={styles.textContainer}>
-        <Text style={styles.storyName}>{item.groomName} ❤️ {item.brideName}</Text>
-        <Text style={styles.storyDescription}>{item.thought}</Text>
-        <View style={styles.ratingContainer}>{renderStars(item.rating)}</View>
+  const renderItem = ({ item }) => {
+    const { groomDetails: groom, brideDetails: bride } = item;
+
+    return (
+      <View style={styles.storyCard}>
+        <View style={styles.collabHeader}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('MatrimonyPeopleProfile', { userId: groom.userId })
+            }
+          >
+            <Image source={{ uri: groom.profileImage }} style={styles.avatar} />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{ marginLeft: -SW(20) }}
+            onPress={() =>
+              navigation.navigate('MatrimonyPeopleProfile', { userId: bride.userId })
+            }
+          >
+            <Image source={{ uri: bride.profileImage }} style={styles.avatar} />
+            <View style={styles.collabIcon}>
+              <FontAwesome name="handshake-o" size={12} color={Colors.theme_color} />
+            </View>
+          </TouchableOpacity>
+          <View style={{ marginLeft: SW(8) }}>
+            <View style={{ flexDirection: 'row', marginLeft: SW(8) }}>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('MatrimonyPeopleProfile', { userId: groom.userId })
+                }
+              >
+                <Text style={styles.nameText}>{groom.name}</Text>
+              </TouchableOpacity>
+
+              <Text style={styles.nameText}> & </Text>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('MatrimonyPeopleProfile', { userId: bride.userId })
+                }
+              >
+                <Text style={styles.nameText}>{bride.name}</Text>
+              </TouchableOpacity>
+            </View>
+
+            <Text style={{ fontSize: SF(10), color: '#888' }}>
+              {groom.bioDataId} · {bride.bioDataId}
+            </Text>
+          </View>
+        </View>
+        <TouchableOpacity
+          activeOpacity={0.9}
+          onPress={() => {
+            setCurrentImg(item.photoUrl);
+            setViewerVisible(true);
+          }}
+        >
+          <Image
+            source={{ uri: item.photoUrl }}
+            style={{ width: '100%', aspectRatio: 1 }}
+            resizeMode="cover"
+          />
+        </TouchableOpacity>
+        <ImageViewing
+          images={currentImg ? [{ uri: currentImg }] : []}
+          imageIndex={0}
+          visible={viewerVisible}
+          onRequestClose={() => setViewerVisible(false)}
+        />
+
+        <Text style={styles.storyName}>
+          {item.groomName} ❤️ {item.brideName}
+        </Text>
+        <Text style={styles.thought}>{item.thought}</Text>
+        <View style={styles.ratingRow}>{renderStars(item.rating)}</View>
       </View>
-    </View>
-  );
+    );
+  };
+
+
+
 
   return (
     <SafeAreaView style={Globalstyles.container}>
@@ -85,10 +191,10 @@ const SuccessStories = ({ navigation }) => {
           <Text style={Globalstyles.headerText}>Success Stories</Text>
         </View>
         <View style={styles.righticons}>
-        <TouchableOpacity onPress={() => navigation.navigate('PostSuccessStories')}>
+          <TouchableOpacity onPress={() => navigation.navigate('PostSuccessStories')}>
             <Text style={styles.postText}>Post</Text>
           </TouchableOpacity>
-        <TouchableOpacity style={{ position: 'relative' }} onPress={() => navigation.navigate('Notification')}>
+          <TouchableOpacity style={{ position: 'relative' }} onPress={() => navigation.navigate('Notification')}>
             <AntDesign
               name="bells"
               size={25}
@@ -116,6 +222,16 @@ const SuccessStories = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
+
+      {!loadingMyStory && myStory && (
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('MySuccessStory', { story: myStory })
+          }
+        >
+          <Text style={[styles.postText,{alignSelf:"flex-end"}]}>View Your Story</Text>
+        </TouchableOpacity>
+      )}
 
       <FlatList
         data={stories}

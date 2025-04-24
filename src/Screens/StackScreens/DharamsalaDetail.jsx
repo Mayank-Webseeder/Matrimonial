@@ -12,6 +12,7 @@ import { SAVED_PROFILES } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SF, SH, SW } from '../../utils/Dimensions';
+const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 import { showMessage } from 'react-native-flash-message';
 const { width, height } = Dimensions.get("window");
 import { useSelector } from 'react-redux';
@@ -22,7 +23,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
   const [showFullText, setShowFullText] = useState(false);
   const [Save, setIsSaved] = useState(initialSavedState || false);
   const description = DharamsalaData.description || "No description available.";
-  const truncatedDescription = description.slice(0, 100) + "...";
+  const truncatedDescription = description.slice(0, 300) + "...";
   const [modalVisible, setModalVisible] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
    const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
@@ -181,36 +182,44 @@ const DharamsalaDetail = ({ navigation, route }) => {
 
           {/* Modal for Full Image View */}
           <Modal visible={modalVisible} transparent={true} animationType="fade">
-            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.8)", justifyContent: "center", alignItems: "center" }}>
-              <ScrollView
-                horizontal
-                pagingEnabled
-                showsHorizontalScrollIndicator={false}
-                contentOffset={{ x: imageIndex * SW(350), y: 0 }}
-                onMomentumScrollEnd={(event) => {
-                  const newIndex = Math.round(event.nativeEvent.contentOffset.x / width);
-                  setImageIndex(newIndex);
-                }}
-              >
-                {formattedImages.map((img, idx) => (
-                  <View key={idx} style={{ width: SW(350), height: SH(500), justifyContent: "center", alignItems: "center",
-                  marginTop:SH(100) }}>
-                    <Image
-                      source={{ uri: img.uri }}
-                      style={{ width: "90%", height: "80%", borderRadius: 10, resizeMode: "contain" }}
-                    />
-                  </View>
-                ))}
-              </ScrollView>
+            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.8)"}}>
+            <ScrollView
+  horizontal
+  pagingEnabled
+  showsHorizontalScrollIndicator={false}
+  contentOffset={{ x: imageIndex * SCREEN_W, y: 0 }} 
+  onMomentumScrollEnd={(e) =>
+    setImageIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W))
+  }
+>
+  {formattedImages.map((img, idx) => (
+    <View
+      key={idx}
+      style={{
+        width: SCREEN_W,            
+        height: SCREEN_H,           
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop:SH(15)
+      }}
+    >
+      <Image
+        source={{ uri: img.uri }}
+        resizeMode="contain"         
+        style={{ width: '100%', height: '100%' }}
+      />
+    </View>
+  ))}
+</ScrollView>
 
               <View style={{
-                position: "absolute", top: 40, alignSelf: "center", backgroundColor: "rgba(0,0,0,0.6)",
+                position: "absolute", top:SH(30), alignSelf: "center", backgroundColor: "rgba(0,0,0,0.6)",
                 paddingHorizontal: SW(8), borderRadius: 5, paddingVertical: SH(8)
               }}>
                 <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>{imageIndex + 1} / {formattedImages.length}</Text>
               </View>
 
-              <TouchableOpacity onPress={() => setModalVisible(false)} style={{ position: "absolute", top: 40, right: 20 }}>
+              <TouchableOpacity onPress={() => setModalVisible(false)} style={{ position: "absolute", top:SH(40), right:SW(20) }}>
                 <Text style={{ color: "white", fontSize: SF(13), fontFamily: "Poppins-Regular" }}>Close</Text>
               </TouchableOpacity>
             </View>
@@ -228,10 +237,10 @@ const DharamsalaDetail = ({ navigation, route }) => {
           {/* Description with Read More / Read Less */}
           <View style={styles.TextView}>
             <Text style={Globalstyles.title}>Description</Text>
-            <Text style={styles.smallText}>
+            <Text style={styles.descriptionText}>
               {showFullText ? description : truncatedDescription}
             </Text>
-            {description.length > 100 && (
+            {description.length > 300 && (
               <TouchableOpacity onPress={() => setShowFullText(!showFullText)}>
                 <Text style={styles.viewMore}>
                   {showFullText ? 'Read Less' : 'Read More'}

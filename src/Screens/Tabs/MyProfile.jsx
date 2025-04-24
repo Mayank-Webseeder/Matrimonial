@@ -336,6 +336,18 @@ const MyProfile = ({ navigation }) => {
             });
     };
 
+    const tryOpenDrawer = () => {
+        const parent = navigation.getParent();           // nearest parent navigator
+      
+        if (parent && parent?.openDrawer) {
+          // इस navigator में Drawer मौजूद है
+          navigation.dispatch(DrawerActions.openDrawer());
+        } else {
+          // Drawer नहीं मिला → Main drawer‑stack पर लौट जायें
+          navigation.navigate('MainApp');                // root where Drawer lives
+        }
+      };
+
     if (ProfileLoading) {
         return (
             <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -353,7 +365,7 @@ const MyProfile = ({ navigation }) => {
             />
             <View style={Globalstyles.header}>
                 <View style={styles.headerContainer}>
-                    <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
+                    <TouchableOpacity onPress={tryOpenDrawer}>
                         <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
                     </TouchableOpacity>
                     <Text style={styles.headerText}>{capitalizeFirstLetter(profileData.username || 'NA')}</Text>

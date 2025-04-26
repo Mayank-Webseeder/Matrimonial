@@ -148,6 +148,18 @@ const PAYMENT_VERIFICATION=`${BASE_URL}/subscription/verifyPayment`;
 const PAID_URL=`${BASE_URL}/subscription/buy`;
 const SUBSCRIPTION_HISTORY=`${BASE_URL}/subscription/history`;
 
+// Advertise Windows
+
+const HOME_ADVERDISE_WINDOW=`${BASE_URL}/user/get-advertisement?targetProfileType=HomePage`;
+const DHARMSHALA_ADVERDISE_WINDOW=`${BASE_URL}/user/get-advertisement?targetProfileType=Dharmshala`;
+const PANDIT_ADVERDISE_WINDOW=`${BASE_URL}/user/get-advertisement?targetProfileType=Pandit`;
+const JYOTISH_ADVERDISE_WINDOW=`${BASE_URL}/user/get-advertisement?targetProfileType=Jyotish`;
+const KATHAVACHAK_ADVERDISE_WINDOW=`${BASE_URL}/user/get-advertisement?targetProfileType=Kathavachak`;
+const COMMITTEE_ADVERDISE_WINDOW=`${BASE_URL}/user/get-advertisement?targetProfileType=Committee`;
+const EVENT_NEWS_ADVERDISE_WINDOW=`${BASE_URL}/user/get-advertisement?targetProfileType=EventPost`;
+const ACTIVIST_ADVERDISE_WINDOW=`${BASE_URL}/user/get-advertisement?targetProfileType=Activist`;
+const BIODATA_ADVERTISE_WINDOW=`${BASE_URL}/user/get-advertisement?targetProfileType=Biodata`;
+
 export {
     SIGNUP_ENDPOINT,
     LOGIN_ENDPOINT,
@@ -252,5 +264,14 @@ export {
     SUCESS_STORIES,
     POST_SUCESS_sTORY,
     MY_SUCCESS_STORY,
-    DELETE_SUCCESS_STORY
+    DELETE_SUCCESS_STORY,
+    HOME_ADVERDISE_WINDOW,
+    DHARMSHALA_ADVERDISE_WINDOW,
+    PANDIT_ADVERDISE_WINDOW,
+    JYOTISH_ADVERDISE_WINDOW,
+    KATHAVACHAK_ADVERDISE_WINDOW,
+    COMMITTEE_ADVERDISE_WINDOW,
+    EVENT_NEWS_ADVERDISE_WINDOW,
+    ACTIVIST_ADVERDISE_WINDOW,
+    BIODATA_ADVERTISE_WINDOW
 }

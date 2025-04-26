@@ -11,7 +11,7 @@ import AppIntroSlider from 'react-native-app-intro-slider';
 import Globalstyles from '../../utils/GlobalCss';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { GET_ACTIVIST, GET_ALL_BIODATA_PROFILES, GET_BIODATA, PROFILE_ENDPOINT, NOTIFICATION } from '../../utils/BaseUrl';
+import { GET_ACTIVIST, GET_ALL_BIODATA_PROFILES, GET_BIODATA, PROFILE_ENDPOINT, NOTIFICATION, HOME_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
 import { useDispatch } from 'react-redux';
 import { setAllBiodata } from '../../ReduxStore/Slices/GetAllBiodataSlice';
 import { setBioData } from '../../ReduxStore/Slices/BiodataSlice';
@@ -27,7 +27,6 @@ import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
   const sliderRef = useRef(null);
-  const [socket, setSocket] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [biodata, setBiodata] = useState("");
@@ -37,6 +36,8 @@ const Home = ({ navigation }) => {
   const MyprofileData = useSelector((state) => state.getBiodata);
   const ProfileData = useSelector((state) => state.profile);
   const profile_data = ProfileData?.profiledata || {};
+  const [slider, setSlider] = useState([]);
+
   const isBiodataMissing = Object.keys(MyprofileData?.Biodata || {}).length > 0;
   const isBiodataExpired = profile_data?.serviceSubscriptions?.some(
     (sub) => sub.serviceType === "Biodata" && sub.status === "Expired"
@@ -58,13 +59,10 @@ const Home = ({ navigation }) => {
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
   const [NotificationData, setNotificationData] = useState({});
-  
-    const isBiodataEmpty = Object.keys(MyprofileData?.Biodata || {}).length === 0;
-  
-  const sections = ["dummy"];
-  // const ProfileData = useSelector((state) => state.profile);
-  // const profile_data = ProfileData?.profiledata || {};
 
+  const isBiodataEmpty = Object.keys(MyprofileData?.Biodata || {}).length === 0;
+
+  const sections = ["dummy"];
 
   useEffect(() => {
     const expiredServices = [];
@@ -106,15 +104,15 @@ const Home = ({ navigation }) => {
       setNotificationData({});
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
-  
+
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-  
+
       const res = await axios.get(NOTIFICATION, { headers });
       const notificationData = res.data.data;
-  
+
       if (notificationData && notificationData.length > 0) {
         setNotificationData(notificationData);
         dispatch(setAllNotification(notificationData));
@@ -129,7 +127,7 @@ const Home = ({ navigation }) => {
       setIsLoading(false);
     }
   };
-  
+
 
   useFocusEffect(
     React.useCallback(() => {
@@ -140,6 +138,11 @@ const Home = ({ navigation }) => {
       fetchProfile();
     }, [])
   );
+
+  useEffect(() => {
+    Advertisement_window();
+  }, []);
+
 
   const fetchProfile = async () => {
     setProfileData({});
@@ -193,6 +196,46 @@ const Home = ({ navigation }) => {
       setLoading(false)
     }
   };
+
+
+  const Advertisement_window = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+  
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+  
+      const response = await axios.get(HOME_ADVERDISE_WINDOW, { headers });
+  
+      if (response.data) {
+        const fetchedData = response.data.data;
+        console.log("fetchedData", JSON.stringify(fetchedData));
+  
+        const fullSliderData = fetchedData.flatMap((item) => 
+          item.media.map((mediaItem) => ({
+            id: `${item._id}_${mediaItem._id}`,
+            title: item.title,
+            description: item.description,
+            image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
+            resolution: mediaItem.resolution, // 👈 yeh add kiya
+          }))
+        );
+  
+        setSlider(fullSliderData);
+        console.log("Slider Data:", fullSliderData);
+      } else {
+        setSlider([]);
+      }
+    } catch (error) {
+      console.error("Error fetching advertisement:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
   const handleNavigateToProfile = (item) => {
     console.log("item", item);
@@ -274,20 +317,23 @@ const Home = ({ navigation }) => {
     }
   };
 
+
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (currentIndex < slider.length - 1) {
-        setCurrentIndex((prevIndex) => prevIndex + 1);
-        sliderRef.current?.goToSlide(currentIndex + 1);
-      } else {
-        setCurrentIndex(0);
-        sliderRef.current?.goToSlide(0);
-      }
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, [currentIndex]);
-
+    if (slider.length === 0) return;
+  
+    const currentSlide = slider[currentIndex];
+    const durationInSeconds = currentSlide?.duration || 2; 
+    const durationInMilliseconds = durationInSeconds * 1000; 
+  
+    const timeout = setTimeout(() => {
+      const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
+      setCurrentIndex(nextIndex);
+      sliderRef.current?.goToSlide(nextIndex);
+    }, durationInMilliseconds);
+  
+    return () => clearTimeout(timeout);
+  }, [currentIndex, slider]);
+  
 
   const renderSkeleton = () => (
     <SkeletonPlaceholder>
@@ -361,17 +407,24 @@ const Home = ({ navigation }) => {
               <AppIntroSlider
                 ref={sliderRef}
                 data={slider}
-                renderItem={({ item }) => (
-                  <Image source={item.image} style={styles.sliderImage} />
-                )}
+                renderItem={({ item }) => {
+                  const { width, height } = item.resolution;
+                  return (
+                    <Image
+                      source={{ uri: item.image }}
+                      style={{
+                        width,
+                        height,
+                      }}
+                    />
+                  );
+                }}
                 showNextButton={false}
                 showDoneButton={false}
                 dotStyle={styles.dot}
                 activeDotStyle={styles.activeDot}
               />
             </View>
-
-            {/* MATRIMONY */}
             <View>
               <HeadingWithViewAll
                 heading="MATRIMONY"

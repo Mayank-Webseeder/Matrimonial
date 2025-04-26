@@ -88,8 +88,8 @@ const styles = StyleSheet.create({
     marginBottom: SH(30)
   },
   sliderImage: {
-    width: "100%",
-    height: SH(180),
+    width:"100%",
+    height:SH(180),
     resizeMode: 'cover',
   },
   dot: {

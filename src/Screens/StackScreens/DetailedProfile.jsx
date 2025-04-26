@@ -1,13 +1,14 @@
 
 import {
   Text, View, Image, ImageBackground, TextInput, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, FlatList,
-  Modal,Alert
+  Modal, Alert
 } from 'react-native'
 import React, { useEffect, useState, useCallback } from 'react'
 import styles from '../StyleScreens/ProfileStyle';
 import { TouchableOpacity } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
-import { CREATE_PERSONAL_DETAILS, FREE_TRIAL, MATRIMONIALFETCH_PLAN, PAID_URL, PAYMENT_VERIFICATION, RAZORPAY, UPDATE_PERSONAL_DETAILS } from '../../utils/BaseUrl';
+import { CREATE_PERSONAL_DETAILS, FREE_TRIAL, MATRIMONIALFETCH_PLAN, 
+  PAID_URL, PAYMENT_VERIFICATION, RAZORPAY, UPDATE_PERSONAL_DETAILS ,GET_BIODATA } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -21,6 +22,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { SW } from '../../utils/Dimensions';
 import { useFocusEffect } from '@react-navigation/native';
 import RazorpayCheckout from 'react-native-razorpay';
+import { setBioData } from '../../ReduxStore/Slices/BiodataSlice';
+import { useDispatch } from 'react-redux';
 
 import {
   OccupationData, QualificationData, maritalStatusData, ManglikStatusData, LivingData, ProfileCreatedData, CityData, Income,
@@ -32,6 +35,7 @@ import {
 import { showMessage } from 'react-native-flash-message';
 
 const DetailedProfile = ({ navigation, profileData }) => {
+  const dispatch=useDispatch();
   const [isEditing, setIsEditing] = useState(true);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -47,7 +51,6 @@ const DetailedProfile = ({ navigation, profileData }) => {
   const [selectedState, setSelectedState] = useState("");
   const [errors, setErrors] = useState({});
   // const MyprofileData = useSelector((state) => state.getBiodata);
-  const myBiodata = profileData?.personalDetails;
   const [plans, setPlans] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [trialLoading, setTrialLoading] = useState(false);
@@ -56,10 +59,14 @@ const DetailedProfile = ({ navigation, profileData }) => {
   const profile_data = ProfileData?.profiledata || {};
   const [buyingPlanId, setBuyingPlanId] = useState(null);
   const [TrialPlanId, setTrialPlanId] = useState(null);
+const [mybiodata, setMyBiodata] = useState({});
+
+const myBiodata = profileData?.personalDetails || mybiodata?.personalDetails;
 
   useEffect(() => {
-    console.log("profile_data", JSON.stringify(profile_data));
-  })
+    getBiodata();
+    console.log("mybiodata", JSON.stringify(mybiodata));
+  },[])
 
   const [biodata, setBiodata] = useState({
     subCaste: '',
@@ -114,6 +121,32 @@ const DetailedProfile = ({ navigation, profileData }) => {
     bestImageName: "Upload One Best Image",
   });
 
+
+  const getBiodata = async () => {
+    try {
+      setMyBiodata("")
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+      const response = await axios.get(GET_BIODATA, { headers });
+      if (response.data) {
+        const fetchedData = response.data.data;
+        console.log("My bio data in home page", fetchedData);
+        setMyBiodata(fetchedData);
+        dispatch(setBioData(fetchedData));
+      } else {
+        setMyBiodata({});
+      }
+    } catch (error) {
+      console.error("Error fetching biodata:", error);
+    }
+  };
+
   // subscription part 
   const fetchPlans = async () => {
     try {
@@ -145,7 +178,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
         setBiodata((prev) => ({
           ...prev,
           ...myBiodata,
-          gender: profileData?.gender,
+          gender: profileData?.gender || mybiodata?.gender,
         }));
       }
     }, [myBiodata, profileData?.gender])
@@ -482,7 +515,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           message: successMessage,
           type: "success",
           duration: 3000,
-          icon:"success"
+          icon: "success"
         });
 
         setBiodata((prev) => ({
@@ -493,7 +526,11 @@ const DetailedProfile = ({ navigation, profileData }) => {
         setErrors({});
 
         setTimeout(() => {
-          navigation.navigate(isUpdating ? "MainApp" : "MainPartnerPrefrence");
+          if (isUpdating) {
+            navigation.replace("MatrimonyPage");
+          } else {
+            navigation.navigate("MainPartnerPrefrence");
+          }
         }, 1000);
 
         return;
@@ -798,12 +835,16 @@ const DetailedProfile = ({ navigation, profileData }) => {
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata?.fullname}
               editable={isEditing}
-              onChangeText={(text) => handleInputChange("fullname", text)}
-              placeholder='Enter Your Full Name'
+              onChangeText={(text) => {
+                const cleanText = text.replace(/[^A-Za-z\s]/g, '');
+                handleInputChange("fullname", cleanText);
+              }}
+              placeholder="Enter Your Full Name"
               placeholderTextColor={Colors.gray}
               autoComplete="off"
               textContentType="none"
             />
+
             {errors.fullname && <Text style={styles.errorText}>{errors.fullname}</Text>}
           </View>
           <View>

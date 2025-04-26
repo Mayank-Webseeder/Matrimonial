@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, StatusBar, SafeAreaView } from "react-native";
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, StatusBar, SafeAreaView ,FlatList } from "react-native";
 import React, { useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
@@ -11,6 +11,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSelector } from "react-redux";
 import { showMessage } from "react-native-flash-message";
+import { CityData } from "../../DummyData/DropdownData";
 
 const UpdateProfile = ({ navigation }) => {
   const ProfileData = useSelector((state) => state.profile);
@@ -18,9 +19,30 @@ const UpdateProfile = ({ navigation }) => {
   const [username, setUsername] = useState(profileData.username || "");
   const [mobileNo, setMobileNo] = useState(profileData.mobileNo || "");
   const [dob, setDob] = useState(profileData.dob ? new Date(profileData.dob) : new Date());
-  const [city, setCity] = useState(profileData.city || "");
   const [gender, setGender] = useState(profileData.gender || "");
   const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const [city, setCity] = useState(profileData.city || "");
+const [filteredCities, setFilteredCities] = useState([]);
+
+const handleCityInputChange = (text) => {
+    setCity(text);
+
+    if (text) {
+        const filtered = CityData.filter((item) =>
+            item?.label?.toLowerCase().includes(text.toLowerCase())
+        ).map(item => item.label);
+        setFilteredCities(filtered);
+    } else {
+        setFilteredCities([]);
+    }
+};
+
+const handleCitySelect = (item) => {
+    setCity(item);
+    setFilteredCities([]);
+};
+
 
   const update_profile = async () => {
     try {
@@ -125,15 +147,29 @@ const UpdateProfile = ({ navigation }) => {
             onChange={handleDateChange}
           />
         )}
-
-        <Text style={Globalstyles.title}>City</Text>
-        <TextInput
-          style={Globalstyles.input}
-          placeholder="Enter your city"
-          placeholderTextColor={Colors.gray}
-          value={city}
-          onChangeText={setCity}
-        />
+<Text style={Globalstyles.title}>City</Text>
+<TextInput
+    style={Globalstyles.input}
+    value={city}
+    onChangeText={handleCityInputChange}
+    placeholder="Enter your city"
+    placeholderTextColor={Colors.gray}
+    autoComplete="off"
+    textContentType="none"
+/>
+{filteredCities.length > 0 && city.length > 0 ? (
+    <FlatList
+        data={filteredCities.slice(0, 5)}
+        scrollEnabled={false}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => handleCitySelect(item)}>
+                <Text style={Globalstyles.listItem}>{item}</Text>
+            </TouchableOpacity>
+        )}
+        style={Globalstyles.suggestions}
+/>
+) : null}
 
         <Text style={Globalstyles.title}>Gender</Text>
         <View style={styles.genderContainer}>

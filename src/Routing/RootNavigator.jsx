@@ -264,7 +264,6 @@ function MyTabs() {
   );
 }
 
-
 function MyDrawer() {
   return (
     <Drawer.Navigator
@@ -382,7 +381,7 @@ const RootNavigator = () => {
       setInitialRoute(token ? "AppStack" : "AuthStack");
       setTimeout(() => {
         setIsLoading(false);
-      }, 2000);
+      }, 3000);
     };
   
     checkUserToken();

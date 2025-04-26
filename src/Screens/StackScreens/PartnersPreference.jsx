@@ -242,7 +242,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
                 setTimeout(() => {
                     navigation.reset({
                         index: 0,
-                        routes: [{ name: "MyProfile" }],
+                        routes: [{ name: "MainApp" }],
                     });
                 }, 1000);
                 return;

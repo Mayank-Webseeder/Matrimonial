@@ -79,11 +79,33 @@ const Register = ({ navigation }) => {
         if (!mobileNumber) newErrors.mobileNumber = "Mobile number is required.";
         else if (!/^\d{10}$/.test(mobileNumber)) newErrors.mobileNumber = "Enter a valid 10-digit mobile number.";
 
-        if (!fullName) newErrors.fullName = "Full name is required.";
-        if (!selectedDate) newErrors.selectedDate = "Date of Birth is required.";
+        if (!fullName) {
+            newErrors.fullName = "Full name is required.";
+        } else if (!/^[A-Za-z\s]+$/.test(fullName)) {
+            newErrors.fullName = "Name must contain only letters.";
+        } else if (fullName.length > 30) {
+            newErrors.fullName = "Name cannot exceed 30 characters.";
+        }
+        if (!selectedDate) {
+            newErrors.selectedDate = "Date of Birth is required.";
+        } else {
+            const today = new Date();
+            const birthDate = new Date(selectedDate);
+            const age = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+
+            if (age < 18) {
+                newErrors.selectedDate = "Your age is below 18";
+            }
+        }
         if (!cityInput.trim()) newErrors.selectedCity = "City is required.";
         if (!gender) newErrors.gender = "Gender is required.";
         if (!password) newErrors.password = "Password is required.";
+        if (!confirmPassword) newErrors.confirmPassword = "confirmPassword is required.";
         if (password !== confirmPassword) newErrors.confirmPassword = "Passwords do not match.";
         if (!otp) newErrors.otp = "OTP is required.";
         else if (!/^\d{6}$/.test(otp)) newErrors.otp = "Enter a valid 6-digit OTP.";
@@ -106,7 +128,7 @@ const Register = ({ navigation }) => {
 
             if (response.status === 200 || response.data.status === true) {
                 setOtpSent(true);  // Mark OTP as sent
-                showMessage({ type: "success", message: "OTP Sent", description: "Check your SMS for the OTP",icon:"success" });
+                showMessage({ type: "success", message: "OTP Sent", description: "Check your SMS for the OTP", icon: "success" });
             } else {
                 throw new Error(response.data.message || "OTP request failed");
             }
@@ -114,9 +136,9 @@ const Register = ({ navigation }) => {
             console.error("OTP Error:", error);
 
             if (error.response?.status === 400) {
-                showMessage({ type: "danger", message: "Invalid Request", description: error.response.data.message || "Mobile number is required",icon:"danger" });
+                showMessage({ type: "danger", message: "Invalid Request", description: error.response.data.message || "Mobile number is required", icon: "danger" });
             } else {
-                showMessage({ type:"danger", message: "OTP Error", description: error.message || "Failed to send OTP. Try again.",icon:"danger" });
+                showMessage({ type: "danger", message: "OTP Error", description: error.message || "Failed to send OTP. Try again.", icon: "danger" });
             }
         } finally {
             setIsOtpLoading(false);
@@ -127,7 +149,7 @@ const Register = ({ navigation }) => {
         if (!validateFields()) return;
 
         if (!otp || otp.length !== 6) {
-            showMessage({ type: "danger", message: "Invalid OTP", description: "Please enter the correct OTP.",icon:"danger" });
+            showMessage({ type: "danger", message: "Invalid OTP", description: "Please enter the correct OTP.", icon: "danger" });
             return;
         }
 
@@ -179,7 +201,7 @@ const Register = ({ navigation }) => {
                     type: "success",
                     message: "Sign Up Successful",
                     description: "You have successfully signed up!",
-                    icon:"success",
+                    icon: "success",
                     onHide: () =>
                         navigation.reset({
                             index: 0,
@@ -197,14 +219,14 @@ const Register = ({ navigation }) => {
                     type: "danger",
                     message: "Invalid Request",
                     description: error.response.data.message || "Please check your input.",
-                    icon:"danger"
+                    icon: "danger"
                 });
             } else {
                 showMessage({
                     type: "danger",
                     message: "Sign Up Error",
                     description: error.message || "An error occurred. Please try again.",
-                    icon:"danger"
+                    icon: "danger"
                 });
             }
         } finally {
@@ -250,7 +272,10 @@ const Register = ({ navigation }) => {
                             style={Globalstyles.input}
                             placeholder="Enter your full name"
                             value={fullName}
-                            onChangeText={setFullName}
+                            onChangeText={(text) => {
+                                const cleanText = text.replace(/[^A-Za-z\s]/g, '');
+                                setFullName(cleanText);
+                            }}
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
                             textContentType="none"
@@ -284,6 +309,7 @@ const Register = ({ navigation }) => {
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
                             textContentType="none"
+                            maxLength={30}
                         />
                         {filteredCities.length > 0 && cityInput ? (
                             <FlatList
@@ -405,7 +431,7 @@ const Register = ({ navigation }) => {
                                 keyboardType="numeric"
                                 placeholder="Enter your mobile number"
                                 value={mobileNumber}
-                                onChangeText={setMobileNumber}
+                                onChangeText={(text) => setMobileNumber(text.replace(/[^0-9]/g, ''))}
                                 maxLength={10}
                                 placeholderTextColor={Colors.gray}
                                 editable={!otpSent}
@@ -417,14 +443,17 @@ const Register = ({ navigation }) => {
                             </TouchableOpacity>
 
                         </View>
+                        {errors.mobileNumber && (
+                                <Text style={styles.errorText}>{errors.mobileNumber}</Text>
+                            )}
                         {/* Mobile Number */}
-                        <Text style={Globalstyles.title}>Otp <Entypo name={'star'} color={'red'} size={12} /></Text>
+                        <Text style={Globalstyles.title}>OTP <Entypo name={'star'} color={'red'} size={12} /></Text>
 
                         <TextInput style={Globalstyles.input} keyboardType="numeric" placeholder="Enter Your Otp " placeholderTextColor={Colors.gray}
                             value={otp} onChangeText={setOtp} maxLength={6} />
 
-                        {errors.Otp && (
-                            <Text style={styles.errorText}>{errors.Otp}</Text>
+                        {errors.otp && (
+                            <Text style={styles.errorText}>{errors.otp}</Text>
                         )}
                     </View>
                     {/* Continue Button */}
@@ -448,6 +477,7 @@ const Register = ({ navigation }) => {
                     mode="date"
                     display="default"
                     onChange={handleDateChange}
+                    maximumDate={new Date()}
                 />
             )}
         </SafeAreaView>

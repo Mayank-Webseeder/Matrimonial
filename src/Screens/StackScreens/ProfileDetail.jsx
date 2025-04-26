@@ -21,7 +21,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { showMessage } from 'react-native-flash-message';
 
 const ProfileDetail = ({ route, navigation }) => {
-    const { profileType } = route.params;
+    const { profileType } = route.params || {} ;
     const [profileData, setProfileData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [postloading, setPostLoading] = useState(false);
@@ -115,6 +115,28 @@ const ProfileDetail = ({ route, navigation }) => {
             fetchData();
         }, [])
     );
+
+
+    const fetchProfilesDetails = async (profileType) => {
+        try {
+            setLoading(true);
+            setSelectedProfile(profileType);
+            const token = await AsyncStorage.getItem('userToken');
+            const response = await axios.get(
+                `${PROFILE_TYPE}/${profileType}`,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+
+            console.log("Fetched Data:", response.data.data);
+            setFetchProfileDetails(response.data.data);
+            setLoading(false);
+        } catch (error) {
+            console.error("Error fetching profiles:", error);
+            setLoading(false);
+        }
+    };
 
     if (loading) {
         return (

@@ -337,14 +337,12 @@ const MyProfile = ({ navigation }) => {
     };
 
     const tryOpenDrawer = () => {
-        const parent = navigation.getParent();           // nearest parent navigator
+        const parent = navigation.getParent();          
       
         if (parent && parent?.openDrawer) {
-          // इस navigator में Drawer मौजूद है
           navigation.dispatch(DrawerActions.openDrawer());
         } else {
-          // Drawer नहीं मिला → Main drawer‑stack पर लौट जायें
-          navigation.navigate('MainApp');                // root where Drawer lives
+          navigation.navigate('MainApp');               
         }
       };
 

@@ -493,7 +493,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
         setErrors({});
 
         setTimeout(() => {
-          navigation.navigate(isUpdating ? "MyProfile" : "MainPartnerPrefrence");
+          navigation.navigate(isUpdating ? "MainApp" : "MainPartnerPrefrence");
         }, 1000);
 
         return;
@@ -822,10 +822,11 @@ const DetailedProfile = ({ navigation, profileData }) => {
             {errors.dob && <Text style={styles.errorText}>{errors.dob}</Text>}
             {showDatePicker && (
               <DateTimePicker
-                value={biodata.dob ? new Date(biodata.dob) : new Date()} // Ensure it's a Date object
+                value={biodata.dob ? new Date(biodata.dob) : new Date()}
                 mode="date"
                 display="default"
                 onChange={(event, selectedDate) => handleDateChange(event, selectedDate)}
+                maximumDate={new Date()}
               />
             )}
           </View>

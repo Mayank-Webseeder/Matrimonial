@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TextInput, TouchableOpacity, SafeAreaView, ScrollView, FlatList, Image, ActivityIndicator } from 'react-native';
-
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/ActivistFormStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -15,6 +14,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 import { showMessage } from 'react-native-flash-message';
+
 export default function ActivistForm({ navigation }) {
   const [subCasteInput, setSubCasteInput] = useState('');
   const [stateInput, setStateInput] = useState('');
@@ -67,8 +67,6 @@ export default function ActivistForm({ navigation }) {
         console.error("❌ Base64 data is missing!");
         return;
       }
-
-      // ✅ Update state with Base64 image
       setActivistData((prev) => ({
         ...prev,
         profilePhoto: `data:${image.mime};base64,${image.data}`,
@@ -208,7 +206,7 @@ export default function ActivistForm({ navigation }) {
       "fullname", "subCaste", "dob", "state", "city",
       "mobileNo", "knownActivistIds", "engagedWithCommittee", "profilePhoto",
     ];
-  
+
     const payload = {};
     for (const key of keys) {
       if (ActivistData[key] !== undefined && ActivistData[key] !== "") {
@@ -217,11 +215,9 @@ export default function ActivistForm({ navigation }) {
         payload[key] = "";
       }
     }
-  
-    // ✅ Ensure DOB is formatted as YYYY-MM-DD for backend
     if (payload.dob) {
       let parsedDate;
-  
+
       if (moment(payload.dob, moment.ISO_8601, true).isValid()) {
         parsedDate = moment(payload.dob);
       } else if (moment(payload.dob, "DD/MM/YYYY", true).isValid()) {
@@ -229,16 +225,14 @@ export default function ActivistForm({ navigation }) {
       } else if (moment(payload.dob, "DD/MM/YYYY", true).isValid()) {
         parsedDate = moment(payload.dob, "DD/MM/YYYY");
       }
-  
+
       if (parsedDate && parsedDate.isValid()) {
-        payload.dob = parsedDate.format("DD/MM/YYYY"); // ✅ Convert to correct format
+        payload.dob = parsedDate.format("DD/MM/YYYY"); 
       } else {
         console.error("❌ Invalid DOB format received:", payload.dob);
         throw new Error("Invalid DOB format. Expected format is YYYY-MM-DD.");
       }
     }
-  
-    // ✅ Convert knownActivistIds to an array of ObjectIds
     if (payload.knownActivistIds) {
       if (!Array.isArray(payload.knownActivistIds)) {
         try {
@@ -249,8 +243,7 @@ export default function ActivistForm({ navigation }) {
         }
       }
     }
-  
-    // ✅ Convert profile photo to base64 if available
+
     if (ActivistData.profilePhoto) {
       try {
         payload.profilePhoto = await convertToBase64(ActivistData.profilePhoto);
@@ -259,12 +252,9 @@ export default function ActivistForm({ navigation }) {
         console.error("❌ Base64 Conversion Error:", error);
       }
     }
-  
+
     return payload;
   };
-  
-  
-
 
   const handleActivistSave = async () => {
     try {
@@ -272,7 +262,7 @@ export default function ActivistForm({ navigation }) {
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-       showMessage({
+        showMessage({
           type: "danger",
           message: "Error",
           description: "Authorization token is missing.",
@@ -284,28 +274,22 @@ export default function ActivistForm({ navigation }) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-
-      // ✅ Prepare the payload
       const payload = await constructActivistPayload(ActivistData, !ActivistData?._id);
       console.log("Payload:", payload);
-
-      // ✅ Decide whether to create or update
       const apiCall = ActivistData?._id ? axios.patch : axios.post;
       const endpoint = ActivistData?._id ? UPDATE_ACTIVIST : CREATE_ACTIVIST;
 
       const response = await apiCall(endpoint, payload, { headers });
       console.log("API Response:", response.data);
       if (response.status === 200 && response.data.status === true) {
-       showMessage({
+        showMessage({
           type: "success",
           message: ActivistData?._id ? "Activist Profile Updated Successfully" : "Your activist approval request is on its way! Stay tuned.",
           description: response.data.message || "Your changes have been saved!",
-          icon:"success"
+          icon: "success"
         });
 
         setIsEditing(false);
-
-        // ✅ Store new activist ID if created
         if (!ActivistData?._id && response.data?.data?._id) {
           setActivistData((prev) => ({
             ...prev,
@@ -313,10 +297,8 @@ export default function ActivistForm({ navigation }) {
           }));
         }
         navigation.goBack();
-        return; // ✅ Success case handled
+        return;
       }
-
-      // ❌ If response is not successful, throw an error
       throw new Error(response.data.message || "Something went wrong");
 
     } catch (error) {
@@ -327,11 +309,11 @@ export default function ActivistForm({ navigation }) {
         errorMessage = error.response.data?.message || "Invalid request!";
       }
 
-     showMessage({
+      showMessage({
         type: "danger",
         message: "Error",
         description: errorMessage,
-        icon:"danger"
+        icon: "danger"
       });
 
     } finally {
@@ -341,18 +323,18 @@ export default function ActivistForm({ navigation }) {
 
   const handleAddActivistId = (text) => {
     if (text.trim() !== "") {
-        setActivistData((prev) => ({
-            ...prev,
-            knownActivistIds: [...prev.knownActivistIds, { activistId: text.trim() }],
-        }));
+      setActivistData((prev) => ({
+        ...prev,
+        knownActivistIds: [...prev.knownActivistIds, { activistId: text.trim() }],
+      }));
     }
-};
-const handleRemoveActivistId = (index) => {
-  setActivistData((prev) => ({
+  };
+  const handleRemoveActivistId = (index) => {
+    setActivistData((prev) => ({
       ...prev,
       knownActivistIds: prev.knownActivistIds.filter((_, i) => i !== index),
-  }));
-};
+    }));
+  };
 
 
   return (
@@ -368,15 +350,17 @@ const handleRemoveActivistId = (index) => {
       </View>
       <ScrollView style={Globalstyles.form} showsVerticalScrollIndicator={false}>
         <Text style={Globalstyles.title}>Full Name <Entypo name={'star'} color={'red'} size={12} /></Text>
-        <TextInput style={Globalstyles.input} placeholder="Enter your Full Name" value={ActivistData.fullname}
-          onChangeText={(text) => setActivistData((prev) => ({ ...prev, fullname: text }))} placeholderTextColor={Colors.gray}
+        <TextInput style={Globalstyles.input}
+          placeholder="Enter your Full Name"
+          value={ActivistData.fullname}
+          onChangeText={(text) => setActivistData((prev) => ({ ...prev, fullname: text }))}
+          placeholderTextColor={Colors.gray}
           autoComplete="off"
           textContentType="none" />
-        {/* Sub Caste Dropdown */}
         <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
         <TextInput
           style={Globalstyles.input}
-          value={ActivistData?.subCaste} // `myBiodata?.subCaste` ki jagah `subCasteInput` use karein
+          value={ActivistData?.subCaste}
           onChangeText={handleSubCasteInputChange}
           placeholder="Type your sub caste"
           placeholderTextColor={Colors.gray}
@@ -384,7 +368,6 @@ const handleRemoveActivistId = (index) => {
           textContentType="none"
         />
 
-        {/* Agar user type karega toh list dikhegi */}
         {filteredSubCaste.length > 0 ? (
           <FlatList
             data={filteredSubCaste.slice(0, 5)}
@@ -412,15 +395,13 @@ const handleRemoveActivistId = (index) => {
             textContentType="none"
           />
 
-
-
-
           {showDatePicker && (
             <DateTimePicker
               value={ActivistData.dob ? new Date(ActivistData.dob) : new Date()} // Ensure it's a Date object
               mode="date"
               display="default"
               onChange={(event, selectedDate) => handleDateChange(event, selectedDate)}
+              maximumDate={new Date()}
             />
           )}
         </View>
@@ -492,30 +473,29 @@ const handleRemoveActivistId = (index) => {
           Known Activist ID No.
         </Text>
         <TextInput
-    style={Globalstyles.input}
-    placeholder="Enter Activist ID"
-    value={tempId}
-    onChangeText={setTempId}
-    onSubmitEditing={() => {
-        handleAddActivistId(tempId);
-        setTempId("");
-    }}
-    placeholderTextColor={Colors.gray}
-    autoComplete="off"
-    textContentType="none"
-/>
+          style={Globalstyles.input}
+          placeholder="Enter Activist ID"
+          value={tempId}
+          onChangeText={setTempId}
+          onSubmitEditing={() => {
+            handleAddActivistId(tempId);
+            setTempId("");
+          }}
+          placeholderTextColor={Colors.gray}
+          autoComplete="off"
+          textContentType="none"
+        />
 
-<View style={{ flexDirection: "row", flexWrap: "wrap", marginTop: 10 }}>
-    {ActivistData.knownActivistIds.map((item, index) => (
-        <View key={index} style={styles.tag}>
-            <Text style={styles.tagText}>{item.activistId}</Text>
-            <TouchableOpacity onPress={() => handleRemoveActivistId(index)}>
+        <View style={{ flexDirection: "row", flexWrap: "wrap", marginTop: 10 }}>
+          {ActivistData.knownActivistIds.map((item, index) => (
+            <View key={index} style={styles.tag}>
+              <Text style={styles.tagText}>{item.activistId}</Text>
+              <TouchableOpacity onPress={() => handleRemoveActivistId(index)}>
                 <Text style={styles.removeTag}>✖</Text>
-            </TouchableOpacity>
+              </TouchableOpacity>
+            </View>
+          ))}
         </View>
-    ))}
-</View>
-
 
         <Text style={Globalstyles.title}>Are you engaged with any Brahmin committee? </Text>
         <View style={styles.radioGroup}>
@@ -548,7 +528,6 @@ const handleRemoveActivistId = (index) => {
             <Text style={styles.radioText}>No</Text>
           </TouchableOpacity>
         </View>
-
 
         {/* Profile Picture Upload */}
         <View>

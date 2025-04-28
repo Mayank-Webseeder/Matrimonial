@@ -44,22 +44,27 @@ const Register = ({ navigation }) => {
             width: 300,
             height: 250,
             cropping: true,
-            includeBase64: true,
+            includeBase64: false,
             mediaType: "any"
         })
             .then(image => {
                 console.log('Selected Image:', image); // Check the image object
-                if (!image.data) {
-                    console.error("Base64 data is missing!");
+    
+                if (!image.path) {
+                    console.error("Image path is missing!");
                     return;
                 }
-                setSelectedImage(image.data); // Ensure this is set correctly
-                setSelectedImageName(image.path.split('/').pop());
+    
+                // Extract the image name from the path and update state
+                const imageName = image.path.split('/').pop(); // Get the file name from the path
+                setSelectedImageName(imageName);  // Update the state with the file name
+    
+                // You can also set the image URI to your state (if needed for further use)
+                setSelectedImage(image.path);  // Set the image path (not base64)
             })
             .catch(error => {
                 console.error('Image Picking Error:', error);
             });
-
     };
 
     const handleCityInputChange = (text) => {
@@ -152,39 +157,47 @@ const Register = ({ navigation }) => {
 
     const handleSignup = async () => {
         if (!validateFields()) return;
-
+    
         if (!otp || otp.length !== 6) {
             showMessage({ type: "danger", message: "Invalid OTP", description: "Please enter the correct OTP.", icon: "danger" });
             return;
         }
-
+    
         setIsLoading(true);
         try {
             const formattedDate = selectedDate
                 ? `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, "0")}-${selectedDate.getDate().toString().padStart(2, "0")}`
                 : null;
-
-            const payload = {
-                username: fullName.trim(),
-                dob: formattedDate,
-                city: selectedCity || cityInput.trim(),
-                gender: gender,
-                password: password.trim(),
-                photoUrl: selectedImage,
-                mobileNo: mobileNumber.trim(),
-                otp: otp.trim(),
-            };
-
-            console.log("SignUp Payload:", payload);
-            const response = await axios.post(SIGNUP_ENDPOINT, payload);
-            console.log("Signup Response:", response.data);
+    
+            const formData = new FormData();
+      
+            formData.append('username', fullName.trim());
+            formData.append('dob', formattedDate);
+            formData.append('city', selectedCity || cityInput.trim());
+            formData.append('gender', gender);
+            formData.append('password', password.trim());
+            formData.append('mobileNo', mobileNumber.trim());
+            formData.append('otp', otp.trim());
+  
+            if (selectedImage) {
+                formData.append('photoUrl', {
+                    uri: selectedImage,
+                });
+            }
+    
+            console.log("SignUp FormData:", formData); 
+    
+            const response = await axios.post(SIGNUP_ENDPOINT, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                }
+            });
+    
+            console.log("Signup Response:",JSON.stringify(response.data));
             const RegisterData = response.data;
-
+    
             if (response.status === 200 && response.data.status === true) {
-                // ✅ Redux store reset karein (purana biodata remove ho jaye)
                 dispatch(resetBioData());
-
-                // ✅ Token store karein
                 const token = RegisterData?.user?.token || null;
                 const userId = RegisterData?.user?.user?.id;
                 if (token && userId) {
@@ -194,14 +207,14 @@ const Register = ({ navigation }) => {
                 } else {
                     console.warn("Token is missing in response, skipping storage.");
                 }
-
+    
                 try {
                     initializeSocket(userId);
                     console.log(`✅ Socket initialized successfully for user: ${userId}`);
                 } catch (socketError) {
                     console.error("🚨 Socket Initialization Failed:", socketError);
                 }
-
+    
                 showMessage({
                     type: "success",
                     message: "Sign Up Successful",
@@ -218,26 +231,30 @@ const Register = ({ navigation }) => {
             }
         } catch (error) {
             console.error("Sign Up Error:", error);
-
-            if (error.response?.status === 400) {
-                showMessage({
-                    type: "danger",
-                    message: "Invalid Request",
-                    description: error.response.data.message || "Please check your input.",
-                    icon: "danger"
-                });
+        
+            let errorMessage = "An unexpected error occurred. Please try again.";
+            let errorDescription = "";
+        
+            if (error.response) {
+                errorMessage = error.response.data.message || "Server responded with an error.";
+                errorDescription = error.response.data.error || "Please check your input and try again.";
+            } else if (error.request) {
+                errorMessage = "Network Error";
+                errorDescription = "Unable to reach the server. Please check your internet connection.";
             } else {
-                showMessage({
-                    type: "danger",
-                    message: "Sign Up Error",
-                    description: error.message || "An error occurred. Please try again.",
-                    icon: "danger"
-                });
+                errorMessage = "Error";
+                errorDescription = error.message || "An unexpected error occurred.";
             }
-        } finally {
-            setIsLoading(false);
+        
+            showMessage({
+                type: "danger",
+                message: errorMessage,
+                description: errorDescription,
+                icon: "danger"
+            });
         }
     };
+    
 
 
     const handleDateChange = (event, date) => {

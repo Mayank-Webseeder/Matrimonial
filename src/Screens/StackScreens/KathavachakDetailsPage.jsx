@@ -1,5 +1,6 @@
 import { Text, View, Image, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Linking, ActivityIndicator } from 'react-native';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
+import AppIntroSlider from 'react-native-app-intro-slider';
 import styles from '../StyleScreens/PanditDetailPageStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
@@ -12,7 +13,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Globalstyles from '../../utils/GlobalCss';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { JYOTISH_DESCRIPTION, KATHAVACHAK_DESCRIPTION, SAVED_PROFILES } from '../../utils/BaseUrl';
+import { JYOTISH_DESCRIPTION, KATHAVACHAK_ADVERDISE_WINDOW, KATHAVACHAK_DESCRIPTION, SAVED_PROFILES } from '../../utils/BaseUrl';
 import moment from "moment";
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
@@ -22,6 +23,9 @@ import { showMessage } from 'react-native-flash-message';
 
 
 const kathavachakDetailsPage = ({ navigation, item, route }) => {
+    const sliderRef = useRef(null);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [slider, setSlider] = useState([]);
     const { kathavachak_id, isSaved: initialSavedState } = route.params || {};
     const [Save, setIsSaved] = useState(initialSavedState || false);
     const [profileData, setProfileData] = useState(null);
@@ -103,6 +107,69 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
         }
     };
 
+
+
+    useEffect(() => {
+        Advertisement_window();
+    }, []);
+
+
+    useEffect(() => {
+        if (slider.length === 0) return;
+
+        const currentSlide = slider[currentIndex];
+        const durationInSeconds = currentSlide?.duration || 2;
+        const durationInMilliseconds = durationInSeconds * 1000;
+
+        const timeout = setTimeout(() => {
+            const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
+            setCurrentIndex(nextIndex);
+            sliderRef.current?.goToSlide(nextIndex);
+        }, durationInMilliseconds);
+
+        return () => clearTimeout(timeout);
+    }, [currentIndex, slider]);
+
+
+    const Advertisement_window = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userToken');
+            if (!token) throw new Error('No token found');
+
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            };
+
+            const response = await axios.get(KATHAVACHAK_ADVERDISE_WINDOW, { headers });
+
+            if (response.data) {
+                const fetchedData = response.data.data;
+                console.log("fetchedData", JSON.stringify(fetchedData));
+
+                const fullSliderData = fetchedData.flatMap((item) =>
+                    item.media.map((mediaItem) => ({
+                        id: `${item._id}_${mediaItem._id}`,
+                        title: item.title,
+                        description: item.description,
+                        image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
+                        resolution: mediaItem.resolution,
+                    }))
+                );
+
+                setSlider(fullSliderData);
+                console.log("Slider Data:", fullSliderData);
+            } else {
+                setSlider([]);
+            }
+        } catch (error) {
+            console.error("Error fetching advertisement:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
     const savedProfiles = async () => {
         if (!kathavachak_id) {
             showMessage({
@@ -182,8 +249,13 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
 
     const renderImages = (images) => {
         if (!images || images.length === 0) {
-            return <Text style={styles.noReviewsText}>No images available for this post</Text>;
-        }
+            return (
+              <View style={styles.noImagesContainer}>
+                <MaterialIcons name="hide-image" size={40} color={Colors.gray} style={styles.icon} />
+                <Text style={styles.noImagesText}>No additional photos available for this post</Text>
+              </View>
+            );
+          }
 
         const rows = [];
         for (let i = 0; i < images.length; i += 2) {
@@ -484,7 +556,10 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                             )}
                         </>
                     ) : (
-                        <Text style={styles.noReviewsText}>No reviews yet</Text>
+                        <View style={styles.noReviewsContainer}>
+                            <Text style={styles.noReviewsTitle}>No Reviews Yet</Text>
+                            <Text style={styles.noReviewsSubtitle}>Newly uploaded reviews will appear here.</Text>
+                        </View>
                     )}
                 </View>
 
@@ -512,7 +587,29 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                         <FontAwesome5 name="instagram" size={30} color="#E4405F" />
                     </TouchableOpacity>
                 </View>
-                <Image source={require('../../Images/slider.png')} style={styles.Bottomimage} />
+                <View style={[styles.Bottomimage, { paddingBottom: SH(15) }]}>
+                    <AppIntroSlider
+                        ref={sliderRef}
+                        data={slider}
+                        renderItem={({ item }) => {
+                            const { width, height } = item.resolution;
+                            return (
+                                <Image
+                                    source={{ uri: item.image }}
+                                    style={{
+                                        width,
+                                        height,
+                                    }}
+                                />
+                            );
+                        }}
+                        showNextButton={false}
+                        showDoneButton={false}
+                        dotStyle={Globalstyles.dot}
+                        activeDotStyle={Globalstyles.activeDot}
+                    />
+
+                </View>
             </ScrollView>
         </SafeAreaView>
     );

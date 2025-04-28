@@ -99,8 +99,9 @@ const SuccessStories = ({ navigation }) => {
   };
 
   const renderItem = ({ item }) => {
-    const { groomDetails: groom, brideDetails: bride } = item;
+    const groom = item.groomDetails || {};
 
+    const bride = item.brideDetails || {};
     return (
       <View style={styles.storyCard}>
         <View style={styles.collabHeader}>
@@ -109,7 +110,10 @@ const SuccessStories = ({ navigation }) => {
               navigation.navigate('MatrimonyPeopleProfile', { userId: groom.userId })
             }
           >
-            <Image source={{ uri: groom.profileImage }} style={styles.avatar} />
+            <Image
+              source={{ uri: groom.profileImage || require('../../Images/NoImage.png') }}
+              style={styles.avatar}
+            />
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -118,11 +122,15 @@ const SuccessStories = ({ navigation }) => {
               navigation.navigate('MatrimonyPeopleProfile', { userId: bride.userId })
             }
           >
-            <Image source={{ uri: bride.profileImage }} style={styles.avatar} />
+            <Image
+              source={{ uri: bride.profileImage || require('../../Images/NoImage.png') }}
+              style={styles.avatar}
+            />
             <View style={styles.collabIcon}>
               <FontAwesome name="handshake-o" size={12} color={Colors.theme_color} />
             </View>
           </TouchableOpacity>
+
           <View style={{ marginLeft: SW(8) }}>
             <View style={{ flexDirection: 'row', marginLeft: SW(8) }}>
               <TouchableOpacity
@@ -130,24 +138,26 @@ const SuccessStories = ({ navigation }) => {
                   navigation.navigate('MatrimonyPeopleProfile', { userId: groom.userId })
                 }
               >
-                <Text style={styles.nameText}>{groom.name}</Text>
+                <Text style={styles.nameText}>{groom.name || NA}</Text>
               </TouchableOpacity>
 
               <Text style={styles.nameText}> & </Text>
+
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate('MatrimonyPeopleProfile', { userId: bride.userId })
                 }
               >
-                <Text style={styles.nameText}>{bride.name}</Text>
+                <Text style={styles.nameText}>{bride.name || 'NA'}</Text>
               </TouchableOpacity>
             </View>
 
-            <Text style={{ fontSize: SF(10), color: '#888' }}>
-              {groom.bioDataId} · {bride.bioDataId}
+            <Text style={{ fontSize: SF(10), color: '#888', marginLeft: SW(9) }}>
+              {groom.bioDataId || 'NA'} · {bride.bioDataId || 'NA'}
             </Text>
           </View>
         </View>
+
         <TouchableOpacity
           activeOpacity={0.9}
           onPress={() => {
@@ -161,6 +171,7 @@ const SuccessStories = ({ navigation }) => {
             resizeMode="cover"
           />
         </TouchableOpacity>
+
         <ImageViewing
           images={currentImg ? [{ uri: currentImg }] : []}
           imageIndex={0}
@@ -169,11 +180,14 @@ const SuccessStories = ({ navigation }) => {
         />
 
         <Text style={styles.storyName}>
-          {item.groomName} ❤️ {item.brideName}
+          {item.groomName || 'NA'} ❤️ {item.brideName || 'NA'}
         </Text>
+
         <Text style={styles.thought}>{item.thought}</Text>
+
         <View style={styles.ratingRow}>{renderStars(item.rating)}</View>
       </View>
+
     );
   };
 
@@ -229,7 +243,7 @@ const SuccessStories = ({ navigation }) => {
             navigation.navigate('MySuccessStory', { story: myStory })
           }
         >
-          <Text style={[styles.postText,{alignSelf:"flex-end"}]}>View Your Story</Text>
+          <Text style={[styles.postText, { alignSelf: "flex-end" }]}>View Your Story</Text>
         </TouchableOpacity>
       )}
 

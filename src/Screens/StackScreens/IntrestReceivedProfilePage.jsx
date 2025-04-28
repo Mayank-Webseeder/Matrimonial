@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback ,useRef } from 'react';
 import { View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator, Dimensions, Modal } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import AppIntroSlider from 'react-native-app-intro-slider';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
@@ -12,7 +13,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { MATCHED_PROFILE } from '../../utils/BaseUrl';
+import { BIODATA_ADVERTISE_WINDOW, MATCHED_PROFILE } from '../../utils/BaseUrl';
 import { ACCEPTED_API, REJECTED_API, SAVED_PROFILES } from '../../utils/BaseUrl';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import moment from 'moment';
@@ -21,6 +22,9 @@ import { showMessage } from 'react-native-flash-message';
 const { width, height } = Dimensions.get("window");
 
 const IntrestReceivedProfilePage = ({ navigation, route }) => {
+  const sliderRef = useRef(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [slider, setSlider] = useState([]);
   const { userId } = route.params;
   const [loading, setLoading] = useState(true);
   const [loadingAccept, setLoadingAccept] = useState(false);
@@ -66,6 +70,67 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
       setLoadingDecline(false);
     }, [userId])
   );
+
+
+  useEffect(() => {
+    Advertisement_window();
+  }, []);
+
+
+  useEffect(() => {
+    if (slider.length === 0) return;
+
+    const currentSlide = slider[currentIndex];
+    const durationInSeconds = currentSlide?.duration || 2;
+    const durationInMilliseconds = durationInSeconds * 1000;
+
+    const timeout = setTimeout(() => {
+      const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
+      setCurrentIndex(nextIndex);
+      sliderRef.current?.goToSlide(nextIndex);
+    }, durationInMilliseconds);
+
+    return () => clearTimeout(timeout);
+  }, [currentIndex, slider]);
+
+
+  const Advertisement_window = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+      const response = await axios.get(BIODATA_ADVERTISE_WINDOW, { headers });
+
+      if (response.data) {
+        const fetchedData = response.data.data;
+        console.log("fetchedData", JSON.stringify(fetchedData));
+
+        const fullSliderData = fetchedData.flatMap((item) =>
+          item.media.map((mediaItem) => ({
+            id: `${item._id}_${mediaItem._id}`,
+            title: item.title,
+            description: item.description,
+            image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
+            resolution: mediaItem.resolution,
+          }))
+        );
+
+        setSlider(fullSliderData);
+        console.log("Slider Data:", fullSliderData);
+      } else {
+        setSlider([]);
+      }
+    } catch (error) {
+      console.error("Error fetching advertisement:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchUserProfile = async (id) => {
     setLoading(true);
@@ -576,9 +641,30 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
             To find better matches, please set your partner preferences.
           </Text>
         )}
-        <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
+        <View style={Globalstyles.bottomImage}>
+          <AppIntroSlider
+            ref={sliderRef}
+            data={slider}
+            renderItem={({ item }) => {
+              const { width, height } = item.resolution;
+              return (
+                <Image
+                  source={{ uri: item.image }}
+                  style={{
+                    width,
+                    height,
+                  }}
+                />
+              );
+            }}
+            showNextButton={false}
+            showDoneButton={false}
+            dotStyle={Globalstyles.dot}
+            activeDotStyle={Globalstyles.activeDot}
+          />
+        </View>
       </ScrollView>
-      
+
       <View style={styles.bottomContainer}>
         <TouchableOpacity
           style={[

@@ -55,7 +55,7 @@ import PartnersPreference from '../Screens/StackScreens/PartnersPreference';
 import PhotoGallery from '../Screens/StackScreens/PhotoGallery';
 import MainPartnerPrefrence from '../Screens/DrawerScreen/MainPartnerPrefrence';
 import { useDispatch } from 'react-redux';
-import { GET_BIODATA, PROFILE_ENDPOINT } from '../utils/BaseUrl';
+import { GET_BIODATA, PHOTO_URL, PROFILE_ENDPOINT } from '../utils/BaseUrl';
 import { setProfiledata } from '../ReduxStore/Slices/ProfileSlice';
 import axios from 'axios';
 import IntrestReceivedProfilePage from '../Screens/StackScreens/IntrestReceivedProfilePage';
@@ -96,7 +96,7 @@ function MyTabs() {
   const [profiledata, setProfileData] = useState({});
   const ProfileData = useSelector((state) => state.profile);
   const profile_data = ProfileData?.profiledata || {};
-  const image = profile_data?.photoUrl?.[0];
+  const image = `${PHOTO_URL}/${profile_data?.photoUrl?.[0]}`;
   const [isLoading, setLoading] = useState(true);
   const [biodata, setBiodata] = useState({});
   const [mybiodata, setMybiodata] = useState({});

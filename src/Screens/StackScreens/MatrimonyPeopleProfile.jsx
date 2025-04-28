@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import {
   View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator, Share, Switch,
   Modal, Dimensions
@@ -14,14 +14,18 @@ import Globalstyles from '../../utils/GlobalCss';
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import moment from "moment";
 import axios from 'axios';
-import { DELETE_SEND_REQUEST, MATCHED_PROFILE, SAVED_PROFILES, SEND_REQUEST, SHARED_PROFILES, VERIFY_PROFILE } from '../../utils/BaseUrl';
+import { BIODATA_ADVERTISE_WINDOW, DELETE_SEND_REQUEST, MATCHED_PROFILE, SAVED_PROFILES, SEND_REQUEST, SHARED_PROFILES, VERIFY_PROFILE } from '../../utils/BaseUrl';
 import { useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SF, SH, SW } from '../../utils/Dimensions';
 import { showMessage } from 'react-native-flash-message';
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
+import AppIntroSlider from 'react-native-app-intro-slider';
 
 const MatrimonyPeopleProfile = ({ navigation }) => {
+  const sliderRef = useRef(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [slider, setSlider] = useState([]);
   const route = useRoute();
   const { userId } = route.params || {};
   const [loading, setLoading] = useState(true);
@@ -55,6 +59,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const isBlurCondition = status === "accepted" ? !isVisible : isBlur;
   const [Save, setIsSaved] = useState(initialSavedState || false);
   const hasOtherDetails = personalDetails?.knowCooking || personalDetails?.dietaryHabit || personalDetails?.smokingHabit || personalDetails?.drinkingHabit || personalDetails?.tobaccoHabits || personalDetails?.hobbies;
+
   const handleToggle = async () => {
     const newValue = !isSwitchOn;
     setIsSwitchOn(newValue);
@@ -65,6 +70,67 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       setIsSwitchOn(true);
     } else if (responseMessage.includes("disapproved")) {
       setIsSwitchOn(false);
+    }
+  };
+
+
+  useEffect(() => {
+    Advertisement_window();
+  }, []);
+
+
+  useEffect(() => {
+    if (slider.length === 0) return;
+
+    const currentSlide = slider[currentIndex];
+    const durationInSeconds = currentSlide?.duration || 2;
+    const durationInMilliseconds = durationInSeconds * 1000;
+
+    const timeout = setTimeout(() => {
+      const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
+      setCurrentIndex(nextIndex);
+      sliderRef.current?.goToSlide(nextIndex);
+    }, durationInMilliseconds);
+
+    return () => clearTimeout(timeout);
+  }, [currentIndex, slider]);
+
+
+  const Advertisement_window = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+      const response = await axios.get(BIODATA_ADVERTISE_WINDOW, { headers });
+
+      if (response.data) {
+        const fetchedData = response.data.data;
+        console.log("fetchedData", JSON.stringify(fetchedData));
+
+        const fullSliderData = fetchedData.flatMap((item) =>
+          item.media.map((mediaItem) => ({
+            id: `${item._id}_${mediaItem._id}`,
+            title: item.title,
+            description: item.description,
+            image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
+            resolution: mediaItem.resolution,
+          }))
+        );
+
+        setSlider(fullSliderData);
+        console.log("Slider Data:", fullSliderData);
+      } else {
+        setSlider([]);
+      }
+    } catch (error) {
+      console.error("Error fetching advertisement:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -401,6 +467,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const formattedHeight = personalDetails?.heightFeet
     ?.replace(/\s*-\s*/, "")
     ?.replace(/\s+/g, "");
+
 
   return (
     <SafeAreaView style={Globalstyles.container}>
@@ -860,7 +927,28 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           </Text>
         )}
 
-        <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
+        <View style={Globalstyles.bottomImage}>
+          <AppIntroSlider
+            ref={sliderRef}
+            data={slider}
+            renderItem={({ item }) => {
+              const { width, height } = item.resolution;
+              return (
+                <Image
+                  source={{ uri: item.image }}
+                  style={{
+                    width,
+                    height,
+                  }}
+                />
+              );
+            }}
+            showNextButton={false}
+            showDoneButton={false}
+            dotStyle={Globalstyles.dot}
+            activeDotStyle={Globalstyles.activeDot}
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

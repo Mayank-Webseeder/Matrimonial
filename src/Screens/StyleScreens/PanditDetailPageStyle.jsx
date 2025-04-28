@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: Colors.dark,
     textAlign: "center",
-    textTransform:"capitalize"
+    textTransform: "capitalize"
   },
   ratingCount: {
     marginRight: SW(260),
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     paddingVertical: SH(10),
   },
   reviewRating: {
-    alignSelf:"flex-start"
+    alignSelf: "flex-start"
   },
   reviewName: {
     fontSize: SF(12),
@@ -147,20 +147,20 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     width: SW(75),
-},
-buttonText: {
+  },
+  buttonText: {
     color: Colors.light,
     fontFamily: "Poppins-Regular",
     fontSize: SF(10),
     marginLeft: SW(2),
-},
-disabledButton: {
+  },
+  disabledButton: {
     backgroundColor: Colors.gray, // ✅ Gray background for disabled buttons
     opacity: 0.5, // ✅ Reduce opacity to indicate it's disabled
-},
-disabledText: {
+  },
+  disabledText: {
     color: Colors.gray, // ✅ Gray text for disabled buttons
-},
+  },
   iconText: {
     fontSize: SF(13),
     color: Colors.dark,
@@ -186,7 +186,7 @@ disabledText: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginRight:SW(5)
+    marginRight: SW(5)
   },
   postReviewButton: {
     paddingHorizontal: SW(10),
@@ -232,7 +232,38 @@ disabledText: {
   noReviewsText: {
     textAlign: "center",
     color: Colors.gray,
-    fontFamily: "Poppins-Regular"
-  }
+    fontFamily: "Poppins-Regular",
+    paddingVertical: SH(10)
+  },
+  noReviewsContainer: {
+    alignItems: 'center',
+    marginVertical: SH(20),
+  },
+  noReviewsTitle: {
+    fontSize: SF(24),
+    fontFamily: "Poppins-Bold",
+    color: Colors.gray,
+    marginBottom: SH(8),
+  },
+  noReviewsSubtitle: {
+    fontSize: SF(16),
+    color: Colors.gray,
+    textAlign: 'center',
+    marginTop: SH(10),
+  },
+  noImagesContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal:SW(20),
+    paddingVertical:SH(20)
+  },
+  noImagesText: {
+    fontSize:SF(18),
+    color:Colors.gray,
+    textAlign: 'center',
+  },
+  icon: {
+    marginBottom: SH(10),
+  },
 });
 export default styles;

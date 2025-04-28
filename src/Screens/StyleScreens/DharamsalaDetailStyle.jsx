@@ -130,6 +130,10 @@ const styles = StyleSheet.create({
     marginTop: SH(5),
     fontFamily: 'Poppins-Bold',
   },
+  Bottomimage:{
+    marginVertical:SH(10),
+    paddingBottom:SH(15)
+  }
 
 });
 

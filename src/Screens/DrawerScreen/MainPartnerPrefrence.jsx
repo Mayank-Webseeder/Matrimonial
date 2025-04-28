@@ -13,12 +13,13 @@ import DetailedProfile from '../StackScreens/DetailedProfile';
 import PartnersPreference from '../StackScreens/PartnersPreference';
 import PhotoGallery from '../StackScreens/PhotoGallery';
 import ImageViewing from 'react-native-image-viewing';
+import { PHOTO_URL } from '../../utils/BaseUrl';
 
 const MainPartnerPrefrence = ({ navigation }) => {
     const [activeComponent, setActiveComponent] = useState("PartnersPreference");
     const profileData = useSelector((state) => state.profile);
     console.log("profileData in myprofile", profileData);
-    const image = profileData?.profiledata?.photoUrl?.[0];
+    const image = `${PHOTO_URL}/${profileData?.profiledata?.photoUrl?.[0]}`;
     console.log("image", image);
     const formattedDate = moment(profileData?.profiledata?.dob).format("DD/MM/YYYY");
     const MyprofileData = useSelector((state) => state.getBiodata);

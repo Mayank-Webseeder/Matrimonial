@@ -4,7 +4,7 @@ import styles from "../StyleScreens/RegisterStyle";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Colors from "../../utils/Colors";
 import axios from "axios";
-import { FORGOT_PASSWORD, OTP_ENDPOINT } from "../../utils/BaseUrl";
+import { FORGOT_PASSWORD, FORGOT_PASSWORD_OTP } from "../../utils/BaseUrl";
 import Globalstyles from "../../utils/GlobalCss";
 import Entypo from 'react-native-vector-icons/Entypo';
 import { SH, SW, SF } from "../../utils/Dimensions";
@@ -45,19 +45,19 @@ const ForgotScreen = ({ navigation }) => {
 
     const handleSendOtp = async () => {
         if (!/^\d{10}$/.test(mobileNumber)) {
-            showMessage({ type:"danger", message: "Invalid Number", description: "Enter a valid 10-digit mobile number" ,icon:"danger"});
+            showMessage({ type: "danger", message: "Invalid Number", description: "Enter a valid 10-digit mobile number", icon: "danger" });
             return;
         }
 
         try {
             setIsOtpLoading(true);
-            const response = await axios.post(OTP_ENDPOINT, { mobileNo: mobileNumber });
+            const response = await axios.post(FORGOT_PASSWORD_OTP, { mobileNo: mobileNumber });
 
             console.log("OTP Response:", response.data);
 
             if (response.status === 200 && response.data.status === true) {
                 setOtpSent(true);
-                showMessage({ type: "success", message: "OTP Sent", description: "Check your SMS for the OTP" ,icon:"success"});
+                showMessage({ type: "success", message: "OTP Sent", description: "Check your SMS for the OTP", icon: "success" });
             } else {
                 throw new Error(response.data.message || "OTP request failed");
             }
@@ -65,9 +65,9 @@ const ForgotScreen = ({ navigation }) => {
             console.error("OTP Error:", error);
 
             if (error.response?.status === 400) {
-               showMessage({ type: "danger", message: "Invalid Request", description: error.response.data.message || "Mobile number is required" });
+                showMessage({ type: "danger", message: "Invalid Request", description: error.response.data.message || "Mobile number is required" });
             } else {
-                showMessage({ type:"danger", message: "OTP Error", description: error.message || "Failed to send OTP. Try again.",icon:"danger" });
+                showMessage({ type: "danger", message: "OTP Error", description: error.message || "Failed to send OTP. Try again.", icon: "danger" });
             }
         } finally {
             setIsOtpLoading(false);

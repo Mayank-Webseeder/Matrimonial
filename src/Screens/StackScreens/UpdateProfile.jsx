@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, StatusBar, SafeAreaView ,FlatList } from "react-native";
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, FlatList } from "react-native";
 import React, { useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
@@ -23,25 +23,25 @@ const UpdateProfile = ({ navigation }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const [city, setCity] = useState(profileData.city || "");
-const [filteredCities, setFilteredCities] = useState([]);
+  const [filteredCities, setFilteredCities] = useState([]);
 
-const handleCityInputChange = (text) => {
+  const handleCityInputChange = (text) => {
     setCity(text);
 
     if (text) {
-        const filtered = CityData.filter((item) =>
-            item?.label?.toLowerCase().includes(text.toLowerCase())
-        ).map(item => item.label);
-        setFilteredCities(filtered);
+      const filtered = CityData.filter((item) =>
+        item?.label?.toLowerCase().includes(text.toLowerCase())
+      ).map(item => item.label);
+      setFilteredCities(filtered);
     } else {
-        setFilteredCities([]);
+      setFilteredCities([]);
     }
-};
+  };
 
-const handleCitySelect = (item) => {
+  const handleCitySelect = (item) => {
     setCity(item);
     setFilteredCities([]);
-};
+  };
 
 
   const update_profile = async () => {
@@ -147,29 +147,29 @@ const handleCitySelect = (item) => {
             onChange={handleDateChange}
           />
         )}
-<Text style={Globalstyles.title}>City</Text>
-<TextInput
-    style={Globalstyles.input}
-    value={city}
-    onChangeText={handleCityInputChange}
-    placeholder="Enter your city"
-    placeholderTextColor={Colors.gray}
-    autoComplete="off"
-    textContentType="none"
-/>
-{filteredCities.length > 0 && city.length > 0 ? (
-    <FlatList
-        data={filteredCities.slice(0, 5)}
-        scrollEnabled={false}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => handleCitySelect(item)}>
+        <Text style={Globalstyles.title}>City</Text>
+        <TextInput
+          style={Globalstyles.input}
+          value={city}
+          onChangeText={handleCityInputChange}
+          placeholder="Enter your city"
+          placeholderTextColor={Colors.gray}
+          autoComplete="off"
+          textContentType="none"
+        />
+        {filteredCities.length > 0 && city.length > 0 ? (
+          <FlatList
+            data={filteredCities.slice(0, 5)}
+            scrollEnabled={false}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => handleCitySelect(item)}>
                 <Text style={Globalstyles.listItem}>{item}</Text>
-            </TouchableOpacity>
-        )}
-        style={Globalstyles.suggestions}
-/>
-) : null}
+              </TouchableOpacity>
+            )}
+            style={Globalstyles.suggestions}
+          />
+        ) : null}
 
         <Text style={Globalstyles.title}>Gender</Text>
         <View style={styles.genderContainer}>

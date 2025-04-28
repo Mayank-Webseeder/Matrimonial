@@ -8,7 +8,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import Globalstyles from '../../utils/GlobalCss';
-import { SAVED_PROFILES } from '../../utils/BaseUrl';
+import { DHARMSHALA_ADVERDISE_WINDOW, SAVED_PROFILES } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SF, SH, SW } from '../../utils/Dimensions';
@@ -29,6 +29,8 @@ const DharamsalaDetail = ({ navigation, route }) => {
    const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
        const notificationCount = notifications ? notifications.length : 0;
   const formattedImages = DharamsalaData.images.map(img => ({ uri: img }));
+  const [slider, setSlider] = useState([]);
+  
   const openImageViewer = (index) => {
     setImageIndex(index);
     setModalVisible(true);
@@ -52,6 +54,68 @@ const DharamsalaDetail = ({ navigation, route }) => {
 
     return () => clearInterval(interval);
   }, [currentIndex]);
+
+
+  useEffect(() => {
+    Advertisement_window();
+  }, []);
+
+
+  useEffect(() => {
+    if (slider.length === 0) return;
+
+    const currentSlide = slider[currentIndex];
+    const durationInSeconds = currentSlide?.duration || 2;
+    const durationInMilliseconds = durationInSeconds * 1000;
+
+    const timeout = setTimeout(() => {
+      const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
+      setCurrentIndex(nextIndex);
+      sliderRef.current?.goToSlide(nextIndex);
+    }, durationInMilliseconds);
+
+    return () => clearTimeout(timeout);
+  }, [currentIndex, slider]);
+
+
+  const Advertisement_window = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+      const response = await axios.get(DHARMSHALA_ADVERDISE_WINDOW, { headers });
+
+      if (response.data) {
+        const fetchedData = response.data.data;
+        console.log("fetchedData", JSON.stringify(fetchedData));
+
+        const fullSliderData = fetchedData.flatMap((item) =>
+          item.media.map((mediaItem) => ({
+            id: `${item._id}_${mediaItem._id}`,
+            title: item.title,
+            description: item.description,
+            image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
+            resolution: mediaItem.resolution,
+          }))
+        );
+
+        setSlider(fullSliderData);
+        console.log("Slider Data:", fullSliderData);
+      } else {
+        setSlider([]);
+      }
+    } catch (error) {
+      console.error("Error fetching advertisement:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   const SliderrenderItem = ({ item, index }) => (
     <TouchableOpacity onPress={() => openImageViewer(index)}>
@@ -272,7 +336,29 @@ const DharamsalaDetail = ({ navigation, route }) => {
           </TouchableOpacity>
         </View>
 
-        <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
+        <View style={styles.Bottomimage}>
+              <AppIntroSlider
+                    ref={sliderRef}
+                    data={slider}
+                    renderItem={({ item }) => {
+                        const { width, height } = item.resolution;
+                        return (
+                            <Image
+                                source={{ uri: item.image }}
+                                style={{
+                                    width,
+                                    height,
+                                }}
+                            />
+                        );
+                    }}
+                    showNextButton={false}
+                    showDoneButton={false}
+                    dotStyle={Globalstyles.dot}
+                    activeDotStyle={Globalstyles.activeDot}
+                />
+
+              </View>
 
       </ScrollView>
     </SafeAreaView>

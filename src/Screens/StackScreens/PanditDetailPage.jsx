@@ -1,5 +1,6 @@
 import { Text, View, Image, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Linking, ActivityIndicator } from 'react-native';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
+import AppIntroSlider from 'react-native-app-intro-slider';
 import styles from '../StyleScreens/PanditDetailPageStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
@@ -12,15 +13,18 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Globalstyles from '../../utils/GlobalCss';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { PANDIT_DESCRIPTION, SAVED_PROFILES } from '../../utils/BaseUrl';
+import { PANDIT_DESCRIPTION, SAVED_PROFILES, PANDIT_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
 import moment from "moment";
 import { useFocusEffect } from '@react-navigation/native';
 import ImageViewing from 'react-native-image-viewing';
-import { SH, SW ,SF } from '../../utils/Dimensions';
+import { SH, SW, SF } from '../../utils/Dimensions';
 import { showMessage } from 'react-native-flash-message';
 import { useSelector } from 'react-redux';
 
 const PanditDetailPage = ({ navigation, item, route }) => {
+    const sliderRef = useRef(null);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [slider, setSlider] = useState([]);
     const { pandit_id, isSaved: initialSavedState } = route.params || {};
     const [Save, setIsSaved] = useState(initialSavedState || false);
     const [profileData, setProfileData] = useState(null);
@@ -32,8 +36,8 @@ const PanditDetailPage = ({ navigation, item, route }) => {
     const [myRatings, setMyRatings] = useState([]);
     const [otherRatings, setOtherRatings] = useState([]);
     const [visible, setVisible] = useState(false);
-     const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
-           const notificationCount = notifications ? notifications.length : 0;
+    const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
+    const notificationCount = notifications ? notifications.length : 0;
     const profilePhoto = profileData?.profilePhoto
         ? { uri: profileData.profilePhoto }
         : require('../../Images/NoImage.png');
@@ -52,7 +56,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
             showMessage({
                 type: "danger",
                 message: "Pandit ID not found!",
-                icon:"danger"
+                icon: "danger"
             });
             return;
         }
@@ -100,6 +104,68 @@ const PanditDetailPage = ({ navigation, item, route }) => {
         }
     };
 
+
+    useEffect(() => {
+        Advertisement_window();
+    }, []);
+
+
+    useEffect(() => {
+        if (slider.length === 0) return;
+
+        const currentSlide = slider[currentIndex];
+        const durationInSeconds = currentSlide?.duration || 2;
+        const durationInMilliseconds = durationInSeconds * 1000;
+
+        const timeout = setTimeout(() => {
+            const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
+            setCurrentIndex(nextIndex);
+            sliderRef.current?.goToSlide(nextIndex);
+        }, durationInMilliseconds);
+
+        return () => clearTimeout(timeout);
+    }, [currentIndex, slider]);
+
+
+    const Advertisement_window = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userToken');
+            if (!token) throw new Error('No token found');
+
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            };
+
+            const response = await axios.get(PANDIT_ADVERDISE_WINDOW, { headers });
+
+            if (response.data) {
+                const fetchedData = response.data.data;
+                console.log("fetchedData", JSON.stringify(fetchedData));
+
+                const fullSliderData = fetchedData.flatMap((item) =>
+                    item.media.map((mediaItem) => ({
+                        id: `${item._id}_${mediaItem._id}`,
+                        title: item.title,
+                        description: item.description,
+                        image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
+                        resolution: mediaItem.resolution,
+                    }))
+                );
+
+                setSlider(fullSliderData);
+                console.log("Slider Data:", fullSliderData);
+            } else {
+                setSlider([]);
+            }
+        } catch (error) {
+            console.error("Error fetching advertisement:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
     const savedProfiles = async () => {
         if (!pandit_id) {
             showMessage({
@@ -109,32 +175,32 @@ const PanditDetailPage = ({ navigation, item, route }) => {
             });
             return;
         }
-    
+
         setIsSaved((prev) => !prev); // ✅ Optimistic UI Update
-    
+
         try {
             const token = await AsyncStorage.getItem("userToken");
             if (!token) throw new Error("No token found");
-    
+
             const headers = {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             };
-    
+
             console.log("API Request:", `${SAVED_PROFILES}/${pandit_id}`);
-    
+
             const response = await axios.post(`${SAVED_PROFILES}/${pandit_id}`, {}, { headers });
-    
+
             console.log("Response Data:", response?.data);
-    
+
             if (response.status === 200 && response.data.status === true) { // ✅ Corrected check
                 showMessage({
                     type: "success",
                     message: "Success",
                     description: response.data.message || "Profile saved successfully!",
-                    icon:"success"
+                    icon: "success"
                 });
-    
+
                 // ✅ API response ke hisaab se state update karo
                 setIsSaved(response.data.message.includes("saved successfully"));
             } else {
@@ -142,26 +208,23 @@ const PanditDetailPage = ({ navigation, item, route }) => {
             }
         } catch (error) {
             console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
-    
+
             // ❌ Rollback state if API fails
             setIsSaved((prev) => !prev);
-    
+
             let errorMessage = "Something went wrong!";
             if (error.response?.status === 400) {
                 errorMessage = error.response.data?.message || "Bad request.";
             }
-    
+
             showMessage({
                 type: "error",
                 message: "Error",
                 description: errorMessage,
-                icon:"danger"
+                icon: "danger"
             });
         }
     };
-    
-
-
 
     const openLink = (url, platform) => {
         if (url) {
@@ -172,19 +235,24 @@ const PanditDetailPage = ({ navigation, item, route }) => {
     };
 
     const showMessages = (message) => {
-           showMessage({
-             type: 'info',
-             message: message,
-             visibilityTime: 3000,
-             autoHide: true,
-             icon:"info"
-           });
-         };
-         
+        showMessage({
+            type: 'info',
+            message: message,
+            visibilityTime: 3000,
+            autoHide: true,
+            icon: "info"
+        });
+    };
+
     const renderImages = (images) => {
         if (!images || images.length === 0) {
-            return <Text style={styles.noReviewsText}>No images available for this post</Text>;
-        }
+            return (
+              <View style={styles.noImagesContainer}>
+                <MaterialIcons name="hide-image" size={40} color={Colors.gray} style={styles.icon} />
+                <Text style={styles.noImagesText}>No additional photos available for this post</Text>
+              </View>
+            );
+          }
 
         const rows = [];
         for (let i = 0; i < images.length; i += 2) {
@@ -215,8 +283,8 @@ const PanditDetailPage = ({ navigation, item, route }) => {
     const handleShare = async () => {
         showMessage({
             type: "info",
-            message:"Under development",
-            icon:"info"
+            message: "Under development",
+            icon: "info"
         })
     };
 
@@ -244,32 +312,32 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                     <Text style={Globalstyles.headerText}>{profileData?.fullName}</Text>
                 </View>
                 <View style={styles.righticons}>
-                <TouchableOpacity style={{ position: 'relative' }} onPress={() => navigation.navigate('Notification')}>
-            <AntDesign
-              name="bells"
-              size={25}
-              color={Colors.theme_color}
-            />
-            {notificationCount > 0 && (
-              <View
-                style={{
-                  position: "absolute",
-                  right: -5,
-                  top: -5,
-                  width: SW(16),
-                  height: SW(16),
-                  borderRadius: SW(16) / 2,
-                  backgroundColor: "red",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Text style={{ color: 'white', fontSize: SF(9), fontFamily: "Poppins-Bold" }}>
-                  {notificationCount}
-                </Text>
-              </View>
-            )}
-          </TouchableOpacity>
+                    <TouchableOpacity style={{ position: 'relative' }} onPress={() => navigation.navigate('Notification')}>
+                        <AntDesign
+                            name="bells"
+                            size={25}
+                            color={Colors.theme_color}
+                        />
+                        {notificationCount > 0 && (
+                            <View
+                                style={{
+                                    position: "absolute",
+                                    right: -5,
+                                    top: -5,
+                                    width: SW(16),
+                                    height: SW(16),
+                                    borderRadius: SW(16) / 2,
+                                    backgroundColor: "red",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                }}
+                            >
+                                <Text style={{ color: 'white', fontSize: SF(9), fontFamily: "Poppins-Bold" }}>
+                                    {notificationCount}
+                                </Text>
+                            </View>
+                        )}
+                    </TouchableOpacity>
                 </View>
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>
@@ -309,63 +377,63 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 </View>
 
                 <View style={styles.contentContainer}>
-                {profileData?.description ? (
-  <>
-    <Text style={styles.sectionTitle}>Description</Text>
-    <Text style={styles.text}>{profileData.description}</Text>
-  </>
-) : null}
+                    {profileData?.description ? (
+                        <>
+                            <Text style={styles.sectionTitle}>Description</Text>
+                            <Text style={styles.text}>{profileData.description}</Text>
+                        </>
+                    ) : null}
                     <View style={styles.sharecontainer}>
-    <TouchableOpacity 
-        style={[styles.iconContainer, my_id === profileData?.userId]} 
-        onPress={() => savedProfiles(profileData._id)}
-        disabled={my_id === profileData?.userId} // ✅ Disable button for self
-    >
-        <FontAwesome
-            name={Save ? "bookmark" : "bookmark-o"}
-            size={19}
-            color={my_id === profileData?.userId ? Colors.gray : Colors.dark} // ✅ Gray if disabled
-        />
-        <Text style={[styles.iconText, my_id === profileData?.userId && styles.disabledText]}>
-            {Save ? "Saved" : "Save"}
-        </Text>
-    </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.iconContainer, my_id === profileData?.userId]}
+                            onPress={() => savedProfiles(profileData._id)}
+                            disabled={my_id === profileData?.userId} // ✅ Disable button for self
+                        >
+                            <FontAwesome
+                                name={Save ? "bookmark" : "bookmark-o"}
+                                size={19}
+                                color={my_id === profileData?.userId ? Colors.gray : Colors.dark} // ✅ Gray if disabled
+                            />
+                            <Text style={[styles.iconText, my_id === profileData?.userId && styles.disabledText]}>
+                                {Save ? "Saved" : "Save"}
+                            </Text>
+                        </TouchableOpacity>
 
-    {/* ✅ Share button (Always Active) */}
-    <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
-        <Feather name="send" size={20} color={Colors.dark} />
-        <Text style={styles.iconText}>Shares</Text>
-    </TouchableOpacity>
+                        {/* ✅ Share button (Always Active) */}
+                        <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
+                            <Feather name="send" size={20} color={Colors.dark} />
+                            <Text style={styles.iconText}>Shares</Text>
+                        </TouchableOpacity>
 
-    {/* ✅ Call Button (Disabled for self profile) */}
-    <TouchableOpacity 
-        style={[styles.Button, my_id === profileData?.userId && styles.disabledButton]} 
-        onPress={() => Linking.openURL(`tel:${profileData?.mobileNo}`)}
-        disabled={my_id === profileData?.userId} // ✅ Disable button
-    >
-        <MaterialIcons 
-            name="call" 
-            size={20} 
-            color={my_id === profileData?.userId ? Colors.gray : Colors.light} // ✅ Gray if disabled
-        />
-    </TouchableOpacity>
+                        {/* ✅ Call Button (Disabled for self profile) */}
+                        <TouchableOpacity
+                            style={[styles.Button, my_id === profileData?.userId && styles.disabledButton]}
+                            onPress={() => Linking.openURL(`tel:${profileData?.mobileNo}`)}
+                            disabled={my_id === profileData?.userId} // ✅ Disable button
+                        >
+                            <MaterialIcons
+                                name="call"
+                                size={20}
+                                color={my_id === profileData?.userId ? Colors.gray : Colors.light} // ✅ Gray if disabled
+                            />
+                        </TouchableOpacity>
 
-    {/* ✅ Report Button (Disabled for self profile) */}
-    <TouchableOpacity 
-        style={[styles.iconContainer, my_id === profileData?.userId]} 
-        onPress={() => navigation.navigate('ReportPage', { profileId: profileData?._id })}
-        disabled={my_id === profileData?.userId} // ✅ Disable button
-    >
-        <MaterialIcons 
-            name="error-outline" 
-            size={20} 
-            color={my_id === profileData?.userId ? Colors.gray : Colors.dark} // ✅ Gray if disabled
-        />
-        <Text style={[styles.iconText, my_id === profileData?.userId && styles.disabledText]}>
-            Report
-        </Text>
-    </TouchableOpacity>
-</View>
+                        {/* ✅ Report Button (Disabled for self profile) */}
+                        <TouchableOpacity
+                            style={[styles.iconContainer, my_id === profileData?.userId]}
+                            onPress={() => navigation.navigate('ReportPage', { profileId: profileData?._id })}
+                            disabled={my_id === profileData?.userId} // ✅ Disable button
+                        >
+                            <MaterialIcons
+                                name="error-outline"
+                                size={20}
+                                color={my_id === profileData?.userId ? Colors.gray : Colors.dark} // ✅ Gray if disabled
+                            />
+                            <Text style={[styles.iconText, my_id === profileData?.userId && styles.disabledText]}>
+                                Report
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
 
 
 
@@ -417,14 +485,14 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                                 <Text style={styles.reviewName}>You</Text>
                             </View>
                             <View>
-                                            <Text style={styles.reviewDate}>
-                                                {moment(myRatings.createdAt).format("DD-MM-YYYY")}
-                                            </Text>
-                                            <Text style={styles.reviewDate}>
-                                                {moment(myRatings.createdAt).format("hh:mm A")}
-                                            </Text>
+                                <Text style={styles.reviewDate}>
+                                    {moment(myRatings.createdAt).format("DD-MM-YYYY")}
+                                </Text>
+                                <Text style={styles.reviewDate}>
+                                    {moment(myRatings.createdAt).format("hh:mm A")}
+                                </Text>
 
-                                        </View>
+                            </View>
                         </View>
                         <View style={styles.reviewRating}>
                             <Rating
@@ -470,7 +538,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                                             <Text style={styles.reviewText}>{review?.review}</Text>
 
                                         </View>
-                                        <View style={{ alignSelf:"flex-start" }}>
+                                        <View style={{ alignSelf: "flex-start" }}>
                                             <Text style={styles.reviewDate}>
                                                 {moment(review.createdAt).format("DD-MM-YYYY")}
                                             </Text>
@@ -493,7 +561,10 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                             )}
                         </>
                     ) : (
-                        <Text style={styles.noReviewsText}>No reviews yet</Text>
+                        <View style={styles.noReviewsContainer}>
+                            <Text style={styles.noReviewsTitle}>No Reviews Yet</Text>
+                            <Text style={styles.noReviewsSubtitle}>Newly uploaded reviews will appear here.</Text>
+                        </View>
                     )}
 
                 </View>
@@ -522,7 +593,31 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                         <FontAwesome5 name="instagram" size={30} color="#E4405F" />
                     </TouchableOpacity>
                 </View>
-                <Image source={require('../../Images/slider.png')} style={styles.Bottomimage} />
+                {/* <Image source={require('../../Images/slider.png')} style={styles.Bottomimage} /> */}
+
+                <View style={styles.Bottomimage}>
+                    <AppIntroSlider
+                        ref={sliderRef}
+                        data={slider}
+                        renderItem={({ item }) => {
+                            const { width, height } = item.resolution;
+                            return (
+                                <Image
+                                    source={{ uri: item.image }}
+                                    style={{
+                                        width,
+                                        height,
+                                    }}
+                                />
+                            );
+                        }}
+                        showNextButton={false}
+                        showDoneButton={false}
+                        dotStyle={Globalstyles.dot}
+                        activeDotStyle={Globalstyles.activeDot}
+                    />
+
+                </View>
             </ScrollView>
         </SafeAreaView>
     );

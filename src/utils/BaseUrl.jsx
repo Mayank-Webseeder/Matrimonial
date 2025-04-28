@@ -1,13 +1,14 @@
-import { BaseRouter } from "@react-navigation/native";
+// for show the image 
+const PHOTO_URL = "https://api-matrimonial.webseeder.tech"
 
 const BASE_URL = "https://api-matrimonial.webseeder.tech/api/v1";
 // const BASE_URL = "https://matrimonial-backend-oikh.onrender.com/api/v1";
-
 // auth api's
 const SIGNUP_ENDPOINT = `${BASE_URL}/user/signUp`;
 const LOGIN_ENDPOINT = `${BASE_URL}/user/signIn`;
 const OTP_ENDPOINT = `${BASE_URL}/user/sendOTP`;
 const FORGOT_PASSWORD = `${BASE_URL}/user/forgotPassword`;
+const FORGOT_PASSWORD_OTP = `${BASE_URL}/user/sendResetOTP`;
 const CHANGE_PASSWORD = `${BASE_URL}/user/changePassword`;
 const FEEDBACK = `${BASE_URL}/user/create-feedback`;
 
@@ -20,7 +21,7 @@ const UPLOAD_PROFILE_PHOTO = `${BASE_URL}/user/updateProfileImage`;
 const UPDATE_PROFILE = `${BASE_URL}/user/updateProfile`;
 const DELETE_USER = `${BASE_URL}/user/deleteUser`;
 const DELETE_PROFILE_PHOTO = `${BASE_URL}/user/delete-profileImage`;
-const PROFILE_TYPE=`${BASE_URL}/user/profiles`;
+const PROFILE_TYPE = `${BASE_URL}/user/profiles`;
 
 // biodata api's
 const CREATE_PERSONAL_DETAILS = `${BASE_URL}/biodata/createPersonalDetails`;
@@ -79,10 +80,10 @@ const DELETE_SAVED_PROFILE = `${BASE_URL}/saved/deleteSavedProfiles`;
 
 // share
 const SHARED_PROFILES = `${BASE_URL}/user/share-bioDataprofile`;
-const SUCESS_STORIES=`${BASE_URL}/user/get-successStories`;
-const POST_SUCESS_sTORY=`${BASE_URL}/user/create-successStory`;
-const MY_SUCCESS_STORY=`${BASE_URL}/user/get-successStories?myStory=true`;
-const DELETE_SUCCESS_STORY=`${BASE_URL}/user/delete-successStory`;
+const SUCESS_STORIES = `${BASE_URL}/user/get-successStories`;
+const POST_SUCESS_sTORY = `${BASE_URL}/user/create-successStory`;
+const MY_SUCCESS_STORY = `${BASE_URL}/user/get-successStories?myStory=true`;
+const DELETE_SUCCESS_STORY = `${BASE_URL}/user/delete-successStory`;
 
 // activist APIs
 const CREATE_ACTIVIST = `${BASE_URL}/activist/createActivist`;
@@ -137,28 +138,28 @@ const EVENT_NEWS_NOTIFICATION_HANDLE_API = `${BASE_URL}/settings/set-eventPostNo
 
 // subscriptions
 
-const MATRIMONIALFETCH_PLAN=`${BASE_URL}/user/getPlans/Biodata`;
-const PANDIT_PLANS=`${BASE_URL}/user/getPlans/Pandit`;
-const JYOISH_PLANS=`${BASE_URL}/user/getPlans/Jyotish`;
-const KATHAVACHAK_PLANS=`${BASE_URL}/user/getPlans/Kathavachak`;
-const FETCH_PLANS=`${BASE_URL}/user/getPlans`;
-const RAZORPAY=`${BASE_URL}/subscription/getRazorPayKey`;
-const FREE_TRIAL=`${BASE_URL}/subscription/setTrial`;
-const PAYMENT_VERIFICATION=`${BASE_URL}/subscription/verifyPayment`;
-const PAID_URL=`${BASE_URL}/subscription/buy`;
-const SUBSCRIPTION_HISTORY=`${BASE_URL}/subscription/history`;
+const MATRIMONIALFETCH_PLAN = `${BASE_URL}/user/getPlans/Biodata`;
+const PANDIT_PLANS = `${BASE_URL}/user/getPlans/Pandit`;
+const JYOISH_PLANS = `${BASE_URL}/user/getPlans/Jyotish`;
+const KATHAVACHAK_PLANS = `${BASE_URL}/user/getPlans/Kathavachak`;
+const FETCH_PLANS = `${BASE_URL}/user/getPlans`;
+const RAZORPAY = `${BASE_URL}/subscription/getRazorPayKey`;
+const FREE_TRIAL = `${BASE_URL}/subscription/setTrial`;
+const PAYMENT_VERIFICATION = `${BASE_URL}/subscription/verifyPayment`;
+const PAID_URL = `${BASE_URL}/subscription/buy`;
+const SUBSCRIPTION_HISTORY = `${BASE_URL}/subscription/history`;
 
 // Advertise Windows
 
-const HOME_ADVERDISE_WINDOW=`${BASE_URL}/user/get-advertisement?targetProfileType=HomePage`;
-const DHARMSHALA_ADVERDISE_WINDOW=`${BASE_URL}/user/get-advertisement?targetProfileType=Dharmshala`;
-const PANDIT_ADVERDISE_WINDOW=`${BASE_URL}/user/get-advertisement?targetProfileType=Pandit`;
-const JYOTISH_ADVERDISE_WINDOW=`${BASE_URL}/user/get-advertisement?targetProfileType=Jyotish`;
-const KATHAVACHAK_ADVERDISE_WINDOW=`${BASE_URL}/user/get-advertisement?targetProfileType=Kathavachak`;
-const COMMITTEE_ADVERDISE_WINDOW=`${BASE_URL}/user/get-advertisement?targetProfileType=Committee`;
-const EVENT_NEWS_ADVERDISE_WINDOW=`${BASE_URL}/user/get-advertisement?targetProfileType=EventPost`;
-const ACTIVIST_ADVERDISE_WINDOW=`${BASE_URL}/user/get-advertisement?targetProfileType=Activist`;
-const BIODATA_ADVERTISE_WINDOW=`${BASE_URL}/user/get-advertisement?targetProfileType=Biodata`;
+const HOME_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=HomePage`;
+const DHARMSHALA_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Dharmshala`;
+const PANDIT_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Pandit`;
+const JYOTISH_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Jyotish`;
+const KATHAVACHAK_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Kathavachak`;
+const COMMITTEE_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Committee`;
+const EVENT_NEWS_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=EventPost`;
+const ACTIVIST_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Activist`;
+const BIODATA_ADVERTISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Biodata`;
 
 export {
     SIGNUP_ENDPOINT,
@@ -273,5 +274,7 @@ export {
     COMMITTEE_ADVERDISE_WINDOW,
     EVENT_NEWS_ADVERDISE_WINDOW,
     ACTIVIST_ADVERDISE_WINDOW,
-    BIODATA_ADVERTISE_WINDOW
+    BIODATA_ADVERTISE_WINDOW,
+    FORGOT_PASSWORD_OTP,
+    PHOTO_URL
 }

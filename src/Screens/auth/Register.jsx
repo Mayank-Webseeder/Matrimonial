@@ -104,7 +104,12 @@ const Register = ({ navigation }) => {
         }
         if (!cityInput.trim()) newErrors.selectedCity = "City is required.";
         if (!gender) newErrors.gender = "Gender is required.";
-        if (!password) newErrors.password = "Password is required.";
+        const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
+        if (!password) {
+            newErrors.password = "Password is required.";
+        } else if (!strongPasswordRegex.test(password)) {
+            newErrors.password = "Password must be at least 8 characters long, contain one uppercase letter, one number, and one special character.";
+        }
         if (!confirmPassword) newErrors.confirmPassword = "confirmPassword is required.";
         if (password !== confirmPassword) newErrors.confirmPassword = "Passwords do not match.";
         if (!otp) newErrors.otp = "OTP is required.";
@@ -444,8 +449,8 @@ const Register = ({ navigation }) => {
 
                         </View>
                         {errors.mobileNumber && (
-                                <Text style={styles.errorText}>{errors.mobileNumber}</Text>
-                            )}
+                            <Text style={styles.errorText}>{errors.mobileNumber}</Text>
+                        )}
                         {/* Mobile Number */}
                         <Text style={Globalstyles.title}>OTP <Entypo name={'star'} color={'red'} size={12} /></Text>
 

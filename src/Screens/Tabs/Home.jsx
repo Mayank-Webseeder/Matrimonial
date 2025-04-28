@@ -11,7 +11,7 @@ import AppIntroSlider from 'react-native-app-intro-slider';
 import Globalstyles from '../../utils/GlobalCss';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { GET_ACTIVIST, GET_ALL_BIODATA_PROFILES, GET_BIODATA, PROFILE_ENDPOINT, NOTIFICATION, HOME_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
+import { GET_ACTIVIST, GET_ALL_BIODATA_PROFILES, GET_BIODATA, PROFILE_ENDPOINT, NOTIFICATION, HOME_ADVERDISE_WINDOW, PHOTO_URL } from '../../utils/BaseUrl';
 import { useDispatch } from 'react-redux';
 import { setAllBiodata } from '../../ReduxStore/Slices/GetAllBiodataSlice';
 import { setBioData } from '../../ReduxStore/Slices/BiodataSlice';
@@ -23,12 +23,15 @@ import { setProfiledata } from '../../ReduxStore/Slices/ProfileSlice';
 import { reseAllNotification, setAllNotification } from '../../ReduxStore/Slices/GetAllNotificationSlice';
 import { SF, SW, SH } from '../../utils/Dimensions';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import Video from 'react-native-video';
 
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
-  const sliderRef = useRef(null);
+  const sliderRefTop = useRef(null);
+  const sliderRefBottom = useRef(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndexTop, setCurrentIndexTop] = useState(0); // For Top Slider
+  const [currentIndexBottom, setCurrentIndexBottom] = useState(1);
   const [biodata, setBiodata] = useState("");
   const [mybiodata, setMybiodata] = useState("");
   const [allbiodata, setallBiodata] = useState("");
@@ -36,8 +39,8 @@ const Home = ({ navigation }) => {
   const MyprofileData = useSelector((state) => state.getBiodata);
   const ProfileData = useSelector((state) => state.profile);
   const profile_data = ProfileData?.profiledata || {};
-  const [slider, setSlider] = useState([]);
-
+  const [slider, setSlider] = useState([]); // 👈 fetched data yahaan set hoga
+  const [videoLoading, setVideoLoading] = useState(true);
   const isBiodataMissing = Object.keys(MyprofileData?.Biodata || {}).length > 0;
   const isBiodataExpired = profile_data?.serviceSubscriptions?.some(
     (sub) => sub.serviceType === "Biodata" && sub.status === "Expired"
@@ -202,28 +205,29 @@ const Home = ({ navigation }) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) throw new Error('No token found');
-  
+
       const headers = {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       };
-  
+
       const response = await axios.get(HOME_ADVERDISE_WINDOW, { headers });
-  
+
       if (response.data) {
         const fetchedData = response.data.data;
         console.log("fetchedData", JSON.stringify(fetchedData));
-  
-        const fullSliderData = fetchedData.flatMap((item) => 
+
+        const fullSliderData = fetchedData.flatMap((item) =>
           item.media.map((mediaItem) => ({
             id: `${item._id}_${mediaItem._id}`,
             title: item.title,
             description: item.description,
-            image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
+            image: `${PHOTO_URL}/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution, // 👈 yeh add kiya
+            mediaType: mediaItem.mediaUrl.includes('.mp4') ? 'video' : 'image', // Determine media type
           }))
         );
-  
+
         setSlider(fullSliderData);
         console.log("Slider Data:", fullSliderData);
       } else {
@@ -235,7 +239,6 @@ const Home = ({ navigation }) => {
       setLoading(false);
     }
   };
-  
 
   const handleNavigateToProfile = (item) => {
     console.log("item", item);
@@ -320,20 +323,36 @@ const Home = ({ navigation }) => {
 
   useEffect(() => {
     if (slider.length === 0) return;
-  
-    const currentSlide = slider[currentIndex];
-    const durationInSeconds = currentSlide?.duration || 2; 
-    const durationInMilliseconds = durationInSeconds * 1000; 
-  
-    const timeout = setTimeout(() => {
-      const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
-      setCurrentIndex(nextIndex);
-      sliderRef.current?.goToSlide(nextIndex);
-    }, durationInMilliseconds);
-  
-    return () => clearTimeout(timeout);
-  }, [currentIndex, slider]);
-  
+
+    // Handling the top slider change
+    const currentSlideTop = slider[currentIndexTop];
+    const durationInSecondsTop = currentSlideTop?.duration || 2;
+    const durationInMillisecondsTop = durationInSecondsTop * 1000;
+
+    const timeoutTop = setTimeout(() => {
+      const nextIndexTop = currentIndexTop < slider.length - 1 ? currentIndexTop + 1 : 0;
+      setCurrentIndexTop(nextIndexTop);  // Move top slider
+      sliderRefTop.current?.goToSlide(nextIndexTop);
+    }, durationInMillisecondsTop);
+
+    return () => clearTimeout(timeoutTop);
+  }, [currentIndexTop, slider]);
+
+  useEffect(() => {
+    if (slider.length === 0) return;
+    const currentSlideBottom = slider[currentIndexBottom];
+    const durationInSecondsBottom = currentSlideBottom?.duration || 2;
+    const durationInMillisecondsBottom = durationInSecondsBottom * 1000;
+
+    const timeoutBottom = setTimeout(() => {
+      const nextIndexBottom = currentIndexBottom < slider.length - 1 ? currentIndexBottom + 1 : 0;
+      setCurrentIndexBottom(nextIndexBottom);
+      sliderRefBottom.current?.goToSlide(nextIndexBottom);
+    }, durationInMillisecondsBottom);
+
+    return () => clearTimeout(timeoutBottom);
+  }, [currentIndexBottom, slider]);
+
 
   const renderSkeleton = () => (
     <SkeletonPlaceholder>
@@ -346,6 +365,7 @@ const Home = ({ navigation }) => {
       </View>
     </SkeletonPlaceholder>
   );
+
 
 
   if (isLoading) {
@@ -404,26 +424,25 @@ const Home = ({ navigation }) => {
         ListHeaderComponent={
           <>
             <View style={styles.sliderContainer}>
-              <AppIntroSlider
-                ref={sliderRef}
-                data={slider}
-                renderItem={({ item }) => {
-                  const { width, height } = item.resolution;
-                  return (
-                    <Image
-                      source={{ uri: item.image }}
-                      style={{
-                        width,
-                        height,
-                      }}
-                    />
-                  );
-                }}
-                showNextButton={false}
-                showDoneButton={false}
-                dotStyle={styles.dot}
-                activeDotStyle={styles.activeDot}
-              />
+              <View style={styles.topSlider}>
+                <AppIntroSlider
+                  ref={sliderRefTop}
+                  data={slider}
+                  renderItem={({ item }) => {
+                    const { width, height } = item.resolution;
+                    return (
+                      <Image
+                        source={{ uri: item.image }}
+                        style={{ width, height }}
+                      />
+                    );
+                  }}
+                  showNextButton={false}
+                  showDoneButton={false}
+                  dotStyle={styles.dot}
+                  activeDotStyle={styles.activeDot}
+                />
+              </View>
             </View>
             <View>
               <HeadingWithViewAll
@@ -520,12 +539,25 @@ const Home = ({ navigation }) => {
                 showsHorizontalScrollIndicator={false}
               />
             </View>
-
-            {/* Bottom Image */}
-            <Image
-              source={require("../../Images/slider.png")}
-              style={Globalstyles.bottomImage}
-            />
+            <View style={styles.bottomSlider}>
+              <AppIntroSlider
+                ref={sliderRefBottom}
+                data={slider}
+                renderItem={({ item }) => {
+                  const { width, height } = item.resolution;
+                  return (
+                    <Image
+                      source={{ uri: item.image }}
+                      style={{ width, height }}
+                    />
+                  );
+                }}
+                showNextButton={false}
+                showDoneButton={false}
+                dotStyle={styles.dot}
+                activeDotStyle={styles.activeDot}
+              />
+            </View>
           </>
         }
         refreshControl={

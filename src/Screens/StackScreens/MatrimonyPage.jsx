@@ -14,6 +14,7 @@ import PartnersPreference from './PartnersPreference';
 import PhotoGallery from './PhotoGallery';
 import ImageViewing from 'react-native-image-viewing';
 import { useFocusEffect } from '@react-navigation/native';
+import { PHOTO_URL } from '../../utils/BaseUrl';
 
 
 const MatrimonyPage = ({ navigation, route }) => {
@@ -21,7 +22,7 @@ const MatrimonyPage = ({ navigation, route }) => {
     const [activeComponent, setActiveComponent] = useState("DetailedProfile");
     const profile_Data = useSelector((state) => state.profile);
     console.log("profileData in myprofile", profileData);
-    const image = profile_Data?.profiledata?.photoUrl?.[0];
+    const image = `${PHOTO_URL}/${profile_Data?.profiledata?.photoUrl?.[0]}`;
     console.log("image", image);
     const formattedDate = moment(profile_Data?.profiledata?.dob).format("DD/MM/YYYY");
     const MyprofileData = useSelector((state) => state.getBiodata);

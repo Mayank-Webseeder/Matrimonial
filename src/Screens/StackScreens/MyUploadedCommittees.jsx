@@ -138,13 +138,13 @@ const MyUploadedCommittees = ({ navigation, route }) => {
                     onRequestClose={() => setModalVisible(false)}
                 >
                     <TouchableOpacity
-                        style={styles.modalOverlay}
+                        style={styles.modalOverlay1}
                         onPress={() => setModalVisible(false)}
                     >
-                        <View style={[styles.modalContent, { top: modalPosition.top, left: modalPosition.left }]}>
+                        <View style={[styles.modalContent1, { top: modalPosition.top, left: modalPosition.left }]}>
                             {/* Update Option */}
                             <TouchableOpacity
-                                style={styles.modalOption}
+                                style={styles.modalOption1}
                                 onPress={() => {
                                     setModalVisible(false);
                                     navigation.navigate('UpdateCommittee', { committeeData: selectedItem });

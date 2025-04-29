@@ -55,7 +55,7 @@ import PartnersPreference from '../Screens/StackScreens/PartnersPreference';
 import PhotoGallery from '../Screens/StackScreens/PhotoGallery';
 import MainPartnerPrefrence from '../Screens/DrawerScreen/MainPartnerPrefrence';
 import { useDispatch } from 'react-redux';
-import { GET_BIODATA, PROFILE_ENDPOINT } from '../utils/BaseUrl';
+import { GET_BIODATA, PHOTO_URL, PROFILE_ENDPOINT } from '../utils/BaseUrl';
 import { setProfiledata } from '../ReduxStore/Slices/ProfileSlice';
 import axios from 'axios';
 import IntrestReceivedProfilePage from '../Screens/StackScreens/IntrestReceivedProfilePage';
@@ -83,6 +83,7 @@ import JyotishRegister from '../Screens/StackScreens/JyotishRegister';
 import KathavachakRegister from '../Screens/StackScreens/KathavachakRegister';
 import SubscriptionHistory from '../Screens/DrawerScreen/SubscriptionHistory';
 import { SocketProvider } from '../Socket/socketContext';
+import MySuccessStory from '../Screens/DrawerScreen/MySuccessStory';
 
 const Stack = createNativeStackNavigator();
 const AppStackNavigator = createNativeStackNavigator();
@@ -95,7 +96,7 @@ function MyTabs() {
   const [profiledata, setProfileData] = useState({});
   const ProfileData = useSelector((state) => state.profile);
   const profile_data = ProfileData?.profiledata || {};
-  const image = profile_data?.photoUrl?.[0];
+  const image = `${PHOTO_URL}/${profile_data?.photoUrl?.[0]}`;
   const [isLoading, setLoading] = useState(true);
   const [biodata, setBiodata] = useState({});
   const [mybiodata, setMybiodata] = useState({});
@@ -263,7 +264,6 @@ function MyTabs() {
   );
 }
 
-
 function MyDrawer() {
   return (
     <Drawer.Navigator
@@ -295,6 +295,7 @@ function MyDrawer() {
       <Drawer.Screen name="AboutJs" component={AboutJs} />
       <Drawer.Screen name="MyProfile" component={MyProfile} />
       <Drawer.Screen name="SubscriptionHistory" component={SubscriptionHistory} />
+      <Drawer.Screen name="MySuccessStory" component={MySuccessStory} />
     </Drawer.Navigator>
   );
 }
@@ -348,6 +349,7 @@ export const AppStack = () => (
     <AppStackNavigator.Screen name="PanditRegister" component={PanditRegister} />
     <AppStackNavigator.Screen name="JyotishRegister" component={JyotishRegister} />
     <AppStackNavigator.Screen name="KathavachakRegister" component={KathavachakRegister} />
+    <AppStackNavigator.Screen name="MySuccessStory" component={MySuccessStory} />
   </AppStackNavigator.Navigator>
 );
 
@@ -375,12 +377,16 @@ const RootNavigator = () => {
       const token = await AsyncStorage.getItem("userToken");
       const userId = await AsyncStorage.getItem("userId");
       console.log("Token in root file:", token);
+  
       setInitialRoute(token ? "AppStack" : "AuthStack");
-      setIsLoading(false);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 3000);
     };
-
+  
     checkUserToken();
   }, []);
+  
 
 
   if (isLoading) {

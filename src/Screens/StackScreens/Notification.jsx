@@ -121,7 +121,7 @@ const Notification = ({ navigation }) => {
         console.log("🚀 Navigating to MatrimonyPeopleProfile with ID:", notification._id, "User ID:", notification.relatedData.toUserId);
         navigation.navigate('MatrimonyPeopleProfile', {
           id: notification._id,
-          userId: notification?.relatedData?.toUserId,
+          userId: notification?.relatedData?.fromUserId,
         });
         break;
 
@@ -190,10 +190,10 @@ const Notification = ({ navigation }) => {
         break;
 
       case 'connectionRequestResponse':
-        console.log("🚀 Navigating to MatrimonyPeopleProfile with ID:", notification._id, "User ID:", notification.relatedData.toUserId);
+        console.log("🚀 Navigating to MatrimonyPeopleProfile with ID:", notification._id, "User ID:", notification.relatedData.fromUserId);
         navigation.navigate('MatrimonyPeopleProfile', {
           id: notification._id,
-          userId: notification?.relatedData?.toUserId,
+          userId: notification?.relatedData?.fromUserId,
         });
         break;
 
@@ -201,7 +201,7 @@ const Notification = ({ navigation }) => {
         console.log("📩 Navigating to IntrestReceivedProfilePage with ID:", notification._id, "User ID:", notification.relatedData.fromUserId);
         navigation.navigate('IntrestReceivedProfilePage', {
           id: notification._id,
-          userId: notification?.relatedData?.fromUserId, // 👈 correct key
+          userId: notification?.relatedData?.fromUserId,
         });
         break;
 

@@ -88,8 +88,8 @@ const styles = StyleSheet.create({
     marginBottom: SH(30)
   },
   sliderImage: {
-    width: "100%",
-    height: SH(180),
+    width:"100%",
+    height:SH(180),
     resizeMode: 'cover',
   },
   dot: {
@@ -118,6 +118,9 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
     textAlign: 'center',
     lineHeight: SF(22),
+  },
+  bottomSlider:{
+    paddingBottom:SH(20)
   }
 });
 

@@ -8,10 +8,11 @@ import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import Globalstyles from '../../utils/GlobalCss';
-import { SAVED_PROFILES } from '../../utils/BaseUrl';
+import { DHARMSHALA_ADVERDISE_WINDOW, SAVED_PROFILES } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SF, SH, SW } from '../../utils/Dimensions';
+const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 import { showMessage } from 'react-native-flash-message';
 const { width, height } = Dimensions.get("window");
 import { useSelector } from 'react-redux';
@@ -22,12 +23,14 @@ const DharamsalaDetail = ({ navigation, route }) => {
   const [showFullText, setShowFullText] = useState(false);
   const [Save, setIsSaved] = useState(initialSavedState || false);
   const description = DharamsalaData.description || "No description available.";
-  const truncatedDescription = description.slice(0, 100) + "...";
+  const truncatedDescription = description.slice(0, 300) + "...";
   const [modalVisible, setModalVisible] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
    const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
        const notificationCount = notifications ? notifications.length : 0;
   const formattedImages = DharamsalaData.images.map(img => ({ uri: img }));
+  const [slider, setSlider] = useState([]);
+  
   const openImageViewer = (index) => {
     setImageIndex(index);
     setModalVisible(true);
@@ -51,6 +54,68 @@ const DharamsalaDetail = ({ navigation, route }) => {
 
     return () => clearInterval(interval);
   }, [currentIndex]);
+
+
+  useEffect(() => {
+    Advertisement_window();
+  }, []);
+
+
+  useEffect(() => {
+    if (slider.length === 0) return;
+
+    const currentSlide = slider[currentIndex];
+    const durationInSeconds = currentSlide?.duration || 2;
+    const durationInMilliseconds = durationInSeconds * 1000;
+
+    const timeout = setTimeout(() => {
+      const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
+      setCurrentIndex(nextIndex);
+      sliderRef.current?.goToSlide(nextIndex);
+    }, durationInMilliseconds);
+
+    return () => clearTimeout(timeout);
+  }, [currentIndex, slider]);
+
+
+  const Advertisement_window = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+      const response = await axios.get(DHARMSHALA_ADVERDISE_WINDOW, { headers });
+
+      if (response.data) {
+        const fetchedData = response.data.data;
+        console.log("fetchedData", JSON.stringify(fetchedData));
+
+        const fullSliderData = fetchedData.flatMap((item) =>
+          item.media.map((mediaItem) => ({
+            id: `${item._id}_${mediaItem._id}`,
+            title: item.title,
+            description: item.description,
+            image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
+            resolution: mediaItem.resolution,
+          }))
+        );
+
+        setSlider(fullSliderData);
+        console.log("Slider Data:", fullSliderData);
+      } else {
+        setSlider([]);
+      }
+    } catch (error) {
+      console.error("Error fetching advertisement:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   const SliderrenderItem = ({ item, index }) => (
     <TouchableOpacity onPress={() => openImageViewer(index)}>
@@ -181,36 +246,44 @@ const DharamsalaDetail = ({ navigation, route }) => {
 
           {/* Modal for Full Image View */}
           <Modal visible={modalVisible} transparent={true} animationType="fade">
-            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.8)", justifyContent: "center", alignItems: "center" }}>
-              <ScrollView
-                horizontal
-                pagingEnabled
-                showsHorizontalScrollIndicator={false}
-                contentOffset={{ x: imageIndex * SW(350), y: 0 }}
-                onMomentumScrollEnd={(event) => {
-                  const newIndex = Math.round(event.nativeEvent.contentOffset.x / width);
-                  setImageIndex(newIndex);
-                }}
-              >
-                {formattedImages.map((img, idx) => (
-                  <View key={idx} style={{ width: SW(350), height: SH(500), justifyContent: "center", alignItems: "center",
-                  marginTop:SH(100) }}>
-                    <Image
-                      source={{ uri: img.uri }}
-                      style={{ width: "90%", height: "80%", borderRadius: 10, resizeMode: "contain" }}
-                    />
-                  </View>
-                ))}
-              </ScrollView>
+            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.8)"}}>
+            <ScrollView
+  horizontal
+  pagingEnabled
+  showsHorizontalScrollIndicator={false}
+  contentOffset={{ x: imageIndex * SCREEN_W, y: 0 }} 
+  onMomentumScrollEnd={(e) =>
+    setImageIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W))
+  }
+>
+  {formattedImages.map((img, idx) => (
+    <View
+      key={idx}
+      style={{
+        width: SCREEN_W,            
+        height: SCREEN_H,           
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop:SH(15)
+      }}
+    >
+      <Image
+        source={{ uri: img.uri }}
+        resizeMode="contain"         
+        style={{ width: '100%', height: '100%' }}
+      />
+    </View>
+  ))}
+</ScrollView>
 
               <View style={{
-                position: "absolute", top: 40, alignSelf: "center", backgroundColor: "rgba(0,0,0,0.6)",
+                position: "absolute", top:SH(30), alignSelf: "center", backgroundColor: "rgba(0,0,0,0.6)",
                 paddingHorizontal: SW(8), borderRadius: 5, paddingVertical: SH(8)
               }}>
                 <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>{imageIndex + 1} / {formattedImages.length}</Text>
               </View>
 
-              <TouchableOpacity onPress={() => setModalVisible(false)} style={{ position: "absolute", top: 40, right: 20 }}>
+              <TouchableOpacity onPress={() => setModalVisible(false)} style={{ position: "absolute", top:SH(40), right:SW(20) }}>
                 <Text style={{ color: "white", fontSize: SF(13), fontFamily: "Poppins-Regular" }}>Close</Text>
               </TouchableOpacity>
             </View>
@@ -228,10 +301,10 @@ const DharamsalaDetail = ({ navigation, route }) => {
           {/* Description with Read More / Read Less */}
           <View style={styles.TextView}>
             <Text style={Globalstyles.title}>Description</Text>
-            <Text style={styles.smallText}>
+            <Text style={styles.descriptionText}>
               {showFullText ? description : truncatedDescription}
             </Text>
-            {description.length > 100 && (
+            {description.length > 300 && (
               <TouchableOpacity onPress={() => setShowFullText(!showFullText)}>
                 <Text style={styles.viewMore}>
                   {showFullText ? 'Read Less' : 'Read More'}
@@ -263,7 +336,29 @@ const DharamsalaDetail = ({ navigation, route }) => {
           </TouchableOpacity>
         </View>
 
-        <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
+        <View style={styles.Bottomimage}>
+              <AppIntroSlider
+                    ref={sliderRef}
+                    data={slider}
+                    renderItem={({ item }) => {
+                        const { width, height } = item.resolution;
+                        return (
+                            <Image
+                                source={{ uri: item.image }}
+                                style={{
+                                    width,
+                                    height,
+                                }}
+                            />
+                        );
+                    }}
+                    showNextButton={false}
+                    showDoneButton={false}
+                    dotStyle={Globalstyles.dot}
+                    activeDotStyle={Globalstyles.activeDot}
+                />
+
+              </View>
 
       </ScrollView>
     </SafeAreaView>

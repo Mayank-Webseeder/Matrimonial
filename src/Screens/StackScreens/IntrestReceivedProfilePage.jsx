@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback ,useRef } from 'react';
 import { View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator, Dimensions, Modal } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import AppIntroSlider from 'react-native-app-intro-slider';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -11,8 +13,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { MATCHED_PROFILE } from '../../utils/BaseUrl';
-import { ACCEPTED_API, REJECTED_API, SAVED_PROFILES } from '../../utils/BaseUrl';
+import { BIODATA_ADVERTISE_WINDOW, MATCHED_PROFILE ,ACCEPTED_API, REJECTED_API, SAVED_PROFILES } from '../../utils/BaseUrl';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import moment from 'moment';
 import { useFocusEffect } from '@react-navigation/native';
@@ -20,24 +21,28 @@ import { showMessage } from 'react-native-flash-message';
 const { width, height } = Dimensions.get("window");
 
 const IntrestReceivedProfilePage = ({ navigation, route }) => {
+  const sliderRef = useRef(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [slider, setSlider] = useState([]);
   const { userId } = route.params;
   const [loading, setLoading] = useState(true);
   const [loadingAccept, setLoadingAccept] = useState(false);
   const [loadingDecline, setLoadingDecline] = useState(false);
   const [profileData, setProfileData] = useState([]);
-   const [userData, setUserData] = useState({});
-   const [Save, setIsSaved] = useState(initialSavedState || false);
-   const hideContact = !!(userData?.hideContact || userData?.hideContact);
-   const hideOptionalDetails = !!(userData?.hideOptionalDetails || userData?.hideOptionalDetails)
-   const _id = userData?._id;
-   const personalDetails = userData?.personalDetails;
-   const initialSavedState=profileData?.isSaved;
-  const status=profileData?.requestStatus;
-  const requestId=profileData?.requestId;
-  const isBlur=userData?.isBlur;
+  const [userData, setUserData] = useState({});
+  const [Save, setIsSaved] = useState(initialSavedState || false);
+  const hideContact = !!(userData?.hideContact || userData?.hideContact);
+  const hideOptionalDetails = !!(userData?.hideOptionalDetails || userData?.hideOptionalDetails)
+  const _id = userData?._id;
+  const personalDetails = userData?.personalDetails;
+  const initialSavedState = profileData?.isSaved;
+  const status = profileData?.requestStatus;
+  const requestId = profileData?.requestId;
+  const isBlur = userData?.isBlur;
   const MyprofileData = useSelector((state) => state.getBiodata);
   const [imageIndex, setImageIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
+  const hasOtherDetails = personalDetails?.knowCooking || personalDetails?.dietaryHabit || personalDetails?.smokingHabit || personalDetails?.drinkingHabit || personalDetails?.tobaccoHabits || personalDetails?.hobbies;
 
   useEffect(() => {
     console.log("userId", userId);
@@ -59,8 +64,72 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
       if (userId) {
         fetchUserProfile(userId);
       }
+
+      setLoadingAccept(false);
+      setLoadingDecline(false);
     }, [userId])
   );
+
+
+  useEffect(() => {
+    Advertisement_window();
+  }, []);
+
+
+  useEffect(() => {
+    if (slider.length === 0) return;
+
+    const currentSlide = slider[currentIndex];
+    const durationInSeconds = currentSlide?.duration || 2;
+    const durationInMilliseconds = durationInSeconds * 1000;
+
+    const timeout = setTimeout(() => {
+      const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
+      setCurrentIndex(nextIndex);
+      sliderRef.current?.goToSlide(nextIndex);
+    }, durationInMilliseconds);
+
+    return () => clearTimeout(timeout);
+  }, [currentIndex, slider]);
+
+
+  const Advertisement_window = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+      const response = await axios.get(BIODATA_ADVERTISE_WINDOW, { headers });
+
+      if (response.data) {
+        const fetchedData = response.data.data;
+        console.log("fetchedData", JSON.stringify(fetchedData));
+
+        const fullSliderData = fetchedData.flatMap((item) =>
+          item.media.map((mediaItem) => ({
+            id: `${item._id}_${mediaItem._id}`,
+            title: item.title,
+            description: item.description,
+            image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
+            resolution: mediaItem.resolution,
+          }))
+        );
+
+        setSlider(fullSliderData);
+        console.log("Slider Data:", fullSliderData);
+      } else {
+        setSlider([]);
+      }
+    } catch (error) {
+      console.error("Error fetching advertisement:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchUserProfile = async (id) => {
     setLoading(true);
@@ -98,12 +167,12 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
     }
   };
   if (loading) {
-      return (
-        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color={Colors.theme_color} />
-        </View>
-      );
-    }
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color={Colors.theme_color} />
+      </View>
+    );
+  }
 
   // if (loading) {
   //   return (
@@ -122,7 +191,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
       showMessage({
         type: "danger",
         message: "User ID not found!",
-        icon:"danger"
+        icon: "danger"
       });
       return;
     }
@@ -222,9 +291,10 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         description: errorMessage,
         icon: "danger"
       });
+      setLoadingAccept(false);
     }
     finally {
-      setLoadingDecline(false);
+      setLoadingAccept(false);
     }
   };
 
@@ -278,9 +348,10 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         description: errorMessage,
         icon: "danger"
       });
+      setLoadingDecline(false);
     }
     finally {
-      setLoading(false)
+      setLoadingDecline(false)
     }
   };
 
@@ -386,12 +457,12 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
               <FontAwesome
                 name={Save ? "bookmark" : "bookmark-o"}
                 size={19}
-                color={Colors.dark}
+                color={Colors.theme_color}
               />
               <Text style={styles.iconText}>{Save ? "Saved" : "Save"}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
-              <Feather name="send" size={19} color={Colors.dark} />
+              <Feather name="send" size={19} color={Colors.theme_color} />
               <Text style={styles.iconText}>Shares</Text>
             </TouchableOpacity>
             {/* <TouchableOpacity style={styles.interestedButton}>
@@ -407,12 +478,12 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
               }}
               disabled={hideContact} // Disable press functionality when hidden
             >
-              <MaterialIcons name="call" size={19} color={Colors.dark} />
+              <MaterialIcons name="call" size={19} color={Colors.theme_color} />
               <Text style={styles.iconText}>Call</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ReportPage', { profileId: _id })}>
-              <MaterialIcons name="error-outline" size={19} color={Colors.dark} />
+              <MaterialIcons name="error-outline" size={19} color={Colors.theme_color} />
               <Text style={styles.iconText}>Report</Text>
             </TouchableOpacity>
           </View>
@@ -425,7 +496,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
             {personalDetails?.maritalStatus && <Text style={styles.text}>{personalDetails?.maritalStatus}</Text>}
             {personalDetails?.manglikStatus && <Text style={styles.text}>{personalDetails?.manglikStatus}</Text>}
             {personalDetails?.disabilities && <Text style={styles.text}>Disability: {personalDetails?.disabilities}</Text>}
-            {/* {personalDetails?.profileCreatedBy && <Text style={styles.text}>Profile created by: {personalDetails?.profileCreatedBy}</Text>} */}
+            {personalDetails?.profileCreatedBy && <Text style={styles.text}>Profile created by: {personalDetails?.profileCreatedBy}</Text>}
           </View>
           <View style={styles.rightContainer}>
             {personalDetails?.currentCity && <Text style={styles.text}>{personalDetails?.currentCity}</Text>}
@@ -436,7 +507,10 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         </View >
         <View style={styles.flexContainer1}>
           <View>
-            <Text style={styles.HeadingText}>Horoscope</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
+              <MaterialIcons name="stars" size={25} color={Colors.theme_color} />
+              <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Horoscope</Text>
+            </View>
             <Text style={styles.text}>DOB {moment(personalDetails.dob).format("DD-MM-YYYY")} / Time: {personalDetails?.timeOfBirth}</Text>
             {personalDetails?.placeofbirth && <Text style={styles.text}>Place of Birth: {personalDetails?.placeofbirth}</Text>}
 
@@ -461,7 +535,10 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         </View>
         <View style={styles.flexContainer1}>
           <View>
-            <Text style={styles.HeadingText}>About Me</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
+              <MaterialCommunityIcons name="account-box-outline" size={25} color={Colors.theme_color} />
+              <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>About Me</Text>
+            </View>
             {!hideOptionalDetails && (
               <>
                 {personalDetails?.aboutMe && <Text style={styles.text}>{personalDetails?.aboutMe}</Text>}
@@ -469,52 +546,71 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
             )}
             {personalDetails?.complexion && <Text style={styles.text}>Complexion: {personalDetails?.complexion}</Text>}
             {personalDetails?.weight && <Text style={styles.text}>Weight: {personalDetails?.weight}</Text>}
-            {personalDetails?.livingStatus && <Text style={styles.text}>Currently Living city: {personalDetails?.livingStatus}</Text>}
-            {personalDetails?.familyType && <Text style={styles.text}>Living with family: {personalDetails?.familyType}</Text>}
+            {/* {personalDetails?.currentCity && <Text style={styles.text}>Currently in: {personalDetails?.currentCity}</Text>} */}
+            {personalDetails?.livingStatus && <Text style={styles.text}>Living with family: {personalDetails?.livingStatus}</Text>}
           </View>
         </View>
         <View style={styles.flexContainer1}>
           <View>
-            <Text style={styles.HeadingText}>Family Section</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
+              <FontAwesome name="group" size={20} color={Colors.theme_color} />
+              <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Family Section</Text>
+            </View>
             {personalDetails?.fatherName && <Text style={styles.text}>Father’s Name: {personalDetails?.fatherName}</Text>}
             {personalDetails?.fatherOccupation && <Text style={styles.text}>Father’s Occupation: {personalDetails?.fatherOccupation}</Text>}
             {personalDetails?.motherName && <Text style={styles.text}>Mother’s Name: {personalDetails?.motherName}</Text>}
             {personalDetails?.motherOccupation && <Text style={styles.text}>Mother’s Occupation: {personalDetails?.motherOccupation}</Text>}
-            {personalDetails?.familyIncome && <Text style={[styles.text, { textTransform: "none" }]}>Family Income (Annually): {personalDetails?.familyIncome}</Text>}
+            {personalDetails?.fatherIncomeAnnually && <Text style={[styles.text, { textTransform: "none" }]}>Father Income: {personalDetails.fatherIncomeAnnually}</Text>}
+            {personalDetails?.motherIncomeAnnually && <Text style={[styles.text, { textTransform: "none" }]}>Mother Income: {personalDetails.motherIncomeAnnually}</Text>}
             {personalDetails?.familyType && <Text style={styles.text}>Family Type: {personalDetails?.familyType}</Text>}
             {personalDetails?.siblings && <Text style={styles.text}>Siblings: {personalDetails?.siblings}</Text>}
-            {!hideOptionalDetails && (
-              <>
-                <Text style={styles.HeadingText}>About My family</Text>
-                {personalDetails?.otherFamilyMemberInfo && <Text style={styles.text}>Other Family Members: {personalDetails.otherFamilyMemberInfo}</Text>}
-              </>
-            )}
           </View>
         </View>
-        {!hideContact && personalDetails?.contactNumber1 && (
-          <View style={styles.flexContainer1}>
-            <View>
-              <Text style={styles.HeadingText}>Contact Details:</Text>
-              {personalDetails?.contactNumber1 && <Text style={styles.text}>Mobile No. 1: {personalDetails.contactNumber1}</Text>}
-              {personalDetails?.contactNumber2 && <Text style={styles.text}>Mobile No. 2: {personalDetails.contactNumber2}</Text>}
+        {
+          !hideOptionalDetails && personalDetails?.otherFamilyMemberInfo && (
+            <View style={styles.detailbox}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
+                <FontAwesome name="group" size={20} color={Colors.theme_color} />
+                <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Family's Other Details</Text>
+              </View>
+              {personalDetails?.otherFamilyMemberInfo && <Text style={styles.text}>Other Family Members: {personalDetails.otherFamilyMemberInfo}</Text>}
             </View>
+          )
+        }
+        {!hideContact && (
+          <View style={styles.detailbox}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
+              <AntDesign name="contacts" size={25} color={Colors.theme_color} />
+              <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Contact Details</Text>
+            </View>
+            {personalDetails?.contactNumber1 && <Text style={styles.text}>Mobile No. 1: {personalDetails.contactNumber1}</Text>}
+            {personalDetails?.contactNumber2 && <Text style={styles.text}>Mobile No. 2: {personalDetails.contactNumber2}</Text>}
+            {personalDetails?.cityOrVillage && <Text style={styles.text}>City : {personalDetails.cityOrVillage}</Text>}
+            {personalDetails?.state && <Text style={styles.text}>State : {personalDetails.state}</Text>}
           </View>
         )}
-        {!hideOptionalDetails && personalDetails?.knowCooking && (
+        {!hideOptionalDetails && hasOtherDetails && (
           <View style={styles.flexContainer1}>
             <View>
-              <Text style={styles.HeadingText}>Other Details:</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
+                <MaterialIcons name="details" size={25} color={Colors.theme_color} />
+                <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Other Details</Text>
+              </View>
               {personalDetails?.knowCooking && <Text style={styles.text}>Cooking: {personalDetails.knowCooking}</Text>}
               {personalDetails?.dietaryHabit && <Text style={styles.text}>Diet: {personalDetails.dietaryHabit}</Text>}
               {personalDetails?.smokingHabit && <Text style={styles.text}>Smoke: {personalDetails.smokingHabit}</Text>}
               {personalDetails?.drinkingHabit && <Text style={styles.text}>Drinking: {personalDetails.drinkingHabit}</Text>}
               {personalDetails?.tobaccoHabits && <Text style={styles.text}>Tobacco: {personalDetails.tobaccoHabits}</Text>}
+              {personalDetails?.hobbies && <Text style={styles.text}>Hobby: {personalDetails.hobbies}</Text>}
             </View>
           </View>
         )}
         {Object.keys(profileData?.comparisonResults || {}).length > 0 ? (
           <View style={styles.flexContainer3}>
-            <Text style={styles.HeadingText}>Your Similarities</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
+              <MaterialCommunityIcons name="heart-half-full" size={25} color={Colors.theme_color} />
+              <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Your Similarities</Text>
+            </View>
             <View style={styles.flex}>
               <Image
                 source={{ uri: profileData?.loggedInUserBiodata?.personalDetails?.closeUpPhoto }}
@@ -544,10 +640,31 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
             To find better matches, please set your partner preferences.
           </Text>
         )}
-        <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
+        <View style={Globalstyles.bottomImage}>
+          <AppIntroSlider
+            ref={sliderRef}
+            data={slider}
+            renderItem={({ item }) => {
+              const { width, height } = item.resolution;
+              return (
+                <Image
+                  source={{ uri: item.image }}
+                  style={{
+                    width,
+                    height,
+                  }}
+                />
+              );
+            }}
+            showNextButton={false}
+            showDoneButton={false}
+            dotStyle={Globalstyles.dot}
+            activeDotStyle={Globalstyles.activeDot}
+          />
+        </View>
       </ScrollView>
-      <View style={styles.bottomContainer}>
 
+      <View style={styles.bottomContainer}>
         <TouchableOpacity
           style={[
             styles.declineButton,
@@ -587,8 +704,6 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
             </>
           )}
         </TouchableOpacity>
-
-
       </View>
     </SafeAreaView>
   );

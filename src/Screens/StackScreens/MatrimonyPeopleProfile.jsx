@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import {
   View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator, Share, Switch,
   Modal, Dimensions
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -13,14 +14,18 @@ import Globalstyles from '../../utils/GlobalCss';
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import moment from "moment";
 import axios from 'axios';
-import { DELETE_SEND_REQUEST, MATCHED_PROFILE, SAVED_PROFILES, SEND_REQUEST, SHARED_PROFILES, VERIFY_PROFILE } from '../../utils/BaseUrl';
+import { BIODATA_ADVERTISE_WINDOW, DELETE_SEND_REQUEST, MATCHED_PROFILE, SAVED_PROFILES, SEND_REQUEST, SHARED_PROFILES, VERIFY_PROFILE } from '../../utils/BaseUrl';
 import { useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SF, SH, SW } from '../../utils/Dimensions';
 import { showMessage } from 'react-native-flash-message';
-const { width, height } = Dimensions.get("window");
+const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
+import AppIntroSlider from 'react-native-app-intro-slider';
 
 const MatrimonyPeopleProfile = ({ navigation }) => {
+  const sliderRef = useRef(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [slider, setSlider] = useState([]);
   const route = useRoute();
   const { userId } = route.params || {};
   const [loading, setLoading] = useState(true);
@@ -53,6 +58,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const isBlur = userData?.isBlur;
   const isBlurCondition = status === "accepted" ? !isVisible : isBlur;
   const [Save, setIsSaved] = useState(initialSavedState || false);
+  const hasOtherDetails = personalDetails?.knowCooking || personalDetails?.dietaryHabit || personalDetails?.smokingHabit || personalDetails?.drinkingHabit || personalDetails?.tobaccoHabits || personalDetails?.hobbies;
 
   const handleToggle = async () => {
     const newValue = !isSwitchOn;
@@ -64,6 +70,67 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       setIsSwitchOn(true);
     } else if (responseMessage.includes("disapproved")) {
       setIsSwitchOn(false);
+    }
+  };
+
+
+  useEffect(() => {
+    Advertisement_window();
+  }, []);
+
+
+  useEffect(() => {
+    if (slider.length === 0) return;
+
+    const currentSlide = slider[currentIndex];
+    const durationInSeconds = currentSlide?.duration || 2;
+    const durationInMilliseconds = durationInSeconds * 1000;
+
+    const timeout = setTimeout(() => {
+      const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
+      setCurrentIndex(nextIndex);
+      sliderRef.current?.goToSlide(nextIndex);
+    }, durationInMilliseconds);
+
+    return () => clearTimeout(timeout);
+  }, [currentIndex, slider]);
+
+
+  const Advertisement_window = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+      const response = await axios.get(BIODATA_ADVERTISE_WINDOW, { headers });
+
+      if (response.data) {
+        const fetchedData = response.data.data;
+        console.log("fetchedData", JSON.stringify(fetchedData));
+
+        const fullSliderData = fetchedData.flatMap((item) =>
+          item.media.map((mediaItem) => ({
+            id: `${item._id}_${mediaItem._id}`,
+            title: item.title,
+            description: item.description,
+            image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
+            resolution: mediaItem.resolution,
+          }))
+        );
+
+        setSlider(fullSliderData);
+        console.log("Slider Data:", fullSliderData);
+      } else {
+        setSlider([]);
+      }
+    } catch (error) {
+      console.error("Error fetching advertisement:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -211,6 +278,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       console.log("requestId:", profileData?.requestId);
       console.log("isBlur:", userData?.isBlur);
       console.log("userId:", userData?.userId);
+      console.log("userData?.personalDetails", userData?.personalDetails);
       if (userId) {
         fetchUserProfile(userId);
       }
@@ -400,6 +468,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
     ?.replace(/\s*-\s*/, "")
     ?.replace(/\s+/g, "");
 
+
   return (
     <SafeAreaView style={Globalstyles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
@@ -424,66 +493,146 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             <TouchableOpacity onPress={() => openImageViewer(0)}>
               <Image
                 source={{ uri: images[0] }}
-                style={{ width: SW(350), height: SH(330), borderRadius: 10 }}
+                style={{ width: SW(370), height: SH(350), borderRadius: 10, resizeMode: "cover" }}
                 blurRadius={isBlurCondition ? 5 : 0}
               />
             </TouchableOpacity>
           )}
-          <Modal visible={modalVisible} transparent={true} animationType="fade">
-            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.8)", justifyContent: "center", alignItems: "center" }}>
+          <Modal visible={modalVisible} transparent animationType="fade">
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: 'rgba(0,0,0,0.8)',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
               <ScrollView
                 horizontal
                 pagingEnabled
                 showsHorizontalScrollIndicator={false}
-                onMomentumScrollEnd={(event) => {
-                  const newIndex = Math.round(event.nativeEvent.contentOffset.x / width);
-                  setImageIndex(newIndex);
-                }}
-                style={{ width, height }}
+                onMomentumScrollEnd={(e) =>
+                  setImageIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W))
+                }
+                contentOffset={{ x: imageIndex * SCREEN_W, y: 0 }}   // current slide
+                style={{ width: SCREEN_W, height: SCREEN_H }}
               >
-                {images.map((img, idx) => (
-                  <View key={idx} style={{ width, height, justifyContent: "center", alignItems: "center" }}>
+                {images.map((uri, idx) => (
+                  <View
+                    key={idx}
+                    style={{
+                      width: SCREEN_W,
+                      height: SCREEN_H,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
                     <Image
-                      source={{ uri: img }}
-                      style={{ width: width * 0.9, height: height * 0.8, borderRadius: 10, resizeMode: "contain" }}
+                      source={{ uri }}
+                      resizeMode="contain"            // या "cover" अगर crop चाहिये
+                      style={{ width: '100%', height: '100%' }}
                       blurRadius={isBlurCondition ? 5 : 0}
                     />
                   </View>
                 ))}
               </ScrollView>
-              <View style={{ position: "absolute", top: 40, alignSelf: "center", backgroundColor: "rgba(0,0,0,0.6)", padding: 8, borderRadius: 5 }}>
-                <Text style={{ color: "white", fontSize: SF(13), fontFamily: "Poppins-Regular" }}>{imageIndex + 1} / {images.length}</Text>
-              </View>
-              <TouchableOpacity onPress={() => setModalVisible(false)} style={{ position: "absolute", top: 40, right: 20 }}>
-                <Text style={{ color: "white", fontSize: SF(13), fontFamily: "Poppins-Regular" }}>Close</Text>
-              </TouchableOpacity>
 
+              {/* index badge */}
+              <View
+                style={{
+                  position: 'absolute',
+                  top: SH(40),
+                  alignSelf: 'center',
+                  backgroundColor: 'rgba(0,0,0,0.6)',
+                  paddingHorizontal: SW(8),
+                  paddingVertical: SH(8),
+                  borderRadius: 5,
+                }}
+              >
+                <Text style={{ color: '#fff' }}>
+                  {imageIndex + 1} / {images.length}
+                </Text>
+              </View>
+
+              {/* close button */}
+              <TouchableOpacity
+                onPress={() => setModalVisible(false)}
+                style={{ position: 'absolute', top: 40, right: 20 }}
+              >
+                <Text style={{ color: '#fff' }}>Close</Text>
+              </TouchableOpacity>
             </View>
           </Modal>
         </View>
-        {isActivist && (
-          <View style={styles.verifiedContainer}>
-            {isVerified && (
-              <Image
-                source={require("../../Images/verified.png")}
-                style={styles.verifiedBadge}
-              />
-            )}
+        {/* {isActivist ? (
+  <View style={styles.verifiedContainer}>
+    {isVerified && (
+      <Image
+        source={require("../../Images/verified.png")}
+        style={styles.verifiedBadge}
+      />
+    )}
 
+    {isVerified ? (
+      verifiedBy === activistId ? (
+        <>
+          <Text style={styles.verifiedText}>Verified</Text>
+          <Switch
+            value={isSwitchOn}
+            onValueChange={handleToggle}
+            thumbColor={isSwitchOn ? "#4CAF50" : "#767577"}
+            trackColor={{ false: "#f4f3f4", true: "#4CAF50" }}
+          />
+        </>
+      ) : (
+        <Text style={styles.verifiedText}>Verified</Text>
+      )
+    ) : (
+      <>
+        <Text style={styles.verifiedText}>Verify Profile</Text>
+        <Switch
+          value={isSwitchOn}
+          onValueChange={handleToggle}
+          thumbColor={isSwitchOn ? "#4CAF50" : "#767577"}
+          trackColor={{ false: "#f4f3f4", true: "#4CAF50" }}
+        />
+      </>
+    )}
+  </View>
+) : (
+  isVerified && (
+    <View style={[styles.verifiedContainer,{top: SH(300),
+      left: SW(270)}]}>
+      <Image
+        source={require("../../Images/verified.png")}
+        style={styles.verifiedBadge}
+      />
+      <Text style={styles.verifiedText}>Verified</Text>
+    </View>
+  )
+)} */}
+
+        {isActivist ? (
+          <View style={styles.verifiedContainer}>
             {isVerified ? (
-              verifiedBy === activistId ? (
-                <>
-                  <Text style={styles.verifiedText}>Verified</Text>
+              <>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: "flex-end" }}>
+                  <Image
+                    source={require("../../Images/verified.png")}
+                    style={styles.verifiedBadge}
+                  />
+                  <Text style={[styles.verifiedText, { paddingHorizontal: SW(5), paddingVertical: SH(3) }]}> Already Verified</Text>
+                </View>
+
+                {verifiedBy === activistId && (
                   <Switch
                     value={isSwitchOn}
                     onValueChange={handleToggle}
                     thumbColor={isSwitchOn ? "#4CAF50" : "#767577"}
                     trackColor={{ false: "#f4f3f4", true: "#4CAF50" }}
                   />
-                </>
-              ) : (
-                <Text style={styles.verifiedText}>Verified</Text>
-              )
+                )}
+              </>
             ) : (
               <>
                 <Text style={styles.verifiedText}>Verify Profile</Text>
@@ -496,7 +645,20 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               </>
             )}
           </View>
+        ) : (
+          isVerified && (
+            <View style={[styles.verifiedContainer, { top: SH(320), left: SW(275), width: SW(80) }]}>
+              <Image
+                source={require("../../Images/verified.png")}
+                style={styles.verifiedBadge}
+              />
+              <Text style={styles.verifiedText}>Verified</Text>
+            </View>
+          )
         )}
+
+
+
 
         <View style={styles.flexContainer}>
           <View style={styles.flex}>
@@ -516,13 +678,13 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               <FontAwesome
                 name={Save ? "bookmark" : "bookmark-o"}
                 size={19}
-                color={Colors.dark}
+                color={Colors.theme_color}
               />
               <Text style={styles.iconText}>{Save ? "Saved" : "Save"}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.iconContainer} onPress={shareProfiles}>
-              <Feather name="send" size={19} color={Colors.dark} />
+              <Feather name={"send"} size={19} color={Colors.theme_color} />
               <Text style={styles.iconText}>Share</Text>
             </TouchableOpacity>
 
@@ -541,8 +703,8 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                     </Text>
                   ) : (
                     <Text style={styles.buttonText}>
-                        {requestId ? "Delete Interest" : status ? status : "Send Interest"}
-                      </Text>
+                      {requestId ? "Cancel Interest" : status ? status : "Send Interest"}
+                    </Text>
                   )}
                 </Text>
               )}
@@ -557,11 +719,11 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               }}
               disabled={hideContact} // Disable press functionality when hidden
             >
-              <MaterialIcons name="call" size={19} color={Colors.dark} />
+              <MaterialIcons name={"call"} size={19} color={Colors.theme_color} />
               <Text style={styles.iconText}>Call</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ReportPage', { profileId: _id })}>
-              <MaterialIcons name="error-outline" size={20} color={Colors.dark} />
+              <MaterialIcons name={"error-outline"} size={20} color={Colors.theme_color} />
               <Text style={styles.iconText}>Report</Text>
             </TouchableOpacity>
           </View>
@@ -580,16 +742,16 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             {personalDetails?.maritalStatus && <Text style={styles.text}>{personalDetails?.maritalStatus}</Text>}
             {personalDetails?.manglikStatus && <Text style={styles.text}>{personalDetails?.manglikStatus}</Text>}
             {personalDetails?.disabilities && <Text style={styles.text}>Disability: {personalDetails?.disabilities}</Text>}
-            {/* {personalDetails?.profileCreatedBy && <Text style={styles.text}>Profile Created By: {personalDetails?.profileCreatedBy}</Text>} */}
+            {personalDetails?.profileCreatedBy && <Text style={styles.text}>Profile Created By: {personalDetails?.profileCreatedBy}</Text>}
           </View>
 
           {/** Right Container */}
           <View style={styles.rightContainer}>
             {/* Right-side details */}
             {personalDetails?.currentCity && <Text style={styles.text}>{personalDetails?.currentCity}</Text>}
-            {personalDetails?.occupation && <Text style={styles.text}>{personalDetails?.occupation}</Text>}
+            {personalDetails?.occupation && <Text style={[styles.text, { textTransform: "none" }]}>{personalDetails?.occupation}</Text>}
             {personalDetails?.annualIncome && <Text style={[styles.text, { textTransform: "none" }]}>{personalDetails?.annualIncome} </Text>}
-            {personalDetails?.qualification && <Text style={styles.text}>{personalDetails?.qualification}</Text>}
+            {personalDetails?.qualification && <Text style={[styles.text, { textTransform: "none" }]}>{personalDetails?.qualification}</Text>}
           </View>
         </View>
 
@@ -597,7 +759,10 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         {personalDetails?.dob && (
           <View style={styles.flexContainer1}>
             <View>
-              <Text style={styles.HeadingText}>Horoscope</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
+                <MaterialIcons name="stars" size={25} color={Colors.theme_color} />
+                <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Horoscope</Text>
+              </View>
               <Text style={styles.text}>DOB {moment(personalDetails.dob).format("DD-MM-YYYY")} / Time: {personalDetails?.timeOfBirth}</Text>
               {personalDetails?.placeofbirth && <Text style={styles.text}>Place of Birth: {personalDetails?.placeofbirth}</Text>}
 
@@ -623,68 +788,96 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         )}
 
         {/* About Me Section */}
-        {personalDetails?.aboutMe && (
+        {!hideOptionalDetails && (
           <View style={styles.flexContainer1}>
             <View>
-              <Text style={styles.HeadingText}>About Me</Text>
-              {!hideOptionalDetails && (
-                <>
-                  {personalDetails?.aboutMe && <Text style={styles.text}>{personalDetails?.aboutMe}</Text>}
-                </>
-              )}
-              <View style={styles.flexContainer2}>
-                {personalDetails?.complexion && <Text style={styles.text}>Completion: {personalDetails?.complexion}</Text>}
-                {personalDetails?.weight && <Text style={styles.text}>Weight: {personalDetails?.weight} kg </Text>}
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
+                <MaterialCommunityIcons name="account-box-outline" size={25} color={Colors.theme_color} />
+                <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>About Me</Text>
               </View>
-              <View style={styles.flexContainer2}>
-                {personalDetails?.currentCity && <Text style={styles.text}>Currently in: {personalDetails?.currentCity}</Text>}
-                {personalDetails?.livingStatus && <Text style={styles.text}>Living with family: {personalDetails?.livingStatus}</Text>}
+
+
+              {personalDetails?.aboutMe && <Text style={styles.text}>{personalDetails?.aboutMe}</Text>}
+
+              <View style={{ marginVertical: SH(4) }}>
+                <View style={styles.flexContainer2}>
+                  {personalDetails?.complexion && (
+                    <Text style={styles.text}>Complexion: {personalDetails?.complexion}</Text>
+                  )}
+                  {personalDetails?.weight && (
+                    <Text style={styles.text}>Weight: {personalDetails?.weight} kg</Text>
+                  )}
+                </View>
+
+                <View style={styles.flexContainer2}>
+                  {/* {personalDetails?.currentCity && (
+                    <Text style={styles.text}>Currently in: {personalDetails?.currentCity}</Text>
+                  )} */}
+                  {personalDetails?.livingStatus && (
+                    <Text style={styles.text}>Living with family: {personalDetails?.livingStatus}</Text>
+                  )}
+                </View>
               </View>
             </View>
           </View>
         )}
 
         {/* Family Section */}
-        {personalDetails?.fatherName && (
-          <View style={styles.flexContainer1}>
-            <View>
-              <Text style={styles.HeadingText}>Family Section</Text>
-              {personalDetails?.fatherName && <Text style={styles.text}>Father’s Name: {personalDetails.fatherName}</Text>}
-              {personalDetails?.fatherOccupation && <Text style={styles.text}>Father’s Occupation: {personalDetails.fatherOccupation}</Text>}
-              {personalDetails?.motherName && <Text style={styles.text}>Mother’s Name: {personalDetails.motherName}</Text>}
-              {personalDetails?.fatherIncomeAnnually && <Text style={[styles.text, { textTransform: "none" }]}>Family Income: {personalDetails.fatherIncomeAnnually}</Text>}
-              {personalDetails?.familyType && <Text style={styles.text}>Family Type: {personalDetails.familyType}</Text>}
-              {!hideOptionalDetails && (
-                <>
-                  <Text style={styles.HeadingText}>About My family</Text>
-                  {personalDetails?.otherFamilyMemberInfo && <Text style={styles.text}>Other Family Members: {personalDetails.otherFamilyMemberInfo}</Text>}
-                </>
-              )}
+        <View style={styles.flexContainer1}>
+          <View>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
+              <FontAwesome name="group" size={20} color={Colors.theme_color} />
+              <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Family Section</Text>
             </View>
+            {personalDetails?.fatherName && <Text style={styles.text}>Father’s Name: {personalDetails.fatherName}</Text>}
+            {personalDetails?.fatherOccupation && <Text style={styles.text}>Father’s Occupation: {personalDetails.fatherOccupation}</Text>}
+            {personalDetails?.motherName && <Text style={styles.text}>Mother’s Name: {personalDetails.motherName}</Text>}
+            {personalDetails?.fatherIncomeAnnually && <Text style={[styles.text, { textTransform: "none" }]}>Father Income: {personalDetails.fatherIncomeAnnually}</Text>}
+            {personalDetails?.motherIncomeAnnually && <Text style={[styles.text, { textTransform: "none" }]}>Mother Income: {personalDetails.motherIncomeAnnually}</Text>}
+            {personalDetails?.familyType && <Text style={styles.text}>Family Type: {personalDetails.familyType}</Text>}
           </View>
-        )}
+        </View>
+
+        {
+          !hideOptionalDetails && personalDetails?.otherFamilyMemberInfo && (
+            <View style={styles.detailbox}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
+                <FontAwesome name="group" size={20} color={Colors.theme_color} />
+                <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Family's Other Details</Text>
+              </View>
+              {personalDetails?.otherFamilyMemberInfo && <Text style={styles.text}>Other Family Members: {personalDetails.otherFamilyMemberInfo}</Text>}
+            </View>
+          )
+        }
 
         {/* Contact Section */}
-        {!hideContact && personalDetails?.contactNumber1 && (
-          <View style={styles.flexContainer1}>
-            <View>
-              <Text style={styles.HeadingText}>Contact Details:</Text>
-              {personalDetails?.contactNumber1 && <Text style={styles.text}>Mobile No. 1: {personalDetails.contactNumber1}</Text>}
-              {personalDetails?.contactNumber2 && <Text style={styles.text}>Mobile No. 2: {personalDetails.contactNumber2}</Text>}
+        {!hideContact && (
+          <View style={styles.detailbox}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
+              <AntDesign name="contacts" size={25} color={Colors.theme_color} />
+              <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Contact Details</Text>
             </View>
+            {personalDetails?.contactNumber1 && <Text style={styles.text}>Mobile No. 1: {personalDetails.contactNumber1}</Text>}
+            {personalDetails?.contactNumber2 && <Text style={styles.text}>Mobile No. 2: {personalDetails.contactNumber2}</Text>}
+            {personalDetails?.cityOrVillage && <Text style={styles.text}>City : {personalDetails.cityOrVillage}</Text>}
+            {personalDetails?.state && <Text style={styles.text}>State : {personalDetails.state}</Text>}
           </View>
         )}
 
         {/* Other Details */}
-        {!hideOptionalDetails && personalDetails?.knowCooking && (
+        {!hideOptionalDetails && hasOtherDetails && (
           <View style={styles.flexContainer1}>
             <View>
-              <Text style={styles.HeadingText}>Other Details:</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
+                <MaterialIcons name="details" size={25} color={Colors.theme_color} />
+                <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Other Details</Text>
+              </View>
               {personalDetails?.knowCooking && <Text style={styles.text}>Cooking: {personalDetails.knowCooking}</Text>}
               {personalDetails?.dietaryHabit && <Text style={styles.text}>Diet: {personalDetails.dietaryHabit}</Text>}
               {personalDetails?.smokingHabit && <Text style={styles.text}>Smoke: {personalDetails.smokingHabit}</Text>}
               {personalDetails?.drinkingHabit && <Text style={styles.text}>Drinking: {personalDetails.drinkingHabit}</Text>}
               {personalDetails?.tobaccoHabits && <Text style={styles.text}>Tobacco: {personalDetails.tobaccoHabits}</Text>}
+              {personalDetails?.hobbies && <Text style={styles.text}>Hobby: {personalDetails.hobbies}</Text>}
             </View>
           </View>
         )}
@@ -700,7 +893,10 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
         {Object.keys(profileData?.comparisonResults || {}).length > 0 ? (
           <View style={styles.flexContainer3}>
-            <Text style={styles.HeadingText}>Your Similarities</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
+              <MaterialCommunityIcons name="heart-half-full" size={25} color={Colors.theme_color} />
+              <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Your Similarities</Text>
+            </View>
             <View style={styles.flex}>
               <Image
                 source={{ uri: profileData?.loggedInUserBiodata?.personalDetails?.closeUpPhoto }}
@@ -718,9 +914,9 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               <View key={index} style={styles.flexContainer5}>
                 <Text style={styles.label}>{key.replace(/([A-Z])/g, " $1").trim()}</Text>
                 {profileData.comparisonResults[key] ? (
-                  <MaterialIcons name="check" style={[styles.icon, styles.checkIcon]} />
+                  <MaterialIcons name={"check"} style={[styles.icon, styles.checkIcon]} />
                 ) : (
-                  <MaterialIcons name="close" style={[styles.icon, styles.crossIcon]} />
+                  <MaterialIcons name={"close"} style={[styles.icon, styles.crossIcon]} />
                 )}
               </View>
             ))}
@@ -731,7 +927,28 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           </Text>
         )}
 
-        <Image source={require('../../Images/slider.png')} style={Globalstyles.bottomImage} />
+        <View style={Globalstyles.bottomImage}>
+          <AppIntroSlider
+            ref={sliderRef}
+            data={slider}
+            renderItem={({ item }) => {
+              const { width, height } = item.resolution;
+              return (
+                <Image
+                  source={{ uri: item.image }}
+                  style={{
+                    width,
+                    height,
+                  }}
+                />
+              );
+            }}
+            showNextButton={false}
+            showDoneButton={false}
+            dotStyle={Globalstyles.dot}
+            activeDotStyle={Globalstyles.activeDot}
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

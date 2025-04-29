@@ -14,7 +14,7 @@ import { subCasteOptions } from '../../DummyData/DropdownData';
 import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { SH, SF, SW } from '../../utils/Dimensions';
-import { GET_ALL_DHARAMSALA, GET_DHARAMSALA, SAVED_PROFILES } from '../../utils/BaseUrl';
+import { DHARMSHALA_ADVERDISE_WINDOW, GET_ALL_DHARAMSALA, GET_DHARAMSALA, SAVED_PROFILES } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
@@ -47,6 +47,7 @@ const Dharmshala = () => {
   const [refreshing, setRefreshing] = useState(false);
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
+ const [slider, setSlider] = useState([]);
 
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
@@ -107,14 +108,29 @@ const Dharmshala = () => {
     }, 2000);
   }, []);
 
+  
+    useEffect(() => {
+      Advertisement_window();
+    }, []);
+  
 
-  const SliderRenderItem = ({ item }) => {
-    return (
-      <View>
-        <Image source={item.image} style={styles.sliderImage} />
-      </View>
-    );
-  };
+ useEffect(() => {
+    if (slider.length === 0) return;
+  
+    const currentSlide = slider[currentIndex];
+    const durationInSeconds = currentSlide?.duration || 2; 
+    const durationInMilliseconds = durationInSeconds * 1000; 
+  
+    const timeout = setTimeout(() => {
+      const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
+      setCurrentIndex(nextIndex);
+      sliderRef.current?.goToSlide(nextIndex);
+    }, durationInMilliseconds);
+  
+    return () => clearTimeout(timeout);
+  }, [currentIndex, slider]);
+  
+
 
   const fetchDharamsalaData = async (filterType = "search") => {
     try {
@@ -173,6 +189,7 @@ const Dharmshala = () => {
       setLoading(false);
     }
   };
+  
   const GetMyDharamsalaData = async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -201,6 +218,45 @@ const Dharmshala = () => {
       console.error("Error fetching committee data:", error);
     }
   };
+
+    const Advertisement_window = async () => {
+      try {
+        const token = await AsyncStorage.getItem('userToken');
+        if (!token) throw new Error('No token found');
+    
+        const headers = {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        };
+    
+        const response = await axios.get(DHARMSHALA_ADVERDISE_WINDOW, { headers });
+    
+        if (response.data) {
+          const fetchedData = response.data.data;
+          console.log("fetchedData", JSON.stringify(fetchedData));
+    
+          const fullSliderData = fetchedData.flatMap((item) => 
+            item.media.map((mediaItem) => ({
+              id: `${item._id}_${mediaItem._id}`,
+              title: item.title,
+              description: item.description,
+              image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
+              resolution: mediaItem.resolution, // 👈 yeh add kiya
+            }))
+          );
+    
+          setSlider(fullSliderData);
+          console.log("Slider Data:", fullSliderData);
+        } else {
+          setSlider([]);
+        }
+      } catch (error) {
+        console.error("Error fetching advertisement:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
 
   const renderSkeleton = () => (
     <SkeletonPlaceholder>
@@ -490,16 +546,26 @@ const Dharmshala = () => {
       }>
         {/* Image Slider */}
         <View style={styles.sliderContainer}>
-          <AppIntroSlider
-            ref={sliderRef}
-            data={slider}
-            renderItem={SliderRenderItem}
-            showNextButton={false}
-            showDoneButton={false}
-            dotStyle={styles.dot}
-            activeDotStyle={styles.activeDot}
-            onSlideChange={(index) => setCurrentIndex(index)}
-          />
+        <AppIntroSlider
+                ref={sliderRef}
+                data={slider}
+                renderItem={({ item }) => {
+                  const { width, height } = item.resolution;
+                  return (
+                    <Image
+                      source={{ uri: item.image }}
+                      style={{
+                        width,
+                        height,
+                      }}
+                    />
+                  );
+                }}
+                showNextButton={false}
+                showDoneButton={false}
+                dotStyle={styles.dot}
+                activeDotStyle={styles.activeDot}
+              />
         </View>
 
         {loading ? renderSkeleton() : (

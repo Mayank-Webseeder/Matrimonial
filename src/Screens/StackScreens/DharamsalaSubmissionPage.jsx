@@ -12,6 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import _ from "lodash";
 import { showMessage } from 'react-native-flash-message';
+import {launchImageLibrary} from 'react-native-image-picker';
 
 const DharamsalaSubmissionPage = ({ navigation }) => {
     const [subCasteInput, setSubCasteInput] = useState('');
@@ -94,29 +95,56 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
         }));
     };
 
+const pickerOptions = {
+  selectionLimit: 4,     // 🔒 hard cap at 4
+  mediaType: 'photo',
+  includeBase64: false,  // you only need file‑URIs
+  maxWidth: 400,         // resize so you don’t need in‑picker cropping
+  maxHeight: 400,
+  quality: 1,
+};
+
+    // const handleImageUpload = () => {
+    //     ImageCropPicker.openPicker({
+    //         multiple: true,
+    //         cropping: true,
+    //         width: 400,
+    //         height: 400,
+    //         compressImageQuality: 1,
+    //         mediaType: "photo",
+    //         maxLength:5
+    //     })
+    //         .then((images) => {
+    //             if (images.length > 4) {
+    //                 alert("You can only upload up to 4 Dharamsala photos.");
+    //                 return;
+    //             }
+    //             setDharamsalaData((prev) => ({
+    //                 ...prev,
+    //                 images: images.map(img => ({ uri: img.path })),
+    //             }));
+    //         })
+    //         .catch((err) => {
+    //             console.log("Crop Picker Error:", err);
+    //         });
+    // };
+
+
     const handleImageUpload = () => {
-        ImageCropPicker.openPicker({
-            multiple: true,
-            cropping: true,
-            width: 400,
-            height: 400,
-            compressImageQuality: 1,
-            mediaType: "photo"
-        })
-            .then((images) => {
-                if (images.length > 4) {
-                    alert("You can only upload up to 4 Dharamsala photos.");
-                    return;
-                }
-                setDharamsalaData((prev) => ({
-                    ...prev,
-                    images: images.map(img => ({ uri: img.path })),
-                }));
-            })
-            .catch((err) => {
-                console.log("Crop Picker Error:", err);
-            });
-    };
+        launchImageLibrary(pickerOptions, (response) => {
+          if (response.didCancel) return;                        
+          if (response.errorCode) {
+            console.log('ImagePicker Error:', response.errorMessage);
+            return;
+          }
+          const images = response.assets ?? [];               
+      
+          setDharamsalaData((prev) => ({
+            ...prev,
+            images: images.map((img) => ({ uri: img.uri })),     
+          }));
+        });
+      };
 
 
     const convertToBase64 = async (images) => {
@@ -307,7 +335,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     textContentType="none"
                 />
 
-                <Text style={Globalstyles.title}>Description (Optional)</Text>
+                <Text style={Globalstyles.title}>Description</Text>
                 <TextInput
                     style={[Globalstyles.input, styles.textArea]}
                     placeholder="Enter Description"

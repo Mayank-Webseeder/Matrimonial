@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         overflow: 'hidden',
         shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 }, // ✅ Required for iOS
         shadowOpacity: 0.1,
         shadowRadius: 5,
         elevation: 3,
@@ -284,7 +285,7 @@ const styles = StyleSheet.create({
     },
     modalOverlay: {
         flex: 1,
-        backgroundColor: "rgba(0,0,0,0.3)", // Dim background
+        backgroundColor: "rgba(0,0,0,0.3)",
     },
     modalContent: {
         position: "absolute",

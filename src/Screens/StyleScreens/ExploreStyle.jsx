@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   },
   verifiedContainer: {
     position: "absolute",
-    top: SH(230),
+    top: SH(250),
     left: SW(257),
     flexDirection: "row",
     alignItems: "center",
@@ -73,16 +73,16 @@ const styles = StyleSheet.create({
     color: "green",
     fontWeight: "bold",
     fontSize: SF(11),
-     textTransform:"capitalize"
+    textTransform: "capitalize"
   },
   ButtonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: SW(10),
-    paddingVertical:SH(10),
+    paddingVertical: SH(10),
     marginRight: SW(5),
-    backgroundColor:Colors.light
+    backgroundColor: Colors.light
   },
 
   leftButtons: {
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     color: Colors.dark,
     fontFamily: "Poppins-Regular",
     fontSize: SF(15),
-     textTransform:"capitalize"
+    textTransform: "capitalize"
   },
   activeButton: {
     backgroundColor: Colors.theme_color,
@@ -115,13 +115,13 @@ const styles = StyleSheet.create({
     color: 'white',
     fontFamily: "Poppins-Regular",
     fontSize: SF(13),
-     textTransform:"capitalize"
+    textTransform: "capitalize"
   },
   inactiveText: {
     color: 'black',
     fontFamily: "Poppins-Regular",
     fontSize: SF(13),
-     textTransform:"capitalize"
+    textTransform: "capitalize"
   },
 
   profileData: {
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     fontSize: SF(13),
     flexWrap: "wrap",
     maxWidth: "100%",
-    textTransform:"capitalize",
+    textTransform: "capitalize",
   },
 
   rowItem: {
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
   boldText: {
     fontFamily: "Poppins-Bold",
     fontSize: SF(18),
-     textTransform:"capitalize"
+    textTransform: "capitalize"
   },
 
   sharecontainer: {
@@ -180,21 +180,22 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     alignItems: 'center',
-    display:"flex",flexDirection:"row"
+    display: "flex", flexDirection: "row"
   },
   iconText: {
     fontSize: SF(12),
     color: Colors.dark,
     marginTop: SH(5),
-    paddingHorizontal:SW(5),
+    paddingHorizontal: SW(5),
     fontFamily: "Poppins-Regular",
-     textTransform:"capitalize"
+    textTransform: "capitalize"
   },
   card: {
     backgroundColor: '#fff',
     borderRadius: 10,
     overflow: 'hidden',
     shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
@@ -212,7 +213,7 @@ const styles = StyleSheet.create({
     fontSize: SF(15),
     color: Colors.gray,
     fontFamily: 'Poppins-Regular',
-     textTransform:"capitalize"
+    textTransform: "capitalize"
   },
 
 });

@@ -48,8 +48,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',
     shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 5,
     elevation: 3,
     marginHorizontal: SW(10),
     marginVertical: SH(7),
@@ -264,27 +264,27 @@ const styles = StyleSheet.create({
     marginBottom: SH(5),
     fontFamily: "Poppins-Medium"
   },
-  modalOverlay: {
+  modalOverlay1: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.3)",
-  },
-  modalContent: {
+},
+  modalContent1: {
     position: "absolute",
     backgroundColor: "white",
-    paddingHorizontal:SW(15),
-    paddingVertical:SH(10),
-    borderRadius:10,
-    width:SW(150),
+    paddingHorizontal: SW(15),
+    paddingVertical: SH(10),
+    borderRadius: 10,
+    width: SW(150),
     elevation: 5,
-  },
-  modalOption: {
-    paddingHorizontal:SW(10),
-    paddingVertical:SH(2),
-  },
-  optionText: {
-    fontSize:SF(15),
-    fontFamily:"Poppins-Regular",
-  },
+},
+modalOption1: {
+    paddingHorizontal: SW(10),
+    paddingVertical: SH(2),
+},
+optionText: {
+    fontSize: SF(15),
+    fontFamily: "Poppins-Regular"
+},
   updateText:{
     fontSize:SF(15),
     fontFamily:"Poppins-Regular",

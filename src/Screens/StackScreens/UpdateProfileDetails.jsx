@@ -13,6 +13,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { SH, SW } from '../../utils/Dimensions';
 import { showMessage } from 'react-native-flash-message';
+import {launchImageLibrary} from 'react-native-image-picker';
 
 const UpdateProfileDetails = ({ navigation, route }) => {
     const [stateInput, setStateInput] = useState('');
@@ -105,37 +106,46 @@ const UpdateProfileDetails = ({ navigation, route }) => {
     };
 
 
+    const ADDL_LIMIT = 5;                // max extra photos
+
+const pickerOpts = {
+  selectionLimit: ADDL_LIMIT,        // gallery stops user at 5
+  mediaType: 'photo',
+  includeBase64: true,               // we still need base‑64
+  maxWidth: 400,                     // optional resize
+  maxHeight: 400,
+  quality: 1,
+};
+
+
     // Additional Photos Picker
-    const handleAdditionalPhotosPick = async () => {
-        try {
-            const images = await ImageCropPicker.openPicker({
-                multiple: true,
-                cropping: false,
-                includeBase64: true,
-            });
-
-            if (!images || images.length === 0) {
-                console.error("No images selected!");
-                return;
-            }
-
-            const newPhotos = images.map(img => `data:${img.mime};base64,${img.data}`);
-
-            if (newPhotos.length > 5) {
-                alert("You can only upload up to 5 photos.");
-                return;
-            }
-
-            // ❌ Old logic was appending; ✅ Now it REPLACES old photos
-            setRoleRegisterData(prevData => ({
-                ...prevData,
-                additionalPhotos: newPhotos, // Replaces old images with new ones
-            }));
-
-        } catch (err) {
-            console.log("Additional Photos Picker Error:", err);
-        }
-    };
+   const handleAdditionalPhotosPick = () => {
+           launchImageLibrary(pickerOpts, (response) => {
+             if (response.didCancel) return;                            // user aborted
+             if (response.errorCode) {
+               console.log('ImagePicker Error:', response.errorMessage);
+               return;
+             }
+         
+             const incoming = response.assets ?? [];
+         
+             setRoleRegisterData((prev) => {
+               // Convert each asset to data‑URI just like before
+               const newPhotos = incoming.map(
+                 (img) => `data:${img.type};base64,${img.base64}`
+               );
+         
+               const updated = [...prev.additionalPhotos, ...newPhotos];
+         
+               if (updated.length > ADDL_LIMIT) {
+                 Alert.alert(`You can only upload up to ${ADDL_LIMIT} additional photos.`);
+                 return prev;                                           // refuse update
+               }
+         
+               return { ...prev, additionalPhotos: updated };
+             });
+           });
+         };
 
 
     const handleStateInputChange = (text) => {
@@ -554,10 +564,10 @@ const UpdateProfileDetails = ({ navigation, route }) => {
 
 
                     <View style={styles.photopickContainer}>
-                        <Text style={styles.title}>Photos (Up to 5)</Text>
+                        <Text style={styles.smalltitle}>Photos (Up to 5)</Text>
 
                         {/* Crop Picker Button */}
-                        <TouchableOpacity style={styles.PickPhotoButton} onPress={handleAdditionalPhotosPick}>
+                        <TouchableOpacity style={[styles.PickPhotoButton]} onPress={handleAdditionalPhotosPick}>
                             <Text style={styles.PickPhotoText}>Pick & Crop Photo</Text>
                         </TouchableOpacity>
                     </View>

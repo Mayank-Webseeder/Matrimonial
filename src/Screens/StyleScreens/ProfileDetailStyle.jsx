@@ -56,16 +56,32 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light,
   },
   flexContainer1: {
+    // flexDirection: "row",
+    // flexWrap: "wrap",
+    // justifyContent: "space-between",
+    // paddingHorizontal: SW(10),
+    // paddingVertical: SH(10),
+    // borderColor: Colors.gray,
+    // borderWidth: 1,
+    // borderRadius: 10,
+    // width: "100%",
+    // marginVertical: SH(5),
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
-    paddingHorizontal: SW(10),
+    paddingHorizontal: SW(8),
     paddingVertical: SH(10),
-    borderColor: Colors.gray,
-    borderWidth: 1,
     borderRadius: 10,
-    width: "100%",
+    width: "99%",
     marginVertical: SH(5),
+    backgroundColor: "#fff", // Ensure background for shadow to show properly
+    marginHorizontal: SW(2),
+    // Updated shadow
+    shadowColor: Colors.theme_color,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 4,
   },
   socialContainer: {
     flexDirection: "row",
@@ -409,7 +425,30 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: Colors.gray,
     fontFamily: "Poppins-Regular"
-  }
+  },
+  detailbox:{
+    // paddingHorizontal: SW(10),
+    // paddingVertical: SH(10),
+    // borderColor: Colors.gray,
+    // borderWidth: 1,
+    // borderRadius: 10,
+    // width: "100%",
+    // marginVertical: SH(5),
+
+    paddingHorizontal: SW(8),
+    paddingVertical: SH(10),
+    borderRadius: 10,
+    width: "99%",
+    marginVertical: SH(5),
+    backgroundColor: "#fff", // Ensure background for shadow to show properly
+    marginHorizontal: SW(2),
+    // Updated shadow
+    shadowColor: Colors.theme_color,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 4,
+  },
 });
 
 export default styles;

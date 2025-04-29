@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable ,RefreshControl } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, RefreshControl } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -14,10 +14,10 @@ import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import axios from 'axios';
 import { slider } from '../../DummyData/DummyData';
-import { GET_ALL_KATHAVACHAK, SAVED_PROFILES } from '../../utils/BaseUrl';
+import { GET_ALL_KATHAVACHAK, KATHAVACHAK_ADVERDISE_WINDOW, SAVED_PROFILES } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
-import { SH, SW  ,SF} from '../../utils/Dimensions';
+import { SH, SW, SF } from '../../utils/Dimensions';
 import { useFocusEffect } from '@react-navigation/native';
 import ImageViewing from 'react-native-image-viewing';
 import { showMessage } from 'react-native-flash-message';
@@ -37,11 +37,12 @@ const Kathavachak = ({ navigation }) => {
   const [modalLocality, setModalLocality] = useState('');
   const [isImageVisible, setImageVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
- const [refreshing, setRefreshing] = useState(false);
-   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
-     const notificationCount = notifications ? notifications.length : 0;
+  const [refreshing, setRefreshing] = useState(false);
+  const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
+  const notificationCount = notifications ? notifications.length : 0;
   const ProfileData = useSelector((state) => state.profile);
   const profile_data = ProfileData?.profiledata || {};
+  const [slider, setSlider] = useState([]);
 
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
@@ -57,20 +58,65 @@ const Kathavachak = ({ navigation }) => {
     KathavachakDataAPI("modal");
   };
 
+   useEffect(() => {
+      Advertisement_window();
+    }, []);
+  
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (currentIndex < slider.length - 1) {
-        setCurrentIndex((prevIndex) => prevIndex + 1);
-        sliderRef.current?.goToSlide(currentIndex + 1);
-      } else {
-        setCurrentIndex(0);
-        sliderRef.current?.goToSlide(0);
-      }
-    }, 2000);
+    if (slider.length === 0) return;
 
-    return () => clearInterval(interval);
-  }, [currentIndex]);
+    const currentSlide = slider[currentIndex];
+    const durationInSeconds = currentSlide?.duration || 2;
+    const durationInMilliseconds = durationInSeconds * 1000;
+
+    const timeout = setTimeout(() => {
+      const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
+      setCurrentIndex(nextIndex);
+      sliderRef.current?.goToSlide(nextIndex);
+    }, durationInMilliseconds);
+
+    return () => clearTimeout(timeout);
+  }, [currentIndex, slider]);
+
+
+  const Advertisement_window = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+      const response = await axios.get(KATHAVACHAK_ADVERDISE_WINDOW, { headers });
+
+      if (response.data) {
+        const fetchedData = response.data.data;
+        console.log("fetchedData", JSON.stringify(fetchedData));
+
+        const fullSliderData = fetchedData.flatMap((item) =>
+          item.media.map((mediaItem) => ({
+            id: `${item._id}_${mediaItem._id}`,
+            title: item.title,
+            description: item.description,
+            image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
+            resolution: mediaItem.resolution,
+          }))
+        );
+
+        setSlider(fullSliderData);
+        console.log("Slider Data:", fullSliderData);
+      } else {
+        setSlider([]);
+      }
+    } catch (error) {
+      console.error("Error fetching advertisement:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const KathavachakDataAPI = async (filterType = "search") => {
     try {
@@ -314,7 +360,7 @@ const Kathavachak = ({ navigation }) => {
           <Text style={Globalstyles.headerText}>Kathavachak</Text>
         </View>
         <View style={styles.headerContainer}>
-        <TouchableOpacity style={{ position: 'relative' }} onPress={() => navigation.navigate('Notification')}>
+          <TouchableOpacity style={{ position: 'relative' }} onPress={() => navigation.navigate('Notification')}>
             <AntDesign
               name="bells"
               size={25}
@@ -379,11 +425,18 @@ const Kathavachak = ({ navigation }) => {
           <AppIntroSlider
             ref={sliderRef}
             data={slider}
-            renderItem={({ item }) => (
-              <View>
-                <Image source={item.image} style={Globalstyles.sliderImage} />
-              </View>
-            )}
+            renderItem={({ item }) => {
+              const { width, height } = item.resolution;
+              return (
+                <Image
+                  source={{ uri: item.image }}
+                  style={{
+                    width,
+                    height,
+                  }}
+                />
+              );
+            }}
             showNextButton={false}
             showDoneButton={false}
             dotStyle={Globalstyles.dot}

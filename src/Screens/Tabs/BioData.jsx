@@ -9,7 +9,7 @@ import AppIntroSlider from 'react-native-app-intro-slider';
 import HeadingWithViewAll from '../../Components/HeadingWithViewAll';
 import { SavedProfileData } from '../../DummyData/DummyData';
 import Globalstyles from '../../utils/GlobalCss';
-import { MATRIMONY_SUMMRARY } from '../../utils/BaseUrl';
+import { BIODATA_ADVERTISE_WINDOW, MATRIMONY_SUMMRARY } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
@@ -17,8 +17,11 @@ import { SH, SW, SF } from '../../utils/Dimensions';
 import { useFocusEffect } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 const BioData = ({ navigation }) => {
-  const sliderRef = useRef(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndexTop, setCurrentIndexTop] = useState(0); // For Top Slider
+  const [currentIndexBottom, setCurrentIndexBottom] = useState(1); // For Bottom Slider (starts from index 1)
+  const sliderRefTop = useRef(null);
+  const sliderRefBottom = useRef(null);
+  const [slider, setSlider] = useState([]);
   const [all_profiles, setAllprofiles] = useState({});
   const [isLoading, setIsLoading] = useState("");
   const MatrimonialData = all_profiles?.metrimony || [];
@@ -74,27 +77,92 @@ const BioData = ({ navigation }) => {
   );
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (currentIndex < slider.length - 1) {
-        setCurrentIndex((prevIndex) => prevIndex + 1);
-        sliderRef.current?.goToSlide(currentIndex + 1);
+    Advertisement_window();
+  }, []);
+
+
+  useEffect(() => {
+    if (slider.length === 0) return;
+
+    const currentSlideTop = slider[currentIndexTop];
+    const durationInSecondsTop = currentSlideTop?.duration || 2;
+    const durationInMillisecondsTop = durationInSecondsTop * 1000;
+
+    const timeoutTop = setTimeout(() => {
+      const nextIndexTop = currentIndexTop < slider.length - 1 ? currentIndexTop + 1 : 0;
+      setCurrentIndexTop(nextIndexTop);  // Move top slider
+      sliderRefTop.current?.goToSlide(nextIndexTop);
+    }, durationInMillisecondsTop);
+
+    return () => clearTimeout(timeoutTop);
+  }, [currentIndexTop, slider]);
+  
+  useEffect(() => {
+    if (slider.length === 0) return;
+
+    const currentSlideBottom = slider[currentIndexBottom];
+    const durationInSecondsBottom = currentSlideBottom?.duration || 2;
+    const durationInMillisecondsBottom = durationInSecondsBottom * 1000;
+
+    const timeoutBottom = setTimeout(() => {
+      const nextIndexBottom = currentIndexBottom < slider.length - 1 ? currentIndexBottom + 1 : 0;
+      setCurrentIndexBottom(nextIndexBottom); 
+      sliderRefBottom.current?.goToSlide(nextIndexBottom);
+    }, durationInMillisecondsBottom);
+
+    return () => clearTimeout(timeoutBottom);
+  }, [currentIndexBottom, slider]);
+
+  const Advertisement_window = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+      const response = await axios.get(BIODATA_ADVERTISE_WINDOW, { headers });
+
+      if (response.data) {
+        const fetchedData = response.data.data;
+        console.log("fetchedData", JSON.stringify(fetchedData));
+
+        const fullSliderData = fetchedData.flatMap((item) =>
+          item.media.map((mediaItem) => ({
+            id: `${item._id}_${mediaItem._id}`,
+            title: item.title,
+            description: item.description,
+            image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
+            resolution: mediaItem.resolution,
+          }))
+        );
+
+        setSlider(fullSliderData);
+        console.log("Slider Data:", fullSliderData);
       } else {
-        setCurrentIndex(0);
-        sliderRef.current?.goToSlide(0);
+        setSlider([]);
       }
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, [currentIndex]);
-
-  const renderItem = ({ item }) => {
-    return (
-      <View>
-        <Image source={item.image} style={styles.sliderImage} />
-      </View>
-    );
+    } catch (error) {
+      console.error("Error fetching advertisement:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
+  const renderItem = ({ item }) => {
+    const { width, height } = item.resolution;
+    return (
+      <Image
+        source={{ uri: item.image }}
+        style={{
+          width,
+          height,
+        }}
+      />
+    );
+  };
 
   const handleNavigateToProfile = (item) => {
     navigation.navigate("MatrimonyPeopleProfile", {
@@ -235,14 +303,13 @@ const BioData = ({ navigation }) => {
       }>
         <View style={styles.sliderContainer}>
           <AppIntroSlider
-            ref={sliderRef}
+            ref={sliderRefTop}
             data={slider}
             renderItem={renderItem}
             showNextButton={false}
             showDoneButton={false}
-            dotStyle={styles.dot}
-            activeDotStyle={styles.activeDot}
-            onSlideChange={(index) => setCurrentIndex(index)}
+            dotStyle={Globalstyles.dot}
+            activeDotStyle={Globalstyles.activeDot}
           />
         </View>
 
@@ -333,7 +400,17 @@ const BioData = ({ navigation }) => {
         ) : (
           null
         )}
-        <Image source={require('../../Images/slider.png')} style={styles.Sliderimage} />
+        <View style={Globalstyles.bottomImage}>
+          <AppIntroSlider
+            ref={sliderRefBottom}
+            data={slider}
+            renderItem={renderItem}
+            showNextButton={false}
+            showDoneButton={false}
+            dotStyle={Globalstyles.dot}
+            activeDotStyle={Globalstyles.activeDot}
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

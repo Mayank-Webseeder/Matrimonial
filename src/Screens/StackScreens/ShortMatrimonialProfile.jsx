@@ -30,7 +30,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
             showMessage({
                 message: 'User ID not found!',
                 type: 'danger',
-                icon:"danger",
+                icon: "danger",
                 duration: 3000,
             });
             return;
@@ -82,7 +82,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
             );
 
             showMessage({
-                message:error.response?.data?.message || "Failed to save profile!",
+                message: error.response?.data?.message || "Failed to save profile!",
                 type: 'danger',
                 duration: 3000,
             });
@@ -168,9 +168,9 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                             {/* Right Column */}
                             <View style={styles.rightColumn}>
                                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.currentCity}</Text>
-                                <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.occupation}</Text>
+                                <Text style={[styles.text, styles.rowItem, { textTransform: "none" }]}>{item?.personalDetails?.occupation}</Text>
                                 <Text style={[styles.text, styles.rowItem, { textTransform: "none" }]}>{item?.personalDetails?.annualIncome}</Text>
-                                <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.qualification}</Text>
+                                <Text style={[styles.text, styles.rowItem, { textTransform: "none" }]}>{item?.personalDetails?.qualification}</Text>
                             </View>
                         </View>
                     </View>

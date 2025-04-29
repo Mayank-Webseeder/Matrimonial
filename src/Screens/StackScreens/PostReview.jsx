@@ -9,6 +9,7 @@ import Colors from '../../utils/Colors';
 import Globalstyles from '../../utils/GlobalCss';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 import {
     PANDIT_REVIEW,
@@ -190,9 +191,9 @@ const PostReview = ({ navigation, route }) => {
                 </View>
             </View>
             <View style={Globalstyles.form}>
-                <Text style={Globalstyles.title}>Rating (Required)</Text>
+                <Text style={Globalstyles.title}>Rating <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <View style={styles.starContainer}>{renderStars()}</View>
-                <Text style={Globalstyles.title}>Description (Optional)</Text>
+                <Text style={Globalstyles.title}>Description</Text>
                 <TextInput
                     style={Globalstyles.textInput}
                     placeholder="Write your review..."

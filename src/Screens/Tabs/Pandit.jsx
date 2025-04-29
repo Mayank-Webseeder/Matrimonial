@@ -17,7 +17,7 @@ import { ExperienceData, RatingData, panditServices } from '../../DummyData/Drop
 import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import axios from 'axios';
-import { GET_ALL_PANDIT_DATA, SAVED_PROFILES } from '../../utils/BaseUrl';
+import { GET_ALL_PANDIT_DATA, PANDIT_ADVERDISE_WINDOW, SAVED_PROFILES } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { SF, SH, SW } from '../../utils/Dimensions';
@@ -45,7 +45,8 @@ const Pandit = ({ navigation }) => {
   const ProfileData = useSelector((state) => state.profile);
   const profile_data = ProfileData?.profiledata || {};
   const [refreshing, setRefreshing] = useState(false);
-
+ const [slider, setSlider] = useState([]);
+ 
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
     setImageVisible(true);
@@ -120,6 +121,68 @@ const Pandit = ({ navigation }) => {
       setLoading(false);
     }
   };
+
+
+  useEffect(() => {
+    Advertisement_window();
+  }, []);
+
+
+  useEffect(() => {
+    if (slider.length === 0) return;
+
+    const currentSlide = slider[currentIndex];
+    const durationInSeconds = currentSlide?.duration || 2;
+    const durationInMilliseconds = durationInSeconds * 1000;
+
+    const timeout = setTimeout(() => {
+      const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
+      setCurrentIndex(nextIndex);
+      sliderRef.current?.goToSlide(nextIndex);
+    }, durationInMilliseconds);
+
+    return () => clearTimeout(timeout);
+  }, [currentIndex, slider]);
+
+
+  const Advertisement_window = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+      const response = await axios.get(PANDIT_ADVERDISE_WINDOW, { headers });
+
+      if (response.data) {
+        const fetchedData = response.data.data;
+        console.log("fetchedData", JSON.stringify(fetchedData));
+
+        const fullSliderData = fetchedData.flatMap((item) =>
+          item.media.map((mediaItem) => ({
+            id: `${item._id}_${mediaItem._id}`,
+            title: item.title,
+            description: item.description,
+            image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
+            resolution: mediaItem.resolution,
+          }))
+        );
+
+        setSlider(fullSliderData);
+        console.log("Slider Data:", fullSliderData);
+      } else {
+        setSlider([]);
+      }
+    } catch (error) {
+      console.error("Error fetching advertisement:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   const savedProfiles = async (_id) => {
     if (!_id) {
@@ -421,15 +484,22 @@ const Pandit = ({ navigation }) => {
           <AppIntroSlider
             ref={sliderRef}
             data={slider}
-            renderItem={({ item }) => (
-              <View>
-                <Image source={item.image} style={Globalstyles.sliderImage} />
-              </View>
-            )}
+            renderItem={({ item }) => {
+              const { width, height } = item.resolution;
+              return (
+                <Image
+                  source={{ uri: item.image }}
+                  style={{
+                    width,
+                    height,
+                  }}
+                />
+              );
+            }}
             showNextButton={false}
             showDoneButton={false}
             dotStyle={Globalstyles.dot}
-            activeDotStyle={Globalstyles.activeDot}
+                activeDotStyle={Globalstyles.activeDot}
           />
         </View>
         {isLoading ? renderSkeleton() : (

@@ -16,6 +16,7 @@ const ViewPost = ({ navigation, route }) => {
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
   const isLiked = post?.isLiked;
   console.log("post", JSON.stringify(post));
+  const author = post.activistDetails;
 
   // ✅ Get images from API response correctly
   const images = post?.images || [];
@@ -28,12 +29,12 @@ const ViewPost = ({ navigation, route }) => {
   const [imageAspectRatios, setImageAspectRatios] = useState([]);
 
   const handleShare = async () => {
-      showMessage({
-        type: "info",
-        message: "Under development",
-        icon: "info"
-      });
-    };
+    showMessage({
+      type: "info",
+      message: "Under development",
+      icon: "info"
+    });
+  };
 
   useEffect(() => {
     const fetchAspectRatios = async () => {
@@ -79,58 +80,56 @@ const ViewPost = ({ navigation, route }) => {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} >
-       <View style={styles.card}>
-       <View style={styles.postHeader}>
-        <View style={{ display: "flex", flexDirection: 'row', alignItems: 'center' }}>
-            <View>
-              <Image source={{ uri: MyActivistProfile?.profilePhoto }} style={styles.EventheaderImage} />
-            </View>
-            <View>
-              {/* <Text style={styles.name}>
-                {item.activistName} <Text style={styles.hour}>{getTimeAgo(item.createdAt)}</Text>
-              </Text> */}
-              <Text style={styles.name}>
-                {MyActivistProfile?.activistId} <Text style={styles.hour}>{MyActivistProfile?.activistId}</Text>
-              </Text>
-              <Text style={styles.date_time}>{formatDateTime(post.createdAt)}</Text>
-            </View>
-          </View>
-        </View>
+        <View style={styles.card}>
+          <View style={styles.postHeader}>
+            <View style={{ display: "flex", flexDirection: 'row', alignItems: 'center' }}>
+              <View>
+                <Image source={{ uri: author.profilePhoto }} style={styles.EventheaderImage} />
 
-        <Text style={styles.postDescriptionText}>
-          {post?.description}
-        </Text>
-
-        {images.length > 0 && (
-          <View>
-            {images.map((image, index) => (
-              <View key={index} >
-                <View>
-                  <Image
-                    source={{ uri: image }}
-                    style={[styles.image, { aspectRatio: imageAspectRatios[index] || 1 }]}
-                    resizeMode="cover"
-                  />
-                </View>
-                <View style={styles.likeShareComment}>
-                  <View style={styles.likeShare}>
-                    <AntDesign name={isLiked ? "heart" : "hearto"} size={20} color={isLiked ? "red" : Colors.dark} />
-                    <Text style={styles.shareText}>{post?.likes?.length} Likes</Text>
-                  </View>
-                  <View style={styles.likeShare}>
-                    <EvilIcons name="comment" size={20} color={Colors.dark} />
-                    <Text style={styles.shareText}>{post?.comments?.length} Comments</Text>
-                  </View>
-                  <TouchableOpacity style={styles.likeShare} onPress={handleShare}>
-                    <Feather name="send" size={20} color={Colors.dark} />
-                    <Text style={styles.shareText}>250 Shares</Text>
-                  </TouchableOpacity>
-                </View>
               </View>
-            ))}
+              <View>
+                <Text style={styles.name}>
+                  {author?.activistId} <Text style={styles.hour}>{author?.activistId}</Text>
+                </Text>
+                <Text style={styles.date_time}>{formatDateTime(post.createdAt)}</Text>
+              </View>
+            </View>
           </View>
-        )}
-       </View>
+
+          <Text style={styles.postDescriptionText}>
+            {post?.description}
+          </Text>
+
+          {images.length > 0 && (
+            <View>
+              {images.map((image, index) => (
+                <View key={index} >
+                  <View>
+                    <Image
+                      source={{ uri: image }}
+                      style={[styles.image, { aspectRatio: imageAspectRatios[index] || 1 }]}
+                      resizeMode="cover"
+                    />
+                  </View>
+                  {/* <View style={styles.likeShareComment}>
+                    <View style={styles.likeShare}>
+                      <AntDesign name={isLiked ? "heart" : "hearto"} size={20} color={isLiked ? "red" : Colors.dark} />
+                      <Text style={styles.shareText}>{post?.likes?.length} Likes</Text>
+                    </View>
+                    <View style={styles.likeShare}>
+                      <EvilIcons name="comment" size={20} color={Colors.dark} />
+                      <Text style={styles.shareText}>{post?.comments?.length} Comments</Text>
+                    </View>
+                    <TouchableOpacity style={styles.likeShare} onPress={handleShare}>
+                      <Feather name="send" size={20} color={Colors.dark} />
+                      <Text style={styles.shareText}>250 Shares</Text>
+                    </TouchableOpacity>
+                  </View> */}
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

@@ -70,6 +70,7 @@ const styles = StyleSheet.create({
         marginHorizontal: SW(2),
         paddingVertical: SH(6),
         shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 }, // ✅ Required for iOS
         shadowOpacity: 0.1,
         shadowRadius: 5,
         elevation: 3,

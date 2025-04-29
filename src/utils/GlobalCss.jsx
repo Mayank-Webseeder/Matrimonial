@@ -90,12 +90,8 @@ const Globalstyles = StyleSheet.create({
     // paddingVertical: SH(7),
   },
   bottomImage: {
-    width: "98%",
-    height: SH(200),
-    resizeMode: 'cover',
-    marginVertical: SH(10),
-    marginHorizontal: SW(5),
-    borderRadius: 10
+   paddingBottom:SH(30),
+   paddingTop:SH(10)
   },
   sliderContainer: {
     marginBottom: SH(10)

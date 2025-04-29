@@ -15,7 +15,7 @@ import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { SH, SF } from '../../utils/Dimensions';
 import { useSelector } from 'react-redux';
-import { GET_ALL_COMITTEE, GET_COMMIITEE, SAVED_PROFILES } from '../../utils/BaseUrl';
+import { COMMITTEE_ADVERDISE_WINDOW, GET_ALL_COMITTEE, GET_COMMIITEE, SAVED_PROFILES } from '../../utils/BaseUrl';
 import axios from 'axios';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -46,7 +46,7 @@ const Committee = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
-
+  const [slider, setSlider] = useState([]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -81,28 +81,6 @@ const Committee = ({ navigation }) => {
     setFilteredOptions([]);
   };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (currentIndex < slider.length - 1) {
-        setCurrentIndex((prevIndex) => prevIndex + 1);
-        sliderRef.current?.goToSlide(currentIndex + 1);
-      } else {
-        setCurrentIndex(0);
-        sliderRef.current?.goToSlide(0);
-      }
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, [currentIndex]);
-
-  const SliderRenderItem = ({ item }) => {
-    return (
-      <View>
-        <Image source={item.image} style={styles.sliderImage} />
-      </View>
-    );
-  };
-
   useFocusEffect(
     React.useCallback(() => {
       setLocality('');
@@ -111,6 +89,29 @@ const Committee = ({ navigation }) => {
       fetchMyCommitteeData();
     }, [])
   );
+
+  useEffect(() => {
+    Advertisement_window();
+  }, []);
+
+
+  useEffect(() => {
+    if (slider.length === 0) return;
+
+    const currentSlide = slider[currentIndex];
+    const durationInSeconds = currentSlide?.duration || 2;
+    const durationInMilliseconds = durationInSeconds * 1000;
+
+    const timeout = setTimeout(() => {
+      const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
+      setCurrentIndex(nextIndex);
+      sliderRef.current?.goToSlide(nextIndex);
+    }, durationInMilliseconds);
+
+    return () => clearTimeout(timeout);
+  }, [currentIndex, slider]);
+
+
   const fetchMyCommitteeData = async () => {
     try {
       setIsLoading(true);
@@ -194,6 +195,44 @@ const Committee = ({ navigation }) => {
     } catch (error) {
       console.error("Error fetching committee data:", error);
       setError(error.response ? error.response.data.message : "Failed to fetch data. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const Advertisement_window = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+      const response = await axios.get(COMMITTEE_ADVERDISE_WINDOW, { headers });
+
+      if (response.data) {
+        const fetchedData = response.data.data;
+        console.log("fetchedData", JSON.stringify(fetchedData));
+
+        const fullSliderData = fetchedData.flatMap((item) =>
+          item.media.map((mediaItem) => ({
+            id: `${item._id}_${mediaItem._id}`,
+            title: item.title,
+            description: item.description,
+            image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
+            resolution: mediaItem.resolution,
+          }))
+        );
+
+        setSlider(fullSliderData);
+        console.log("Slider Data:", fullSliderData);
+      } else {
+        setSlider([]);
+      }
+    } catch (error) {
+      console.error("Error fetching advertisement:", error);
     } finally {
       setLoading(false);
     }
@@ -491,12 +530,22 @@ const Committee = ({ navigation }) => {
           <AppIntroSlider
             ref={sliderRef}
             data={slider}
-            renderItem={SliderRenderItem}
+            renderItem={({ item }) => {
+              const { width, height } = item.resolution;
+              return (
+                <Image
+                  source={{ uri: item.image }}
+                  style={{
+                    width,
+                    height,
+                  }}
+                />
+              );
+            }}
             showNextButton={false}
             showDoneButton={false}
             dotStyle={styles.dot}
             activeDotStyle={styles.activeDot}
-            onSlideChange={(index) => setCurrentIndex(index)}
           />
         </View>
         {isLoading ? renderSkeleton() : (

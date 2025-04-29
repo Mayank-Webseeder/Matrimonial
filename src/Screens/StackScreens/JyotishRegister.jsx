@@ -297,16 +297,29 @@ const JyotishRegister = ({ navigation }) => {
     const validateForm = (data) => {
         let errors = {};
 
-        if (!data) return errors; // Ensure data exists to avoid undefined errors
+        if (!data) return errors;
 
         const allFields = Object.keys(data);
-
-        // Get mandatory fields (all except optional ones)
         const MANDATORY_FIELDS = allFields.filter(field => !OPTIONAL_FIELDS.includes(field));
 
         MANDATORY_FIELDS.forEach((field) => {
-            if (!data[field] || String(data[field]).trim() === "") {
-                errors[field] = `${field} is required`;
+            const value = String(data[field] || "").trim();
+            if (!value) {
+                errors[field] = `${field} is required.`;
+                return;
+            }
+            if (field === "mobileNo") {
+                if (!/^\d{10}$/.test(value)) {
+                    errors[field] = "Enter a valid 10-digit mobile number.";
+                }
+            }
+
+            if (field === "fullName") {
+                if (!/^[A-Za-z\s]+$/.test(value)) {
+                    errors[field] = `${field} must contain only letters and spaces.`;
+                } else if (value.length > 30) {
+                    errors[field] = `${field} cannot exceed 30 characters.`;
+                }
             }
         });
 
@@ -386,18 +399,21 @@ const JyotishRegister = ({ navigation }) => {
                 error?.response?.message ||
                 error?.message ||
                 "Something went wrong!";
-
+        
             console.error("❌ Error:", errorMessage);
-
+        
             showMessage({
                 message: errorMessage,
                 type: "danger",
                 icon: "danger",
                 duration: 5000,
             });
-            setTimeout(() => {
-                openModal();
-            }, 1000);
+            if (errorMessage.includes("valid Jyotish subscription")) {
+                setTimeout(() => {
+                    openModal();
+                }, 1000);
+            }
+        
         } finally {
             console.log("Loader Stopped!");
             setIsLoading(false);
@@ -746,7 +762,10 @@ const JyotishRegister = ({ navigation }) => {
                     <Text style={Globalstyles.title}>Name <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput style={Globalstyles.input}
                         value={RoleRegisterData?.fullName}
-                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, fullName: text }))}
+                        onChangeText={(text) => {
+                            const cleanText = text.replace(/[^A-Za-z\s]/g, '');
+                            setRoleRegisterData((prev) => ({ ...prev, fullName: cleanText }));
+                        }}
                         placeholder='Enter Your Full Name'
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
@@ -757,7 +776,7 @@ const JyotishRegister = ({ navigation }) => {
                     <Text style={Globalstyles.title}>Mobile No. <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput style={Globalstyles.input}
                         value={RoleRegisterData?.mobileNo}
-                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, mobileNo: text }))}
+                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
                         keyboardType="phone-pad"
                         placeholder="Enter Your Mobile No." maxLength={10}
                         placeholderTextColor={Colors.gray}
@@ -925,7 +944,9 @@ const JyotishRegister = ({ navigation }) => {
                             )}
                         </TouchableOpacity>
                     </View>
-                    {errors.profilePhoto && <Text style={styles.errorText}>{errors.profilePhoto}</Text>}
+                    {!RoleRegisterData.profilePhoto && errors.profilePhoto && (
+    <Text style={styles.errorText}>{errors.profilePhoto}</Text>
+)}
 
                     <Text style={Globalstyles.title}>Add Description</Text>
                     <TextInput style={Globalstyles.textInput} value={RoleRegisterData.description}

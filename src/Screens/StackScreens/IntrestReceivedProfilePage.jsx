@@ -490,7 +490,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         </View>
         <View style={styles.flexContainer1}>
           <View style={styles.leftContainer}>
-            <Text style={styles.HeadingText}>{personalDetails.fullname}</Text>
+            <Text style={styles.HeadingText}>{personalDetails?.fullname}</Text>
             {personalDetails?.dob && <Text style={styles.text}>{new Date().getFullYear() - new Date(personalDetails?.dob).getFullYear()} Yrs, {formattedHeight} </Text>}
             {personalDetails?.subCaste && <Text style={styles.text}>{personalDetails?.subCaste}</Text>}
             {personalDetails?.maritalStatus && <Text style={styles.text}>{personalDetails?.maritalStatus}</Text>}

@@ -144,15 +144,9 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Bold"
   },
   flexContainer2: {
+    width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
-    width: "100%",
-    paddingHorizontal: SW(10),
-    paddingVertical: SH(10),
-    borderColor: Colors.gray,
-    borderWidth: 1,
-    borderRadius: 10,
   },
   column: {
     width: "48%",
@@ -421,11 +415,6 @@ const styles = StyleSheet.create({
     marginRight: SW(10),
     borderRadius: 3
   },
-  noReviewsText: {
-    textAlign: "center",
-    color: Colors.gray,
-    fontFamily: "Poppins-Regular"
-  },
   detailbox:{
     // paddingHorizontal: SW(10),
     // paddingVertical: SH(10),
@@ -448,6 +437,36 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 8,
     elevation: 4,
+  },
+  noImagesContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal:SW(20),
+    paddingVertical:SH(20)
+  },
+  noImagesText: {
+    fontSize:SF(18),
+    color:Colors.gray,
+    textAlign: 'center',
+  },
+  icon: {
+    marginBottom: SH(10),
+  },
+  noReviewsContainer: {
+    alignItems: 'center',
+    marginVertical: SH(20),
+  },
+  noReviewsTitle: {
+    fontSize: SF(24),
+    fontFamily: "Poppins-Bold",
+    color: Colors.gray,
+    marginBottom: SH(8),
+  },
+  noReviewsSubtitle: {
+    fontSize: SF(16),
+    color: Colors.gray,
+    textAlign: 'center',
+    marginTop: SH(10),
   },
 });
 

@@ -411,7 +411,10 @@ const pickerOpts = {
                     <Text style={Globalstyles.title}>Name</Text>
                     <TextInput style={Globalstyles.input}
                         value={RoleRegisterData.fullName}
-                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, fullName: text }))}
+                        onChangeText={(text) => {
+                            const cleanText = text.replace(/[^A-Za-z\s]/g, '');
+                            setRoleRegisterData((prev) => ({ ...prev, fullName: cleanText }));
+                        }}
                         placeholder='Enter Your Full Name'
                         placeholderTextColor={Colors.gray}
                     />
@@ -419,7 +422,7 @@ const pickerOpts = {
                     <Text style={Globalstyles.title}>Mobile No.</Text>
                     <TextInput style={Globalstyles.input}
                         value={RoleRegisterData?.mobileNo}
-                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, mobileNo: text }))}
+                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
                         keyboardType="phone-pad"
                         placeholder="Enter Your Mobile No." maxLength={10}
                         placeholderTextColor={Colors.gray} />

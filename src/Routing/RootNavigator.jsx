@@ -96,7 +96,9 @@ function MyTabs() {
   const [profiledata, setProfileData] = useState({});
   const ProfileData = useSelector((state) => state.profile);
   const profile_data = ProfileData?.profiledata || {};
-  const image = `${PHOTO_URL}/${profile_data?.photoUrl?.[0]}`;
+  const imagePath = profile_data?.photoUrl?.[0];
+  const image = imagePath ? `${PHOTO_URL}/${imagePath}` : null;
+  const isValidImage = image && !image.includes("undefined") && !image.includes("null") && image.trim() !== "";
   const [isLoading, setLoading] = useState(true);
   const [biodata, setBiodata] = useState({});
   const [mybiodata, setMybiodata] = useState({});
@@ -185,6 +187,7 @@ function MyTabs() {
 
   const isBiodataEmpty = Object.keys(MyprofileData?.Biodata || {}).length === 0;
 
+
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -226,7 +229,7 @@ function MyTabs() {
           } else if (route.name === 'MyProfile') {
             tabBarIcon = (
               <Image
-                source={image ? { uri: image } : require('../Images/Profile.png')}
+                source={isValidImage ? { uri: image } : require('../Images/Profile.png')}
                 style={{ width: SW(25), height: SH(25), borderRadius: 20, resizeMode: "cover" }}
               />
             );
@@ -377,16 +380,16 @@ const RootNavigator = () => {
       const token = await AsyncStorage.getItem("userToken");
       const userId = await AsyncStorage.getItem("userId");
       console.log("Token in root file:", token);
-  
+
       setInitialRoute(token ? "AppStack" : "AuthStack");
       setTimeout(() => {
         setIsLoading(false);
       }, 3000);
     };
-  
+
     checkUserToken();
   }, []);
-  
+
 
 
   if (isLoading) {
@@ -395,10 +398,10 @@ const RootNavigator = () => {
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={initialRoute}>
-    <Stack.Screen name="AuthStack" component={AuthStack} />
-    <Stack.Screen name="AppStack" component={WrappedAppStack} />
-  </Stack.Navigator>
-  
+      <Stack.Screen name="AuthStack" component={AuthStack} />
+      <Stack.Screen name="AppStack" component={WrappedAppStack} />
+    </Stack.Navigator>
+
   );
 };
 

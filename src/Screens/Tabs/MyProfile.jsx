@@ -32,7 +32,7 @@ const MyProfile = ({ navigation }) => {
     const [fetchProfileDetails, setFetchProfileDetails] = useState(null);
     const [loading, setLoading] = useState(false);
     const [ProfileLoading, setProfileLoading] = useState(false);
-   const image = `${PHOTO_URL}/${profileData?.photoUrl?.[0]}`;
+    const image = `${PHOTO_URL}/${profileData?.photoUrl?.[0]}`;
     const [isLoading, setIsLoading] = useState(false);
     // console.log("profileData", profileData);
     const formattedDate = moment(profileData.dob).format("DD/MM/YYYY");
@@ -47,8 +47,21 @@ const MyProfile = ({ navigation }) => {
     useFocusEffect(
         useCallback(() => {
             fetchProfile();
+            console.log("image",image);
         }, [])
     );
+
+    const isValidUri = (uri) => {
+  return uri && typeof uri === "string" && !uri.includes("undefined") && !uri.includes("null") && uri.trim() !== "";
+};
+
+const finalImageSource =
+  isValidUri(selectedImage)
+    ? { uri: selectedImage }
+    : isValidUri(image)
+      ? { uri: image }
+      : require('../../Images/Profile.png');
+
 
     const fetchProfile = async () => {
         setProfileLoading(true);
@@ -381,11 +394,7 @@ const MyProfile = ({ navigation }) => {
                     <TouchableOpacity onPress={() => setImageViewVisible(true)}>
                         <Image
                             source={
-                                selectedImage
-                                    ? { uri: selectedImage }
-                                    : image
-                                        ? { uri: image }
-                                        : require('../../Images/Profile.png')
+                                finalImageSource
                             }
                             style={styles.image}
                         />

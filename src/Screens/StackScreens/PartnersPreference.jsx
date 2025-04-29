@@ -4,14 +4,15 @@ import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/PartnerPreferenceStyle';
 import { TouchableOpacity } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
-import { CREATE_PARTNER_PERFRENCES, UPDATE_PARTNER_PERFRENCES } from '../../utils/BaseUrl';
+import { CREATE_PARTNER_PERFRENCES, UPDATE_PARTNER_PERFRENCES ,GET_BIODATA } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Globalstyles from '../../utils/GlobalCss';
 import { useSelector } from 'react-redux';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useFocusEffect } from '@react-navigation/native';
-
+import { setBioData } from '../../ReduxStore/Slices/BiodataSlice';
+import { useDispatch } from 'react-redux';
 import {
     PartnerOccupationData, FamilyTypeData,
     FamilyFinancialStatusData, PartnersLiveinData, BodyStructureData, ComplexionData, PartnerQualificationData, PartnerDietHabit, Disabilities, subCasteOptions,
@@ -20,6 +21,7 @@ import {
 import { showMessage } from 'react-native-flash-message';
 
 const PartnersPreference = ({ navigation, profileData }) => {
+    const dispatch=useDispatch();
     const [isEditing, setIsEditing] = useState(true);
     const [stateInput, setStateInput] = useState('');
     const [subCasteInput, setSubCasteInput] = useState('');
@@ -32,7 +34,8 @@ const PartnersPreference = ({ navigation, profileData }) => {
     const [selectedSubCaste, setSelectedSubCaste] = useState('');
     const [loading, setLoading] = useState(false);
     const MyprofileData = useSelector((state) => state.getBiodata);
-    const myPartnerPreferences = profileData?.partnerPreferences || MyprofileData?.Biodata?.partnerPreferences;
+    const [mybiodata, setMyBiodata] = useState({});
+    const myPartnerPreferences = profileData?.partnerPreferences || mybiodata?.partnerPreferences;
 
     const [biodata, setBiodata] = useState({
         partnerSubCaste: '',
@@ -59,6 +62,39 @@ const PartnersPreference = ({ navigation, profileData }) => {
         partnerFamilyFinancialStatus: '',
         partnerFamilyIncome: '',
     });
+
+
+     useEffect(() => {
+        getBiodata();
+        console.log("mybiodata", JSON.stringify(mybiodata));
+      }, [])
+    
+    
+      const getBiodata = async () => {
+        try {
+          setMyBiodata("")
+          const token = await AsyncStorage.getItem('userToken');
+          if (!token) throw new Error('No token found');
+    
+          const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          };
+    
+          const response = await axios.get(GET_BIODATA, { headers });
+          if (response.data) {
+            const fetchedData = response.data.data;
+            console.log("My bio data in home page", fetchedData);
+            setMyBiodata(fetchedData);
+            dispatch(setBioData(fetchedData));
+          } else {
+            setMyBiodata({});
+          }
+        } catch (error) {
+          console.error("Error fetching biodata:", error);
+        }
+      };
+
 
     useEffect(() => {
         if (myPartnerPreferences) {
@@ -242,7 +278,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
                 setTimeout(() => {
                     navigation.reset({
                         index: 0,
-                        routes: [{ name: "MainApp" }],
+                        routes: [{ name: "MainPartnerPrefrence" }],
                     });
                 }, 1000);
                 return;

@@ -61,6 +61,11 @@ const styles = StyleSheet.create({
         fontSize: SF(15),
         fontFamily: "Poppins-Bold"
     },
+    errorText: {
+        color: 'red',
+        fontSize: SF(13),
+        fontFamily: "Poppins-Regular"
+    },
 
 });
 

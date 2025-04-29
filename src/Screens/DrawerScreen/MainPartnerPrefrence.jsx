@@ -19,13 +19,14 @@ const MainPartnerPrefrence = ({ navigation }) => {
     const [activeComponent, setActiveComponent] = useState("PartnersPreference");
     const profileData = useSelector((state) => state.profile);
     console.log("profileData in myprofile", profileData);
-    const image = `${PHOTO_URL}/${profileData?.profiledata?.photoUrl?.[0]}`;
+     const imagePath = profileData?.photoUrl?.[0];
+           const image = imagePath ? `${PHOTO_URL}/${imagePath}` : null;
+           const isValidImage = image && !image.includes("undefined") && !image.includes("null") && image.trim() !== "";
     console.log("image", image);
     const formattedDate = moment(profileData?.profiledata?.dob).format("DD/MM/YYYY");
     const MyprofileData = useSelector((state) => state.getBiodata);
     const [biodataAvailable, setBiodataAvailable] = useState(false);
     const [visible, setVisible] = useState(false);
-    const imageSource = image ? { uri: image } : require('../../Images/Profile.png');
 
     const handlePress = (componentName) => {
         setActiveComponent(componentName);
@@ -70,7 +71,7 @@ const MainPartnerPrefrence = ({ navigation }) => {
                 <View style={styles.topContainer}>
 
                     <TouchableOpacity onPress={() => setVisible(true)}>
-                        <Image source={imageSource} style={styles.image} />
+                        <Image source={isValidImage ? { uri: image } : require('../../Images/Profile.png')} style={styles.image} />
                     </TouchableOpacity>
                     <ImageViewing
                         images={[{ uri: image }]}

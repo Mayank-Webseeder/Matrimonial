@@ -7,8 +7,10 @@ import React, { useEffect, useState, useCallback } from 'react'
 import styles from '../StyleScreens/ProfileStyle';
 import { TouchableOpacity } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
-import { CREATE_PERSONAL_DETAILS, FREE_TRIAL, MATRIMONIALFETCH_PLAN, 
-  PAID_URL, PAYMENT_VERIFICATION, RAZORPAY, UPDATE_PERSONAL_DETAILS ,GET_BIODATA } from '../../utils/BaseUrl';
+import {
+  CREATE_PERSONAL_DETAILS, FREE_TRIAL, MATRIMONIALFETCH_PLAN,
+  PAID_URL, PAYMENT_VERIFICATION, RAZORPAY, UPDATE_PERSONAL_DETAILS, GET_BIODATA
+} from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -35,7 +37,7 @@ import {
 import { showMessage } from 'react-native-flash-message';
 
 const DetailedProfile = ({ navigation, profileData }) => {
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(true);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -59,14 +61,9 @@ const DetailedProfile = ({ navigation, profileData }) => {
   const profile_data = ProfileData?.profiledata || {};
   const [buyingPlanId, setBuyingPlanId] = useState(null);
   const [TrialPlanId, setTrialPlanId] = useState(null);
-const [mybiodata, setMyBiodata] = useState({});
+  const [mybiodata, setMyBiodata] = useState({});
 
-const myBiodata = profileData?.personalDetails || mybiodata?.personalDetails;
-
-  useEffect(() => {
-    getBiodata();
-    console.log("mybiodata", JSON.stringify(mybiodata));
-  },[])
+  const myBiodata = profileData?.personalDetails || mybiodata?.personalDetails;
 
   const [biodata, setBiodata] = useState({
     subCaste: '',
@@ -120,6 +117,11 @@ const myBiodata = profileData?.personalDetails || mybiodata?.personalDetails;
     fullImageName: "Upload One Full Image",
     bestImageName: "Upload One Best Image",
   });
+
+  useEffect(() => {
+    getBiodata();
+    console.log("mybiodata", JSON.stringify(mybiodata));
+  }, [])
 
 
   const getBiodata = async () => {
@@ -419,8 +421,11 @@ const myBiodata = profileData?.personalDetails || mybiodata?.personalDetails;
     ];
 
     const payload = {};
+
     for (const key of keys) {
-      if (biodata[key] !== undefined && biodata[key] !== "") {
+      if (key === "dob") {
+        payload[key] = biodata[key] || "";
+      } else if (biodata[key] !== undefined && biodata[key] !== "") {
         payload[key] = biodata[key];
       } else if (isNew) {
         payload[key] = "";
@@ -428,7 +433,6 @@ const myBiodata = profileData?.personalDetails || mybiodata?.personalDetails;
     }
 
     try {
-      // ✅ Ensure Base64 conversion only if needed
       payload.closeUpPhoto = biodata.closeUpPhoto.startsWith("data:image")
         ? biodata.closeUpPhoto
         : await convertToBase64(biodata.closeUpPhoto);
@@ -446,6 +450,7 @@ const myBiodata = profileData?.personalDetails || mybiodata?.personalDetails;
 
     return payload;
   };
+
   const OPTIONAL_FIELDS = [
     "weight", "complexion", "nadi", "gotraSelf", "gotraMother", "aboutMe", "otherFamilyMemberInfo",
     "knowCooking", "dietaryHabit", "smokingHabit", "drinkingHabit",
@@ -454,17 +459,57 @@ const myBiodata = profileData?.personalDetails || mybiodata?.personalDetails;
 
   const validateForm = (biodata) => {
     let errors = {};
+
     const allFields = Object.keys(biodata);
     const MANDATORY_FIELDS = allFields.filter(field => !OPTIONAL_FIELDS.includes(field));
 
     MANDATORY_FIELDS.forEach((field) => {
-      if (!biodata[field] || biodata[field] === "") {
+      const value = String(biodata[field] || "").trim();
+
+      if (!value) {
         errors[field] = `${field} is required`;
+      } else {
+        // Full Name Validation
+        if (field === "fullname") {
+          if (!/^[A-Za-z\s]+$/.test(value)) {
+            errors.fullname = "Full name must contain only letters and spaces.";
+          } else if (value.length > 25) {
+            errors.fullname = "Full name cannot exceed 25 characters.";
+          }
+        }
+
+        // DOB Validation
+        if (field === "dob") {
+          const birthDate = new Date(value);
+          if (isNaN(birthDate.getTime())) {
+            errors.dob = "Enter a valid date of birth.";
+          } else {
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+              age--;
+            }
+
+            if (age < 18) {
+              errors.dob = "Age must be 18 or older.";
+            }
+          }
+        }
+
+        // Contact Number Validation
+        if (field === "contactNumber1" || field === "contactNumber2") {
+          if (!/^\d{10}$/.test(value)) {
+            errors[field] = "Enter a valid 10-digit mobile number.";
+          }
+        }
       }
     });
 
     return errors;
   };
+
 
 
   const handleSave = async () => {
@@ -539,13 +584,19 @@ const myBiodata = profileData?.personalDetails || mybiodata?.personalDetails;
       throw new Error(response.data.message || "Something went wrong");
 
     } catch (error) {
-      console.error("🚨 API Error:", error.response?.data || error.message);
-
+      const errorStatus = error.response?.status;
+      const errorData = error.response?.data;
       const errorMessage =
-        error.response?.data?.message ||
+        errorData?.message ||
         error.response?.message ||
         error.message ||
         "Something went wrong!";
+
+      console.error("🚨 API Error:");
+      console.error("Status Code:", errorStatus);
+      console.error("Error Message:", errorMessage);
+      console.error("Full Error Data:", errorData);
+
       showMessage({
         message: errorMessage,
         type: 'danger',
@@ -553,9 +604,11 @@ const myBiodata = profileData?.personalDetails || mybiodata?.personalDetails;
         duration: 3000,
       });
 
-      setTimeout(() => {
-        openModal();
-      }, 1000);
+      if (errorMessage === "You do not have an active subscription for Biodata service.") {
+        setTimeout(() => {
+          openModal();
+        }, 1000);
+      }
 
     } finally {
       setIsLoading(false);

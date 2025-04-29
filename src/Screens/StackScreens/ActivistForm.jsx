@@ -28,6 +28,7 @@ export default function ActivistForm({ navigation }) {
   const [isEditing, setIsEditing] = useState(true);
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
   const [tempId, setTempId] = useState("");
+  const [errors, setErrors] = useState({});
   const [ActivistData, setActivistData] = useState({
     fullname: '',
     subCaste: '',
@@ -227,7 +228,7 @@ export default function ActivistForm({ navigation }) {
       }
 
       if (parsedDate && parsedDate.isValid()) {
-        payload.dob = parsedDate.format("DD/MM/YYYY"); 
+        payload.dob = parsedDate.format("DD/MM/YYYY");
       } else {
         console.error("❌ Invalid DOB format received:", payload.dob);
         throw new Error("Invalid DOB format. Expected format is YYYY-MM-DD.");
@@ -256,8 +257,56 @@ export default function ActivistForm({ navigation }) {
     return payload;
   };
 
+  const validateFields = () => {
+    const newErrors = {};
+    if (!ActivistData.mobileNo) {
+      newErrors.mobileNo = "Mobile number is required.";
+    } else if (!/^\d{10}$/.test(ActivistData.mobileNo)) {
+      newErrors.mobileNo = "Enter a valid 10-digit mobile number.";
+    }
+    if (!ActivistData.fullname) {
+      newErrors.fullname = "Full name is required.";
+    } else if (!/^[A-Za-z\s]+$/.test(ActivistData.fullname)) {
+      newErrors.fullname = "Name must contain only letters.";
+    } else if (ActivistData.fullname.length > 30) {
+      newErrors.fullname = "Name cannot exceed 30 characters.";
+    }
+    if (!ActivistData.dob) {
+      newErrors.dob = "Date of Birth is required.";
+    } else {
+      const today = new Date();
+      const birthDate = new Date(ActivistData.dob);
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const m = today.getMonth() - birthDate.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      if (age < 18) {
+        newErrors.dob = "Age must be 18 or older.";
+      }
+    }
+    if (!ActivistData.city?.trim()) {
+      newErrors.city = "City is required.";
+    }
+    if (!ActivistData.subCaste?.trim()) {
+      newErrors.subCaste = "Sub caste is required.";
+    }
+    if (!ActivistData.state?.trim()) {
+      newErrors.state = "state is required.";
+    }
+    if (!ActivistData.profilePhoto?.trim()) {
+      newErrors.profilePhoto = "profilePhoto is required.";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+
   const handleActivistSave = async () => {
     try {
+      if (!validateFields()) {
+        return;
+      }
       setIsLoading(true);
       const token = await AsyncStorage.getItem("userToken");
 
@@ -353,10 +402,18 @@ export default function ActivistForm({ navigation }) {
         <TextInput style={Globalstyles.input}
           placeholder="Enter your Full Name"
           value={ActivistData.fullname}
-          onChangeText={(text) => setActivistData((prev) => ({ ...prev, fullname: text }))}
+          onChangeText={(text) => {
+            const cleanText = text.replace(/[^A-Za-z\s]/g, '');
+            setActivistData((prev) => ({ ...prev, fullname: cleanText }));
+          }}
           placeholderTextColor={Colors.gray}
           autoComplete="off"
           textContentType="none" />
+        {errors?.fullname && (
+          <Text style={styles.errorText}>
+            {errors.fullname}
+          </Text>
+        )}
         <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
         <TextInput
           style={Globalstyles.input}
@@ -382,6 +439,12 @@ export default function ActivistForm({ navigation }) {
           />
         ) : null}
 
+{errors?.subCaste && (
+          <Text style={styles.errorText}>
+            {errors.subCaste}
+          </Text>
+        )}
+
         <View>
           <Text style={Globalstyles.title}>Date of Birth <Entypo name={'star'} color={'red'} size={12} /></Text>
           <TextInput
@@ -405,6 +468,12 @@ export default function ActivistForm({ navigation }) {
             />
           )}
         </View>
+
+        {errors?.dob && (
+          <Text style={styles.errorText}>
+            {errors.dob}
+          </Text>
+        )}
 
         {/* State Dropdown */}
         <Text style={Globalstyles.title}>State <Entypo name={'star'} color={'red'} size={12} /></Text>
@@ -432,6 +501,12 @@ export default function ActivistForm({ navigation }) {
           />
         ) : null}
 
+{errors?.state && (
+          <Text style={styles.errorText}>
+            {errors.state}
+          </Text>
+        )}
+
         {/* City/Village Input */}
         <Text style={Globalstyles.title}>City/Village <Entypo name={'star'} color={'red'} size={12} /></Text>
         <TextInput
@@ -457,6 +532,13 @@ export default function ActivistForm({ navigation }) {
           />
         ) : null}
 
+
+{errors?.city && (
+          <Text style={styles.errorText}>
+            {errors.city}
+          </Text>
+        )}
+
         {/* Contact Input */}
         <Text style={Globalstyles.title}>Contact <Entypo name={'star'} color={'red'} size={12} /></Text>
         <TextInput
@@ -465,10 +547,15 @@ export default function ActivistForm({ navigation }) {
           keyboardType="numeric"
           maxLength={10}
           placeholderTextColor={Colors.gray}
-          value={ActivistData.mobileNo} onChangeText={(text) => setActivistData((prev) => ({ ...prev, mobileNo: text }))}
+          value={ActivistData.mobileNo} onChangeText={(text) => setActivistData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
           autoComplete="off"
           textContentType="none"
         />
+        {errors?.mobileNo && (
+          <Text style={styles.errorText}>
+            {errors.mobileNo}
+          </Text>
+        )}
         <Text style={Globalstyles.title}>
           Known Activist ID No.
         </Text>
@@ -544,6 +631,13 @@ export default function ActivistForm({ navigation }) {
             />
           ) : null}
         </View>
+
+        {errors?.profilePhoto && (
+          <Text style={styles.errorText}>
+            {errors.profilePhoto}
+          </Text>
+        )}
+        
         <TouchableOpacity
           style={[styles.submitButton, isLoading && { opacity: 0.7 }]}
           onPress={handleActivistSave}

@@ -91,9 +91,10 @@ const styles = StyleSheet.create({
         marginLeft: SW(10),
     },
     errorText: {
-        color: "red",
+        color: 'red',
+        fontSize: SF(13),
         fontFamily: "Poppins-Regular"
-    }
+    },
 });
 
 export default styles;

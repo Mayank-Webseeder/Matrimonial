@@ -15,7 +15,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector } from 'react-redux';
 import RazorpayCheckout from 'react-native-razorpay';
 import { showMessage } from "react-native-flash-message";
-import {launchImageLibrary} from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 
 const PanditRegister = ({ navigation }) => {
@@ -180,14 +180,14 @@ const PanditRegister = ({ navigation }) => {
 
     const ADDL_LIMIT = 5;                // max extra photos
 
-const pickerOpts = {
-  selectionLimit: ADDL_LIMIT,        // gallery stops user at 5
-  mediaType: 'photo',
-  includeBase64: true,               // we still need base‑64
-  maxWidth: 400,                     // optional resize
-  maxHeight: 400,
-  quality: 1,
-};
+    const pickerOpts = {
+        selectionLimit: ADDL_LIMIT,        // gallery stops user at 5
+        mediaType: 'photo',
+        includeBase64: true,               // we still need base‑64
+        maxWidth: 400,                     // optional resize
+        maxHeight: 400,
+        quality: 1,
+    };
 
     const handleProfilePhotoPick = async () => {
         try {
@@ -251,32 +251,32 @@ const pickerOpts = {
 
     const handleAdditionalPhotosPick = () => {
         launchImageLibrary(pickerOpts, (response) => {
-          if (response.didCancel) return;                            // user aborted
-          if (response.errorCode) {
-            console.log('ImagePicker Error:', response.errorMessage);
-            return;
-          }
-      
-          const incoming = response.assets ?? [];
-      
-          setRoleRegisterData((prev) => {
-            // Convert each asset to data‑URI just like before
-            const newPhotos = incoming.map(
-              (img) => `data:${img.type};base64,${img.base64}`
-            );
-      
-            const updated = [...prev.additionalPhotos, ...newPhotos];
-      
-            if (updated.length > ADDL_LIMIT) {
-              Alert.alert(`You can only upload up to ${ADDL_LIMIT} additional photos.`);
-              return prev;                                           // refuse update
+            if (response.didCancel) return;                            // user aborted
+            if (response.errorCode) {
+                console.log('ImagePicker Error:', response.errorMessage);
+                return;
             }
-      
-            return { ...prev, additionalPhotos: updated };
-          });
+
+            const incoming = response.assets ?? [];
+
+            setRoleRegisterData((prev) => {
+                // Convert each asset to data‑URI just like before
+                const newPhotos = incoming.map(
+                    (img) => `data:${img.type};base64,${img.base64}`
+                );
+
+                const updated = [...prev.additionalPhotos, ...newPhotos];
+
+                if (updated.length > ADDL_LIMIT) {
+                    Alert.alert(`You can only upload up to ${ADDL_LIMIT} additional photos.`);
+                    return prev;                                           // refuse update
+                }
+
+                return { ...prev, additionalPhotos: updated };
+            });
         });
-      };
-      
+    };
+
     const OPTIONAL_FIELDS = [
         "residentialAddress", "additionalPhotos", "experience", "websiteUrl",
         "facebookUrl", "youtubeUrl", "instagramUrl", "whatsapp", "description", "aadharNo"
@@ -285,21 +285,35 @@ const pickerOpts = {
     const validateForm = (data) => {
         let errors = {};
 
-        if (!data) return errors; // Ensure data exists to avoid undefined errors
+        if (!data) return errors;
 
         const allFields = Object.keys(data);
-
-        // Get mandatory fields (all except optional ones)
         const MANDATORY_FIELDS = allFields.filter(field => !OPTIONAL_FIELDS.includes(field));
 
         MANDATORY_FIELDS.forEach((field) => {
-            if (!data[field] || String(data[field]).trim() === "") {
-                errors[field] = `${field} is required`;
+            const value = String(data[field] || "").trim();
+            if (!value) {
+                errors[field] = `${field} is required.`;
+                return;
+            }
+            if (field === "mobileNo") {
+                if (!/^\d{10}$/.test(value)) {
+                    errors[field] = "Enter a valid 10-digit mobile number.";
+                }
+            }
+
+            if (field === "fullName") {
+                if (!/^[A-Za-z\s]+$/.test(value)) {
+                    errors[field] = `${field} must contain only letters and spaces.`;
+                } else if (value.length > 30) {
+                    errors[field] = `${field} cannot exceed 30 characters.`;
+                }
             }
         });
 
         return errors;
     };
+
 
     const handleSubmit = async () => {
         try {
@@ -373,8 +387,7 @@ const pickerOpts = {
         } catch (error) {
             const errorMessage =
                 error?.response?.data?.message ||
-                error?.response?.error
-            error?.response?.message ||
+                error?.response?.message ||
                 error?.message ||
                 "Something went wrong!";
 
@@ -386,9 +399,12 @@ const pickerOpts = {
                 icon: "danger",
                 duration: 5000,
             });
-            setTimeout(() => {
-                openModal();
-            }, 1000);
+            if (errorMessage.includes("valid Pandit subscription")) {
+                setTimeout(() => {
+                    openModal();
+                }, 1000);
+            }
+
         } finally {
             console.log("Loader Stopped!");
             setIsLoading(false);
@@ -736,18 +752,21 @@ const pickerOpts = {
                     <Text style={Globalstyles.title}>Name <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput style={Globalstyles.input}
                         value={RoleRegisterData?.fullName}
-                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, fullName: text }))}
+                        onChangeText={(text) => {
+                            const cleanText = text.replace(/[^A-Za-z\s]/g, '');
+                            setRoleRegisterData((prev) => ({ ...prev, fullName: cleanText }));
+                        }}
                         placeholder='Enter Your Full Name'
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
-                    />
+                    />a
                     {errors.fullName && <Text style={styles.errorText}>{errors.fullName}</Text>}
 
                     <Text style={Globalstyles.title}>Mobile No. <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput style={Globalstyles.input}
                         value={RoleRegisterData?.mobileNo}
-                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, mobileNo: text }))}
+                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
                         keyboardType="phone-pad"
                         placeholder="Enter Your Mobile No." maxLength={10}
                         placeholderTextColor={Colors.gray}
@@ -915,7 +934,9 @@ const pickerOpts = {
                             )}
                         </TouchableOpacity>
                     </View>
-                    {errors.profilePhoto && <Text style={styles.errorText}>{errors.profilePhoto}</Text>}
+                    {!RoleRegisterData.profilePhoto && errors.profilePhoto && (
+                        <Text style={styles.errorText}>{errors.profilePhoto}</Text>
+                    )}
 
                     <Text style={Globalstyles.title}>Add Description</Text>
                     <TextInput style={Globalstyles.textInput} value={RoleRegisterData.description}

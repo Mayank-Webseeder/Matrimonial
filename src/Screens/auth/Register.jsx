@@ -49,16 +49,16 @@ const Register = ({ navigation }) => {
         })
             .then(image => {
                 console.log('Selected Image:', image); // Check the image object
-    
+
                 if (!image.path) {
                     console.error("Image path is missing!");
                     return;
                 }
-    
+
                 // Extract the image name from the path and update state
                 const imageName = image.path.split('/').pop(); // Get the file name from the path
                 setSelectedImageName(imageName);  // Update the state with the file name
-    
+
                 // You can also set the image URI to your state (if needed for further use)
                 setSelectedImage(image.path);  // Set the image path (not base64)
             })
@@ -157,20 +157,20 @@ const Register = ({ navigation }) => {
 
     const handleSignup = async () => {
         if (!validateFields()) return;
-    
+
         if (!otp || otp.length !== 6) {
             showMessage({ type: "danger", message: "Invalid OTP", description: "Please enter the correct OTP.", icon: "danger" });
             return;
         }
-    
+
         setIsLoading(true);
         try {
             const formattedDate = selectedDate
                 ? `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, "0")}-${selectedDate.getDate().toString().padStart(2, "0")}`
                 : null;
-    
+
             const formData = new FormData();
-      
+
             formData.append('username', fullName.trim());
             formData.append('dob', formattedDate);
             formData.append('city', selectedCity || cityInput.trim());
@@ -178,24 +178,24 @@ const Register = ({ navigation }) => {
             formData.append('password', password.trim());
             formData.append('mobileNo', mobileNumber.trim());
             formData.append('otp', otp.trim());
-  
+
             if (selectedImage) {
                 formData.append('photoUrl', {
                     uri: selectedImage,
                 });
             }
-    
-            console.log("SignUp FormData:", formData); 
-    
+
+            console.log("SignUp FormData:", formData);
+
             const response = await axios.post(SIGNUP_ENDPOINT, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 }
             });
-    
-            console.log("Signup Response:",JSON.stringify(response.data));
+
+            console.log("Signup Response:", JSON.stringify(response.data));
             const RegisterData = response.data;
-    
+
             if (response.status === 200 && response.data.status === true) {
                 dispatch(resetBioData());
                 const token = RegisterData?.user?.token || null;
@@ -207,14 +207,14 @@ const Register = ({ navigation }) => {
                 } else {
                     console.warn("Token is missing in response, skipping storage.");
                 }
-    
+
                 try {
                     initializeSocket(userId);
                     console.log(`✅ Socket initialized successfully for user: ${userId}`);
                 } catch (socketError) {
                     console.error("🚨 Socket Initialization Failed:", socketError);
                 }
-    
+
                 showMessage({
                     type: "success",
                     message: "Sign Up Successful",
@@ -231,10 +231,10 @@ const Register = ({ navigation }) => {
             }
         } catch (error) {
             console.error("Sign Up Error:", error);
-        
+
             let errorMessage = "An unexpected error occurred. Please try again.";
             let errorDescription = "";
-        
+
             if (error.response) {
                 errorMessage = error.response.data.message || "Server responded with an error.";
                 errorDescription = error.response.data.error || "Please check your input and try again.";
@@ -245,7 +245,7 @@ const Register = ({ navigation }) => {
                 errorMessage = "Error";
                 errorDescription = error.message || "An unexpected error occurred.";
             }
-        
+
             showMessage({
                 type: "danger",
                 message: errorMessage,
@@ -254,7 +254,7 @@ const Register = ({ navigation }) => {
             });
         }
     };
-    
+
 
 
     const handleDateChange = (event, date) => {

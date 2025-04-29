@@ -17,8 +17,8 @@ const CommitteeSubmissionPage = ({ navigation }) => {
     const [cityInput, setCityInput] = useState('');
     const [filteredCities, setFilteredCities] = useState([]);
     const [filteredSubCaste, setFilteredSubCaste] = useState([]);
-    const [isEditing, setIsEditing] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
+    const [errors, setErrors] = useState({});
     const [CommitteeData, setCommitteeData] = useState({
         committeeTitle: '',
         presidentName: '',
@@ -142,54 +142,94 @@ const CommitteeSubmissionPage = ({ navigation }) => {
         return payload;
     };
 
+    const validateFields = () => {
+        const newErrors = {};
+        if (!CommitteeData.mobileNo) {
+            newErrors.mobileNo = "Mobile number is required.";
+        } else if (!/^\d{10}$/.test(CommitteeData.mobileNo)) {
+            newErrors.mobileNo = "Enter a valid 10-digit mobile number.";
+        }
+        if (!CommitteeData.presidentName) {
+            newErrors.presidentName = "presidentName is required.";
+        } else if (!/^[A-Za-z\s]+$/.test(CommitteeData.presidentName)) {
+            newErrors.presidentName = "DharmspresidentName must contain only letters.";
+        } else if (CommitteeData.presidentName.length > 30) {
+            newErrors.presidentName = "presidentName Name cannot exceed 30 characters.";
+        }
+        if (!CommitteeData.committeeTitle) {
+            newErrors.committeeTitle = "committeeTitle is required.";
+        } else if (!/^[A-Za-z\s]+$/.test(CommitteeData.committeeTitle)) {
+            newErrors.committeeTitle = "committeeTitle must contain only letters.";
+        } else if (CommitteeData.committeeTitle.length > 30) {
+            newErrors.committeeTitle = "committeeTitle Name cannot exceed 30 characters.";
+        }
+        if (!CommitteeData.city?.trim()) {
+            newErrors.city = "City is required.";
+        }
+        if (!CommitteeData.area?.trim()) {
+            newErrors.area = "area is required.";
+        }
+        if (!CommitteeData.subCaste?.trim()) {
+            newErrors.subCaste = "Sub caste is required.";
+        }
+        if (!CommitteeData.photoUrl) {
+            newErrors.photoUrl = "photoUrl is required.";
+        }
+
+        setErrors(newErrors);
+
+        return Object.keys(newErrors).length === 0;
+    };
+
 
     const handleCommitteeSave = async () => {
         try {
+            if (!validateFields()) return;
             setIsLoading(true);
-    
+
             const token = await AsyncStorage.getItem("userToken");
             if (!token) {
-               showMessage({ type: "danger", message: "Error", description: "Authorization token is missing." });
+                showMessage({ type: "danger", message: "Error", description: "Authorization token is missing." });
                 return;
             }
-    
+
             const payload = await constructCommitteePayload(CommitteeData, true);
             console.log("🚀 Constructed Payload:", JSON.stringify(payload));
-    
+
             const headers = {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`
             };
-    
+
             const response = await axios.post(CREATE_COMMITTEE, payload, { headers });
-    
+
             console.log("✅ API Response:", JSON.stringify(response.data));
-    
+
             if (response.status === 200 || response.data.status === true) {
-               showMessage({
+                showMessage({
                     type: "success",
                     message: "Committee Created Successfully",
                     description: response.data.message || "Your committee profile has been saved!",
                     visibilityTime: 2000,
-                    icon:"success",
+                    icon: "success",
                 });
                 navigation.navigate("Committee");
             } else {
-               showMessage({
+                showMessage({
                     type: "danger",
                     message: "Error",
                     description: response.data?.message || "Failed to save committee.",
-                    icon:"danger"
+                    icon: "danger"
                 });
             }
         } catch (error) {
             console.error("🚨 Error Creating Committee:", error.response?.data || error.message);
-           showMessage({ type: "danger", message: "Error", description: "Failed to save committee data." ,icon:"danger"});
+            showMessage({ type: "danger", message: "Error", description: "Failed to save committee data.", icon: "danger" });
         } finally {
             setIsLoading(false);
         }
     };
-    
+
     return (
         <SafeAreaView style={Globalstyles.container}>
             <StatusBar
@@ -219,8 +259,16 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     value={CommitteeData.committeeTitle}
                     autoComplete="off"
                     textContentType="none"
-                    onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, committeeTitle: text }))} placeholderTextColor={Colors.gray}
+                    onChangeText={(text) => {
+                        const cleanText = text.replace(/[^A-Za-z\s]/g, '');
+                        setCommitteeData((prev) => ({ ...prev, committeeTitle: cleanText }));
+                    }}
+                    placeholderTextColor={Colors.gray}
                 />
+
+                {errors.committeeTitle && (
+                    <Text style={styles.errorText}>{errors.committeeTitle}</Text>
+                )}
 
                 {/* Dharamsala Name */}
                 <Text style={Globalstyles.title}>Committee President Name <Entypo name={'star'} color={'red'} size={12} /></Text>
@@ -228,11 +276,18 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     style={Globalstyles.input}
                     placeholder="Enter President Name"
                     value={CommitteeData.presidentName}
-                    onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, presidentName: text }))}
+                    onChangeText={(text) => {
+                        const cleanText = text.replace(/[^A-Za-z\s]/g, '');
+                        setCommitteeData((prev) => ({ ...prev, presidentName: cleanText }));
+                    }}
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
                     textContentType="none"
                 />
+
+                {errors.presidentName && (
+                    <Text style={styles.errorText}>{errors.presidentName}</Text>
+                )}
 
                 <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
@@ -244,6 +299,10 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     autoComplete="off"
                     textContentType="none"
                 />
+
+                {errors.subCaste && (
+                    <Text style={styles.errorText}>{errors.subCaste}</Text>
+                )}
 
                 {/* Agar user type karega toh list dikhegi */}
                 {filteredSubCaste.length > 0 ? (
@@ -271,6 +330,9 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     autoComplete="off"
                     textContentType="none"
                 />
+                {errors.city && (
+                    <Text style={styles.errorText}>{errors.city}</Text>
+                )}
                 {filteredCities.length > 0 && cityInput ? (
                     <FlatList
                         data={filteredCities.slice(0, 5)}
@@ -294,6 +356,9 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     autoComplete="off"
                     textContentType="none"
                 />
+                {errors.area && (
+                    <Text style={styles.errorText}>{errors.area}</Text>
+                )}
 
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginVertical: SH(10) }}>
                     <Text style={Globalstyles.title}>Upload President Image <Entypo name={'star'} color={'red'} size={12} /></Text>
@@ -308,6 +373,10 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     />
                 ) : null}
 
+                {errors.photoUrl && (
+                    <Text style={styles.errorText}>{errors.photoUrl}</Text>
+                )}
+
                 <Text style={Globalstyles.title}>Contact Number Of President <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
                     style={Globalstyles.input}
@@ -317,9 +386,12 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
                     textContentType="none"
-                    value={CommitteeData.mobileNo} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, mobileNo: text }))}
+                    value={CommitteeData.mobileNo} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
                 />
 
+                {errors.mobileNo && (
+                    <Text style={styles.errorText}>{errors.mobileNo}</Text>
+                )}
                 <TouchableOpacity
                     style={styles.submitButton}
                     onPress={handleCommitteeSave}
@@ -338,6 +410,11 @@ const CommitteeSubmissionPage = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+    errorText: {
+        color: 'red',
+        fontSize: SF(13),
+        fontFamily: "Poppins-Regular"
+    },
     container: {
         flex: 1,
         backgroundColor: Colors.light,

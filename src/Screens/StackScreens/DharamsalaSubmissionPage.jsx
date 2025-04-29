@@ -7,12 +7,12 @@ import Globalstyles from '../../utils/GlobalCss';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { CityData, subCasteOptions } from '../../DummyData/DropdownData';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { CREATE_DHARAMSALA} from '../../utils/BaseUrl';
+import { CREATE_DHARAMSALA } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import _ from "lodash";
 import { showMessage } from 'react-native-flash-message';
-import {launchImageLibrary} from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 const DharamsalaSubmissionPage = ({ navigation }) => {
     const [subCasteInput, setSubCasteInput] = useState('');
@@ -22,13 +22,14 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
     const [selectedCity, setSelectedCity] = useState('');
     const [selectedSubCaste, setSelectedSubCaste] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [errors, setErrors] = useState({});
 
     const [DharamsalaData, setDharamsalaData] = useState({
         dharmshalaName: '',
         subCaste: '',
         city: '',
         description: '',
-        images: [],  // ✅ Ensure images is an array
+        images: [],
         mobileNo: ''
     });
 
@@ -95,14 +96,14 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
         }));
     };
 
-const pickerOptions = {
-  selectionLimit: 4,     // 🔒 hard cap at 4
-  mediaType: 'photo',
-  includeBase64: false,  // you only need file‑URIs
-  maxWidth: 400,         // resize so you don’t need in‑picker cropping
-  maxHeight: 400,
-  quality: 1,
-};
+    const pickerOptions = {
+        selectionLimit: 4,     // 🔒 hard cap at 4
+        mediaType: 'photo',
+        includeBase64: false,  // you only need file‑URIs
+        maxWidth: 400,         // resize so you don’t need in‑picker cropping
+        maxHeight: 400,
+        quality: 1,
+    };
 
     // const handleImageUpload = () => {
     //     ImageCropPicker.openPicker({
@@ -132,19 +133,19 @@ const pickerOptions = {
 
     const handleImageUpload = () => {
         launchImageLibrary(pickerOptions, (response) => {
-          if (response.didCancel) return;                        
-          if (response.errorCode) {
-            console.log('ImagePicker Error:', response.errorMessage);
-            return;
-          }
-          const images = response.assets ?? [];               
-      
-          setDharamsalaData((prev) => ({
-            ...prev,
-            images: images.map((img) => ({ uri: img.uri })),     
-          }));
+            if (response.didCancel) return;
+            if (response.errorCode) {
+                console.log('ImagePicker Error:', response.errorMessage);
+                return;
+            }
+            const images = response.assets ?? [];
+
+            setDharamsalaData((prev) => ({
+                ...prev,
+                images: images.map((img) => ({ uri: img.uri })),
+            }));
         });
-      };
+    };
 
 
     const convertToBase64 = async (images) => {
@@ -191,8 +192,39 @@ const pickerOptions = {
         return payload;
     };
 
+    const validateFields = () => {
+        const newErrors = {};
+        if (!DharamsalaData.mobileNo) {
+            newErrors.mobileNo = "Mobile number is required.";
+        } else if (!/^\d{10}$/.test(DharamsalaData.mobileNo)) {
+            newErrors.mobileNo = "Enter a valid 10-digit mobile number.";
+        }
+        if (!DharamsalaData.dharmshalaName) {
+            newErrors.dharmshalaName = "Dharmshala Name is required.";
+        } else if (!/^[A-Za-z\s]+$/.test(DharamsalaData.dharmshalaName)) {
+            newErrors.dharmshalaName = "Dharmshala Name must contain only letters.";
+        } else if (DharamsalaData.dharmshalaName.length > 50) {
+            newErrors.dharmshalaName = "Dharmshala Name cannot exceed 50 characters.";
+        }
+        if (!DharamsalaData.city?.trim()) {
+            newErrors.city = "City is required.";
+        }
+        if (!DharamsalaData.subCaste?.trim()) {
+            newErrors.subCaste = "Sub caste is required.";
+        }
+        if (!DharamsalaData.images || DharamsalaData.images.length === 0) {
+            newErrors.images = "At least one image is required.";
+        }
+
+        setErrors(newErrors);
+
+        return Object.keys(newErrors).length === 0;
+    };
+
+
     const handleCreateDharamSala = async () => {
         try {
+            if (!validateFields()) return;
             setIsLoading(true);
             const token = await AsyncStorage.getItem("userToken");
 
@@ -266,12 +298,19 @@ const pickerOptions = {
                 <TextInput
                     style={Globalstyles.input}
                     placeholder="Enter Dharamsala Name"
-                    value={DharamsalaData.dharmshalaName}
-                    onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, dharmshalaName: text }))}
+                    value={DharamsalaData?.dharmshalaName}
+                    onChangeText={(text) => {
+                        const cleanText = text.replace(/[^A-Za-z\s]/g, '');
+                        setDharamsalaData((prev) => ({ ...prev, dharmshalaName: cleanText }));
+                    }}
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
                     textContentType="none"
                 />
+
+                {errors.dharmshalaName && (
+                    <Text style={styles.errorText}>{errors.dharmshalaName}</Text>
+                )}
 
                 <Text style={Globalstyles.title}>Sub-Caste Name <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
@@ -299,6 +338,10 @@ const pickerOptions = {
                     />
                 ) : null}
 
+                {errors.subCaste && (
+                    <Text style={styles.errorText}>{errors.subCaste}</Text>
+                )}
+
                 <Text style={Globalstyles.title}>City <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
                     style={Globalstyles.input}
@@ -322,6 +365,9 @@ const pickerOptions = {
                         style={Globalstyles.suggestions}
                     />
                 ) : null}
+                {errors.city && (
+                    <Text style={styles.errorText}>{errors.city}</Text>
+                )}
 
                 <Text style={Globalstyles.title}>Contact <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
@@ -330,10 +376,13 @@ const pickerOptions = {
                     keyboardType="numeric"
                     maxLength={10}
                     placeholderTextColor={Colors.gray}
-                    value={DharamsalaData.mobileNo} onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, mobileNo: text }))}
+                    value={DharamsalaData.mobileNo} onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
                     autoComplete="off"
                     textContentType="none"
                 />
+                {errors.mobileNo && (
+                    <Text style={styles.errorText}>{errors.mobileNo}</Text>
+                )}
 
                 <Text style={Globalstyles.title}>Description</Text>
                 <TextInput
@@ -364,6 +413,10 @@ const pickerOptions = {
                     </View>
                 )}
 
+                {errors.images && (
+                    <Text style={styles.errorText}>{errors.images}</Text>
+                )}
+
                 <TouchableOpacity
                     style={styles.submitButton}
                     onPress={handleCreateDharamSala}
@@ -381,7 +434,11 @@ const pickerOptions = {
 };
 
 const styles = StyleSheet.create({
-
+    errorText: {
+        color: 'red',
+        fontSize: SF(13),
+        fontFamily: "Poppins-Regular"
+    },
     title: {
         fontSize: SF(15),
         fontFamily: "Poppins-Medium",

@@ -21,7 +21,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { showMessage } from 'react-native-flash-message';
 
 const ProfileDetail = ({ route, navigation }) => {
-    const { profileType } = route.params || {} ;
+    const { profileType } = route.params || {};
     const [profileData, setProfileData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [postloading, setPostLoading] = useState(false);
@@ -177,8 +177,14 @@ const ProfileDetail = ({ route, navigation }) => {
 
     const renderImages = (images) => {
         if (!images || images.length === 0) {
-            return <Text style={styles.noReviewsText}>No images available for this post</Text>;
+            return (
+                <View style={styles.noImagesContainer}>
+                    <MaterialIcons name="hide-image" size={40} color={Colors.gray} style={styles.icon} />
+                    <Text style={styles.noImagesText}>No additional photos available for this post</Text>
+                </View>
+            );
         }
+
 
         const rows = [];
         for (let i = 0; i < images.length; i += 2) {
@@ -366,6 +372,15 @@ const ProfileDetail = ({ route, navigation }) => {
                                             {profileData?.personalDetails?.placeofbirth && (
                                                 <Text style={styles.text}>Place of Birth: {profileData.personalDetails.placeofbirth}</Text>
                                             )}
+                                        </View>
+                                        <View style={styles.flexContainer2}>
+                                            {profileData?.personalDetails?.nadi && <Text style={styles.text}>Nadi: {profileData?.personalDetails?.nadi}</Text>}
+                                            {profileData?.personalDetails?.gotraSelf && <Text style={styles.text}>Gotra (Self): {profileData?.personalDetails?.gotraSelf}</Text>}
+                                        </View>
+
+                                        <View style={styles.flexContainer2}>
+                                            {profileData?.personalDetails?.manglikStatus && <Text style={styles.text}>{profileData?.personalDetails?.manglikStatus}</Text>}
+                                            {profileData?.personalDetails?.gotraMother && <Text style={styles.text}>Gotra (Mother): {profileData?.personalDetails?.gotraMother}</Text>}
                                         </View>
                                     </View>
                                 )}
@@ -678,7 +693,10 @@ const ProfileDetail = ({ route, navigation }) => {
                                         )}
                                     </>
                                 ) : (
-                                    <Text style={styles.noReviewsText}>No reviews yet</Text>
+                                    <View style={styles.noReviewsContainer}>
+                                        <Text style={styles.noReviewsTitle}>No Reviews Yet</Text>
+                                        <Text style={styles.noReviewsSubtitle}>Newly uploaded reviews will appear here.</Text>
+                                    </View>
                                 )}
 
                             </View>
@@ -855,7 +873,10 @@ const ProfileDetail = ({ route, navigation }) => {
                                         )}
                                     </>
                                 ) : (
-                                    <Text style={styles.noReviewsText}>No reviews yet</Text>
+                                    <View style={styles.noReviewsContainer}>
+                                        <Text style={styles.noReviewsTitle}>No Reviews Yet</Text>
+                                        <Text style={styles.noReviewsSubtitle}>Newly uploaded reviews will appear here.</Text>
+                                    </View>
                                 )}
 
                             </View>
@@ -1030,7 +1051,10 @@ const ProfileDetail = ({ route, navigation }) => {
                                         )}
                                     </>
                                 ) : (
-                                    <Text style={styles.noReviewsText}>No reviews yet</Text>
+                                    <View style={styles.noReviewsContainer}>
+                                        <Text style={styles.noReviewsTitle}>No Reviews Yet</Text>
+                                        <Text style={styles.noReviewsSubtitle}>Newly uploaded reviews will appear here.</Text>
+                                    </View>
                                 )}
 
                             </View>

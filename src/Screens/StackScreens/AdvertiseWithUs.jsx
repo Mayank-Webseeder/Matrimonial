@@ -17,10 +17,36 @@ const AdvertiseWithUs = ({ navigation }) => {
     const [mobileNo, setMobileNo] = useState("");
     const [email, setEmail] = useState("");
     const [message, setMessage] = useState("");
+    const [errors, setErrors] = useState({});
 
+    const validateFields = () => {
+        const newErrors = {};
+
+        if (!mobileNo) newErrors.mobileNo = "Mobile number is required.";
+        else if (!/^\d{10}$/.test(mobileNo)) newErrors.mobileNo = "Enter a valid 10-digit mobile number.";
+
+        if (!firstName) {
+            newErrors.firstName = "firstName is required.";
+        } else if (!/^[A-Za-z\s]+$/.test(firstName)) {
+            newErrors.firstName = "firstName must contain only letters.";
+        } else if (firstName.length > 15) {
+            newErrors.firstName = "firstName cannot exceed 15 characters.";
+        }
+        if (!lastName) {
+            newErrors.lastName = "lastName is required.";
+        } else if (!/^[A-Za-z\s]+$/.test(lastName)) {
+            newErrors.lastName = "lastName must contain only letters.";
+        } else if (lastName.length > 15) {
+            newErrors.lastName = "lastName cannot exceed 15 characters.";
+        }
+        if (!email.trim()) newErrors.email = "email is required.";
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleSubmit = async () => {
         try {
+            if (!validateFields()) return;
             const token = await AsyncStorage.getItem('userToken'); // ✅ Fetch Token
             if (!token) throw new Error('No token found');
 
@@ -44,11 +70,11 @@ const AdvertiseWithUs = ({ navigation }) => {
 
             // ✅ Ensure response is successful
             if (response.status === 200 && response.data.status === true) {
-               showMessage({
+                showMessage({
                     type: 'success',
                     message: 'Success',
                     description: response.data.message || 'Your Advertise Request has been submitted successfully!',
-                    icon:"success"
+                    icon: "success"
                 });
 
                 setTimeout(() => {
@@ -68,11 +94,11 @@ const AdvertiseWithUs = ({ navigation }) => {
                 errorMessage = error.response.data?.message || "Invalid request!";
             }
 
-           showMessage({
+            showMessage({
                 type: 'danger',
                 message: 'Error',
                 description: errorMessage,
-                icon:"danger"
+                icon: "danger"
             });
 
         }
@@ -100,24 +126,24 @@ const AdvertiseWithUs = ({ navigation }) => {
                             <Text style={styles.title}>Contact Information</Text>
                             <Text style={styles.subtitle}>Say something to start a live chat!</Text>
                             <View style={styles.iconContainer}>
-                            <View style={styles.iconContainer}>
-                                <MaterialIcons name="phone" size={22} color={Colors.light} />
-                                <Text
-                                    style={styles.contactText}
-                                    onPress={() => Linking.openURL("tel:8871186630")}
-                                >
-                                    8871186630
-                                </Text>
-                            </View>
-                            <View style={styles.iconContainer}>
-                                <MaterialIcons name="phone" size={22} color={Colors.light} />
-                                <Text
-                                    style={styles.contactText}
-                                    onPress={() => Linking.openURL("tel:8871186630")}
-                                >
-                                     8966930727
-                                </Text>
-                            </View>
+                                <View style={styles.iconContainer}>
+                                    <MaterialIcons name="phone" size={22} color={Colors.light} />
+                                    <Text
+                                        style={styles.contactText}
+                                        onPress={() => Linking.openURL("tel:8871186630")}
+                                    >
+                                        8871186630
+                                    </Text>
+                                </View>
+                                <View style={styles.iconContainer}>
+                                    <MaterialIcons name="phone" size={22} color={Colors.light} />
+                                    <Text
+                                        style={styles.contactText}
+                                        onPress={() => Linking.openURL("tel:8871186630")}
+                                    >
+                                        8966930727
+                                    </Text>
+                                </View>
                             </View>
 
                             {/* <View style={styles.iconContainer}>
@@ -169,21 +195,45 @@ const AdvertiseWithUs = ({ navigation }) => {
                 {/* Form Fields */}
                 <View style={Globalstyles.form}>
                     <Text style={Globalstyles.title}>First Name</Text>
-                    <TextInput style={Globalstyles.input} placeholder="Enter First Name" value={firstName} onChangeText={setFirstName}
+                    <TextInput style={Globalstyles.input} placeholder="Enter First Name" 
+                    value={firstName} 
+                    onChangeText={(text) => {
+                        const cleanText = text.replace(/[^A-Za-z\s]/g, '');
+                        setFirstName(cleanText);
+                    }}
                         placeholderTextColor={Colors.gray} />
 
+                    {errors.firstName && (
+                        <Text style={styles.errorText}>{errors.firstName}</Text>
+                    )}
+
                     <Text style={Globalstyles.title}>Last Name</Text>
-                    <TextInput style={Globalstyles.input} placeholder="Enter Last Name" value={lastName} onChangeText={setLastName}
-                        placeholderTextColor={Colors.gray} />
+                    <TextInput style={Globalstyles.input} placeholder="Enter Last Name" value={lastName} 
+                    onChangeText={(text) => {
+                        const cleanText = text.replace(/[^A-Za-z\s]/g, '');
+                        setLastName(cleanText);
+                    }}
+                     placeholderTextColor={Colors.gray} />
+                    {errors.lastName && (
+                        <Text style={styles.errorText}>{errors.lastName}</Text>
+                    )}
 
                     <Text style={Globalstyles.title}>Email</Text>
                     <TextInput style={Globalstyles.input} placeholder="Enter Email" value={email} onChangeText={setEmail} keyboardType="email-address"
                         placeholderTextColor={Colors.gray} />
+                    {errors.email && (
+                        <Text style={styles.errorText}>{errors.email}</Text>
+                    )}
 
                     <Text style={Globalstyles.title}>Phone No</Text>
-                    <TextInput style={Globalstyles.input} placeholder="Enter Mobile Number" value={mobileNo} onChangeText={setMobileNo}
+                    <TextInput style={Globalstyles.input} placeholder="Enter Mobile Number" value={mobileNo}
+                     onChangeText={(text) => setMobileNo(text.replace(/[^0-9]/g, ''))}
                         keyboardType="numeric" maxLength={10}
                         placeholderTextColor={Colors.gray} />
+
+                    {errors.mobileNo && (
+                        <Text style={styles.errorText}>{errors.mobileNo}</Text>
+                    )}
 
                     <Text style={Globalstyles.title}>Message</Text>
                     <TextInput style={[Globalstyles.textInput]} placeholder="Write your message..." value={message}

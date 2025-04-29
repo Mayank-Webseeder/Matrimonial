@@ -271,8 +271,6 @@ const pickerOpts = {
 
     const handleSubmit = async () => {
         setIsLoading(true);
-
-        // ✅ API Mapping based on profileType
         const roleApiMapping = {
             Pandit: UPDATE_PANDIT,
             Jyotish: UPDATE_JYOTISH,
@@ -296,15 +294,12 @@ const pickerOpts = {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`,
             };
-
             const url = roleApiMapping[profileType];
             const servicesKey = `${profileType.toLowerCase()}Services`;
             const existingServices = profileData?.[servicesKey] || [];
-
             const filteredServices = Object.keys(checked).filter(service =>
                 servicesOptions[profileType].some(option => option.value === service) && checked[service]
-            );
-
+            );      
             let profilePhotoBase64 = null;
             if (RoleRegisterData.profilePhoto) {
                 try {
@@ -355,7 +350,7 @@ const pickerOpts = {
                 });
 
                 setTimeout(() => {
-                    navigation.navigate("MyProfile");
+                    navigation.replace("ProfileDetail", { profileType:profileType });
                     setIsLoading(false);
                 }, 2000);
 
@@ -385,7 +380,6 @@ const pickerOpts = {
             setIsLoading(false);
         }
     };
-
 
     const handleCheckboxChange = (service) => {
         setChecked((prev) => ({

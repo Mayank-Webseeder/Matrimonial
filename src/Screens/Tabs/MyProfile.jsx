@@ -32,7 +32,6 @@ const MyProfile = ({ navigation }) => {
     const [fetchProfileDetails, setFetchProfileDetails] = useState(null);
     const [loading, setLoading] = useState(false);
     const [ProfileLoading, setProfileLoading] = useState(false);
-    const image = `${PHOTO_URL}/${profileData?.photoUrl?.[0]}`;
     const [isLoading, setIsLoading] = useState(false);
     // console.log("profileData", profileData);
     const formattedDate = moment(profileData.dob).format("DD/MM/YYYY");
@@ -55,14 +54,21 @@ const MyProfile = ({ navigation }) => {
   return uri && typeof uri === "string" && !uri.includes("undefined") && !uri.includes("null") && uri.trim() !== "";
 };
 
-const finalImageSource =
-  isValidUri(selectedImage)
-    ? { uri: selectedImage }
-    : isValidUri(image)
-      ? { uri: image }
-      : require('../../Images/Profile.png');
+const rawImagePath = profileData?.photoUrl?.[0];
+const isFullUrl = rawImagePath?.startsWith("http");
 
+// Build proper image URL
+const image = rawImagePath
+  ? (isFullUrl ? rawImagePath : `${PHOTO_URL}/${rawImagePath}`)
+  : null;
 
+// Final image source
+const finalImageSource = isValidUri(selectedImage)
+  ? { uri: selectedImage }
+  : isValidUri(image)
+    ? { uri: image }
+    : require('../../Images/Profile.png');
+    
     const fetchProfile = async () => {
         setProfileLoading(true);
         try {

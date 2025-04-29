@@ -14,7 +14,7 @@ import { subCasteOptions } from '../../DummyData/DropdownData';
 import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { SH, SF, SW } from '../../utils/Dimensions';
-import { DHARMSHALA_ADVERDISE_WINDOW, GET_ALL_DHARAMSALA, GET_DHARAMSALA, SAVED_PROFILES } from '../../utils/BaseUrl';
+import { DHARMSHALA_ADVERDISE_WINDOW, GET_ALL_DHARAMSALA, GET_DHARAMSALA, SAVED_PROFILES, TOP_DHARMSHALA_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
@@ -93,6 +93,7 @@ const Dharmshala = () => {
       setDharamsalaData([]);
       fetchDharamsalaData("all");
       GetMyDharamsalaData();
+      Advertisement_window();
     }, [])
   );
 
@@ -105,6 +106,7 @@ const Dharmshala = () => {
       setDharamsalaData([]);
       fetchDharamsalaData("all");
       GetMyDharamsalaData();
+      Advertisement_window();
     }, 2000);
   }, []);
 
@@ -229,7 +231,7 @@ const Dharmshala = () => {
           'Authorization': `Bearer ${token}`,
         };
     
-        const response = await axios.get(DHARMSHALA_ADVERDISE_WINDOW, { headers });
+        const response = await axios.get(TOP_DHARMSHALA_ADVERDISE_WINDOW, { headers });
     
         if (response.data) {
           const fetchedData = response.data.data;

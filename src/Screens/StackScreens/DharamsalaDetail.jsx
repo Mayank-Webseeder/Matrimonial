@@ -8,7 +8,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import Globalstyles from '../../utils/GlobalCss';
-import { DHARMSHALA_ADVERDISE_WINDOW, SAVED_PROFILES } from '../../utils/BaseUrl';
+import { BOTTOM_DHARMSHALA_ADVERDISE_WINDOW, DHARMSHALA_ADVERDISE_WINDOW, SAVED_PROFILES } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SF, SH, SW } from '../../utils/Dimensions';
@@ -88,7 +88,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
         'Authorization': `Bearer ${token}`,
       };
 
-      const response = await axios.get(DHARMSHALA_ADVERDISE_WINDOW, { headers });
+      const response = await axios.get(BOTTOM_DHARMSHALA_ADVERDISE_WINDOW, { headers });
 
       if (response.data) {
         const fetchedData = response.data.data;

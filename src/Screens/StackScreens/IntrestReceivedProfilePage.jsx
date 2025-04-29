@@ -13,7 +13,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { BIODATA_ADVERTISE_WINDOW, MATCHED_PROFILE ,ACCEPTED_API, REJECTED_API, SAVED_PROFILES } from '../../utils/BaseUrl';
+import { MATCHED_PROFILE ,ACCEPTED_API, REJECTED_API, SAVED_PROFILES, BOTTOM_BIODATA_ADVERTISE_WINDOW } from '../../utils/BaseUrl';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import moment from 'moment';
 import { useFocusEffect } from '@react-navigation/native';
@@ -103,7 +103,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         'Authorization': `Bearer ${token}`,
       };
 
-      const response = await axios.get(BIODATA_ADVERTISE_WINDOW, { headers });
+      const response = await axios.get(BOTTOM_BIODATA_ADVERTISE_WINDOW, { headers });
 
       if (response.data) {
         const fetchedData = response.data.data;

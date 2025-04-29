@@ -9,19 +9,21 @@ import AppIntroSlider from 'react-native-app-intro-slider';
 import HeadingWithViewAll from '../../Components/HeadingWithViewAll';
 import { SavedProfileData } from '../../DummyData/DummyData';
 import Globalstyles from '../../utils/GlobalCss';
-import { BIODATA_ADVERTISE_WINDOW, MATRIMONY_SUMMRARY } from '../../utils/BaseUrl';
+import { BIODATA_ADVERTISE_WINDOW, BOTTOM_BIODATA_ADVERTISE_WINDOW, MATRIMONY_SUMMRARY, TOP_BIODATA_ADVERTISE_WINDOW } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import { useFocusEffect } from '@react-navigation/native';
+import { PHOTO_URL } from '../../utils/BaseUrl';
 import { useSelector } from 'react-redux';
 const BioData = ({ navigation }) => {
   const [currentIndexTop, setCurrentIndexTop] = useState(0); // For Top Slider
   const [currentIndexBottom, setCurrentIndexBottom] = useState(1); // For Bottom Slider (starts from index 1)
   const sliderRefTop = useRef(null);
   const sliderRefBottom = useRef(null);
-  const [slider, setSlider] = useState([]);
+   const [Topslider, TopsetSlider] = useState([]);
+   const [Bottomslider, BottomsetSlider] = useState([]);
   const [all_profiles, setAllprofiles] = useState({});
   const [isLoading, setIsLoading] = useState("");
   const MatrimonialData = all_profiles?.metrimony || [];
@@ -35,6 +37,8 @@ const BioData = ({ navigation }) => {
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     get_all_mixed_matrimony_profiles();
+    Top_Advertisement_window();
+    Bottom_Advertisement_window();
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
@@ -73,11 +77,14 @@ const BioData = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       get_all_mixed_matrimony_profiles();
+      Top_Advertisement_window();
+      Bottom_Advertisement_window();
     }, [])
   );
 
   useEffect(() => {
-    Advertisement_window();
+    Top_Advertisement_window();
+    Bottom_Advertisement_window();
   }, []);
 
 
@@ -113,7 +120,7 @@ const BioData = ({ navigation }) => {
     return () => clearTimeout(timeoutBottom);
   }, [currentIndexBottom, slider]);
 
-  const Advertisement_window = async () => {
+  const Top_Advertisement_window = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) throw new Error('No token found');
@@ -123,7 +130,7 @@ const BioData = ({ navigation }) => {
         'Authorization': `Bearer ${token}`,
       };
 
-      const response = await axios.get(BIODATA_ADVERTISE_WINDOW, { headers });
+      const response = await axios.get(TOP_BIODATA_ADVERTISE_WINDOW, { headers });
 
       if (response.data) {
         const fetchedData = response.data.data;
@@ -134,20 +141,58 @@ const BioData = ({ navigation }) => {
             id: `${item._id}_${mediaItem._id}`,
             title: item.title,
             description: item.description,
-            image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
-            resolution: mediaItem.resolution,
+            image: `${PHOTO_URL}/${mediaItem.mediaUrl}`,
+            resolution: mediaItem.resolution, // 👈 yeh add kiya
+            mediaType: mediaItem.mediaUrl.includes('.mp4') ? 'video' : 'image', // Determine media type
           }))
         );
 
-        setSlider(fullSliderData);
+        TopsetSlider(fullSliderData);
         console.log("Slider Data:", fullSliderData);
       } else {
-        setSlider([]);
+        TopsetSlider([]);
       }
     } catch (error) {
       console.error("Error fetching advertisement:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const Bottom_Advertisement_window = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+      const response = await axios.get(BOTTOM_BIODATA_ADVERTISE_WINDOW, { headers });
+
+      if (response.data) {
+        const fetchedData = response.data.data;
+        console.log("fetchedData", JSON.stringify(fetchedData));
+
+        const fullSliderData = fetchedData.flatMap((item) =>
+          item.media.map((mediaItem) => ({
+            id: `${item._id}_${mediaItem._id}`,
+            title: item.title,
+            description: item.description,
+            image: `${PHOTO_URL}/${mediaItem.mediaUrl}`,
+            resolution: mediaItem.resolution, // 👈 yeh add kiya
+            mediaType: mediaItem.mediaUrl.includes('.mp4') ? 'video' : 'image', // Determine media type
+          }))
+        );
+
+        BottomsetSlider(fullSliderData);
+        console.log("Slider Data:", fullSliderData);
+      } else {
+        BottomsetSlider([]);
+      }
+    } catch (error) {
+      console.error("Error fetching advertisement:", error);
     }
   };
 
@@ -304,7 +349,7 @@ const BioData = ({ navigation }) => {
         <View style={styles.sliderContainer}>
           <AppIntroSlider
             ref={sliderRefTop}
-            data={slider}
+            data={Topslider}
             renderItem={renderItem}
             showNextButton={false}
             showDoneButton={false}
@@ -403,7 +448,7 @@ const BioData = ({ navigation }) => {
         <View style={Globalstyles.bottomImage}>
           <AppIntroSlider
             ref={sliderRefBottom}
-            data={slider}
+            data={Bottomslider}
             renderItem={renderItem}
             showNextButton={false}
             showDoneButton={false}

@@ -116,28 +116,6 @@ const ProfileDetail = ({ route, navigation }) => {
         }, [])
     );
 
-
-    const fetchProfilesDetails = async (profileType) => {
-        try {
-            setLoading(true);
-            setSelectedProfile(profileType);
-            const token = await AsyncStorage.getItem('userToken');
-            const response = await axios.get(
-                `${PROFILE_TYPE}/${profileType}`,
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
-            );
-
-            console.log("Fetched Data:", response.data.data);
-            setFetchProfileDetails(response.data.data);
-            setLoading(false);
-        } catch (error) {
-            console.error("Error fetching profiles:", error);
-            setLoading(false);
-        }
-    };
-
     if (loading) {
         return (
             <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>

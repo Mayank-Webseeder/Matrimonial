@@ -14,7 +14,7 @@ import Globalstyles from '../../utils/GlobalCss';
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import moment from "moment";
 import axios from 'axios';
-import { BIODATA_ADVERTISE_WINDOW, DELETE_SEND_REQUEST, MATCHED_PROFILE, SAVED_PROFILES, SEND_REQUEST, SHARED_PROFILES, VERIFY_PROFILE } from '../../utils/BaseUrl';
+import { BIODATA_ADVERTISE_WINDOW, BOTTOM_BIODATA_ADVERTISE_WINDOW, DELETE_SEND_REQUEST, MATCHED_PROFILE, SAVED_PROFILES, SEND_REQUEST, SHARED_PROFILES, VERIFY_PROFILE } from '../../utils/BaseUrl';
 import { useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SF, SH, SW } from '../../utils/Dimensions';
@@ -106,7 +106,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         'Authorization': `Bearer ${token}`,
       };
 
-      const response = await axios.get(BIODATA_ADVERTISE_WINDOW, { headers });
+      const response = await axios.get(BOTTOM_BIODATA_ADVERTISE_WINDOW, { headers });
 
       if (response.data) {
         const fetchedData = response.data.data;

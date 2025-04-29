@@ -14,7 +14,7 @@ import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import axios from 'axios';
 import { slider } from '../../DummyData/DummyData';
-import { GET_ALL_KATHAVACHAK, KATHAVACHAK_ADVERDISE_WINDOW, SAVED_PROFILES } from '../../utils/BaseUrl';
+import { GET_ALL_KATHAVACHAK, SAVED_PROFILES, TOP_KATHAVACHAK_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { SH, SW, SF } from '../../utils/Dimensions';
@@ -58,10 +58,39 @@ const Kathavachak = ({ navigation }) => {
     KathavachakDataAPI("modal");
   };
 
-   useEffect(() => {
+  useEffect(() => {
+    Advertisement_window();
+  }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocality('');
+      setModalLocality('')
+      setRating(' ')
+      setExperience(' ')
+      setServices('')
+      setKathavachakData([]);
+      KathavachakDataAPI("all");
+      Advertisement_window()
+    }, [])
+  );
+
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+      setLocality('');
+      setModalLocality('')
+      setRating(' ')
+      setExperience(' ')
+      setServices('')
+      setKathavachakData([]);
+      KathavachakDataAPI("all");
       Advertisement_window();
-    }, []);
-  
+    }, 2000);
+  }, []);
+
 
   useEffect(() => {
     if (slider.length === 0) return;
@@ -90,7 +119,7 @@ const Kathavachak = ({ navigation }) => {
         'Authorization': `Bearer ${token}`,
       };
 
-      const response = await axios.get(KATHAVACHAK_ADVERDISE_WINDOW, { headers });
+      const response = await axios.get(TOP_KATHAVACHAK_ADVERDISE_WINDOW, { headers });
 
       if (response.data) {
         const fetchedData = response.data.data;
@@ -214,34 +243,6 @@ const Kathavachak = ({ navigation }) => {
       );
     }
   };
-
-  useFocusEffect(
-    React.useCallback(() => {
-      setLocality('');
-      setModalLocality('')
-      setRating(' ')
-      setExperience(' ')
-      setServices('')
-      setKathavachakData([]);
-      KathavachakDataAPI("all");
-    }, [])
-  );
-
-
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-      setLocality('');
-      setModalLocality('')
-      setRating(' ')
-      setExperience(' ')
-      setServices('')
-      setKathavachakData([]);
-      KathavachakDataAPI("all");
-    }, 2000);
-  }, []);
-
 
   const renderSkeleton = () => (
     <SkeletonPlaceholder>

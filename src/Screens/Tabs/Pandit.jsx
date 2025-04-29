@@ -17,7 +17,7 @@ import { ExperienceData, RatingData, panditServices } from '../../DummyData/Drop
 import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import axios from 'axios';
-import { GET_ALL_PANDIT_DATA, PANDIT_ADVERDISE_WINDOW, SAVED_PROFILES } from '../../utils/BaseUrl';
+import { GET_ALL_PANDIT_DATA, TOP_PANDIT_ADVERDISE_WINDOW, SAVED_PROFILES } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { SF, SH, SW } from '../../utils/Dimensions';
@@ -124,7 +124,7 @@ const Pandit = ({ navigation }) => {
 
 
   useEffect(() => {
-    Advertisement_window();
+    Top_Advertisement_window();
   }, []);
 
 
@@ -145,7 +145,7 @@ const Pandit = ({ navigation }) => {
   }, [currentIndex, slider]);
 
 
-  const Advertisement_window = async () => {
+  const Top_Advertisement_window = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) throw new Error('No token found');
@@ -155,7 +155,7 @@ const Pandit = ({ navigation }) => {
         'Authorization': `Bearer ${token}`,
       };
 
-      const response = await axios.get(PANDIT_ADVERDISE_WINDOW, { headers });
+      const response = await axios.get(TOP_PANDIT_ADVERDISE_WINDOW, { headers });
 
       if (response.data) {
         const fetchedData = response.data.data;

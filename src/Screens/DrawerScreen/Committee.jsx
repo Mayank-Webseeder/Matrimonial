@@ -15,7 +15,7 @@ import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { SH, SF } from '../../utils/Dimensions';
 import { useSelector } from 'react-redux';
-import { COMMITTEE_ADVERDISE_WINDOW, GET_ALL_COMITTEE, GET_COMMIITEE, SAVED_PROFILES } from '../../utils/BaseUrl';
+import { COMMITTEE_ADVERDISE_WINDOW, GET_ALL_COMITTEE, GET_COMMIITEE, SAVED_PROFILES, TOP_COMMITTEE_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
 import axios from 'axios';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -56,6 +56,7 @@ const Committee = ({ navigation }) => {
       setSubcaste('');
       fetchComitteeData("all");
       fetchMyCommitteeData();
+      Advertisement_window();
     }, 2000);
   }, []);
 
@@ -210,7 +211,7 @@ const Committee = ({ navigation }) => {
         'Authorization': `Bearer ${token}`,
       };
 
-      const response = await axios.get(COMMITTEE_ADVERDISE_WINDOW, { headers });
+      const response = await axios.get(TOP_COMMITTEE_ADVERDISE_WINDOW, { headers });
 
       if (response.data) {
         const fetchedData = response.data.data;

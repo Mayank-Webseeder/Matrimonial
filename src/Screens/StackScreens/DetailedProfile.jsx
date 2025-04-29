@@ -572,7 +572,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
         setTimeout(() => {
           if (isUpdating) {
-            navigation.replace("MatrimonyPage");
+            navigation.replace("ProfileDetail", { profileType: "Biodata" });
           } else {
             navigation.navigate("MainPartnerPrefrence");
           }

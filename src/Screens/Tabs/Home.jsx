@@ -11,7 +11,7 @@ import AppIntroSlider from 'react-native-app-intro-slider';
 import Globalstyles from '../../utils/GlobalCss';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { GET_ACTIVIST, GET_ALL_BIODATA_PROFILES, GET_BIODATA, PROFILE_ENDPOINT, NOTIFICATION, HOME_ADVERDISE_WINDOW, PHOTO_URL } from '../../utils/BaseUrl';
+import { GET_ACTIVIST, GET_ALL_BIODATA_PROFILES, GET_BIODATA, PROFILE_ENDPOINT, NOTIFICATION, HOME_ADVERDISE_WINDOW, PHOTO_URL, BOTTOM_HOME_ADVERDISE_WINDOW, TOP_HOME_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
 import { useDispatch } from 'react-redux';
 import { setAllBiodata } from '../../ReduxStore/Slices/GetAllBiodataSlice';
 import { setBioData } from '../../ReduxStore/Slices/BiodataSlice';
@@ -30,7 +30,7 @@ const Home = ({ navigation }) => {
   const sliderRefTop = useRef(null);
   const sliderRefBottom = useRef(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [currentIndexTop, setCurrentIndexTop] = useState(0); // For Top Slider
+  const [currentIndexTop, setCurrentIndexTop] = useState(0);
   const [currentIndexBottom, setCurrentIndexBottom] = useState(1);
   const [biodata, setBiodata] = useState("");
   const [mybiodata, setMybiodata] = useState("");
@@ -39,8 +39,8 @@ const Home = ({ navigation }) => {
   const MyprofileData = useSelector((state) => state.getBiodata);
   const ProfileData = useSelector((state) => state.profile);
   const profile_data = ProfileData?.profiledata || {};
-  const [slider, setSlider] = useState([]); // 👈 fetched data yahaan set hoga
-  const [videoLoading, setVideoLoading] = useState(true);
+  const [Topslider, TopsetSlider] = useState([]);
+  const [Bottomslider, BottomsetSlider] = useState([]);
   const isBiodataMissing = Object.keys(MyprofileData?.Biodata || {}).length > 0;
   const isBiodataExpired = profile_data?.serviceSubscriptions?.some(
     (sub) => sub.serviceType === "Biodata" && sub.status === "Expired"
@@ -97,6 +97,8 @@ const Home = ({ navigation }) => {
       GetAll_Biodata();
       getActivistProfile();
       fetchProfile();
+      Top_Advertisement_window();
+      Bottom_Advertisement_window();
     }, 2000);
   }, []);
 
@@ -143,7 +145,8 @@ const Home = ({ navigation }) => {
   );
 
   useEffect(() => {
-    Advertisement_window();
+    Top_Advertisement_window();
+    Bottom_Advertisement_window();
   }, []);
 
 
@@ -201,7 +204,7 @@ const Home = ({ navigation }) => {
   };
 
 
-  const Advertisement_window = async () => {
+  const Top_Advertisement_window = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) throw new Error('No token found');
@@ -211,7 +214,7 @@ const Home = ({ navigation }) => {
         'Authorization': `Bearer ${token}`,
       };
 
-      const response = await axios.get(HOME_ADVERDISE_WINDOW, { headers });
+      const response = await axios.get(TOP_HOME_ADVERDISE_WINDOW, { headers });
 
       if (response.data) {
         const fetchedData = response.data.data;
@@ -228,10 +231,49 @@ const Home = ({ navigation }) => {
           }))
         );
 
-        setSlider(fullSliderData);
+        TopsetSlider(fullSliderData);
         console.log("Slider Data:", fullSliderData);
       } else {
-        setSlider([]);
+        TopsetSlider([]);
+      }
+    } catch (error) {
+      console.error("Error fetching advertisement:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const Bottom_Advertisement_window = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+      const response = await axios.get(BOTTOM_HOME_ADVERDISE_WINDOW, { headers });
+
+      if (response.data) {
+        const fetchedData = response.data.data;
+        console.log("fetchedData", JSON.stringify(fetchedData));
+
+        const fullSliderData = fetchedData.flatMap((item) =>
+          item.media.map((mediaItem) => ({
+            id: `${item._id}_${mediaItem._id}`,
+            title: item.title,
+            description: item.description,
+            image: `${PHOTO_URL}/${mediaItem.mediaUrl}`,
+            resolution: mediaItem.resolution, // 👈 yeh add kiya
+            mediaType: mediaItem.mediaUrl.includes('.mp4') ? 'video' : 'image', // Determine media type
+          }))
+        );
+
+        BottomsetSlider(fullSliderData);
+        console.log("Slider Data:", fullSliderData);
+      } else {
+        BottomsetSlider([]);
       }
     } catch (error) {
       console.error("Error fetching advertisement:", error);
@@ -427,14 +469,30 @@ const Home = ({ navigation }) => {
               <View style={styles.topSlider}>
                 <AppIntroSlider
                   ref={sliderRefTop}
-                  data={slider}
+                  data={Topslider}
                   renderItem={({ item }) => {
                     const { width, height } = item.resolution;
+
                     return (
-                      <Image
-                        source={{ uri: item.image }}
-                        style={{ width, height }}
-                      />
+                      <>
+                        {item.mediaType === 'video' ? (
+                          <Video
+                            source={{ uri: item.image }}
+                            style={{ width, height }}
+                            resizeMode="cover"
+                            repeat
+                            muted={false}
+                            controls={true}
+                            paused={false} // autoplay
+                          />
+                        ) : (
+                          <Image
+                            source={{ uri: item.image }}
+                            style={{ width, height }}
+                            resizeMode="cover"
+                          />
+                        )}
+                      </>
                     );
                   }}
                   showNextButton={false}
@@ -542,7 +600,7 @@ const Home = ({ navigation }) => {
             <View style={styles.bottomSlider}>
               <AppIntroSlider
                 ref={sliderRefBottom}
-                data={slider}
+                data={Bottomslider}
                 renderItem={({ item }) => {
                   const { width, height } = item.resolution;
                   return (

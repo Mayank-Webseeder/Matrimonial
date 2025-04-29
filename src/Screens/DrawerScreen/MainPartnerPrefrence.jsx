@@ -18,10 +18,12 @@ import { PHOTO_URL } from '../../utils/BaseUrl';
 const MainPartnerPrefrence = ({ navigation }) => {
     const [activeComponent, setActiveComponent] = useState("PartnersPreference");
     const profileData = useSelector((state) => state.profile);
-    console.log("profileData in myprofile", profileData);
-     const imagePath = profileData?.photoUrl?.[0];
-           const image = imagePath ? `${PHOTO_URL}/${imagePath}` : null;
-           const isValidImage = image && !image.includes("undefined") && !image.includes("null") && image.trim() !== "";
+    const profile_Data = useSelector((state) => state.profile);
+    const profile_data = profile_Data?.profiledata || {};
+    const imagePath = profile_data?.photoUrl?.[0];
+    const isFullUrl = imagePath?.startsWith("http");
+    const image = imagePath ? (isFullUrl ? imagePath : `${PHOTO_URL}/${imagePath}`) : null;
+    const isValidImage = image && !image.includes("undefined") && !image.includes("null") && image.trim() !== "";
     console.log("image", image);
     const formattedDate = moment(profileData?.profiledata?.dob).format("DD/MM/YYYY");
     const MyprofileData = useSelector((state) => state.getBiodata);

@@ -13,7 +13,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Globalstyles from '../../utils/GlobalCss';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { PANDIT_DESCRIPTION, SAVED_PROFILES, PANDIT_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
+import { PANDIT_DESCRIPTION, SAVED_PROFILES, PANDIT_ADVERDISE_WINDOW, BOTTOM_PANDIT_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
 import moment from "moment";
 import { useFocusEffect } from '@react-navigation/native';
 import ImageViewing from 'react-native-image-viewing';
@@ -137,7 +137,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 'Authorization': `Bearer ${token}`,
             };
 
-            const response = await axios.get(PANDIT_ADVERDISE_WINDOW, { headers });
+            const response = await axios.get(BOTTOM_PANDIT_ADVERDISE_WINDOW, { headers });
 
             if (response.data) {
                 const fetchedData = response.data.data;

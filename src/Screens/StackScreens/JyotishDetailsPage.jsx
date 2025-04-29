@@ -11,7 +11,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Globalstyles from '../../utils/GlobalCss';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { JYOTISH_DESCRIPTION, SAVED_PROFILES, JYOTISH_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
+import { JYOTISH_DESCRIPTION, SAVED_PROFILES, JYOTISH_ADVERDISE_WINDOW, BOTTOM_JYOTISH_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import moment from "moment";
@@ -138,7 +138,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                 'Authorization': `Bearer ${token}`,
             };
 
-            const response = await axios.get(JYOTISH_ADVERDISE_WINDOW, { headers });
+            const response = await axios.get(BOTTOM_JYOTISH_ADVERDISE_WINDOW, { headers });
 
             if (response.data) {
                 const fetchedData = response.data.data;

@@ -14,7 +14,7 @@ import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import axios from 'axios';
 import { slider } from '../../DummyData/DummyData';
-import { GET_ALL_JYOTISH, JYOTISH_ADVERDISE_WINDOW, SAVED_PROFILES } from '../../utils/BaseUrl';
+import { GET_ALL_JYOTISH, JYOTISH_ADVERDISE_WINDOW, SAVED_PROFILES, TOP_JYOTISH_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { SH, SW, SF } from '../../utils/Dimensions';
@@ -90,7 +90,7 @@ const Jyotish = ({ navigation }) => {
         'Authorization': `Bearer ${token}`,
       };
 
-      const response = await axios.get(JYOTISH_ADVERDISE_WINDOW, { headers });
+      const response = await axios.get(TOP_JYOTISH_ADVERDISE_WINDOW, { headers });
 
       if (response.data) {
         const fetchedData = response.data.data;

@@ -21,9 +21,10 @@ const MatrimonyPage = ({ navigation, route }) => {
     const { profileData } = route.params || {};
     const [activeComponent, setActiveComponent] = useState("DetailedProfile");
     const profile_Data = useSelector((state) => state.profile);
-    console.log("profileData in myprofile", profileData);
-    const imagePath = profile_Data?.photoUrl?.[0];
-    const image = imagePath ? `${PHOTO_URL}/${imagePath}` : null;
+    const profile_data = profile_Data?.profiledata || {};
+    const imagePath = profile_data?.photoUrl?.[0];
+    const isFullUrl = imagePath?.startsWith("http");
+    const image = imagePath ? (isFullUrl ? imagePath : `${PHOTO_URL}/${imagePath}`) : null;
     const isValidImage = image && !image.includes("undefined") && !image.includes("null") && image.trim() !== "";
     console.log("image", image);
     const formattedDate = moment(profile_Data?.profiledata?.dob).format("DD/MM/YYYY");

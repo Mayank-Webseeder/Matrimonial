@@ -383,7 +383,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
-          <Text style={Globalstyles.headerText}>{personalDetails.fullname || 'Raj Sharma'}</Text>
+          <Text style={Globalstyles.headerText}>{personalDetails?.fullname || 'Raj Sharma'}</Text>
         </View>
         <View style={styles.righticons}>
           <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { View, Text, TouchableOpacity, Image, FlatList, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, TouchableOpacity, Image, FlatList, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, RefreshControl,Linking } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
@@ -144,6 +144,7 @@ const BioData = ({ navigation }) => {
             image: `${PHOTO_URL}/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution, // 👈 yeh add kiya
             mediaType: mediaItem.mediaUrl.includes('.mp4') ? 'video' : 'image', // Determine media type
+            hyperlink: mediaItem.hyperlink, 
           }))
         );
 
@@ -181,6 +182,7 @@ const BioData = ({ navigation }) => {
             image: `${PHOTO_URL}/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution, // 👈 yeh add kiya
             mediaType: mediaItem.mediaUrl.includes('.mp4') ? 'video' : 'image', // Determine media type
+            hyperlink: mediaItem.hyperlink, 
           }))
         );
 
@@ -196,14 +198,22 @@ const BioData = ({ navigation }) => {
 
   const renderItem = ({ item }) => {
     const { width, height } = item.resolution;
+
+    const handlePress = () => {
+      if (item.hyperlink) {
+        Linking.openURL(item.hyperlink).catch(err =>
+          console.error("Failed to open URL:", err)
+        );
+      }
+    };
+  
     return (
-      <Image
-        source={{ uri: item.image }}
-        style={{
-          width,
-          height,
-        }}
-      />
+      <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+        <Image
+          source={{ uri: item.image }}
+          style={{ width, height, resizeMode: 'cover' }}
+        />
+      </TouchableOpacity>
     );
   };
 

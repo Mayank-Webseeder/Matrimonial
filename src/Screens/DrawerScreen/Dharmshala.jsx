@@ -14,7 +14,7 @@ import { subCasteOptions } from '../../DummyData/DropdownData';
 import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { SH, SF, SW } from '../../utils/Dimensions';
-import { DHARMSHALA_ADVERDISE_WINDOW, GET_ALL_DHARAMSALA, GET_DHARAMSALA, SAVED_PROFILES, TOP_DHARMSHALA_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
+import {GET_ALL_DHARAMSALA, GET_DHARAMSALA, SAVED_PROFILES, TOP_DHARMSHALA_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
@@ -245,6 +245,7 @@ const Dharmshala = () => {
             description: item.description,
             image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution, // 👈 yeh add kiya
+            hyperlink: mediaItem.hyperlink,
           }))
         );
 
@@ -552,16 +553,24 @@ const Dharmshala = () => {
             data={slider}
             renderItem={({ item }) => {
               const { width, height } = item.resolution;
+            
+              const handlePress = () => {
+                if (item.hyperlink) {
+                  Linking.openURL(item.hyperlink).catch(err =>
+                    console.error("Failed to open URL:", err)
+                  );
+                }
+              };
+            
               return (
-                <Image
-                  source={{ uri: item.image }}
-                  style={{
-                    width,
-                    height,
-                  }}
-                />
+                <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                  <Image
+                    source={{ uri: item.image }}
+                    style={{ width, height, resizeMode: 'cover' }}
+                  />
+                </TouchableOpacity>
               );
-            }}
+            }}            
             showNextButton={false}
             showDoneButton={false}
             dotStyle={styles.dot}

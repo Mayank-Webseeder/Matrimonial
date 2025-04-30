@@ -23,22 +23,61 @@ const PostSuccessStories = ({ navigation }) => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [weddingDate, setWeddingDate] = useState('');
     const [showDatePicker, setShowDatePicker] = useState(false);
+    const [errors, setErrors] = useState({});
+
+    const validateFields = () => {
+        const newErrors = {};
+
+        if (!gromname?.trim()) {
+            newErrors.gromname = "Groom name is required.";
+        } else if (!/^[A-Za-z\s]+$/.test(gromname)) {
+            newErrors.groomName = "Groom name must contain only letters.";
+        }
+
+        if (!groomBiodataId?.trim()) {
+            newErrors.groomBiodataId = "Groom BioData ID is required.";
+        }
+
+        if (!bridename?.trim()) {
+            newErrors.bridename = "Bride name is required.";
+        } else if (!/^[A-Za-z\s]+$/.test(bridename)) {
+            newErrors.bridename = "Bride name must contain only letters.";
+        }
+
+        if (!brideBiodataId?.trim()) {
+            newErrors.brideBiodataId = "Bride BioData ID is required.";
+        }
+
+        if (!comment) {
+            newErrors.comment = "Your thought is required.";
+        }
+
+        // if (!weddingDate) {
+        //     newErrors.weddingDate = "Wedding date is required.";
+        // } else {
+        //     const today = new Date();
+        //     const selected = new Date(weddingDate);
+        //     if (selected > today) {
+        //         newErrors.weddingDate = "Wedding date cannot be in the future.";
+        //     }
+        // }
+
+        if (!rating) {
+            newErrors.rating = "Rating is required.";
+        } else if (isNaN(rating) || rating < 1 || rating > 5) {
+            newErrors.rating = "Rating must be between 1 and 5.";
+        }
+
+        setErrors(newErrors); // If you're using a state to display field errors
+        return Object.keys(newErrors).length === 0;
+    };
 
 
     const handleSubmit = async () => {
+        if (!validateFields()) return;
         try {
             const token = await AsyncStorage.getItem('userToken'); // ✅ Fetch Token
             if (!token) throw new Error('No token found');
-
-            if (!gromname || !bridename || !rating || !groomBiodataId || !brideBiodataId) {
-                showMessage({
-                    type: 'warning',
-                    message: 'Missing Fields',
-                    description: 'Please fill all fields and upload a photo before submitting.',
-                    icon: 'warning',
-                });
-                return;
-            }
 
             const payload = {
                 groomName: gromname,
@@ -84,15 +123,15 @@ const PostSuccessStories = ({ navigation }) => {
 
         } catch (error) {
             console.error('❌ Error submitting success story:', error.response?.data?.message);
-        
+
             let errorMessage = 'Failed to submit success story. Please try again later.';
-        
+
             if (error.response?.data?.message) {
                 errorMessage = error.response.data.message;
             } else if (error.message) {
                 errorMessage = error.message;
             }
-        
+
             showMessage({
                 type: 'danger',
                 message: errorMessage,
@@ -169,18 +208,27 @@ const PostSuccessStories = ({ navigation }) => {
                     <View style={styles.ratingContainer}>
                         {renderStars()}
                     </View>
+                    {errors.rating && (
+                        <Text style={styles.errorText}>{errors.rating}</Text>
+                    )}
                     <Text style={Globalstyles.title}>Groom name <Entypo name={'star'} color={'red'} size={12} /> </Text>
                     <TextInput
                         style={Globalstyles.input}
                         placeholder="Enter groom name"
                         multiline={true}
                         value={gromname}
-                        onChangeText={setGromname}
+                        onChangeText={(text) => {
+                            const cleanText = text.replace(/[^A-Za-z\s]/g, '');
+                            setGromname(cleanText);
+                        }}
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
 
                     />
+                    {errors.gromname && (
+                        <Text style={styles.errorText}>{errors.gromname}</Text>
+                    )}
                     <Text style={Globalstyles.title}>Groom Biodata ID  <Entypo name={'star'} color={'red'} size={12} /> </Text>
                     <TextInput
                         style={Globalstyles.input}
@@ -193,17 +241,26 @@ const PostSuccessStories = ({ navigation }) => {
                         textContentType="none"
 
                     />
+                    {errors.groomBiodataId && (
+                        <Text style={styles.errorText}>{errors.groomBiodataId}</Text>
+                    )}
                     <Text style={Globalstyles.title}>Bride name  <Entypo name={'star'} color={'red'} size={12} /> </Text>
                     <TextInput
                         style={Globalstyles.input}
                         placeholder="Enter Bride name"
                         multiline={true}
                         value={bridename}
-                        onChangeText={setBridename}
+                        onChangeText={(text) => {
+                            const cleanText = text.replace(/[^A-Za-z\s]/g, '');
+                            setBridename(cleanText);
+                        }}
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
                     />
+                    {errors.bridename && (
+                        <Text style={styles.errorText}>{errors.bridename}</Text>
+                    )}
                     <Text style={Globalstyles.title}>Bride Biodata ID  <Entypo name={'star'} color={'red'} size={12} /> </Text>
                     <TextInput
                         style={Globalstyles.input}
@@ -215,6 +272,9 @@ const PostSuccessStories = ({ navigation }) => {
                         autoComplete="off"
                         textContentType="none"
                     />
+                    {errors.brideBiodataId && (
+                        <Text style={styles.errorText}>{errors.brideBiodataId}</Text>
+                    )}
                     <Text style={Globalstyles.title}>Wedding Date</Text>
                     <TouchableOpacity
                         style={Globalstyles.input}
@@ -245,6 +305,9 @@ const PostSuccessStories = ({ navigation }) => {
                         autoComplete="off"
                         textContentType="none"
                     />
+                    {errors.comment && (
+                        <Text style={styles.errorText}>{errors.comment}</Text>
+                    )}
                     <Text style={Globalstyles.title}>Upload your one couple picture</Text>
                     <TouchableOpacity style={styles.uploadButton} onPress={handleImagePick}>
                         <Text style={styles.uploadText}>{selectedImage ? 'Change Image' : 'Upload Image'}</Text>
@@ -299,7 +362,7 @@ const styles = StyleSheet.create({
     ratingContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: SH(25)
+        marginBottom: SH(10)
     },
     star: {
         marginHorizontal: SW(3),
@@ -323,5 +386,10 @@ const styles = StyleSheet.create({
     },
     photosContainer: {
         paddingVertical: SH(10),
+    },
+    errorText: {
+        color: 'red',
+        fontSize: SF(13),
+        fontFamily: "Poppins-Regular"
     },
 })

@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, TextInput, ActivityIndicator, RefreshControl } from 'react-native';
+import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, TextInput, ActivityIndicator, RefreshControl ,Linking} from 'react-native';
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import styles from '../StyleScreens/EventNewsStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -161,6 +161,7 @@ const EventNews = ({ navigation }) => {
             description: item.description,
             image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution,
+            hyperlink: mediaItem.hyperlink,
           }))
         );
 
@@ -758,17 +759,25 @@ const EventNews = ({ navigation }) => {
             ref={sliderRef}
             data={slider}
             renderItem={({ item }) => {
-              const { width, height } = item.resolution;
-              return (
-                <Image
-                  source={{ uri: item.image }}
-                  style={{
-                    width,
-                    height,
-                  }}
-                />
-              );
-            }}
+                              const { width, height } = item.resolution;
+                            
+                              const handlePress = () => {
+                                if (item.hyperlink) {
+                                  Linking.openURL(item.hyperlink).catch(err =>
+                                    console.error("Failed to open URL:", err)
+                                  );
+                                }
+                              };
+                            
+                              return (
+                                <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                                  <Image
+                                    source={{ uri: item.image }}
+                                    style={{ width, height, resizeMode: 'cover' }}
+                                  />
+                                </TouchableOpacity>
+                              );
+                            }}
             showNextButton={false}
             showDoneButton={false}
             dotStyle={Globalstyles.dot}

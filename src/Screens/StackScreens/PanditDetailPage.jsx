@@ -150,6 +150,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                         description: item.description,
                         image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
                         resolution: mediaItem.resolution,
+                        hyperlink: mediaItem.hyperlink,
                     }))
                 );
 
@@ -247,12 +248,12 @@ const PanditDetailPage = ({ navigation, item, route }) => {
     const renderImages = (images) => {
         if (!images || images.length === 0) {
             return (
-              <View style={styles.noImagesContainer}>
-                <MaterialIcons name="hide-image" size={40} color={Colors.gray} style={styles.icon} />
-                <Text style={styles.noImagesText}>No additional photos available for this post</Text>
-              </View>
+                <View style={styles.noImagesContainer}>
+                    <MaterialIcons name="hide-image" size={40} color={Colors.gray} style={styles.icon} />
+                    <Text style={styles.noImagesText}>No additional photos available for this post</Text>
+                </View>
             );
-          }
+        }
 
         const rows = [];
         for (let i = 0; i < images.length; i += 2) {
@@ -601,14 +602,22 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                         data={slider}
                         renderItem={({ item }) => {
                             const { width, height } = item.resolution;
+
+                            const handlePress = () => {
+                                if (item.hyperlink) {
+                                    Linking.openURL(item.hyperlink).catch(err =>
+                                        console.error("Failed to open URL:", err)
+                                    );
+                                }
+                            };
+
                             return (
-                                <Image
-                                    source={{ uri: item.image }}
-                                    style={{
-                                        width,
-                                        height,
-                                    }}
-                                />
+                                <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                                    <Image
+                                        source={{ uri: item.image }}
+                                        style={{ width, height, resizeMode: 'cover' }}
+                                    />
+                                </TouchableOpacity>
                             );
                         }}
                         showNextButton={false}

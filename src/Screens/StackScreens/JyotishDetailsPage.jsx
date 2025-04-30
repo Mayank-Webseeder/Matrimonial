@@ -151,6 +151,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                         description: item.description,
                         image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
                         resolution: mediaItem.resolution,
+                        hyperlink: mediaItem.hyperlink, 
                     }))
                 );
 
@@ -590,16 +591,24 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                         data={slider}
                         renderItem={({ item }) => {
                             const { width, height } = item.resolution;
+                          
+                            const handlePress = () => {
+                              if (item.hyperlink) {
+                                Linking.openURL(item.hyperlink).catch(err =>
+                                  console.error("Failed to open URL:", err)
+                                );
+                              }
+                            };
+                          
                             return (
+                              <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                                 <Image
-                                    source={{ uri: item.image }}
-                                    style={{
-                                        width,
-                                        height,
-                                    }}
+                                  source={{ uri: item.image }}
+                                  style={{ width, height, resizeMode: 'cover' }}
                                 />
+                              </TouchableOpacity>
                             );
-                        }}
+                          }}                          
                         showNextButton={false}
                         showDoneButton={false}
                         dotStyle={Globalstyles.dot}

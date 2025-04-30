@@ -24,7 +24,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slider, setSlider] = useState([]);
-  const { userId } = route.params;
+  const { userId } = route.params || {};
   const [loading, setLoading] = useState(false);
   const [loadingAccept, setLoadingAccept] = useState(false);
   const [loadingDecline, setLoadingDecline] = useState(false);
@@ -44,10 +44,6 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const [imageIndex, setImageIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const hasOtherDetails = personalDetails?.knowCooking || personalDetails?.dietaryHabit || personalDetails?.smokingHabit || personalDetails?.drinkingHabit || personalDetails?.tobaccoHabits || personalDetails?.hobbies;
-
-  useEffect(() => {
-    console.log("userId", userId);
-  }, [])
 
   const images = [
     personalDetails?.closeUpPhoto,
@@ -74,8 +70,10 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
 
   useEffect(() => {
     Advertisement_window();
-  }, []);
-
+    if (userId) {
+      fetchUserProfile(userId);
+    }
+  }, [userId]);
 
   useEffect(() => {
     if (slider.length === 0) return;
@@ -92,7 +90,6 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
 
     return () => clearTimeout(timeout);
   }, [currentIndex, slider]);
-
 
   const Advertisement_window = async () => {
     try {
@@ -117,6 +114,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
             description: item.description,
             image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution,
+            hyperlink: mediaItem.hyperlink,
           }))
         );
 
@@ -166,26 +164,6 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
       setLoading(false);
     }
   };
-
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color={Colors.theme_color} />
-      </View>
-    );
-  }
-
-  // if (loading) {
-  //   return (
-  //     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-  //       <ActivityIndicator size="large" color={Colors.theme_color} />
-  //     </View>
-  //   );
-  // }
-
-  // if (!profileData) {
-  //   return <Text style={{ padding: 20 }}>No Data Available</Text>;
-  // }
 
   const savedProfiles = async () => {
     if (!_id) {
@@ -375,6 +353,18 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const formattedHeight = personalDetails?.heightFeet
     ?.replace(/\s*-\s*/, "")
     ?.replace(/\s+/g, "");
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color={Colors.theme_color} />
+      </View>
+    );
+  }
+
+  if (!profileData) {
+    return <Text style={{ padding: 20 }}>No Data Available</Text>;
+  }
 
   return (
     <SafeAreaView style={Globalstyles.container}>
@@ -656,14 +646,22 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
             data={slider}
             renderItem={({ item }) => {
               const { width, height } = item.resolution;
+
+              const handlePress = () => {
+                if (item.hyperlink) {
+                  Linking.openURL(item.hyperlink).catch(err =>
+                    console.error("Failed to open URL:", err)
+                  );
+                }
+              };
+
               return (
-                <Image
-                  source={{ uri: item.image }}
-                  style={{
-                    width,
-                    height,
-                  }}
-                />
+                <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                  <Image
+                    source={{ uri: item.image }}
+                    style={{ width, height, resizeMode: 'cover' }}
+                  />
+                </TouchableOpacity>
               );
             }}
             showNextButton={false}

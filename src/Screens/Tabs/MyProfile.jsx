@@ -308,21 +308,26 @@ const finalImageSource = isValidUri(selectedImage)
         try {
           const token = await AsyncStorage.getItem("userToken");
           if (!token) throw new Error("Authorization token is missing.");
+      
+          const fileName = imagePath.split('/').pop();
+          const fileType = fileName?.split('.').pop();
+          const mimeType = fileType === 'png' ? 'image/png' : 'image/jpeg';
+      
           const formData = new FormData();
           formData.append("photoUrl", {
             uri: imagePath,
+            name: fileName || `photo_${Date.now()}.jpg`,
+            type: mimeType,
           });
-          console.log("FormData being sent:", JSON.stringify(formData));
+      
           const headers = {
             'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${token}`,
           };
-          const response = await axios.put(UPLOAD_PROFILE_PHOTO, formData, { headers });
-          console.log("Profile image updated successfully:", response.data);
-   
-          const message = response?.data?.message;
       
-          if (message === "Profile image updated successfully.") {
+          const response = await axios.put(UPLOAD_PROFILE_PHOTO, formData, { headers });
+      
+          if (response?.data?.message === "Profile image updated successfully.") {
             showMessage({
               message: "Profile Updated!",
               description: "Your image has been successfully uploaded.",
@@ -331,7 +336,6 @@ const finalImageSource = isValidUri(selectedImage)
               icon: "success",
             });
       
-            console.log("Navigating to MainApp...");
             navigation.reset({
               index: 0,
               routes: [{ name: "MainApp" }],
@@ -340,13 +344,13 @@ const finalImageSource = isValidUri(selectedImage)
       
         } catch (error) {
           if (error.response) {
-            console.error("API Error:", error.response.data); 
-            console.error("Status Code:", error.response.status); 
+            console.error("API Error:", error.response.data);
           } else if (error.request) {
-            console.error("Network Error:", error.request); 
+            console.error("Network Error:", error.request);
           } else {
-            console.error("Error uploading profile image:", error.message); 
+            console.error("Error uploading profile image:", error.message);
           }
+      
           showMessage({
             message: "Upload Failed!",
             description: "Please try again.",
@@ -358,6 +362,7 @@ const finalImageSource = isValidUri(selectedImage)
           setIsLoading(false);
         }
       };
+      
       
       
 

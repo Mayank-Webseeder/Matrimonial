@@ -111,6 +111,7 @@ const Matrimonial = ({ navigation }) => {
             description: item.description,
             image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution,
+            hyperlink: mediaItem.hyperlink, 
           }))
         );
 
@@ -577,16 +578,24 @@ const Matrimonial = ({ navigation }) => {
                 data={slider}
                 renderItem={({ item }) => {
                   const { width, height } = item.resolution;
+                
+                  const handlePress = () => {
+                    if (item.hyperlink) {
+                      Linking.openURL(item.hyperlink).catch(err =>
+                        console.error("Failed to open URL:", err)
+                      );
+                    }
+                  };
+                
                   return (
-                    <Image
-                      source={{ uri: item.image }}
-                      style={{
-                        width,
-                        height,
-                      }}
-                    />
+                    <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                      <Image
+                        source={{ uri: item.image }}
+                        style={{ width, height, resizeMode: 'cover' }}
+                      />
+                    </TouchableOpacity>
                   );
-                }}
+                }}                
                 showNextButton={false}
                 showDoneButton={false}
                 dotStyle={Globalstyles.dot}

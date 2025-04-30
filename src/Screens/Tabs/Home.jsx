@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, TouchableOpacity, FlatList, Image, SafeAreaView, Text, StatusBar, ActivityIndicator, Alert, RefreshControl } from 'react-native';
+import { View, TouchableOpacity, FlatList, Image, SafeAreaView, Text, StatusBar, ActivityIndicator, Alert, RefreshControl, Linking } from 'react-native';
 import { DrawerActions } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from '../StyleScreens/HomeStyle';
@@ -228,6 +228,7 @@ const Home = ({ navigation }) => {
             image: `${PHOTO_URL}/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution, // 👈 yeh add kiya
             mediaType: mediaItem.mediaUrl.includes('.mp4') ? 'video' : 'image', // Determine media type
+            hyperlink: mediaItem.hyperlink,
           }))
         );
 
@@ -265,6 +266,7 @@ const Home = ({ navigation }) => {
             image: `${PHOTO_URL}/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution, // 👈 yeh add kiya
             mediaType: mediaItem.mediaUrl.includes('.mp4') ? 'video' : 'image', // Determine media type
+            hyperlink: mediaItem.hyperlink, 
           }))
         );
 
@@ -404,8 +406,6 @@ const Home = ({ navigation }) => {
     </SkeletonPlaceholder>
   );
 
-
-
   if (isLoading) {
     return <View style={styles.loading}>
       <ActivityIndicator size={'large'} color={Colors.theme_color} />
@@ -468,9 +468,17 @@ const Home = ({ navigation }) => {
                   data={Topslider}
                   renderItem={({ item }) => {
                     const { width, height } = item.resolution;
-
+                  
+                    const handlePress = () => {
+                      if (item.hyperlink) {
+                        Linking.openURL(item.hyperlink).catch(err =>
+                          console.error("Failed to open URL:", err)
+                        );
+                      }
+                    };
+                  
                     return (
-                      <>
+                      <TouchableOpacity activeOpacity={0.9} onPress={handlePress}>
                         {item.mediaType === 'video' ? (
                           <Video
                             source={{ uri: item.image }}
@@ -479,7 +487,7 @@ const Home = ({ navigation }) => {
                             repeat
                             muted={false}
                             controls={true}
-                            paused={false} // autoplay
+                            paused={false}
                           />
                         ) : (
                           <Image
@@ -488,9 +496,9 @@ const Home = ({ navigation }) => {
                             resizeMode="cover"
                           />
                         )}
-                      </>
+                      </TouchableOpacity>
                     );
-                  }}
+                  }}                  
                   showNextButton={false}
                   showDoneButton={false}
                   dotStyle={styles.dot}
@@ -599,11 +607,22 @@ const Home = ({ navigation }) => {
                 data={Bottomslider}
                 renderItem={({ item }) => {
                   const { width, height } = item.resolution;
+                
+                  const handlePress = () => {
+                    if (item.hyperlink) {
+                      Linking.openURL(item.hyperlink).catch(err =>
+                        console.error("Failed to open URL:", err)
+                      );
+                    }
+                  };
+                
                   return (
-                    <Image
-                      source={{ uri: item.image }}
-                      style={{ width, height }}
-                    />
+                    <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                      <Image
+                        source={{ uri: item.image }}
+                        style={{ width, height, resizeMode: 'cover' }}
+                      />
+                    </TouchableOpacity>
                   );
                 }}
                 showNextButton={false}

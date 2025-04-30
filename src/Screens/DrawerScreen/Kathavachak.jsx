@@ -132,6 +132,7 @@ const Kathavachak = ({ navigation }) => {
             description: item.description,
             image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution,
+            hyperlink: mediaItem.hyperlink, 
           }))
         );
 
@@ -424,18 +425,25 @@ const Kathavachak = ({ navigation }) => {
           <AppIntroSlider
             ref={sliderRef}
             data={slider}
-            renderItem={({ item }) => {
-              const { width, height } = item.resolution;
-              return (
-                <Image
-                  source={{ uri: item.image }}
-                  style={{
-                    width,
-                    height,
-                  }}
-                />
-              );
-            }}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.CategoryContainer}
+                onPress={() => {
+                  if (item.screen) {
+                    navigation.navigate(item.screen);
+                  } else if (item.hyperlink) {
+                    Linking.openURL(item.hyperlink).catch(err =>
+                      console.error("Failed to open URL:", err)
+                    );
+                  } else {
+                    console.warn("No navigation or hyperlink provided.");
+                  }
+                }}
+              >
+                <Image source={item.image} style={styles.images} />
+                <Text style={styles.text}>{item.text}</Text>
+              </TouchableOpacity>
+            )}            
             showNextButton={false}
             showDoneButton={false}
             dotStyle={Globalstyles.dot}

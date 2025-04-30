@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, ScrollView, Image, TouchableOpacity, Linking, ToastAndroid, Alert } from 'react-native';
+import { View, Text, ActivityIndicator, ScrollView, Image, TouchableOpacity, Linking, ToastAndroid, Alert, Modal, Dimensions } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from '../StyleScreens/ProfileDetailStyle';
@@ -13,12 +13,13 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Globalstyles from '../../utils/GlobalCss';
-import { SH, SW } from '../../utils/Dimensions';
+import { SH, SW, SF } from '../../utils/Dimensions';
 import ImageViewing from 'react-native-image-viewing';
 import { PROFILE_TYPE, REPOST } from '../../utils/BaseUrl';
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
 import { showMessage } from 'react-native-flash-message';
+const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 
 const ProfileDetail = ({ route, navigation }) => {
     const { profileType } = route.params || {};
@@ -27,11 +28,19 @@ const ProfileDetail = ({ route, navigation }) => {
     const [postloading, setPostLoading] = useState(false);
     const images = profileData?.additionalPhotos || [];
     const [visible, setVisible] = useState(false);
-    const [isImageViewVisible, setImageViewVisible] = useState(false);
+    const [imageIndex, setImageIndex] = useState(0);
+    const [modalVisible, setModalVisible] = useState(false);
     const hasOtherDetails = profileData?.personalDetails?.knowCooking || profileData?.personalDetails?.dietaryHabit || profileData?.personalDetails?.smokingHabit ||
         profileData?.personalDetails?.drinkingHabit || profileData?.personalDetails?.tobaccoHabits || profileData?.personalDetails?.hobbies;
 
-    const imageUri = profileData?.personalDetails?.closeUpPhoto;
+
+    const Myimages = [
+        profileData?.personalDetails?.closeUpPhoto,
+        profileData?.personalDetails?.fullPhoto,
+        profileData?.personalDetails?.bestPhoto
+    ].filter(Boolean);
+
+
     const profilePhoto = profileData?.profilePhoto
         ? { uri: profileData.profilePhoto }
         : require('../../Images/NoImage.png');
@@ -54,6 +63,12 @@ const ProfileDetail = ({ route, navigation }) => {
     const KathavachakStatus = profile_data?.serviceSubscriptions?.find(
         (sub) => sub.serviceType === 'Kathavachak'
     )?.status;
+
+    const openImageViewer = (index) => {
+        setImageIndex(index);
+        setModalVisible(true);
+    };
+
 
     useEffect(() => {
         let isExpired = false;
@@ -251,20 +266,87 @@ const ProfileDetail = ({ route, navigation }) => {
             <ScrollView showsVerticalScrollIndicator={false}>
                 {profileType === 'Biodata' && (
                     <>
-                        {imageUri && (
-                            <View>
-                                <TouchableOpacity onPress={() => setImageViewVisible(true)}>
+                        {Myimages.length > 0 && (
+                            <View style={{ alignItems: 'center' }}>
+                                {/* Only show the first image outside */}
+                                <TouchableOpacity onPress={() => openImageViewer(0)}>
                                     <Image
-                                        source={{ uri: imageUri }}
-                                        style={styles.matrimonyImage}
+                                        source={{ uri: Myimages[0] }}
+                                        style={{
+                                            width: SW(350),
+                                            height: SH(300),
+                                            borderRadius: 10,
+                                            resizeMode: 'cover',
+                                            marginBottom: SH(10),
+                                        }}
                                     />
                                 </TouchableOpacity>
-                                <ImageViewing
-                                    images={[{ uri: imageUri }]}
-                                    imageIndex={0}
-                                    visible={isImageViewVisible}
-                                    onRequestClose={() => setImageViewVisible(false)}
-                                />
+
+                                {/* Modal to show all images */}
+                                <Modal visible={modalVisible} transparent animationType="fade">
+                                    <View
+                                        style={{
+                                            flex: 1,
+                                            backgroundColor: 'rgba(0,0,0,0.8)',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                        }}
+                                    >
+                                        <ScrollView
+                                            horizontal
+                                            pagingEnabled
+                                            showsHorizontalScrollIndicator={false}
+                                            onMomentumScrollEnd={(e) =>
+                                                setImageIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W))
+                                            }
+                                            contentOffset={{ x: imageIndex * SCREEN_W, y: 0 }}
+                                            style={{ width: SCREEN_W, height: SCREEN_H }}
+                                        >
+                                            {Myimages.map((uri, idx) => (
+                                                <View
+                                                    key={idx}
+                                                    style={{
+                                                        width: SCREEN_W,
+                                                        height: SCREEN_H,
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                    }}
+                                                >
+                                                    <Image
+                                                        source={{ uri }}
+                                                        resizeMode="contain"
+                                                        style={{ width: '100%', height: '100%' }}
+                                                    />
+                                                </View>
+                                            ))}
+                                        </ScrollView>
+
+                                        {/* Index Badge */}
+                                        <View
+                                            style={{
+                                                position: 'absolute',
+                                                top: SH(40),
+                                                alignSelf: 'center',
+                                                backgroundColor: 'rgba(0,0,0,0.6)',
+                                                paddingHorizontal: SW(8),
+                                                paddingVertical: SH(8),
+                                                borderRadius: 5,
+                                            }}
+                                        >
+                                            <Text style={{ color: '#fff' }}>
+                                                {imageIndex + 1} / {Myimages.length}
+                                            </Text>
+                                        </View>
+
+                                        {/* Close Button */}
+                                        <TouchableOpacity
+                                            onPress={() => setModalVisible(false)}
+                                            style={{ position: 'absolute', top: 40, right: 20 }}
+                                        >
+                                            <Text style={{ color: '#fff' }}>Close</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </Modal>
                             </View>
                         )}
 

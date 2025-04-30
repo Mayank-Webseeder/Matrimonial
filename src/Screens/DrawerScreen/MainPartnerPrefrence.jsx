@@ -13,22 +13,18 @@ import DetailedProfile from '../StackScreens/DetailedProfile';
 import PartnersPreference from '../StackScreens/PartnersPreference';
 import PhotoGallery from '../StackScreens/PhotoGallery';
 import ImageViewing from 'react-native-image-viewing';
-import { PHOTO_URL } from '../../utils/BaseUrl';
 
 const MainPartnerPrefrence = ({ navigation }) => {
     const [activeComponent, setActiveComponent] = useState("PartnersPreference");
     const profileData = useSelector((state) => state.profile);
-    const profile_Data = useSelector((state) => state.profile);
-    const profile_data = profile_Data?.profiledata || {};
-    const imagePath = profile_data?.photoUrl?.[0];
-    const isFullUrl = imagePath?.startsWith("http");
-    const image = imagePath ? (isFullUrl ? imagePath : `${PHOTO_URL}/${imagePath}`) : null;
-    const isValidImage = image && !image.includes("undefined") && !image.includes("null") && image.trim() !== "";
+    console.log("profileData in myprofile", profileData);
+    const image = profileData?.profiledata?.photoUrl?.[0];
     console.log("image", image);
     const formattedDate = moment(profileData?.profiledata?.dob).format("DD/MM/YYYY");
     const MyprofileData = useSelector((state) => state.getBiodata);
     const [biodataAvailable, setBiodataAvailable] = useState(false);
     const [visible, setVisible] = useState(false);
+    const imageSource = image ? { uri: image } : require('../../Images/Profile.png');
 
     const handlePress = (componentName) => {
         setActiveComponent(componentName);
@@ -73,7 +69,7 @@ const MainPartnerPrefrence = ({ navigation }) => {
                 <View style={styles.topContainer}>
 
                     <TouchableOpacity onPress={() => setVisible(true)}>
-                        <Image source={isValidImage ? { uri: image } : require('../../Images/Profile.png')} style={styles.image} />
+                        <Image source={imageSource} style={styles.image} />
                     </TouchableOpacity>
                     <ImageViewing
                         images={[{ uri: image }]}

@@ -44,27 +44,22 @@ const Register = ({ navigation }) => {
             width: 300,
             height: 250,
             cropping: true,
-            includeBase64: false,
+            includeBase64: true,
             mediaType: "any"
         })
             .then(image => {
-                console.log('Selected Image:', image); // Check the image object
-
-                if (!image.path) {
-                    console.error("Image path is missing!");
+                console.log('Selected Image:', image);
+                if (!image.data) {
+                    console.error("Base64 data is missing!");
                     return;
                 }
-
-                // Extract the image name from the path and update state
-                const imageName = image.path.split('/').pop(); // Get the file name from the path
-                setSelectedImageName(imageName);  // Update the state with the file name
-
-                // You can also set the image URI to your state (if needed for further use)
-                setSelectedImage(image.path);  // Set the image path (not base64)
+                setSelectedImage(image.data);
+                setSelectedImageName(image.path.split('/').pop());
             })
             .catch(error => {
                 console.error('Image Picking Error:', error);
             });
+
     };
 
     const handleCityInputChange = (text) => {
@@ -155,11 +150,112 @@ const Register = ({ navigation }) => {
         }
     };
 
+    // const handleSignup = async () => {
+    //     if (!validateFields()) return;
+
+    //     if (!otp || otp.length !== 6) {
+    //         showMessage({ type: "danger", message: "Invalid OTP", description: "Please enter the correct OTP.", icon: "danger" });
+    //         return;
+    //     }
+
+    //     setIsLoading(true);
+    //     try {
+    //         const formattedDate = selectedDate
+    //             ? `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, "0")}-${selectedDate.getDate().toString().padStart(2, "0")}`
+    //             : null;
+
+    //         const formData = new FormData();
+
+    //         formData.append('username', fullName.trim());
+    //         formData.append('dob', formattedDate);
+    //         formData.append('city', selectedCity || cityInput.trim());
+    //         formData.append('gender', gender);
+    //         formData.append('password', password.trim());
+    //         formData.append('mobileNo', mobileNumber.trim());
+    //         formData.append('otp', otp.trim());
+
+    //         if (selectedImage) {
+    //             formData.append('photoUrl', {
+    //                 uri: selectedImage,
+    //             });
+    //         }
+
+    //         console.log("SignUp FormData:", formData);
+
+    //         const response = await axios.post(SIGNUP_ENDPOINT, formData, {
+    //             headers: {
+    //                 'Content-Type': 'multipart/form-data',
+    //             }
+    //         });
+
+    //         console.log("Signup Response:", JSON.stringify(response.data));
+    //         const RegisterData = response.data;
+
+    //         if (response.status === 200 && response.data.status === true) {
+    //             dispatch(resetBioData());
+    //             const token = RegisterData?.user?.token || null;
+    //             const userId = RegisterData?.user?.user?.id;
+    //             if (token && userId) {
+    //                 await AsyncStorage.setItem("userToken", token);
+    //                 await AsyncStorage.setItem("userId", userId);
+    //                 console.log("Token saved:", token);
+    //             } else {
+    //                 console.warn("Token is missing in response, skipping storage.");
+    //             }
+
+    //             try {
+    //                 initializeSocket(userId);
+    //                 console.log(`✅ Socket initialized successfully for user: ${userId}`);
+    //             } catch (socketError) {
+    //                 console.error("🚨 Socket Initialization Failed:", socketError);
+    //             }
+
+    //             showMessage({
+    //                 type: "success",
+    //                 message: "Sign Up Successful",
+    //                 description: "You have successfully signed up!",
+    //                 icon: "success",
+    //                 onHide: () =>
+    //                     navigation.reset({
+    //                         index: 0,
+    //                         routes: [{ name: "AppStack" }],
+    //                     }),
+    //             });
+    //         } else {
+    //             throw new Error(RegisterData.message || "Signup failed");
+    //         }
+    //     } catch (error) {
+    //         console.error("Sign Up Error:", error);
+
+    //         let errorMessage = "An unexpected error occurred. Please try again.";
+    //         let errorDescription = "";
+
+    //         if (error.response) {
+    //             errorMessage = error.response.data.message || "Server responded with an error.";
+    //             errorDescription = error.response.data.error || "Please check your input and try again.";
+    //         } else if (error.request) {
+    //             errorMessage = "Network Error";
+    //             errorDescription = "Unable to reach the server. Please check your internet connection.";
+    //         } else {
+    //             errorMessage = "Error";
+    //             errorDescription = error.message || "An unexpected error occurred.";
+    //         }
+
+    //         showMessage({
+    //             type: "danger",
+    //             message: errorMessage,
+    //             description: errorDescription,
+    //             icon: "danger"
+    //         });
+    //     }
+    // };
+
+
     const handleSignup = async () => {
         if (!validateFields()) return;
 
         if (!otp || otp.length !== 6) {
-            showMessage({ type: "danger", message: "Invalid OTP", description: "Please enter the correct OTP.", icon: "danger" });
+            Toast.show({ type: "error", text1: "Invalid OTP", text2: "Please enter the correct OTP." });
             return;
         }
 
@@ -169,35 +265,27 @@ const Register = ({ navigation }) => {
                 ? `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, "0")}-${selectedDate.getDate().toString().padStart(2, "0")}`
                 : null;
 
-            const formData = new FormData();
+            const payload = {
+                username: fullName.trim(),
+                dob: formattedDate,
+                city: selectedCity || cityInput.trim(),
+                gender: gender,
+                password: password.trim(),
+                photoUrl: selectedImage,
+                mobileNo: mobileNumber.trim(),
+                otp: otp.trim(),
+            };
 
-            formData.append('username', fullName.trim());
-            formData.append('dob', formattedDate);
-            formData.append('city', selectedCity || cityInput.trim());
-            formData.append('gender', gender);
-            formData.append('password', password.trim());
-            formData.append('mobileNo', mobileNumber.trim());
-            formData.append('otp', otp.trim());
-
-            if (selectedImage) {
-                formData.append('photoUrl', {
-                    uri: selectedImage,
-                });
-            }
-
-            console.log("SignUp FormData:", formData);
-
-            const response = await axios.post(SIGNUP_ENDPOINT, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                }
-            });
-
-            console.log("Signup Response:", JSON.stringify(response.data));
+            console.log("SignUp Payload:", payload);
+            const response = await axios.post(SIGNUP_ENDPOINT, payload);
+            console.log("Signup Response:", response.data);
             const RegisterData = response.data;
 
             if (response.status === 200 && response.data.status === true) {
+                // ✅ Redux store reset karein (purana biodata remove ho jaye)
                 dispatch(resetBioData());
+
+                // ✅ Token store karein
                 const token = RegisterData?.user?.token || null;
                 const userId = RegisterData?.user?.user?.id;
                 if (token && userId) {
@@ -215,11 +303,10 @@ const Register = ({ navigation }) => {
                     console.error("🚨 Socket Initialization Failed:", socketError);
                 }
 
-                showMessage({
+                Toast.show({
                     type: "success",
-                    message: "Sign Up Successful",
-                    description: "You have successfully signed up!",
-                    icon: "success",
+                    text1: "Sign Up Successful",
+                    text2: "You have successfully signed up!",
                     onHide: () =>
                         navigation.reset({
                             index: 0,
@@ -232,30 +319,23 @@ const Register = ({ navigation }) => {
         } catch (error) {
             console.error("Sign Up Error:", error);
 
-            let errorMessage = "An unexpected error occurred. Please try again.";
-            let errorDescription = "";
-
-            if (error.response) {
-                errorMessage = error.response.data.message || "Server responded with an error.";
-                errorDescription = error.response.data.error || "Please check your input and try again.";
-            } else if (error.request) {
-                errorMessage = "Network Error";
-                errorDescription = "Unable to reach the server. Please check your internet connection.";
+            if (error.response?.status === 400) {
+                Toast.show({
+                    type: "error",
+                    text1: "Invalid Request",
+                    text2: error.response.data.message || "Please check your input.",
+                });
             } else {
-                errorMessage = "Error";
-                errorDescription = error.message || "An unexpected error occurred.";
+                Toast.show({
+                    type: "error",
+                    text1: "Sign Up Error",
+                    text2: error.message || "An error occurred. Please try again.",
+                });
             }
-
-            showMessage({
-                type: "danger",
-                message: errorMessage,
-                description: errorDescription,
-                icon: "danger"
-            });
+        } finally {
+            setIsLoading(false);
         }
     };
-
-
 
     const handleDateChange = (event, date) => {
         if (date && date !== selectedDate) {

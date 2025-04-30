@@ -45,8 +45,38 @@ const Pandit = ({ navigation }) => {
   const ProfileData = useSelector((state) => state.profile);
   const profile_data = ProfileData?.profiledata || {};
   const [refreshing, setRefreshing] = useState(false);
- const [slider, setSlider] = useState([]);
- 
+  const [slider, setSlider] = useState([]);
+
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocality('');
+      setModalLocality('')
+      setRating(' ')
+      setExperience(' ')
+      setServices('')
+      setPanditData([]);
+      fetchPanditData("all");
+      Top_Advertisement_window();
+    }, [])
+  );
+
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+      setLocality('');
+      setModalLocality('')
+      setRating(' ')
+      setExperience(' ')
+      setServices('')
+      setPanditData([]);
+      fetchPanditData("all");
+    }, 2000);
+  }, []);
+
+
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
     setImageVisible(true);
@@ -178,8 +208,6 @@ const Pandit = ({ navigation }) => {
       }
     } catch (error) {
       console.error("Error fetching advertisement:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -263,34 +291,6 @@ const Pandit = ({ navigation }) => {
       console.error("Error sharing:", error);
     }
   };
-
-  useFocusEffect(
-    React.useCallback(() => {
-      setLocality('');
-      setModalLocality('')
-      setRating(' ')
-      setExperience(' ')
-      setServices('')
-      setPanditData([]);
-      fetchPanditData("all");
-    }, [])
-  );
-
-
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-      setLocality('');
-      setModalLocality('')
-      setRating(' ')
-      setExperience(' ')
-      setServices('')
-      setPanditData([]);
-      fetchPanditData("all");
-    }, 2000);
-  }, []);
-
   const renderSkeleton = () => (
     <SkeletonPlaceholder>
       <View style={{ margin: SH(20) }}>
@@ -499,7 +499,7 @@ const Pandit = ({ navigation }) => {
             showNextButton={false}
             showDoneButton={false}
             dotStyle={Globalstyles.dot}
-                activeDotStyle={Globalstyles.activeDot}
+            activeDotStyle={Globalstyles.activeDot}
           />
         </View>
         {isLoading ? renderSkeleton() : (

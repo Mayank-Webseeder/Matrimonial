@@ -22,8 +22,8 @@ const BioData = ({ navigation }) => {
   const [currentIndexBottom, setCurrentIndexBottom] = useState(1); // For Bottom Slider (starts from index 1)
   const sliderRefTop = useRef(null);
   const sliderRefBottom = useRef(null);
-   const [Topslider, TopsetSlider] = useState([]);
-   const [Bottomslider, BottomsetSlider] = useState([]);
+  const [Topslider, TopsetSlider] = useState([]);
+  const [Bottomslider, BottomsetSlider] = useState([]);
   const [all_profiles, setAllprofiles] = useState({});
   const [isLoading, setIsLoading] = useState("");
   const MatrimonialData = all_profiles?.metrimony || [];
@@ -43,6 +43,20 @@ const BioData = ({ navigation }) => {
       setRefreshing(false);
     }, 2000);
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      get_all_mixed_matrimony_profiles();
+      Top_Advertisement_window();
+      Bottom_Advertisement_window();
+    }, [])
+  );
+
+  useEffect(() => {
+    Top_Advertisement_window();
+    Bottom_Advertisement_window();
+  }, []);
+
 
   const get_all_mixed_matrimony_profiles = async () => {
     try {
@@ -74,20 +88,6 @@ const BioData = ({ navigation }) => {
     }
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      get_all_mixed_matrimony_profiles();
-      Top_Advertisement_window();
-      Bottom_Advertisement_window();
-    }, [])
-  );
-
-  useEffect(() => {
-    Top_Advertisement_window();
-    Bottom_Advertisement_window();
-  }, []);
-
-
   useEffect(() => {
     if (slider.length === 0) return;
 
@@ -103,7 +103,7 @@ const BioData = ({ navigation }) => {
 
     return () => clearTimeout(timeoutTop);
   }, [currentIndexTop, slider]);
-  
+
   useEffect(() => {
     if (slider.length === 0) return;
 
@@ -113,7 +113,7 @@ const BioData = ({ navigation }) => {
 
     const timeoutBottom = setTimeout(() => {
       const nextIndexBottom = currentIndexBottom < slider.length - 1 ? currentIndexBottom + 1 : 0;
-      setCurrentIndexBottom(nextIndexBottom); 
+      setCurrentIndexBottom(nextIndexBottom);
       sliderRefBottom.current?.goToSlide(nextIndexBottom);
     }, durationInMillisecondsBottom);
 
@@ -154,8 +154,6 @@ const BioData = ({ navigation }) => {
       }
     } catch (error) {
       console.error("Error fetching advertisement:", error);
-    } finally {
-      setLoading(false);
     }
   };
 

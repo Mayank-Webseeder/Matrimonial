@@ -43,6 +43,34 @@ const Jyotish = ({ navigation }) => {
   const profile_data = ProfileData?.profiledata || {};
   const [refreshing, setRefreshing] = useState(false);
   const [slider, setSlider] = useState([]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocality('');
+      setModalLocality('')
+      setRating(' ')
+      setExperience(' ')
+      setServices('')
+      JyotishDataAPI("all");
+      Advertisement_window();
+    }, [])
+  );
+
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+      setLocality('');
+      setModalLocality('')
+      setRating(' ')
+      setExperience(' ')
+      setServices('')
+      JyotishDataAPI("all");
+      Advertisement_window();
+    }, 2000);
+  }, []);
+
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
     setImageVisible(true);
@@ -113,8 +141,6 @@ const Jyotish = ({ navigation }) => {
       }
     } catch (error) {
       console.error("Error fetching advertisement:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -217,31 +243,6 @@ const Jyotish = ({ navigation }) => {
     }
   };
 
-
-  useFocusEffect(
-    React.useCallback(() => {
-      setLocality('');
-      setModalLocality('')
-      setRating(' ')
-      setExperience(' ')
-      setServices('')
-      JyotishDataAPI("all");
-    }, [])
-  );
-
-
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-      setLocality('');
-      setModalLocality('')
-      setRating(' ')
-      setExperience(' ')
-      setServices('')
-      JyotishDataAPI("all");
-    }, 2000);
-  }, []);
 
   const renderSkeleton = () => (
     <SkeletonPlaceholder>

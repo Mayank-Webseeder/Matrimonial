@@ -121,8 +121,6 @@ const Matrimonial = ({ navigation }) => {
       }
     } catch (error) {
       console.error("Error fetching advertisement:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -158,12 +156,6 @@ const Matrimonial = ({ navigation }) => {
       console.error("❌ Error fetching profiles:", error.response?.data || error);
     }
   };
-
-  const renderItem = ({ item }) => (
-    <View>
-      <Image source={item.image} style={styles.sliderImage} />
-    </View>
-  );
 
   useEffect(() => {
     const interval = setInterval(() => {

@@ -521,6 +521,9 @@ const ProfileDetail = ({ route, navigation }) => {
                                     {profileData.partnerPreferences.partnerCity && (
                                         <Text style={styles.text}>City: {profileData.partnerPreferences.partnerCity}</Text>
                                     )}
+                                    {profileData.partnerPreferences.partnerExpectations && (
+                                        <Text style={styles.text}> Expectation with partner : {profileData.partnerPreferences.partnerExpectations}</Text>
+                                    )}
                                 </View>
                             </View>
                         )}
@@ -776,7 +779,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                 {profileData?.description ? (
                                     <>
                                         <Text style={styles.sectionTitle}>Description</Text>
-                                        <Text style={styles.text}>{profileData.description}</Text>
+                                        <Text style={styles.text}>{profileData?.description}</Text>
                                     </>
                                 ) : null}
                             </View>
@@ -808,7 +811,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                                     <View>
                                                         <Image
                                                             source={review?.userId?.photoUrl[0]
-                                                                ? { uri: review.userId.photoUrl[0] }
+                                                                ? { uri: review?.userId?.photoUrl[0] }
                                                                 : require("../../Images/NoImage.png") // Fallback image
                                                             }
                                                             style={{ width: SW(50), height: SH(50), borderRadius: 50 }}
@@ -954,7 +957,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                 {profileData?.description ? (
                                     <>
                                         <Text style={styles.sectionTitle}>Description</Text>
-                                        <Text style={styles.text}>{profileData.description}</Text>
+                                        <Text style={styles.text}>{profileData?.description}</Text>
                                     </>
                                 ) : null}
                             </View>
@@ -986,7 +989,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                                     <View>
                                                         <Image
                                                             source={review?.userId?.photoUrl[0]
-                                                                ? { uri: review.userId.photoUrl[0] }
+                                                                ? { uri: review?.userId?.photoUrl[0] }
                                                                 : require("../../Images/NoImage.png") // Fallback image
                                                             }
                                                             style={{ width: SW(50), height: SH(50), borderRadius: 50 }}

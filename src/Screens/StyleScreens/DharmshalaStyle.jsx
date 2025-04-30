@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
   },
   DharamSalaList: {
     marginVertical: SH(10),
-    marginBottom: SH(200)
+    // marginBottom: SH(200)
   },
 
   sharecontainer: {

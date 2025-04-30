@@ -14,7 +14,7 @@ import Globalstyles from '../../utils/GlobalCss';
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import moment from "moment";
 import axios from 'axios';
-import { BIODATA_ADVERTISE_WINDOW, BOTTOM_BIODATA_ADVERTISE_WINDOW, DELETE_SEND_REQUEST, MATCHED_PROFILE, SAVED_PROFILES, SEND_REQUEST, SHARED_PROFILES, VERIFY_PROFILE } from '../../utils/BaseUrl';
+import {BOTTOM_BIODATA_ADVERTISE_WINDOW, DELETE_SEND_REQUEST, MATCHED_PROFILE, SAVED_PROFILES, SEND_REQUEST, VERIFY_PROFILE } from '../../utils/BaseUrl';
 import { useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SF, SH, SW } from '../../utils/Dimensions';
@@ -28,14 +28,13 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const [slider, setSlider] = useState([]);
   const route = useRoute();
   const { userId } = route.params || {};
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [loadingIntrest, setLoadingIntrest] = useState(false);
   const [intrestLoading, setIntrestLoading] = useState(false);
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
   const [profileData, setProfileData] = useState([]);
   const [userData, setUserData] = useState({});
   const MyprofileData = useSelector((state) => state.getBiodata);
-  const partnerPreferenceData = MyprofileData?.Biodata?.partnerPreferences || null;
   const [isImageVisible, setImageVisible] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
@@ -129,8 +128,6 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       }
     } catch (error) {
       console.error("Error fetching advertisement:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -737,7 +734,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             <Text style={styles.HeadingText}>{personalDetails?.fullname}</Text>
 
             {/* Other details */}
-            <Text style={styles.text}>{calculateAge(personalDetails.dob)} Yrs, {formattedHeight} </Text>
+            <Text style={styles.text}>{calculateAge(personalDetails?.dob)} Yrs, {formattedHeight} </Text>
             {personalDetails?.subCaste && <Text style={styles.text}>{personalDetails?.subCaste}</Text>}
             {personalDetails?.maritalStatus && <Text style={styles.text}>{personalDetails?.maritalStatus}</Text>}
             {personalDetails?.manglikStatus && <Text style={styles.text}>{personalDetails?.manglikStatus}</Text>}

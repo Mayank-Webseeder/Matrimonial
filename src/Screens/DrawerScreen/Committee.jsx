@@ -29,7 +29,7 @@ const Committee = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [locality, setLocality] = useState('');
   const [activeButton, setActiveButton] = useState(null);
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(false);
   const [subcaste, setSubcaste] = useState("");
   const [filteredOptions, setFilteredOptions] = useState([]);
   const sliderRef = useRef(null);
@@ -60,6 +60,20 @@ const Committee = ({ navigation }) => {
     }, 2000);
   }, []);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocality('');
+      setSubcaste('');
+      fetchComitteeData("all");
+      fetchMyCommitteeData();
+      Advertisement_window();
+    }, [])
+  );
+
+  useEffect(() => {
+    Advertisement_window();
+  }, []);
+
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
     setImageVisible(true);
@@ -81,19 +95,6 @@ const Committee = ({ navigation }) => {
     setSubcaste(value.label);
     setFilteredOptions([]);
   };
-
-  useFocusEffect(
-    React.useCallback(() => {
-      setLocality('');
-      setSubcaste('');
-      fetchComitteeData("all");
-      fetchMyCommitteeData();
-    }, [])
-  );
-
-  useEffect(() => {
-    Advertisement_window();
-  }, []);
 
 
   useEffect(() => {
@@ -234,8 +235,6 @@ const Committee = ({ navigation }) => {
       }
     } catch (error) {
       console.error("Error fetching advertisement:", error);
-    } finally {
-      setLoading(false);
     }
   };
 

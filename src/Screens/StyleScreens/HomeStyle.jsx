@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     lineHeight: SF(22),
   },
   bottomSlider:{
-    paddingBottom:SH(20)
+    paddingBottom:SH(10)
   }
 });
 

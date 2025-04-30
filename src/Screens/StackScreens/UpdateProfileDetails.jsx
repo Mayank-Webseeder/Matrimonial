@@ -13,7 +13,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { SH, SW } from '../../utils/Dimensions';
 import { showMessage } from 'react-native-flash-message';
-import {launchImageLibrary} from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 const UpdateProfileDetails = ({ navigation, route }) => {
     const [stateInput, setStateInput] = useState('');
@@ -67,9 +67,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
 
         const updatedChecked = {};
         servicesOptions[profileType].forEach(service => {
-            const normalizedServiceValue = service.value.replace(/\s+/g, "_");
-
-            updatedChecked[service.value] = profileData[profileServicesKey]?.includes(normalizedServiceValue);
+            updatedChecked[service.value] = profileData[profileServicesKey]?.includes(service.value);
         });
 
         console.log("✅ New checked state:", updatedChecked);
@@ -108,44 +106,44 @@ const UpdateProfileDetails = ({ navigation, route }) => {
 
     const ADDL_LIMIT = 5;                // max extra photos
 
-const pickerOpts = {
-  selectionLimit: ADDL_LIMIT,        // gallery stops user at 5
-  mediaType: 'photo',
-  includeBase64: true,               // we still need base‑64
-  maxWidth: 400,                     // optional resize
-  maxHeight: 400,
-  quality: 1,
-};
+    const pickerOpts = {
+        selectionLimit: ADDL_LIMIT,        // gallery stops user at 5
+        mediaType: 'photo',
+        includeBase64: true,               // we still need base‑64
+        maxWidth: 400,                     // optional resize
+        maxHeight: 400,
+        quality: 1,
+    };
 
 
     // Additional Photos Picker
-   const handleAdditionalPhotosPick = () => {
-           launchImageLibrary(pickerOpts, (response) => {
-             if (response.didCancel) return;                            // user aborted
-             if (response.errorCode) {
-               console.log('ImagePicker Error:', response.errorMessage);
-               return;
-             }
-         
-             const incoming = response.assets ?? [];
-         
-             setRoleRegisterData((prev) => {
-               // Convert each asset to data‑URI just like before
-               const newPhotos = incoming.map(
-                 (img) => `data:${img.type};base64,${img.base64}`
-               );
-         
-               const updated = [...prev.additionalPhotos, ...newPhotos];
-         
-               if (updated.length > ADDL_LIMIT) {
-                 Alert.alert(`You can only upload up to ${ADDL_LIMIT} additional photos.`);
-                 return prev;                                           // refuse update
-               }
-         
-               return { ...prev, additionalPhotos: updated };
-             });
-           });
-         };
+    const handleAdditionalPhotosPick = () => {
+        launchImageLibrary(pickerOpts, (response) => {
+            if (response.didCancel) return;                            // user aborted
+            if (response.errorCode) {
+                console.log('ImagePicker Error:', response.errorMessage);
+                return;
+            }
+
+            const incoming = response.assets ?? [];
+
+            setRoleRegisterData((prev) => {
+                // Convert each asset to data‑URI just like before
+                const newPhotos = incoming.map(
+                    (img) => `data:${img.type};base64,${img.base64}`
+                );
+
+                const updated = [...prev.additionalPhotos, ...newPhotos];
+
+                if (updated.length > ADDL_LIMIT) {
+                    Alert.alert(`You can only upload up to ${ADDL_LIMIT} additional photos.`);
+                    return prev;                                           // refuse update
+                }
+
+                return { ...prev, additionalPhotos: updated };
+            });
+        });
+    };
 
 
     const handleStateInputChange = (text) => {
@@ -299,7 +297,7 @@ const pickerOpts = {
             const existingServices = profileData?.[servicesKey] || [];
             const filteredServices = Object.keys(checked).filter(service =>
                 servicesOptions[profileType].some(option => option.value === service) && checked[service]
-            );      
+            );
             let profilePhotoBase64 = null;
             if (RoleRegisterData.profilePhoto) {
                 try {
@@ -350,7 +348,7 @@ const pickerOpts = {
                 });
 
                 setTimeout(() => {
-                    navigation.replace("ProfileDetail", { profileType:profileType });
+                    navigation.replace("ProfileDetail", { profileType: profileType });
                     setIsLoading(false);
                 }, 2000);
 

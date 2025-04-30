@@ -154,7 +154,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                         description: item.description,
                         image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
                         resolution: mediaItem.resolution,
-                        hyperlink: mediaItem.hyperlink, 
+                        hyperlink: mediaItem.hyperlink,
                     }))
                 );
 
@@ -592,25 +592,26 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                     <AppIntroSlider
                         ref={sliderRef}
                         data={slider}
-                        renderItem={({ item }) => (
-                            <TouchableOpacity
-                              style={styles.CategoryContainer}
-                              onPress={() => {
-                                if (item.screen) {
-                                  navigation.navigate(item.screen);
-                                } else if (item.hyperlink) {
-                                  Linking.openURL(item.hyperlink).catch(err =>
-                                    console.error("Failed to open URL:", err)
-                                  );
-                                } else {
-                                  console.warn("No navigation or hyperlink provided.");
+                        renderItem={({ item }) => {
+                            const { width, height } = item.resolution;
+
+                            const handlePress = () => {
+                                if (item.hyperlink) {
+                                    Linking.openURL(item.hyperlink).catch(err =>
+                                        console.error("Failed to open URL:", err)
+                                    );
                                 }
-                              }}
-                            >
-                              <Image source={item.image} style={styles.images} />
-                              <Text style={styles.text}>{item.text}</Text>
-                            </TouchableOpacity>
-                          )}                          
+                            };
+
+                            return (
+                                <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                                    <Image
+                                        source={{ uri: item.image }}
+                                        style={{ width, height, resizeMode: 'cover' }}
+                                    />
+                                </TouchableOpacity>
+                            );
+                        }}
                         showNextButton={false}
                         showDoneButton={false}
                         dotStyle={Globalstyles.dot}

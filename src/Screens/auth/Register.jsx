@@ -121,7 +121,7 @@ const Register = ({ navigation }) => {
 
     const handleSendOtp = async () => {
         if (!/^\d{10}$/.test(mobileNumber)) {
-            showMessage({ type: "error", message: "Invalid Number", description: "Enter a valid 10-digit mobile number" });
+            showMessage({ type:"danger", message: "Invalid Number", description: "Enter a valid 10-digit mobile number" });
             return;
         }
 
@@ -143,150 +143,56 @@ const Register = ({ navigation }) => {
             if (error.response?.status === 400) {
                 showMessage({ type: "danger", message: "Invalid Request", description: error.response.data.message || "Mobile number is required", icon: "danger" });
             } else {
-                showMessage({ type: "danger", message: "OTP Error", description: error.message || "Failed to send OTP. Try again.", icon: "danger" });
+                showMessage({ type:"danger", message: "OTP Error", description: error.message || "Failed to send OTP. Try again.", icon: "danger" });
             }
         } finally {
             setIsOtpLoading(false);
         }
     };
 
-    // const handleSignup = async () => {
-    //     if (!validateFields()) return;
-
-    //     if (!otp || otp.length !== 6) {
-    //         showMessage({ type: "danger", message: "Invalid OTP", description: "Please enter the correct OTP.", icon: "danger" });
-    //         return;
-    //     }
-
-    //     setIsLoading(true);
-    //     try {
-    //         const formattedDate = selectedDate
-    //             ? `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, "0")}-${selectedDate.getDate().toString().padStart(2, "0")}`
-    //             : null;
-
-    //         const formData = new FormData();
-
-    //         formData.append('username', fullName.trim());
-    //         formData.append('dob', formattedDate);
-    //         formData.append('city', selectedCity || cityInput.trim());
-    //         formData.append('gender', gender);
-    //         formData.append('password', password.trim());
-    //         formData.append('mobileNo', mobileNumber.trim());
-    //         formData.append('otp', otp.trim());
-
-    //         if (selectedImage) {
-    //             formData.append('photoUrl', {
-    //                 uri: selectedImage,
-    //             });
-    //         }
-
-    //         console.log("SignUp FormData:", formData);
-
-    //         const response = await axios.post(SIGNUP_ENDPOINT, formData, {
-    //             headers: {
-    //                 'Content-Type': 'multipart/form-data',
-    //             }
-    //         });
-
-    //         console.log("Signup Response:", JSON.stringify(response.data));
-    //         const RegisterData = response.data;
-
-    //         if (response.status === 200 && response.data.status === true) {
-    //             dispatch(resetBioData());
-    //             const token = RegisterData?.user?.token || null;
-    //             const userId = RegisterData?.user?.user?.id;
-    //             if (token && userId) {
-    //                 await AsyncStorage.setItem("userToken", token);
-    //                 await AsyncStorage.setItem("userId", userId);
-    //                 console.log("Token saved:", token);
-    //             } else {
-    //                 console.warn("Token is missing in response, skipping storage.");
-    //             }
-
-    //             try {
-    //                 initializeSocket(userId);
-    //                 console.log(`✅ Socket initialized successfully for user: ${userId}`);
-    //             } catch (socketError) {
-    //                 console.error("🚨 Socket Initialization Failed:", socketError);
-    //             }
-
-    //             showMessage({
-    //                 type: "success",
-    //                 message: "Sign Up Successful",
-    //                 description: "You have successfully signed up!",
-    //                 icon: "success",
-    //                 onHide: () =>
-    //                     navigation.reset({
-    //                         index: 0,
-    //                         routes: [{ name: "AppStack" }],
-    //                     }),
-    //             });
-    //         } else {
-    //             throw new Error(RegisterData.message || "Signup failed");
-    //         }
-    //     } catch (error) {
-    //         console.error("Sign Up Error:", error);
-
-    //         let errorMessage = "An unexpected error occurred. Please try again.";
-    //         let errorDescription = "";
-
-    //         if (error.response) {
-    //             errorMessage = error.response.data.message || "Server responded with an error.";
-    //             errorDescription = error.response.data.error || "Please check your input and try again.";
-    //         } else if (error.request) {
-    //             errorMessage = "Network Error";
-    //             errorDescription = "Unable to reach the server. Please check your internet connection.";
-    //         } else {
-    //             errorMessage = "Error";
-    //             errorDescription = error.message || "An unexpected error occurred.";
-    //         }
-
-    //         showMessage({
-    //             type: "danger",
-    //             message: errorMessage,
-    //             description: errorDescription,
-    //             icon: "danger"
-    //         });
-    //     }
-    // };
-
     const handleSignup = async () => {
         if (!validateFields()) return;
-
+    
         if (!otp || otp.length !== 6) {
-            Toast.show({ type: "error", text1: "Invalid OTP", text2: "Please enter the correct OTP." });
+            showMessage({
+                type: "danger",
+                message: "Invalid OTP",
+                description: "Please enter the correct OTP.",
+                icon: "danger"
+            });
             return;
         }
-
+    
         setIsLoading(true);
         try {
             const formattedDate = selectedDate
                 ? `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, "0")}-${selectedDate.getDate().toString().padStart(2, "0")}`
                 : null;
-
+    
             const payload = {
                 username: fullName.trim(),
                 dob: formattedDate,
                 city: selectedCity || cityInput.trim(),
                 gender: gender,
                 password: password.trim(),
-                photoUrl: selectedImage,
+                photoUrl: selectedImage, // Make sure it's a valid URL or base64 if backend expects that
                 mobileNo: mobileNumber.trim(),
                 otp: otp.trim(),
             };
-
+    
             console.log("SignUp Payload:", payload);
+    
             const response = await axios.post(SIGNUP_ENDPOINT, payload);
-            console.log("Signup Response:", response.data);
+    
+            console.log("Signup Response:", JSON.stringify(response.data));
             const RegisterData = response.data;
-
+    
             if (response.status === 200 && response.data.status === true) {
-                // ✅ Redux store reset karein (purana biodata remove ho jaye)
                 dispatch(resetBioData());
-
-                // ✅ Token store karein
+    
                 const token = RegisterData?.user?.token || null;
                 const userId = RegisterData?.user?.user?.id;
+    
                 if (token && userId) {
                     await AsyncStorage.setItem("userToken", token);
                     await AsyncStorage.setItem("userId", userId);
@@ -294,47 +200,56 @@ const Register = ({ navigation }) => {
                 } else {
                     console.warn("Token is missing in response, skipping storage.");
                 }
-
+    
                 try {
                     initializeSocket(userId);
                     console.log(`✅ Socket initialized successfully for user: ${userId}`);
                 } catch (socketError) {
                     console.error("🚨 Socket Initialization Failed:", socketError);
                 }
-
-                Toast.show({
+    
+                showMessage({
                     type: "success",
-                    text1: "Sign Up Successful",
-                    text2: "You have successfully signed up!",
-                    onHide: () =>
-                        navigation.reset({
-                            index: 0,
-                            routes: [{ name: "AppStack" }],
-                        }),
+                    message: "Sign Up Successful",
+                    description: "You have successfully signed up!",
+                    icon: "success"
+                });
+    
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AppStack" }],
                 });
             } else {
                 throw new Error(RegisterData.message || "Signup failed");
             }
         } catch (error) {
             console.error("Sign Up Error:", error);
-
-            if (error.response?.status === 400) {
-                Toast.show({
-                    type: "error",
-                    text1: "Invalid Request",
-                    text2: error.response.data.message || "Please check your input.",
-                });
+    
+            let errorMessage = "An unexpected error occurred. Please try again.";
+            let errorDescription = "";
+    
+            if (error.response) {
+                errorMessage = error.response.data.message || "Server responded with an error.";
+                errorDescription = error.response.data.error || "Please check your input and try again.";
+            } else if (error.request) {
+                errorMessage = "Network Error";
+                errorDescription = "Unable to reach the server. Please check your internet connection.";
             } else {
-                Toast.show({
-                    type: "error",
-                    text1: "Sign Up Error",
-                    text2: error.message || "An error occurred. Please try again.",
-                });
+                errorMessage = "Error";
+                errorDescription = error.message || "An unexpected error occurred.";
             }
+    
+            showMessage({
+                type: "danger",
+                message: errorMessage,
+                description: errorDescription,
+                icon: "danger"
+            });
         } finally {
             setIsLoading(false);
         }
     };
+    
 
     const handleDateChange = (event, date) => {
         if (date && date !== selectedDate) {
@@ -387,14 +302,14 @@ const Register = ({ navigation }) => {
                         {/* Date of Birth */}
                         <View>
                             <Text style={Globalstyles.title}>Date of Birth <Entypo name={'star'} color={'red'} size={12} /></Text>
-                            <View style={Globalstyles.inputContainer}>
+                            <TouchableOpacity style={Globalstyles.inputContainer} onPress={() => setShowDatePicker(true)}>
                                 <Text style={styles.dateText}>
                                     {selectedDate ? formatDate(selectedDate) : " "}
                                 </Text>
                                 <TouchableOpacity onPress={() => setShowDatePicker(true)}>
                                     <AntDesign name={"down"} size={20} style={styles.arrow} />
                                 </TouchableOpacity>
-                            </View>
+                            </TouchableOpacity>
                             {errors.selectedDate && (
                                 <Text style={styles.errorText}>{errors.selectedDate}</Text>
                             )}

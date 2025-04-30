@@ -22,9 +22,11 @@ const CustomDrawer = (props) => {
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
   const ProfileData = useSelector((state) => state.profile);
   const isMatrimonial = ProfileData?.profiledata?.isMatrimonial || false;
-  const imagePath = ProfileData?.photoUrl?.[0];
-   const image = imagePath ? `${PHOTO_URL}/${imagePath}` : null;
-   const isValidImage = image && !image.includes("undefined") && !image.includes("null") && image.trim() !== "";
+  const profile_data = ProfileData?.profiledata || {};
+  const imagePath = profile_data?.photoUrl?.[0];
+  const isFullUrl = imagePath?.startsWith("http");
+  const image = imagePath ? (isFullUrl ? imagePath : `${PHOTO_URL}/${imagePath}`) : null;
+  const isValidImage = image && !image.includes("undefined") && !image.includes("null") && image.trim() !== "";
   const name = ProfileData?.profiledata?.username || 'userName';
   const Id = ProfileData?.profiledata?.userId || 'user id';
   const isBiodataExpired = ProfileData?.profiledata?.serviceSubscriptions?.some(
@@ -59,7 +61,7 @@ const CustomDrawer = (props) => {
     { title: 'About Us', screen: 'AboutJs' },
     { title: 'Feedback/Suggestion', screen: 'FeedBack' },
     { title: 'Share App' },
-    {title:'SubscriptionHistory', screen: 'SubscriptionHistory'},
+    { title: 'SubscriptionHistory', screen: 'SubscriptionHistory' },
   ];
 
   const panditOptions = [
@@ -83,7 +85,7 @@ const CustomDrawer = (props) => {
       await AsyncStorage.removeItem("profileInterest");
       await AsyncStorage.removeItem("newsEvents");
 
-      dispatch(resetBioData()); 
+      dispatch(resetBioData());
       dispatch(resetsetActivistdata());
       dispatch(resetAllBiodata());
       dispatch(reseAllNotification());
@@ -147,7 +149,7 @@ const CustomDrawer = (props) => {
 
           {/* Profile Image on the Left */}
           <Image
-           source={isValidImage ? { uri: image } : require('../../Images/Profile.png')}
+            source={isValidImage ? { uri: image } : require('../../Images/Profile.png')}
             style={styles.profileImage}
           />
 

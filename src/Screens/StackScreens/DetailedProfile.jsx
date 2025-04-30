@@ -477,6 +477,20 @@ const DetailedProfile = ({ navigation, profileData }) => {
             errors.fullname = "Full name cannot exceed 25 characters.";
           }
         }
+        if (field === "fatherName") {
+          if (!/^[A-Za-z\s]+$/.test(value)) {
+            errors.fatherName = "fatherName must contain only letters and spaces.";
+          } else if (value.length > 25) {
+            errors.fatherName = "fatherName cannot exceed 25 characters.";
+          }
+        }
+        if (field === "motherName") {
+          if (!/^[A-Za-z\s]+$/.test(value)) {
+            errors.motherName = "motherName must contain only letters and spaces.";
+          } else if (value.length > 25) {
+            errors.motherName = "motherName cannot exceed 25 characters.";
+          }
+        }
 
         // DOB Validation
         if (field === "dob") {
@@ -1223,7 +1237,10 @@ const DetailedProfile = ({ navigation, profileData }) => {
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata?.fatherName}
-              onChangeText={(text) => handleInputChange("fatherName", text)}
+              onChangeText={(text) => {
+                const cleanText = text.replace(/[^A-Za-z\s]/g, '');
+                handleInputChange("fatherName", cleanText);
+              }}
               editable={isEditing}
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Father Name'
@@ -1237,7 +1254,10 @@ const DetailedProfile = ({ navigation, profileData }) => {
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata?.motherName}
-              onChangeText={(text) => handleInputChange("motherName", text)}
+              onChangeText={(text) => {
+                const cleanText = text.replace(/[^A-Za-z\s]/g, '');
+                handleInputChange("motherName", cleanText);
+              }}
               editable={isEditing}
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Mother Name'
@@ -1370,7 +1390,10 @@ const DetailedProfile = ({ navigation, profileData }) => {
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata?.contactNumber1}
-              onChangeText={(text) => handleInputChange("contactNumber1", text)}
+              onChangeText={(text) => {
+                const cleanText = text.replace(/[^0-9]/g, '');
+                handleInputChange("contactNumber1", cleanText);
+              }}
               keyboardType="phone-pad"
               maxLength={10}
               editable={isEditing}
@@ -1387,7 +1410,10 @@ const DetailedProfile = ({ navigation, profileData }) => {
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata?.contactNumber2}
-              onChangeText={(text) => handleInputChange("contactNumber2", text)}
+              onChangeText={(text) => {
+                const cleanText = text.replace(/[^0-9]/g, '');
+                handleInputChange("contactNumber2", cleanText);
+              }}
               keyboardType="phone-pad"
               maxLength={10}
               editable={isEditing}

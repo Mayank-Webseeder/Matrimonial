@@ -176,7 +176,6 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
     }
 
     try {
-      setLoading(true)
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
 
@@ -214,9 +213,6 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         description: errorMessage,
         icon: "danger"
       });
-    }
-    finally {
-      setLoading(false)
     }
   };
 

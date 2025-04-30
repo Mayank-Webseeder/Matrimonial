@@ -250,7 +250,6 @@ const Register = ({ navigation }) => {
     //     }
     // };
 
-
     const handleSignup = async () => {
         if (!validateFields()) return;
 

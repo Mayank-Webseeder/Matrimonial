@@ -143,7 +143,7 @@ const Register = ({ navigation }) => {
             if (error.response?.status === 400) {
                 showMessage({ type: "danger", message: "Invalid Request", description: error.response.data.message || "Mobile number is required", icon: "danger" });
             } else {
-                showMessage({ type:"danger", message: "OTP Error", description: error.message || "Failed to send OTP. Try again.", icon: "danger" });
+                showMessage({ type:"danger", message: "OTP Failed", description: error.message || "Failed to send OTP. Try again.", icon: "danger" });
             }
         } finally {
             setIsOtpLoading(false);

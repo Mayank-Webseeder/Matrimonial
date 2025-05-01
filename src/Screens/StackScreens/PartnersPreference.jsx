@@ -149,40 +149,41 @@ const PartnersPreference = ({ navigation, profileData }) => {
         }));
     };
 
-
-    // Handle city selection to update both the input field and biodata.partnerCity
     const handleCitySelect = (item) => {
         setCityInput(item);
         setBiodata(prevState => ({
             ...prevState,
-            partnerCity: item, // Save selected city
+            partnerCity: item,
         }));
         setFilteredCities([]);
     };
 
     const handleSubCasteInputChange = (text) => {
-        setSubCasteInput(text);
-        if (text) {
-            const filtered = subCasteOptions.filter((item) =>
+        const filtered = subCasteOptions
+            .filter((item) =>
                 item?.label?.toLowerCase().includes(text.toLowerCase())
-            ).map(item => item.label);
-            setFilteredSubCaste(filtered);
-        } else {
-            setFilteredSubCaste([]);
-        }
-        setBiodata(prevState => ({
-            ...prevState,
-            partnerSubCaste: text,
-        }));
-    };
+            )
+            .map((item) => item.label);
 
-    // Sub Caste input handler
+        // Only allow typing if there's a match
+        if (filtered.length > 0) {
+            setSubCasteInput(text);
+            setFilteredSubCaste(filtered);
+            setBiodata((prevState) => ({
+                ...prevState,
+                partnerSubCaste: text,
+            }));
+        } else {
+            // Show only "Other" when no match found
+            setFilteredSubCaste(['Other']);
+        }
+    };
     const handleSubCasteSelect = (item) => {
-        setSubCasteInput(item);
+        setSubCasteInput(item === 'Other' ? 'Other' : item);
         setSelectedSubCaste(item);
-        setBiodata(prevBiodata => ({
+        setBiodata((prevBiodata) => ({
             ...prevBiodata,
-            partnerSubCaste: item, // Correct key
+            partnerSubCaste: item === 'Other' ? 'Other' : item,
         }));
         setFilteredSubCaste([]);
     };

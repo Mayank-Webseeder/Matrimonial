@@ -146,32 +146,39 @@ export default function ActivistForm({ navigation }) {
   };
 
   const handleSubCasteInputChange = (text) => {
+    // Set the input text
     setSubCasteInput(text);
-
-    if (text) {
-      const filtered = subCasteOptions
-        .filter((item) => item?.label?.toLowerCase().includes(text.toLowerCase()))
-        .map((item) => item.label);
-
+  
+    // Filter subCasteOptions based on the input
+    const filtered = subCasteOptions
+      .filter((item) => item?.label?.toLowerCase().includes(text.toLowerCase()))
+      .map((item) => item.label);
+  
+    // If matches are found, update filtered options
+    if (filtered.length > 0) {
       setFilteredSubCaste(filtered);
     } else {
-      setFilteredSubCaste([]);
+      // If no matches, only show "Other"
+      setFilteredSubCaste(['Other']);
     }
+  
+    // Update the activist data with the current input text
     setActivistData((prevActivistData) => ({
       ...prevActivistData,
       subCaste: text,
     }));
   };
-
+  
   const handleSubCasteSelect = (selectedItem) => {
-    setSubCasteInput(selectedItem);
+    const finalValue = selectedItem === 'Other' ? 'Other' : selectedItem;
+    setSubCasteInput(finalValue);
     setFilteredSubCaste([]);
-
     setActivistData((prevActivistData) => ({
       ...prevActivistData,
-      subCaste: selectedItem,
+      subCaste: finalValue,
     }));
   };
+  
 
   const convertToBase64 = async (imageUri) => {
     try {

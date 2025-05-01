@@ -82,20 +82,29 @@ const Dharmshala = () => {
 
   const handleInputChange = (text) => {
     setSubcaste(text);
-    if (text.trim() === '') {
-      setFilteredOptions([]); // Clear suggestions if input is empty
-    } else {
-      const filtered = subCasteOptions.filter((option) =>
-        option.label.toLowerCase().includes(text.toLowerCase())
-      );
-      setFilteredOptions(filtered);
-    }
-  };
 
-  const handleOptionSelect = (value) => {
-    setSubcaste(value.label);
-    setFilteredOptions([]);
-  };
+    if (text.trim() === '') {
+        setFilteredOptions([]);
+    } else {
+        const filtered = subCasteOptions.filter((option) =>
+            option.label.toLowerCase().includes(text.toLowerCase())
+        );
+        if (filtered.length === 0) {
+            setFilteredOptions([{ label: 'Other', value: 'Other' }]); 
+        } else {
+            setFilteredOptions(filtered);
+        }
+    }
+};
+
+const handleOptionSelect = (value) => {
+  if (value.label === 'Other') {
+      setSubcaste('');
+  } else {
+      setSubcaste(value.label);
+  }
+  setFilteredOptions([]); 
+};
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -140,27 +149,27 @@ const Dharmshala = () => {
       setLoading(true);
       setDharamsalaData([]);
       setError(null);
-
+  
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
-
+  
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-
+  
       let queryParams = [];
-
+  
       if (filterType === "search") {
         const cleanedLocality = locality.trim();
         const cleanedSubCaste = subcaste.trim();
-
+  
         if (cleanedLocality) queryParams.push(`locality=${encodeURIComponent(cleanedLocality.toLowerCase())}`);
         if (cleanedSubCaste) queryParams.push(`subCaste=${encodeURIComponent(cleanedSubCaste.toLowerCase())}`);
       } else if (filterType === "modal") {
         const cleanedModalLocality = modalLocality.trim();
         const cleanedModalSubCaste = subcaste.trim();
-
+  
         if (cleanedModalLocality && cleanedModalSubCaste) {
           queryParams.push(`locality=${encodeURIComponent(cleanedModalLocality.toLowerCase())}`);
           queryParams.push(`subCaste=${encodeURIComponent(cleanedModalSubCaste.toLowerCase())}`);
@@ -170,16 +179,17 @@ const Dharmshala = () => {
           queryParams.push(`subCaste=${encodeURIComponent(cleanedModalSubCaste.toLowerCase())}`);
         }
       }
-
+  
       const url = filterType === "all" ? GET_ALL_DHARAMSALA : `${GET_ALL_DHARAMSALA}?${queryParams.join("&")}`;
-
+  
       console.log("Fetching Data from:", url);
-
+  
       const response = await axios.get(url, { headers });
-
-      console.log("Response Data:", JSON.stringify(response.data.data));
-
-      if (response.data && response.data.data.length > 0) {
+  
+      // Log the complete response
+      console.log("Response Data:", JSON.stringify(response.data));
+  
+      if (response.data && response.data.data && response.data.data.length > 0) {
         setDharamsalaData(response.data.data);
       } else {
         setDharamsalaData([]);
@@ -187,11 +197,13 @@ const Dharmshala = () => {
       }
     } catch (error) {
       console.error("Error fetching Dharamsala data:", error);
-      setError(error.response ? error.response.data.message : "Failed to fetch data. Please try again.");
+      const errorMessage = error.response ? error.response.data.message : "Failed to fetch data. Please try again.";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
   };
+  
 
   const GetMyDharamsalaData = async () => {
     try {

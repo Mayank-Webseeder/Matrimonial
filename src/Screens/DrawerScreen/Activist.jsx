@@ -134,23 +134,30 @@ const Activist = ({ navigation }) => {
   };
 
   const handleInputChange = (text) => {
-    setSubcaste(text);
-
-    if (text.trim() === '') {
-      setFilteredOptions([]);
-    } else {
-      const filtered = subCasteOptions.filter((option) =>
-        option.label.toLowerCase().includes(text.toLowerCase())
-      );
-      setFilteredOptions(filtered);
-    }
-  };
-
-
-  const handleOptionSelect = (value) => {
-    setSubcaste(value.label);
-    setFilteredOptions([]);
-  };
+     setSubcaste(text);
+ 
+     if (text.trim() === '') {
+         setFilteredOptions([]);
+     } else {
+         const filtered = subCasteOptions.filter((option) =>
+             option.label.toLowerCase().includes(text.toLowerCase())
+         );
+         if (filtered.length === 0) {
+             setFilteredOptions([{ label: 'Other', value: 'Other' }]); 
+         } else {
+             setFilteredOptions(filtered);
+         }
+     }
+ };
+ 
+ const handleOptionSelect = (value) => {
+   if (value.label === 'Other') {
+       setSubcaste('');
+   } else {
+       setSubcaste(value.label);
+   }
+   setFilteredOptions([]); 
+ };
 
   const renderSkeleton = () => (
     <SkeletonPlaceholder>
@@ -310,7 +317,6 @@ const Activist = ({ navigation }) => {
               </View>
             }
           />
-
         )}
 
         <Modal

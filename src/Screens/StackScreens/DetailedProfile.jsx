@@ -312,30 +312,28 @@ const DetailedProfile = ({ navigation, profileData }) => {
   };
 
   const handleSubCasteInputChange = (text) => {
-    setSubCasteInput(text);
+    const filtered = subCasteOptions
+      .filter((item) => item.label.toLowerCase().includes(text.toLowerCase()))
+      .map((item) => item.label);
 
-    if (text) {
-      const filtered = subCasteOptions
-        .filter((item) => item?.label?.toLowerCase().includes(text.toLowerCase()))
-        .map((item) => item.label);
-
+    if (filtered.length > 0) {
+      setSubCasteInput(text);
       setFilteredSubCaste(filtered);
+      setBiodata((prevState) => ({
+        ...prevState,
+        subCaste: text,
+      }));
     } else {
-      setFilteredSubCaste([]);
+      setFilteredSubCaste(['Other']);
     }
-    setBiodata((prevState) => ({
-      ...prevState,
-      subCaste: text,
-    }));
   };
-
   const handleSubCasteSelect = (selectedItem) => {
-    setSubCasteInput(selectedItem);
+    setSubCasteInput(selectedItem === 'Other' ? 'Other' : selectedItem);
     setFilteredSubCaste([]);
-
+  
     setBiodata((prevState) => ({
       ...prevState,
-      subCaste: selectedItem,
+      subCaste: selectedItem === 'Other' ? 'Other' : selectedItem,
     }));
   };
 
@@ -865,7 +863,6 @@ const DetailedProfile = ({ navigation, profileData }) => {
           />
           {errors.subCaste && <Text style={styles.errorText}>{errors.subCaste}</Text>}
 
-          {/* Agar user type karega toh list dikhegi */}
           {filteredSubCaste.length > 0 ? (
             <FlatList
               data={filteredSubCaste.slice(0, 5)}

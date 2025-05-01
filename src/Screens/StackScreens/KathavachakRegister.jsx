@@ -680,32 +680,36 @@ const KathavachakRegister = ({ navigation }) => {
     };
 
     const handleSubCasteInputChange = (text) => {
-        setSubCasteInput(text);
-
-        if (text) {
-            const filtered = subCasteOptions
-                .filter((item) => item?.label?.toLowerCase().includes(text.toLowerCase()))
-                .map((item) => item.label);
-
-            setFilteredSubCaste(filtered);
-        } else {
-            setFilteredSubCaste([]);
-        }
-        setRoleRegisterData((PrevRoleRegisterData) => ({
-            ...PrevRoleRegisterData,
-            subCaste: text,
-        }));
-    };
-
-    const handleSubCasteSelect = (selectedItem) => {
-        setSubCasteInput(selectedItem);
-        setFilteredSubCaste([]);
-
-        setRoleRegisterData((PrevRoleRegisterData) => ({
-            ...PrevRoleRegisterData,
-            subCaste: selectedItem,
-        }));
-    };
+          const filtered = subCasteOptions
+              .filter((item) =>
+                  item?.label?.toLowerCase().includes(text.toLowerCase())
+              )
+              .map((item) => item.label);
+      
+          // If matches found, allow input
+          if (filtered.length > 0) {
+              setSubCasteInput(text);
+              setFilteredSubCaste(filtered);
+              setRoleRegisterData((PrevRoleRegisterData) => ({
+                  ...PrevRoleRegisterData,
+                  subCaste: text,
+              }));
+          } else {
+              // Don't allow arbitrary input — only show "Other"
+              setFilteredSubCaste(['Other']);
+          }
+      };
+      
+      const handleSubCasteSelect = (selectedItem) => {
+          const finalValue = selectedItem === 'Other' ? 'Other' : selectedItem;
+      
+          setSubCasteInput(finalValue);
+          setFilteredSubCaste([]);
+          setRoleRegisterData((PrevRoleRegisterData) => ({
+              ...PrevRoleRegisterData,
+              subCaste: finalValue,
+          }));
+      };
 
     const handleInputChange = (field, value) => {
         setRoleRegisterData((prev) => ({

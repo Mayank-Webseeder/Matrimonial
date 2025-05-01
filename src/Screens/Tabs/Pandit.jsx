@@ -500,7 +500,7 @@ const Pandit = ({ navigation }) => {
                 <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                   <Image
                     source={{ uri: item.image }}
-                    style={{ width, height, resizeMode: 'cover' }}
+                    style={{ width, height, resizeMode: 'contain' }}
                   />
                 </TouchableOpacity>
               );

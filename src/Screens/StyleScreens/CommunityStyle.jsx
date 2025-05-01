@@ -9,14 +9,23 @@ const styles = StyleSheet.create({
       marginTop: 0
     },
     emptyContainer: {
-      alignItems: 'center',
+      flex: 1,
       justifyContent: 'center',
-      height: SH(200),
+      alignItems: 'center',
+      paddingHorizontal: SW(20),
+      paddingVertical: SH(20),
+      marginTop: SH(50),
     },
     emptyText: {
-      fontSize: SF(15),
-      color:"gray",
-      fontFamily: 'Poppins-Regular',
+      fontSize: SF(20),
+      fontFamily: "Poppins-Bold",
+      color: '#555',
+      marginBottom: SH(8),
+    },
+    infoText: {
+      fontSize: SF(18),
+      color: '#888',
+      textAlign: 'center',
     },
     fixedHeader: {
       marginVertical: SH(10),

@@ -567,7 +567,9 @@ const Committee = ({ navigation }) => {
             contentContainerStyle={styles.panditListData}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>No committeeData Available</Text>
+                <FontAwesome name="users" size={60} color="#ccc" style={{ marginBottom: 15 }} />
+                <Text style={styles.emptyText}>No Committee Data Available</Text>
+                <Text style={styles.infoText}>Committee member profiles will appear here once available.</Text>
               </View>
             }
           />

@@ -461,7 +461,9 @@ const Kathavachak = ({ navigation }) => {
             contentContainerStyle={styles.panditListData}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
+                <FontAwesome name="user-circle" size={60} color="#ccc" style={{ marginBottom: 15 }} />
                 <Text style={styles.emptyText}>No Kathavachak Data Available</Text>
+                <Text style={styles.infoText}>Kathavachak profiles will appear here once available.</Text>
               </View>
             }
           />

@@ -6,7 +6,6 @@ import styles from '../StyleScreens/HomeStyle';
 import Colors from '../../utils/Colors';
 import HeadingWithViewAll from '../../Components/HeadingWithViewAll';
 import { Category, communityData, slider } from '../../DummyData/DummyData';
-import { ScrollView } from 'react-native-gesture-handler';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import Globalstyles from '../../utils/GlobalCss';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -24,6 +23,7 @@ import { reseAllNotification, setAllNotification } from '../../ReduxStore/Slices
 import { SF, SW, SH } from '../../utils/Dimensions';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import Video from 'react-native-video';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -459,6 +459,7 @@ const Home = ({ navigation }) => {
       <FlatList
         data={sections}
         keyExtractor={(item, index) => index.toString()}
+        showsVerticalScrollIndicator={false}
         ListHeaderComponent={
           <>
             <View style={styles.sliderContainer}>
@@ -545,11 +546,16 @@ const Home = ({ navigation }) => {
                       </TouchableOpacity>
                     </View>
                   )}
-                  horizontal
+                  horizontal={true}
                   showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={{ flexGrow: 1 }}
                   ListEmptyComponent={
-                    <View style={styles.emptyContainer}>
-                      <Text style={styles.emptyText}>No Matrimonial Profile Created Yet</Text>
+                    <View style={styles.emptyWrapper}>
+                      <View style={styles.emptyContainer}>
+                        <FontAwesome name="heart-o" size={SW(30)} color={Colors.theme_color} style={{ marginBottom: SH(5) }} />
+                        <Text style={styles.emptyText}>No Matrimonial Profile Created Yet</Text>
+                        <Text style={styles.infoText}>Create your profile to start finding your perfect match.</Text>
+                      </View>
                     </View>
                   }
                 />

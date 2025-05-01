@@ -16,6 +16,7 @@ import { DrawerActions, useFocusEffect } from '@react-navigation/native';
 import ImageViewing from 'react-native-image-viewing';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { useSelector } from 'react-redux';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const Activist = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -303,7 +304,9 @@ const Activist = ({ navigation }) => {
             }
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>No activist Data Available</Text>
+                <FontAwesome name="user" size={60} color="#ccc" style={{ marginBottom: 15 }} />
+                <Text style={styles.emptyText}>No Activist Data Available</Text>
+                <Text style={styles.infoText}>Activist profiles will appear here once available.</Text>
               </View>
             }
           />

@@ -588,7 +588,9 @@ const Dharmshala = () => {
             contentContainerStyle={styles.DharamSalaList}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>No DharamsalaData Available</Text>
+                <FontAwesome name="building" size={60} color="#ccc" style={{ marginBottom: 15 }} />
+                <Text style={styles.emptyText}>No Dharamsala Data Available</Text>
+                <Text style={styles.infoText}>Dharamsala listings will appear here once available.</Text>
               </View>
             }
           />

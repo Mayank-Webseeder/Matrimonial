@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator, Dimensions, Modal } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator, Dimensions, Modal, Alert } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -140,10 +140,16 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
     try {
       setLoading(true);
       const response = await axios.get(`${MATCHED_PROFILE}/${id}`, { headers });
-      console.log("response", JSON.stringify(response.data))
+      console.log("response", JSON.stringify(response.data));
+
       if (response.data.status) {
         setProfileData(response.data);
-        setUserData(response?.data?.targetUserBioData)
+        setUserData(response?.data?.targetUserBioData);
+      } else {
+        setProfileData(null);
+        setUserData(null);
+        setLoading(false);
+        Alert.alert("Error", "User account has been deleted or no biodata available.");
       }
     } catch (error) {
       console.error("❌ Error fetching profile");
@@ -153,6 +159,12 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         console.error("Status Code:", error.response.status);
         console.error("Message:", error.response.data?.message || "No message");
         console.error("Data:", error.response.data);
+
+        if (error.response.data?.message === "Target user has not set any biodata or personal details.") {
+          setProfileData(null);
+          setUserData(null);
+          setLoading(false);
+        }
       } else if (error.request) {
         console.error("📡 No response received from server.");
         console.error("Request Details:", error.request);
@@ -358,8 +370,17 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
     );
   }
 
-  if (!profileData) {
-    return <Text style={{ padding: 20 }}>No Data Available</Text>;
+
+  if (!profileData && !userData) {
+    return (
+      <View style={styles.container}>
+        <MaterialIcons name="person-off" size={60} color="#ccc" />
+        <Text style={styles.title}>Profile Unavailable</Text>
+        <Text style={styles.message}>
+          The user's profile is currently unavailable. They may have deleted their account
+        </Text>
+      </View>
+    );
   }
 
   return (
@@ -589,7 +610,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
             </View>
           </View>
         </View>
-        
+
         <View style={[styles.familyDiv]}>
           <View>
             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
@@ -656,12 +677,13 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
                 <FontAwesome name="group" size={20} color={Colors.theme_color} />
                 <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Family's Other Details</Text>
               </View>
-              {personalDetails?.otherFamilyMemberInfo && (
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Other Family Members:</Text>
-                  <Text style={styles.infoValue}>{personalDetails.otherFamilyMemberInfo}</Text>
+              <View style={styles.detailbox}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
+                  <FontAwesome name="group" size={20} color={Colors.theme_color} />
+                  <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Family's Other Details</Text>
                 </View>
-              )}
+                {personalDetails?.otherFamilyMemberInfo && <Text style={styles.text}>Other Family Members: {personalDetails.otherFamilyMemberInfo}</Text>}
+              </View>
             </View>
           )
         }

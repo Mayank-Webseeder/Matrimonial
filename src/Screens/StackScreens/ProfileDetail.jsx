@@ -586,10 +586,10 @@ const ProfileDetail = ({ route, navigation }) => {
                             profileData?.personalDetails?.otherFamilyMemberInfo && (
                                 <View style={styles.detailbox}>
                                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
-                                        <FontAwesome name={"group"} size={20} color={Colors.theme_color} />
-                                        <Text style={styles.HeadingText}> Family's Other Details</Text>
+                                        <FontAwesome name="group" size={20} color={Colors.theme_color} />
+                                        <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Family's Other Details</Text>
                                     </View>
-                                    {profileData?.personalDetails?.otherFamilyMemberInfo && <Text style={styles.text}>Other Family Members: {profileData?.personalDetails.otherFamilyMemberInfo}</Text>}
+                                    {personalDetails?.otherFamilyMemberInfo && <Text style={styles.text}>Other Family Members: {personalDetails.otherFamilyMemberInfo}</Text>}
                                 </View>
                             )
                         }
@@ -629,28 +629,48 @@ const ProfileDetail = ({ route, navigation }) => {
 
                         {/* Other Details */}
                         {hasOtherDetails && (
-                            <View style={styles.flexContainer1}>
+                            <View style={styles.familyDiv}>
                                 <View>
                                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
-                                        <MaterialIcons name={"details"} size={25} color={Colors.theme_color} />
-                                        <Text style={styles.HeadingText}> Other Details</Text>  </View>
-                                    {profileData?.personalDetails?.knowCooking && (
-                                        <Text style={styles.text}>Cooking: {profileData?.personalDetails.knowCooking}</Text>
+                                        <MaterialIcons name="details" size={25} color={Colors.theme_color} />
+                                        <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Other Details</Text>
+                                    </View>
+
+                                    {personalDetails?.knowCooking && (
+                                        <View style={styles.infoRow}>
+                                            <Text style={styles.infoLabel}>Cooking :</Text>
+                                            <Text style={styles.infoValue}>{personalDetails.knowCooking}</Text>
+                                        </View>
                                     )}
-                                    {profileData?.personalDetails?.dietaryHabit && (
-                                        <Text style={styles.text}>Diet: {profileData?.personalDetails.dietaryHabit}</Text>
+                                    {personalDetails?.dietaryHabit && (
+                                        <View style={styles.infoRow}>
+                                            <Text style={styles.infoLabel}>Diet :</Text>
+                                            <Text style={styles.infoValue}>{personalDetails.dietaryHabit}</Text>
+                                        </View>
                                     )}
-                                    {profileData?.personalDetails?.smokingHabit && (
-                                        <Text style={styles.text}>Smoke: {profileData?.personalDetails.smokingHabit}</Text>
+                                    {personalDetails?.smokingHabit && (
+                                        <View style={styles.infoRow}>
+                                            <Text style={styles.infoLabel}>Smoke :</Text>
+                                            <Text style={styles.infoValue}>{personalDetails.smokingHabit}</Text>
+                                        </View>
                                     )}
-                                    {profileData?.personalDetails?.drinkingHabit && (
-                                        <Text style={styles.text}>Drinking: {profileData?.personalDetails.drinkingHabit}</Text>
+                                    {personalDetails?.drinkingHabit && (
+                                        <View style={styles.infoRow}>
+                                            <Text style={styles.infoLabel}>Drinking :</Text>
+                                            <Text style={styles.infoValue}>{personalDetails.drinkingHabit}</Text>
+                                        </View>
                                     )}
-                                    {profileData?.personalDetails?.tobaccoHabits && (
-                                        <Text style={styles.text}>Tobacco: {profileData?.personalDetails.tobaccoHabits}</Text>
+                                    {personalDetails?.tobaccoHabits && (
+                                        <View style={styles.infoRow}>
+                                            <Text style={styles.infoLabel}>Tobacco :</Text>
+                                            <Text style={styles.infoValue}>{personalDetails.tobaccoHabits}</Text>
+                                        </View>
                                     )}
-                                    {profileData?.personalDetails?.hobbies && (
-                                        <Text style={styles.text}>Hobby: {profileData?.personalDetails?.hobbies}</Text>
+                                    {personalDetails?.hobbies && (
+                                        <View style={styles.infoRow}>
+                                            <Text style={styles.infoLabel}>Hobby :</Text>
+                                            <Text style={styles.infoValue}>{personalDetails.hobbies}</Text>
+                                        </View>
                                     )}
                                 </View>
                             </View>

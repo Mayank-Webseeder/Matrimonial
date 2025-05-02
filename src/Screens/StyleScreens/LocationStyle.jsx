@@ -3,7 +3,26 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
-
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    backgroundColor: '#fff',
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginTop: 15,
+    color: '#333',
+  },
+  message: {
+    fontSize: 16,
+    marginTop: 8,
+    textAlign: 'center',
+    color: '#666',
+    lineHeight: 22,
+  },
   righticons: {
     flexDirection: 'row',
     alignItems: "center"
@@ -18,7 +37,7 @@ const styles = StyleSheet.create({
   verifiedContainer: {
     position: "absolute",
     top: SH(315),
-    left: SW(222),
+    left: SW(228),
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#e3e6e4",
@@ -31,7 +50,7 @@ const styles = StyleSheet.create({
   verifiedBadge: {
     width: SW(20),
     height: SH(20),
-    marginRight: SW(1),
+    paddingHorizontal: SW(1),
     resizeMode: "contain"
   },
   verifiedText: {

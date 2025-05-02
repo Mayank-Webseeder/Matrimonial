@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, TextInput, TouchableOpacity, SafeAreaView, ScrollView, FlatList, Image, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, SafeAreaView, ScrollView, FlatList, Image, ActivityIndicator, Alert } from 'react-native';
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/ActivistFormStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -149,12 +149,12 @@ export default function ActivistForm({ navigation }) {
   const handleSubCasteInputChange = (text) => {
     // Set the input text
     setSubCasteInput(text);
-  
+
     // Filter subCasteOptions based on the input
     const filtered = subCasteOptions
       .filter((item) => item?.label?.toLowerCase().includes(text.toLowerCase()))
       .map((item) => item.label);
-  
+
     // If matches are found, update filtered options
     if (filtered.length > 0) {
       setFilteredSubCaste(filtered);
@@ -162,14 +162,14 @@ export default function ActivistForm({ navigation }) {
       // If no matches, only show "Other"
       setFilteredSubCaste(['Other']);
     }
-  
+
     // Update the activist data with the current input text
     setActivistData((prevActivistData) => ({
       ...prevActivistData,
       subCaste: text,
     }));
   };
-  
+
   const handleSubCasteSelect = (selectedItem) => {
     const finalValue = selectedItem === 'Other' ? 'Other' : selectedItem;
     setSubCasteInput(finalValue);
@@ -179,7 +179,7 @@ export default function ActivistForm({ navigation }) {
       subCaste: finalValue,
     }));
   };
-  
+
 
   const convertToBase64 = async (imageUri) => {
     try {
@@ -315,22 +315,19 @@ export default function ActivistForm({ navigation }) {
       [field]: value,
     }));
   };
-  
+
 
   const handleActivistSave = async () => {
     try {
       if (!validateFields()) {
         return;
       }
+
       setIsLoading(true);
       const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
-        showMessage({
-          type: "danger",
-          message: "Error",
-          description: "Authorization token is missing.",
-        });
+        Alert.alert("Error", "Authorization token is missing.");
         return;
       }
 
@@ -338,31 +335,40 @@ export default function ActivistForm({ navigation }) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
+
       const payload = await constructActivistPayload(ActivistData, !ActivistData?._id);
       console.log("Payload:", payload);
+
       const apiCall = ActivistData?._id ? axios.patch : axios.post;
       const endpoint = ActivistData?._id ? UPDATE_ACTIVIST : CREATE_ACTIVIST;
 
       const response = await apiCall(endpoint, payload, { headers });
       console.log("API Response:", response.data);
+
       if (response.status === 200 && response.data.status === true) {
         showMessage({
           type: "success",
-          message: ActivistData?._id ? "Activist Profile Updated Successfully" : "Your activist approval request is on its way! Stay tuned.",
+          message: ActivistData?._id
+            ? "Activist Profile Updated Successfully"
+            : "Your activist approval request is on its way! Stay tuned.",
           description: response.data.message || "Your changes have been saved!",
-          icon: "success"
+          icon: "success",
+          duration: 5000, // shows for 3 seconds
         });
 
         setIsEditing(false);
+
         if (!ActivistData?._id && response.data?.data?._id) {
           setActivistData((prev) => ({
             ...prev,
             _id: response.data.data._id,
           }));
         }
+
         navigation.goBack();
         return;
       }
+
       throw new Error(response.data.message || "Something went wrong");
 
     } catch (error) {
@@ -372,13 +378,7 @@ export default function ActivistForm({ navigation }) {
       if (error.response && error.response.status === 400) {
         errorMessage = error.response.data?.message || "Invalid request!";
       }
-
-      showMessage({
-        type: "danger",
-        message: "Error",
-        description: errorMessage,
-        icon: "danger"
-      });
+      Alert.alert("Error", errorMessage);
 
     } finally {
       setIsLoading(false);
@@ -431,18 +431,18 @@ export default function ActivistForm({ navigation }) {
         )}
         <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
         <Dropdown
-  style={[Globalstyles.input, !isEditing && styles.readOnly]}
-  data={subCasteOptions}
-  labelField="label"
-  valueField="value"
-  value={ActivistData?.subCaste}
-  editable={isEditing}
-  onChange={(item) => handleInputChange("subCaste", item.value)}
-  placeholder="Select subCaste"
-  placeholderStyle={{ color: '#E7E7E7' }}
-  autoScroll={false}
-  showsVerticalScrollIndicator={false}
-/>
+          style={[Globalstyles.input, !isEditing && styles.readOnly]}
+          data={subCasteOptions}
+          labelField="label"
+          valueField="value"
+          value={ActivistData?.subCaste}
+          editable={isEditing}
+          onChange={(item) => handleInputChange("subCaste", item.value)}
+          placeholder="Select subCaste"
+          placeholderStyle={{ color: '#E7E7E7' }}
+          autoScroll={false}
+          showsVerticalScrollIndicator={false}
+        />
         {/* <TextInput
           style={Globalstyles.input}
           value={ActivistData?.subCaste}
@@ -467,7 +467,7 @@ export default function ActivistForm({ navigation }) {
           />
         ) : null} */}
 
-{errors?.subCaste && (
+        {errors?.subCaste && (
           <Text style={styles.errorText}>
             {errors.subCaste}
           </Text>
@@ -529,7 +529,7 @@ export default function ActivistForm({ navigation }) {
           />
         ) : null}
 
-{errors?.state && (
+        {errors?.state && (
           <Text style={styles.errorText}>
             {errors.state}
           </Text>
@@ -561,7 +561,7 @@ export default function ActivistForm({ navigation }) {
         ) : null}
 
 
-{errors?.city && (
+        {errors?.city && (
           <Text style={styles.errorText}>
             {errors.city}
           </Text>
@@ -665,7 +665,7 @@ export default function ActivistForm({ navigation }) {
             {errors.profilePhoto}
           </Text>
         )}
-        
+
         <TouchableOpacity
           style={[styles.submitButton, isLoading && { opacity: 0.7 }]}
           onPress={handleActivistSave}

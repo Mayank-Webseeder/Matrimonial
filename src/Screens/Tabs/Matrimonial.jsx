@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from '../StyleScreens/ExploreStyle';
 import Colors from '../../utils/Colors';
 import Globalstyles from '../../utils/GlobalCss';
-import { FEMALE_FILTER_API, GET_ALL_BIODATA_PROFILES, MALE_FILTER_API, SAVED_PROFILES } from '../../utils/BaseUrl';
+import { FEMALE_FILTER_API, GET_ALL_BIODATA_PROFILES, MALE_FILTER_API, SAVED_PROFILES, TOP_BIODATA_ADVERTISE_WINDOW } from '../../utils/BaseUrl';
 import { slider } from '../../DummyData/DummyData';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import { useFocusEffect } from '@react-navigation/native';
@@ -20,6 +20,7 @@ import { showMessage } from 'react-native-flash-message';
 const Matrimonial = ({ navigation }) => {
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [slider, setSlider] = useState([]);
   const MyprofileData = useSelector((state) => state.getBiodata);
   const gender = MyprofileData?.Biodata?.gender || null;
 
@@ -64,6 +65,66 @@ const Matrimonial = ({ navigation }) => {
     }, [])
   );
 
+
+  useEffect(() => {
+    Advertisement_window();
+  }, []);
+
+
+  useEffect(() => {
+    if (slider.length === 0) return;
+
+    const currentSlide = slider[currentIndex];
+    const durationInSeconds = currentSlide?.duration || 2;
+    const durationInMilliseconds = durationInSeconds * 1000;
+
+    const timeout = setTimeout(() => {
+      const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
+      setCurrentIndex(nextIndex);
+      sliderRef.current?.goToSlide(nextIndex);
+    }, durationInMilliseconds);
+
+    return () => clearTimeout(timeout);
+  }, [currentIndex, slider]);
+
+
+  const Advertisement_window = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+      const response = await axios.get(TOP_BIODATA_ADVERTISE_WINDOW, { headers });
+
+      if (response.data) {
+        const fetchedData = response.data.data;
+        console.log("fetchedData", JSON.stringify(fetchedData));
+
+        const fullSliderData = fetchedData.flatMap((item) =>
+          item.media.map((mediaItem) => ({
+            id: `${item._id}_${mediaItem._id}`,
+            title: item.title,
+            description: item.description,
+            image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
+            resolution: mediaItem.resolution,
+            hyperlink: mediaItem.hyperlink, 
+          }))
+        );
+
+        setSlider(fullSliderData);
+        console.log("Slider Data:", fullSliderData);
+      } else {
+        setSlider([]);
+      }
+    } catch (error) {
+      console.error("Error fetching advertisement:", error);
+    }
+  };
+
   useEffect(() => {
     if (activeButton === 1) fetchGirlsFilterData();
     else if (activeButton === 2) fetchBoysFilterData();
@@ -96,12 +157,6 @@ const Matrimonial = ({ navigation }) => {
       console.error("❌ Error fetching profiles:", error.response?.data || error);
     }
   };
-
-  const renderItem = ({ item }) => (
-    <View>
-      <Image source={item.image} style={styles.sliderImage} />
-    </View>
-  );
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -500,13 +555,13 @@ const Matrimonial = ({ navigation }) => {
           {searchQuery.length > 0 ? (
             <View>
               <AntDesign name={'close'} size={20} color={'gray'} onPress={() => {
-              setSearchQuery('');
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'Matrimonial' }],
-              });
-            }}
-            />
+                setSearchQuery('');
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'Matrimonial' }],
+                });
+              }}
+              />
             </View>
           ) : (
             <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => setSearchMode(!searchMode)} />
@@ -517,16 +572,34 @@ const Matrimonial = ({ navigation }) => {
       <ScrollView showsVerticalScrollIndicator={false}>
         {!searchMode && (
           <>
-            <View style={styles.sliderContainer}>
+            <View style={[styles.sliderContainer, { paddingBottom: SH(10) }]}>
               <AppIntroSlider
                 ref={sliderRef}
                 data={slider}
-                renderItem={renderItem}
+                renderItem={({ item }) => {
+                  const { width, height } = item.resolution;
+                
+                  const handlePress = () => {
+                    if (item.hyperlink) {
+                      Linking.openURL(item.hyperlink).catch(err =>
+                        console.error("Failed to open URL:", err)
+                      );
+                    }
+                  };
+                
+                  return (
+                    <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                      <Image
+                        source={{ uri: item.image }}
+                        style={{ width, height, resizeMode: 'cover' }}
+                      />
+                    </TouchableOpacity>
+                  );
+                }}                
                 showNextButton={false}
                 showDoneButton={false}
-                dotStyle={styles.dot}
-                activeDotStyle={styles.activeDot}
-                onSlideChange={(index) => setCurrentIndex(index)}
+                dotStyle={Globalstyles.dot}
+                activeDotStyle={Globalstyles.activeDot}
               />
             </View>
           </>

@@ -70,29 +70,35 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
     };
 
     const handleSubCasteInputChange = (text) => {
-        setSubCasteInput(text);
-
-        if (text) {
-            const filtered = subCasteOptions
-                .filter((item) => item?.label?.toLowerCase().includes(text.toLowerCase()))
-                .map((item) => item.label);
-
+        const filtered = subCasteOptions
+            .filter((item) =>
+                item?.label?.toLowerCase().includes(text.toLowerCase())
+            )
+            .map((item) => item.label);
+    
+        if (filtered.length > 0) {
+            // Allow valid matches
+            setSubCasteInput(text);
             setFilteredSubCaste(filtered);
+            setDharamsalaData((prev) => ({
+                ...prev,
+                subCaste: text,
+            }));
         } else {
-            setFilteredSubCaste([]);
+            // Disallow unmatched text, show only "Other"
+            setFilteredSubCaste(['Other']);
         }
-        setDharamsalaData((prevDharamsalaData) => ({
-            ...prevDharamsalaData,
-            subCaste: text,
-        }));
     };
+    
 
     const handleSubCasteSelect = (selectedItem) => {
-        setSubCasteInput(selectedItem);
+        const finalValue = selectedItem === 'Other' ? 'Other' : selectedItem;
+    
+        setSubCasteInput(finalValue);
         setFilteredSubCaste([]);
-        setDharamsalaData((prevDharamsalaData) => ({
-            ...prevDharamsalaData,
-            subCaste: selectedItem,
+        setDharamsalaData((prev) => ({
+            ...prev,
+            subCaste: finalValue,
         }));
     };
 

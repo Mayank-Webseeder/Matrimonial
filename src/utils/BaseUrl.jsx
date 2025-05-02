@@ -151,15 +151,43 @@ const SUBSCRIPTION_HISTORY = `${BASE_URL}/subscription/history`;
 
 // Advertise Windows
 
-const HOME_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=HomePage`;
-const DHARMSHALA_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Dharmshala`;
-const PANDIT_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Pandit`;
-const JYOTISH_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Jyotish`;
-const KATHAVACHAK_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Kathavachak`;
-const COMMITTEE_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Committee`;
-const EVENT_NEWS_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=EventPost`;
-const ACTIVIST_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Activist`;
-const BIODATA_ADVERTISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Biodata`;
+// Base types without sections
+// HomePage
+
+const TOP_HOME_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=HomePage&section=Top`;
+const BOTTOM_HOME_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=HomePage&section=Bottom`;
+
+// Dharmshala
+const TOP_DHARMSHALA_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Dharmshala&section=Top`;
+const BOTTOM_DHARMSHALA_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Dharmshala&section=Bottom`;
+
+// Pandit
+const TOP_PANDIT_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Pandit&section=Top`;
+const BOTTOM_PANDIT_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Pandit&section=Bottom`;
+
+// Jyotish
+const TOP_JYOTISH_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Jyotish&section=Top`;
+const BOTTOM_JYOTISH_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Jyotish&section=Bottom`;
+
+// Kathavachak
+const TOP_KATHAVACHAK_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Kathavachak&section=Top`;
+const BOTTOM_KATHAVACHAK_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Kathavachak&section=Bottom`;
+
+// Committee
+const TOP_COMMITTEE_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Committee&section=Top`;
+const BOTTOM_COMMITTEE_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Committee&section=Bottom`;
+
+// Event News
+const TOP_EVENT_NEWS_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=EventPost&section=Top`;
+const BOTTOM_EVENT_NEWS_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=EventPost&section=Bottom`;
+
+// Activist
+const TOP_ACTIVIST_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Activist&section=Top`;
+const BOTTOM_ACTIVIST_ADVERDISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Activist&section=Bottom`;
+
+// Biodata
+const TOP_BIODATA_ADVERTISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Biodata&section=Top`;
+const BOTTOM_BIODATA_ADVERTISE_WINDOW = `${BASE_URL}/user/get-advertisement?targetProfileType=Biodata&section=Bottom`;
 
 export {
     SIGNUP_ENDPOINT,
@@ -266,15 +294,24 @@ export {
     POST_SUCESS_sTORY,
     MY_SUCCESS_STORY,
     DELETE_SUCCESS_STORY,
-    HOME_ADVERDISE_WINDOW,
-    DHARMSHALA_ADVERDISE_WINDOW,
-    PANDIT_ADVERDISE_WINDOW,
-    JYOTISH_ADVERDISE_WINDOW,
-    KATHAVACHAK_ADVERDISE_WINDOW,
-    COMMITTEE_ADVERDISE_WINDOW,
-    EVENT_NEWS_ADVERDISE_WINDOW,
-    ACTIVIST_ADVERDISE_WINDOW,
-    BIODATA_ADVERTISE_WINDOW,
     FORGOT_PASSWORD_OTP,
-    PHOTO_URL
+    PHOTO_URL,
+    TOP_HOME_ADVERDISE_WINDOW,
+    BOTTOM_HOME_ADVERDISE_WINDOW,
+    TOP_PANDIT_ADVERDISE_WINDOW,
+    BOTTOM_PANDIT_ADVERDISE_WINDOW,
+    TOP_JYOTISH_ADVERDISE_WINDOW,
+    BOTTOM_JYOTISH_ADVERDISE_WINDOW,
+    TOP_KATHAVACHAK_ADVERDISE_WINDOW,
+    BOTTOM_KATHAVACHAK_ADVERDISE_WINDOW,
+    TOP_BIODATA_ADVERTISE_WINDOW,
+    BOTTOM_BIODATA_ADVERTISE_WINDOW,
+    TOP_ACTIVIST_ADVERDISE_WINDOW,
+    BOTTOM_ACTIVIST_ADVERDISE_WINDOW,
+    TOP_COMMITTEE_ADVERDISE_WINDOW,
+    BOTTOM_COMMITTEE_ADVERDISE_WINDOW,
+    TOP_DHARMSHALA_ADVERDISE_WINDOW,
+    BOTTOM_DHARMSHALA_ADVERDISE_WINDOW,
+    TOP_EVENT_NEWS_ADVERDISE_WINDOW,
+    BOTTOM_EVENT_NEWS_ADVERDISE_WINDOW
 }

@@ -12,7 +12,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { UPLOAD_PROFILE_PHOTO, DELETE_PROFILE_PHOTO, PROFILE_ENDPOINT, PROFILE_TYPE, PHOTO_URL } from '../../utils/BaseUrl';
+import { UPLOAD_PROFILE_PHOTO, DELETE_PROFILE_PHOTO, PROFILE_ENDPOINT, PROFILE_TYPE } from '../../utils/BaseUrl';
 import axios from 'axios';
 import { DrawerActions, useFocusEffect } from '@react-navigation/native';
 import ImageViewing from 'react-native-image-viewing';
@@ -32,7 +32,7 @@ const MyProfile = ({ navigation }) => {
     const [fetchProfileDetails, setFetchProfileDetails] = useState(null);
     const [loading, setLoading] = useState(false);
     const [ProfileLoading, setProfileLoading] = useState(false);
-    const image = `${PHOTO_URL}/${profileData?.photoUrl?.[0]}`;
+    const image = profileData?.photoUrl?.[0];
     const [isLoading, setIsLoading] = useState(false);
     // console.log("profileData", profileData);
     const formattedDate = moment(profileData.dob).format("DD/MM/YYYY");
@@ -47,21 +47,8 @@ const MyProfile = ({ navigation }) => {
     useFocusEffect(
         useCallback(() => {
             fetchProfile();
-            console.log("image",image);
         }, [])
     );
-
-    const isValidUri = (uri) => {
-  return uri && typeof uri === "string" && !uri.includes("undefined") && !uri.includes("null") && uri.trim() !== "";
-};
-
-const finalImageSource =
-  isValidUri(selectedImage)
-    ? { uri: selectedImage }
-    : isValidUri(image)
-      ? { uri: image }
-      : require('../../Images/Profile.png');
-
 
     const fetchProfile = async () => {
         setProfileLoading(true);
@@ -259,61 +246,41 @@ const finalImageSource =
         }
     };
 
+
     const handleImageUpload = async () => {
         ImageCropPicker.openPicker({
-          width: 300,
-          height: 300,
-          cropping: true,
-          includeBase64: false,  // Don't include base64 data
+            width: 300,
+            height: 300,
+            cropping: true,
+            includeBase64: true,
         })
-          .then(image => {
-            setSelectedImage(image.path);
-            setModalVisible(false);
-            console.log('Selected Image:', image);
-      
-            // Start loader before upload
-            setIsLoading(true);
-            upload_profile_image(image.path); // Pass the image path instead of base64 data
-          })
-          .catch(error => {
-            console.error('Image Picking Error:', error);
-          });
-      };
-      
-      const handleCameraCapture = () => {
-        ImageCropPicker.openCamera({
-          cropping: true,
-          width: 300,
-          height: 250,
-          includeBase64: false,  // Don't include base64 data
-        })
-          .then(image => {
-            setSelectedImage(image.path);
-            setModalVisible(false);
-            console.log('Captured Image:', image);
-            upload_profile_image(image.path); // Pass the image path instead of base64 data
-          })
-          .catch(error => {
-            console.error('Camera Error:', error);
-          });
-      };
-      
-      const upload_profile_image = async (imagePath) => {
+            .then(image => {
+                setSelectedImage(image.path);
+                setModalVisible(false);
+                console.log('Selected Image:', image);
+
+                // Start loader before upload
+                setIsLoading(true);
+                upload_profile_image(image.data);
+            })
+            .catch(error => {
+                console.error('Image Picking Error:', error);
+            });
+    };
+
+    const upload_profile_image = async (base64Data) => {
+        console.log("Base64 Image Data:", base64Data);
         try {
           const token = await AsyncStorage.getItem("userToken");
           if (!token) throw new Error("Authorization token is missing.");
-          const formData = new FormData();
-          formData.append("photoUrl", {
-            uri: imagePath,
-          });
-          console.log("FormData being sent:", JSON.stringify(formData));
+      
           const headers = {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           };
-          const response = await axios.put(UPLOAD_PROFILE_PHOTO, formData, { headers });
+      
+          const response = await axios.put(UPLOAD_PROFILE_PHOTO, { photoUrl: base64Data }, { headers });
           console.log("Profile image updated successfully:", response.data);
-   
           const message = response?.data?.message;
       
           if (message === "Profile image updated successfully.") {
@@ -322,7 +289,7 @@ const finalImageSource =
               description: "Your image has been successfully uploaded.",
               type: "success",
               duration: 3000,
-              icon: "success",
+              icon:"success"
             });
       
             console.log("Navigating to MainApp...");
@@ -331,37 +298,53 @@ const finalImageSource =
               routes: [{ name: "MainApp" }],
             });
           }
-      
         } catch (error) {
           if (error.response) {
-            console.error("API Error:", error.response.data); 
-            console.error("Status Code:", error.response.status); 
-          } else if (error.request) {
-            console.error("Network Error:", error.request); 
+            console.error("API Error:", error.response.data);
           } else {
-            console.error("Error uploading profile image:", error.message); 
+            console.error("Error uploading profile image:", error.message);
           }
+      
           showMessage({
             message: "Upload Failed!",
             description: "Please try again.",
             type: "danger",
             duration: 3000,
-            icon: "danger",
+            icon:"danger"
           });
         } finally {
           setIsLoading(false);
         }
       };
-      
-      
+
+
+    const handleCameraCapture = () => {
+        ImageCropPicker.openCamera({
+            cropping: true,
+            width: 300,
+            height: 250,
+            includeBase64: true,
+        })
+            .then(image => {
+                setSelectedImage(image.path);
+                setModalVisible(false);
+                console.log('Captured Image:', image);
+                upload_profile_image(image.data);
+            })
+            .catch(error => {
+                console.error('Camera Error:', error);
+            });
+    };
 
     const tryOpenDrawer = () => {
-        const parent = navigation.getParent();          
+        const parent = navigation.getParent();           // nearest parent navigator
       
         if (parent && parent?.openDrawer) {
+          // इस navigator में Drawer मौजूद है
           navigation.dispatch(DrawerActions.openDrawer());
         } else {
-          navigation.navigate('MainApp');               
+          // Drawer नहीं मिला → Main drawer‑stack पर लौट जायें
+          navigation.navigate('MainApp');                // root where Drawer lives
         }
       };
 
@@ -394,7 +377,11 @@ const finalImageSource =
                     <TouchableOpacity onPress={() => setImageViewVisible(true)}>
                         <Image
                             source={
-                                finalImageSource
+                                selectedImage
+                                    ? { uri: selectedImage }
+                                    : image
+                                        ? { uri: image }
+                                        : require('../../Images/Profile.png')
                             }
                             style={styles.image}
                         />

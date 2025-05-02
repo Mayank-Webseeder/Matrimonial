@@ -57,29 +57,33 @@ const CommitteeSubmissionPage = ({ navigation }) => {
     };
 
     const handleSubCasteInputChange = (text) => {
-        setSubCasteInput(text);
-
-        if (text) {
-            const filtered = subCasteOptions
-                .filter((item) => item?.label?.toLowerCase().includes(text.toLowerCase()))
-                .map((item) => item.label);
-
+        const filtered = subCasteOptions
+            .filter((item) =>
+                item?.label?.toLowerCase().includes(text.toLowerCase())
+            )
+            .map((item) => item.label);
+    
+        if (filtered.length > 0) {
+            setSubCasteInput(text);
             setFilteredSubCaste(filtered);
+            setCommitteeData((prevCommitteeData) => ({
+                ...prevCommitteeData,
+                subCaste: text,
+            }));
         } else {
-            setFilteredSubCaste([]);
+            setFilteredSubCaste(['Other']);
         }
-        setCommitteeData((prevCommitteeData) => ({
-            ...prevCommitteeData,
-            subCaste: text,
-        }));
     };
+    
 
     const handleSubCasteSelect = (selectedItem) => {
-        setSubCasteInput(selectedItem);
+        const finalValue = selectedItem === 'Other' ? 'Other' : selectedItem;
+    
+        setSubCasteInput(finalValue);
         setFilteredSubCaste([]);
         setCommitteeData((prevCommitteeData) => ({
             ...prevCommitteeData,
-            subCaste: selectedItem,
+            subCaste: finalValue,
         }));
     };
 

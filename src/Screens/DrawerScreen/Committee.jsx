@@ -15,7 +15,7 @@ import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { SH, SF } from '../../utils/Dimensions';
 import { useSelector } from 'react-redux';
-import { COMMITTEE_ADVERDISE_WINDOW, GET_ALL_COMITTEE, GET_COMMIITEE, SAVED_PROFILES } from '../../utils/BaseUrl';
+import { COMMITTEE_ADVERDISE_WINDOW, GET_ALL_COMITTEE, GET_COMMIITEE, SAVED_PROFILES, TOP_COMMITTEE_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
 import axios from 'axios';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -29,7 +29,7 @@ const Committee = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [locality, setLocality] = useState('');
   const [activeButton, setActiveButton] = useState(null);
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(false);
   const [subcaste, setSubcaste] = useState("");
   const [filteredOptions, setFilteredOptions] = useState([]);
   const sliderRef = useRef(null);
@@ -56,30 +56,9 @@ const Committee = ({ navigation }) => {
       setSubcaste('');
       fetchComitteeData("all");
       fetchMyCommitteeData();
+      Advertisement_window();
     }, 2000);
   }, []);
-
-  const openImageViewer = (imageUri) => {
-    setSelectedImage(imageUri);
-    setImageVisible(true);
-  };
-
-  const handleInputChange = (text) => {
-    setSubcaste(text);
-    if (text.trim() === '') {
-      setFilteredOptions([]);
-    } else {
-      const filtered = subCasteOptions.filter((option) =>
-        option.label.toLowerCase().includes(text.toLowerCase())
-      );
-      setFilteredOptions(filtered);
-    }
-  };
-
-  const handleOptionSelect = (value) => {
-    setSubcaste(value.label);
-    setFilteredOptions([]);
-  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -87,6 +66,7 @@ const Committee = ({ navigation }) => {
       setSubcaste('');
       fetchComitteeData("all");
       fetchMyCommitteeData();
+      Advertisement_window();
     }, [])
   );
 
@@ -94,6 +74,38 @@ const Committee = ({ navigation }) => {
     Advertisement_window();
   }, []);
 
+  const openImageViewer = (imageUri) => {
+    setSelectedImage(imageUri);
+    setImageVisible(true);
+  };
+
+ const handleInputChange = (text) => {
+     setSubcaste(text);
+ 
+     if (text.trim() === '') {
+         setFilteredOptions([]); // Clear suggestions if input is empty
+     } else {
+         const filtered = subCasteOptions.filter((option) =>
+             option.label.toLowerCase().includes(text.toLowerCase())
+         );
+ 
+         // If no match, show "Other" option
+         if (filtered.length === 0) {
+             setFilteredOptions([{ label: 'Other', value: 'Other' }]); 
+         } else {
+             setFilteredOptions(filtered);
+         }
+     }
+ };
+ 
+ const handleOptionSelect = (value) => {
+   if (value.label === 'Other') {
+       setSubcaste('');
+   } else {
+       setSubcaste(value.label);
+   }
+   setFilteredOptions([]); 
+ };
 
   useEffect(() => {
     if (slider.length === 0) return;
@@ -210,7 +222,7 @@ const Committee = ({ navigation }) => {
         'Authorization': `Bearer ${token}`,
       };
 
-      const response = await axios.get(COMMITTEE_ADVERDISE_WINDOW, { headers });
+      const response = await axios.get(TOP_COMMITTEE_ADVERDISE_WINDOW, { headers });
 
       if (response.data) {
         const fetchedData = response.data.data;
@@ -223,6 +235,7 @@ const Committee = ({ navigation }) => {
             description: item.description,
             image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution,
+            hyperlink: mediaItem.hyperlink,
           }))
         );
 
@@ -233,8 +246,6 @@ const Committee = ({ navigation }) => {
       }
     } catch (error) {
       console.error("Error fetching advertisement:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -532,14 +543,22 @@ const Committee = ({ navigation }) => {
             data={slider}
             renderItem={({ item }) => {
               const { width, height } = item.resolution;
+            
+              const handlePress = () => {
+                if (item.hyperlink) {
+                  Linking.openURL(item.hyperlink).catch(err =>
+                    console.error("Failed to open URL:", err)
+                  );
+                }
+              };
+            
               return (
-                <Image
-                  source={{ uri: item.image }}
-                  style={{
-                    width,
-                    height,
-                  }}
-                />
+                <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                  <Image
+                    source={{ uri: item.image }}
+                    style={{ width, height, resizeMode: 'contain' }}
+                  />
+                </TouchableOpacity>
               );
             }}
             showNextButton={false}
@@ -558,7 +577,9 @@ const Committee = ({ navigation }) => {
             contentContainerStyle={styles.panditListData}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>No committeeData Available</Text>
+                <FontAwesome name="users" size={60} color="#ccc" style={{ marginBottom: 15 }} />
+                <Text style={styles.emptyText}>No Committee Data Available</Text>
+                <Text style={styles.infoText}>Committee member profiles will appear here once available.</Text>
               </View>
             }
           />

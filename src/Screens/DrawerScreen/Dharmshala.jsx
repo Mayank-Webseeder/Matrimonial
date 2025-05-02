@@ -14,7 +14,7 @@ import { subCasteOptions } from '../../DummyData/DropdownData';
 import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { SH, SF, SW } from '../../utils/Dimensions';
-import { DHARMSHALA_ADVERDISE_WINDOW, GET_ALL_DHARAMSALA, GET_DHARAMSALA, SAVED_PROFILES } from '../../utils/BaseUrl';
+import {GET_ALL_DHARAMSALA, GET_DHARAMSALA, SAVED_PROFILES, TOP_DHARMSHALA_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
@@ -39,7 +39,7 @@ const Dharmshala = () => {
   const [dharamsalaData, setDharamsalaData] = useState([]);
   const [MydharamsalaData, setMyDharamsalaData] = useState([]);
   const [modalLocality, setModalLocality] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
   const [isImageVisible, setImageVisible] = useState(false);
@@ -47,7 +47,33 @@ const Dharmshala = () => {
   const [refreshing, setRefreshing] = useState(false);
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
- const [slider, setSlider] = useState([]);
+  const [slider, setSlider] = useState([]);
+
+
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocality('');
+      setSubcaste('');
+      setDharamsalaData([]);
+      fetchDharamsalaData("all");
+      GetMyDharamsalaData();
+      Advertisement_window();
+    }, [])
+  );
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+      setLocality('');
+      setSubcaste('');
+      setDharamsalaData([]);
+      fetchDharamsalaData("all");
+      GetMyDharamsalaData();
+      Advertisement_window();
+    }, 2000);
+  }, []);
 
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
@@ -56,20 +82,29 @@ const Dharmshala = () => {
 
   const handleInputChange = (text) => {
     setSubcaste(text);
-    if (text.trim() === '') {
-      setFilteredOptions([]); // Clear suggestions if input is empty
-    } else {
-      const filtered = subCasteOptions.filter((option) =>
-        option.label.toLowerCase().includes(text.toLowerCase())
-      );
-      setFilteredOptions(filtered);
-    }
-  };
 
-  const handleOptionSelect = (value) => {
-    setSubcaste(value.label);
-    setFilteredOptions([]);
-  };
+    if (text.trim() === '') {
+        setFilteredOptions([]);
+    } else {
+        const filtered = subCasteOptions.filter((option) =>
+            option.label.toLowerCase().includes(text.toLowerCase())
+        );
+        if (filtered.length === 0) {
+            setFilteredOptions([{ label: 'Other', value: 'Other' }]); 
+        } else {
+            setFilteredOptions(filtered);
+        }
+    }
+};
+
+const handleOptionSelect = (value) => {
+  if (value.label === 'Other') {
+      setSubcaste('');
+  } else {
+      setSubcaste(value.label);
+  }
+  setFilteredOptions([]); 
+};
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -86,50 +121,27 @@ const Dharmshala = () => {
   }, [currentIndex]);
 
 
-  useFocusEffect(
-    React.useCallback(() => {
-      setLocality('');
-      setSubcaste('');
-      setDharamsalaData([]);
-      fetchDharamsalaData("all");
-      GetMyDharamsalaData();
-    }, [])
-  );
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-      setLocality('');
-      setSubcaste('');
-      setDharamsalaData([]);
-      fetchDharamsalaData("all");
-      GetMyDharamsalaData();
-    }, 2000);
+  useEffect(() => {
+    Advertisement_window();
   }, []);
 
-  
-    useEffect(() => {
-      Advertisement_window();
-    }, []);
-  
 
- useEffect(() => {
+  useEffect(() => {
     if (slider.length === 0) return;
-  
+
     const currentSlide = slider[currentIndex];
-    const durationInSeconds = currentSlide?.duration || 2; 
-    const durationInMilliseconds = durationInSeconds * 1000; 
-  
+    const durationInSeconds = currentSlide?.duration || 2;
+    const durationInMilliseconds = durationInSeconds * 1000;
+
     const timeout = setTimeout(() => {
       const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
       setCurrentIndex(nextIndex);
       sliderRef.current?.goToSlide(nextIndex);
     }, durationInMilliseconds);
-  
+
     return () => clearTimeout(timeout);
   }, [currentIndex, slider]);
-  
+
 
 
   const fetchDharamsalaData = async (filterType = "search") => {
@@ -137,27 +149,27 @@ const Dharmshala = () => {
       setLoading(true);
       setDharamsalaData([]);
       setError(null);
-
+  
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
-
+  
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-
+  
       let queryParams = [];
-
+  
       if (filterType === "search") {
         const cleanedLocality = locality.trim();
         const cleanedSubCaste = subcaste.trim();
-
+  
         if (cleanedLocality) queryParams.push(`locality=${encodeURIComponent(cleanedLocality.toLowerCase())}`);
         if (cleanedSubCaste) queryParams.push(`subCaste=${encodeURIComponent(cleanedSubCaste.toLowerCase())}`);
       } else if (filterType === "modal") {
         const cleanedModalLocality = modalLocality.trim();
         const cleanedModalSubCaste = subcaste.trim();
-
+  
         if (cleanedModalLocality && cleanedModalSubCaste) {
           queryParams.push(`locality=${encodeURIComponent(cleanedModalLocality.toLowerCase())}`);
           queryParams.push(`subCaste=${encodeURIComponent(cleanedModalSubCaste.toLowerCase())}`);
@@ -167,16 +179,17 @@ const Dharmshala = () => {
           queryParams.push(`subCaste=${encodeURIComponent(cleanedModalSubCaste.toLowerCase())}`);
         }
       }
-
+  
       const url = filterType === "all" ? GET_ALL_DHARAMSALA : `${GET_ALL_DHARAMSALA}?${queryParams.join("&")}`;
-
+  
       console.log("Fetching Data from:", url);
-
+  
       const response = await axios.get(url, { headers });
-
-      console.log("Response Data:", JSON.stringify(response.data.data));
-
-      if (response.data && response.data.data.length > 0) {
+  
+      // Log the complete response
+      console.log("Response Data:", JSON.stringify(response.data));
+  
+      if (response.data && response.data.data && response.data.data.length > 0) {
         setDharamsalaData(response.data.data);
       } else {
         setDharamsalaData([]);
@@ -184,12 +197,14 @@ const Dharmshala = () => {
       }
     } catch (error) {
       console.error("Error fetching Dharamsala data:", error);
-      setError(error.response ? error.response.data.message : "Failed to fetch data. Please try again.");
+      const errorMessage = error.response ? error.response.data.message : "Failed to fetch data. Please try again.";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
   };
   
+
   const GetMyDharamsalaData = async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -219,43 +234,42 @@ const Dharmshala = () => {
     }
   };
 
-    const Advertisement_window = async () => {
-      try {
-        const token = await AsyncStorage.getItem('userToken');
-        if (!token) throw new Error('No token found');
-    
-        const headers = {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        };
-    
-        const response = await axios.get(DHARMSHALA_ADVERDISE_WINDOW, { headers });
-    
-        if (response.data) {
-          const fetchedData = response.data.data;
-          console.log("fetchedData", JSON.stringify(fetchedData));
-    
-          const fullSliderData = fetchedData.flatMap((item) => 
-            item.media.map((mediaItem) => ({
-              id: `${item._id}_${mediaItem._id}`,
-              title: item.title,
-              description: item.description,
-              image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
-              resolution: mediaItem.resolution, // 👈 yeh add kiya
-            }))
-          );
-    
-          setSlider(fullSliderData);
-          console.log("Slider Data:", fullSliderData);
-        } else {
-          setSlider([]);
-        }
-      } catch (error) {
-        console.error("Error fetching advertisement:", error);
-      } finally {
-        setLoading(false);
+  const Advertisement_window = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+      const response = await axios.get(TOP_DHARMSHALA_ADVERDISE_WINDOW, { headers });
+
+      if (response.data) {
+        const fetchedData = response.data.data;
+        console.log("fetchedData", JSON.stringify(fetchedData));
+
+        const fullSliderData = fetchedData.flatMap((item) =>
+          item.media.map((mediaItem) => ({
+            id: `${item._id}_${mediaItem._id}`,
+            title: item.title,
+            description: item.description,
+            image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
+            resolution: mediaItem.resolution, // 👈 yeh add kiya
+            hyperlink: mediaItem.hyperlink,
+          }))
+        );
+
+        setSlider(fullSliderData);
+        console.log("Slider Data:", fullSliderData);
+      } else {
+        setSlider([]);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching advertisement:", error);
+    }
+  };
 
 
   const renderSkeleton = () => (
@@ -546,26 +560,34 @@ const Dharmshala = () => {
       }>
         {/* Image Slider */}
         <View style={styles.sliderContainer}>
-        <AppIntroSlider
-                ref={sliderRef}
-                data={slider}
-                renderItem={({ item }) => {
-                  const { width, height } = item.resolution;
-                  return (
-                    <Image
-                      source={{ uri: item.image }}
-                      style={{
-                        width,
-                        height,
-                      }}
-                    />
+          <AppIntroSlider
+            ref={sliderRef}
+            data={slider}
+            renderItem={({ item }) => {
+              const { width, height } = item.resolution;
+            
+              const handlePress = () => {
+                if (item.hyperlink) {
+                  Linking.openURL(item.hyperlink).catch(err =>
+                    console.error("Failed to open URL:", err)
                   );
-                }}
-                showNextButton={false}
-                showDoneButton={false}
-                dotStyle={styles.dot}
-                activeDotStyle={styles.activeDot}
-              />
+                }
+              };
+            
+              return (
+                <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                  <Image
+                    source={{ uri: item.image }}
+                    style={{ width, height, resizeMode: 'contain' }}
+                  />
+                </TouchableOpacity>
+              );
+            }}            
+            showNextButton={false}
+            showDoneButton={false}
+            dotStyle={styles.dot}
+            activeDotStyle={styles.activeDot}
+          />
         </View>
 
         {loading ? renderSkeleton() : (
@@ -578,7 +600,9 @@ const Dharmshala = () => {
             contentContainerStyle={styles.DharamSalaList}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>No DharamsalaData Available</Text>
+                <FontAwesome name="building" size={60} color="#ccc" style={{ marginBottom: 15 }} />
+                <Text style={styles.emptyText}>No Dharamsala Data Available</Text>
+                <Text style={styles.infoText}>Dharamsala listings will appear here once available.</Text>
               </View>
             }
           />

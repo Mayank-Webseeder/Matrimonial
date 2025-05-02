@@ -11,7 +11,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Globalstyles from '../../utils/GlobalCss';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { JYOTISH_DESCRIPTION, SAVED_PROFILES, JYOTISH_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
+import { JYOTISH_DESCRIPTION, SAVED_PROFILES, JYOTISH_ADVERDISE_WINDOW, BOTTOM_JYOTISH_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import moment from "moment";
@@ -138,7 +138,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                 'Authorization': `Bearer ${token}`,
             };
 
-            const response = await axios.get(JYOTISH_ADVERDISE_WINDOW, { headers });
+            const response = await axios.get(BOTTOM_JYOTISH_ADVERDISE_WINDOW, { headers });
 
             if (response.data) {
                 const fetchedData = response.data.data;
@@ -151,6 +151,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                         description: item.description,
                         image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
                         resolution: mediaItem.resolution,
+                        hyperlink: mediaItem.hyperlink, 
                     }))
                 );
 
@@ -590,16 +591,24 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                         data={slider}
                         renderItem={({ item }) => {
                             const { width, height } = item.resolution;
+                          
+                            const handlePress = () => {
+                              if (item.hyperlink) {
+                                Linking.openURL(item.hyperlink).catch(err =>
+                                  console.error("Failed to open URL:", err)
+                                );
+                              }
+                            };
+                          
                             return (
+                              <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                                 <Image
-                                    source={{ uri: item.image }}
-                                    style={{
-                                        width,
-                                        height,
-                                    }}
+                                  source={{ uri: item.image }}
+                                  style={{ width, height, resizeMode: 'cover' }}
                                 />
+                              </TouchableOpacity>
                             );
-                        }}
+                          }}                          
                         showNextButton={false}
                         showDoneButton={false}
                         dotStyle={Globalstyles.dot}

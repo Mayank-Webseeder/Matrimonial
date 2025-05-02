@@ -673,30 +673,34 @@ const PanditRegister = ({ navigation }) => {
     };
 
     const handleSubCasteInputChange = (text) => {
-        setSubCasteInput(text);
-
-        if (text) {
-            const filtered = subCasteOptions
-                .filter((item) => item?.label?.toLowerCase().includes(text.toLowerCase()))
-                .map((item) => item.label);
-
+        const filtered = subCasteOptions
+            .filter((item) =>
+                item?.label?.toLowerCase().includes(text.toLowerCase())
+            )
+            .map((item) => item.label);
+    
+        // If matches found, allow input
+        if (filtered.length > 0) {
+            setSubCasteInput(text);
             setFilteredSubCaste(filtered);
+            setRoleRegisterData((PrevRoleRegisterData) => ({
+                ...PrevRoleRegisterData,
+                subCaste: text,
+            }));
         } else {
-            setFilteredSubCaste([]);
+            // Don't allow arbitrary input — only show "Other"
+            setFilteredSubCaste(['Other']);
         }
-        setRoleRegisterData((PrevRoleRegisterData) => ({
-            ...PrevRoleRegisterData,
-            subCaste: text,
-        }));
     };
-
+    
     const handleSubCasteSelect = (selectedItem) => {
-        setSubCasteInput(selectedItem);
+        const finalValue = selectedItem === 'Other' ? 'Other' : selectedItem;
+    
+        setSubCasteInput(finalValue);
         setFilteredSubCaste([]);
-
         setRoleRegisterData((PrevRoleRegisterData) => ({
             ...PrevRoleRegisterData,
-            subCaste: selectedItem,
+            subCaste: finalValue,
         }));
     };
 

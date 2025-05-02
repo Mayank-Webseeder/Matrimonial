@@ -13,7 +13,6 @@ import { resetAllBiodata } from '../../ReduxStore/Slices/GetAllBiodataSlice';
 import { reseAllNotification } from '../../ReduxStore/Slices/GetAllNotificationSlice';
 import { resetProfiledata } from '../../ReduxStore/Slices/ProfileSlice';
 import { showMessage } from 'react-native-flash-message';
-import { PHOTO_URL } from '../../utils/BaseUrl';
 
 const CustomDrawer = (props) => {
   const dispatch = useDispatch();
@@ -22,9 +21,7 @@ const CustomDrawer = (props) => {
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
   const ProfileData = useSelector((state) => state.profile);
   const isMatrimonial = ProfileData?.profiledata?.isMatrimonial || false;
-  const imagePath = ProfileData?.photoUrl?.[0];
-   const image = imagePath ? `${PHOTO_URL}/${imagePath}` : null;
-   const isValidImage = image && !image.includes("undefined") && !image.includes("null") && image.trim() !== "";
+  const image = ProfileData?.profiledata?.photoUrl?.[0];
   const name = ProfileData?.profiledata?.username || 'userName';
   const Id = ProfileData?.profiledata?.userId || 'user id';
   const isBiodataExpired = ProfileData?.profiledata?.serviceSubscriptions?.some(
@@ -147,7 +144,7 @@ const CustomDrawer = (props) => {
 
           {/* Profile Image on the Left */}
           <Image
-           source={isValidImage ? { uri: image } : require('../../Images/Profile.png')}
+            source={image ? { uri: image } : require('../../Images/Profile.png')}
             style={styles.profileImage}
           />
 

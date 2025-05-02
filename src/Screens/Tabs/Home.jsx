@@ -1,17 +1,16 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, TouchableOpacity, FlatList, Image, SafeAreaView, Text, StatusBar, ActivityIndicator, Alert, RefreshControl } from 'react-native';
+import { View, TouchableOpacity, FlatList, Image, SafeAreaView, Text, StatusBar, ActivityIndicator, Alert, RefreshControl, Linking } from 'react-native';
 import { DrawerActions } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from '../StyleScreens/HomeStyle';
 import Colors from '../../utils/Colors';
 import HeadingWithViewAll from '../../Components/HeadingWithViewAll';
 import { Category, communityData, slider } from '../../DummyData/DummyData';
-import { ScrollView } from 'react-native-gesture-handler';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import Globalstyles from '../../utils/GlobalCss';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { GET_ACTIVIST, GET_ALL_BIODATA_PROFILES, GET_BIODATA, PROFILE_ENDPOINT, NOTIFICATION, HOME_ADVERDISE_WINDOW, PHOTO_URL } from '../../utils/BaseUrl';
+import { GET_ACTIVIST, GET_ALL_BIODATA_PROFILES, GET_BIODATA, PROFILE_ENDPOINT, NOTIFICATION, HOME_ADVERDISE_WINDOW, PHOTO_URL, BOTTOM_HOME_ADVERDISE_WINDOW, TOP_HOME_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
 import { useDispatch } from 'react-redux';
 import { setAllBiodata } from '../../ReduxStore/Slices/GetAllBiodataSlice';
 import { setBioData } from '../../ReduxStore/Slices/BiodataSlice';
@@ -24,13 +23,14 @@ import { reseAllNotification, setAllNotification } from '../../ReduxStore/Slices
 import { SF, SW, SH } from '../../utils/Dimensions';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import Video from 'react-native-video';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
   const sliderRefTop = useRef(null);
   const sliderRefBottom = useRef(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [currentIndexTop, setCurrentIndexTop] = useState(0); // For Top Slider
+  const [currentIndexTop, setCurrentIndexTop] = useState(0);
   const [currentIndexBottom, setCurrentIndexBottom] = useState(1);
   const [biodata, setBiodata] = useState("");
   const [mybiodata, setMybiodata] = useState("");
@@ -39,8 +39,8 @@ const Home = ({ navigation }) => {
   const MyprofileData = useSelector((state) => state.getBiodata);
   const ProfileData = useSelector((state) => state.profile);
   const profile_data = ProfileData?.profiledata || {};
-  const [slider, setSlider] = useState([]); // 👈 fetched data yahaan set hoga
-  const [videoLoading, setVideoLoading] = useState(true);
+  const [Topslider, TopsetSlider] = useState([]);
+  const [Bottomslider, BottomsetSlider] = useState([]);
   const isBiodataMissing = Object.keys(MyprofileData?.Biodata || {}).length > 0;
   const isBiodataExpired = profile_data?.serviceSubscriptions?.some(
     (sub) => sub.serviceType === "Biodata" && sub.status === "Expired"
@@ -97,6 +97,8 @@ const Home = ({ navigation }) => {
       GetAll_Biodata();
       getActivistProfile();
       fetchProfile();
+      Top_Advertisement_window();
+      Bottom_Advertisement_window();
     }, 2000);
   }, []);
 
@@ -143,7 +145,8 @@ const Home = ({ navigation }) => {
   );
 
   useEffect(() => {
-    Advertisement_window();
+    Top_Advertisement_window();
+    Bottom_Advertisement_window();
   }, []);
 
 
@@ -201,7 +204,7 @@ const Home = ({ navigation }) => {
   };
 
 
-  const Advertisement_window = async () => {
+  const Top_Advertisement_window = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) throw new Error('No token found');
@@ -211,7 +214,7 @@ const Home = ({ navigation }) => {
         'Authorization': `Bearer ${token}`,
       };
 
-      const response = await axios.get(HOME_ADVERDISE_WINDOW, { headers });
+      const response = await axios.get(TOP_HOME_ADVERDISE_WINDOW, { headers });
 
       if (response.data) {
         const fetchedData = response.data.data;
@@ -225,18 +228,55 @@ const Home = ({ navigation }) => {
             image: `${PHOTO_URL}/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution, // 👈 yeh add kiya
             mediaType: mediaItem.mediaUrl.includes('.mp4') ? 'video' : 'image', // Determine media type
+            hyperlink: mediaItem.hyperlink,
           }))
         );
 
-        setSlider(fullSliderData);
+        TopsetSlider(fullSliderData);
         console.log("Slider Data:", fullSliderData);
       } else {
-        setSlider([]);
+        TopsetSlider([]);
       }
     } catch (error) {
       console.error("Error fetching advertisement:", error);
-    } finally {
-      setLoading(false);
+    }
+  };
+
+  const Bottom_Advertisement_window = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+      const response = await axios.get(BOTTOM_HOME_ADVERDISE_WINDOW, { headers });
+
+      if (response.data) {
+        const fetchedData = response.data.data;
+        console.log("fetchedData", JSON.stringify(fetchedData));
+
+        const fullSliderData = fetchedData.flatMap((item) =>
+          item.media.map((mediaItem) => ({
+            id: `${item._id}_${mediaItem._id}`,
+            title: item.title,
+            description: item.description,
+            image: `${PHOTO_URL}/${mediaItem.mediaUrl}`,
+            resolution: mediaItem.resolution, // 👈 yeh add kiya
+            mediaType: mediaItem.mediaUrl.includes('.mp4') ? 'video' : 'image', // Determine media type
+            hyperlink: mediaItem.hyperlink, 
+          }))
+        );
+
+        BottomsetSlider(fullSliderData);
+        console.log("Slider Data:", fullSliderData);
+      } else {
+        BottomsetSlider([]);
+      }
+    } catch (error) {
+      console.error("Error fetching advertisement:", error);
     }
   };
 
@@ -366,8 +406,6 @@ const Home = ({ navigation }) => {
     </SkeletonPlaceholder>
   );
 
-
-
   if (isLoading) {
     return <View style={styles.loading}>
       <ActivityIndicator size={'large'} color={Colors.theme_color} />
@@ -421,22 +459,47 @@ const Home = ({ navigation }) => {
       <FlatList
         data={sections}
         keyExtractor={(item, index) => index.toString()}
+        showsVerticalScrollIndicator={false}
         ListHeaderComponent={
           <>
             <View style={styles.sliderContainer}>
               <View style={styles.topSlider}>
                 <AppIntroSlider
                   ref={sliderRefTop}
-                  data={slider}
+                  data={Topslider}
                   renderItem={({ item }) => {
                     const { width, height } = item.resolution;
+                  
+                    const handlePress = () => {
+                      if (item.hyperlink) {
+                        Linking.openURL(item.hyperlink).catch(err =>
+                          console.error("Failed to open URL:", err)
+                        );
+                      }
+                    };
+                  
                     return (
-                      <Image
-                        source={{ uri: item.image }}
-                        style={{ width, height }}
-                      />
+                      <TouchableOpacity activeOpacity={0.9} onPress={handlePress}>
+                        {item.mediaType === 'video' ? (
+                          <Video
+                            source={{ uri: item.image }}
+                            style={{ width, height }}
+                            resizeMode="cover"
+                            repeat
+                            muted={false}
+                            controls={true}
+                            paused={false}
+                          />
+                        ) : (
+                          <Image
+                            source={{ uri: item.image }}
+                            style={{ width, height }}
+                            resizeMode="cover"
+                          />
+                        )}
+                      </TouchableOpacity>
                     );
-                  }}
+                  }}                  
                   showNextButton={false}
                   showDoneButton={false}
                   dotStyle={styles.dot}
@@ -483,11 +546,16 @@ const Home = ({ navigation }) => {
                       </TouchableOpacity>
                     </View>
                   )}
-                  horizontal
+                  horizontal={true}
                   showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={{ flexGrow: 1 }}
                   ListEmptyComponent={
-                    <View style={styles.emptyContainer}>
-                      <Text style={styles.emptyText}>No Matrimonial Profile Created Yet</Text>
+                    <View style={styles.emptyWrapper}>
+                      <View style={styles.emptyContainer}>
+                        <FontAwesome name="heart-o" size={SW(30)} color={Colors.theme_color} style={{ marginBottom: SH(5) }} />
+                        <Text style={styles.emptyText}>No Matrimonial Profile Created Yet</Text>
+                        <Text style={styles.infoText}>Create your profile to start finding your perfect match.</Text>
+                      </View>
                     </View>
                   }
                 />
@@ -542,14 +610,25 @@ const Home = ({ navigation }) => {
             <View style={styles.bottomSlider}>
               <AppIntroSlider
                 ref={sliderRefBottom}
-                data={slider}
+                data={Bottomslider}
                 renderItem={({ item }) => {
                   const { width, height } = item.resolution;
+                
+                  const handlePress = () => {
+                    if (item.hyperlink) {
+                      Linking.openURL(item.hyperlink).catch(err =>
+                        console.error("Failed to open URL:", err)
+                      );
+                    }
+                  };
+                
                   return (
-                    <Image
-                      source={{ uri: item.image }}
-                      style={{ width, height }}
-                    />
+                    <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                      <Image
+                        source={{ uri: item.image }}
+                        style={{ width, height, resizeMode: 'cover' }}
+                      />
+                    </TouchableOpacity>
                   );
                 }}
                 showNextButton={false}

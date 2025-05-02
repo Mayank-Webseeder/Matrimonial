@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, TextInput, ActivityIndicator, RefreshControl } from 'react-native';
+import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, TextInput, ActivityIndicator, RefreshControl ,Linking} from 'react-native';
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import styles from '../StyleScreens/EventNewsStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -9,7 +9,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { useFocusEffect } from '@react-navigation/native';
 import { SW, SH, SF } from '../../utils/Dimensions';
 import Globalstyles from '../../utils/GlobalCss';
-import { GET_ALL_EVENT_NEWS, LIKEPOST, COMMENTPOST, VIEW_EVENT, BASE_URL } from '../../utils/BaseUrl';
+import { GET_ALL_EVENT_NEWS, LIKEPOST, COMMENTPOST, VIEW_EVENT, BASE_URL, BOTTOM_EVENT_NEWS_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import moment from 'moment';
@@ -18,8 +18,13 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { showMessage } from 'react-native-flash-message';
+import AppIntroSlider from 'react-native-app-intro-slider';
+
 const EventNews = ({ navigation }) => {
   const sheetRef = useRef(null);
+  const sliderRef = useRef(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [slider, setSlider] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [eventdata, setEventData] = useState([]);
   const [likeData, setLikeData] = useState({});
@@ -106,9 +111,69 @@ const EventNews = ({ navigation }) => {
     useCallback(() => {
       fetchPostData();
       GetEventNews();
+      Advertisement_window();
       setPage(1);
     }, [])
   );
+
+
+  useEffect(() => {
+    Advertisement_window();
+  }, []);
+
+
+  useEffect(() => {
+    if (slider.length === 0) return;
+
+    const currentSlide = slider[currentIndex];
+    const durationInSeconds = currentSlide?.duration || 2;
+    const durationInMilliseconds = durationInSeconds * 1000;
+
+    const timeout = setTimeout(() => {
+      const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
+      setCurrentIndex(nextIndex);
+      sliderRef.current?.goToSlide(nextIndex);
+    }, durationInMilliseconds);
+
+    return () => clearTimeout(timeout);
+  }, [currentIndex, slider]);
+
+  const Advertisement_window = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+      const response = await axios.get(BOTTOM_EVENT_NEWS_ADVERDISE_WINDOW, { headers });
+
+      if (response.data) {
+        const fetchedData = response.data.data;
+        console.log("fetchedData", JSON.stringify(fetchedData));
+
+        const fullSliderData = fetchedData.flatMap((item) =>
+          item.media.map((mediaItem) => ({
+            id: `${item._id}_${mediaItem._id}`,
+            title: item.title,
+            description: item.description,
+            image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
+            resolution: mediaItem.resolution,
+            hyperlink: mediaItem.hyperlink,
+          }))
+        );
+
+        setSlider(fullSliderData);
+        console.log("Slider Data:", fullSliderData);
+      } else {
+        setSlider([]);
+      }
+    } catch (error) {
+      console.error("Error fetching advertisement:", error);
+    }
+  };
 
   const LIKE = async (postId) => {
     try {
@@ -688,6 +753,38 @@ const EventNews = ({ navigation }) => {
             <Text style={styles.loadMoreText}>Load More Posts</Text>
           </TouchableOpacity>
         )}
+
+        <View style={[Globalstyles.bottomImage, { paddingBottom: SH(10) }]}>
+          <AppIntroSlider
+            ref={sliderRef}
+            data={slider}
+            renderItem={({ item }) => {
+                              const { width, height } = item.resolution;
+                            
+                              const handlePress = () => {
+                                if (item.hyperlink) {
+                                  Linking.openURL(item.hyperlink).catch(err =>
+                                    console.error("Failed to open URL:", err)
+                                  );
+                                }
+                              };
+                            
+                              return (
+                                <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                                  <Image
+                                    source={{ uri: item.image }}
+                                    style={{ width, height, resizeMode: 'cover' }}
+                                  />
+                                </TouchableOpacity>
+                              );
+                            }}
+            showNextButton={false}
+            showDoneButton={false}
+            dotStyle={Globalstyles.dot}
+            activeDotStyle={Globalstyles.activeDot}
+          />
+        </View>
+
       </ScrollView>
     </SafeAreaView>
   );

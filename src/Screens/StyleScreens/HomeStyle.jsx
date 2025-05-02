@@ -107,20 +107,39 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.theme_color,
     marginTop: SW(100)
   },
+  emptyWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: SH(10),
+  },
   emptyContainer: {
-    width: '100%',
-    paddingHorizontal: SW(50),
-    paddingVertical: SH(25)
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: SW(35),
+    paddingVertical: SH(10),
+    backgroundColor:Colors.light_theme,
+    borderRadius: SW(12),
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   emptyText: {
-    fontSize: SF(15),
-    color: Colors.gray,
-    fontFamily: 'Poppins-Regular',
+    fontSize: SF(14),
+    fontFamily: 'Poppins-Bold',
+    color: '#555',
+    marginBottom: SH(8),
     textAlign: 'center',
-    lineHeight: SF(22),
+  },
+  infoText: {
+    fontSize: SF(12),
+    color: '#888',
+    textAlign: 'center',
   },
   bottomSlider:{
-    paddingBottom:SH(20)
+    paddingBottom:SH(10)
   }
 });
 

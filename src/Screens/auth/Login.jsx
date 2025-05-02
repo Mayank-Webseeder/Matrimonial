@@ -19,10 +19,19 @@ const Login = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
 
     const dispatch = useDispatch();
+
     const validateFields = () => {
         const newErrors = {};
-        if (!mobileNumber) newErrors.mobileNumber = "Mobile number is required.";
-        if (!password) newErrors.password = "Password is required.";
+
+        if (!mobileNumber?.trim()) {
+            newErrors.mobileNumber = "Mobile number is required.";
+        } else if (!/^[0-9]{10}$/.test(mobileNumber.trim())) {
+            newErrors.mobileNumber = "Enter a valid 10-digit mobile number.";
+        }
+
+        if (!password?.trim()) {
+            newErrors.password = "Password is required.";
+        }
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -145,9 +154,9 @@ const Login = ({ navigation }) => {
                         keyboardType="numeric"
                         placeholder="Enter your mobile number"
                         value={mobileNumber}
-                        onChangeText={setMobileNumber}
+                        onChangeText={(text) => setMobileNumber(text.replace(/[^0-9]/g, ''))}
                         placeholderTextColor={Colors.gray}
-                        maxLength={10}
+                        maxLength={12}
                         autoComplete="off"
                         textContentType="none"
                     />

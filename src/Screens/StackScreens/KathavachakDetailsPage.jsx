@@ -13,7 +13,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Globalstyles from '../../utils/GlobalCss';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { JYOTISH_DESCRIPTION, KATHAVACHAK_ADVERDISE_WINDOW, KATHAVACHAK_DESCRIPTION, SAVED_PROFILES } from '../../utils/BaseUrl';
+import { BOTTOM_KATHAVACHAK_ADVERDISE_WINDOW, KATHAVACHAK_DESCRIPTION, SAVED_PROFILES } from '../../utils/BaseUrl';
 import moment from "moment";
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
@@ -141,7 +141,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                 'Authorization': `Bearer ${token}`,
             };
 
-            const response = await axios.get(KATHAVACHAK_ADVERDISE_WINDOW, { headers });
+            const response = await axios.get(BOTTOM_KATHAVACHAK_ADVERDISE_WINDOW, { headers });
 
             if (response.data) {
                 const fetchedData = response.data.data;
@@ -154,6 +154,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                         description: item.description,
                         image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
                         resolution: mediaItem.resolution,
+                        hyperlink: mediaItem.hyperlink,
                     }))
                 );
 
@@ -250,12 +251,12 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
     const renderImages = (images) => {
         if (!images || images.length === 0) {
             return (
-              <View style={styles.noImagesContainer}>
-                <MaterialIcons name="hide-image" size={40} color={Colors.gray} style={styles.icon} />
-                <Text style={styles.noImagesText}>No additional photos available for this post</Text>
-              </View>
+                <View style={styles.noImagesContainer}>
+                    <MaterialIcons name="hide-image" size={40} color={Colors.gray} style={styles.icon} />
+                    <Text style={styles.noImagesText}>No additional photos available for this post</Text>
+                </View>
             );
-          }
+        }
 
         const rows = [];
         for (let i = 0; i < images.length; i += 2) {
@@ -593,14 +594,22 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                         data={slider}
                         renderItem={({ item }) => {
                             const { width, height } = item.resolution;
+
+                            const handlePress = () => {
+                                if (item.hyperlink) {
+                                    Linking.openURL(item.hyperlink).catch(err =>
+                                        console.error("Failed to open URL:", err)
+                                    );
+                                }
+                            };
+
                             return (
-                                <Image
-                                    source={{ uri: item.image }}
-                                    style={{
-                                        width,
-                                        height,
-                                    }}
-                                />
+                                <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                                    <Image
+                                        source={{ uri: item.image }}
+                                        style={{ width, height, resizeMode: 'cover' }}
+                                    />
+                                </TouchableOpacity>
                             );
                         }}
                         showNextButton={false}

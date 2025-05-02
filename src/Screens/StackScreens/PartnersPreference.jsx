@@ -4,7 +4,7 @@ import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/PartnerPreferenceStyle';
 import { TouchableOpacity } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
-import { CREATE_PARTNER_PERFRENCES, UPDATE_PARTNER_PERFRENCES ,GET_BIODATA } from '../../utils/BaseUrl';
+import { CREATE_PARTNER_PERFRENCES, UPDATE_PARTNER_PERFRENCES, GET_BIODATA } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Globalstyles from '../../utils/GlobalCss';
@@ -21,7 +21,7 @@ import {
 import { showMessage } from 'react-native-flash-message';
 
 const PartnersPreference = ({ navigation, profileData }) => {
-    const dispatch=useDispatch();
+    const dispatch = useDispatch();
     const [isEditing, setIsEditing] = useState(true);
     const [stateInput, setStateInput] = useState('');
     const [subCasteInput, setSubCasteInput] = useState('');
@@ -64,36 +64,36 @@ const PartnersPreference = ({ navigation, profileData }) => {
     });
 
 
-     useEffect(() => {
+    useEffect(() => {
         getBiodata();
         console.log("mybiodata", JSON.stringify(mybiodata));
-      }, [])
-    
-    
-      const getBiodata = async () => {
+    }, [])
+
+
+    const getBiodata = async () => {
         try {
-          setMyBiodata("")
-          const token = await AsyncStorage.getItem('userToken');
-          if (!token) throw new Error('No token found');
-    
-          const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          };
-    
-          const response = await axios.get(GET_BIODATA, { headers });
-          if (response.data) {
-            const fetchedData = response.data.data;
-            console.log("My bio data in home page", fetchedData);
-            setMyBiodata(fetchedData);
-            dispatch(setBioData(fetchedData));
-          } else {
-            setMyBiodata({});
-          }
+            setMyBiodata("")
+            const token = await AsyncStorage.getItem('userToken');
+            if (!token) throw new Error('No token found');
+
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            };
+
+            const response = await axios.get(GET_BIODATA, { headers });
+            if (response.data) {
+                const fetchedData = response.data.data;
+                console.log("My bio data in home page", fetchedData);
+                setMyBiodata(fetchedData);
+                dispatch(setBioData(fetchedData));
+            } else {
+                setMyBiodata({});
+            }
         } catch (error) {
-          console.error("Error fetching biodata:", error);
+            console.error("Error fetching biodata:", error);
         }
-      };
+    };
 
 
     useEffect(() => {
@@ -149,40 +149,41 @@ const PartnersPreference = ({ navigation, profileData }) => {
         }));
     };
 
-
-    // Handle city selection to update both the input field and biodata.partnerCity
     const handleCitySelect = (item) => {
         setCityInput(item);
         setBiodata(prevState => ({
             ...prevState,
-            partnerCity: item, // Save selected city
+            partnerCity: item,
         }));
         setFilteredCities([]);
     };
 
     const handleSubCasteInputChange = (text) => {
-        setSubCasteInput(text);
-        if (text) {
-            const filtered = subCasteOptions.filter((item) =>
+        const filtered = subCasteOptions
+            .filter((item) =>
                 item?.label?.toLowerCase().includes(text.toLowerCase())
-            ).map(item => item.label);
-            setFilteredSubCaste(filtered);
-        } else {
-            setFilteredSubCaste([]);
-        }
-        setBiodata(prevState => ({
-            ...prevState,
-            partnerSubCaste: text,
-        }));
-    };
+            )
+            .map((item) => item.label);
 
-    // Sub Caste input handler
+        // Only allow typing if there's a match
+        if (filtered.length > 0) {
+            setSubCasteInput(text);
+            setFilteredSubCaste(filtered);
+            setBiodata((prevState) => ({
+                ...prevState,
+                partnerSubCaste: text,
+            }));
+        } else {
+            // Show only "Other" when no match found
+            setFilteredSubCaste(['Other']);
+        }
+    };
     const handleSubCasteSelect = (item) => {
-        setSubCasteInput(item);
+        setSubCasteInput(item === 'Other' ? 'Other' : item);
         setSelectedSubCaste(item);
-        setBiodata(prevBiodata => ({
+        setBiodata((prevBiodata) => ({
             ...prevBiodata,
-            partnerSubCaste: item, // Correct key
+            partnerSubCaste: item === 'Other' ? 'Other' : item,
         }));
         setFilteredSubCaste([]);
     };
@@ -267,7 +268,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
                     message: successMessage,
                     type: 'success',
                     duration: 3000,
-                    icon:"success"
+                    icon: "success"
                 });
 
                 if (!isUpdating && response.data._id) {
@@ -276,10 +277,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
 
                 setIsEditing(false);
                 setTimeout(() => {
-                    navigation.reset({
-                        index: 0,
-                        routes: [{ name: "MainPartnerPrefrence" }],
-                    });
+                    navigation.replace("ProfileDetail", { profileType: "Biodata" });
                 }, 1000);
                 return;
             }

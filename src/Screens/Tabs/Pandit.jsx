@@ -17,7 +17,7 @@ import { ExperienceData, RatingData, panditServices } from '../../DummyData/Drop
 import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import axios from 'axios';
-import { GET_ALL_PANDIT_DATA, PANDIT_ADVERDISE_WINDOW, SAVED_PROFILES } from '../../utils/BaseUrl';
+import { GET_ALL_PANDIT_DATA, TOP_PANDIT_ADVERDISE_WINDOW, SAVED_PROFILES } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { SF, SH, SW } from '../../utils/Dimensions';
@@ -45,8 +45,38 @@ const Pandit = ({ navigation }) => {
   const ProfileData = useSelector((state) => state.profile);
   const profile_data = ProfileData?.profiledata || {};
   const [refreshing, setRefreshing] = useState(false);
- const [slider, setSlider] = useState([]);
- 
+  const [slider, setSlider] = useState([]);
+
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocality('');
+      setModalLocality('')
+      setRating(' ')
+      setExperience(' ')
+      setServices('')
+      setPanditData([]);
+      fetchPanditData("all");
+      Top_Advertisement_window();
+    }, [])
+  );
+
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+      setLocality('');
+      setModalLocality('')
+      setRating(' ')
+      setExperience(' ')
+      setServices('')
+      setPanditData([]);
+      fetchPanditData("all");
+    }, 2000);
+  }, []);
+
+
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
     setImageVisible(true);
@@ -124,7 +154,7 @@ const Pandit = ({ navigation }) => {
 
 
   useEffect(() => {
-    Advertisement_window();
+    Top_Advertisement_window();
   }, []);
 
 
@@ -145,7 +175,7 @@ const Pandit = ({ navigation }) => {
   }, [currentIndex, slider]);
 
 
-  const Advertisement_window = async () => {
+  const Top_Advertisement_window = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) throw new Error('No token found');
@@ -155,7 +185,7 @@ const Pandit = ({ navigation }) => {
         'Authorization': `Bearer ${token}`,
       };
 
-      const response = await axios.get(PANDIT_ADVERDISE_WINDOW, { headers });
+      const response = await axios.get(TOP_PANDIT_ADVERDISE_WINDOW, { headers });
 
       if (response.data) {
         const fetchedData = response.data.data;
@@ -168,6 +198,7 @@ const Pandit = ({ navigation }) => {
             description: item.description,
             image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution,
+            hyperlink: mediaItem.hyperlink,
           }))
         );
 
@@ -178,8 +209,6 @@ const Pandit = ({ navigation }) => {
       }
     } catch (error) {
       console.error("Error fetching advertisement:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -263,34 +292,6 @@ const Pandit = ({ navigation }) => {
       console.error("Error sharing:", error);
     }
   };
-
-  useFocusEffect(
-    React.useCallback(() => {
-      setLocality('');
-      setModalLocality('')
-      setRating(' ')
-      setExperience(' ')
-      setServices('')
-      setPanditData([]);
-      fetchPanditData("all");
-    }, [])
-  );
-
-
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-      setLocality('');
-      setModalLocality('')
-      setRating(' ')
-      setExperience(' ')
-      setServices('')
-      setPanditData([]);
-      fetchPanditData("all");
-    }, 2000);
-  }, []);
-
   const renderSkeleton = () => (
     <SkeletonPlaceholder>
       <View style={{ margin: SH(20) }}>
@@ -486,20 +487,28 @@ const Pandit = ({ navigation }) => {
             data={slider}
             renderItem={({ item }) => {
               const { width, height } = item.resolution;
+            
+              const handlePress = () => {
+                if (item.hyperlink) {
+                  Linking.openURL(item.hyperlink).catch(err =>
+                    console.error("Failed to open URL:", err)
+                  );
+                }
+              };
+            
               return (
-                <Image
-                  source={{ uri: item.image }}
-                  style={{
-                    width,
-                    height,
-                  }}
-                />
+                <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                  <Image
+                    source={{ uri: item.image }}
+                    style={{ width, height, resizeMode: 'contain' }}
+                  />
+                </TouchableOpacity>
               );
-            }}
+            }}            
             showNextButton={false}
             showDoneButton={false}
             dotStyle={Globalstyles.dot}
-                activeDotStyle={Globalstyles.activeDot}
+            activeDotStyle={Globalstyles.activeDot}
           />
         </View>
         {isLoading ? renderSkeleton() : (
@@ -512,7 +521,9 @@ const Pandit = ({ navigation }) => {
             contentContainerStyle={styles.panditListData}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
+                <FontAwesome name="user-circle" size={60} color="#ccc" style={{ marginBottom: 15 }} />
                 <Text style={styles.emptyText}>No Pandit Data Available</Text>
+                <Text style={styles.infoText}>Pandit profiles will appear here once available.</Text>
               </View>
             }
           />

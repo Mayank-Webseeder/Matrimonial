@@ -14,7 +14,7 @@ import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import axios from 'axios';
 import { slider } from '../../DummyData/DummyData';
-import { GET_ALL_JYOTISH, JYOTISH_ADVERDISE_WINDOW, SAVED_PROFILES } from '../../utils/BaseUrl';
+import { GET_ALL_JYOTISH, JYOTISH_ADVERDISE_WINDOW, SAVED_PROFILES, TOP_JYOTISH_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { SH, SW, SF } from '../../utils/Dimensions';
@@ -43,6 +43,34 @@ const Jyotish = ({ navigation }) => {
   const profile_data = ProfileData?.profiledata || {};
   const [refreshing, setRefreshing] = useState(false);
   const [slider, setSlider] = useState([]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setLocality('');
+      setModalLocality('')
+      setRating(' ')
+      setExperience(' ')
+      setServices('')
+      JyotishDataAPI("all");
+      Advertisement_window();
+    }, [])
+  );
+
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+      setLocality('');
+      setModalLocality('')
+      setRating(' ')
+      setExperience(' ')
+      setServices('')
+      JyotishDataAPI("all");
+      Advertisement_window();
+    }, 2000);
+  }, []);
+
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
     setImageVisible(true);
@@ -90,7 +118,7 @@ const Jyotish = ({ navigation }) => {
         'Authorization': `Bearer ${token}`,
       };
 
-      const response = await axios.get(JYOTISH_ADVERDISE_WINDOW, { headers });
+      const response = await axios.get(TOP_JYOTISH_ADVERDISE_WINDOW, { headers });
 
       if (response.data) {
         const fetchedData = response.data.data;
@@ -103,6 +131,7 @@ const Jyotish = ({ navigation }) => {
             description: item.description,
             image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution,
+            hyperlink: mediaItem.hyperlink, 
           }))
         );
 
@@ -113,8 +142,6 @@ const Jyotish = ({ navigation }) => {
       }
     } catch (error) {
       console.error("Error fetching advertisement:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -217,31 +244,6 @@ const Jyotish = ({ navigation }) => {
     }
   };
 
-
-  useFocusEffect(
-    React.useCallback(() => {
-      setLocality('');
-      setModalLocality('')
-      setRating(' ')
-      setExperience(' ')
-      setServices('')
-      JyotishDataAPI("all");
-    }, [])
-  );
-
-
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-      setLocality('');
-      setModalLocality('')
-      setRating(' ')
-      setExperience(' ')
-      setServices('')
-      JyotishDataAPI("all");
-    }, 2000);
-  }, []);
 
   const renderSkeleton = () => (
     <SkeletonPlaceholder>
@@ -429,16 +431,24 @@ const Jyotish = ({ navigation }) => {
             data={slider}
             renderItem={({ item }) => {
               const { width, height } = item.resolution;
+            
+              const handlePress = () => {
+                if (item.hyperlink) {
+                  Linking.openURL(item.hyperlink).catch(err =>
+                    console.error("Failed to open URL:", err)
+                  );
+                }
+              };
+            
               return (
-                <Image
-                  source={{ uri: item.image }}
-                  style={{
-                    width,
-                    height,
-                  }}
-                />
+                <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                  <Image
+                    source={{ uri: item.image }}
+                    style={{ width, height, resizeMode: 'contain' }}
+                  />
+                </TouchableOpacity>
               );
-            }}
+            }}            
             showNextButton={false}
             showDoneButton={false}
             dotStyle={Globalstyles.dot}
@@ -455,7 +465,9 @@ const Jyotish = ({ navigation }) => {
             contentContainerStyle={styles.panditListData}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
+                <FontAwesome name="user-circle" size={60} color="#ccc" style={{ marginBottom: 15 }} />
                 <Text style={styles.emptyText}>No Jyotish Data Available</Text>
+                <Text style={styles.infoText}>Jyotish profiles will appear here once available.</Text>
               </View>
             }
           />

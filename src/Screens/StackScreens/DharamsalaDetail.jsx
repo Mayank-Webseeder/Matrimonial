@@ -8,7 +8,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import Globalstyles from '../../utils/GlobalCss';
-import { DHARMSHALA_ADVERDISE_WINDOW, SAVED_PROFILES } from '../../utils/BaseUrl';
+import { BOTTOM_DHARMSHALA_ADVERDISE_WINDOW, DHARMSHALA_ADVERDISE_WINDOW, SAVED_PROFILES } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SF, SH, SW } from '../../utils/Dimensions';
@@ -26,11 +26,11 @@ const DharamsalaDetail = ({ navigation, route }) => {
   const truncatedDescription = description.slice(0, 300) + "...";
   const [modalVisible, setModalVisible] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
-   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
-       const notificationCount = notifications ? notifications.length : 0;
+  const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
+  const notificationCount = notifications ? notifications.length : 0;
   const formattedImages = DharamsalaData.images.map(img => ({ uri: img }));
   const [slider, setSlider] = useState([]);
-  
+
   const openImageViewer = (index) => {
     setImageIndex(index);
     setModalVisible(true);
@@ -88,7 +88,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
         'Authorization': `Bearer ${token}`,
       };
 
-      const response = await axios.get(DHARMSHALA_ADVERDISE_WINDOW, { headers });
+      const response = await axios.get(BOTTOM_DHARMSHALA_ADVERDISE_WINDOW, { headers });
 
       if (response.data) {
         const fetchedData = response.data.data;
@@ -101,6 +101,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
             description: item.description,
             image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution,
+            hyperlink: mediaItem.hyperlink,
           }))
         );
 
@@ -111,8 +112,6 @@ const DharamsalaDetail = ({ navigation, route }) => {
       }
     } catch (error) {
       console.error("Error fetching advertisement:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -130,7 +129,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
     showMessage({
       type: "info",
       message: "Under development",
-      icon:"info"
+      icon: "info"
     });
   };
 
@@ -182,7 +181,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
         type: "danger",
         message: "Error",
         description: error.response?.data?.message || "Something went wrong!",
-        icon:"danger"
+        icon: "danger"
       });
     }
   };
@@ -200,32 +199,32 @@ const DharamsalaDetail = ({ navigation, route }) => {
           <Text style={Globalstyles.headerText}>{DharamsalaData.dharmshalaName}</Text>
         </View>
         <View style={styles.righticons}>
-         <TouchableOpacity style={{ position: 'relative' }} onPress={() => navigation.navigate('Notification')}>
-                    <AntDesign
-                      name="bells"
-                      size={25}
-                      color={Colors.theme_color}
-                    />
-                    {notificationCount > 0 && (
-                      <View
-                        style={{
-                          position: "absolute",
-                          right: -5,
-                          top: -5,
-                          width: SW(16),
-                          height: SW(16),
-                          borderRadius: SW(16) / 2,
-                          backgroundColor: "red",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Text style={{ color: 'white', fontSize: SF(9), fontFamily: "Poppins-Bold" }}>
-                          {notificationCount}
-                        </Text>
-                      </View>
-                    )}
-                  </TouchableOpacity>
+          <TouchableOpacity style={{ position: 'relative' }} onPress={() => navigation.navigate('Notification')}>
+            <AntDesign
+              name="bells"
+              size={25}
+              color={Colors.theme_color}
+            />
+            {notificationCount > 0 && (
+              <View
+                style={{
+                  position: "absolute",
+                  right: -5,
+                  top: -5,
+                  width: SW(16),
+                  height: SW(16),
+                  borderRadius: SW(16) / 2,
+                  backgroundColor: "red",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: 'white', fontSize: SF(9), fontFamily: "Poppins-Bold" }}>
+                  {notificationCount}
+                </Text>
+              </View>
+            )}
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -246,44 +245,44 @@ const DharamsalaDetail = ({ navigation, route }) => {
 
           {/* Modal for Full Image View */}
           <Modal visible={modalVisible} transparent={true} animationType="fade">
-            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.8)"}}>
-            <ScrollView
-  horizontal
-  pagingEnabled
-  showsHorizontalScrollIndicator={false}
-  contentOffset={{ x: imageIndex * SCREEN_W, y: 0 }} 
-  onMomentumScrollEnd={(e) =>
-    setImageIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W))
-  }
->
-  {formattedImages.map((img, idx) => (
-    <View
-      key={idx}
-      style={{
-        width: SCREEN_W,            
-        height: SCREEN_H,           
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop:SH(15)
-      }}
-    >
-      <Image
-        source={{ uri: img.uri }}
-        resizeMode="contain"         
-        style={{ width: '100%', height: '100%' }}
-      />
-    </View>
-  ))}
-</ScrollView>
+            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.8)" }}>
+              <ScrollView
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator={false}
+                contentOffset={{ x: imageIndex * SCREEN_W, y: 0 }}
+                onMomentumScrollEnd={(e) =>
+                  setImageIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W))
+                }
+              >
+                {formattedImages.map((img, idx) => (
+                  <View
+                    key={idx}
+                    style={{
+                      width: SCREEN_W,
+                      height: SCREEN_H,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginTop: SH(15)
+                    }}
+                  >
+                    <Image
+                      source={{ uri: img.uri }}
+                      resizeMode="contain"
+                      style={{ width: '100%', height: '100%' }}
+                    />
+                  </View>
+                ))}
+              </ScrollView>
 
               <View style={{
-                position: "absolute", top:SH(30), alignSelf: "center", backgroundColor: "rgba(0,0,0,0.6)",
+                position: "absolute", top: SH(30), alignSelf: "center", backgroundColor: "rgba(0,0,0,0.6)",
                 paddingHorizontal: SW(8), borderRadius: 5, paddingVertical: SH(8)
               }}>
                 <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>{imageIndex + 1} / {formattedImages.length}</Text>
               </View>
 
-              <TouchableOpacity onPress={() => setModalVisible(false)} style={{ position: "absolute", top:SH(40), right:SW(20) }}>
+              <TouchableOpacity onPress={() => setModalVisible(false)} style={{ position: "absolute", top: SH(40), right: SW(20) }}>
                 <Text style={{ color: "white", fontSize: SF(13), fontFamily: "Poppins-Regular" }}>Close</Text>
               </TouchableOpacity>
             </View>
@@ -337,28 +336,36 @@ const DharamsalaDetail = ({ navigation, route }) => {
         </View>
 
         <View style={styles.Bottomimage}>
-              <AppIntroSlider
-                    ref={sliderRef}
-                    data={slider}
-                    renderItem={({ item }) => {
-                        const { width, height } = item.resolution;
-                        return (
-                            <Image
-                                source={{ uri: item.image }}
-                                style={{
-                                    width,
-                                    height,
-                                }}
-                            />
-                        );
-                    }}
-                    showNextButton={false}
-                    showDoneButton={false}
-                    dotStyle={Globalstyles.dot}
-                    activeDotStyle={Globalstyles.activeDot}
-                />
+          <AppIntroSlider
+            ref={sliderRef}
+            data={slider}
+            renderItem={({ item }) => {
+              const { width, height } = item.resolution;
+            
+              const handlePress = () => {
+                if (item.hyperlink) {
+                  Linking.openURL(item.hyperlink).catch(err =>
+                    console.error("Failed to open URL:", err)
+                  );
+                }
+              };
+            
+              return (
+                <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                  <Image
+                    source={{ uri: item.image }}
+                    style={{ width, height, resizeMode: 'cover' }}
+                  />
+                </TouchableOpacity>
+              );
+            }}            
+            showNextButton={false}
+            showDoneButton={false}
+            dotStyle={Globalstyles.dot}
+            activeDotStyle={Globalstyles.activeDot}
+          />
 
-              </View>
+        </View>
 
       </ScrollView>
     </SafeAreaView>

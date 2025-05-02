@@ -97,7 +97,8 @@ function MyTabs() {
   const ProfileData = useSelector((state) => state.profile);
   const profile_data = ProfileData?.profiledata || {};
   const imagePath = profile_data?.photoUrl?.[0];
-  const image = imagePath ? `${PHOTO_URL}/${imagePath}` : null;
+  const isFullUrl = imagePath?.startsWith("http");
+  const image = imagePath ? (isFullUrl ? imagePath : `${PHOTO_URL}/${imagePath}`) : null;
   const isValidImage = image && !image.includes("undefined") && !image.includes("null") && image.trim() !== "";
   const [isLoading, setLoading] = useState(true);
   const [biodata, setBiodata] = useState({});
@@ -125,8 +126,8 @@ function MyTabs() {
       console.log("headers in profile", headers);
       const res = await axios.get(PROFILE_ENDPOINT, { headers });
       console.log("API Response:", JSON.stringify(res.data));
-      setProfileData(res.data.data); // ✅ State update karo
-      dispatch(setProfiledata(res.data.data)); // Redux update karo
+      setProfileData(res.data.data);
+      dispatch(setProfiledata(res.data.data));
 
     } catch (error) {
       console.error("Error fetching profile:", error.response ? error.response.data : error.message);

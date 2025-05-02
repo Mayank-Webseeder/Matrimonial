@@ -582,18 +582,6 @@ const ProfileDetail = ({ route, navigation }) => {
 
                         </View>
 
-                        {
-                            profileData?.personalDetails?.otherFamilyMemberInfo && (
-                                <View style={styles.detailbox}>
-                                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
-                                        <FontAwesome name="group" size={20} color={Colors.theme_color} />
-                                        <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Family's Other Details</Text>
-                                    </View>
-                                    {personalDetails?.otherFamilyMemberInfo && <Text style={styles.text}>Other Family Members: {personalDetails.otherFamilyMemberInfo}</Text>}
-                                </View>
-                            )
-                        }
-
                         {/* Contact Section */}
                         <View style={styles.detailbox}>
                             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
@@ -683,12 +671,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                         <FontAwesome name="group" size={20} color={Colors.theme_color} />
                                         <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Family's Other Details</Text>
                                     </View>
-                                    {personalDetails?.otherFamilyMemberInfo && (
-                                        <View style={styles.infoRow}>
-                                            <Text style={styles.infoLabel}>Other Family Members:</Text>
-                                            <Text style={styles.infoValue}>{personalDetails.otherFamilyMemberInfo}</Text>
-                                        </View>
-                                    )}
+                                    {personalDetails?.otherFamilyMemberInfo && <Text style={styles.text}>Other Family Members: {personalDetails.otherFamilyMemberInfo}</Text>}
                                 </View>
                             )
                         }

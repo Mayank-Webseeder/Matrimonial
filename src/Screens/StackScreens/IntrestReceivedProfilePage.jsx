@@ -670,20 +670,14 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
 
         </View>
 
-        {
+         {
           !hideOptionalDetails && personalDetails?.otherFamilyMemberInfo && (
             <View style={styles.detailbox}>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
                 <FontAwesome name="group" size={20} color={Colors.theme_color} />
                 <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Family's Other Details</Text>
               </View>
-              <View style={styles.detailbox}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
-                  <FontAwesome name="group" size={20} color={Colors.theme_color} />
-                  <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Family's Other Details</Text>
-                </View>
-                {personalDetails?.otherFamilyMemberInfo && <Text style={styles.text}>Other Family Members: {personalDetails.otherFamilyMemberInfo}</Text>}
-              </View>
+              {personalDetails?.otherFamilyMemberInfo && <Text style={styles.text}>Other Family Members: {personalDetails.otherFamilyMemberInfo}</Text>}
             </View>
           )
         }

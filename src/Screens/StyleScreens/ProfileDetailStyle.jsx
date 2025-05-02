@@ -115,10 +115,9 @@ const styles = StyleSheet.create({
   },
 
   text: {
-    fontSize: SF(13),
-    color: Colors.dark,
-    marginBottom: SH(2),
-    fontFamily: "Poppins-Regular",
+    fontfamily:"Poppins-Regular",
+    color: '#000',
+    fontSize:SF(15)
   },
   flexContainer: {
     paddingHorizontal: SW(10),
@@ -272,8 +271,9 @@ const styles = StyleSheet.create({
     marginBottom: SH(8),
   },
   text: {
-    fontSize: SF(13),
-    fontFamily: 'Poppins-Regular',
+     fontfamily:"Poppins-Regular",
+    color: '#000',
+    fontSize:SF(15),
     textTransform:"capitalize"
   },
   servicesGrid: {
@@ -474,8 +474,9 @@ const styles = StyleSheet.create({
     },
     infoLabel: {
       width: SW(150),
-     fontfamily:"Poppins-Regular",
-      color: '#000',
+      fontfamily:"Poppins-Regular",
+    color: '#000',
+    fontSize:SF(15)
     },
     infoValue: {
       flex: 1,

@@ -148,11 +148,9 @@ const styles = StyleSheet.create({
   },
 
   text: {
-    fontSize: SF(13),
-    color: Colors.dark,
-    marginBottom: SH(2),
-    fontFamily: "Poppins-Regular",
-    textTransform: "capitalize"
+    fontfamily:"Poppins-Regular",
+    color: '#000',
+    fontSize:SF(15)
   },
 
   flexContainer: {
@@ -329,8 +327,9 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     width: SW(150),
-   fontfamily:"Poppins-Regular",
+    fontfamily:"Poppins-Regular",
     color: '#000',
+    fontSize:SF(15)
   },
   infoValue: {
     flex: 1,

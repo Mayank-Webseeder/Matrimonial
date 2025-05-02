@@ -452,6 +452,7 @@ export const subCasteOptions = [
   { label: 'Vyas', value: 'Vyas' },
   { label: 'Viswabrahmin', value: 'Viswabrahmin' },
   { label: 'Zalora', value: 'Zalora' },
+  { label: 'Other', value: 'Other' },
 ];
 
 export const ExperienceData = [

@@ -24,6 +24,7 @@ import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { SW } from '../../utils/Dimensions';
 import _ from "lodash";
 import { showMessage } from 'react-native-flash-message';
+import { CommonActions } from '@react-navigation/native';
 
 const Committee = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -79,33 +80,23 @@ const Committee = ({ navigation }) => {
     setImageVisible(true);
   };
 
- const handleInputChange = (text) => {
-     setSubcaste(text);
- 
-     if (text.trim() === '') {
-         setFilteredOptions([]); // Clear suggestions if input is empty
-     } else {
-         const filtered = subCasteOptions.filter((option) =>
-             option.label.toLowerCase().includes(text.toLowerCase())
-         );
- 
-         // If no match, show "Other" option
-         if (filtered.length === 0) {
-             setFilteredOptions([{ label: 'Other', value: 'Other' }]); 
-         } else {
-             setFilteredOptions(filtered);
-         }
-     }
- };
- 
- const handleOptionSelect = (value) => {
-   if (value.label === 'Other') {
-       setSubcaste('');
-   } else {
-       setSubcaste(value.label);
-   }
-   setFilteredOptions([]); 
- };
+  const handleInputChange = (text) => {
+    setSubcaste(text);
+    if (text.trim() === '') {
+      setFilteredOptions([]);
+    } else {
+      const filtered = subCasteOptions.filter((option) =>
+        option.label.toLowerCase().includes(text.toLowerCase())
+      );
+      setFilteredOptions(filtered);
+    }
+  };
+
+  const handleOptionSelect = (value) => {
+    setSubcaste(value.label);
+    setFilteredOptions([]);
+  };
+
 
   useEffect(() => {
     if (slider.length === 0) return;
@@ -439,17 +430,17 @@ const Committee = ({ navigation }) => {
       {/* Fixed Header */}
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: "center" }}>
-          <TouchableOpacity onPress={() => {
-            navigation.reset({
-              index: 0,
-              routes: [{ name: "MainApp" }],
-            });
-          }}>
-            <MaterialIcons
-              name="arrow-back-ios-new"
-              size={25}
-              color={Colors.theme_color}
-            />
+          <TouchableOpacity
+            onPress={() => {
+              navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [{ name: 'MainApp' }],
+                })
+              );
+            }}
+          >
+            <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>Committee</Text>
         </View>

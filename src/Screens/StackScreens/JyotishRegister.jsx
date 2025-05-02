@@ -384,14 +384,15 @@ const JyotishRegister = ({ navigation }) => {
                 description: "Registered as Jyotish",
                 type: "success",
                 icon: "success",
-                duration: 3000,
-            });
-
-            await AsyncStorage.removeItem("RoleRegisterData");
-
-            setTimeout(() => {
-                navigation.navigate("MyProfile");
-            }, 2000);
+                 duration: 5000,
+                            });
+                
+                            await AsyncStorage.removeItem("RoleRegisterData");
+                
+                            setTimeout(() => {
+                                // navigation.navigate("MyProfile");
+                                navigation.navigate("MainApp");
+                            }, 3000);
 
         } catch (error) {
             const errorMessage =
@@ -862,19 +863,22 @@ const JyotishRegister = ({ navigation }) => {
                     />
 
                     <Text style={Globalstyles.title}>Sub Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
-                    <TextInput
+                    <Dropdown
                         style={Globalstyles.input}
-                        value={RoleRegisterData?.subCaste} // `myBiodata?.subCaste` ki jagah `subCasteInput` use karein
-                        onChangeText={handleSubCasteInputChange}
-                        placeholder="Type your sub caste"
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
+                        data={subCasteOptions}
+                        labelField="label"
+                        valueField="value"
+                        value={RoleRegisterData?.subCaste}
+                        onChange={(text) => handleInputChange("subCaste", text.value)}
+                        placeholder="Select Your subCaste"
+                        placeholderStyle={{ color: '#E7E7E7' }}
+                        autoScroll={false}
+                        showsVerticalScrollIndicator={false}
                     />
                     {errors.subCaste && <Text style={styles.errorText}>{errors.subCaste}</Text>}
 
                     {/* Agar user type karega toh list dikhegi */}
-                    {filteredSubCaste.length > 0 ? (
+                    {/* {filteredSubCaste.length > 0 ? (
                         <FlatList
                             data={filteredSubCaste.slice(0, 5)}
                             scrollEnabled={false}
@@ -886,7 +890,7 @@ const JyotishRegister = ({ navigation }) => {
                             )}
                             style={Globalstyles.suggestions}
                         />
-                    ) : null}
+                    ) : null} */}
 
 
                     {/* Role Selection with Checkboxes */}
@@ -932,6 +936,8 @@ const JyotishRegister = ({ navigation }) => {
                             onChange={(text) => handleInputChange("experience", text.value)}
                             placeholder="Select Experience"
                             placeholderStyle={{ color: '#E7E7E7' }}
+                            autoScroll={false}
+                            showsVerticalScrollIndicator={false}
                         />
                     </View>
 

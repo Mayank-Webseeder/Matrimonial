@@ -25,6 +25,7 @@ import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import _ from "lodash";
 import { showMessage } from 'react-native-flash-message';
 import { useCallback } from 'react';
+import { CommonActions } from '@react-navigation/native';
 
 const Dharmshala = () => {
   const navigation = useNavigation();
@@ -81,30 +82,21 @@ const Dharmshala = () => {
   };
 
   const handleInputChange = (text) => {
-    setSubcaste(text);
-
-    if (text.trim() === '') {
-        setFilteredOptions([]);
-    } else {
-        const filtered = subCasteOptions.filter((option) =>
-            option.label.toLowerCase().includes(text.toLowerCase())
-        );
-        if (filtered.length === 0) {
-            setFilteredOptions([{ label: 'Other', value: 'Other' }]); 
-        } else {
-            setFilteredOptions(filtered);
-        }
-    }
-};
-
-const handleOptionSelect = (value) => {
-  if (value.label === 'Other') {
-      setSubcaste('');
-  } else {
-      setSubcaste(value.label);
-  }
-  setFilteredOptions([]); 
-};
+     setSubcaste(text);
+     if (text.trim() === '') {
+       setFilteredOptions([]);
+     } else {
+       const filtered = subCasteOptions.filter((option) =>
+         option.label.toLowerCase().includes(text.toLowerCase())
+       );
+       setFilteredOptions(filtered);
+     }
+   };
+ 
+   const handleOptionSelect = (value) => {
+     setSubcaste(value.label);
+     setFilteredOptions([]);
+   };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -454,18 +446,18 @@ const handleOptionSelect = (value) => {
       {/* Fixed Header */}
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: "center" }}>
-          <TouchableOpacity onPress={() => {
-            navigation.reset({
-              index: 0,
-              routes: [{ name: "MainApp" }],
-            });
-          }}>
-            <MaterialIcons
-              name="arrow-back-ios-new"
-              size={25}
-              color={Colors.theme_color}
-            />
-          </TouchableOpacity>
+        <TouchableOpacity
+  onPress={() => {
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: 'MainApp' }],
+      })
+    );
+  }}
+>
+  <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
+</TouchableOpacity>
           <Text style={Globalstyles.headerText}>Dharmshala</Text>
         </View>
         <View style={styles.righticons}>

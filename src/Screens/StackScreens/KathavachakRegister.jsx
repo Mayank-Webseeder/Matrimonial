@@ -120,22 +120,22 @@ const KathavachakRegister = ({ navigation }) => {
         fetchProfilesDetails();
     }, []);
 
-     useEffect(() => {
-            if (fetchProfileDetails) {
-                setRoleRegisterData(prev => ({
-                    ...prev,
-                    mobileNo: fetchProfileDetails.mobileNo || "",
-                    fullName: fetchProfileDetails.fullName || "",
-                    state: fetchProfileDetails.state || "",
-                    city: fetchProfileDetails.city || "",
-                    subCaste: fetchProfileDetails.subCaste || "",
-                    aadharNo: fetchProfileDetails.aadharNo || "",
-                    residentialAddress: fetchProfileDetails.residentialAddress || "",
-                    description: fetchProfileDetails.description || "",
-                }));
-            }
-        }, [fetchProfileDetails]);
-    
+    useEffect(() => {
+        if (fetchProfileDetails) {
+            setRoleRegisterData(prev => ({
+                ...prev,
+                mobileNo: fetchProfileDetails.mobileNo || "",
+                fullName: fetchProfileDetails.fullName || "",
+                state: fetchProfileDetails.state || "",
+                city: fetchProfileDetails.city || "",
+                subCaste: fetchProfileDetails.subCaste || "",
+                aadharNo: fetchProfileDetails.aadharNo || "",
+                residentialAddress: fetchProfileDetails.residentialAddress || "",
+                description: fetchProfileDetails.description || "",
+            }));
+        }
+    }, [fetchProfileDetails]);
+
 
 
     const fetchPlans = async () => {
@@ -250,43 +250,43 @@ const KathavachakRegister = ({ navigation }) => {
     // };
 
     const ADDL_LIMIT = 5;                // max extra photos
-    
+
     const pickerOpts = {
-      selectionLimit: ADDL_LIMIT,        // gallery stops user at 5
-      mediaType: 'photo',
-      includeBase64: true,               // we still need base‑64
-      maxWidth: 400,                     // optional resize
-      maxHeight: 400,
-      quality: 1,
+        selectionLimit: ADDL_LIMIT,        // gallery stops user at 5
+        mediaType: 'photo',
+        includeBase64: true,               // we still need base‑64
+        maxWidth: 400,                     // optional resize
+        maxHeight: 400,
+        quality: 1,
     };
-    
-     const handleAdditionalPhotosPick = () => {
-            launchImageLibrary(pickerOpts, (response) => {
-              if (response.didCancel) return;                            // user aborted
-              if (response.errorCode) {
+
+    const handleAdditionalPhotosPick = () => {
+        launchImageLibrary(pickerOpts, (response) => {
+            if (response.didCancel) return;                            // user aborted
+            if (response.errorCode) {
                 console.log('ImagePicker Error:', response.errorMessage);
                 return;
-              }
-          
-              const incoming = response.assets ?? [];
-          
-              setRoleRegisterData((prev) => {
+            }
+
+            const incoming = response.assets ?? [];
+
+            setRoleRegisterData((prev) => {
                 // Convert each asset to data‑URI just like before
                 const newPhotos = incoming.map(
-                  (img) => `data:${img.type};base64,${img.base64}`
+                    (img) => `data:${img.type};base64,${img.base64}`
                 );
-          
+
                 const updated = [...prev.additionalPhotos, ...newPhotos];
-          
+
                 if (updated.length > ADDL_LIMIT) {
-                  Alert.alert(`You can only upload up to ${ADDL_LIMIT} additional photos.`);
-                  return prev;                                           // refuse update
+                    Alert.alert(`You can only upload up to ${ADDL_LIMIT} additional photos.`);
+                    return prev;                                           // refuse update
                 }
-          
+
                 return { ...prev, additionalPhotos: updated };
-              });
             });
-          };
+        });
+    };
 
 
     const OPTIONAL_FIELDS = [
@@ -384,39 +384,40 @@ const KathavachakRegister = ({ navigation }) => {
                 description: "Registered as Kathavachak",
                 type: "success",
                 icon: "success",
-                duration: 3000,
+                duration: 5000,
             });
 
             await AsyncStorage.removeItem("RoleRegisterData");
 
             setTimeout(() => {
-                navigation.navigate("MyProfile");
-            }, 2000);
+                // navigation.navigate("MyProfile");
+                navigation.navigate("MainApp");
+            }, 3000);
         } catch (error) {
-                    const errorMessage =
-                        error?.response?.data?.message ||
-                        error?.response?.message ||
-                        error?.message ||
-                        "Something went wrong!";
-                
-                    console.error("❌ Error:", errorMessage);
-                
-                    showMessage({
-                        message: errorMessage,
-                        type: "danger",
-                        icon: "danger",
-                        duration: 5000,
-                    });
-                    if (errorMessage.includes("valid Kathavachak subscription")) {
-                        setTimeout(() => {
-                            openModal();
-                        }, 1000);
-                    }
-                
-                } finally {
-                    console.log("Loader Stopped!");
-                    setIsLoading(false);
-                }
+            const errorMessage =
+                error?.response?.data?.message ||
+                error?.response?.message ||
+                error?.message ||
+                "Something went wrong!";
+
+            console.error("❌ Error:", errorMessage);
+
+            showMessage({
+                message: errorMessage,
+                type: "danger",
+                icon: "danger",
+                duration: 5000,
+            });
+            if (errorMessage.includes("valid Kathavachak subscription")) {
+                setTimeout(() => {
+                    openModal();
+                }, 1000);
+            }
+
+        } finally {
+            console.log("Loader Stopped!");
+            setIsLoading(false);
+        }
     };
 
     const handleFreeTrial = async (plan) => {
@@ -680,36 +681,36 @@ const KathavachakRegister = ({ navigation }) => {
     };
 
     const handleSubCasteInputChange = (text) => {
-          const filtered = subCasteOptions
-              .filter((item) =>
-                  item?.label?.toLowerCase().includes(text.toLowerCase())
-              )
-              .map((item) => item.label);
-      
-          // If matches found, allow input
-          if (filtered.length > 0) {
-              setSubCasteInput(text);
-              setFilteredSubCaste(filtered);
-              setRoleRegisterData((PrevRoleRegisterData) => ({
-                  ...PrevRoleRegisterData,
-                  subCaste: text,
-              }));
-          } else {
-              // Don't allow arbitrary input — only show "Other"
-              setFilteredSubCaste(['Other']);
-          }
-      };
-      
-      const handleSubCasteSelect = (selectedItem) => {
-          const finalValue = selectedItem === 'Other' ? 'Other' : selectedItem;
-      
-          setSubCasteInput(finalValue);
-          setFilteredSubCaste([]);
-          setRoleRegisterData((PrevRoleRegisterData) => ({
-              ...PrevRoleRegisterData,
-              subCaste: finalValue,
-          }));
-      };
+        const filtered = subCasteOptions
+            .filter((item) =>
+                item?.label?.toLowerCase().includes(text.toLowerCase())
+            )
+            .map((item) => item.label);
+
+        // If matches found, allow input
+        if (filtered.length > 0) {
+            setSubCasteInput(text);
+            setFilteredSubCaste(filtered);
+            setRoleRegisterData((PrevRoleRegisterData) => ({
+                ...PrevRoleRegisterData,
+                subCaste: text,
+            }));
+        } else {
+            // Don't allow arbitrary input — only show "Other"
+            setFilteredSubCaste(['Other']);
+        }
+    };
+
+    const handleSubCasteSelect = (selectedItem) => {
+        const finalValue = selectedItem === 'Other' ? 'Other' : selectedItem;
+
+        setSubCasteInput(finalValue);
+        setFilteredSubCaste([]);
+        setRoleRegisterData((PrevRoleRegisterData) => ({
+            ...PrevRoleRegisterData,
+            subCaste: finalValue,
+        }));
+    };
 
     const handleInputChange = (field, value) => {
         setRoleRegisterData((prev) => ({
@@ -736,7 +737,7 @@ const KathavachakRegister = ({ navigation }) => {
         if (!tempUrlData[type] || urlPatterns[type].test(tempUrlData[type])) {
             setRoleRegisterData((prev) => ({ ...prev, [type]: tempUrlData[type] }));
         } else {
-           showMessage({
+            showMessage({
                 type: "error",
                 message: "Invalid URL",
                 description: `Please enter a valid ${type.replace("Url", "")} link.`,
@@ -859,7 +860,7 @@ const KathavachakRegister = ({ navigation }) => {
                     />
 
                     <Text style={Globalstyles.title}>Sub Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
-                    <TextInput
+                    {/* <TextInput
                         style={Globalstyles.input}
                         value={RoleRegisterData?.subCaste} // `myBiodata?.subCaste` ki jagah `subCasteInput` use karein
                         onChangeText={handleSubCasteInputChange}
@@ -867,11 +868,23 @@ const KathavachakRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                    /> */}
+                    <Dropdown
+                        style={Globalstyles.input}
+                        data={subCasteOptions}
+                        labelField="label"
+                        valueField="value"
+                        value={RoleRegisterData?.subCaste}
+                        onChange={(text) => handleInputChange("subCaste", text.value)}
+                        placeholder="Select Your subCaste"
+                        placeholderStyle={{ color: '#E7E7E7' }}
+                        autoScroll={false}
+                        showsVerticalScrollIndicator={false}
                     />
                     {errors.subCaste && <Text style={styles.errorText}>{errors.subCaste}</Text>}
 
                     {/* Agar user type karega toh list dikhegi */}
-                    {filteredSubCaste.length > 0 ? (
+                    {/* {filteredSubCaste.length > 0 ? (
                         <FlatList
                             data={filteredSubCaste.slice(0, 5)}
                             scrollEnabled={false}
@@ -883,7 +896,7 @@ const KathavachakRegister = ({ navigation }) => {
                             )}
                             style={Globalstyles.suggestions}
                         />
-                    ) : null}
+                    ) : null} */}
 
 
                     {/* Role Selection with Checkboxes */}
@@ -929,6 +942,8 @@ const KathavachakRegister = ({ navigation }) => {
                             onChange={(text) => handleInputChange("experience", text.value)}
                             placeholder="Select Experience"
                             placeholderStyle={{ color: '#E7E7E7' }}
+                            autoScroll={false}
+                            showsVerticalScrollIndicator={false}
                         />
                     </View>
 
@@ -946,8 +961,8 @@ const KathavachakRegister = ({ navigation }) => {
                         </TouchableOpacity>
                     </View>
                     {!RoleRegisterData.profilePhoto && errors.profilePhoto && (
-    <Text style={styles.errorText}>{errors.profilePhoto}</Text>
-)}
+                        <Text style={styles.errorText}>{errors.profilePhoto}</Text>
+                    )}
 
                     <Text style={Globalstyles.title}>Add Description</Text>
                     <TextInput style={Globalstyles.textInput} value={RoleRegisterData.description}

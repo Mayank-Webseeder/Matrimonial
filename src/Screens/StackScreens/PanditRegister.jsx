@@ -375,14 +375,15 @@ const PanditRegister = ({ navigation }) => {
                 description: "Registered as Pandit",
                 type: "success",
                 icon: "success",
-                duration: 3000,
+                duration: 5000,
             });
 
             await AsyncStorage.removeItem("RoleRegisterData");
 
             setTimeout(() => {
-                navigation.navigate("MyProfile");
-            }, 2000);
+                // navigation.navigate("MyProfile");
+                navigation.navigate("MainApp");
+            }, 3000);
 
         } catch (error) {
             const errorMessage =
@@ -678,7 +679,7 @@ const PanditRegister = ({ navigation }) => {
                 item?.label?.toLowerCase().includes(text.toLowerCase())
             )
             .map((item) => item.label);
-    
+
         // If matches found, allow input
         if (filtered.length > 0) {
             setSubCasteInput(text);
@@ -692,10 +693,10 @@ const PanditRegister = ({ navigation }) => {
             setFilteredSubCaste(['Other']);
         }
     };
-    
+
     const handleSubCasteSelect = (selectedItem) => {
         const finalValue = selectedItem === 'Other' ? 'Other' : selectedItem;
-    
+
         setSubCasteInput(finalValue);
         setFilteredSubCaste([]);
         setRoleRegisterData((PrevRoleRegisterData) => ({
@@ -852,7 +853,7 @@ const PanditRegister = ({ navigation }) => {
                     />
 
                     <Text style={Globalstyles.title}>Sub Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
-                    <TextInput
+                    {/* <TextInput
                         style={Globalstyles.input}
                         value={RoleRegisterData?.subCaste} // `myBiodata?.subCaste` ki jagah `subCasteInput` use karein
                         onChangeText={handleSubCasteInputChange}
@@ -860,11 +861,23 @@ const PanditRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                    /> */}
+                    <Dropdown
+                        style={Globalstyles.input}
+                        data={subCasteOptions}
+                        labelField="label"
+                        valueField="value"
+                        value={RoleRegisterData?.subCaste}
+                        onChange={(text) => handleInputChange("subCaste", text.value)}
+                        placeholder="Select Your subCaste"
+                        placeholderStyle={{ color: '#E7E7E7' }}
+                        autoScroll={false}
+                        showsVerticalScrollIndicator={false}
                     />
                     {errors.subCaste && <Text style={styles.errorText}>{errors.subCaste}</Text>}
 
                     {/* Agar user type karega toh list dikhegi */}
-                    {filteredSubCaste.length > 0 ? (
+                    {/* {filteredSubCaste.length > 0 ? (
                         <FlatList
                             data={filteredSubCaste.slice(0, 5)}
                             scrollEnabled={false}
@@ -876,7 +889,7 @@ const PanditRegister = ({ navigation }) => {
                             )}
                             style={Globalstyles.suggestions}
                         />
-                    ) : null}
+                    ) : null} */}
 
 
                     {/* Role Selection with Checkboxes */}
@@ -922,6 +935,8 @@ const PanditRegister = ({ navigation }) => {
                             onChange={(text) => handleInputChange("experience", text.value)}
                             placeholder="Select Experience"
                             placeholderStyle={{ color: '#E7E7E7' }}
+                            autoScroll={false}
+                            showsVerticalScrollIndicator={false}
                         />
                     </View>
 

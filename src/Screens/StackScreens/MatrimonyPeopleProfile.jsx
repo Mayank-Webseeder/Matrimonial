@@ -14,7 +14,7 @@ import Globalstyles from '../../utils/GlobalCss';
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import moment from "moment";
 import axios from 'axios';
-import {BOTTOM_BIODATA_ADVERTISE_WINDOW, DELETE_SEND_REQUEST, MATCHED_PROFILE, SAVED_PROFILES, SEND_REQUEST, VERIFY_PROFILE } from '../../utils/BaseUrl';
+import { BOTTOM_BIODATA_ADVERTISE_WINDOW, DELETE_SEND_REQUEST, MATCHED_PROFILE, SAVED_PROFILES, SEND_REQUEST, VERIFY_PROFILE } from '../../utils/BaseUrl';
 import { useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SF, SH, SW } from '../../utils/Dimensions';
@@ -118,7 +118,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             description: item.description,
             image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution,
-            hyperlink: mediaItem.hyperlink, 
+            hyperlink: mediaItem.hyperlink,
           }))
         );
 
@@ -708,30 +708,55 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
         {/* Horoscope Section */}
         {personalDetails?.dob && (
-          <View style={styles.flexContainer1}>
+          <View style={styles.familyDiv}>
             <View>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
                 <MaterialIcons name="stars" size={25} color={Colors.theme_color} />
                 <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Horoscope</Text>
               </View>
-              <Text style={styles.text}>DOB {moment(personalDetails.dob).format("DD-MM-YYYY")} / Time: {personalDetails?.timeOfBirth}</Text>
-              {personalDetails?.placeofbirth && <Text style={styles.text}>Place of Birth: {personalDetails?.placeofbirth}</Text>}
 
-              <View style={styles.flexContainer2}>
-                {!hideOptionalDetails && (
-                  <>
-                    {personalDetails?.nadi && <Text style={styles.text}>Nadi: {personalDetails?.nadi}</Text>}
-                    {personalDetails?.gotraSelf && <Text style={styles.text}>Gotra (Self): {personalDetails?.gotraSelf}</Text>}
-                  </>
-                )}
+              {/* Displaying Date of Birth and Time of Birth */}
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>DOB :</Text>
+                <Text style={styles.infoValue}>{moment(personalDetails.dob).format("DD-MM-YYYY")} / Time: {personalDetails?.timeOfBirth}</Text>
               </View>
 
-              <View style={styles.flexContainer2}>
-                {personalDetails?.manglikStatus && <Text style={styles.text}>{personalDetails?.manglikStatus}</Text>}
-                {!hideOptionalDetails && (
-                  <>
-                    {personalDetails?.gotraMother && <Text style={styles.text}>Gotra (Mother): {personalDetails?.gotraMother}</Text>}
-                  </>
+              {/* Displaying Place of Birth */}
+              {personalDetails?.placeofbirth && (
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Place of Birth :</Text>
+                  <Text style={styles.infoValue}>{personalDetails?.placeofbirth}</Text>
+                </View>
+              )}
+
+              {/* Optional Details for Horoscope */}
+              <View>
+                {!hideOptionalDetails && personalDetails?.nadi && (
+                  <View style={styles.infoRow}>
+                    <Text style={styles.infoLabel}>Nadi :</Text>
+                    <Text style={styles.infoValue}>{personalDetails?.nadi}</Text>
+                  </View>
+                )}
+
+                {!hideOptionalDetails && personalDetails?.gotraSelf && (
+                  <View style={styles.infoRow}>
+                    <Text style={styles.infoLabel}>Gotra (Self) :</Text>
+                    <Text style={styles.infoValue}>{personalDetails?.gotraSelf}</Text>
+                  </View>
+                )}
+
+                {personalDetails?.manglikStatus && (
+                  <View style={styles.infoRow}>
+                    <Text style={styles.infoLabel}>Manglik Status :</Text>
+                    <Text style={styles.infoValue}>{personalDetails?.manglikStatus}</Text>
+                  </View>
+                )}
+
+                {!hideOptionalDetails && personalDetails?.gotraMother && (
+                  <View style={styles.infoRow}>
+                    <Text style={styles.infoLabel}>Gotra (Mother) :</Text>
+                    <Text style={styles.infoValue}>{personalDetails?.gotraMother}</Text>
+                  </View>
                 )}
               </View>
             </View>
@@ -740,53 +765,107 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
         {/* About Me Section */}
         {!hideOptionalDetails && (
-          <View style={styles.flexContainer1}>
+          <View style={styles.familyDiv}>
             <View>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
                 <MaterialCommunityIcons name="account-box-outline" size={25} color={Colors.theme_color} />
                 <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>About Me</Text>
               </View>
 
-
-              {personalDetails?.aboutMe && <Text style={styles.text}>{personalDetails?.aboutMe}</Text>}
+              {personalDetails?.aboutMe?.trim() !== "" && (
+                <Text style={styles.text}>{personalDetails?.aboutMe}</Text>
+              )}
 
               <View style={{ marginVertical: SH(4) }}>
-                <View style={styles.flexContainer2}>
+                <View style={styles.infoRow}>
                   {personalDetails?.complexion && (
-                    <Text style={styles.text}>Complexion: {personalDetails?.complexion}</Text>
-                  )}
-                  {personalDetails?.weight && (
-                    <Text style={styles.text}>Weight: {personalDetails?.weight} kg</Text>
+                    <>
+                      <Text style={styles.infoLabel}>Complexion :</Text>
+                      <Text style={styles.infoValue}>{personalDetails.complexion}</Text>
+                    </>
                   )}
                 </View>
 
-                <View style={styles.flexContainer2}>
-                  {/* {personalDetails?.currentCity && (
-                    <Text style={styles.text}>Currently in: {personalDetails?.currentCity}</Text>
-                  )} */}
+                <View style={styles.infoRow}>
+                  {personalDetails?.weight && (
+                    <>
+                      <Text style={styles.infoLabel}>Weight :</Text>
+                      <Text style={styles.infoValue}>{personalDetails.weight} kg</Text>
+                    </>
+                  )}
+                </View>
+
+                <View style={styles.infoRow}>
                   {personalDetails?.livingStatus && (
-                    <Text style={styles.text}>Living with family: {personalDetails?.livingStatus}</Text>
+                    <>
+                      <Text style={styles.infoLabel}>Living with family :</Text>
+                      <Text style={styles.infoValue}>{personalDetails.livingStatus}</Text>
+                    </>
                   )}
                 </View>
               </View>
             </View>
           </View>
         )}
-
+        
         {/* Family Section */}
-        <View style={styles.flexContainer1}>
+        <View style={[styles.familyDiv]}>
           <View>
             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
               <FontAwesome name="group" size={20} color={Colors.theme_color} />
               <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Family Section</Text>
             </View>
-            {personalDetails?.fatherName && <Text style={styles.text}>Father’s Name: {personalDetails.fatherName}</Text>}
-            {personalDetails?.fatherOccupation && <Text style={styles.text}>Father’s Occupation: {personalDetails.fatherOccupation}</Text>}
-            {personalDetails?.motherName && <Text style={styles.text}>Mother’s Name: {personalDetails.motherName}</Text>}
-            {personalDetails?.fatherIncomeAnnually && <Text style={[styles.text, { textTransform: "none" }]}>Father Income: {personalDetails.fatherIncomeAnnually}</Text>}
-            {personalDetails?.motherIncomeAnnually && <Text style={[styles.text, { textTransform: "none" }]}>Mother Income: {personalDetails.motherIncomeAnnually}</Text>}
-            {personalDetails?.familyType && <Text style={styles.text}>Family Type: {personalDetails.familyType}</Text>}
+
+            {personalDetails?.fatherName && (
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Father’s Name :</Text>
+                <Text style={styles.infoValue}>{personalDetails.fatherName}</Text>
+              </View>
+            )}
+            {personalDetails?.motherName && (
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Mother’s Name :</Text>
+                <Text style={styles.infoValue}>{personalDetails.motherName}</Text>
+              </View>
+            )}
+            {personalDetails?.fatherOccupation && (
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Father’s Occupation :</Text>
+                <Text style={styles.infoValue}>{personalDetails.fatherOccupation}</Text>
+              </View>
+            )}
+            {personalDetails?.fatherIncomeAnnually && (
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Father Income :</Text>
+                <Text style={styles.infoValue}>{personalDetails.fatherIncomeAnnually}</Text>
+              </View>
+            )}
+            {personalDetails?.motherOccupation && (
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Mother’s Occupation :</Text>
+                <Text style={styles.infoValue}>{personalDetails.motherOccupation}</Text>
+              </View>
+            )}
+            {personalDetails?.motherIncomeAnnually && (
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Mother’s Income :</Text>
+                <Text style={styles.infoValue}>{personalDetails.motherIncomeAnnually}</Text>
+              </View>
+            )}
+            {personalDetails?.siblings && (
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Siblings :</Text>
+                <Text style={styles.infoValue}>{personalDetails.siblings}</Text>
+              </View>
+            )}
+            {personalDetails?.familyType && (
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Family Type :</Text>
+                <Text style={styles.infoValue}>{personalDetails.familyType}</Text>
+              </View>
+            )}
           </View>
+
         </View>
 
         {
@@ -808,31 +887,83 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               <AntDesign name="contacts" size={25} color={Colors.theme_color} />
               <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Contact Details</Text>
             </View>
-            {personalDetails?.contactNumber1 && <Text style={styles.text}>Mobile No. 1: {personalDetails.contactNumber1}</Text>}
-            {personalDetails?.contactNumber2 && <Text style={styles.text}>Mobile No. 2: {personalDetails.contactNumber2}</Text>}
-            {personalDetails?.cityOrVillage && <Text style={styles.text}>City : {personalDetails.cityOrVillage}</Text>}
-            {personalDetails?.state && <Text style={styles.text}>State : {personalDetails.state}</Text>}
+
+            {personalDetails?.contactNumber1 && (
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Mobile No. 1 :</Text>
+                <Text style={styles.infoValue}>{personalDetails.contactNumber1}</Text>
+              </View>
+            )}
+            {personalDetails?.contactNumber2 && (
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Mobile No. 2 :</Text>
+                <Text style={styles.infoValue}>{personalDetails.contactNumber2}</Text>
+              </View>
+            )}
+            {personalDetails?.cityOrVillage && (
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>City :</Text>
+                <Text style={styles.infoValue}>{personalDetails.cityOrVillage}</Text>
+              </View>
+            )}
+            {personalDetails?.state && (
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>State :</Text>
+                <Text style={styles.infoValue}>{personalDetails.state}</Text>
+              </View>
+            )}
           </View>
         )}
 
+
         {/* Other Details */}
         {!hideOptionalDetails && hasOtherDetails && (
-          <View style={styles.flexContainer1}>
+          <View style={styles.familyDiv}>
             <View>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
                 <MaterialIcons name="details" size={25} color={Colors.theme_color} />
                 <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Other Details</Text>
               </View>
-              {personalDetails?.knowCooking && <Text style={styles.text}>Cooking: {personalDetails.knowCooking}</Text>}
-              {personalDetails?.dietaryHabit && <Text style={styles.text}>Diet: {personalDetails.dietaryHabit}</Text>}
-              {personalDetails?.smokingHabit && <Text style={styles.text}>Smoke: {personalDetails.smokingHabit}</Text>}
-              {personalDetails?.drinkingHabit && <Text style={styles.text}>Drinking: {personalDetails.drinkingHabit}</Text>}
-              {personalDetails?.tobaccoHabits && <Text style={styles.text}>Tobacco: {personalDetails.tobaccoHabits}</Text>}
-              {personalDetails?.hobbies && <Text style={styles.text}>Hobby: {personalDetails.hobbies}</Text>}
+
+              {personalDetails?.knowCooking && (
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Cooking :</Text>
+                  <Text style={styles.infoValue}>{personalDetails.knowCooking}</Text>
+                </View>
+              )}
+              {personalDetails?.dietaryHabit && (
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Diet :</Text>
+                  <Text style={styles.infoValue}>{personalDetails.dietaryHabit}</Text>
+                </View>
+              )}
+              {personalDetails?.smokingHabit && (
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Smoke :</Text>
+                  <Text style={styles.infoValue}>{personalDetails.smokingHabit}</Text>
+                </View>
+              )}
+              {personalDetails?.drinkingHabit && (
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Drinking :</Text>
+                  <Text style={styles.infoValue}>{personalDetails.drinkingHabit}</Text>
+                </View>
+              )}
+              {personalDetails?.tobaccoHabits && (
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Tobacco :</Text>
+                  <Text style={styles.infoValue}>{personalDetails.tobaccoHabits}</Text>
+                </View>
+              )}
+              {personalDetails?.hobbies && (
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Hobby :</Text>
+                  <Text style={styles.infoValue}>{personalDetails.hobbies}</Text>
+                </View>
+              )}
             </View>
           </View>
         )}
-
 
         {partnerPreferences?.partnerExpectations &&
           <View style={styles.flexContainer3}>
@@ -884,7 +1015,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             data={slider}
             renderItem={({ item }) => {
               const { width, height } = item.resolution;
-           
+
               const handlePress = () => {
                 if (item.hyperlink) {
                   Linking.openURL(item.hyperlink).catch(err =>
@@ -892,7 +1023,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                   );
                 }
               };
-            
+
               return (
                 <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                   <Image
@@ -901,7 +1032,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                   />
                 </TouchableOpacity>
               );
-            }}            
+            }}
             showNextButton={false}
             showDoneButton={false}
             dotStyle={Globalstyles.dot}

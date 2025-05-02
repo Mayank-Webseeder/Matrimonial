@@ -11,6 +11,7 @@ import { CREATE_COMMITTEE } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { showMessage } from 'react-native-flash-message';
+import { Dropdown } from 'react-native-element-dropdown';
 
 const CommitteeSubmissionPage = ({ navigation }) => {
     const [subCasteInput, setSubCasteInput] = useState('');
@@ -29,6 +30,13 @@ const CommitteeSubmissionPage = ({ navigation }) => {
         mobileNo: ''
     });
 
+    const handleInputChange = (field, value) => {
+        setCommitteeData(prev => ({
+          ...prev,
+          [field]: value,
+        }));
+      };
+      
 
     const handleCityInputChange = (text) => {
         setCityInput(text);
@@ -294,7 +302,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                 )}
 
                 <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
-                <TextInput
+                {/* <TextInput
                     style={Globalstyles.input}
                     value={CommitteeData?.subCaste} // `myBiodata?.subCaste` ki jagah `subCasteInput` use karein
                     onChangeText={handleSubCasteInputChange}
@@ -302,6 +310,19 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
                     textContentType="none"
+                /> */}
+
+<Dropdown
+                    style={Globalstyles.input}
+                    data={subCasteOptions}
+                    labelField="label"
+                    valueField="value"
+                    value={CommitteeData?.subCaste}
+                    onChange={(text) => handleInputChange("subCaste", text.value)}
+                    placeholder="Select Your subCaste"
+                    placeholderStyle={{ color: '#E7E7E7' }}
+                    autoScroll={false}
+                    showsVerticalScrollIndicator={false}
                 />
 
                 {errors.subCaste && (
@@ -309,7 +330,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                 )}
 
                 {/* Agar user type karega toh list dikhegi */}
-                {filteredSubCaste.length > 0 ? (
+                {/* {filteredSubCaste.length > 0 ? (
                     <FlatList
                         data={filteredSubCaste.slice(0, 5)}
                         scrollEnabled={false}
@@ -321,7 +342,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                         )}
                         style={Globalstyles.suggestions}
                     />
-                ) : null}
+                ) : null} */}
 
 
                 <Text style={Globalstyles.title}>City <Entypo name={'star'} color={'red'} size={12} /></Text>

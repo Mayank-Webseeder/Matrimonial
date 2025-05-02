@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import Splash from '../Screens/Splash';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Login from '../Screens/auth/Login';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Home from '../Screens/Tabs/Home';
@@ -187,6 +188,8 @@ function MyTabs() {
   );
 
   const isBiodataEmpty = Object.keys(MyprofileData?.Biodata || {}).length === 0;
+  const insets = useSafeAreaInsets();
+
 
 
   return (
@@ -248,10 +251,12 @@ function MyTabs() {
         },
         tabBarStyle: {
           backgroundColor: Colors.theme_color,
-          height: SH(55),
-          borderTopLeftRadius: 15,
-          borderTopRightRadius: 15,
-          paddingHorizontal: SW(10),
+          // height: SH(55),
+           height: SH(55) + insets.bottom,
+           borderTopLeftRadius: 15,
+           borderTopRightRadius: 15,
+           paddingHorizontal: SW(10),
+           paddingBottom: Platform.OS === 'ios' ? insets.bottom : 0,
         },
       })}
     >

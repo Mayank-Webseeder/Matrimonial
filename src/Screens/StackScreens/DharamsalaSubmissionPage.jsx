@@ -13,6 +13,7 @@ import axios from 'axios';
 import _ from "lodash";
 import { showMessage } from 'react-native-flash-message';
 import { launchImageLibrary } from 'react-native-image-picker';
+import { Dropdown } from 'react-native-element-dropdown';
 
 const DharamsalaSubmissionPage = ({ navigation }) => {
     const [subCasteInput, setSubCasteInput] = useState('');
@@ -42,6 +43,14 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
             icon
         });
     }, 500);
+
+
+    const handleInputChange = (field, value) => {
+        setDharamsalaData(prev => ({
+            ...prev,
+            [field]: value,
+        }));
+    };
 
     const handleCityInputChange = (text) => {
         setCityInput(text);
@@ -75,7 +84,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                 item?.label?.toLowerCase().includes(text.toLowerCase())
             )
             .map((item) => item.label);
-    
+
         if (filtered.length > 0) {
             // Allow valid matches
             setSubCasteInput(text);
@@ -89,11 +98,11 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
             setFilteredSubCaste(['Other']);
         }
     };
-    
+
 
     const handleSubCasteSelect = (selectedItem) => {
         const finalValue = selectedItem === 'Other' ? 'Other' : selectedItem;
-    
+
         setSubCasteInput(finalValue);
         setFilteredSubCaste([]);
         setDharamsalaData((prev) => ({
@@ -319,7 +328,20 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                 )}
 
                 <Text style={Globalstyles.title}>Sub-Caste Name <Entypo name={'star'} color={'red'} size={12} /></Text>
-                <TextInput
+                <Dropdown
+                    style={Globalstyles.input}
+                    data={subCasteOptions}
+                    labelField="label"
+                    valueField="value"
+                    value={DharamsalaData?.subCaste}
+                    onChange={(text) => handleInputChange("subCaste", text.value)}
+                    placeholder="Select Your subCaste"
+                    placeholderStyle={{ color: '#E7E7E7' }}
+                    autoScroll={false}
+                    showsVerticalScrollIndicator={false}
+                />
+
+                {/* <TextInput
                     style={Globalstyles.input}
                     value={DharamsalaData?.subCaste} // `myBiodata?.subCaste` ki jagah `subCasteInput` use karein
                     onChangeText={handleSubCasteInputChange}
@@ -327,10 +349,10 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
                     textContentType="none"
-                />
+                /> */}
 
                 {/* Agar user type karega toh list dikhegi */}
-                {filteredSubCaste.length > 0 ? (
+                {/* {filteredSubCaste.length > 0 ? (
                     <FlatList
                         data={filteredSubCaste.slice(0, 5)}
                         scrollEnabled={false}
@@ -342,7 +364,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                         )}
                         style={Globalstyles.suggestions}
                     />
-                ) : null}
+                ) : null} */}
 
                 {errors.subCaste && (
                     <Text style={styles.errorText}>{errors.subCaste}</Text>

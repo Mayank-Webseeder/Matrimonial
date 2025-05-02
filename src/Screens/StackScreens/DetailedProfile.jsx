@@ -43,10 +43,8 @@ const DetailedProfile = ({ navigation, profileData }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [stateInput, setStateInput] = useState("");
-  const [subCasteInput, setSubCasteInput] = useState("");
   const [filteredStates, setFilteredStates] = useState([]);
   const [filteredCities, setFilteredCities] = useState([]);
-  const [filteredSubCaste, setFilteredSubCaste] = useState([]);
   const [cityInput, setCityInput] = useState("");
   const [cityOrVillageInput, setCityOrVillageInput] = useState("");
   const [filteredCitiesOrVillages, setFilteredCitiesOrVillages] = useState([]);
@@ -112,11 +110,8 @@ const DetailedProfile = ({ navigation, profileData }) => {
     bestPhoto: '',
   });
 
-  const [imageNames, setImageNames] = useState({
-    closeupImageName: "Upload One Closeup Image",
-    fullImageName: "Upload One Full Image",
-    bestImageName: "Upload One Best Image",
-  });
+  const [subCasteInput, setSubCasteInput] = useState(biodata.subCaste || '');
+  const [filteredSubCaste, setFilteredSubCaste] = useState([]);
 
   useEffect(() => {
     getBiodata();
@@ -312,28 +307,25 @@ const DetailedProfile = ({ navigation, profileData }) => {
   };
 
   const handleSubCasteInputChange = (text) => {
+    setSubCasteInput(text);
     const filtered = subCasteOptions
       .filter((item) => item.label.toLowerCase().includes(text.toLowerCase()))
       .map((item) => item.label);
 
-    if (filtered.length > 0) {
-      setSubCasteInput(text);
-      setFilteredSubCaste(filtered);
-      setBiodata((prevState) => ({
-        ...prevState,
-        subCaste: text,
-      }));
-    } else {
-      setFilteredSubCaste(['Other']);
-    }
-  };
-  const handleSubCasteSelect = (selectedItem) => {
-    setSubCasteInput(selectedItem === 'Other' ? 'Other' : selectedItem);
-    setFilteredSubCaste([]);
-  
+    setFilteredSubCaste(filtered.length > 0 ? filtered : ['Other']);
     setBiodata((prevState) => ({
       ...prevState,
-      subCaste: selectedItem === 'Other' ? 'Other' : selectedItem,
+      subCaste: '',
+    }));
+  };
+
+  const handleSubCasteSelect = (selectedItem) => {
+    setSubCasteInput(selectedItem);
+    setFilteredSubCaste([]);
+
+    setBiodata((prevState) => ({
+      ...prevState,
+      subCaste: selectedItem,
     }));
   };
 
@@ -521,8 +513,6 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
     return errors;
   };
-
-
 
   const handleSave = async () => {
     console.log("🟢 handleSave triggered");
@@ -847,23 +837,33 @@ const DetailedProfile = ({ navigation, profileData }) => {
         backgroundColor="transparent"
         translucent
       />
-      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
 
         <View style={Globalstyles.form}>
           <View style={styles.detail}>
             <Text style={styles.Formtitle}>Create Biodata</Text>
           </View>
           <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
-          <TextInput
-            style={Globalstyles.input}
-            value={biodata?.subCaste}
-            onChangeText={handleSubCasteInputChange}
-            placeholder="Type your sub caste"
-            placeholderTextColor={Colors.gray}
+          <Dropdown
+            style={[Globalstyles.input, !isEditing && styles.readOnly]}
+            data={subCasteOptions}
+            labelField="label"
+            valueField="value"
+            value={
+              subCasteOptions.find(item => item.label === biodata?.subCaste)?.value || ''
+            }
+            editable={isEditing}
+            onChange={(text) => handleInputChange("subCaste", text.value)}
+            placeholder="Select subCaste"
+            placeholderStyle={{ color: '#E7E7E7' }}
+            autoScroll={false}
+            showsVerticalScrollIndicator={false}
           />
-          {errors.subCaste && <Text style={styles.errorText}>{errors.subCaste}</Text>}
+          {errors.subCaste && (
+            <Text style={styles.errorText}>{errors.subCaste}</Text>
+          )}
 
-          {filteredSubCaste.length > 0 ? (
+          {/* {filteredSubCaste.length > 0 ? (
             <FlatList
               data={filteredSubCaste.slice(0, 5)}
               scrollEnabled={false}
@@ -875,7 +875,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               )}
               style={Globalstyles.suggestions}
             />
-          ) : null}
+          ) : null} */}
 
           <View>
             <Text style={Globalstyles.title}>Gender <Entypo name={'star'} color={'red'} size={12} /> </Text>
@@ -980,11 +980,15 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={maritalStatusData}
               labelField="label"
               valueField="value"
-              value={biodata?.maritalStatus}
+              value={
+                maritalStatusData.find(item => item.label === biodata?.maritalStatus)?.value || ''
+              }
               editable={isEditing}
               onChange={(text) => handleInputChange("maritalStatus", text.value)}
               placeholder="Select marital status"
               placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
             />
           </View>
           {errors.maritalStatus && <Text style={styles.errorText}>{errors.maritalStatus}</Text>}
@@ -996,7 +1000,9 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={MyDisabilities}
               labelField="label"
               valueField="value"
-              value={biodata?.disabilities}
+              value={
+                MyDisabilities.find(item => item.label === biodata?.disabilities)?.value || ''
+              }
               editable={isEditing}
               onChange={(text) => handleInputChange("disabilities", text.value)}
               placeholder="Select disability"
@@ -1011,11 +1017,15 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={heightData}
               labelField="label"
               valueField="value"
-              value={biodata?.heightFeet}
+              value={
+                heightData.find(item => item.label === biodata?.heightFeet)?.value || ''
+              }
               editable={isEditing}
               onChange={(text) => handleInputChange("heightFeet", text.value)}
               placeholder="Height"
               placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
             />
           </View>
           {errors.heightFeet && <Text style={styles.errorText}>{errors.heightFeet}</Text>}
@@ -1031,6 +1041,8 @@ const DetailedProfile = ({ navigation, profileData }) => {
               onChange={(text) => handleInputChange("weight", text.value)}
               placeholder="Weight"
               placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
             />
           </View>
           <View>
@@ -1040,11 +1052,15 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={MyComplexionData}
               labelField="label"
               valueField="value"
-              value={biodata?.complexion}
+              value={
+                MyComplexionData.find(item => item.label === biodata?.complexion)?.value || ''
+              }
               editable={isEditing}
               onChange={(text) => handleInputChange("complexion", text.value)}
               placeholder="Select Complexion"
               placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
             />
           </View>
           <View>
@@ -1054,11 +1070,15 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={ManglikStatusData}
               labelField="label"
               valueField="value"
-              value={biodata?.manglikStatus}
+              value={
+                ManglikStatusData.find(item => item.label === biodata?.manglikStatus)?.value || ''
+              }
               editable={isEditing}
               onChange={(text) => handleInputChange("manglikStatus", text.value)}
               placeholder="Select status"
               placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
             />
             {errors.manglikStatus && <Text style={styles.errorText}>{errors.manglikStatus}</Text>}
           </View>
@@ -1111,12 +1131,16 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={QualificationData}
               labelField="label"
               valueField="value"
-              value={biodata?.qualification}
+              value={
+                QualificationData.find(item => item.label === biodata?.qualification)?.value || ''
+              }
               editable={isEditing}
               onChange={(text) => handleInputChange("qualification", text.value)}
               placeholder="Select Qualification"
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
             />
             {errors.qualification && <Text style={styles.errorText}>{errors.qualification}</Text>}
           </View>
@@ -1127,12 +1151,16 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={OccupationData}
               labelField="label"
               valueField="value"
-              value={biodata?.occupation}
+              value={
+                OccupationData.find(item => item.label === biodata?.occupation)?.value || ''
+              }
               editable={isEditing}
               onChange={(text) => handleInputChange("occupation", text.value)}
               placeholder="Select occupation"
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
             />
             {errors.occupation && <Text style={styles.errorText}>{errors.occupation}</Text>}
           </View>
@@ -1143,12 +1171,16 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={Income}
               labelField="label"
               valueField="value"
-              value={biodata?.annualIncome}
+              value={
+                Income.find(item => item.label === biodata?.annualIncome)?.value || ''
+              }
               editable={isEditing}
               onChange={(text) => handleInputChange("annualIncome", text.value)}
               placeholder="Select Income"
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
             />
             {errors.annualIncome && <Text style={styles.errorText}>{errors.annualIncome}</Text>}
           </View>
@@ -1159,12 +1191,16 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={LivingData}
               labelField="label"
               valueField="value"
-              value={biodata?.livingStatus}
+              value={
+                LivingData.find(item => item.label === biodata?.livingStatus)?.value || ''
+              }
               editable={isEditing}
               onChange={(text) => handleInputChange("livingStatus", text.value)}
               placeholder="Select Status"
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
             />
             {errors.livingStatus && <Text style={styles.errorText}>{errors.livingStatus}</Text>}
           </View>
@@ -1219,12 +1255,16 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={ProfileCreatedData}
               labelField="label"
               valueField="value"
-              value={biodata?.profileCreatedBy}
+              value={
+                ProfileCreatedData.find(item => item.label === biodata?.profileCreatedBy)?.value || ''
+              }
               editable={isEditing}
               onChange={(text) => handleInputChange("profileCreatedBy", text.value)}
               placeholder="Select Person"
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
             />
             {errors.profileCreatedBy && <Text style={styles.errorText}>{errors.profileCreatedBy}</Text>}
           </View>
@@ -1270,12 +1310,16 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={MotherOccupationData}
               labelField="label"
               valueField="value"
-              value={biodata?.fatherOccupation}
+              value={
+                MotherOccupationData.find(item => item.label === biodata?.fatherOccupation)?.value || ''
+              }
               editable={isEditing}
               onChange={(text) => handleInputChange("fatherOccupation", text.value)}
               placeholder="Select Occupation"
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
             />
             {errors.fatherOccupation && <Text style={styles.errorText}>{errors.fatherOccupation}</Text>}
           </View>
@@ -1286,12 +1330,16 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={Income}
               labelField="label"
               valueField="value"
-              value={biodata?.fatherIncomeAnnually}
+              value={
+                Income.find(item => item.label === biodata?.fatherIncomeAnnually)?.value || ''
+              }
               editable={isEditing}
               onChange={(text) => handleInputChange("fatherIncomeAnnually", text.value)}
               placeholder="Select Income"
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
             />
             {errors.fatherIncomeAnnually && <Text style={styles.errorText}>{errors.fatherIncomeAnnually}</Text>}
 
@@ -1303,12 +1351,16 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={MotherOccupationData}
               labelField="label"
               valueField="value"
-              value={biodata?.motherOccupation}
+              value={
+                MotherOccupationData.find(item => item.label === biodata?.motherOccupation)?.value || ''
+              }
               editable={isEditing}
               onChange={(text) => handleInputChange("motherOccupation", text.value)}
               placeholder="Select Occupation"
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
             />
             {errors.motherOccupation && <Text style={styles.errorText}>{errors.motherOccupation}</Text>}
           </View>
@@ -1319,12 +1371,16 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={Income}
               labelField="label"
               valueField="value"
-              value={biodata?.motherIncomeAnnually}
+              value={
+                Income.find(item => item.label === biodata?.motherIncomeAnnually)?.value || ''
+              }
               editable={isEditing}
               onChange={(text) => handleInputChange("motherIncomeAnnually", text.value)}
               placeholder="Select Income"
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
             />
             {errors.motherIncomeAnnually && <Text style={styles.errorText}>{errors.motherIncomeAnnually}</Text>}
           </View>
@@ -1336,12 +1392,16 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={FamilyType}
               labelField="label"
               valueField="value"
-              value={biodata?.familyType}
+              value={
+                FamilyType.find(item => item.label === biodata?.familyType)?.value || ''
+              }
               editable={isEditing}
               onChange={(text) => handleInputChange("familyType", text.value)}
               placeholder="Select Type"
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
             />
             {errors.familyType && <Text style={styles.errorText}>{errors.familyType}</Text>}
           </View>
@@ -1358,6 +1418,8 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholder="Select Type"
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
             />
             {errors.siblings && <Text style={styles.errorText}>{errors.siblings}</Text>}
           </View>
@@ -1374,7 +1436,6 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholder='Enter Your Family Info.'
               autoComplete="off"
               textContentType="none"
-
             />
           </View>
           <View>
@@ -1484,12 +1545,16 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={CookingStatus}
               labelField="label"
               valueField="value"
-              value={biodata?.knowCooking}
+              value={
+                CookingStatus.find(item => item.label === biodata?.knowCooking)?.value || ''
+              }
               editable={isEditing}
               onChange={(text) => handleInputChange("knowCooking", text.value)}
               placeholder="Select Status"
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
             />
           </View>
           <View>
@@ -1499,12 +1564,16 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={DietHabit}
               labelField="label"
               valueField="value"
-              value={biodata?.dietaryHabit}
+              value={
+                DietHabit.find(item => item.label === biodata?.dietaryHabit)?.value || ''
+              }
               editable={isEditing}
               onChange={(text) => handleInputChange("dietaryHabit", text.value)}
               placeholder="Select Habit"
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
             />
           </View>
           <View>
@@ -1514,12 +1583,16 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={smokingStatusData}
               labelField="label"
               valueField="value"
-              value={biodata?.smokingHabit}
+              value={
+                smokingStatusData.find(item => item.label === biodata?.smokingHabit)?.value || ''
+              }
               editable={isEditing}
               onChange={(text) => handleInputChange("smokingHabit", text.value)}
               placeholder="Select Status"
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
             />
           </View>
           <View>
@@ -1529,12 +1602,16 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={DrinkingHabit}
               labelField="label"
               valueField="value"
-              value={biodata?.drinkingHabit}
+              value={
+                DrinkingHabit.find(item => item.label === biodata?.drinkingHabit)?.value || ''
+              }
               editable={isEditing}
               onChange={(text) => handleInputChange("drinkingHabit", text.value)}
               placeholder="Select Habit"
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
             />
           </View>
           <View>
@@ -1544,12 +1621,16 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={TobacooHabit}
               labelField="label"
               valueField="value"
-              value={biodata?.tobaccoHabits}
+              value={
+                TobacooHabit.find(item => item.label === biodata?.tobaccoHabits)?.value || ''
+              }
               editable={isEditing}
               onChange={(text) => handleInputChange("tobaccoHabits", text.value)}
               placeholder="Select Habit"
               disabled={!isEditing}
               placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
             />
 
           </View>
@@ -1566,6 +1647,8 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholder='Enter Your Hobbies'
               autoComplete="off"
               textContentType="none"
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
 
             />
           </View>

@@ -468,6 +468,35 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: SH(10),
   },
+   infoRow: {
+      flexDirection: 'row',
+      marginBottom: SH(5),
+    },
+    infoLabel: {
+      width: SW(150),
+     fontfamily:"Poppins-Regular",
+      color: '#000',
+    },
+    infoValue: {
+      flex: 1,
+      color: '#000',
+      flexWrap: 'wrap',
+    },
+   familyDiv:{
+      paddingHorizontal: SW(8),
+      paddingVertical: SH(10),
+      borderRadius: 10,
+      width: "99%",
+      backgroundColor: "#fff", // Ensure background for shadow to show properly
+      marginHorizontal: SW(2),
+      // Updated shadow
+      shadowColor: Colors.theme_color,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.08,
+      shadowRadius: 8,
+      elevation: 4,
+      marginVertical: SH(5),
+    },
 });
 
 export default styles;

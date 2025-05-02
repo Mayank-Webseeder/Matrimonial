@@ -14,6 +14,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 import { showMessage } from 'react-native-flash-message';
+import { Dropdown } from 'react-native-element-dropdown';
 
 export default function ActivistForm({ navigation }) {
   const [subCasteInput, setSubCasteInput] = useState('');
@@ -308,6 +309,13 @@ export default function ActivistForm({ navigation }) {
     return Object.keys(newErrors).length === 0;
   };
 
+  const handleInputChange = (field, value) => {
+    setActivistData(prev => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+  
 
   const handleActivistSave = async () => {
     try {
@@ -422,7 +430,20 @@ export default function ActivistForm({ navigation }) {
           </Text>
         )}
         <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
-        <TextInput
+        <Dropdown
+  style={[Globalstyles.input, !isEditing && styles.readOnly]}
+  data={subCasteOptions}
+  labelField="label"
+  valueField="value"
+  value={ActivistData?.subCaste}
+  editable={isEditing}
+  onChange={(item) => handleInputChange("subCaste", item.value)}
+  placeholder="Select subCaste"
+  placeholderStyle={{ color: '#E7E7E7' }}
+  autoScroll={false}
+  showsVerticalScrollIndicator={false}
+/>
+        {/* <TextInput
           style={Globalstyles.input}
           value={ActivistData?.subCaste}
           onChangeText={handleSubCasteInputChange}
@@ -444,7 +465,7 @@ export default function ActivistForm({ navigation }) {
             )}
             style={Globalstyles.suggestions}
           />
-        ) : null}
+        ) : null} */}
 
 {errors?.subCaste && (
           <Text style={styles.errorText}>

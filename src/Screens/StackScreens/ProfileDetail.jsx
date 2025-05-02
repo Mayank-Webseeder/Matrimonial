@@ -32,7 +32,7 @@ const ProfileDetail = ({ route, navigation }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const hasOtherDetails = profileData?.personalDetails?.knowCooking || profileData?.personalDetails?.dietaryHabit || profileData?.personalDetails?.smokingHabit ||
         profileData?.personalDetails?.drinkingHabit || profileData?.personalDetails?.tobaccoHabits || profileData?.personalDetails?.hobbies;
-
+    const personalDetails = profileData?.personalDetails;
 
     const Myimages = [
         profileData?.personalDetails?.closeUpPhoto,
@@ -255,8 +255,7 @@ const ProfileDetail = ({ route, navigation }) => {
             <View style={Globalstyles.header}>
                 <View style={{ flex: 1, flexDirection: 'row', alignContent: "center" }}>
                     <TouchableOpacity
-                        // onPress={() => navigation.goBack()}
-                        onPress={() => navigation.pop()}
+                        onPress={() => navigation.navigate("MainApp")}
                     >
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
@@ -409,38 +408,70 @@ const ProfileDetail = ({ route, navigation }) => {
                                             <Text style={styles.text}>{profileData.personalDetails.currentCity}</Text>
                                         )}
                                         {profileData?.personalDetails?.occupation && (
-                                            <Text style={styles.text}>{profileData.personalDetails.occupation}</Text>
+                                            <Text style={[styles.text, { textTransform: "none" }]}>{profileData.personalDetails.occupation}</Text>
                                         )}
                                         {profileData?.personalDetails?.annualIncome && (
                                             <Text style={[styles.text, { textTransform: "none" }]}>{profileData.personalDetails.annualIncome}</Text>
                                         )}
                                         {profileData?.personalDetails?.qualification && (
-                                            <Text style={styles.text}>{profileData.personalDetails.qualification}</Text>
+                                            <Text style={[styles.text, { textTransform: "none" }]}>{profileData.personalDetails.qualification}</Text>
                                         )}
                                     </View>
                                 </View>
 
                                 {/* Horoscope Section */}
-                                {profileData?.personalDetails?.dob && (
-                                    <View style={styles.flexContainer1}>
+                                {personalDetails?.dob && (
+                                    <View style={styles.familyDiv}>
                                         <View>
                                             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
-                                                <MaterialIcons name={"stars"} size={25} color={Colors.theme_color} />
-                                                <Text style={styles.HeadingText}> Horoscope</Text>
+                                                <MaterialIcons name="stars" size={25} color={Colors.theme_color} />
+                                                <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Horoscope</Text>
                                             </View>
-                                            <Text style={styles.text}>DOB {moment(profileData?.personalDetails?.dob).format("DD-MM-YYYY")} / Time: {profileData?.personalDetails?.timeOfBirth}</Text>
-                                            {profileData?.personalDetails?.placeofbirth && (
-                                                <Text style={styles.text}>Place of Birth: {profileData.personalDetails.placeofbirth}</Text>
-                                            )}
-                                        </View>
-                                        <View style={styles.flexContainer2}>
-                                            {profileData?.personalDetails?.nadi && <Text style={styles.text}>Nadi: {profileData?.personalDetails?.nadi}</Text>}
-                                            {profileData?.personalDetails?.gotraSelf && <Text style={styles.text}>Gotra (Self): {profileData?.personalDetails?.gotraSelf}</Text>}
-                                        </View>
 
-                                        <View style={styles.flexContainer2}>
-                                            {profileData?.personalDetails?.manglikStatus && <Text style={styles.text}>{profileData?.personalDetails?.manglikStatus}</Text>}
-                                            {profileData?.personalDetails?.gotraMother && <Text style={styles.text}>Gotra (Mother): {profileData?.personalDetails?.gotraMother}</Text>}
+                                            {/* Displaying Date of Birth and Time of Birth */}
+                                            <View style={styles.infoRow}>
+                                                <Text style={styles.infoLabel}>DOB :</Text>
+                                                <Text style={styles.infoValue}>{moment(personalDetails.dob).format("DD-MM-YYYY")} / Time: {personalDetails?.timeOfBirth}</Text>
+                                            </View>
+
+                                            {/* Displaying Place of Birth */}
+                                            {personalDetails?.placeofbirth && (
+                                                <View style={styles.infoRow}>
+                                                    <Text style={styles.infoLabel}>Place of Birth :</Text>
+                                                    <Text style={styles.infoValue}>{personalDetails?.placeofbirth}</Text>
+                                                </View>
+                                            )}
+
+                                            {/* Optional Details for Horoscope */}
+                                            <View>
+                                                {personalDetails?.nadi && (
+                                                    <View style={styles.infoRow}>
+                                                        <Text style={styles.infoLabel}>Nadi :</Text>
+                                                        <Text style={styles.infoValue}>{personalDetails?.nadi}</Text>
+                                                    </View>
+                                                )}
+
+                                                {personalDetails?.gotraSelf && (
+                                                    <View style={styles.infoRow}>
+                                                        <Text style={styles.infoLabel}>Gotra (Self) :</Text>
+                                                        <Text style={styles.infoValue}>{personalDetails?.gotraSelf}</Text>
+                                                    </View>
+                                                )}
+
+                                                {personalDetails?.manglikStatus && (
+                                                    <View style={styles.infoRow}>
+                                                        <Text style={styles.infoLabel}>Manglik Status :</Text>
+                                                        <Text style={styles.infoValue}>{personalDetails?.manglikStatus}</Text>
+                                                    </View>
+                                                )}
+
+                                                {personalDetails?.gotraMother && (
+                                                    <View style={styles.infoRow}>
+                                                        <Text style={styles.infoLabel}>Gotra (Mother) :</Text>
+                                                        <Text style={styles.infoValue}>{personalDetails?.gotraMother}</Text>
+                                                    </View>
+                                                )}
+                                            </View>
                                         </View>
                                     </View>
                                 )}
@@ -448,58 +479,108 @@ const ProfileDetail = ({ route, navigation }) => {
                         </View>
 
                         {/* About Me Section */}
-                        {(profileData?.personalDetails &&
-                            (profileData?.personalDetails?.aboutMe ||
-                                profileData?.personalDetails?.complexion ||
-                                profileData?.personalDetails?.weight ||
-                                profileData?.personalDetails?.livingStatus)) && (
-                                <View style={styles.flexContainer1}>
-                                    <View>
-                                        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
-                                            <MaterialCommunityIcons name="account-box-outline" size={25} color={Colors.theme_color} />
-                                            <Text style={styles.HeadingText}> About Me</Text>
-                                        </View>
+                        <View style={styles.familyDiv}>
+                            <View>
+                                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
+                                    <MaterialCommunityIcons name="account-box-outline" size={25} color={Colors.theme_color} />
+                                    <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>About Me</Text>
+                                </View>
 
-                                        {profileData?.personalDetails?.aboutMe && (
-                                            <Text style={styles.text}>{profileData?.personalDetails?.aboutMe}</Text>
+                                {personalDetails?.aboutMe?.trim() !== "" && (
+                                    <Text style={styles.text}>{personalDetails?.aboutMe}</Text>
+                                )}
+
+                                <View style={{ marginVertical: SH(4) }}>
+                                    <View style={styles.infoRow}>
+                                        {personalDetails?.complexion && (
+                                            <>
+                                                <Text style={styles.infoLabel}>Complexion :</Text>
+                                                <Text style={styles.infoValue}>{personalDetails.complexion}</Text>
+                                            </>
                                         )}
+                                    </View>
 
-                                        <View style={styles.flexContainer4}>
-                                            {profileData?.personalDetails?.complexion && (
-                                                <Text style={styles.text}>Complexion: {profileData?.personalDetails?.complexion}</Text>
-                                            )}
-                                            {profileData?.personalDetails?.weight && (
-                                                <Text style={styles.text}>Weight: {profileData?.personalDetails?.weight} kg</Text>
-                                            )}
-                                        </View>
+                                    <View style={styles.infoRow}>
+                                        {personalDetails?.weight && (
+                                            <>
+                                                <Text style={styles.infoLabel}>Weight :</Text>
+                                                <Text style={styles.infoValue}>{personalDetails.weight} kg</Text>
+                                            </>
+                                        )}
+                                    </View>
 
-                                        <View style={styles.flexContainer4}>
-                                            {profileData?.personalDetails?.livingStatus && (
-                                                <Text style={styles.text}>Living with family: {profileData?.personalDetails?.livingStatus}</Text>
-                                            )}
-                                        </View>
+                                    <View style={styles.infoRow}>
+                                        {personalDetails?.livingStatus && (
+                                            <>
+                                                <Text style={styles.infoLabel}>Living with family :</Text>
+                                                <Text style={styles.infoValue}>{personalDetails.livingStatus}</Text>
+                                            </>
+                                        )}
                                     </View>
                                 </View>
-                            )}
+                            </View>
+                        </View>
 
 
                         {/* Family Section */}
-                        {profileData?.personalDetails?.fatherName && (
-                            <View style={styles.flexContainer1}>
-                                <View>
-                                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
-                                        <FontAwesome name="group" size={20} color={Colors.theme_color} />
-                                        <Text style={styles.HeadingText}> Family Section</Text>
-                                    </View>
-                                    {profileData?.personalDetails?.fatherName && <Text style={styles.text}>Father’s Name: {profileData?.personalDetails.fatherName}</Text>}
-                                    {profileData?.personalDetails?.fatherOccupation && <Text style={styles.text}>Father’s Occupation: {profileData?.personalDetails.fatherOccupation}</Text>}
-                                    {profileData?.personalDetails?.motherName && <Text style={styles.text}>Mother’s Name: {profileData?.personalDetails.motherName}</Text>}
-                                    {profileData?.personalDetails?.fatherIncomeAnnually && <Text style={[styles.text, { textTransform: "none" }]}>Father Income: {profileData?.personalDetails.fatherIncomeAnnually}</Text>}
-                                    {profileData?.personalDetails?.motherIncomeAnnually && <Text style={[styles.text, { textTransform: "none" }]}>Mother Income: {profileData?.personalDetails.motherIncomeAnnually}</Text>}
-                                    {profileData?.personalDetails?.familyType && <Text style={styles.text}>Family Type: {profileData?.personalDetails.familyType}</Text>}
+                        <View style={[styles.familyDiv]}>
+                            <View>
+                                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
+                                    <FontAwesome name="group" size={20} color={Colors.theme_color} />
+                                    <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Family Section</Text>
                                 </View>
+
+                                {personalDetails?.fatherName && (
+                                    <View style={styles.infoRow}>
+                                        <Text style={styles.infoLabel}>Father’s Name :</Text>
+                                        <Text style={styles.infoValue}>{personalDetails.fatherName}</Text>
+                                    </View>
+                                )}
+                                {personalDetails?.motherName && (
+                                    <View style={styles.infoRow}>
+                                        <Text style={styles.infoLabel}>Mother’s Name :</Text>
+                                        <Text style={styles.infoValue}>{personalDetails.motherName}</Text>
+                                    </View>
+                                )}
+                                {personalDetails?.fatherOccupation && (
+                                    <View style={styles.infoRow}>
+                                        <Text style={styles.infoLabel}>Father’s Occupation :</Text>
+                                        <Text style={styles.infoValue}>{personalDetails.fatherOccupation}</Text>
+                                    </View>
+                                )}
+                                {personalDetails?.fatherIncomeAnnually && (
+                                    <View style={styles.infoRow}>
+                                        <Text style={styles.infoLabel}>Father Income :</Text>
+                                        <Text style={styles.infoValue}>{personalDetails.fatherIncomeAnnually}</Text>
+                                    </View>
+                                )}
+                                {personalDetails?.motherOccupation && (
+                                    <View style={styles.infoRow}>
+                                        <Text style={styles.infoLabel}>Mother’s Occupation :</Text>
+                                        <Text style={styles.infoValue}>{personalDetails.motherOccupation}</Text>
+                                    </View>
+                                )}
+                                {personalDetails?.motherIncomeAnnually && (
+                                    <View style={styles.infoRow}>
+                                        <Text style={styles.infoLabel}>Mother’s Income :</Text>
+                                        <Text style={styles.infoValue}>{personalDetails.motherIncomeAnnually}</Text>
+                                    </View>
+                                )}
+                                {personalDetails?.siblings && (
+                                    <View style={styles.infoRow}>
+                                        <Text style={styles.infoLabel}>Siblings :</Text>
+                                        <Text style={styles.infoValue}>{personalDetails.siblings}</Text>
+                                    </View>
+                                )}
+                                {personalDetails?.familyType && (
+                                    <View style={styles.infoRow}>
+                                        <Text style={styles.infoLabel}>Family Type :</Text>
+                                        <Text style={styles.infoValue}>{personalDetails.familyType}</Text>
+                                    </View>
+                                )}
                             </View>
-                        )}
+
+                        </View>
 
                         {
                             profileData?.personalDetails?.otherFamilyMemberInfo && (
@@ -516,13 +597,34 @@ const ProfileDetail = ({ route, navigation }) => {
                         {/* Contact Section */}
                         <View style={styles.detailbox}>
                             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
-                                <AntDesign name={"contacts"} size={25} color={Colors.theme_color} />
-                                <Text style={styles.HeadingText}> Contact Details</Text>
+                                <AntDesign name="contacts" size={25} color={Colors.theme_color} />
+                                <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Contact Details</Text>
                             </View>
-                            {profileData?.personalDetails?.contactNumber1 && <Text style={styles.text}>Mobile No. 1: {profileData?.personalDetails.contactNumber1}</Text>}
-                            {profileData?.personalDetails?.contactNumber2 && <Text style={styles.text}>Mobile No. 2: {profileData?.personalDetails.contactNumber2}</Text>}
-                            {profileData?.personalDetails?.cityOrVillage && <Text style={styles.text}>City : {profileData?.personalDetails.cityOrVillage}</Text>}
-                            {profileData?.personalDetails?.state && <Text style={styles.text}>State : {profileData?.personalDetails.state}</Text>}
+
+                            {personalDetails?.contactNumber1 && (
+                                <View style={styles.infoRow}>
+                                    <Text style={styles.infoLabel}>Mobile No. 1 :</Text>
+                                    <Text style={styles.infoValue}>{personalDetails.contactNumber1}</Text>
+                                </View>
+                            )}
+                            {personalDetails?.contactNumber2 && (
+                                <View style={styles.infoRow}>
+                                    <Text style={styles.infoLabel}>Mobile No. 2 :</Text>
+                                    <Text style={styles.infoValue}>{personalDetails.contactNumber2}</Text>
+                                </View>
+                            )}
+                            {personalDetails?.cityOrVillage && (
+                                <View style={styles.infoRow}>
+                                    <Text style={styles.infoLabel}>City :</Text>
+                                    <Text style={styles.infoValue}>{personalDetails.cityOrVillage}</Text>
+                                </View>
+                            )}
+                            {personalDetails?.state && (
+                                <View style={styles.infoRow}>
+                                    <Text style={styles.infoLabel}>State :</Text>
+                                    <Text style={styles.infoValue}>{personalDetails.state}</Text>
+                                </View>
+                            )}
                         </View>
 
                         {/* Other Details */}
@@ -554,61 +656,142 @@ const ProfileDetail = ({ route, navigation }) => {
                             </View>
                         )}
 
+                        {
+                            personalDetails?.otherFamilyMemberInfo && (
+                                <View style={styles.detailbox}>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
+                                        <FontAwesome name="group" size={20} color={Colors.theme_color} />
+                                        <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Family's Other Details</Text>
+                                    </View>
+                                    {personalDetails?.otherFamilyMemberInfo && (
+                                        <View style={styles.infoRow}>
+                                            <Text style={styles.infoLabel}>Other Family Members:</Text>
+                                            <Text style={styles.infoValue}>{personalDetails.otherFamilyMemberInfo}</Text>
+                                        </View>
+                                    )}
+                                </View>
+                            )
+                        }
+
                         {profileData?.partnerPreferences && Object.keys(profileData.partnerPreferences).length > 0 && (
-                            <View style={styles.detailbox}>
+                            <View style={styles.familyDiv}>
                                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
                                     <MaterialCommunityIcons name="account-search" size={25} color={Colors.theme_color} />
                                     <Text style={[styles.HeadingText, { marginLeft: 8 }]}>My Partner Preferences</Text>
                                 </View>
                                 <View>
                                     {profileData.partnerPreferences.partnerBodyStructure && (
-                                        <Text style={styles.text}>Body Structure: {profileData.partnerPreferences.partnerBodyStructure}</Text>
+                                        <View style={styles.infoRow}>
+                                            <Text style={styles.infoLabel}>Body Structure:</Text>
+                                            <Text style={styles.infoValue}>{profileData.partnerPreferences.partnerBodyStructure}</Text>
+                                        </View>
                                     )}
+
                                     {profileData.partnerPreferences.partnerDietaryHabits && (
-                                        <Text style={styles.text}>Diet: {profileData.partnerPreferences.partnerDietaryHabits}</Text>
+                                        <View style={styles.infoRow}>
+                                            <Text style={styles.infoLabel}>Diet:</Text>
+                                            <Text style={styles.infoValue}>{profileData.partnerPreferences.partnerDietaryHabits}</Text>
+                                        </View>
                                     )}
+
                                     {profileData.partnerPreferences.partnerSmokingHabits && (
-                                        <Text style={styles.text}>Smoke: {profileData.partnerPreferences.partnerSmokingHabits}</Text>
+                                        <View style={styles.infoRow}>
+                                            <Text style={styles.infoLabel}>Smoke:</Text>
+                                            <Text style={styles.infoValue}>{profileData.partnerPreferences.partnerSmokingHabits}</Text>
+                                        </View>
                                     )}
+
                                     {profileData.partnerPreferences.partnerDrinkingHabits && (
-                                        <Text style={styles.text}>Drinking: {profileData.partnerPreferences.partnerDrinkingHabits}</Text>
+                                        <View style={styles.infoRow}>
+                                            <Text style={styles.infoLabel}>Drinking:</Text>
+                                            <Text style={styles.infoValue}>{profileData.partnerPreferences.partnerDrinkingHabits}</Text>
+                                        </View>
                                     )}
+
                                     {profileData.partnerPreferences.partnerDisabilities && (
-                                        <Text style={styles.text}>Disabilities: {profileData.partnerPreferences.partnerDisabilities}</Text>
+                                        <View style={styles.infoRow}>
+                                            <Text style={styles.infoLabel}>Disabilities:</Text>
+                                            <Text style={styles.infoValue}>{profileData.partnerPreferences.partnerDisabilities}</Text>
+                                        </View>
                                     )}
+
                                     {profileData.partnerPreferences.partnerManglikStatus && (
-                                        <Text style={styles.text}>{profileData.partnerPreferences.partnerManglikStatus}</Text>
+                                        <View style={styles.infoRow}>
+                                            <Text style={styles.infoLabel}>Manglik Status:</Text>
+                                            <Text style={styles.infoValue}>{profileData.partnerPreferences.partnerManglikStatus}</Text>
+                                        </View>
                                     )}
+
                                     {profileData.partnerPreferences.partnerFamilyType && (
-                                        <Text style={styles.text}>Family Type: {profileData.partnerPreferences.partnerFamilyType}</Text>
+                                        <View style={styles.infoRow}>
+                                            <Text style={styles.infoLabel}>Family Type:</Text>
+                                            <Text style={styles.infoValue}>{profileData.partnerPreferences.partnerFamilyType}</Text>
+                                        </View>
                                     )}
+
                                     {profileData.partnerPreferences.partnerMinAge && profileData.partnerPreferences.partnerMaxAge && (
-                                        <Text style={styles.text}>Age Range: {profileData.partnerPreferences.partnerMinAge} - {profileData.partnerPreferences.partnerMaxAge} yrs</Text>
+                                        <View style={styles.infoRow}>
+                                            <Text style={styles.infoLabel}>Age Range:</Text>
+                                            <Text style={styles.infoValue}>
+                                                {profileData.partnerPreferences.partnerMinAge} - {profileData.partnerPreferences.partnerMaxAge} yrs
+                                            </Text>
+                                        </View>
                                     )}
+
                                     {profileData.partnerPreferences.partnerMinHeightFeet && profileData.partnerPreferences.partnerMaxHeightFeet && (
-                                        <Text style={styles.text}>Height Range: {profileData.partnerPreferences.partnerMinHeightFeet} Min - {profileData.partnerPreferences.partnerMaxHeightFeet} Max</Text>
+                                        <View style={styles.infoRow}>
+                                            <Text style={styles.infoLabel}>Height Range:</Text>
+                                            <Text style={styles.infoValue}>
+                                                {profileData.partnerPreferences.partnerMinHeightFeet} Min - {profileData.partnerPreferences.partnerMaxHeightFeet} Max
+                                            </Text>
+                                        </View>
                                     )}
+
                                     {profileData.partnerPreferences.partnerIncome && (
-                                        <Text style={[styles.text, { textTransform: "none" }]}>Income: {profileData.partnerPreferences.partnerIncome}</Text>
+                                        <View style={styles.infoRow}>
+                                            <Text style={styles.infoLabel}>Income:</Text>
+                                            <Text style={styles.infoValue}>{profileData.partnerPreferences.partnerIncome}</Text>
+                                        </View>
                                     )}
+
                                     {profileData.partnerPreferences.partnerOccupation && (
-                                        <Text style={styles.text}>Occupation: {profileData.partnerPreferences.partnerOccupation}</Text>
+                                        <View style={styles.infoRow}>
+                                            <Text style={styles.infoLabel}>Occupation:</Text>
+                                            <Text style={styles.infoValue}>{profileData.partnerPreferences.partnerOccupation}</Text>
+                                        </View>
                                     )}
+
                                     {profileData.partnerPreferences.partnerQualification && (
-                                        <Text style={styles.text}>Qualification: {profileData.partnerPreferences.partnerQualification}</Text>
+                                        <View style={styles.infoRow}>
+                                            <Text style={styles.infoLabel}>Qualification:</Text>
+                                            <Text style={styles.infoValue}>{profileData.partnerPreferences.partnerQualification}</Text>
+                                        </View>
                                     )}
+
                                     {profileData.partnerPreferences.partnerState && (
-                                        <Text style={styles.text}>State: {profileData.partnerPreferences.partnerState}</Text>
+                                        <View style={styles.infoRow}>
+                                            <Text style={styles.infoLabel}>State:</Text>
+                                            <Text style={styles.infoValue}>{profileData.partnerPreferences.partnerState}</Text>
+                                        </View>
                                     )}
+
                                     {profileData.partnerPreferences.partnerCity && (
-                                        <Text style={styles.text}>City: {profileData.partnerPreferences.partnerCity}</Text>
+                                        <View style={styles.infoRow}>
+                                            <Text style={styles.infoLabel}>City:</Text>
+                                            <Text style={styles.infoValue}>{profileData.partnerPreferences.partnerCity}</Text>
+                                        </View>
                                     )}
+
                                     {profileData.partnerPreferences.partnerExpectations && (
-                                        <Text style={styles.text}> Expectation with partner : {profileData.partnerPreferences.partnerExpectations}</Text>
+                                        <View style={styles.infoRow}>
+                                            <Text style={styles.infoLabel}>Expectation with partner:</Text>
+                                            <Text style={styles.infoValue}>{profileData.partnerPreferences.partnerExpectations}</Text>
+                                        </View>
                                     )}
                                 </View>
                             </View>
                         )}
+
 
                     </>
                 )}

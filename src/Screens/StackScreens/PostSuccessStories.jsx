@@ -115,7 +115,7 @@ const PostSuccessStories = ({ navigation }) => {
                 });
 
                 setTimeout(() => {
-                    navigation.navigate('MainApp');
+                    navigation.goBack();
                 }, 2000);
             } else {
                 throw new Error(response.data.message || "Something went wrong!");

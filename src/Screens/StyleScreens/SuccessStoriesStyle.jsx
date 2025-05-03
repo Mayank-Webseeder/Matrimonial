@@ -68,7 +68,10 @@ const styles = StyleSheet.create({
   },
   ratingText: {
     fontStyle: 'italic',
+    marginTop: SH(4),
+    fontSize: SF(14),
     color: '#555',
+    lineHeight: SH(20),
   },
   ratingQuote: {
     fontStyle: 'italic',

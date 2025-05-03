@@ -1064,6 +1064,14 @@ const ProfileDetail = ({ route, navigation }) => {
                                     </>
                                 ) : null}
                             </View>
+                            
+                            {profileData?.experience ? (
+                                <>
+                                    <Text style={styles.sectionTitle}>Experience </Text>
+                                    <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} years of experience` : ''}</Text>
+                                </>
+                            ) : null}
+
                             <View style={styles.section}>
                                 <Text style={styles.sectionTitle}>Services List</Text>
                                 <View style={styles.servicesGrid}>
@@ -1242,6 +1250,13 @@ const ProfileDetail = ({ route, navigation }) => {
                                     </>
                                 ) : null}
                             </View>
+                            {profileData?.experience ? (
+                                <>
+                                    <Text style={styles.sectionTitle}>Experience </Text>
+                                    <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} years of experience` : ''}</Text>
+                                </>
+                            ) : null}
+
                             <View style={styles.section}>
                                 <Text style={styles.sectionTitle}>Services List</Text>
                                 <View style={styles.servicesGrid}>

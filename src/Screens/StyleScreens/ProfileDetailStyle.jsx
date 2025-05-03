@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   section: {
-    marginBottom: SH(5),
+    marginVertical: SH(5),
   },
   sectionTitle: {
     fontSize: SF(15),
@@ -451,6 +451,19 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginBottom: SH(10),
+  },
+  viewMoreButton: {
+    paddingHorizontal: SW(4),
+    backgroundColor: Colors.theme_color,
+    borderRadius: 5,
+    marginHorizontal: SW(100),
+    paddingVertical: SW(3),
+  },
+  viewMoreText: {
+    fontSize: SF(13),
+    color: Colors.light,
+    fontFamily: "poppins-Regular",
+    textAlign: "center"
   },
   noReviewsContainer: {
     alignItems: 'center',

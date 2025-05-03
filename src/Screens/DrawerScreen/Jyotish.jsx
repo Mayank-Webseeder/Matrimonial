@@ -422,7 +422,7 @@ const Jyotish = ({ navigation }) => {
           )}
         </View>
       </View>
-      <ScrollView showsHorizontalScrollIndicator={false} refreshControl={
+      <ScrollView showsVerticalScrollIndicator={false} refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }>
         <View style={Globalstyles.sliderContainer}>

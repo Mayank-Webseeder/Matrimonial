@@ -819,6 +819,12 @@ const ProfileDetail = ({ route, navigation }) => {
                                     <Text style={styles.city}>{profileData?.state}</Text>
                                 </View>
 
+                                {profileData?.residentialAddress ? (
+                                    <Text style={styles.text} numberOfLines={1}>
+                                        {profileData.residentialAddress}
+                                    </Text>
+                                ) : null}
+
                                 <View style={styles.FlexContainer}>
                                     <Rating
                                         type="star"
@@ -831,7 +837,6 @@ const ProfileDetail = ({ route, navigation }) => {
                                         {profileData?.ratings?.length > 0 ? `${profileData?.ratings?.length} Reviews` : "No Ratings Yet"}
                                     </Text>
                                 </View>
-                                <Text style={styles.text} numberOfLines={1}>{profileData?.residentialAddress}</Text>
                             </View>
                         </View>
                         <View style={styles.contentContainer}>
@@ -871,6 +876,14 @@ const ProfileDetail = ({ route, navigation }) => {
                                     </>
                                 ) : null}
                             </View>
+
+                            {profileData?.experience ? (
+                                <>
+                                    <Text style={styles.sectionTitle}>Experience </Text>
+                                    <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} years of experience` : ''}</Text>
+                                </>
+                            ) : null}
+
                             <View style={styles.section}>
                                 <Text style={styles.sectionTitle}>Services List</Text>
                                 <View style={styles.servicesGrid}>
@@ -1123,11 +1136,11 @@ const ProfileDetail = ({ route, navigation }) => {
                                     </>
                                 ) : (
                                     <View style={styles.noReviewsContainer}>
-                                        <Text style={styles.noReviewsTitle}>No Reviews Yet</Text>
-                                        <Text style={styles.noReviewsSubtitle}>Newly uploaded reviews will appear here.</Text>
-                                    </View>
+                                    <Text style={styles.noReviewsTitle}>Reviews will show up here</Text>
+                                    <Text style={styles.noReviewsSubtitle}>You'll see others' feedback once they post it.</Text>
+                                  </View>
                                 )}
-
+                                
                             </View>
                         </View>
                         <View style={styles.container}>

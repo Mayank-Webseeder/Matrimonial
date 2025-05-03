@@ -509,7 +509,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
                             autoScroll={false}
                             showsVerticalScrollIndicator={false}
                         />
-                        <Text style={Globalstyles.title}>Partners Livein  </Text>
+                        {/* <Text style={Globalstyles.title}>Partners Livein  </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={PartnersLiveinData}
@@ -522,7 +522,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
                             placeholderStyle={{ color: '#E7E7E7' }}
                             autoScroll={false}
                             showsVerticalScrollIndicator={false}
-                        />
+                        /> */}
                         <Text style={[Globalstyles.title, { color: Colors.theme_color }]}>Locality</Text>
                         <Text style={Globalstyles.title}>State  </Text>
                         <TextInput
@@ -570,7 +570,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                 style={Globalstyles.suggestions}
                             />
                         ) : null}
-                        <Text style={Globalstyles.title}>Partners body Structure  </Text>
+                        {/* <Text style={Globalstyles.title}>Partners body Structure  </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={BodyStructureData}
@@ -582,7 +582,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
                             placeholder="Select structure" placeholderStyle={{ color: '#E7E7E7' }}
                             autoScroll={false}
                             showsVerticalScrollIndicator={false}
-                        />
+                        /> */}
                         <Text style={Globalstyles.title}>Complexion  </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
@@ -652,7 +652,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
                             onChange={(item) => setBiodata({ ...biodata, partnerFamilyType: item.value })}
                             autoScroll={false}
                             showsVerticalScrollIndicator={false} />
-                        <Text style={Globalstyles.title}>Family Financial Status  </Text>
+                        {/* <Text style={Globalstyles.title}>Family Financial Status  </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={FamilyFinancialStatusData}
@@ -665,8 +665,8 @@ const PartnersPreference = ({ navigation, profileData }) => {
                             onChange={(item) => setBiodata({ ...biodata, partnerFamilyFinancialStatus: item.value })}
                             autoScroll={false}
                             showsVerticalScrollIndicator={false}
-                        />
-                        <Text style={Globalstyles.title}>Family Income  </Text>
+                        /> */}
+                        {/* <Text style={Globalstyles.title}>Family Income  </Text>
                         <Dropdown
                             style={Globalstyles.input}
                             data={PartnerFamliyIncome}
@@ -679,7 +679,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
                             onChange={(item) => setBiodata({ ...biodata, partnerFamilyIncome: item.value })}
                             autoScroll={false}
                             showsVerticalScrollIndicator={false}
-                        />
+                        /> */}
                         <Text style={Globalstyles.title}>Expectations from Partner  </Text>
                         <TextInput style={Globalstyles.textInput}
                             multiline={true} numberOfLines={6}

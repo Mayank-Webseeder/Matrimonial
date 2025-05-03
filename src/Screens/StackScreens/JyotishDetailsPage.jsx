@@ -151,7 +151,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                         description: item.description,
                         image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
                         resolution: mediaItem.resolution,
-                        hyperlink: mediaItem.hyperlink, 
+                        hyperlink: mediaItem.hyperlink,
                     }))
                 );
 
@@ -247,12 +247,12 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
     const renderImages = (images) => {
         if (!images || images.length === 0) {
             return (
-              <View style={styles.noImagesContainer}>
-                <MaterialIcons name="hide-image" size={40} color={Colors.gray} style={styles.icon} />
-                <Text style={styles.noImagesText}>No additional photos available for this post</Text>
-              </View>
+                <View style={styles.noImagesContainer}>
+                    <MaterialIcons name="hide-image" size={40} color={Colors.gray} style={styles.icon} />
+                    <Text style={styles.noImagesText}>No additional photos available for this post</Text>
+                </View>
             );
-          }
+        }
 
         const rows = [];
         for (let i = 0; i < images.length; i += 2) {
@@ -359,6 +359,12 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                             <Text style={styles.city}>{profileData?.state}</Text>
                         </View>
 
+                        {profileData?.residentialAddress ? (
+                            <Text style={styles.text} numberOfLines={1}>
+                                {profileData.residentialAddress}
+                            </Text>
+                        ) : null}
+
                         <View style={styles.FlexContainer}>
                             <Rating
                                 type="star"
@@ -372,7 +378,6 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                             </Text>
                         </View>
 
-                        <Text style={styles.text} numberOfLines={1}>{profileData?.residentialAddress}</Text>
                     </View>
                 </View>
 
@@ -434,6 +439,14 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                             </Text>
                         </TouchableOpacity>
                     </View>
+
+                    {profileData?.experience ? (
+                        <>
+                            <Text style={styles.sectionTitle}>Experience </Text>
+                            <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} years of experience` : ''}</Text>
+                        </>
+                    ) : null}
+
                     <View>
                         <Text style={styles.sectionTitle}>Services List</Text>
                         <View style={styles.servicesGrid}>
@@ -554,9 +567,9 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                         </>
                     ) : (
                         <View style={styles.noReviewsContainer}>
-                        <Text style={styles.noReviewsTitle}>No Reviews Yet</Text>
-                        <Text style={styles.noReviewsSubtitle}>Newly uploaded reviews will appear here.</Text>
-                    </View>
+                        <Text style={styles.noReviewsTitle}>Reviews will show up here</Text>
+                        <Text style={styles.noReviewsSubtitle}>You'll see others' feedback once they post it.</Text>
+                      </View>
                     )}
 
                 </View>
@@ -591,24 +604,24 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                         data={slider}
                         renderItem={({ item }) => {
                             const { width, height } = item.resolution;
-                          
+
                             const handlePress = () => {
-                              if (item.hyperlink) {
-                                Linking.openURL(item.hyperlink).catch(err =>
-                                  console.error("Failed to open URL:", err)
-                                );
-                              }
+                                if (item.hyperlink) {
+                                    Linking.openURL(item.hyperlink).catch(err =>
+                                        console.error("Failed to open URL:", err)
+                                    );
+                                }
                             };
-                          
+
                             return (
-                              <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
-                                <Image
-                                  source={{ uri: item.image }}
-                                  style={{ width, height, resizeMode: 'cover' }}
-                                />
-                              </TouchableOpacity>
+                                <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                                    <Image
+                                        source={{ uri: item.image }}
+                                        style={{ width, height, resizeMode: 'cover' }}
+                                    />
+                                </TouchableOpacity>
                             );
-                          }}                          
+                        }}
                         showNextButton={false}
                         showDoneButton={false}
                         dotStyle={Globalstyles.dot}

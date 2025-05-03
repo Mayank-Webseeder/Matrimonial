@@ -167,7 +167,7 @@ const SuccessStories = ({ navigation }) => {
         >
           <Image
             source={{ uri: item.photoUrl }}
-            style={{ width: '100%', aspectRatio: 1 }}
+            style={{ width: '100%', height: SH(300) }}
             resizeMode="cover"
           />
         </TouchableOpacity>
@@ -183,16 +183,18 @@ const SuccessStories = ({ navigation }) => {
           {item.groomName || 'NA'} ❤️ {item.brideName || 'NA'}
         </Text>
 
-        <Text style={styles.thought}>{item.thought}</Text>
-
-        <View style={styles.ratingRow}>{renderStars(item.rating)}</View>
+        <View style={styles.ratingRow}>
+          <Text style={styles.ratingText}>
+            🌟 {item.rating}/5 App Rating
+          </Text>
+          <Text style={styles.ratingQuote}>
+          “ Brahmin Milan helped us find each other — <Text style={styles.thought}>{item.thought}</Text>”
+          </Text>
+        </View>
       </View>
 
     );
   };
-
-
-
 
   return (
     <SafeAreaView style={Globalstyles.container}>

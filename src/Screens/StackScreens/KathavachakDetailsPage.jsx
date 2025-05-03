@@ -363,6 +363,12 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                             <Text style={styles.city}>{profileData?.state}</Text>
                         </View>
 
+                        {profileData?.residentialAddress ? (
+                            <Text style={styles.text} numberOfLines={1}>
+                                {profileData.residentialAddress}
+                            </Text>
+                        ) : null}
+
                         <View style={styles.FlexContainer}>
                             <Rating
                                 type="star"
@@ -375,8 +381,6 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                                 {profileData?.ratings?.length > 0 ? `${profileData.ratings.length} Reviews` : "No Ratings Yet"}
                             </Text>
                         </View>
-
-                        <Text style={styles.text} numberOfLines={1}>{profileData?.residentialAddress}</Text>
                     </View>
                 </View>
                 <View style={styles.contentContainer}>
@@ -437,6 +441,15 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                             </Text>
                         </TouchableOpacity>
                     </View>
+
+
+                    {profileData?.experience ? (
+                        <>
+                            <Text style={styles.sectionTitle}>Experience </Text>
+                            <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} years of experience` : ''}</Text>
+                        </>
+                    ) : null}
+
                     <View>
                         <Text style={styles.sectionTitle}>Services List</Text>
                         <View style={styles.servicesGrid}>
@@ -558,9 +571,9 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                         </>
                     ) : (
                         <View style={styles.noReviewsContainer}>
-                            <Text style={styles.noReviewsTitle}>No Reviews Yet</Text>
-                            <Text style={styles.noReviewsSubtitle}>Newly uploaded reviews will appear here.</Text>
-                        </View>
+                        <Text style={styles.noReviewsTitle}>Reviews will show up here</Text>
+                        <Text style={styles.noReviewsSubtitle}>You'll see others' feedback once they post it.</Text>
+                      </View>
                     )}
                 </View>
 

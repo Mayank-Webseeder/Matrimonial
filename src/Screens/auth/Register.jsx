@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, ImageBackground, TouchableOpacity, TextInput, ScrollView, SafeAreaView, ActivityIndicator, FlatList } from "react-native";
+import { Text, View, ImageBackground, TouchableOpacity, TextInput, ScrollView, SafeAreaView, ActivityIndicator, FlatList, Pressable } from "react-native";
 import styles from "../StyleScreens/RegisterStyle";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -121,7 +121,7 @@ const Register = ({ navigation }) => {
 
     const handleSendOtp = async () => {
         if (!/^\d{10}$/.test(mobileNumber)) {
-            showMessage({ type:"danger", message: "Invalid Number", description: "Enter a valid 10-digit mobile number" });
+            showMessage({ type: "danger", message: "Invalid Number", description: "Enter a valid 10-digit mobile number" });
             return;
         }
 
@@ -143,7 +143,7 @@ const Register = ({ navigation }) => {
             if (error.response?.status === 400) {
                 showMessage({ type: "danger", message: "Invalid Request", description: error.response.data.message || "Mobile number is required", icon: "danger" });
             } else {
-                showMessage({ type:"danger", message: "OTP Failed", description: error.message || "Failed to send OTP. Try again.", icon: "danger" });
+                showMessage({ type: "danger", message: "OTP Failed", description: error.message || "Failed to send OTP. Try again.", icon: "danger" });
             }
         } finally {
             setIsOtpLoading(false);
@@ -151,24 +151,24 @@ const Register = ({ navigation }) => {
     };
 
     const handleSignup = async () => {
-        if (!validateFields()) return;
-    
-        if (!otp || otp.length !== 6) {
-            showMessage({
-                type: "danger",
-                message: "Invalid OTP",
-                description: "Please enter the correct OTP.",
-                icon: "danger"
-            });
+        if (!validateFields()) {
             return;
         }
-    
-        setIsLoading(true);
+        // if (!otp || otp.length !== 6) {
+        //     showMessage({
+        //         type: "danger",
+        //         message: "Invalid OTP",
+        //         description: "Please enter the correct OTP.",
+        //         icon: "danger"
+        //     });
+        //     return;
+        // }
         try {
+            setIsLoading(true);
             const formattedDate = selectedDate
                 ? `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, "0")}-${selectedDate.getDate().toString().padStart(2, "0")}`
                 : null;
-    
+
             const payload = {
                 username: fullName.trim(),
                 dob: formattedDate,
@@ -179,20 +179,20 @@ const Register = ({ navigation }) => {
                 mobileNo: mobileNumber.trim(),
                 otp: otp.trim(),
             };
-    
+
             console.log("SignUp Payload:", payload);
-    
+
             const response = await axios.post(SIGNUP_ENDPOINT, payload);
-    
+
             console.log("Signup Response:", JSON.stringify(response.data));
             const RegisterData = response.data;
-    
+
             if (response.status === 200 && response.data.status === true) {
                 dispatch(resetBioData());
-    
+
                 const token = RegisterData?.user?.token || null;
                 const userId = RegisterData?.user?.user?.id;
-    
+
                 if (token && userId) {
                     await AsyncStorage.setItem("userToken", token);
                     await AsyncStorage.setItem("userId", userId);
@@ -200,21 +200,21 @@ const Register = ({ navigation }) => {
                 } else {
                     console.warn("Token is missing in response, skipping storage.");
                 }
-    
+
                 try {
                     initializeSocket(userId);
                     console.log(`✅ Socket initialized successfully for user: ${userId}`);
                 } catch (socketError) {
                     console.error("🚨 Socket Initialization Failed:", socketError);
                 }
-    
+
                 showMessage({
                     type: "success",
                     message: "Sign Up Successful",
                     description: "You have successfully signed up!",
                     icon: "success"
                 });
-    
+
                 navigation.reset({
                     index: 0,
                     routes: [{ name: "AppStack" }],
@@ -224,10 +224,10 @@ const Register = ({ navigation }) => {
             }
         } catch (error) {
             console.error("Sign Up Error:", error);
-    
+
             let errorMessage = "An unexpected error occurred. Please try again.";
             let errorDescription = "";
-    
+
             if (error.response) {
                 errorMessage = error.response.data.message || "Server responded with an error.";
                 errorDescription = error.response.data.error || "Please check your input and try again.";
@@ -238,18 +238,19 @@ const Register = ({ navigation }) => {
                 errorMessage = "Error";
                 errorDescription = error.message || "An unexpected error occurred.";
             }
-    
+
             showMessage({
                 type: "danger",
                 message: errorMessage,
                 description: errorDescription,
                 icon: "danger"
             });
+            setIsLoading(false);
         } finally {
             setIsLoading(false);
         }
     };
-    
+
 
     const handleDateChange = (event, date) => {
         if (date && date !== selectedDate) {
@@ -380,13 +381,13 @@ const Register = ({ navigation }) => {
 
                         <View>
                             <Text style={Globalstyles.title}>Create Password  <Entypo name={'star'} color={'red'} size={12} /> </Text>
-                            <View style={Globalstyles.inputContainer}>
+                            <View style={styles.passwordContainer}>
                                 <TextInput
-                                    style={Globalstyles.input1}
+                                    style={styles.passwordInput}
                                     secureTextEntry={!showPassword}
-                                    placeholder="Create a strong password"
                                     value={password}
                                     onChangeText={setPassword}
+                                    placeholder="Create a strong password"
                                     placeholderTextColor={Colors.gray}
                                     autoComplete="off"
                                     textContentType="none"
@@ -408,15 +409,15 @@ const Register = ({ navigation }) => {
                         {/* Confirm Password */}
                         <View>
                             <Text style={Globalstyles.title}>Confirm Password <Entypo name={'star'} color={'red'} size={12} /> </Text>
-                            <View style={Globalstyles.inputContainer}>
+                            <View style={styles.passwordContainer}>
                                 <TextInput
-                                    style={Globalstyles.input1}
+                                    style={styles.passwordInput}
                                     secureTextEntry={!showConfirmPassword}
-                                    placeholder="Confirm your password"
                                     value={confirmPassword}
                                     onChangeText={setConfirmpassword}
+                                    placeholder="Confirm your password"
                                     placeholderTextColor={Colors.gray}
-                                    autoComplete="off"
+                                     autoComplete="off"
                                     textContentType="none"
                                 />
                                 <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
@@ -473,7 +474,7 @@ const Register = ({ navigation }) => {
                         )}
                     </View>
                     {/* Continue Button */}
-                    <TouchableOpacity
+                    <Pressable
                         style={styles.button}
                         onPress={handleSignup}
                         disabled={isLoading}
@@ -483,7 +484,7 @@ const Register = ({ navigation }) => {
                         ) : (
                             <Text style={styles.buttonText}>Sign Up</Text>
                         )}
-                    </TouchableOpacity>
+                    </Pressable>
                 </ScrollView>
             </ImageBackground>
 

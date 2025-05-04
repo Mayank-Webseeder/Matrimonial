@@ -49,9 +49,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: SW(5),
         paddingVertical: SH(5),
         borderRadius: 50,
-        marginTop: SH(30),
+        marginVertical: SH(30),
         width: "100%",
-        marginBottom: SH(20)
+        // marginBottom: SH(25)
     },
     otpButton: {
         paddingHorizontal: SW(5),
@@ -99,6 +99,25 @@ const styles = StyleSheet.create({
         color:"gray",
         fontSize: SF(15),
         textDecorationLine: 'underline',
+    },
+    passwordContainer: {
+        // borderColor: Colors.theme_color,
+        paddingHorizontal: SW(10),
+        // paddingVertical: SH(5),
+        // borderWidth: 1,
+        // borderRadius:10,
+        // marginHorizontal: SW(25),
+        borderColor: '#ccc',
+        borderWidth: 1,
+        color: Colors.dark,
+        marginBottom: SH(10),
+        flexDirection: "row",
+        alignItems: "center",
+        borderRadius: 5,
+    },
+    passwordInput: {
+        flex: 1,
+        color: Colors.dark,
     },
 
 });

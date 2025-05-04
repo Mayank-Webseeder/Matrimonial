@@ -102,7 +102,9 @@ const Register = ({ navigation }) => {
                 newErrors.selectedDate = "Your age is below 18";
             }
         }
-        if (!cityInput.trim()) newErrors.selectedCity = "City is required.";
+        if (!(selectedCity || cityInput.trim())) {
+            newErrors.selectedCity = "City is required.";
+        }
         if (!gender) newErrors.gender = "Gender is required.";
         const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
         if (!password) {
@@ -145,24 +147,26 @@ const Register = ({ navigation }) => {
             } else {
                 showMessage({ type: "danger", message: "OTP Failed", description: error.message || "Failed to send OTP. Try again.", icon: "danger" });
             }
+            setIsOtpLoading(false);
         } finally {
             setIsOtpLoading(false);
         }
     };
 
     const handleSignup = async () => {
+        console.log("✅ handleSignup triggered");
+
         if (!validateFields()) {
+            console.log("❌ Validation failed");
+            showMessage({
+                type: "danger",
+                message: "Validation failed",
+                description: "Please check the highlighted fields.",
+                icon: "danger"
+            });
             return;
         }
-        // if (!otp || otp.length !== 6) {
-        //     showMessage({
-        //         type: "danger",
-        //         message: "Invalid OTP",
-        //         description: "Please enter the correct OTP.",
-        //         icon: "danger"
-        //     });
-        //     return;
-        // }
+
         try {
             setIsLoading(true);
             const formattedDate = selectedDate
@@ -175,7 +179,7 @@ const Register = ({ navigation }) => {
                 city: selectedCity || cityInput.trim(),
                 gender: gender,
                 password: password.trim(),
-                photoUrl: selectedImage, // Make sure it's a valid URL or base64 if backend expects that
+                photoUrl: selectedImage,
                 mobileNo: mobileNumber.trim(),
                 otp: otp.trim(),
             };
@@ -188,7 +192,6 @@ const Register = ({ navigation }) => {
             const RegisterData = response.data;
 
             if (response.status === 200 && response.data.status === true) {
-                dispatch(resetBioData());
 
                 const token = RegisterData?.user?.token || null;
                 const userId = RegisterData?.user?.user?.id;
@@ -219,6 +222,9 @@ const Register = ({ navigation }) => {
                     index: 0,
                     routes: [{ name: "AppStack" }],
                 });
+
+                dispatch(resetBioData());
+
             } else {
                 throw new Error(RegisterData.message || "Signup failed");
             }
@@ -417,7 +423,7 @@ const Register = ({ navigation }) => {
                                     onChangeText={setConfirmpassword}
                                     placeholder="Confirm your password"
                                     placeholderTextColor={Colors.gray}
-                                     autoComplete="off"
+                                    autoComplete="off"
                                     textContentType="none"
                                 />
                                 <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
@@ -484,6 +490,7 @@ const Register = ({ navigation }) => {
                         ) : (
                             <Text style={styles.buttonText}>Sign Up</Text>
                         )}
+
                     </Pressable>
                 </ScrollView>
             </ImageBackground>

@@ -287,7 +287,7 @@ const Activist = ({ navigation }) => {
           </View>
         </View>
       </View>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
 
         {loading ? renderSkeleton() : (
           <FlatList

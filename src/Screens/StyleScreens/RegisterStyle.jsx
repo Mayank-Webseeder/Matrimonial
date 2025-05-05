@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     dateText: {
         flex: 1,
         fontSize: SF(16),
-        color: Colors.dark,
+        color:"gray",
         paddingVertical: SH(7)
     },
     arrow: {
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     otpButton: {
         paddingHorizontal: SW(5),
         paddingVertical: SH(5),
-        paddingRight:SW(10)
+        paddingRight: SW(10)
     },
     otpButtonText: {
         color: Colors.theme_color,
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
         borderRadius: 75,
     },
     imagePlaceholder: {
-        color:"gray",
+        color: "gray",
         fontSize: SF(15),
         textDecorationLine: 'underline',
     },

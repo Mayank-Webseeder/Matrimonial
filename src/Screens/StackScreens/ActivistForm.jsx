@@ -15,6 +15,7 @@ import moment from 'moment';
 import { useSelector } from 'react-redux';
 import { showMessage } from 'react-native-flash-message';
 import { Dropdown } from 'react-native-element-dropdown';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 export default function ActivistForm({ navigation }) {
   const [subCasteInput, setSubCasteInput] = useState('');
@@ -81,15 +82,16 @@ export default function ActivistForm({ navigation }) {
     }
   };
 
+
   const handleDateChange = (event, selectedDate) => {
-    if (!selectedDate) return;
+    setShowDatePicker(false); // Always close the picker
 
-    setShowDatePicker(false);
-
-    setActivistData((prevState) => ({
-      ...prevState,
-      dob: moment(selectedDate).format("YYYY-MM-DD"),
-    }));
+    if (event.type === "set" && selectedDate) {
+      setActivistData((prevState) => ({
+        ...prevState,
+        dob: moment(selectedDate).format("YYYY-MM-DD"),
+      }));
+    }
   };
 
   const handleStateInputChange = (text) => {
@@ -474,28 +476,64 @@ export default function ActivistForm({ navigation }) {
         )}
 
         <View>
-          <Text style={Globalstyles.title}>Date of Birth <Entypo name={'star'} color={'red'} size={12} /></Text>
-          <TextInput
-            style={[Globalstyles.input, !isEditing && styles.readOnly]}
-            value={ActivistData.dob ? moment(ActivistData.dob, "YYYY-MM-DD").format("DD/MM/YYYY") : ""}
-            editable={isEditing}
-            onFocus={() => setShowDatePicker(true)}
-            placeholder="Select your date of birth"
-            placeholderTextColor={Colors.gray}
-            autoComplete="off"
-            textContentType="none"
-          />
+          <Text style={Globalstyles.title}>
+            Date of Birth <Entypo name={'star'} color={'red'} size={12} />
+          </Text>
+
+          <View style={[Globalstyles.inputContainer, { flexDirection: "row", alignItems: "center", justifyContent: "space-between" }]}>
+            <TextInput
+              style={[{ flex: 1 }, !isEditing && styles.readOnly]}
+              value={
+                ActivistData.dob
+                  ? moment(ActivistData.dob, "YYYY-MM-DD").format("DD/MM/YYYY")
+                  : ""
+              }
+              editable={false}
+              placeholder="Select your date of birth"
+              placeholderTextColor={Colors.gray}
+              onTouchStart={() => isEditing && setShowDatePicker(true)}
+            />
+
+            {ActivistData.dob && isEditing ? (
+              <TouchableOpacity onPress={() =>
+                setActivistData((prevState) => ({ ...prevState, dob: "" }))
+              }>
+                <AntDesign name="closecircle" size={18} color="gray" />
+              </TouchableOpacity>
+            ) : (
+              isEditing && (
+                <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+                  <AntDesign name="calendar" size={20} style={styles.arrow} />
+                </TouchableOpacity>
+              )
+            )}
+          </View>
 
           {showDatePicker && (
             <DateTimePicker
-              value={ActivistData.dob ? new Date(ActivistData.dob) : new Date()} // Ensure it's a Date object
+              value={
+                ActivistData.dob
+                  ? new Date(ActivistData.dob)
+                  : new Date(2000, 0, 1)
+              }
               mode="date"
               display="default"
-              onChange={(event, selectedDate) => handleDateChange(event, selectedDate)}
               maximumDate={new Date()}
+              themeVariant="light"
+              onChange={(event, selectedDate) => {
+                setShowDatePicker(false);
+                if (event.type === "set" && selectedDate) {
+                  setActivistData((prevState) => ({
+                    ...prevState,
+                    dob: moment(selectedDate).format("YYYY-MM-DD"),
+                  }));
+                }
+              }}
             />
           )}
         </View>
+
+
 
         {errors?.dob && (
           <Text style={styles.errorText}>

@@ -99,19 +99,20 @@ const SuccessStories = ({ navigation }) => {
   };
 
   const renderItem = ({ item }) => {
-    const groom = item.groomDetails || {};
+    const groom = item?.groomDetails || {};
 
-    const bride = item.brideDetails || {};
+    const bride = item?.brideDetails || {};
+    
     return (
       <View style={styles.storyCard}>
         <View style={styles.collabHeader}>
           <TouchableOpacity
             onPress={() =>
-              navigation.navigate('MatrimonyPeopleProfile', { userId: groom.userId })
+              navigation.navigate('MatrimonyPeopleProfile', { userId: groom?.userId })
             }
           >
             <Image
-              source={{ uri: groom.profileImage || require('../../Images/NoImage.png') }}
+              source={{ uri: groom?.profileImage || require('../../Images/NoImage.png') }}
               style={styles.avatar}
             />
           </TouchableOpacity>
@@ -119,7 +120,7 @@ const SuccessStories = ({ navigation }) => {
           <TouchableOpacity
             style={{ marginLeft: -SW(20) }}
             onPress={() =>
-              navigation.navigate('MatrimonyPeopleProfile', { userId: bride.userId })
+              navigation.navigate('MatrimonyPeopleProfile', { userId: bride?.userId })
             }
           >
             <Image
@@ -135,25 +136,25 @@ const SuccessStories = ({ navigation }) => {
             <View style={{ flexDirection: 'row', marginLeft: SW(8) }}>
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate('MatrimonyPeopleProfile', { userId: groom.userId })
+                  navigation.navigate('MatrimonyPeopleProfile', { userId: groom?.userId })
                 }
               >
-                <Text style={styles.nameText}>{groom.name || NA}</Text>
+                <Text style={styles.nameText}>{groom?.name || NA}</Text>
               </TouchableOpacity>
 
               <Text style={styles.nameText}> & </Text>
 
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate('MatrimonyPeopleProfile', { userId: bride.userId })
+                  navigation.navigate('MatrimonyPeopleProfile', { userId: bride?.userId })
                 }
               >
-                <Text style={styles.nameText}>{bride.name || 'NA'}</Text>
+                <Text style={styles.nameText}>{bride?.name || 'NA'}</Text>
               </TouchableOpacity>
             </View>
 
             <Text style={{ fontSize: SF(10), color: '#888', marginLeft: SW(9) }}>
-              {groom.bioDataId || 'NA'} · {bride.bioDataId || 'NA'}
+              {groom?.bioDataId || 'NA'} · {bride?.bioDataId || 'NA'}
             </Text>
           </View>
         </View>
@@ -166,7 +167,7 @@ const SuccessStories = ({ navigation }) => {
           }}
         >
           <Image
-            source={{ uri: item.photoUrl }}
+            source={{ uri: item?.photoUrl }}
             style={{ width: '100%', height: SH(300) }}
             resizeMode="cover"
           />
@@ -180,7 +181,7 @@ const SuccessStories = ({ navigation }) => {
         />
 
         <Text style={styles.storyName}>
-          {item.groomName || 'NA'} ❤️ {item.brideName || 'NA'}
+          {item?.groomName || 'NA'} ❤️ {item?.brideName || 'NA'}
         </Text>
 
         <View style={styles.ratingRow}>

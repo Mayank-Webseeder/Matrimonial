@@ -120,17 +120,17 @@ const UpdateCommittee = ({ navigation, route }) => {
         if (committeeData) {
             setCommitteeData(prev => ({
                 ...prev,
-                committeeTitle: committeeData.committeeTitle || '',
-                presidentName: committeeData.presidentName || '',
-                subCaste: committeeData.subCaste || '',
-                city: committeeData.city || '',
-                area: committeeData.area || '',
-                mobileNo: committeeData.mobileNo || ''
+                committeeTitle: committeeData?.committeeTitle || '',
+                presidentName: committeeData?.presidentName || '',
+                subCaste: committeeData?.subCaste || '',
+                city: committeeData?.city || '',
+                area: committeeData?.area || '',
+                mobileNo: committeeData?.mobileNo || ''
             }));
 
             // Convert Existing Image to Base64
             if (committeeData.photoUrl) {
-                convertToBase64(committeeData.photoUrl).then(base64Image => {
+                convertToBase64(committeeData?.photoUrl).then(base64Image => {
                     if (base64Image) {
                         setCommitteeData(prev => ({ ...prev, photoUrl: base64Image }));
                     }
@@ -211,7 +211,7 @@ const UpdateCommittee = ({ navigation, route }) => {
                 <TextInput
                     style={Globalstyles.input}
                     placeholder="Enter title"
-                    value={CommitteeData.committeeTitle}
+                    value={CommitteeData?.committeeTitle}
                     autoComplete="off"
                     textContentType="none"
                     onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, committeeTitle: text }))} placeholderTextColor={Colors.gray}
@@ -222,7 +222,7 @@ const UpdateCommittee = ({ navigation, route }) => {
                 <TextInput
                     style={Globalstyles.input}
                     placeholder="Enter President Name"
-                    value={CommitteeData.presidentName}
+                    value={CommitteeData?.presidentName}
                     onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, presidentName: text }))}
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
@@ -284,7 +284,7 @@ const UpdateCommittee = ({ navigation, route }) => {
                 <TextInput
                     style={Globalstyles.input}
                     placeholder="Enter Your Area"
-                    value={CommitteeData.area} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, area: text }))}
+                    value={CommitteeData?.area} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, area: text }))}
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
                     textContentType="none"
@@ -296,9 +296,9 @@ const UpdateCommittee = ({ navigation, route }) => {
                         <Text style={styles.uploadButtonText}>{CommitteeData.photoUrl ? "Change Image" : "Upload Image"}</Text>
                     </TouchableOpacity>
                 </View>
-                {CommitteeData.photoUrl ? (
+                {CommitteeData?.photoUrl ? (
                     <Image
-                        source={{ uri: CommitteeData.photoUrl }}
+                        source={{ uri: CommitteeData?.photoUrl }}
                         style={styles.imagePreviewContainer}
                     />
                 ) : null}
@@ -312,7 +312,7 @@ const UpdateCommittee = ({ navigation, route }) => {
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
                     textContentType="none"
-                    value={CommitteeData.mobileNo} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, mobileNo: text }))}
+                    value={CommitteeData?.mobileNo} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, mobileNo: text }))}
                 />
                 <TouchableOpacity style={styles.submitButton} onPress={handleCommitteeUpdate} disabled={isLoading}>
                     {isLoading ? <ActivityIndicator size="large" color={Colors.light} /> : <Text style={styles.submitButtonText}>Submit</Text>}

@@ -167,7 +167,7 @@ const MyuploadedDharamsala = ({ navigation, route }) => {
 
               <TouchableOpacity
                 style={styles.modalOption}
-                onPress={() => navigation.navigate("DharamsalaDetail", { DharamsalaData: item, isSaved: isSaved, _id: item._id })}
+                onPress={() => navigation.navigate("DharamsalaDetail", { DharamsalaData: item, isSaved: isSaved, _id: item?._id })}
               >
                 <Text style={[styles.updateText]}>View Details</Text>
               </TouchableOpacity>
@@ -194,7 +194,7 @@ const MyuploadedDharamsala = ({ navigation, route }) => {
         <FlatList
           data={DharmshalaData}
           renderItem={renderItem}
-          keyExtractor={(item) => item._id}
+          keyExtractor={(item) => item?._id}
           scrollEnabled={false}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.panditListData}

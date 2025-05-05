@@ -104,7 +104,7 @@ const SavedProfile = ({ navigation }) => {
           description: "Saved profile deleted successfully!",
           icon: "success"
         });
-        fetchSavedProfiles();
+        await fetchSavedProfiles();
       } else {
         throw new Error(response.data.message || "Something went wrong!");
       }

@@ -484,8 +484,8 @@ export default function ActivistForm({ navigation }) {
             <TextInput
               style={[{ flex: 1 }, !isEditing && styles.readOnly]}
               value={
-                ActivistData.dob
-                  ? moment(ActivistData.dob, "YYYY-MM-DD").format("DD/MM/YYYY")
+                ActivistData?.dob
+                  ? moment(ActivistData?.dob, "YYYY-MM-DD").format("DD/MM/YYYY")
                   : ""
               }
               editable={false}
@@ -512,8 +512,8 @@ export default function ActivistForm({ navigation }) {
           {showDatePicker && (
             <DateTimePicker
               value={
-                ActivistData.dob
-                  ? new Date(ActivistData.dob)
+                ActivistData?.dob
+                  ? new Date(ActivistData?.dob)
                   : new Date(2000, 0, 1)
               }
               mode="date"
@@ -532,8 +532,6 @@ export default function ActivistForm({ navigation }) {
             />
           )}
         </View>
-
-
 
         {errors?.dob && (
           <Text style={styles.errorText}>
@@ -597,7 +595,6 @@ export default function ActivistForm({ navigation }) {
             style={Globalstyles.suggestions}
           />
         ) : null}
-
 
         {errors?.city && (
           <Text style={styles.errorText}>

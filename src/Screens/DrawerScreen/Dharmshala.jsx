@@ -368,14 +368,14 @@ const Dharmshala = () => {
   };
 
   const renderItem = ({ item }) => {
-    const isSaved = item.isSaved || null;
+    const isSaved = item?.isSaved || null;
     return (
       <View style={styles.card}
       >
-        <Pressable style={styles.cardData} onPress={() => navigation.navigate("DharamsalaDetail", { DharamsalaData: item, isSaved: isSaved, _id: item._id })} >
-          <TouchableOpacity onPress={() => openImageViewer(item.images?.[0])}>
+        <Pressable style={styles.cardData} onPress={() => navigation.navigate("DharamsalaDetail", { DharamsalaData: item, isSaved: isSaved, _id: item?._id })} >
+          <TouchableOpacity onPress={() => openImageViewer(item?.images?.[0])}>
             <Image
-              source={item.images?.[0] ? { uri: item.images?.[0] } : require('../../Images/NoImage.png')}
+              source={item?.images?.[0] ? { uri: item?.images?.[0] } : require('../../Images/NoImage.png')}
               style={styles.image}
             />
           </TouchableOpacity>
@@ -390,11 +390,11 @@ const Dharmshala = () => {
             />
           )}
           <View style={styles.leftContainer}>
-            <Text style={styles.text}>{item.dharmshalaName}</Text>
+            <Text style={styles.text}>{item?.dharmshalaName}</Text>
             <Text style={[styles.smalltext, { fontFamily: 'Poppins-Medium' }]}>
-              {item.subCaste}
+              {item?.subCaste}
             </Text>
-            <Text style={styles.smalltext}>{item.city}</Text>
+            <Text style={styles.smalltext}>{item?.city}</Text>
           </View>
         </Pressable>
         <View style={styles.sharecontainer}>
@@ -411,7 +411,7 @@ const Dharmshala = () => {
             <Feather name="send" size={18} color={Colors.dark} />
             <Text style={styles.iconText}>Shares</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
+          <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item?.mobileNo}`)}>
             <MaterialIcons name="call" size={17} color={Colors.light} />
           </TouchableOpacity>
         </View>

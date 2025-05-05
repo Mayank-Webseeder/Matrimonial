@@ -325,7 +325,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
                         valueField="value"
                         value={biodata?.partnerSubCaste}
                         editable={isEditing}
-                        onChange={(item) => setBiodata({ ...biodata, partnerMinAge: item.value })}
+                        onChange={(item) => setBiodata({ ...biodata, partnerSubCaste: item.value })}
                         placeholder="Select subCaste"
                         placeholderStyle={{ color: '#E7E7E7' }}
                         autoScroll={false}

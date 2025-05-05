@@ -194,7 +194,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
       // If the user cancels, clear the selected time
       setBiodata((prevState) => ({ ...prevState, timeOfBirth: "" }));
     }
-  
+
     setShowTimePicker(false);
   };
 
@@ -895,7 +895,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={genderData}
               labelField="label"
               valueField="value"
-              value={biodata.gender}
+              value={biodata?.gender}
               editable={isEditing}
               onChange={(text) => handleInputChange("gender", text.value)}
               placeholder="Enter Gender For Create Biodata"
@@ -923,108 +923,108 @@ const DetailedProfile = ({ navigation, profileData }) => {
             {errors.fullname && <Text style={styles.errorText}>{errors.fullname}</Text>}
           </View>
           <View>
-  <Text style={Globalstyles.title}>
-    Date of Birth <Entypo name={'star'} color={'red'} size={12} />
-  </Text>
+            <Text style={Globalstyles.title}>
+              Date of Birth <Entypo name={'star'} color={'red'} size={12} />
+            </Text>
 
-  <View style={[Globalstyles.inputContainer, {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between"
-  }]}>
-    <TextInput
-      style={[{ flex: 1 }, !isEditing && styles.readOnly]}
-      value={biodata?.dob ? formatDate(biodata.dob) : ""}
-      editable={false}
-      onTouchStart={() => isEditing && setShowDatePicker(true)}
-      placeholder="Select your date of birth"
-      placeholderTextColor={Colors.gray}
-    />
+            <View style={[Globalstyles.inputContainer, {
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between"
+            }]}>
+              <TextInput
+                style={[{ flex: 1 }, !isEditing && styles.readOnly]}
+                value={biodata?.dob ? formatDate(biodata.dob) : ""}
+                editable={false}
+                onTouchStart={() => isEditing && setShowDatePicker(true)}
+                placeholder="Select your date of birth"
+                placeholderTextColor={Colors.gray}
+              />
 
-    {biodata?.dob && isEditing ? (
-      <TouchableOpacity onPress={() =>
-        setBiodata((prevState) => ({ ...prevState, dob: "" }))
-      }>
-        <AntDesign name="closecircle" size={18} color="gray" />
-      </TouchableOpacity>
-    ) : (
-      isEditing && (
-        <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-          <AntDesign name="calendar" size={20} style={styles.arrow} />
-        </TouchableOpacity>
-      )
-    )}
-  </View>
+              {biodata?.dob && isEditing ? (
+                <TouchableOpacity onPress={() =>
+                  setBiodata((prevState) => ({ ...prevState, dob: "" }))
+                }>
+                  <AntDesign name="closecircle" size={18} color="gray" />
+                </TouchableOpacity>
+              ) : (
+                isEditing && (
+                  <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+                    <AntDesign name="calendar" size={20} style={styles.arrow} />
+                  </TouchableOpacity>
+                )
+              )}
+            </View>
 
-  {errors.dob && <Text style={styles.errorText}>{errors.dob}</Text>}
+            {errors.dob && <Text style={styles.errorText}>{errors.dob}</Text>}
 
-  {showDatePicker && (
-    <DateTimePicker
-      value={biodata?.dob ? new Date(biodata.dob) : new Date(2000, 0, 1)}
-      mode="date"
-      display="default"
-      onChange={(event, selectedDate) => {
-        setShowDatePicker(false);
-        if (event.type === "set" && selectedDate) {
-          setBiodata((prev) => ({
-            ...prev,
-            dob: selectedDate,
-          }));
-        }
-      }}
-      maximumDate={new Date()}
-      themeVariant="light"
-      textColor="black"
-    />
-  )}
-</View>
+            {showDatePicker && (
+              <DateTimePicker
+                value={biodata?.dob ? new Date(biodata?.dob) : new Date(2000, 0, 1)}
+                mode="date"
+                display="default"
+                onChange={(event, selectedDate) => {
+                  setShowDatePicker(false);
+                  if (event.type === "set" && selectedDate) {
+                    setBiodata((prev) => ({
+                      ...prev,
+                      dob: selectedDate,
+                    }));
+                  }
+                }}
+                maximumDate={new Date()}
+                themeVariant="light"
+                textColor="black"
+              />
+            )}
+          </View>
 
-<View>
-  <Text style={Globalstyles.title}>
-    Time of Birth <Entypo name={'star'} color={'red'} size={12} />
-  </Text>
+          <View>
+            <Text style={Globalstyles.title}>
+              Time of Birth <Entypo name={'star'} color={'red'} size={12} />
+            </Text>
 
-  <View style={[Globalstyles.inputContainer, { flexDirection: "row", alignItems: "center", justifyContent: "space-between" }]}>
-    <TextInput
-      style={[!isEditing && styles.readOnly]}
-      value={biodata?.timeOfBirth || ""}
-      editable={isEditing}
-      onFocus={() => setShowTimePicker(true)}
-      placeholder="HH:MM AM/PM"
-      placeholderTextColor={Colors.gray}
-      autoComplete="off"
-      textContentType="none"
-    />
+            <View style={[Globalstyles.inputContainer, { flexDirection: "row", alignItems: "center", justifyContent: "space-between" }]}>
+              <TextInput
+                style={[!isEditing && styles.readOnly]}
+                value={biodata?.timeOfBirth || ""}
+                editable={isEditing}
+                onFocus={() => setShowTimePicker(true)}
+                placeholder="HH:MM AM/PM"
+                placeholderTextColor={Colors.gray}
+                autoComplete="off"
+                textContentType="none"
+              />
 
-    {/* Clock Icon to Open DateTimePicker */}
-    {!biodata?.timeOfBirth && isEditing && (
-      <TouchableOpacity onPress={() => setShowTimePicker(true)}>
-        <AntDesign name="clockcircleo" size={18} color="gray" />
-      </TouchableOpacity>
-    )}
+              {/* Clock Icon to Open DateTimePicker */}
+              {!biodata?.timeOfBirth && isEditing && (
+                <TouchableOpacity onPress={() => setShowTimePicker(true)}>
+                  <AntDesign name="clockcircleo" size={18} color="gray" />
+                </TouchableOpacity>
+              )}
 
-    {/* Cross Icon to Clear Time */}
-    {biodata?.timeOfBirth && isEditing && (
-      <TouchableOpacity onPress={() => setBiodata((prevState) => ({ ...prevState, timeOfBirth: "" }))}>
-        <AntDesign name="closecircle" size={18} color="gray" />
-      </TouchableOpacity>
-    )}
-  </View>
+              {/* Cross Icon to Clear Time */}
+              {biodata?.timeOfBirth && isEditing && (
+                <TouchableOpacity onPress={() => setBiodata((prevState) => ({ ...prevState, timeOfBirth: "" }))}>
+                  <AntDesign name="closecircle" size={18} color="gray" />
+                </TouchableOpacity>
+              )}
+            </View>
 
-  {errors.timeOfBirth && <Text style={styles.errorText}>{errors.timeOfBirth}</Text>}
+            {errors.timeOfBirth && <Text style={styles.errorText}>{errors.timeOfBirth}</Text>}
 
-  {showTimePicker && (
-    <DateTimePicker
-      value={biodata?.timeOfBirth ? new Date(`1970-01-01T${biodata.timeOfBirth}:00`) : new Date()}
-      mode="time"
-      display="spinner"
-      is24Hour={false}
-      onChange={handleTimeChange}
-      themeVariant="light"
-      textColor="black"
-    />
-  )}
-</View>
+            {showTimePicker && (
+              <DateTimePicker
+                value={biodata?.timeOfBirth ? new Date(`1970-01-01T${biodata.timeOfBirth}:00`) : new Date()}
+                mode="time"
+                display="spinner"
+                is24Hour={false}
+                onChange={handleTimeChange}
+                themeVariant="light"
+                textColor="black"
+              />
+            )}
+          </View>
 
 
 

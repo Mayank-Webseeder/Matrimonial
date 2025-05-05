@@ -144,16 +144,16 @@ const MySuccessStory = ({ navigation, route }) => {
               navigation.navigate('MatrimonyPeopleProfile', { userId: groom.userId })
             }
           >
-            <Image source={{ uri: groom.profileImage }} style={styles.avatar} />
+            <Image source={{ uri: groom?.profileImage }} style={styles.avatar} />
           </TouchableOpacity>
 
           <TouchableOpacity
             style={{ marginLeft: -SW(20) }}
             onPress={() =>
-              navigation.navigate('MatrimonyPeopleProfile', { userId: bride.userId })
+              navigation.navigate('MatrimonyPeopleProfile', { userId: bride?.userId })
             }
           >
-            <Image source={{ uri: bride.profileImage }} style={styles.avatar} />
+            <Image source={{ uri: bride?.profileImage }} style={styles.avatar} />
             <View style={styles.collabIcon}>
               <FontAwesome
                 name="handshake-o"
@@ -170,19 +170,19 @@ const MySuccessStory = ({ navigation, route }) => {
                   navigation.navigate('MatrimonyPeopleProfile', { userId: groom.userId })
                 }
               >
-                <Text style={styles.nameText}>{groom.name}</Text>
+                <Text style={styles.nameText}>{groom?.name}</Text>
               </TouchableOpacity>
               <Text style={styles.nameText}> & </Text>
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate('MatrimonyPeopleProfile', { userId: bride.userId })
+                  navigation.navigate('MatrimonyPeopleProfile', { userId: bride?.userId })
                 }
               >
-                <Text style={styles.nameText}>{bride.name}</Text>
+                <Text style={styles.nameText}>{bride?.name}</Text>
               </TouchableOpacity>
             </View>
             <Text style={{ fontSize: SF(10), color: '#888' }}>
-              {groom.bioDataId} · {bride.bioDataId}
+              {groom?.bioDataId} · {bride?.bioDataId}
             </Text>
           </View>
         </View>
@@ -198,19 +198,19 @@ const MySuccessStory = ({ navigation, route }) => {
         </TouchableOpacity>
 
         <ImageViewing
-          images={[{ uri: story.photoUrl }]}
+          images={[{ uri: story?.photoUrl }]}
           visible={viewerVisible}
           onRequestClose={() => setViewerVisible(false)}
         />
         <Text style={styles.storyName}>
-          {story.groomName} ❤️ {story.brideName}
+          {story?.groomName} ❤️ {story?.brideName}
         </Text>
         <View style={styles.ratingRow}>
           <Text style={styles.ratingText}>
-            🌟 {story.rating}/5 App Rating
+            🌟 {story?.rating}/5 App Rating
           </Text>
           <Text style={styles.ratingQuote}>
-            “ Brahmin Milan helped us find each other — <Text style={styles.thought}>{story.thought}</Text>”
+            “ Brahmin Milan helped us find each other — <Text style={styles.thought}>{story?.thought}</Text>”
           </Text>
         </View>
       </View>

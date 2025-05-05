@@ -405,16 +405,16 @@ const ProfileDetail = ({ route, navigation }) => {
                                     {/* Right Container */}
                                     <View style={styles.rightContainer}>
                                         {profileData?.personalDetails?.currentCity && (
-                                            <Text style={styles.text}>{profileData.personalDetails.currentCity}</Text>
+                                            <Text style={styles.text}>{profileData?.personalDetails?.currentCity}</Text>
                                         )}
                                         {profileData?.personalDetails?.occupation && (
-                                            <Text style={[styles.text, { textTransform: "none" }]}>{profileData.personalDetails.occupation}</Text>
+                                            <Text style={[styles.text, { textTransform: "none" }]}>{profileData?.personalDetails?.occupation}</Text>
                                         )}
                                         {profileData?.personalDetails?.annualIncome && (
-                                            <Text style={[styles.text, { textTransform: "none" }]}>{profileData.personalDetails.annualIncome}</Text>
+                                            <Text style={[styles.text, { textTransform: "none" }]}>{profileData?.personalDetails?.annualIncome}</Text>
                                         )}
                                         {profileData?.personalDetails?.qualification && (
-                                            <Text style={[styles.text, { textTransform: "none" }]}>{profileData.personalDetails.qualification}</Text>
+                                            <Text style={[styles.text, { textTransform: "none" }]}>{profileData?.personalDetails?.qualification}</Text>
                                         )}
                                     </View>
                                 </View>
@@ -495,7 +495,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                         {personalDetails?.complexion && (
                                             <>
                                                 <Text style={styles.infoLabel}>Complexion :</Text>
-                                                <Text style={styles.infoValue}>{personalDetails.complexion}</Text>
+                                                <Text style={styles.infoValue}>{personalDetails?.complexion}</Text>
                                             </>
                                         )}
                                     </View>
@@ -504,7 +504,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                         {personalDetails?.weight && (
                                             <>
                                                 <Text style={styles.infoLabel}>Weight :</Text>
-                                                <Text style={styles.infoValue}>{personalDetails.weight} kg</Text>
+                                                <Text style={styles.infoValue}>{personalDetails?.weight} kg</Text>
                                             </>
                                         )}
                                     </View>
@@ -513,7 +513,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                         {personalDetails?.livingStatus && (
                                             <>
                                                 <Text style={styles.infoLabel}>Living with family :</Text>
-                                                <Text style={styles.infoValue}>{personalDetails.livingStatus}</Text>
+                                                <Text style={styles.infoValue}>{personalDetails?.livingStatus}</Text>
                                             </>
                                         )}
                                     </View>
@@ -533,49 +533,49 @@ const ProfileDetail = ({ route, navigation }) => {
                                 {personalDetails?.fatherName && (
                                     <View style={styles.infoRow}>
                                         <Text style={styles.infoLabel}>Father’s Name :</Text>
-                                        <Text style={styles.infoValue}>{personalDetails.fatherName}</Text>
+                                        <Text style={styles.infoValue}>{personalDetails?.fatherName}</Text>
                                     </View>
                                 )}
                                 {personalDetails?.motherName && (
                                     <View style={styles.infoRow}>
                                         <Text style={styles.infoLabel}>Mother’s Name :</Text>
-                                        <Text style={styles.infoValue}>{personalDetails.motherName}</Text>
+                                        <Text style={styles.infoValue}>{personalDetails?.motherName}</Text>
                                     </View>
                                 )}
                                 {personalDetails?.fatherOccupation && (
                                     <View style={styles.infoRow}>
                                         <Text style={styles.infoLabel}>Father’s Occupation :</Text>
-                                        <Text style={styles.infoValue}>{personalDetails.fatherOccupation}</Text>
+                                        <Text style={styles.infoValue}>{personalDetails?.fatherOccupation}</Text>
                                     </View>
                                 )}
                                 {personalDetails?.fatherIncomeAnnually && (
                                     <View style={styles.infoRow}>
                                         <Text style={styles.infoLabel}>Father Income :</Text>
-                                        <Text style={styles.infoValue}>{personalDetails.fatherIncomeAnnually}</Text>
+                                        <Text style={styles.infoValue}>{personalDetails?.fatherIncomeAnnually}</Text>
                                     </View>
                                 )}
                                 {personalDetails?.motherOccupation && (
                                     <View style={styles.infoRow}>
                                         <Text style={styles.infoLabel}>Mother’s Occupation :</Text>
-                                        <Text style={styles.infoValue}>{personalDetails.motherOccupation}</Text>
+                                        <Text style={styles.infoValue}>{personalDetails?.motherOccupation}</Text>
                                     </View>
                                 )}
                                 {personalDetails?.motherIncomeAnnually && (
                                     <View style={styles.infoRow}>
                                         <Text style={styles.infoLabel}>Mother’s Income :</Text>
-                                        <Text style={styles.infoValue}>{personalDetails.motherIncomeAnnually}</Text>
+                                        <Text style={styles.infoValue}>{personalDetails?.motherIncomeAnnually}</Text>
                                     </View>
                                 )}
                                 {personalDetails?.siblings && (
                                     <View style={styles.infoRow}>
                                         <Text style={styles.infoLabel}>Siblings :</Text>
-                                        <Text style={styles.infoValue}>{personalDetails.siblings}</Text>
+                                        <Text style={styles.infoValue}>{personalDetails?.siblings}</Text>
                                     </View>
                                 )}
                                 {personalDetails?.familyType && (
                                     <View style={styles.infoRow}>
                                         <Text style={styles.infoLabel}>Family Type :</Text>
-                                        <Text style={styles.infoValue}>{personalDetails.familyType}</Text>
+                                        <Text style={styles.infoValue}>{personalDetails?.familyType}</Text>
                                     </View>
                                 )}
                             </View>
@@ -592,25 +592,25 @@ const ProfileDetail = ({ route, navigation }) => {
                             {personalDetails?.contactNumber1 && (
                                 <View style={styles.infoRow}>
                                     <Text style={styles.infoLabel}>Mobile No. 1 :</Text>
-                                    <Text style={styles.infoValue}>{personalDetails.contactNumber1}</Text>
+                                    <Text style={styles.infoValue}>{personalDetails?.contactNumber1}</Text>
                                 </View>
                             )}
                             {personalDetails?.contactNumber2 && (
                                 <View style={styles.infoRow}>
                                     <Text style={styles.infoLabel}>Mobile No. 2 :</Text>
-                                    <Text style={styles.infoValue}>{personalDetails.contactNumber2}</Text>
+                                    <Text style={styles.infoValue}>{personalDetails?.contactNumber2}</Text>
                                 </View>
                             )}
                             {personalDetails?.cityOrVillage && (
                                 <View style={styles.infoRow}>
                                     <Text style={styles.infoLabel}>City :</Text>
-                                    <Text style={styles.infoValue}>{personalDetails.cityOrVillage}</Text>
+                                    <Text style={styles.infoValue}>{personalDetails?.cityOrVillage}</Text>
                                 </View>
                             )}
                             {personalDetails?.state && (
                                 <View style={styles.infoRow}>
                                     <Text style={styles.infoLabel}>State :</Text>
-                                    <Text style={styles.infoValue}>{personalDetails.state}</Text>
+                                    <Text style={styles.infoValue}>{personalDetails?.state}</Text>
                                 </View>
                             )}
                         </View>
@@ -627,37 +627,37 @@ const ProfileDetail = ({ route, navigation }) => {
                                     {personalDetails?.knowCooking && (
                                         <View style={styles.infoRow}>
                                             <Text style={styles.infoLabel}>Cooking :</Text>
-                                            <Text style={styles.infoValue}>{personalDetails.knowCooking}</Text>
+                                            <Text style={styles.infoValue}>{personalDetails?.knowCooking}</Text>
                                         </View>
                                     )}
                                     {personalDetails?.dietaryHabit && (
                                         <View style={styles.infoRow}>
                                             <Text style={styles.infoLabel}>Diet :</Text>
-                                            <Text style={styles.infoValue}>{personalDetails.dietaryHabit}</Text>
+                                            <Text style={styles.infoValue}>{personalDetails?.dietaryHabit}</Text>
                                         </View>
                                     )}
                                     {personalDetails?.smokingHabit && (
                                         <View style={styles.infoRow}>
                                             <Text style={styles.infoLabel}>Smoke :</Text>
-                                            <Text style={styles.infoValue}>{personalDetails.smokingHabit}</Text>
+                                            <Text style={styles.infoValue}>{personalDetails?.smokingHabit}</Text>
                                         </View>
                                     )}
                                     {personalDetails?.drinkingHabit && (
                                         <View style={styles.infoRow}>
                                             <Text style={styles.infoLabel}>Drinking :</Text>
-                                            <Text style={styles.infoValue}>{personalDetails.drinkingHabit}</Text>
+                                            <Text style={styles.infoValue}>{personalDetails?.drinkingHabit}</Text>
                                         </View>
                                     )}
                                     {personalDetails?.tobaccoHabits && (
                                         <View style={styles.infoRow}>
                                             <Text style={styles.infoLabel}>Tobacco :</Text>
-                                            <Text style={styles.infoValue}>{personalDetails.tobaccoHabits}</Text>
+                                            <Text style={styles.infoValue}>{personalDetails?.tobaccoHabits}</Text>
                                         </View>
                                     )}
                                     {personalDetails?.hobbies && (
                                         <View style={styles.infoRow}>
-                                            <Text style={styles.infoLabel}>Hobby :</Text>
-                                            <Text style={styles.infoValue}>{personalDetails.hobbies}</Text>
+                                            <Text style={styles.infoLabel}>Hobbies :</Text>
+                                            <Text style={styles.infoValue}>{personalDetails?.hobbies}</Text>
                                         </View>
                                     )}
                                 </View>
@@ -912,7 +912,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                                     <View>
                                                         <Image
                                                             source={review?.userId?.photoUrl[0]
-                                                                ? { uri: review.userId.photoUrl[0] }
+                                                                ? { uri: review?.userId?.photoUrl[0] }
                                                                 : require("../../Images/NoImage.png") // Fallback image
                                                             }
                                                             style={{ width: SW(50), height: SH(50), borderRadius: 50 }}

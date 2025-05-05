@@ -32,8 +32,8 @@ const PostReview = ({ navigation, route }) => {
 
     useEffect(() => {
         if (myReview) {
-            setDescription(myReview.review);
-            setRating(myReview.rating);
+            setDescription(myReview?.review);
+            setRating(myReview?.rating);
         }
         console.log("Route Parameters:");
         console.log("pandit_id:", pandit_id);

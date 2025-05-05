@@ -754,7 +754,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
               )}
               {personalDetails?.hobbies && (
                 <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Hobby :</Text>
+                  <Text style={styles.infoLabel}>Hobbies :</Text>
                   <Text style={styles.infoValue}>{personalDetails.hobbies}</Text>
                 </View>
               )}

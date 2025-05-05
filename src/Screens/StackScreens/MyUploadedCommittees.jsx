@@ -158,9 +158,9 @@ const MyUploadedCommittees = ({ navigation, route }) => {
                                 style={styles.modalOption}
                                 onPress={async () => {
                                     try {
-                                        await handleDelete(selectedItem._id);
+                                        await handleDelete(selectedItem?._id);
                                         setModalVisible(false);
-                                        console.log("🗑️ Committee Deleted:", selectedItem._id);
+                                        console.log("🗑️ Committee Deleted:", selectedItem?._id);
                                     } catch (error) {
                                         console.error("🚨 Error deleting committee:", error);
                                     }
@@ -191,7 +191,7 @@ const MyUploadedCommittees = ({ navigation, route }) => {
                 <FlatList
                     data={committeeData}
                     renderItem={renderItem}
-                    keyExtractor={(item) => item._id}
+                    keyExtractor={(item) => item?._id}
                     scrollEnabled={false}
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={styles.panditListData}

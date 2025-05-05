@@ -8,10 +8,12 @@ import Globalstyles from '../../utils/GlobalCss';
 import { SH, SW } from '../../utils/Dimensions';
 import moment from 'moment';
 const AllReviewsPage = ({ route, navigation }) => {
-    const { reviews } = route.params;
+    const { reviews } = route.params || {};
+   
     useEffect(() => {
         console.log("reviews", reviews);
     }, [])
+    
     return (
         <SafeAreaView style={Globalstyles.container}>
             <StatusBar

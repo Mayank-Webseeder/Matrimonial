@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 
 const PhotoGallery = () => {
     const MyprofileData = useSelector((state) => state.getBiodata);
-    const myBiodata = MyprofileData?.Biodata?.personalDetails;
+    const myBiodata = MyprofileData?.Biodata?.personalDetails || {};
 
     // Check if all images are missing
     const noImages = !myBiodata?.bestPhoto && !myBiodata?.closeUpPhoto && !myBiodata?.fullPhoto;
@@ -34,13 +34,13 @@ const PhotoGallery = () => {
                     ) : (
                         <View>
                             {myBiodata?.bestPhoto && (
-                                <Image source={{ uri: myBiodata.bestPhoto }} style={styles.bottomImage} />
+                                <Image source={{ uri: myBiodata?.bestPhoto }} style={styles.bottomImage} />
                             )}
                             {myBiodata?.closeUpPhoto && (
-                                <Image source={{ uri: myBiodata.closeUpPhoto }} style={styles.bottomImage} />
+                                <Image source={{ uri: myBiodata?.closeUpPhoto }} style={styles.bottomImage} />
                             )}
                             {myBiodata?.fullPhoto && (
-                                <Image source={{ uri: myBiodata.fullPhoto }} style={styles.bottomImage} />
+                                <Image source={{ uri: myBiodata?.fullPhoto }} style={styles.bottomImage} />
                             )}
                         </View>
                     )}

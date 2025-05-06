@@ -74,7 +74,8 @@ const AdvertiseWithUs = ({ navigation }) => {
                     type: 'success',
                     message: 'Success',
                     description: response.data.message || 'Your Advertise Request has been submitted successfully!',
-                    icon: "success"
+                    icon: "success",
+                    duarion:5000
                 });
 
                 setTimeout(() => {
@@ -98,7 +99,8 @@ const AdvertiseWithUs = ({ navigation }) => {
                 type: 'danger',
                 message: 'Error',
                 description: errorMessage,
-                icon: "danger"
+                icon: "danger",
+                duarion:5000
             });
 
         }

@@ -111,7 +111,8 @@ const PostSuccessStories = ({ navigation }) => {
                     type: 'success',
                     message: 'Success',
                     description: response.data.message || 'Your success story has been submitted!',
-                    icon: "success"
+                    icon: "success",
+                    duarion:5000
                 });
 
                 setTimeout(() => {
@@ -135,7 +136,8 @@ const PostSuccessStories = ({ navigation }) => {
             showMessage({
                 type: 'danger',
                 message: errorMessage,
-                icon: "danger"
+                icon: "danger",
+                duarion:5000
             });
         }
     };

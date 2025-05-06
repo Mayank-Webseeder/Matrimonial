@@ -39,13 +39,13 @@ const ChangePassword = ({ navigation }) => {
   const handleChangePassword = async () => {
     if (!oldPassword || !newPassword || !confirmPassword) {
       setPasswordError("All fields are required!");
-     showMessage({ type: 'danger', message: 'Validation Error', description: 'All fields are required!',icon:"danger" });
+     showMessage({ type: 'danger', message: 'Validation Error', description: 'All fields are required!',icon:"danger",duration: 5000 });
       return;
     }
 
     if (newPassword !== confirmPassword) {
       setPasswordError("Passwords do not match!");
-     showMessage({ type:"danger", message: 'Validation Error', description: 'Passwords do not match!' });
+     showMessage({ type:"danger", message: 'Validation Error', description: 'Passwords do not match!',duration: 5000 });
       return;
     }
 
@@ -55,7 +55,7 @@ const ChangePassword = ({ navigation }) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) {
-       showMessage({ type:"danger", message: 'Authentication Error', description: 'No token found! Please log in again.' });
+       showMessage({ type:"danger", message: 'Authentication Error', description: 'No token found! Please log in again.',duration: 5000 });
         setLoading(false);
         return;
       }
@@ -70,10 +70,10 @@ const ChangePassword = ({ navigation }) => {
       setLoading(false);
 
       if (response.status === 200 && response.data.status === true) {
-       showMessage({ type: 'success', message: 'Success', description: 'Password changed successfully!',icon:"success" });
+       showMessage({ type: 'success', message: 'Success', description: 'Password changed successfully!',icon:"success",duration: 5000 });
         setIsModalVisible(true);
       } else {
-       showMessage({ type: 'danger', message: 'Error', description: response.data.message || "Something went wrong!" , icon:"danger" });
+       showMessage({ type: 'danger', message: 'Error', description: response.data.message || "Something went wrong!" , icon:"danger",duration: 5000 });
       }
 
     } catch (error) {
@@ -81,10 +81,10 @@ const ChangePassword = ({ navigation }) => {
 
       if (error.response && error.response.status === 400) {
         console.log("❌ API Error Response:", error.response.data);
-       showMessage({ type:"danger", message: 'Error', description: error.response.data.message || "Error changing password!" });
+       showMessage({ type:"danger", message: 'Error', description: error.response.data.message || "Error changing password!",duration: 5000 });
       } else {
         console.log("❌ Network Error:", error);
-       showMessage({ type:"danger", message: 'Network Error', description: 'Please try again.',icon:"danger" });
+       showMessage({ type:"danger", message: 'Network Error', description: 'Please try again.',icon:"danger",duration: 5000 });
       }
     }
   };

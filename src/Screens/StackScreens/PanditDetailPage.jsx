@@ -56,7 +56,8 @@ const PanditDetailPage = ({ navigation, item, route }) => {
             showMessage({
                 type: "danger",
                 message: "Pandit ID not found!",
-                icon: "danger"
+                icon: "danger",
+                duarion:5000
             });
             return;
         }
@@ -67,6 +68,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 type: "danger",
                 message: "Authentication Error",
                 description: "No token found. Please log in again.",
+                duarion:5000
             });
             return;
         }
@@ -89,6 +91,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                     type: "danger",
                     message: "No Profile Found",
                     description: response.data.message || "Something went wrong!",
+                    duarion:5000
                 });
             }
         } catch (error) {
@@ -98,6 +101,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 type: "danger",
                 message: "Network Error",
                 description: "Failed to load profile data",
+                duarion:5000
             });
         } finally {
             setLoading(false);
@@ -173,6 +177,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 type: "danger",
                 message: "Error",
                 description: "User ID not found!",
+                duarion:5000
             });
             return;
         }
@@ -199,7 +204,8 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                     type: "success",
                     message: "Success",
                     description: response.data.message || "Profile saved successfully!",
-                    icon: "success"
+                    icon: "success",
+                    duarion:5000
                 });
 
                 // ✅ API response ke hisaab se state update karo
@@ -222,7 +228,8 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 type: "error",
                 message: "Error",
                 description: errorMessage,
-                icon: "danger"
+                icon: "danger",
+                duarion:5000
             });
         }
     };
@@ -239,7 +246,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
         showMessage({
             type: 'info',
             message: message,
-            visibilityTime: 3000,
+            duarion:5000,
             autoHide: true,
             icon: "info"
         });
@@ -285,7 +292,8 @@ const PanditDetailPage = ({ navigation, item, route }) => {
         showMessage({
             type: "info",
             message: "Under development",
-            icon: "info"
+            icon: "info",
+            duarion:5000
         })
     };
 

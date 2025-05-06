@@ -191,6 +191,7 @@ const Kathavachak = ({ navigation }) => {
         type: "danger",
         message: "Error",
         description: "User ID not found!",
+        duration: 5000
       });
       return;
     }
@@ -219,7 +220,8 @@ const Kathavachak = ({ navigation }) => {
         showMessage({
           type: "success",
           message: response.data?.message || "Profile saved successfully!",
-          icon: "success"
+          icon: "success",
+          duration: 5000
         });
       } else {
         throw new Error(response.data?.message || "Something went wrong!");
@@ -233,7 +235,8 @@ const Kathavachak = ({ navigation }) => {
       showMessage({
         type: "danger",
         message: error?.response?.data?.message || "Failed to save profile!",
-        icon: "danger"
+        icon: "danger",
+        duration: 5000
       });
       setKathavachakData((prevProfiles) =>
         prevProfiles.map((profile) =>
@@ -264,7 +267,7 @@ const Kathavachak = ({ navigation }) => {
     showMessage({
       message: "Under development",
       type: "info",
-      duration: 3000,
+      duration: 5000,
       icon: "info",
     });
   };

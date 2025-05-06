@@ -344,7 +344,7 @@ const Home = ({ navigation }) => {
       };
 
       const response = await axios.get(GET_ACTIVIST, { headers });
-      console.log("Activist data", response.data)
+      console.log("Activist data",JSON.stringify( response.data))
       if (response.data && response.data.data && response.data.data) {
         const fetchedData = response.data.data;
         dispatch(setActivistdata(fetchedData));
@@ -359,7 +359,6 @@ const Home = ({ navigation }) => {
       setIsLoading(false)
     }
   };
-
 
   useEffect(() => {
     if (slider.length === 0) return;

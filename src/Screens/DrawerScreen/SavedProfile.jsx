@@ -25,6 +25,7 @@ const SavedProfile = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
+  const [deletingId, setDeletingId] = useState(null);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -66,64 +67,44 @@ const SavedProfile = ({ navigation }) => {
   };
 
   const DeleteSaveProfile = async (_id) => {
-    if (!_id) {
-      console.warn("Invalid ID: Cannot delete profile without a valid _id");
-      showMessage({
-        type: "danger",
-        message: "Error",
-        description: "Profile ID is missing!",
-      });
-      return;
-    }
+    if (!_id || deletingId === _id) return;
 
+    setDeletingId(_id);
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
-
-      if (!token) {
-        throw new Error("No token found. Please log in again.");
-      }
+      if (!token) throw new Error("No token found. Please log in again.");
 
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
 
-      console.log("Deleting saved profile with ID:", _id);
-      console.log("Headers:", headers);
-
       const response = await axios.delete(`${DELETE_SAVED_PROFILE}/${_id}`, { headers });
-      console.log("response", JSON.stringify(response.data))
 
       if (response.status === 200 && response.data.status === true) {
-        console.log("Profile deleted successfully:", response.data);
-
         showMessage({
           type: "success",
           message: "Success",
           description: "Saved profile deleted successfully!",
-          icon: "success"
+          icon: "success",
+          duration: 5000,
         });
         await fetchSavedProfiles();
       } else {
         throw new Error(response.data.message || "Something went wrong!");
       }
     } catch (error) {
-      console.error("Error deleting profile:", error?.response?.data || error.message);
-
-      let errorMessage = "Failed to delete profile. Please try again!";
-      if (error.response && error.response.status === 400) {
-        errorMessage = error.response.data?.message || "Invalid request!";
-      }
-
       showMessage({
         type: "danger",
         message: "Error",
-        description: errorMessage,
-        icon: "danger"
+        description: error?.response?.data?.message || error.message || "Delete failed",
+        icon: "danger",
+        duration: 5000
       });
     } finally {
       setLoading(false);
+      setDeletingId(null);
     }
   };
 
@@ -256,7 +237,14 @@ const SavedProfile = ({ navigation }) => {
             </>
           )}
         </TouchableOpacity>
-        <Text style={styles.unsaveText} onPress={() => DeleteSaveProfile(saveProfile?._id)}>Remove</Text>
+        <Text
+          style={[styles.unsaveText, deletingId === saveProfile?._id && { opacity: 0.5 }]}
+          onPress={() => {
+            if (!deletingId) DeleteSaveProfile(saveProfile?._id);
+          }}
+        >
+          {deletingId === saveProfile?._id ? "Removing..." : "Remove"}
+        </Text>
       </View>
     );
   };

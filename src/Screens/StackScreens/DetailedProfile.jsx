@@ -534,7 +534,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           showMessage({
             message: errorMessages,
             type: "danger",
-            duration: 3000,
+            duration: 5000,
             icon: "danger"
           });
           console.log("❌ Validation failed. Errors:", errors);
@@ -572,7 +572,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
         showMessage({
           message: successMessage,
           type: "success",
-          duration: 3000,
+          duarion: 5000,
           icon: "success"
         });
 
@@ -614,7 +614,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
         message: errorMessage,
         type: 'danger',
         icon: 'danger',
-        duration: 3000,
+        duarion: 5000
       });
 
       if (errorMessage === "You do not have an active subscription for Biodata service.") {
@@ -924,36 +924,29 @@ const DetailedProfile = ({ navigation, profileData }) => {
           </View>
           <View>
             <Text style={Globalstyles.title}>
-              Date of Birth <Entypo name={'star'} color={'red'} size={12} />
+              Date of Birth <Entypo name="star" color="red" size={12} />
             </Text>
 
-            <View style={[Globalstyles.inputContainer, {
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between"
-            }]}>
-              <TextInput
-                style={[{ flex: 1 }, !isEditing && styles.readOnly]}
-                value={biodata?.dob ? formatDate(biodata.dob) : ""}
-                editable={false}
-                onTouchStart={() => isEditing && setShowDatePicker(true)}
-                placeholder="Select your date of birth"
-                placeholderTextColor={Colors.gray}
-              />
+            <View
+              style={[
+                Globalstyles.input,
+                {
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between"
+                }
+              ]}
+            >
+              <TouchableOpacity
+                style={{ flex: 1 }}
+                onPress={() => isEditing && setShowDatePicker(true)}
+                activeOpacity={0.8}
 
-              {biodata?.dob && isEditing ? (
-                <TouchableOpacity onPress={() =>
-                  setBiodata((prevState) => ({ ...prevState, dob: "" }))
-                }>
-                  <AntDesign name="closecircle" size={18} color="gray" />
-                </TouchableOpacity>
-              ) : (
-                isEditing && (
-                  <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-                    <AntDesign name="calendar" size={20} style={styles.arrow} />
-                  </TouchableOpacity>
-                )
-              )}
+              >
+                <Text style={[styles.dateText]}>
+                  {biodata?.dob ? formatDate(biodata.dob) : "Select your date of birth"}
+                </Text>
+              </TouchableOpacity>
             </View>
 
             {errors.dob && <Text style={styles.errorText}>{errors.dob}</Text>}
@@ -974,57 +967,67 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 }}
                 maximumDate={new Date()}
                 themeVariant="light"
-                textColor="black"
               />
             )}
           </View>
 
           <View>
-            <Text style={Globalstyles.title}>
-              Time of Birth <Entypo name={'star'} color={'red'} size={12} />
-            </Text>
+  <Text style={Globalstyles.title}>
+    Time of Birth <Entypo name={'star'} color={'red'} size={12} />
+  </Text>
 
-            <View style={[Globalstyles.inputContainer, { flexDirection: "row", alignItems: "center", justifyContent: "space-between" }]}>
-              <TextInput
-                style={[!isEditing && styles.readOnly]}
-                value={biodata?.timeOfBirth || ""}
-                editable={isEditing}
-                onFocus={() => setShowTimePicker(true)}
-                placeholder="HH:MM AM/PM"
-                placeholderTextColor={Colors.gray}
-                autoComplete="off"
-                textContentType="none"
-              />
+  <TouchableOpacity
+    onPress={() => isEditing && setShowTimePicker(true)}
+    activeOpacity={0.8}
+  >
+    <View
+      style={[
+        Globalstyles.input,
+        {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }
+      ]}
+    >
+      <Text style={styles.dateText}>
+        {biodata?.timeOfBirth ? biodata.timeOfBirth : "HH:MM AM/PM"}
+      </Text>
+    </View>
+  </TouchableOpacity>
 
-              {/* Clock Icon to Open DateTimePicker */}
-              {!biodata?.timeOfBirth && isEditing && (
-                <TouchableOpacity onPress={() => setShowTimePicker(true)}>
-                  <AntDesign name="clockcircleo" size={18} color="gray" />
-                </TouchableOpacity>
-              )}
+  {errors.timeOfBirth && (
+    <Text style={styles.errorText}>{errors.timeOfBirth}</Text>
+  )}
 
-              {/* Cross Icon to Clear Time */}
-              {biodata?.timeOfBirth && isEditing && (
-                <TouchableOpacity onPress={() => setBiodata((prevState) => ({ ...prevState, timeOfBirth: "" }))}>
-                  <AntDesign name="closecircle" size={18} color="gray" />
-                </TouchableOpacity>
-              )}
-            </View>
+{showTimePicker && (
+  <DateTimePicker
+    value={
+      biodata?.timeOfBirth
+        ? new Date(`1970-01-01T${biodata.timeOfBirth}:00`)
+        : new Date()
+    }
+    mode="time"
+    display="spinner"
+    is24Hour={false}
+    onChange={(event, selectedTime) => {
+      setShowTimePicker(false);
+      if (event.type === "set" && selectedTime) {
+        const hours = selectedTime.getHours();
+        const minutes = selectedTime.getMinutes();
+        const formattedTime = moment({ hour: hours, minute: minutes }).format("hh:mm A");
 
-            {errors.timeOfBirth && <Text style={styles.errorText}>{errors.timeOfBirth}</Text>}
+        setBiodata((prev) => ({
+          ...prev,
+          timeOfBirth: formattedTime,
+        }));
+      }
+    }}
+    themeVariant="light"
+  />
+)}
 
-            {showTimePicker && (
-              <DateTimePicker
-                value={biodata?.timeOfBirth ? new Date(`1970-01-01T${biodata.timeOfBirth}:00`) : new Date()}
-                mode="time"
-                display="spinner"
-                is24Hour={false}
-                onChange={handleTimeChange}
-                themeVariant="light"
-                textColor="black"
-              />
-            )}
-          </View>
+</View>
 
 
 

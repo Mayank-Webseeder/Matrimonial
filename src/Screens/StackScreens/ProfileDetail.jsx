@@ -162,7 +162,7 @@ const ProfileDetail = ({ route, navigation }) => {
         showMessage({
             type: 'info',
             message: message,
-            visibilityTime: 3000,
+            duarion:5000,
             autoHide: true,
             icon: "info"
         });

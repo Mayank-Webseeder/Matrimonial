@@ -31,7 +31,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                 message: 'User ID not found!',
                 type: 'danger',
                 icon: "danger",
-                duration: 3000,
+                duarion:5000
             });
             return;
         }
@@ -58,7 +58,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                     message: 'Success',
                     description: response.data.message,
                     type: "success",
-                    duration: 3000,
+                    duarion:5000,
                     icon: "success"
                 });
 
@@ -71,7 +71,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                 showMessage({
                     message: 'Something went wrong!',
                     type: 'danger',
-                    duration: 3000,
+                    duarion:5000,
                     icon: "danger"
                 });
             }
@@ -84,7 +84,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
             showMessage({
                 message: error.response?.data?.message || "Failed to save profile!",
                 type: 'danger',
-                duration: 3000,
+                duarion:5000
             });
         }
     };
@@ -93,7 +93,8 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
         showMessage({
             type: "info",
             message: "Under development",
-            icon: "info"
+            icon: "info",
+            duarion:5000
         });
     };
 
@@ -109,7 +110,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                 message: 'Biodata Missing',
                 description: 'Please create biodata to see full information of this profile.',
                 type: 'warning',
-                duration: 3000,
+                duarion:5000
             });
             navigation.navigate('MatrimonyPage')
         } else if (isBiodataExpired) {
@@ -117,7 +118,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                 message: 'Subscription Expired',
                 description: 'Please activate your subscription to see full information of this profile.',
                 type: 'warning',
-                duration: 3000,
+                duarion:5000,
                 onPress: () => navigation.navigate('BuySubscription', { serviceType: 'Biodata' }),
             });
         } else {

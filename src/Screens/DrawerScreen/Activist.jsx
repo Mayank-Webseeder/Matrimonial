@@ -11,14 +11,17 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { GET_ACTIVIST_PROFILES } from '../../utils/BaseUrl';
+import { GET_ACTIVIST, GET_ACTIVIST_PROFILES } from '../../utils/BaseUrl';
 import { DrawerActions, useFocusEffect } from '@react-navigation/native';
 import ImageViewing from 'react-native-image-viewing';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { useSelector } from 'react-redux';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { setActivistdata } from '../../ReduxStore/Slices/ActivistSlice';
+import { useDispatch } from 'react-redux';
 
 const Activist = ({ navigation }) => {
+  const dispatch=useDispatch();
   const [modalVisible, setModalVisible] = useState(false);
   const [activistData, setActivistData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,6 +37,7 @@ const Activist = ({ navigation }) => {
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
   const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
@@ -45,7 +49,8 @@ const Activist = ({ navigation }) => {
       setLocality('');
       setSubcaste('');
       setError(null);
-      fetchActivistData("all"); // Fetch full list when coming back
+      fetchActivistData("all");
+      getActivistProfile();
     }, [])
   );
 
@@ -57,8 +62,38 @@ const Activist = ({ navigation }) => {
       setSubcaste('');
       setError(null);
       fetchActivistData("all");
+      getActivistProfile();
     }, 2000);
   }, []);
+
+
+    const getActivistProfile = async () => {
+      try {
+        setIsLoading(true)
+        const token = await AsyncStorage.getItem('userToken');
+        if (!token) throw new Error('No token found');
+  
+        const headers = {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        };
+  
+        const response = await axios.get(GET_ACTIVIST, { headers });
+        console.log("Activist data",JSON.stringify( response.data))
+        if (response.data && response.data.data && response.data.data) {
+          const fetchedData = response.data.data;
+          dispatch(setActivistdata(fetchedData));
+          setIsLoading(false)
+        } else {
+          setActivistdata({});
+        }
+      } catch (error) {
+        console.error("Error fetching Activist data:", error);
+      }
+      finally {
+        setIsLoading(false)
+      }
+    };
 
   const fetchActivistData = async (filterType = "search") => {
     try {

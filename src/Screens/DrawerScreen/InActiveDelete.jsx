@@ -45,7 +45,8 @@ const InActiveDelete = ({ navigation }) => {
                     type: "success",
                     message: "Success",
                     description: "Your Biodata has been deleted successfully!",
-                    icon:"success"
+                    icon:"success",
+                    duration: 5000
                 });
                 setSuccessModalVisible(true);
                 dispatch(resetBioData());
@@ -65,7 +66,8 @@ const InActiveDelete = ({ navigation }) => {
                 type: "danger",
                 message: "Error",
                 description: errorMessage,
-                icon:"danger"
+                icon:"danger",
+                duration: 5000
             });
 
         } finally {
@@ -92,7 +94,8 @@ const InActiveDelete = ({ navigation }) => {
                     type: "success",
                     message: "Success",
                     description: "Your Account has been deleted successfully!",
-                    icon:"success"
+                    icon:"success",
+                    duration: 5000
                 });
 
                 await AsyncStorage.clear();
@@ -117,7 +120,8 @@ const InActiveDelete = ({ navigation }) => {
                 type: "danger",
                 message: "Error",
                 description: errorMessage,
-                icon:"danger"
+                icon:"danger",
+                duration: 5000
             });
 
         } finally {

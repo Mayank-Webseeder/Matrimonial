@@ -70,7 +70,8 @@ const ReportPage = ({ navigation, route }) => {
           type: "success",
           message: response.data.message1,
           description: response.data.message2,
-          icon:"success"
+          icon:"success",
+          duarion:5000
         });
 
         setTimeout(() => {
@@ -86,7 +87,8 @@ const ReportPage = ({ navigation, route }) => {
         type: "danger",
         message:error.response?.data?.message1,
         description: error.response?.data?.message2,
-        icon:"danger"
+        icon:"danger",
+        duarion:5000
       });
     } finally {
       setIsLoading(false);  

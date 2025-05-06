@@ -201,7 +201,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
 
             const token = await AsyncStorage.getItem("userToken");
             if (!token) {
-                showMessage({ type: "danger", message: "Error", description: "Authorization token is missing." });
+                showMessage({ type: "danger", message: "Error", description: "Authorization token is missing.", duarion:5000 });
                 return;
             }
 
@@ -222,7 +222,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     type: "success",
                     message: "Committee Created Successfully",
                     description: response.data.message || "Your committee profile has been saved!",
-                    visibilityTime: 2000,
+                    duarion:5000,
                     icon: "success",
                 });
                 navigation.navigate("Committee");
@@ -231,12 +231,13 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     type: "danger",
                     message: "Error",
                     description: response.data?.message || "Failed to save committee.",
-                    icon: "danger"
+                    icon: "danger",
+                    duarion:5000
                 });
             }
         } catch (error) {
             console.error("🚨 Error Creating Committee:", error.response?.data || error.message);
-            showMessage({ type: "danger", message: "Error", description: "Failed to save committee data.", icon: "danger" });
+            showMessage({ type: "danger", message: "Error", description: "Failed to save committee data.", icon: "danger", duarion:5000 });
         } finally {
             setIsLoading(false);
         }

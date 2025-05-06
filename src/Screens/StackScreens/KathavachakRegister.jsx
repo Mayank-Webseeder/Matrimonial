@@ -736,6 +736,7 @@ const KathavachakRegister = ({ navigation }) => {
                 type: "error",
                 message: "Invalid URL",
                 description: `Please enter a valid ${type.replace("Url", "")} link.`,
+                duarion:5000
             });
         }
     };

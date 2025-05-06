@@ -39,7 +39,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
             type,
             message,
             description,
-            visibilityTime: 1000,
+            duarion:5000,
             icon
         });
     }, 500);

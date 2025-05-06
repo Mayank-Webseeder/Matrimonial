@@ -32,7 +32,8 @@ const ViewPost = ({ navigation, route }) => {
     showMessage({
       type: "info",
       message: "Under development",
-      icon: "info"
+      icon: "info",
+      duarion:5000
     });
   };
 

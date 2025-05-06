@@ -206,7 +206,7 @@ const Dharmshala = () => {
           description: 'Authorization token is missing.',
           type: 'warning',
           icon: 'warning',
-          duration: 4000,
+          duarion:5000
         });
         return;
       }
@@ -290,7 +290,7 @@ const Dharmshala = () => {
         message: "You are not an activist!",
         description: "Create an activist profile if you want to upload Dharamsala.",
         position: "bottom",
-        visibilityTime: 4000,
+        duarion:5000,
         autoHide: true,
       });
     }
@@ -303,7 +303,8 @@ const Dharmshala = () => {
         type: "danger",
         message: "Error",
         description: "User ID not found!",
-        icon: "danger"
+        icon: "danger",
+        duarion:5000
       });
       return;
     }
@@ -333,7 +334,8 @@ const Dharmshala = () => {
           type: "success",
           message: "Success",
           description: response.data?.message || "Profile saved successfully!",
-          icon: "success"
+          icon: "success",
+          duarion:5000
         });
       } else {
         throw new Error(response.data?.message || "Something went wrong!");
@@ -348,7 +350,8 @@ const Dharmshala = () => {
         type: "danger",
         message: "Error",
         description: error?.response?.data?.message || "Failed to save profile!",
-        icon: "danger"
+        icon: "danger",
+        duarion:5000
       });
       setDharamsalaData((prevProfiles) =>
         prevProfiles.map((profile) =>
@@ -363,7 +366,7 @@ const Dharmshala = () => {
       message: 'Under development',
       type: 'info',
       icon: 'info',
-      duration: 3000,
+      duarion:5000
     });
   };
 

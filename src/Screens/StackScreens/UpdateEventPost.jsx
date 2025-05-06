@@ -13,7 +13,7 @@ import axios from 'axios';
 import { showMessage } from 'react-native-flash-message';
 
 const UpdateEventPost = ({ navigation, route }) => {
-    const { eventData: initialEventData } = route.params;
+    const { eventData: initialEventData } = route.params || {};
     const [loading, setLoading] = useState(false);
     const MyActivistProfile = useSelector((state) => state.activist.activist_data);
     const [eventData, setEventData] = useState(initialEventData || { title: '', description: '', images: [] });

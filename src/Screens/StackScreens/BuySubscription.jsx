@@ -11,7 +11,7 @@ import axios from 'axios';
 import { FETCH_PLANS, PAID_URL, PAYMENT_VERIFICATION, RAZORPAY } from '../../utils/BaseUrl';
 
 const BuySubscription = ({ navigation, route }) => {
-  const { serviceType } = route.params;
+  const { serviceType } = route.params || {};
   console.log("Service Type:", serviceType);
   const [buyLoading, setBuyLoading] = useState(false);
   const [plans, setPlans] = useState([]);

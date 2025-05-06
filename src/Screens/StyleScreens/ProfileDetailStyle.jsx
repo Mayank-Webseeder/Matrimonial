@@ -115,10 +115,9 @@ const styles = StyleSheet.create({
   },
 
   text: {
-    fontSize: SF(13),
-    color: Colors.dark,
-    marginBottom: SH(2),
-    fontFamily: "Poppins-Regular",
+    fontfamily:"Poppins-Regular",
+    color: '#000',
+    fontSize:SF(15)
   },
   flexContainer: {
     paddingHorizontal: SW(10),
@@ -264,7 +263,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   section: {
-    marginBottom: SH(5),
+    marginVertical: SH(5),
   },
   sectionTitle: {
     fontSize: SF(15),
@@ -272,8 +271,9 @@ const styles = StyleSheet.create({
     marginBottom: SH(8),
   },
   text: {
-    fontSize: SF(13),
-    fontFamily: 'Poppins-Regular',
+     fontfamily:"Poppins-Regular",
+    color: '#000',
+    fontSize:SF(15),
     textTransform:"capitalize"
   },
   servicesGrid: {
@@ -452,6 +452,19 @@ const styles = StyleSheet.create({
   icon: {
     marginBottom: SH(10),
   },
+  viewMoreButton: {
+    paddingHorizontal: SW(4),
+    backgroundColor: Colors.theme_color,
+    borderRadius: 5,
+    marginHorizontal: SW(100),
+    paddingVertical: SW(3),
+  },
+  viewMoreText: {
+    fontSize: SF(13),
+    color: Colors.light,
+    fontFamily: "poppins-Regular",
+    textAlign: "center"
+  },
   noReviewsContainer: {
     alignItems: 'center',
     marginVertical: SH(20),
@@ -474,8 +487,9 @@ const styles = StyleSheet.create({
     },
     infoLabel: {
       width: SW(150),
-     fontfamily:"Poppins-Regular",
-      color: '#000',
+      fontfamily:"Poppins-Regular",
+    color: '#000',
+    fontSize:SF(15)
     },
     infoValue: {
       flex: 1,

@@ -71,7 +71,7 @@ const IntrestedProfile = ({ navigation }) => {
   );
 
   const renderItem = ({ item }, isSent) => {
-    const userData = isSent ? item.toUserBioData : item.FromUserBioData;
+    const userData = isSent ? item.toUserBioData : item?.FromUserBioData;
     const isVisible = item?.isVisible;
     const status = item?.status;
 

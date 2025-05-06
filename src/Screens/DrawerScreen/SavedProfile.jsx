@@ -25,6 +25,7 @@ const SavedProfile = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchSavedProfiles();
@@ -103,7 +104,7 @@ const SavedProfile = ({ navigation }) => {
           description: "Saved profile deleted successfully!",
           icon: "success"
         });
-        fetchSavedProfiles();
+        await fetchSavedProfiles();
       } else {
         throw new Error(response.data.message || "Something went wrong!");
       }
@@ -140,10 +141,7 @@ const SavedProfile = ({ navigation }) => {
     const { saveProfile, profileType } = item;
 
     return (
-      <View
-        style={styles.card}
-      // onPress={() => navigation.navigate("MatrimonyPeopleProfile", { userDetails: saveProfile, userId: saveProfile.userId })}
-      >
+      <View style={styles.card}>
         <TouchableOpacity style={styles.detailsContainer}
           onPress={() => {
             if (profileType === "Biodata") {
@@ -172,33 +170,62 @@ const SavedProfile = ({ navigation }) => {
           }}>
           {profileType === "Biodata" && (
             <>
-              <Image source={{ uri: saveProfile.personalDetails?.closeUpPhoto || "https://via.placeholder.com/150" }} style={styles.image} />
+              <Image
+                source={
+                  saveProfile?.personalDetails?.closeUpPhoto && saveProfile.personalDetails.closeUpPhoto.startsWith("http")
+                    ? { uri: saveProfile.personalDetails.closeUpPhoto }
+                    : require("../../Images/NoImage.png")
+                }
+                style={styles.image}
+              />
               <View style={styles.detailscontent}>
-                <Text style={styles.name} numberOfLines={1}>{saveProfile.personalDetails?.fullname || "N/A"}</Text>
-                <Text style={styles.text} numberOfLines={1} >City: {saveProfile.personalDetails?.cityOrVillage || "N/A"}</Text>
-                <Text style={styles.text} >Age: {saveProfile.personalDetails?.dob ? new Date().getFullYear() - new Date(saveProfile.personalDetails.dob).getFullYear() : "N/A"} Years</Text>
-                {/* <Text style={styles.text}>{saveProfile.personalDetails?.maritalStatus || "N/A"}</Text> */}
-                <Text style={styles.text} numberOfLines={1}>Sub Caste: {saveProfile.personalDetails?.subCaste || "N/A"}</Text>
+                <Text style={styles.name} numberOfLines={1}>
+                  {saveProfile?.personalDetails?.fullname || "N/A"}
+                </Text>
+                <Text style={styles.text} numberOfLines={1}>
+                  City: {saveProfile?.personalDetails?.cityOrVillage || "N/A"}
+                </Text>
+                <Text style={styles.text}>
+                  Age:
+                  {saveProfile?.personalDetails?.dob && !isNaN(new Date(saveProfile.personalDetails.dob).getTime())
+                    ? ` ${new Date().getFullYear() - new Date(saveProfile.personalDetails.dob).getFullYear()} Years`
+                    : " N/A"}
+                </Text>
+                <Text style={styles.text} numberOfLines={1}>
+                  Sub Caste: {saveProfile?.personalDetails?.subCaste || "N/A"}
+                </Text>
               </View>
             </>
           )}
 
+
           {["Pandit", "Jyotish", "Kathavachak"].includes(profileType) && (
             <>
               <Image
-                source={saveProfile.profilePhoto ? { uri: saveProfile.profilePhoto } : require('../../Images/NoImage.png')}
+                source={
+                  saveProfile?.profilePhoto && saveProfile.profilePhoto.startsWith("http")
+                    ? { uri: saveProfile.profilePhoto }
+                    : require("../../Images/NoImage.png")
+                }
                 style={styles.image}
               />
               <View style={styles.detailscontent}>
-                <Text style={styles.name} numberOfLines={1}>{saveProfile?.fullName || "N/A"}</Text>
-                <Text style={styles.text} numberOfLines={1}>City: {saveProfile?.city || "N/A"}</Text>
-                {saveProfile?.experience && <Text style={styles.text}>Experience: {saveProfile?.experience}</Text>}
-                {/* <Text style={styles.text}>Experience: {saveProfile?.experience || "N/A"} years</Text> */}
-                {/* <Text style={styles.text}>Sub Caste: {saveProfile.subCaste || "N/A"}</Text> */}
-                {saveProfile?.area && <Text style={styles.text} numberOfLines={1}>Area: {saveProfile?.area}</Text>}
+                <Text style={styles.name} numberOfLines={1}>
+                  {saveProfile?.fullName || "N/A"}
+                </Text>
+                <Text style={styles.text} numberOfLines={1}>
+                  City: {saveProfile?.city || "N/A"}
+                </Text>
+                <Text style={styles.text}>
+                  Experience: {saveProfile?.experience || "N/A"}
+                </Text>
+                <Text style={styles.text} numberOfLines={1}>
+                  Area: {saveProfile?.area || "N/A"}
+                </Text>
               </View>
             </>
           )}
+
 
           {profileType === "Dharmshala" && (
             <>
@@ -242,8 +269,6 @@ const SavedProfile = ({ navigation }) => {
     ) : null
   }
 
-
-
   return (
     <SafeAreaView style={Globalstyles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
@@ -256,7 +281,6 @@ const SavedProfile = ({ navigation }) => {
             <Text style={Globalstyles.headerText}>Saved</Text>
           </View>
           <View style={styles.righticons}>
-            {/* <AntDesign name={"search1"} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} /> */}
             <TouchableOpacity onPress={() => navigation.navigate('Notification')}>
               <AntDesign
                 name="bells"

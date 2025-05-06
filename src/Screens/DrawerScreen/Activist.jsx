@@ -186,11 +186,11 @@ const Activist = ({ navigation }) => {
             />
           )}
           <View style={{ marginLeft: SW(10) }}>
-            <Text style={styles.text}>{item.fullname}</Text>
-            <Text style={styles.smalltext}>{item.subCaste}</Text>
+            <Text style={styles.text}>{item?.fullname}</Text>
+            <Text style={styles.smalltext}>{item?.subCaste}</Text>
             <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-around" }}>
-              <Text style={styles.smalltext}>{item.city}</Text>
-              <Text style={styles.IDText}>Id : {item.activistId}</Text>
+              <Text style={styles.smalltext}>{item?.city}</Text>
+              <Text style={styles.IDText}>Id : {item?.activistId}</Text>
             </View>
           </View>
         </View>
@@ -287,7 +287,7 @@ const Activist = ({ navigation }) => {
           </View>
         </View>
       </View>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
 
         {loading ? renderSkeleton() : (
           <FlatList
@@ -355,11 +355,11 @@ const Activist = ({ navigation }) => {
                       <FlatList
                         data={filteredOptions.slice(0, 2)}
                         scrollEnabled={false}
-                        keyExtractor={(item) => item.value}
+                        keyExtractor={(item) => item?.value}
                         style={[Globalstyles.suggestions, { marginBottom: 10 }]}
                         renderItem={({ item }) => (
                           <TouchableOpacity onPress={() => handleOptionSelect(item)}>
-                            <Text style={styles.label}>{item.label}</Text>
+                            <Text style={styles.label}>{item?.label}</Text>
                           </TouchableOpacity>
                         )}
                         onLayout={(event) => {

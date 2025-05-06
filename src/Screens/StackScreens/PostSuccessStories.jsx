@@ -204,7 +204,7 @@ const PostSuccessStories = ({ navigation }) => {
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={Globalstyles.form}>
                     <Text style={styles.Text}>Post Your Success Story</Text>
-                    <Text style={styles.description}>Share your experience in scaling</Text>
+                    <Text style={styles.description}>Share your experience with Brahmin Milan </Text>
                     <View style={styles.ratingContainer}>
                         {renderStars()}
                     </View>
@@ -275,7 +275,7 @@ const PostSuccessStories = ({ navigation }) => {
                     {errors.brideBiodataId && (
                         <Text style={styles.errorText}>{errors.brideBiodataId}</Text>
                     )}
-                    <Text style={Globalstyles.title}>Wedding Date</Text>
+                    {/* <Text style={Globalstyles.title}>Wedding Date</Text>
                     <TouchableOpacity
                         style={Globalstyles.input}
                         onPress={() => setShowDatePicker(true)}
@@ -293,7 +293,7 @@ const PostSuccessStories = ({ navigation }) => {
                             onChange={onChangeDate}
                             maximumDate={new Date()}
                         />
-                    )}
+                    )} */}
                     <Text style={Globalstyles.title}>Your thoughts <Entypo name={'star'} color={'red'} size={12} /> </Text>
                     <TextInput
                         style={Globalstyles.textInput}

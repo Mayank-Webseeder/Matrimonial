@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
   },
   rating: {
     fontSize: SF(13),
-    marginVertical: SH(10),
+    marginVertical: SH(5),
     marginHorizontal: SW(3)
   },
   FlexContainer: {
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: '#fff',
-    marginVertical: SH(10)
+    marginVertical: SH(5),
   },
   iconContainer: {
     alignItems: 'center',
@@ -237,19 +237,19 @@ const styles = StyleSheet.create({
   },
   noReviewsContainer: {
     alignItems: 'center',
-    marginVertical: SH(20),
+    marginVertical: SH(10),
   },
   noReviewsTitle: {
     fontSize: SF(24),
     fontFamily: "Poppins-Bold",
     color: Colors.gray,
-    marginBottom: SH(8),
+    marginBottom: SH(5),
   },
   noReviewsSubtitle: {
     fontSize: SF(16),
     color: Colors.gray,
     textAlign: 'center',
-    marginTop: SH(10),
+    marginTop: SH(5),
   },
   noImagesContainer: {
     justifyContent: 'center',

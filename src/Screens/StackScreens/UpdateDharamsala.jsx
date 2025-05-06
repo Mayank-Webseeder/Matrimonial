@@ -14,7 +14,7 @@ import _ from "lodash";
 import { showMessage } from 'react-native-flash-message';
 
 const UpdateDharamsala = ({ navigation, route }) => {
-    const { DharmshalaData } = route.params;
+    const { DharmshalaData } = route.params || {};
     const [subCasteInput, setSubCasteInput] = useState('');
     const [cityInput, setCityInput] = useState('');
     const [filteredCities, setFilteredCities] = useState([]);
@@ -37,16 +37,16 @@ const UpdateDharamsala = ({ navigation, route }) => {
         if (DharmshalaData) {
             setDharamsalaData(prev => ({
                 ...prev,
-                dharmshalaName: DharmshalaData.dharmshalaName || '',
-                description: DharmshalaData.description || '',
-                subCaste: DharmshalaData.subCaste || '',
-                city: DharmshalaData.city || '',
-                images: DharmshalaData.images || [],
-                mobileNo: DharmshalaData.mobileNo || ''
+                dharmshalaName: DharmshalaData?.dharmshalaName || '',
+                description: DharmshalaData?.description || '',
+                subCaste: DharmshalaData?.subCaste || '',
+                city: DharmshalaData?.city || '',
+                images: DharmshalaData?.images || [],
+                mobileNo: DharmshalaData?.mobileNo || ''
             }));
 
             if (DharmshalaData.photoUrl) {
-                convertToBase64(DharmshalaData.photoUrl).then(base64Image => {
+                convertToBase64(DharmshalaData?.photoUrl).then(base64Image => {
                     if (base64Image) {
                         setDharamsalaData(prev => ({ ...prev, photoUrl: base64Image }));
                     }

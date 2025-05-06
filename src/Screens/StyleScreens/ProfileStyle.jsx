@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         marginHorizontal: SW(10),
         marginVertical: SH(20),
-        paddingHorizontal:0,
+        paddingHorizontal: 0,
         paddingVertical: SH(15),
         borderRadius: 10,
         maxHeight: '85%',
@@ -293,11 +293,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
-        paddingHorizontal:SW(10),
-        paddingBottom:SH(20),
-      },
+        paddingHorizontal: SW(10),
+        paddingBottom: SH(20),
+    },
     card: {
-        marginHorizontal:SW(10),
+        marginHorizontal: SW(10),
         backgroundColor: '#e8dae8',
         borderRadius: SW(12),
         overflow: 'hidden',
@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins-Bold",
         marginBottom: SH(5),
         color: Colors.theme_color,
-         textAlign:"center"
+        textAlign: "center"
     },
     Text: {
         fontSize: SF(12),
@@ -384,7 +384,10 @@ const styles = StyleSheet.create({
     },
     buttonRowAligned: {
         marginTop: SH(10),
-      },
+    },
+    arrow: {
+        marginLeft: SW(10),
+    },
 
 })
 export default styles

@@ -352,13 +352,13 @@ const Committee = ({ navigation }) => {
         <Pressable style={styles.cardData}>
           <TouchableOpacity onPress={() => openImageViewer(item.photoUrl)}>
             <Image
-              source={item.photoUrl ? { uri: item.photoUrl } : require('../../Images/NoImage.png')}
+              source={item?.photoUrl ? { uri: item?.photoUrl } : require('../../Images/NoImage.png')}
               style={styles.image}
             />
           </TouchableOpacity>
 
           {/* Image Viewer Modal */}
-          {selectedImage === item.photoUrl && (
+          {selectedImage === item?.photoUrl && (
             <ImageViewing
               images={[{ uri: selectedImage }]}
               imageIndex={0}
@@ -368,13 +368,13 @@ const Committee = ({ navigation }) => {
           )}
 
           <View style={styles.leftContainer}>
-            <Text style={styles.title}>{item.committeeTitle}</Text>
-            <Text style={styles.Nametext}>President - {item.presidentName}</Text>
+            <Text style={styles.title}>{item?.committeeTitle}</Text>
+            <Text style={styles.Nametext}>President - {item?.presidentName}</Text>
             <View style={styles.CityArea}>
-              <Text style={styles.text}>{item.city}</Text>
-              <Text style={styles.text}>{item.subCaste}</Text>
+              <Text style={styles.text}>{item?.city}</Text>
+              <Text style={styles.text}>{item?.subCaste}</Text>
             </View>
-            <Text style={styles.text}>{item.area}</Text>
+            <Text style={styles.text}>{item?.area}</Text>
           </View>
         </Pressable>
 
@@ -382,11 +382,11 @@ const Committee = ({ navigation }) => {
           {/* Bookmark Button */}
           <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
             <FontAwesome
-              name={item.isSaved ? "bookmark" : "bookmark-o"}
+              name={item?.isSaved ? "bookmark" : "bookmark-o"}
               size={19}
               color={Colors.dark}
             />
-            <Text style={styles.iconText}>{item.isSaved ? "Saved" : "Save"}</Text>
+            <Text style={styles.iconText}>{item?.isSaved ? "Saved" : "Save"}</Text>
           </TouchableOpacity>
 
 
@@ -546,7 +546,7 @@ const Committee = ({ navigation }) => {
               return (
                 <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                   <Image
-                    source={{ uri: item.image }}
+                    source={{ uri: item?.image }}
                     style={{ width, height, resizeMode: 'contain' }}
                   />
                 </TouchableOpacity>

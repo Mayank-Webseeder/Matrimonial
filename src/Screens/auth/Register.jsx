@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, ImageBackground, TouchableOpacity, TextInput, ScrollView, SafeAreaView, ActivityIndicator, FlatList } from "react-native";
+import { Text, View, ImageBackground, TouchableOpacity, TextInput, ScrollView, SafeAreaView, ActivityIndicator, FlatList, Pressable, Alert } from "react-native";
 import styles from "../StyleScreens/RegisterStyle";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -76,8 +76,11 @@ const Register = ({ navigation }) => {
     const validateFields = () => {
         const newErrors = {};
 
-        if (!mobileNumber) newErrors.mobileNumber = "Mobile number is required.";
-        else if (!/^\d{10}$/.test(mobileNumber)) newErrors.mobileNumber = "Enter a valid 10-digit mobile number.";
+        if (!mobileNumber) {
+            newErrors.mobileNumber = "Mobile number is required.";
+        } else if (!/^\d{10}$/.test(mobileNumber)) {
+            newErrors.mobileNumber = "Enter a valid 10-digit mobile number.";
+        }
 
         if (!fullName) {
             newErrors.fullName = "Full name is required.";
@@ -86,12 +89,13 @@ const Register = ({ navigation }) => {
         } else if (fullName.length > 30) {
             newErrors.fullName = "Name cannot exceed 30 characters.";
         }
+
         if (!selectedDate) {
             newErrors.selectedDate = "Date of Birth is required.";
         } else {
             const today = new Date();
             const birthDate = new Date(selectedDate);
-            const age = today.getFullYear() - birthDate.getFullYear();
+            let age = today.getFullYear() - birthDate.getFullYear();
             const m = today.getMonth() - birthDate.getMonth();
 
             if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
@@ -102,26 +106,44 @@ const Register = ({ navigation }) => {
                 newErrors.selectedDate = "Your age is below 18";
             }
         }
+
         if (!cityInput.trim()) newErrors.selectedCity = "City is required.";
         if (!gender) newErrors.gender = "Gender is required.";
+
         const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
         if (!password) {
             newErrors.password = "Password is required.";
         } else if (!strongPasswordRegex.test(password)) {
             newErrors.password = "Password must be at least 8 characters long, contain one uppercase letter, one number, and one special character.";
         }
-        if (!confirmPassword) newErrors.confirmPassword = "confirmPassword is required.";
-        if (password !== confirmPassword) newErrors.confirmPassword = "Passwords do not match.";
-        if (!otp) newErrors.otp = "OTP is required.";
-        else if (!/^\d{6}$/.test(otp)) newErrors.otp = "Enter a valid 6-digit OTP.";
+
+        if (!confirmPassword) {
+            newErrors.confirmPassword = "Confirm Password is required.";
+        } else if (password !== confirmPassword) {
+            newErrors.confirmPassword = "Passwords do not match.";
+        }
+
+        if (!otp) {
+            newErrors.otp = "OTP is required.";
+        } else if (!/^\d{6}$/.test(otp)) {
+            newErrors.otp = "Enter a valid 6-digit OTP.";
+        }
 
         setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
+        return {
+            isValid: Object.keys(newErrors).length === 0,
+            newErrors
+        };
     };
+
+    const formattedDate = selectedDate
+            ? `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, "0")}-${selectedDate.getDate().toString().padStart(2, "0")}`
+            : null;
+
 
     const handleSendOtp = async () => {
         if (!/^\d{10}$/.test(mobileNumber)) {
-            showMessage({ type:"danger", message: "Invalid Number", description: "Enter a valid 10-digit mobile number" });
+            showMessage({ type: "danger", message: "Invalid Number", description: "Enter a valid 10-digit mobile number" });
             return;
         }
 
@@ -143,7 +165,7 @@ const Register = ({ navigation }) => {
             if (error.response?.status === 400) {
                 showMessage({ type: "danger", message: "Invalid Request", description: error.response.data.message || "Mobile number is required", icon: "danger" });
             } else {
-                showMessage({ type:"danger", message: "OTP Failed", description: error.message || "Failed to send OTP. Try again.", icon: "danger" });
+                showMessage({ type: "danger", message: "OTP Failed", description: error.message || "Failed to send OTP. Try again.", icon: "danger" });
             }
         } finally {
             setIsOtpLoading(false);
@@ -151,43 +173,46 @@ const Register = ({ navigation }) => {
     };
 
     const handleSignup = async () => {
-        if (!validateFields()) return;
     
-        if (!otp || otp.length !== 6) {
+        const payload = {
+            username: fullName.trim(),
+            dob: formattedDate,
+            city: selectedCity || cityInput.trim(),
+            gender: gender,
+            password: password.trim(),
+            photoUrl: selectedImage,
+            mobileNo: mobileNumber.trim(),
+            otp: otp.trim(),
+        };
+    
+        const { isValid, newErrors } = validateFields();
+        
+        if (!isValid) {
+            const errorDetails = Object.values(newErrors).join("\n");
+    
             showMessage({
                 type: "danger",
-                message: "Invalid OTP",
-                description: "Please enter the correct OTP.",
+                message: "Validation Failed",
+                description: errorDetails,
+                duration: 5000,
                 icon: "danger"
-            });
+            }); 
+            console.log("❌ Validation failed. Errors:", newErrors);
+            setErrors(newErrors);
+            setIsLoading(false);
             return;
         }
     
-        setIsLoading(true);
         try {
-            const formattedDate = selectedDate
-                ? `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, "0")}-${selectedDate.getDate().toString().padStart(2, "0")}`
-                : null;
-    
-            const payload = {
-                username: fullName.trim(),
-                dob: formattedDate,
-                city: selectedCity || cityInput.trim(),
-                gender: gender,
-                password: password.trim(),
-                photoUrl: selectedImage, // Make sure it's a valid URL or base64 if backend expects that
-                mobileNo: mobileNumber.trim(),
-                otp: otp.trim(),
-            };
-    
+            setIsLoading(true);
             console.log("SignUp Payload:", payload);
     
             const response = await axios.post(SIGNUP_ENDPOINT, payload);
-    
-            console.log("Signup Response:", JSON.stringify(response.data));
             const RegisterData = response.data;
     
-            if (response.status === 200 && response.data.status === true) {
+            console.log("Signup Response:", JSON.stringify(RegisterData));
+    
+            if (response.status === 200 && RegisterData.status === true) {
                 dispatch(resetBioData());
     
                 const token = RegisterData?.user?.token || null;
@@ -197,8 +222,6 @@ const Register = ({ navigation }) => {
                     await AsyncStorage.setItem("userToken", token);
                     await AsyncStorage.setItem("userId", userId);
                     console.log("Token saved:", token);
-                } else {
-                    console.warn("Token is missing in response, skipping storage.");
                 }
     
                 try {
@@ -225,18 +248,17 @@ const Register = ({ navigation }) => {
         } catch (error) {
             console.error("Sign Up Error:", error);
     
-            let errorMessage = "An unexpected error occurred. Please try again.";
+            let errorMessage = "An unexpected error occurred.";
             let errorDescription = "";
     
             if (error.response) {
-                errorMessage = error.response.data.message || "Server responded with an error.";
-                errorDescription = error.response.data.error || "Please check your input and try again.";
+                errorMessage = error.response.data.message || "Server error";
+                errorDescription = error.response.data.error || "Please check your input.";
             } else if (error.request) {
                 errorMessage = "Network Error";
-                errorDescription = "Unable to reach the server. Please check your internet connection.";
+                errorDescription = "Check your internet connection.";
             } else {
-                errorMessage = "Error";
-                errorDescription = error.message || "An unexpected error occurred.";
+                errorDescription = error.message;
             }
     
             showMessage({
@@ -249,9 +271,14 @@ const Register = ({ navigation }) => {
             setIsLoading(false);
         }
     };
-    
+
 
     const handleDateChange = (event, date) => {
+        if (event.type === 'dismissed') {
+            setShowDatePicker(false);
+            return;
+        }
+
         if (date && date !== selectedDate) {
             setSelectedDate(date);
         }
@@ -301,19 +328,49 @@ const Register = ({ navigation }) => {
                         )}
                         {/* Date of Birth */}
                         <View>
-                            <Text style={Globalstyles.title}>Date of Birth <Entypo name={'star'} color={'red'} size={12} /></Text>
-                            <TouchableOpacity style={Globalstyles.inputContainer} onPress={() => setShowDatePicker(true)}>
-                                <Text style={styles.dateText}>
-                                    {selectedDate ? formatDate(selectedDate) : " "}
-                                </Text>
-                                <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-                                    <AntDesign name={"down"} size={20} style={styles.arrow} />
-                                </TouchableOpacity>
-                            </TouchableOpacity>
-                            {errors.selectedDate && (
-                                <Text style={styles.errorText}>{errors.selectedDate}</Text>
-                            )}
-                        </View>
+  <Text style={Globalstyles.title}>
+    Date of Birth <Entypo name="star" color="red" size={12} />
+  </Text>
+
+  <View style={[Globalstyles.inputContainer, { flexDirection: "row", alignItems: "center", justifyContent: "space-between" }]}>
+    <TouchableOpacity
+      style={{ flex: 1 }}
+      onPress={() => setShowDatePicker(true)}
+      activeOpacity={0.8}
+    >
+      <Text style={styles.dateText}>
+        {selectedDate ? formatDate(selectedDate) : "Select Date"}
+      </Text>
+    </TouchableOpacity>
+
+    {selectedDate ? (
+      <TouchableOpacity onPress={() => setSelectedDate(null)}>
+        <AntDesign name="closecircle" size={18} color="gray" />
+      </TouchableOpacity>
+    ) : (
+      <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+        <AntDesign name="calendar" size={20} style={styles.arrow} />
+      </TouchableOpacity>
+    )}
+  </View>
+
+  {errors.selectedDate && (
+    <Text style={styles.errorText}>{errors.selectedDate}</Text>
+  )}
+</View>
+
+{showDatePicker && (
+  <DateTimePicker
+    value={selectedDate || new Date(2000, 0, 1)}
+    mode="date"
+    display="default"
+    onChange={handleDateChange}
+    maximumDate={new Date()}
+    themeVariant="light"
+    textColor="black"
+  />
+)}
+
 
                         {/* City */}
                         <Text style={Globalstyles.title}>City <Entypo name={'star'} color={'red'} size={12} /></Text>
@@ -380,13 +437,13 @@ const Register = ({ navigation }) => {
 
                         <View>
                             <Text style={Globalstyles.title}>Create Password  <Entypo name={'star'} color={'red'} size={12} /> </Text>
-                            <View style={Globalstyles.inputContainer}>
+                            <View style={styles.passwordContainer}>
                                 <TextInput
-                                    style={Globalstyles.input1}
+                                    style={styles.passwordInput}
                                     secureTextEntry={!showPassword}
-                                    placeholder="Create a strong password"
                                     value={password}
                                     onChangeText={setPassword}
+                                    placeholder="Create a strong password"
                                     placeholderTextColor={Colors.gray}
                                     autoComplete="off"
                                     textContentType="none"
@@ -408,13 +465,13 @@ const Register = ({ navigation }) => {
                         {/* Confirm Password */}
                         <View>
                             <Text style={Globalstyles.title}>Confirm Password <Entypo name={'star'} color={'red'} size={12} /> </Text>
-                            <View style={Globalstyles.inputContainer}>
+                            <View style={styles.passwordContainer}>
                                 <TextInput
-                                    style={Globalstyles.input1}
+                                    style={styles.passwordInput}
                                     secureTextEntry={!showConfirmPassword}
-                                    placeholder="Confirm your password"
                                     value={confirmPassword}
                                     onChangeText={setConfirmpassword}
+                                    placeholder="Confirm your password"
                                     placeholderTextColor={Colors.gray}
                                     autoComplete="off"
                                     textContentType="none"
@@ -473,7 +530,7 @@ const Register = ({ navigation }) => {
                         )}
                     </View>
                     {/* Continue Button */}
-                    <TouchableOpacity
+                    <Pressable
                         style={styles.button}
                         onPress={handleSignup}
                         disabled={isLoading}
@@ -483,19 +540,9 @@ const Register = ({ navigation }) => {
                         ) : (
                             <Text style={styles.buttonText}>Sign Up</Text>
                         )}
-                    </TouchableOpacity>
+                    </Pressable>
                 </ScrollView>
             </ImageBackground>
-
-            {showDatePicker && (
-                <DateTimePicker
-                    value={selectedDate || new Date()}
-                    mode="date"
-                    display="default"
-                    onChange={handleDateChange}
-                    maximumDate={new Date()}
-                />
-            )}
         </SafeAreaView>
     );
 };

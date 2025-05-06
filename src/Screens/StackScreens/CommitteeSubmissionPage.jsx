@@ -141,11 +141,11 @@ const CommitteeSubmissionPage = ({ navigation }) => {
             }
         }
 
-        if (CommitteeData.photoUrl) {
+        if (CommitteeData?.photoUrl) {
             try {
-                payload.photoUrl = await convertToBase64(CommitteeData.photoUrl);
+                payload.photoUrl = await convertToBase64(CommitteeData?.photoUrl);
 
-                console.log("Converted Base64 Image:", payload.photoUrl);
+                console.log("Converted Base64 Image:", payload?.photoUrl);
             } catch (error) {
                 console.error("Base64 Conversion Error:", error);
             }
@@ -158,33 +158,33 @@ const CommitteeSubmissionPage = ({ navigation }) => {
         const newErrors = {};
         if (!CommitteeData.mobileNo) {
             newErrors.mobileNo = "Mobile number is required.";
-        } else if (!/^\d{10}$/.test(CommitteeData.mobileNo)) {
+        } else if (!/^\d{10}$/.test(CommitteeData?.mobileNo)) {
             newErrors.mobileNo = "Enter a valid 10-digit mobile number.";
         }
         if (!CommitteeData.presidentName) {
             newErrors.presidentName = "presidentName is required.";
-        } else if (!/^[A-Za-z\s]+$/.test(CommitteeData.presidentName)) {
+        } else if (!/^[A-Za-z\s]+$/.test(CommitteeData?.presidentName)) {
             newErrors.presidentName = "DharmspresidentName must contain only letters.";
         } else if (CommitteeData.presidentName.length > 30) {
             newErrors.presidentName = "presidentName Name cannot exceed 30 characters.";
         }
         if (!CommitteeData.committeeTitle) {
             newErrors.committeeTitle = "committeeTitle is required.";
-        } else if (!/^[A-Za-z\s]+$/.test(CommitteeData.committeeTitle)) {
+        } else if (!/^[A-Za-z\s]+$/.test(CommitteeData?.committeeTitle)) {
             newErrors.committeeTitle = "committeeTitle must contain only letters.";
-        } else if (CommitteeData.committeeTitle.length > 30) {
+        } else if (CommitteeData?.committeeTitle.length > 30) {
             newErrors.committeeTitle = "committeeTitle Name cannot exceed 30 characters.";
         }
-        if (!CommitteeData.city?.trim()) {
+        if (!CommitteeData?.city?.trim()) {
             newErrors.city = "City is required.";
         }
-        if (!CommitteeData.area?.trim()) {
+        if (!CommitteeData?.area?.trim()) {
             newErrors.area = "area is required.";
         }
-        if (!CommitteeData.subCaste?.trim()) {
+        if (!CommitteeData?.subCaste?.trim()) {
             newErrors.subCaste = "Sub caste is required.";
         }
-        if (!CommitteeData.photoUrl) {
+        if (!CommitteeData?.photoUrl) {
             newErrors.photoUrl = "photoUrl is required.";
         }
 
@@ -287,7 +287,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                 <TextInput
                     style={Globalstyles.input}
                     placeholder="Enter President Name"
-                    value={CommitteeData.presidentName}
+                    value={CommitteeData?.presidentName}
                     onChangeText={(text) => {
                         const cleanText = text.replace(/[^A-Za-z\s]/g, '');
                         setCommitteeData((prev) => ({ ...prev, presidentName: cleanText }));
@@ -376,7 +376,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                 <TextInput
                     style={Globalstyles.input}
                     placeholder="Enter Your Area"
-                    value={CommitteeData.area} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, area: text }))}
+                    value={CommitteeData?.area} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, area: text }))}
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
                     textContentType="none"
@@ -393,7 +393,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                 </View>
                 {CommitteeData.photoUrl ? (
                     <Image
-                        source={{ uri: CommitteeData.photoUrl }}
+                        source={{ uri: CommitteeData?.photoUrl }}
                         style={styles.imagePreviewContainer}
                     />
                 ) : null}
@@ -411,7 +411,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
                     textContentType="none"
-                    value={CommitteeData.mobileNo} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
+                    value={CommitteeData?.mobileNo} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
                 />
 
                 {errors.mobileNo && (

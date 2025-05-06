@@ -57,7 +57,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
         if (!kathavachak_id) {
             showMessage({
                 type: "danger",
-                message: "Jyotish ID not found!",
+                message: "Kathavachak ID not found!",
                 icon: "danger"
             });
             return;
@@ -175,13 +175,13 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
         if (!kathavachak_id) {
             showMessage({
                 type: "danger",
-                message: "Error",
-                description: "User ID not found!",
+                message: "User ID not found!",
+                icon: "danger"
             });
             return;
         }
 
-        setIsSaved((prev) => !prev); // ✅ Optimistic UI Update
+        setIsSaved((prev) => !prev);
 
         try {
             const token = await AsyncStorage.getItem("userToken");
@@ -198,11 +198,11 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
 
             console.log("Response Data:", response?.data);
 
-            if (response.status === 200 && response.data?.success) {
+            if (response.status === 200 && response.data.status === true) {
                 showMessage({
                     type: "success",
-                    message: "Success",
-                    description: response.data.message || "Profile saved successfully!",
+                    message: response.data.message || "Profile saved successfully!",
+                    icon: "success"
                 });
 
                 // ✅ API response ke hisaab se state update karo
@@ -228,6 +228,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
             });
         }
     };
+
 
 
     const openLink = (url, platform) => {
@@ -363,6 +364,12 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                             <Text style={styles.city}>{profileData?.state}</Text>
                         </View>
 
+                        {profileData?.residentialAddress ? (
+                            <Text style={styles.text} numberOfLines={1}>
+                                {profileData.residentialAddress}
+                            </Text>
+                        ) : null}
+
                         <View style={styles.FlexContainer}>
                             <Rating
                                 type="star"
@@ -375,8 +382,6 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                                 {profileData?.ratings?.length > 0 ? `${profileData.ratings.length} Reviews` : "No Ratings Yet"}
                             </Text>
                         </View>
-
-                        <Text style={styles.text} numberOfLines={1}>{profileData?.residentialAddress}</Text>
                     </View>
                 </View>
                 <View style={styles.contentContainer}>
@@ -437,6 +442,15 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                             </Text>
                         </TouchableOpacity>
                     </View>
+
+
+                    {profileData?.experience ? (
+                        <>
+                            <Text style={styles.sectionTitle}>Experience </Text>
+                            <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} years of experience` : ''}</Text>
+                        </>
+                    ) : null}
+
                     <View>
                         <Text style={styles.sectionTitle}>Services List</Text>
                         <View style={styles.servicesGrid}>
@@ -558,8 +572,8 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                         </>
                     ) : (
                         <View style={styles.noReviewsContainer}>
-                            <Text style={styles.noReviewsTitle}>No Reviews Yet</Text>
-                            <Text style={styles.noReviewsSubtitle}>Newly uploaded reviews will appear here.</Text>
+                            <Text style={styles.noReviewsTitle}>Reviews will show up here</Text>
+                            <Text style={styles.noReviewsSubtitle}>You'll see others' feedback once they post it.</Text>
                         </View>
                     )}
                 </View>

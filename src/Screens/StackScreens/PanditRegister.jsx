@@ -326,7 +326,7 @@ const PanditRegister = ({ navigation }) => {
 
             const headers = {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
+                Authorization: `Bearer ${token}`,
             };
 
             const commonPayload = {
@@ -362,17 +362,17 @@ const PanditRegister = ({ navigation }) => {
                 ...commonPayload,
                 panditServices: Object.keys(checked).filter(service =>
                     servicesOptions["Pandit"].some(option => option.value === service) && checked[service]
-                )
+                ),
             };
 
-            console.log("commonPayload", JSON.stringify(payload))
+            console.log("commonPayload", JSON.stringify(payload));
 
             const response = await axios.post(CREATE_PANDIT, payload, { headers });
             console.log("Response:", JSON.stringify(response.data));
 
             showMessage({
                 message: "Success!",
-                description: "Registered as Pandit",
+                description: response.data?.message || "Registered as Pandit. Your approval request has been sent.",
                 type: "success",
                 icon: "success",
                 duration: 5000,
@@ -381,7 +381,6 @@ const PanditRegister = ({ navigation }) => {
             await AsyncStorage.removeItem("RoleRegisterData");
 
             setTimeout(() => {
-                // navigation.navigate("MyProfile");
                 navigation.navigate("MainApp");
             }, 3000);
 
@@ -394,12 +393,9 @@ const PanditRegister = ({ navigation }) => {
 
             console.error("❌ Error:", errorMessage);
 
-            showMessage({
-                message: errorMessage,
-                type: "danger",
-                icon: "danger",
-                duration: 5000,
-            });
+            // Show error with Alert (not flash message)
+            Alert.alert("Please Wait", errorMessage);
+
             if (errorMessage.includes("valid Pandit subscription")) {
                 setTimeout(() => {
                     openModal();

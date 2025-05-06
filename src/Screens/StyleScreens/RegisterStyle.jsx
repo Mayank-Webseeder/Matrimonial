@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     dateText: {
         flex: 1,
         fontSize: SF(16),
-        color: Colors.dark,
+        color:"gray",
         paddingVertical: SH(7)
     },
     arrow: {
@@ -49,14 +49,14 @@ const styles = StyleSheet.create({
         paddingHorizontal: SW(5),
         paddingVertical: SH(5),
         borderRadius: 50,
-        marginTop: SH(30),
+        marginTop: SH(20),
         width: "100%",
-        marginBottom: SH(20)
+        marginBottom: SH(25)
     },
     otpButton: {
         paddingHorizontal: SW(5),
         paddingVertical: SH(5),
-        paddingRight:SW(10)
+        paddingRight: SW(10)
     },
     otpButtonText: {
         color: Colors.theme_color,
@@ -96,9 +96,28 @@ const styles = StyleSheet.create({
         borderRadius: 75,
     },
     imagePlaceholder: {
-        color:"gray",
+        color: "gray",
         fontSize: SF(15),
         textDecorationLine: 'underline',
+    },
+    passwordContainer: {
+        // borderColor: Colors.theme_color,
+        paddingHorizontal: SW(10),
+        // paddingVertical: SH(5),
+        // borderWidth: 1,
+        // borderRadius:10,
+        // marginHorizontal: SW(25),
+        borderColor: '#ccc',
+        borderWidth: 1,
+        color: Colors.dark,
+        marginBottom: SH(10),
+        flexDirection: "row",
+        alignItems: "center",
+        borderRadius: 5,
+    },
+    passwordInput: {
+        flex: 1,
+        color: Colors.dark,
     },
 
 });

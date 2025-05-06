@@ -284,8 +284,6 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   );
 
   const fetchUserProfile = async (id) => {
-    console.log("id", id);
-    setLoading(true);
     const token = await AsyncStorage.getItem('userToken');
     if (!token) throw new Error('No token found');
 
@@ -295,14 +293,40 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
     };
 
     try {
+      setLoading(true);
       const response = await axios.get(`${MATCHED_PROFILE}/${id}`, { headers });
-      console.log("response", JSON.stringify(response.data))
+      console.log("response", JSON.stringify(response.data));
+
       if (response.data.status) {
         setProfileData(response.data);
-        setUserData(response?.data?.targetUserBioData)
+        setUserData(response?.data?.targetUserBioData);
+      } else {
+        setProfileData(null);
+        setUserData(null);
+        setLoading(false);
+        Alert.alert("Error", "User account has been deleted or no biodata available.");
       }
     } catch (error) {
-      console.error("Error fetching profile:", error);
+      console.error("❌ Error fetching profile");
+
+      if (error.response) {
+        console.error("🔻 Server Error:");
+        console.error("Status Code:", error.response.status);
+        console.error("Message:", error.response.data?.message || "No message");
+        console.error("Data:", error.response.data);
+
+        if (error.response.data?.message === "Target user has not set any biodata or personal details.") {
+          setProfileData(null);
+          setUserData(null);
+          setLoading(false);
+        }
+      } else if (error.request) {
+        console.error("📡 No response received from server.");
+        console.error("Request Details:", error.request);
+      } else {
+        console.error("⚠️ Error Message:", error.message);
+      }
+      setLoading(false);
     } finally {
       setLoading(false);
     }
@@ -458,6 +482,18 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" color={Colors.theme_color} />
+      </View>
+    );
+  }
+
+  if (!profileData && !userData) {
+    return (
+      <View style={styles.container}>
+        <MaterialIcons name="person-off" size={60} color="#ccc" />
+        <Text style={styles.title}>Profile Unavailable</Text>
+        <Text style={styles.message}>
+          The user's profile is currently unavailable. They may have deleted their account
+        </Text>
       </View>
     );
   }
@@ -807,7 +843,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             </View>
           </View>
         )}
-        
+
         {/* Family Section */}
         <View style={[styles.familyDiv]}>
           <View>
@@ -957,7 +993,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               )}
               {personalDetails?.hobbies && (
                 <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Hobby :</Text>
+                  <Text style={styles.infoLabel}>Hobbies :</Text>
                   <Text style={styles.infoValue}>{personalDetails.hobbies}</Text>
                 </View>
               )}

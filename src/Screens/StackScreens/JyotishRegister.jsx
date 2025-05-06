@@ -337,7 +337,7 @@ const JyotishRegister = ({ navigation }) => {
 
             const headers = {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
+                Authorization: `Bearer ${token}`,
             };
 
             const commonPayload = {
@@ -373,7 +373,7 @@ const JyotishRegister = ({ navigation }) => {
                 ...commonPayload,
                 jyotishServices: Object.keys(checked).filter(service =>
                     servicesOptions["Jyotish"].some(option => option.value === service) && checked[service]
-                )
+                ),
             };
 
             const response = await axios.post(CREATE_JYOTISH, payload, { headers });
@@ -381,18 +381,17 @@ const JyotishRegister = ({ navigation }) => {
 
             showMessage({
                 message: "Success!",
-                description: "Registered as Jyotish",
+                description: response.data?.message || "Registered as Jyotish. Your approval request has been sent.",
                 type: "success",
                 icon: "success",
-                 duration: 5000,
-                            });
-                
-                            await AsyncStorage.removeItem("RoleRegisterData");
-                
-                            setTimeout(() => {
-                                // navigation.navigate("MyProfile");
-                                navigation.navigate("MainApp");
-                            }, 3000);
+                duration: 5000,
+            });
+
+            await AsyncStorage.removeItem("RoleRegisterData");
+
+            setTimeout(() => {
+                navigation.navigate("MainApp");
+            }, 3000);
 
         } catch (error) {
             const errorMessage =
@@ -400,21 +399,17 @@ const JyotishRegister = ({ navigation }) => {
                 error?.response?.message ||
                 error?.message ||
                 "Something went wrong!";
-        
+
             console.error("❌ Error:", errorMessage);
-        
-            showMessage({
-                message: errorMessage,
-                type: "danger",
-                icon: "danger",
-                duration: 5000,
-            });
+
+            Alert.alert("Please Wait", errorMessage); // ❌ Replaces showMessage
+
             if (errorMessage.includes("valid Jyotish subscription")) {
                 setTimeout(() => {
                     openModal();
                 }, 1000);
             }
-        
+
         } finally {
             console.log("Loader Stopped!");
             setIsLoading(false);
@@ -684,36 +679,36 @@ const JyotishRegister = ({ navigation }) => {
     };
 
     const handleSubCasteInputChange = (text) => {
-          const filtered = subCasteOptions
-              .filter((item) =>
-                  item?.label?.toLowerCase().includes(text.toLowerCase())
-              )
-              .map((item) => item.label);
-      
-          // If matches found, allow input
-          if (filtered.length > 0) {
-              setSubCasteInput(text);
-              setFilteredSubCaste(filtered);
-              setRoleRegisterData((PrevRoleRegisterData) => ({
-                  ...PrevRoleRegisterData,
-                  subCaste: text,
-              }));
-          } else {
-              // Don't allow arbitrary input — only show "Other"
-              setFilteredSubCaste(['Other']);
-          }
-      };
-      
-      const handleSubCasteSelect = (selectedItem) => {
-          const finalValue = selectedItem === 'Other' ? 'Other' : selectedItem;
-      
-          setSubCasteInput(finalValue);
-          setFilteredSubCaste([]);
-          setRoleRegisterData((PrevRoleRegisterData) => ({
-              ...PrevRoleRegisterData,
-              subCaste: finalValue,
-          }));
-      };
+        const filtered = subCasteOptions
+            .filter((item) =>
+                item?.label?.toLowerCase().includes(text.toLowerCase())
+            )
+            .map((item) => item.label);
+
+        // If matches found, allow input
+        if (filtered.length > 0) {
+            setSubCasteInput(text);
+            setFilteredSubCaste(filtered);
+            setRoleRegisterData((PrevRoleRegisterData) => ({
+                ...PrevRoleRegisterData,
+                subCaste: text,
+            }));
+        } else {
+            // Don't allow arbitrary input — only show "Other"
+            setFilteredSubCaste(['Other']);
+        }
+    };
+
+    const handleSubCasteSelect = (selectedItem) => {
+        const finalValue = selectedItem === 'Other' ? 'Other' : selectedItem;
+
+        setSubCasteInput(finalValue);
+        setFilteredSubCaste([]);
+        setRoleRegisterData((PrevRoleRegisterData) => ({
+            ...PrevRoleRegisterData,
+            subCaste: finalValue,
+        }));
+    };
 
     const handleInputChange = (field, value) => {
         setRoleRegisterData((prev) => ({
@@ -955,8 +950,8 @@ const JyotishRegister = ({ navigation }) => {
                         </TouchableOpacity>
                     </View>
                     {!RoleRegisterData.profilePhoto && errors.profilePhoto && (
-    <Text style={styles.errorText}>{errors.profilePhoto}</Text>
-)}
+                        <Text style={styles.errorText}>{errors.profilePhoto}</Text>
+                    )}
 
                     <Text style={Globalstyles.title}>Add Description</Text>
                     <TextInput style={Globalstyles.textInput} value={RoleRegisterData.description}

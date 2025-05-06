@@ -15,7 +15,7 @@ import { useDispatch } from 'react-redux';
 import { setAllBiodata } from '../../ReduxStore/Slices/GetAllBiodataSlice';
 import { setBioData } from '../../ReduxStore/Slices/BiodataSlice';
 import { useFocusEffect } from '@react-navigation/native';
-import { setActivistdata } from '../../ReduxStore/Slices/ActivistSlice';
+import { resetsetActivistdata, setActivistdata } from '../../ReduxStore/Slices/ActivistSlice';
 import { useSelector } from 'react-redux';
 import { useCallback } from 'react';
 import { setProfiledata } from '../../ReduxStore/Slices/ProfileSlice';
@@ -41,6 +41,7 @@ const Home = ({ navigation }) => {
   const profile_data = ProfileData?.profiledata || {};
   const [Topslider, TopsetSlider] = useState([]);
   const [Bottomslider, BottomsetSlider] = useState([]);
+  const [activitData,setActivitData]=useState({});
   const isBiodataMissing = Object.keys(MyprofileData?.Biodata || {}).length > 0;
   const isBiodataExpired = profile_data?.serviceSubscriptions?.some(
     (sub) => sub.serviceType === "Biodata" && sub.status === "Expired"
@@ -334,32 +335,40 @@ const Home = ({ navigation }) => {
 
   const getActivistProfile = async () => {
     try {
-      setIsLoading(true)
+      setActivitData({});
+      setIsLoading(true);
+  
       const token = await AsyncStorage.getItem('userToken');
       if (!token) throw new Error('No token found');
-
+  
       const headers = {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       };
-
+  
       const response = await axios.get(GET_ACTIVIST, { headers });
-      console.log("Activist data",JSON.stringify( response.data))
-      if (response.data && response.data.data && response.data.data) {
+      console.log("Activist data", JSON.stringify(response.data));
+  
+      if (response.data && response.data.data) {
         const fetchedData = response.data.data;
+        setActivitData(fetchedData);
         dispatch(setActivistdata(fetchedData));
-        setIsLoading(false)
       } else {
-        setActivistdata({});
+        setActivitData({});
+        dispatch(setActivistdata({}));
       }
     } catch (error) {
       console.error("Error fetching Activist data:", error);
-    }
-    finally {
-      setIsLoading(false)
+  
+      // ✅ Clear Redux if 400 error (bad request / no data)
+      if (error.response && error.response.status === 400) {
+        resetsetActivistdata();
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
-
+  
   useEffect(() => {
     if (slider.length === 0) return;
 

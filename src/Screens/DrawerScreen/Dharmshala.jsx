@@ -496,29 +496,29 @@ const Dharmshala = () => {
       <View>
         {/* Search and Filter Section */}
         <View style={styles.searchContainer}>
-          <View style={styles.searchbar}>
-            <TextInput
-              placeholder='Search in Your City'
-              placeholderTextColor="gray"
-              value={locality}
-              onChangeText={(text) => {
-                setLocality(text);
-                fetchDharamsalaData("search");
-              }}
-              style={{ fontSize: SF(13) }}
-            />
-            {locality.length > 0 ? (
-              <AntDesign name={'close'} size={20} color={'gray'} onPress={() => {
-                setLocality('');
-                navigation.reset({
-                  index: 0,
-                  routes: [{ name: 'Dharmshala' }],
-                });
-              }} />
-            ) : (
-              <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchDharamsalaData("search")} />
-            )}
-          </View>
+        <View style={styles.searchbar}>
+          <TextInput
+            placeholder="Search in Your city"
+            value={locality}
+            onChangeText={(text) => setLocality(text)}
+            onSubmitEditing={() => fetchDharamsalaData("search")}
+            placeholderTextColor={"gray"}
+            style={{ flex: 1 }}
+            autoComplete="off"
+            textContentType="none"
+          />
+          {locality.length > 0 ? (
+            <AntDesign name={'close'} size={20} color={'gray'} onPress={() => {
+              setLocality('');
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Committee' }],
+              });
+            }} />
+          ) : (
+            <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchDharamsalaData("search")} />
+          )}
+        </View>
         </View>
 
         <View style={styles.ButtonContainer}>

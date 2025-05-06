@@ -161,19 +161,19 @@ const SavedProfile = ({ navigation }) => {
               />
               <View style={styles.detailscontent}>
                 <Text style={styles.name} numberOfLines={1}>
-                  {saveProfile?.personalDetails?.fullname || "N/A"}
+                  {saveProfile?.personalDetails?.fullname || "NA"}
                 </Text>
                 <Text style={styles.text} numberOfLines={1}>
-                  City: {saveProfile?.personalDetails?.cityOrVillage || "N/A"}
+                  City: {saveProfile?.personalDetails?.cityOrVillage || "NA"}
                 </Text>
                 <Text style={styles.text}>
                   Age:
                   {saveProfile?.personalDetails?.dob && !isNaN(new Date(saveProfile.personalDetails.dob).getTime())
                     ? ` ${new Date().getFullYear() - new Date(saveProfile.personalDetails.dob).getFullYear()} Years`
-                    : " N/A"}
+                    : " NA"}
                 </Text>
                 <Text style={styles.text} numberOfLines={1}>
-                  Sub Caste: {saveProfile?.personalDetails?.subCaste || "N/A"}
+                  Sub Caste: {saveProfile?.personalDetails?.subCaste || "NA"}
                 </Text>
               </View>
             </>
@@ -192,16 +192,16 @@ const SavedProfile = ({ navigation }) => {
               />
               <View style={styles.detailscontent}>
                 <Text style={styles.name} numberOfLines={1}>
-                  {saveProfile?.fullName || "N/A"}
+                  {saveProfile?.fullName || "NA"}
                 </Text>
                 <Text style={styles.text} numberOfLines={1}>
-                  City: {saveProfile?.city || "N/A"}
+                  City: {saveProfile?.city || "NA"}
                 </Text>
                 <Text style={styles.text}>
-                  Experience: {saveProfile?.experience || "N/A"}
+                  Experience: {saveProfile?.experience || "NA"}
                 </Text>
                 <Text style={styles.text} numberOfLines={1}>
-                  Area: {saveProfile?.area || "N/A"}
+                  Area: {saveProfile?.area || "NA"}
                 </Text>
               </View>
             </>
@@ -215,9 +215,9 @@ const SavedProfile = ({ navigation }) => {
                 style={styles.image}
               />
               <View style={styles.detailscontent}>
-                <Text style={styles.name} numberOfLines={1}>{saveProfile?.dharmshalaName || "N/A"}</Text>
-                <Text style={styles.text} numberOfLines={1}>City: {saveProfile?.city || "N/A"}</Text>
-                <Text style={styles.text} numberOfLines={1}>Sub Caste: {saveProfile?.subCaste || "N/A"}</Text>
+                <Text style={styles.name} numberOfLines={1}>{saveProfile?.dharmshalaName || "NA"}</Text>
+                <Text style={styles.text} numberOfLines={1}>City: {saveProfile?.city || "NA"}</Text>
+                <Text style={styles.text} numberOfLines={1}>Sub Caste: {saveProfile?.subCaste || "NA"}</Text>
               </View>
             </>
           )}
@@ -229,10 +229,10 @@ const SavedProfile = ({ navigation }) => {
                 style={styles.image}
               />
               <View style={styles.detailscontent}>
-                <Text style={styles.name} numberOfLines={1}>{saveProfile?.committeeTitle || "N/A"}</Text>
-                <Text style={styles.text} numberOfLines={1}>{saveProfile?.presidentName || "N/A"}</Text>
-                <Text style={styles.text} numberOfLines={1}>City: {saveProfile?.city || "N/A"}</Text>
-                <Text style={styles.text} numberOfLines={1}>Sub Caste: {saveProfile?.subCaste || "N/A"}</Text>
+                <Text style={styles.name} numberOfLines={1}>{saveProfile?.committeeTitle || "NA"}</Text>
+                <Text style={styles.text} numberOfLines={1}>{saveProfile?.presidentName || "NA"}</Text>
+                <Text style={styles.text} numberOfLines={1}>City: {saveProfile?.city || "NA"}</Text>
+                <Text style={styles.text} numberOfLines={1}>Sub Caste: {saveProfile?.subCaste || "NA"}</Text>
               </View>
             </>
           )}

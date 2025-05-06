@@ -11,14 +11,17 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { GET_ACTIVIST_PROFILES } from '../../utils/BaseUrl';
+import { GET_ACTIVIST, GET_ACTIVIST_PROFILES } from '../../utils/BaseUrl';
 import { DrawerActions, useFocusEffect } from '@react-navigation/native';
 import ImageViewing from 'react-native-image-viewing';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { useSelector } from 'react-redux';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { resetsetActivistdata, setActivistdata } from '../../ReduxStore/Slices/ActivistSlice';
+import { useDispatch } from 'react-redux';
 
 const Activist = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [modalVisible, setModalVisible] = useState(false);
   const [activistData, setActivistData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -30,10 +33,12 @@ const Activist = ({ navigation }) => {
   const [modalLocality, setModalLocality] = useState('');
   const [isImageVisible, setImageVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
-  const MyActivistProfile = useSelector((state) => state.activist.activist_data);
+  const MyActivistProfile = useSelector((state) => state.activist.activist_data) || {};
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
   const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [activitData, setActivitData] = useState({});
 
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
@@ -42,10 +47,12 @@ const Activist = ({ navigation }) => {
 
   useFocusEffect(
     React.useCallback(() => {
+      console.log("MyActivistProfile", MyActivistProfile);
       setLocality('');
       setSubcaste('');
       setError(null);
-      fetchActivistData("all"); // Fetch full list when coming back
+      fetchActivistData("all");
+      getActivistProfile();
     }, [])
   );
 
@@ -57,8 +64,47 @@ const Activist = ({ navigation }) => {
       setSubcaste('');
       setError(null);
       fetchActivistData("all");
+      getActivistProfile();
     }, 2000);
   }, []);
+
+
+  const getActivistProfile = async () => {
+    try {
+      setActivitData({});
+      setIsLoading(true);
+
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+      const response = await axios.get(GET_ACTIVIST, { headers });
+      console.log("Activist data", JSON.stringify(response.data));
+
+      if (response.data && response.data.data) {
+        const fetchedData = response.data.data;
+        setActivitData(fetchedData);
+        dispatch(setActivistdata(fetchedData));
+      } else {
+        setActivitData({});
+        dispatch(setActivistdata({}));
+      }
+    } catch (error) {
+      console.error("Error fetching Activist data:", error);
+
+      // ✅ Clear Redux if 400 error (bad request / no data)
+      if (error.response && error.response.status === 400) {
+        resetsetActivistdata();
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
 
   const fetchActivistData = async (filterType = "search") => {
     try {
@@ -134,21 +180,21 @@ const Activist = ({ navigation }) => {
   };
 
   const handleInputChange = (text) => {
-     setSubcaste(text);
-     if (text.trim() === '') {
-       setFilteredOptions([]);
-     } else {
-       const filtered = subCasteOptions.filter((option) =>
-         option.label.toLowerCase().includes(text.toLowerCase())
-       );
-       setFilteredOptions(filtered);
-     }
-   };
- 
-   const handleOptionSelect = (value) => {
-     setSubcaste(value.label);
-     setFilteredOptions([]);
-   };
+    setSubcaste(text);
+    if (text.trim() === '') {
+      setFilteredOptions([]);
+    } else {
+      const filtered = subCasteOptions.filter((option) =>
+        option.label.toLowerCase().includes(text.toLowerCase())
+      );
+      setFilteredOptions(filtered);
+    }
+  };
+
+  const handleOptionSelect = (value) => {
+    setSubcaste(value.label);
+    setFilteredOptions([]);
+  };
 
   const renderSkeleton = () => (
     <SkeletonPlaceholder>
@@ -280,7 +326,7 @@ const Activist = ({ navigation }) => {
               onPress={() => navigation.navigate('ActivistForm')}
             >
               <Text style={styles.buttonText}>
-                {MyActivistProfile ? "Update Profile" : "Be an Activist"}
+                {Object.keys(MyActivistProfile).length > 0 ? "Update Profile" : "Be an Activist"}
               </Text>
             </TouchableOpacity>
 

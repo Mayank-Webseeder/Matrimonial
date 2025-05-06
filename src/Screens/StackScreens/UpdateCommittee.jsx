@@ -166,11 +166,11 @@ const UpdateCommittee = ({ navigation, route }) => {
             setIsLoading(true);
             const token = await AsyncStorage.getItem("userToken");
             if (!token) {
-                showMessage({ type: "danger", message: "Authorization token is missing." });
+                showMessage({ type: "danger", message: "Authorization token is missing.", duarion:5000 });
                 return;
             }
             if (!CommitteeData.photoUrl.startsWith("data:image/")) {
-                showMessage({ type: "error", message: "Please select an image first." });
+                showMessage({ type: "error", message: "Please select an image first.", duarion:5000 });
                 return;
             }
             const apiUrl = `${UPDATE_COMMITTEE}/${committeeData._id}`;
@@ -187,7 +187,7 @@ const UpdateCommittee = ({ navigation, route }) => {
             }
         } catch (error) {
             console.error("API Error:", error.response?.data || error);
-            showMessage({ type: "danger", message: "Failed to update committee.", icon: "danger" });
+            showMessage({ type: "danger", message: "Failed to update committee.", icon: "danger" , duarion:5000 });
         } finally {
             setIsLoading(false);
         }

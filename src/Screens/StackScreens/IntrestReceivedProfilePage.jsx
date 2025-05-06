@@ -182,7 +182,8 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
       showMessage({
         type: "danger",
         message: "User ID not found!",
-        icon: "danger"
+        icon: "danger",
+        duarion:5000
       });
       return;
     }
@@ -204,7 +205,8 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           type: "success",
           message: "Success",
           description: response.data.message || "Profile saved successfully!",
-          icon: "success"
+          icon: "success",
+          duarion:5000
         });
 
         setIsSaved(response.data.message.includes("saved successfully"));
@@ -223,7 +225,8 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         type: "danger",
         message: "Error",
         description: errorMessage,
-        icon: "danger"
+        icon: "danger",
+        duarion:5000
       });
     }
   };
@@ -242,6 +245,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           type: "danger",
           message: "Error",
           description: "User token missing!",
+          duarion:5000
         });
         return;
       }
@@ -257,6 +261,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           message: "Success",
           description: response.data.message || "Request accepted successfully!",
           icon: "success",
+          duarion:5000
         });
         setTimeout(() => {
           navigation.goBack();
@@ -276,7 +281,8 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         type: "danger",
         message: "Error",
         description: errorMessage,
-        icon: "danger"
+        icon: "danger",
+        duarion:5000
       });
       setLoadingAccept(false);
     }
@@ -299,6 +305,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           type: "danger",
           message: "Error",
           description: "User token missing!",
+          duarion:5000
         });
         return;
       }
@@ -313,7 +320,8 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           type: "success",
           message: "Success",
           description: response.data.message || "Request rejected successfully!",
-          icon: "success"
+          icon: "success",
+          duarion:5000
         });
         setTimeout(() => {
           navigation.goBack();
@@ -333,7 +341,8 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         type: "error",
         message: "Error",
         description: errorMessage,
-        icon: "danger"
+        icon: "danger",
+        duarion:5000
       });
       setLoadingDecline(false);
     }
@@ -348,7 +357,8 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
       type: "info",
       message: "Info",
       description: "Under development",
-      icon: "info"
+      icon: "info",
+      duarion:5000
     });
   };
 

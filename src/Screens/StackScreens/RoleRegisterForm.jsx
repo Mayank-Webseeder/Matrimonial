@@ -307,7 +307,8 @@ const RoleRegisterForm = ({ navigation }) => {
                     type: 'success',
                     message: 'Success!',
                     description: `Successfully registered for ${role}.`,
-                    icon:"success"
+                    icon:"success",
+                    duarion:5000
                 });
             });
 
@@ -328,7 +329,8 @@ const RoleRegisterForm = ({ navigation }) => {
             showMessage({
                 type: 'danger',
                 message:error.response?.data?.message || 'Something went wrong!',
-                icon:"danger"
+                icon:"danger",
+                duarion:5000
             });
 
         } finally {
@@ -452,7 +454,8 @@ const RoleRegisterForm = ({ navigation }) => {
                 type: "info",
                 message: "Invalid URL",
                 description: `Please enter a valid ${type.replace("Url", "")} link.`,
-                icon:"info"
+                icon:"info",
+                duarion:5000
             });
         }
     };

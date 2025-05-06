@@ -84,6 +84,7 @@ const Login = ({ navigation }) => {
                     description: "You have logged in!",
                     visibilityTime: 1000,
                     icon: "success",
+                    duration: 5000,
                     textStyle: { fontSize: 14, color: "white" },
                     onHide: () => {
                         console.log("🟢 Navigating to AppStack...");
@@ -99,7 +100,7 @@ const Login = ({ navigation }) => {
                     type: "danger",
                     message: "Login Failed",
                     description: LoginData.message || "Invalid credentials. Please try again.",
-                    visibilityTime: 2000,
+                    duration: 5000,
                     textStyle: { fontSize: 14, color: "white" },
                     icon: "danger"
                 });
@@ -113,7 +114,7 @@ const Login = ({ navigation }) => {
                     type: "error",
                     message: "Unauthorized",
                     description: error.response.data.message || "Invalid mobile number or password.",
-                    visibilityTime: 2000,
+                    duration: 5000,
                     textStyle: { fontSize: 14, color: "white" },
                     backgroundColor: "red",
                 });
@@ -122,7 +123,7 @@ const Login = ({ navigation }) => {
                     type: "danger",
                     message: "Error",
                     description: "Something went wrong. Please try again.",
-                    visibilityTime: 2000,
+                    duration: 5000,
                     textStyle: { fontSize: 14, color: "white" },
                     backgroundColor: "red",
                 });

@@ -192,7 +192,8 @@ const Jyotish = ({ navigation }) => {
         type: "danger",
         message: "Error",
         description: "User ID not found!",
-        icon: "danger"
+        icon: "danger",
+        duration: 5000,
       });
       return;
     }
@@ -221,7 +222,8 @@ const Jyotish = ({ navigation }) => {
         showMessage({
           type: "success",
           message: response.data?.message || "Profile saved successfully!",
-          icon: "success"
+          icon: "success",
+          duration: 5000
         });
       } else {
         throw new Error(response.data?.message || "Something went wrong!");
@@ -234,7 +236,8 @@ const Jyotish = ({ navigation }) => {
       showMessage({
         type: "danger",
         message: error?.response?.data?.message || "Failed to save profile!",
-        icon: "danger"
+        icon: "danger",
+        duration: 5000
       });
       setJyotishData((prevProfiles) =>
         prevProfiles.map((profile) =>
@@ -266,7 +269,7 @@ const Jyotish = ({ navigation }) => {
     showMessage({
       message: "Under development",
       type: "info",
-      duration: 3000,
+      duration: 5000,
       icon: "info",
     });
   };

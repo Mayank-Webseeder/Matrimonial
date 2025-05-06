@@ -72,7 +72,8 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     paddingHorizontal: SW(10),
-    paddingVertical: SH(10)
+    paddingVertical: SH(10),
+    paddingBottom:SH(5)
   },
   detailscontent: {
     paddingVertical: SH(10)

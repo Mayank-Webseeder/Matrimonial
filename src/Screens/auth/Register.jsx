@@ -137,13 +137,13 @@ const Register = ({ navigation }) => {
     };
 
     const formattedDate = selectedDate
-            ? `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, "0")}-${selectedDate.getDate().toString().padStart(2, "0")}`
-            : null;
+        ? `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, "0")}-${selectedDate.getDate().toString().padStart(2, "0")}`
+        : null;
 
 
     const handleSendOtp = async () => {
         if (!/^\d{10}$/.test(mobileNumber)) {
-            showMessage({ type: "danger", message: "Invalid Number", description: "Enter a valid 10-digit mobile number" });
+            showMessage({ type: "danger", message: "Invalid Number", description: "Enter a valid 10-digit mobile number", duration: 5000 });
             return;
         }
 
@@ -155,7 +155,7 @@ const Register = ({ navigation }) => {
 
             if (response.status === 200 || response.data.status === true) {
                 setOtpSent(true);  // Mark OTP as sent
-                showMessage({ type: "success", message: "OTP Sent", description: "Check your SMS for the OTP", icon: "success" });
+                showMessage({ type: "success", message: "OTP Sent", description: "Check your SMS for the OTP", icon: "success", duration: 5000 });
             } else {
                 throw new Error(response.data.message || "OTP request failed");
             }
@@ -163,9 +163,9 @@ const Register = ({ navigation }) => {
             console.error("OTP Error:", error);
 
             if (error.response?.status === 400) {
-                showMessage({ type: "danger", message: "Invalid Request", description: error.response.data.message || "Mobile number is required", icon: "danger" });
+                showMessage({ type: "danger", message: "Invalid Request", description: error.response.data.message || "Mobile number is required", icon: "danger", duration: 5000 });
             } else {
-                showMessage({ type: "danger", message: "OTP Failed", description: error.message || "Failed to send OTP. Try again.", icon: "danger" });
+                showMessage({ type: "danger", message: "OTP Failed", description: error.message || "Failed to send OTP. Try again.", icon: "danger", duration: 5000 });
             }
         } finally {
             setIsOtpLoading(false);
@@ -173,7 +173,7 @@ const Register = ({ navigation }) => {
     };
 
     const handleSignup = async () => {
-    
+
         const payload = {
             username: fullName.trim(),
             dob: formattedDate,
@@ -184,60 +184,61 @@ const Register = ({ navigation }) => {
             mobileNo: mobileNumber.trim(),
             otp: otp.trim(),
         };
-    
+
         const { isValid, newErrors } = validateFields();
-        
+
         if (!isValid) {
             const errorDetails = Object.values(newErrors).join("\n");
-    
+
             showMessage({
                 type: "danger",
                 message: "Validation Failed",
                 description: errorDetails,
                 duration: 5000,
                 icon: "danger"
-            }); 
+            });
             console.log("❌ Validation failed. Errors:", newErrors);
             setErrors(newErrors);
             setIsLoading(false);
             return;
         }
-    
+
         try {
             setIsLoading(true);
             console.log("SignUp Payload:", payload);
-    
+
             const response = await axios.post(SIGNUP_ENDPOINT, payload);
             const RegisterData = response.data;
-    
+
             console.log("Signup Response:", JSON.stringify(RegisterData));
-    
+
             if (response.status === 200 && RegisterData.status === true) {
                 dispatch(resetBioData());
-    
+
                 const token = RegisterData?.user?.token || null;
                 const userId = RegisterData?.user?.user?.id;
-    
+
                 if (token && userId) {
                     await AsyncStorage.setItem("userToken", token);
                     await AsyncStorage.setItem("userId", userId);
                     console.log("Token saved:", token);
                 }
-    
+
                 try {
                     initializeSocket(userId);
                     console.log(`✅ Socket initialized successfully for user: ${userId}`);
                 } catch (socketError) {
                     console.error("🚨 Socket Initialization Failed:", socketError);
                 }
-    
+
                 showMessage({
                     type: "success",
                     message: "Sign Up Successful",
                     description: "You have successfully signed up!",
-                    icon: "success"
+                    icon: "success",
+                    duration: 5000,
                 });
-    
+
                 navigation.reset({
                     index: 0,
                     routes: [{ name: "AppStack" }],
@@ -247,10 +248,10 @@ const Register = ({ navigation }) => {
             }
         } catch (error) {
             console.error("Sign Up Error:", error);
-    
+
             let errorMessage = "An unexpected error occurred.";
             let errorDescription = "";
-    
+
             if (error.response) {
                 errorMessage = error.response.data.message || "Server error";
                 errorDescription = error.response.data.error || "Please check your input.";
@@ -260,12 +261,13 @@ const Register = ({ navigation }) => {
             } else {
                 errorDescription = error.message;
             }
-    
+
             showMessage({
                 type: "danger",
                 message: errorMessage,
                 description: errorDescription,
-                icon: "danger"
+                icon: "danger",
+                duration: 5000,
             });
         } finally {
             setIsLoading(false);
@@ -326,50 +328,47 @@ const Register = ({ navigation }) => {
                         {errors.fullName && (
                             <Text style={styles.errorText}>{errors.fullName}</Text>
                         )}
-                        {/* Date of Birth */}
                         <View>
-  <Text style={Globalstyles.title}>
-    Date of Birth <Entypo name="star" color="red" size={12} />
-  </Text>
+                            <Text style={Globalstyles.title}>
+                                Date of Birth <Entypo name="star" color="red" size={12} />
+                            </Text>
 
-  <View style={[Globalstyles.inputContainer, { flexDirection: "row", alignItems: "center", justifyContent: "space-between" }]}>
-    <TouchableOpacity
-      style={{ flex: 1 }}
-      onPress={() => setShowDatePicker(true)}
-      activeOpacity={0.8}
-    >
-      <Text style={styles.dateText}>
-        {selectedDate ? formatDate(selectedDate) : "Select Date"}
-      </Text>
-    </TouchableOpacity>
+                            <View
+                                style={[
+                                    Globalstyles.inputContainer,
+                                    {
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        justifyContent: "space-between"
+                                    }
+                                ]}
+                            >
+                                <TouchableOpacity
+                                    style={{ flex: 1 }}
+                                    onPress={() => setShowDatePicker(true)}
+                                    activeOpacity={0.8}
+                                >
+                                    <Text style={[styles.dateText]}>
+                                        {selectedDate ? formatDate(selectedDate) : "Select Date"}
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
 
-    {selectedDate ? (
-      <TouchableOpacity onPress={() => setSelectedDate(null)}>
-        <AntDesign name="closecircle" size={18} color="gray" />
-      </TouchableOpacity>
-    ) : (
-      <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-        <AntDesign name="calendar" size={20} style={styles.arrow} />
-      </TouchableOpacity>
-    )}
-  </View>
+                            {errors.selectedDate && (
+                                <Text style={styles.errorText}>{errors.selectedDate}</Text>
+                            )}
+                        </View>
 
-  {errors.selectedDate && (
-    <Text style={styles.errorText}>{errors.selectedDate}</Text>
-  )}
-</View>
-
-{showDatePicker && (
-  <DateTimePicker
-    value={selectedDate || new Date(2000, 0, 1)}
-    mode="date"
-    display="default"
-    onChange={handleDateChange}
-    maximumDate={new Date()}
-    themeVariant="light"
-    textColor="black"
-  />
-)}
+                        {showDatePicker && (
+                            <DateTimePicker
+                                value={selectedDate || new Date(1990, 0, 1)}
+                                mode="date"
+                                display="default"
+                                onChange={handleDateChange}
+                                maximumDate={new Date()}
+                                themeVariant="light"
+                            />
+                        )}
 
 
                         {/* City */}

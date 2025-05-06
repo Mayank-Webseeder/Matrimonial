@@ -56,7 +56,8 @@ const ViewMyEventPost = ({ navigation, route }) => {
       type: "info",
       message: "Info",
       message: "Under development",
-      icon: "info"
+      icon: "info",
+      duarion:5000
     });
   };
 
@@ -130,7 +131,8 @@ const ViewMyEventPost = ({ navigation, route }) => {
         type: "danger",
         message: "Error",
         message: error?.response?.data?.message || "Failed to like event. Please try again!",
-        icon: "danger"
+        icon: "danger",
+        duarion:5000
       });
 
       // Reverse the like state on error
@@ -185,6 +187,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
           type: "success",
           message: "Success",
           message: fetchedData.message || "Comment added successfully!",
+          duarion:5000,
           onHide: () => {
             navigation.reset({
               index: 0,
@@ -204,6 +207,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
         type: "danger",
         message: error?.response?.data?.message || "Failed to add comment. Please try again!",
         icon: "danger",
+        duarion:5000
       });
     } finally {
       setCommentLoading(false);
@@ -242,6 +246,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
           message: "Success",
           message: "Comment deleted successfully!",
           position: "top",
+          duarion:5000
         });
       }
     } catch (error) {
@@ -251,7 +256,8 @@ const ViewMyEventPost = ({ navigation, route }) => {
         type: "danger",
         message: "Error",
         message: error?.response?.data?.message || "Failed to delete comment. Please try again!",
-        icon: "danger"
+        icon: "danger",
+        duarion:5000
       });
     } finally {
       setdeletecommentLoading(false);
@@ -284,7 +290,8 @@ const ViewMyEventPost = ({ navigation, route }) => {
           type: "success",
           message: "Success",
           message: "Event post deleted successfully!",
-          icon: "success"
+          icon: "success",
+          duarion:5000
         });
 
         // ✅ Close modal if used
@@ -313,6 +320,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
         type: "danger",
         message: "Error",
         message: errorMessage,
+        duarion:5000
       });
     } finally {
       setIsLoading(false);

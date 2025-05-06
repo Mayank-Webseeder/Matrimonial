@@ -730,6 +730,7 @@ const PanditRegister = ({ navigation }) => {
                 type: "danger",
                 message: "Invalid URL",
                 description: `Please enter a valid ${type.replace("Url", "")} link.`,
+                duarion:5000
             });
         }
     };

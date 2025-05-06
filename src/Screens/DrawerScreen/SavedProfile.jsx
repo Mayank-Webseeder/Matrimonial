@@ -25,6 +25,7 @@ const SavedProfile = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
+  const [deletingId, setDeletingId] = useState(null);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -66,64 +67,44 @@ const SavedProfile = ({ navigation }) => {
   };
 
   const DeleteSaveProfile = async (_id) => {
-    if (!_id) {
-      console.warn("Invalid ID: Cannot delete profile without a valid _id");
-      showMessage({
-        type: "danger",
-        message: "Error",
-        description: "Profile ID is missing!",
-      });
-      return;
-    }
+    if (!_id || deletingId === _id) return;
 
+    setDeletingId(_id);
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
-
-      if (!token) {
-        throw new Error("No token found. Please log in again.");
-      }
+      if (!token) throw new Error("No token found. Please log in again.");
 
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
 
-      console.log("Deleting saved profile with ID:", _id);
-      console.log("Headers:", headers);
-
       const response = await axios.delete(`${DELETE_SAVED_PROFILE}/${_id}`, { headers });
-      console.log("response", JSON.stringify(response.data))
 
       if (response.status === 200 && response.data.status === true) {
-        console.log("Profile deleted successfully:", response.data);
-
         showMessage({
           type: "success",
           message: "Success",
           description: "Saved profile deleted successfully!",
-          icon: "success"
+          icon: "success",
+          duration: 5000,
         });
         await fetchSavedProfiles();
       } else {
         throw new Error(response.data.message || "Something went wrong!");
       }
     } catch (error) {
-      console.error("Error deleting profile:", error?.response?.data || error.message);
-
-      let errorMessage = "Failed to delete profile. Please try again!";
-      if (error.response && error.response.status === 400) {
-        errorMessage = error.response.data?.message || "Invalid request!";
-      }
-
       showMessage({
         type: "danger",
         message: "Error",
-        description: errorMessage,
-        icon: "danger"
+        description: error?.response?.data?.message || error.message || "Delete failed",
+        icon: "danger",
+        duration: 5000
       });
     } finally {
       setLoading(false);
+      setDeletingId(null);
     }
   };
 
@@ -180,19 +161,19 @@ const SavedProfile = ({ navigation }) => {
               />
               <View style={styles.detailscontent}>
                 <Text style={styles.name} numberOfLines={1}>
-                  {saveProfile?.personalDetails?.fullname || "N/A"}
+                  {saveProfile?.personalDetails?.fullname || "NA"}
                 </Text>
                 <Text style={styles.text} numberOfLines={1}>
-                  City: {saveProfile?.personalDetails?.cityOrVillage || "N/A"}
+                  City: {saveProfile?.personalDetails?.cityOrVillage || "NA"}
                 </Text>
                 <Text style={styles.text}>
                   Age:
                   {saveProfile?.personalDetails?.dob && !isNaN(new Date(saveProfile.personalDetails.dob).getTime())
                     ? ` ${new Date().getFullYear() - new Date(saveProfile.personalDetails.dob).getFullYear()} Years`
-                    : " N/A"}
+                    : " NA"}
                 </Text>
                 <Text style={styles.text} numberOfLines={1}>
-                  Sub Caste: {saveProfile?.personalDetails?.subCaste || "N/A"}
+                  Sub Caste: {saveProfile?.personalDetails?.subCaste || "NA"}
                 </Text>
               </View>
             </>
@@ -211,16 +192,16 @@ const SavedProfile = ({ navigation }) => {
               />
               <View style={styles.detailscontent}>
                 <Text style={styles.name} numberOfLines={1}>
-                  {saveProfile?.fullName || "N/A"}
+                  {saveProfile?.fullName || "NA"}
                 </Text>
                 <Text style={styles.text} numberOfLines={1}>
-                  City: {saveProfile?.city || "N/A"}
+                  City: {saveProfile?.city || "NA"}
                 </Text>
                 <Text style={styles.text}>
-                  Experience: {saveProfile?.experience || "N/A"}
+                  Experience: {saveProfile?.experience || "NA"}
                 </Text>
                 <Text style={styles.text} numberOfLines={1}>
-                  Area: {saveProfile?.area || "N/A"}
+                  Area: {saveProfile?.area || "NA"}
                 </Text>
               </View>
             </>
@@ -234,9 +215,9 @@ const SavedProfile = ({ navigation }) => {
                 style={styles.image}
               />
               <View style={styles.detailscontent}>
-                <Text style={styles.name} numberOfLines={1}>{saveProfile?.dharmshalaName || "N/A"}</Text>
-                <Text style={styles.text} numberOfLines={1}>City: {saveProfile?.city || "N/A"}</Text>
-                <Text style={styles.text} numberOfLines={1}>Sub Caste: {saveProfile?.subCaste || "N/A"}</Text>
+                <Text style={styles.name} numberOfLines={1}>{saveProfile?.dharmshalaName || "NA"}</Text>
+                <Text style={styles.text} numberOfLines={1}>City: {saveProfile?.city || "NA"}</Text>
+                <Text style={styles.text} numberOfLines={1}>Sub Caste: {saveProfile?.subCaste || "NA"}</Text>
               </View>
             </>
           )}
@@ -248,15 +229,22 @@ const SavedProfile = ({ navigation }) => {
                 style={styles.image}
               />
               <View style={styles.detailscontent}>
-                <Text style={styles.name} numberOfLines={1}>{saveProfile?.committeeTitle || "N/A"}</Text>
-                <Text style={styles.text} numberOfLines={1}>{saveProfile?.presidentName || "N/A"}</Text>
-                <Text style={styles.text} numberOfLines={1}>City: {saveProfile?.city || "N/A"}</Text>
-                <Text style={styles.text} numberOfLines={1}>Sub Caste: {saveProfile?.subCaste || "N/A"}</Text>
+                <Text style={styles.name} numberOfLines={1}>{saveProfile?.committeeTitle || "NA"}</Text>
+                <Text style={styles.text} numberOfLines={1}>{saveProfile?.presidentName || "NA"}</Text>
+                <Text style={styles.text} numberOfLines={1}>City: {saveProfile?.city || "NA"}</Text>
+                <Text style={styles.text} numberOfLines={1}>Sub Caste: {saveProfile?.subCaste || "NA"}</Text>
               </View>
             </>
           )}
         </TouchableOpacity>
-        <Text style={styles.unsaveText} onPress={() => DeleteSaveProfile(saveProfile?._id)}>Remove</Text>
+        <Text
+          style={[styles.unsaveText, deletingId === saveProfile?._id && { opacity: 0.5 }]}
+          onPress={() => {
+            if (!deletingId) DeleteSaveProfile(saveProfile?._id);
+          }}
+        >
+          {deletingId === saveProfile?._id ? "Removing..." : "Remove"}
+        </Text>
       </View>
     );
   };

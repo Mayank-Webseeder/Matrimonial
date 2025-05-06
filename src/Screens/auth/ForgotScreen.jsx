@@ -57,7 +57,13 @@ const ForgotScreen = ({ navigation }) => {
 
             if (response.status === 200 && response.data.status === true) {
                 setOtpSent(true);
-                showMessage({ type: "success", message: "OTP Sent", description: "Check your SMS for the OTP", icon: "success" });
+                showMessage({ 
+                    type: "success", 
+                    message: "OTP Sent", 
+                    description: "Check your SMS for the OTP", 
+                    icon: "success",
+                    duration: 5000
+                 });
             } else {
                 throw new Error(response.data.message || "OTP request failed");
             }
@@ -65,9 +71,9 @@ const ForgotScreen = ({ navigation }) => {
             console.error("OTP Error:", error);
 
             if (error.response?.status === 400) {
-                showMessage({ type: "danger", message: "Invalid Request", description: error.response.data.message || "Mobile number is required" });
+                showMessage({ type: "danger", message: "Invalid Request", description: error.response.data.message || "Mobile number is required",duration: 5000 });
             } else {
-                showMessage({ type: "danger", message: "OTP Failed", description: error.message || "Failed to send OTP. Try again.", icon: "danger" });
+                showMessage({ type: "danger", message: "OTP Failed", description: error.message || "Failed to send OTP. Try again.", icon: "danger",duration: 5000 });
             }
         } finally {
             setIsOtpLoading(false);
@@ -95,7 +101,8 @@ const ForgotScreen = ({ navigation }) => {
                     type: "success",
                     message: "Password Reset Successful",
                     description: response.data.message || "You can now log in with your new password.",
-                    icon: "success"
+                    icon: "success",
+                    duration: 5000
                 });
                 setTimeout(() => {
                     navigation.reset({
@@ -115,7 +122,8 @@ const ForgotScreen = ({ navigation }) => {
                 type: "danger",
                 message: "Password Reset Failed",
                 description: error.response?.data?.message || error.message || "Something went wrong. Please try again.",
-                icon: "danger"
+                icon: "danger",
+                duration: 5000
             });
         } finally {
             setIsLoading(false);

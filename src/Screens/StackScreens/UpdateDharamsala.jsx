@@ -223,6 +223,7 @@ const UpdateDharamsala = ({ navigation, route }) => {
                     type: "danger",
                     message: "Authorization Error",
                     description: "Token is missing! Please login again.",
+                    duarion:5000
                 });
                 setIsLoading(false);
                 return;
@@ -250,7 +251,8 @@ const UpdateDharamsala = ({ navigation, route }) => {
                 type: "success",
                 message: "Success",
                 description: "Dharamsala Updated Successfully! 🎉",
-                icon: "success"
+                icon: "success",
+                duarion:5000
             });
 
             setTimeout(() => {
@@ -269,7 +271,8 @@ const UpdateDharamsala = ({ navigation, route }) => {
                 type: "danger",
                 message: "Update Failed",
                 description: errorMessage,
-                icon: "danger"
+                icon: "danger",
+                duarion:5000
             });
         } finally {
             setIsLoading(false);

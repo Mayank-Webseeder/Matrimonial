@@ -39,7 +39,8 @@ const FeedBack = ({ navigation }) => {
                 type: 'success',
                 message: 'Success',
                 description: response.data.message || 'Your Feedback has been submitted successfully!',
-                icon:"success"
+                icon:"success",
+                duration: 5000
             });
 
             setTimeout(() => {
@@ -62,7 +63,8 @@ const FeedBack = ({ navigation }) => {
             type: 'danger',
             message: 'Error',
             description: errorMessage,
-            icon:"danger"
+            icon:"danger",
+            duration: 5000
         });
     }
 };

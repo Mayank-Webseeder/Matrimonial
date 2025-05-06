@@ -58,7 +58,8 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
             showMessage({
                 type: "danger",
                 message: "Kathavachak ID not found!",
-                icon: "danger"
+                icon: "danger",
+                duarion:5000
             });
             return;
         }
@@ -69,6 +70,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                 type: "danger",
                 message: "Authentication Error",
                 description: "No token found. Please log in again.",
+                duarion:5000
             });
             return;
         }
@@ -176,7 +178,8 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
             showMessage({
                 type: "danger",
                 message: "User ID not found!",
-                icon: "danger"
+                icon: "danger",
+                duarion:5000
             });
             return;
         }
@@ -202,7 +205,8 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                 showMessage({
                     type: "success",
                     message: response.data.message || "Profile saved successfully!",
-                    icon: "success"
+                    icon: "success",
+                    duarion:5000
                 });
 
                 // ✅ API response ke hisaab se state update karo
@@ -224,12 +228,11 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
             showMessage({
                 type: "danger",
                 message: errorMessage,
-                icon: "danger"
+                icon: "danger",
+                duarion:5000
             });
         }
     };
-
-
 
     const openLink = (url, platform) => {
         if (url) {
@@ -243,7 +246,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
         showMessage({
             type: 'info',
             message: message,
-            visibilityTime: 3000,
+            duarion:5000,
             autoHide: true,
         });
     };
@@ -290,6 +293,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
             type: "info",
             message: "Info",
             description: "Under development",
+            duarion:5000
         });
     };
 

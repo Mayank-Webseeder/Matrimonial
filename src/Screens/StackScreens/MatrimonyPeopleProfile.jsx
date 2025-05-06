@@ -144,7 +144,8 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         showMessage({
           type: "error",
           message: "User token missing!",
-          icon: "danger"
+          icon: "danger",
+          duarion:5000
         });
         return;
       }
@@ -159,11 +160,12 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           type: "success",
           message: "Success",
           description: response.data.message || "Intrest Deleted successfully!",
-          icon: "success"
+          icon: "success",
+          duarion:5000
         });
         setTimeout(() => {
           navigation.goBack();
-        }, 500);
+        }, 5000);
       } else {
         throw new Error(response.data.message || "Something went wrong");
       }
@@ -178,7 +180,8 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       showMessage({
         type: "danger",
         message: errorMessage,
-        icon: "danger"
+        icon: "danger",
+        duarion:5000
       });
     }
     finally {
@@ -192,7 +195,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         message: "Error: User ID not found!",
         type: "danger",
         icon: "danger",
-        duration: 3000,
+        duarion:5000
       });
       return "";
     }
@@ -216,7 +219,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           message: "Matrimonial Profile Approved ✅",
           type: "success",
           icon: "success",
-          duration: 3000,
+          duarion:5000
         });
       }
       else if (message.toLowerCase().includes("disapproved")) {
@@ -224,7 +227,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           message: "Matrimonial Profile Disapproved ❌",
           type: "danger",
           icon: "danger",
-          duration: 3000,
+          duarion:5000
         });
       }
       else {
@@ -232,7 +235,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           message: message,
           type: "success",
           icon: "success",
-          duration: 3000,
+          duarion:5000
         });
       }
 
@@ -246,7 +249,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         message: error.response?.data?.message,
         type: "danger",
         icon: "danger",
-        duration: 3000,
+        duarion:5000
       });
       return "";
     }
@@ -341,7 +344,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         type: "danger",
         message: "Error",
         description: "User ID not found!",
-        visibilityTime: 3000,
+        duarion:5000,
         autoHide: true
       });
       setLoadingIntrest(false);
@@ -368,7 +371,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           type: "success",
           message: "Success",
           description: response.data.message,
-          visibilityTime: 2000,
+          duarion:5000,
           autoHide: true,
           onHide: () => {
             setTimeout(() => {
@@ -386,7 +389,8 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         type: "danger",
         message: "Error",
         description: error.response?.data?.message || "Failed to send interest!",
-        icon: "danger"
+        icon: "danger",
+        duarion:5000
       });
     } finally {
       setLoadingIntrest(false); // ✅ Hide Loader
@@ -399,7 +403,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         message: "Error: User ID not found!",
         type: "danger",
         icon: "danger",
-        duration: 3000,
+        duarion:5000
       });
       return;
     }
@@ -426,7 +430,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           message: response.data.message,
           type: "success",
           icon: "success",
-          duration: 3000,
+          duarion:5000
         });
         if (response.data.message === "Profile saved successfully.") {
           setIsSaved(true);
@@ -438,7 +442,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           message: "Something went wrong!",
           type: "danger",
           icon: "danger",
-          duration: 3000,
+          duarion:5000
         });
       }
     } catch (error) {
@@ -450,7 +454,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         message: error.response?.data?.message,
         type: "danger",
         icon: "danger",
-        duration: 3000,
+        duarion:5000
       });
     }
   };
@@ -460,7 +464,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       message: "Under development",
       type: "info",
       icon: "info",
-      duration: 3000,
+      duarion:5000
     });
   };
 

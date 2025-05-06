@@ -99,6 +99,7 @@ const CreatePost = ({ navigation, route }) => {
                     type: 'success',
                     message: 'Success',
                     description: response.data.message || 'Your event has been created successfully!',
+                    duarion:5000
                 });
                 navigation.navigate('EventNews');
             } else {
@@ -124,7 +125,8 @@ const CreatePost = ({ navigation, route }) => {
                 type: 'danger',
                 message: 'Error',
                 description: errorMessage,
-                icon: "danger"
+                icon: "danger",
+                duarion:5000
             });
 
         } finally {

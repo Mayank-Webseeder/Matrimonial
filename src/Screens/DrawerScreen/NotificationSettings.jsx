@@ -43,7 +43,8 @@ const NotificationSettings = ({ navigation }) => {
           type: "success",
           message: "Success",
           description: response.data.message || "Setting updated successfully!",
-          icon:"success"
+          icon:"success",
+          duration: 5000
         });
       } else {
         throw new Error(response.data.message || "Something went wrong!");
@@ -61,7 +62,8 @@ const NotificationSettings = ({ navigation }) => {
         type: "danger",
         message: "Error",
         description: errorMessage,
-        icon:"danger"
+        icon:"danger",
+        duration: 5000
       });
     } finally {
       setLoadingProfileInterest(false);
@@ -85,7 +87,7 @@ const NotificationSettings = ({ navigation }) => {
           type: "success",
           message: "Success",
           description: response.data.message || "Notification updated successfully!",
-          icon:"success"
+          icon:"success",duration: 5000
         });
       } else {
         throw new Error(response.data.message || "Something went wrong!");
@@ -103,7 +105,8 @@ const NotificationSettings = ({ navigation }) => {
         type: "danger",
         message: "Error",
         description: errorMessage,
-        icon:"danger"
+        icon:"danger",
+        duration: 5000,
       });
     } finally {
       setLoadingNewsEvents(false);

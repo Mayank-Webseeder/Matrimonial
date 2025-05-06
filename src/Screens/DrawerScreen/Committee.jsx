@@ -265,7 +265,7 @@ const Committee = ({ navigation }) => {
         type: "info",
         message: "You are not an activist!",
         description: "Create an activist profile if you want to upload a committee.",
-        visibilityTime: 4000,
+        duarion:5000,
         autoHide: true,
         icon: "info"
       });
@@ -280,7 +280,8 @@ const Committee = ({ navigation }) => {
         type: "danger",
         message: "Error",
         description: "User ID not found!",
-        icon: "danger"
+        icon: "danger",
+        duarion:5000
       });
       return;
     }
@@ -310,7 +311,8 @@ const Committee = ({ navigation }) => {
           type: "success",
           message: "Success",
           description: response.data?.message || "Profile saved successfully!",
-          icon: "success"
+          icon: "success",
+          duarion:5000
         });
       } else {
         throw new Error(response.data?.message || "Something went wrong!");
@@ -325,7 +327,8 @@ const Committee = ({ navigation }) => {
         type: "danger",
         message: "Error",
         description: error?.response?.data?.message || "Failed to save profile!",
-        icon: "danger"
+        icon: "danger",
+        duarion:5000
       });
       setCommitteeData((prevProfiles) =>
         prevProfiles.map((profile) =>
@@ -340,7 +343,7 @@ const Committee = ({ navigation }) => {
       message: 'Under development',
       type: 'info',
       icon: 'info',
-      duration: 3000,
+      duarion:5000
     });
   };
 

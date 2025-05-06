@@ -279,6 +279,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
             showMessage({
                 type: "danger",
                 message: "Invalid profile type selected.",
+                duarion:5000
             });
             setIsLoading(false);
             return;
@@ -344,7 +345,8 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                     type: "success",
                     message: "Success!",
                     description: `Successfully updated profile for ${profileType}.`,
-                    icon: "success"
+                    icon: "success",
+                    duarion:5000
                 });
 
                 setTimeout(() => {
@@ -364,14 +366,16 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                     type: "danger",
                     message: "Update Failed",
                     description: error.response.data.message || "Invalid request. Please check your input.",
-                    icon: "danger"
+                    icon: "danger",
+                    duarion:5000
                 });
             } else {
                 showMessage({
                     type: "danger",
                     message: "Error",
                     description: error.message || "Something went wrong. Please try again.",
-                    icon: "danger"
+                    icon: "danger",
+                    duarion:5000
                 });
             }
         } finally {

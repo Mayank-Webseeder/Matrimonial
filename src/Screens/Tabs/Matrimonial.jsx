@@ -537,12 +537,10 @@ const Matrimonial = ({ navigation }) => {
         </TouchableOpacity>
 
       </View>
-
-
       {searchMode && (
         <View style={Globalstyles.inputContainer}>
           <TextInput
-            style={{ color: "#000" }}
+            style={{ color: "#000",flex:1 }}
             placeholder="Search by Name, ID, Occupation, City"
             value={searchQuery}
             onChangeText={(text) => {
@@ -556,10 +554,7 @@ const Matrimonial = ({ navigation }) => {
             <View>
               <AntDesign name={'close'} size={20} color={'gray'} onPress={() => {
                 setSearchQuery('');
-                navigation.reset({
-                  index: 0,
-                  routes: [{ name: 'Matrimonial' }],
-                });
+                fetchProfiles();
               }}
               />
             </View>

@@ -58,6 +58,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
             showMessage({
                 type: "error",
                 message: "Jyotish ID not found!",
+                duarion:5000
             });
             return;
         }
@@ -67,7 +68,8 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
             showMessage({
                 type: "danger",
                 message: "No token found. Please log in again.",
-                icon: "danger"
+                icon: "danger",
+                duarion:5000
             });
             return;
         }
@@ -90,6 +92,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                     type: "danger",
                     message: "No Profile Found",
                     description: response.data.message || "Something went wrong!",
+                    duarion:5000
                 });
             }
         } catch (error) {
@@ -99,6 +102,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                 type: "danger",
                 message: "Network Error",
                 description: "Failed to load profile data",
+                duarion:5000
             });
         } finally {
             setLoading(false);
@@ -172,7 +176,8 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
             showMessage({
                 type: "danger",
                 message: "User ID not found!",
-                icon: "danger"
+                icon: "danger",
+                duarion:5000
             });
             return;
         }
@@ -198,7 +203,8 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                 showMessage({
                     type: "success",
                     message: response.data.message || "Profile saved successfully!",
-                    icon: "success"
+                    icon: "success",
+                    duarion:5000
                 });
 
                 // ✅ API response ke hisaab se state update karo
@@ -220,7 +226,8 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
             showMessage({
                 type: "danger",
                 message: errorMessage,
-                icon: "danger"
+                icon: "danger",
+                duarion:5000
             });
         }
     };
@@ -238,7 +245,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
         showMessage({
             type: 'info',
             message: message,
-            visibilityTime: 3000,
+            duarion:5000,
             autoHide: true,
             icon: "info"
         });
@@ -284,7 +291,8 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
         showMessage({
             type: "info",
             message: "Under development",
-            icon: "info"
+            icon: "info",
+            duarion:5000
         });
     };
 

@@ -122,7 +122,8 @@ const UpdateEventPost = ({ navigation, route }) => {
                     type: "success",
                     message: "Success",
                     description: response.data.message || "Event updated successfully!",
-                    icon: "success"
+                    icon: "success",
+                    duarion:5000
                 });
 
                 setTimeout(() => navigation.navigate("EventNews"), 2000);
@@ -141,7 +142,8 @@ const UpdateEventPost = ({ navigation, route }) => {
             showMessage({
                 type: "danger",
                 message: errorMessage,
-                icon: "danger"
+                icon: "danger",
+                duarion:5000
             });
         } finally {
             setLoading(false); // Stop Loader

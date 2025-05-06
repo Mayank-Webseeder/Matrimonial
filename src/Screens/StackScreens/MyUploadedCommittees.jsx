@@ -48,7 +48,8 @@ const MyUploadedCommittees = ({ navigation, route }) => {
                 showMessage({
                     type: "success",
                     message: "Committee deleted successfully!",
-                    icon: "success"
+                    icon: "success",
+                    duarion:5000
                 });
 
                 setModalVisible(false);  // Close modal
@@ -76,7 +77,8 @@ const MyUploadedCommittees = ({ navigation, route }) => {
             showMessage({
                 type: "danger",
                 message:errorMessage,
-                icon: "danger"
+                icon: "danger",
+                duarion:5000
             });
         } finally {
             setIsLoading(false);  // Hide loading indicator

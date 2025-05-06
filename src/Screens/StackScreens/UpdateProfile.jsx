@@ -73,7 +73,8 @@ const UpdateProfile = ({ navigation }) => {
           type: "success",
           message: "Success",
           description: "Profile Updated Successfully!",
-          icon: "none"
+          icon: "none",
+          duarion:5000
         });
 
         navigation.navigate("MainApp");
@@ -91,7 +92,8 @@ const UpdateProfile = ({ navigation }) => {
       showMessage({
         type: "danger",
         message: errorMessage,
-        icon: "danger"
+        icon: "danger",
+        duarion:5000
       });
     }
   };

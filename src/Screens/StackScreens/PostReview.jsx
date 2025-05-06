@@ -132,14 +132,16 @@ const PostReview = ({ navigation, route }) => {
                     type: "success",
                     message: "Success",
                     description: `Your review has been ${isEditMode ? "updated" : "posted"} successfully!`,
-                    icon:"success"
+                    icon:"success",
+                    duarion:5000
                 });
                 navigation.goBack(); 
             } else {
                showMessage({
                     type: "danger",
                     message: "Failed to post/update the review. Please try again.",
-                    icon:"danger"
+                    icon:"danger",
+                    duarion:5000
                 });
             }
         } catch (error) {
@@ -150,7 +152,8 @@ const PostReview = ({ navigation, route }) => {
            showMessage({
                 type: "danger",
                 message:errorMessage,
-                icon:"danger"
+                icon:"danger",
+                duarion:5000
             });
         }
         finally {

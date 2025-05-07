@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
         fontFamily: "poppins-Regular",
         fontSize: SF(13),
         textAlign: "center",
-        marginTop: SH(60)
+        marginTop: SH(80)
     },
 });
 

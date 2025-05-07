@@ -55,17 +55,27 @@ const InActiveDelete = ({ navigation }) => {
             }
 
         } catch (error) {
-            console.error("❌ Error deleting Biodata:", error?.response?.data || error.message);
-
-            let errorMessage = "Failed to delete Biodata. Please try again!";
-            if (error.response && error.response.status === 400) {
-                errorMessage = error.response.data.message || errorMessage;
-            }
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error("Error deleting biodata:", errorMsg);
+        
+            const sessionExpiredMessages = [
+              "User does not Exist....!Please login again",
+              "Invalid token. Please login again",
+              "Token has expired. Please login again"
+            ];
+        
+            if (sessionExpiredMessages.includes(errorMsg)) {
+              await AsyncStorage.removeItem("userToken");
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "AuthStack" }],
+              });
+            } 
 
             showMessage({
                 type: "danger",
                 message: "Error",
-                description: errorMessage,
+                description: errorMsg,
                 icon:"danger",
                 duration: 5000
             });

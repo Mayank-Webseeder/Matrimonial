@@ -69,7 +69,21 @@ const MyProfile = ({ navigation }) => {
             dispatch(setProfiledata(res.data.data)); // Redux update karo
 
         } catch (error) {
-            console.error("Error fetching profile:", error.response ? error.response.data : error.message);
+            const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching myprofile:", errorMsg);
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      } 
         } finally {
             setProfileLoading(false);
         }
@@ -161,7 +175,21 @@ const MyProfile = ({ navigation }) => {
             setFetchProfileDetails(response.data.data);
             setLoading(false);
         } catch (error) {
-            console.error("Error fetching profiles:", error);
+            const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching profile:", errorMsg);
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      } 
             setLoading(false);
         }
     };
@@ -235,12 +263,28 @@ const MyProfile = ({ navigation }) => {
                 throw new Error(response.data.message || "Failed to delete profile photo.");
             }
         } catch (error) {
-            console.error("Error deleting profile photo:", error?.response?.data || error.message);
-           showMessage({
-                type: "danger",
-                message: "Failed to delete profile photo.",
-                icon:"danger"
-            });
+            const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching female biodata:", errorMsg);
+
+      showMessage({
+        type: "danger",
+        message:errorMsg,
+        icon:"danger"
+    });
+
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      } 
         } finally {
             setIsLoading(false);
         }
@@ -299,19 +343,30 @@ const MyProfile = ({ navigation }) => {
             });
           }
         } catch (error) {
-          if (error.response) {
-            console.error("API Error:", error.response.data);
-          } else {
-            console.error("Error uploading profile image:", error.message);
-          }
-      
-          showMessage({
-            message: "Upload Failed!",
-            description: "Please try again.",
-            type: "danger",
-            duration: 3000,
-            icon:"danger"
-          });
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error("Error fetching biodata:", errorMsg);
+            
+            showMessage({
+                message: "Upload Failed!",
+                description: errorMsg,
+                type: "danger",
+                duration: 3000,
+                icon:"danger"
+              });
+
+            const sessionExpiredMessages = [
+              "User does not Exist....!Please login again",
+              "Invalid token. Please login again",
+              "Token has expired. Please login again"
+            ];
+        
+            if (sessionExpiredMessages.includes(errorMsg)) {
+              await AsyncStorage.removeItem("userToken");
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "AuthStack" }],
+              });
+            } 
         } finally {
           setIsLoading(false);
         }

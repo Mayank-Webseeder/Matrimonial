@@ -123,34 +123,27 @@ const PostSuccessStories = ({ navigation }) => {
             }
 
         } catch (error) {
-            console.error('❌ Error submitting success story:', error.response?.data?.message);
-
-            let errorMessage = 'Failed to submit success story. Please try again later.';
-
-            if (error.response?.data?.message) {
-                errorMessage = error.response.data.message;
-            } else if (error.message) {
-                errorMessage = error.message;
-            }
-
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error("Error failed to post story:", errorMsg);
             showMessage({
                 type: 'danger',
-                message: errorMessage,
+                message: errorMsg,
                 icon: "danger",
                 duarion:5000
             });
-        }
-    };
-
-    const formatDate = (date) => {
-        const d = new Date(date);
-        return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`;
-    };
-
-    const onChangeDate = (event, selectedDate) => {
-        setShowDatePicker(Platform.OS === 'ios');
-        if (selectedDate) {
-            setWeddingDate(formatDate(selectedDate));
+            const sessionExpiredMessages = [
+              "User does not Exist....!Please login again",
+              "Invalid token. Please login again",
+              "Token has expired. Please login again"
+            ];
+        
+            if (sessionExpiredMessages.includes(errorMsg)) {
+              await AsyncStorage.removeItem("userToken");
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "AuthStack" }],
+              });
+            }
         }
     };
 

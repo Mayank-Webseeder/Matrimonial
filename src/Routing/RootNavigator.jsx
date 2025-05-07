@@ -118,55 +118,87 @@ function MyTabs() {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
-
+  
       const headers = {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
       };
-
+  
       console.log("headers in profile", headers);
       const res = await axios.get(PROFILE_ENDPOINT, { headers });
       console.log("API Response:", JSON.stringify(res.data));
       setProfileData(res.data.data);
       dispatch(setProfiledata(res.data.data));
-
+  
     } catch (error) {
-      console.error("Error fetching profile:", error.response ? error.response.data : error.message);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching profile:", errorMsg);
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
     } finally {
       setLoading(false);
     }
   };
-
-
+  
   const getBiodata = async () => {
     try {
-      setMybiodata({})
-      setLoading(true)
+      setMybiodata({});
+      setLoading(true);
+  
       const token = await AsyncStorage.getItem('userToken');
       if (!token) throw new Error('No token found');
-
+  
       const headers = {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       };
-
+  
       const response = await axios.get(GET_BIODATA, { headers });
+  
       if (response.data) {
         const fetchedData = response.data.data;
         console.log("My bio data", fetchedData);
         setMybiodata(fetchedData);
         dispatch(setBioData(fetchedData));
-        setLoading(false)
       } else {
-        setBiodata({});
+        setMybiodata({});
       }
+  
     } catch (error) {
-      console.error("Error fetching biodata:", error);
-    }
-    finally {
-      setLoading(false)
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching biodata:", errorMsg);
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
+  
+    } finally {
+      setLoading(false);
     }
   };
+  
 
   useFocusEffect(
     useCallback(() => {
@@ -252,11 +284,11 @@ function MyTabs() {
         tabBarStyle: {
           backgroundColor: Colors.theme_color,
           // height: SH(55),
-           height: SH(55) + insets.bottom,
-           borderTopLeftRadius: 15,
-           borderTopRightRadius: 15,
-           paddingHorizontal: SW(10),
-           paddingBottom: Platform.OS === 'ios' ? insets.bottom : 0,
+          height: SH(55) + insets.bottom,
+          borderTopLeftRadius: 15,
+          borderTopRightRadius: 15,
+          paddingHorizontal: SW(10),
+          paddingBottom: Platform.OS === 'ios' ? insets.bottom : 0,
         },
       })}
     >
@@ -379,7 +411,7 @@ const WrappedAppStack = () => (
 
 const RootNavigator = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [initialRoute, setInitialRoute] = useState('');
+  const [initialRoute, setInitialRoute] = useState(null);
 
   useEffect(() => {
     const checkUserToken = async () => {

@@ -84,7 +84,7 @@ const Login = ({ navigation }) => {
                     description: "You have logged in!",
                     visibilityTime: 1000,
                     icon: "success",
-                    duration: 5000,
+                    duration: 3000,
                     textStyle: { fontSize: 14, color: "white" },
                     onHide: () => {
                         console.log("🟢 Navigating to AppStack...");

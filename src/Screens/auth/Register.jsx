@@ -236,7 +236,7 @@ const Register = ({ navigation }) => {
                     message: "Sign Up Successful",
                     description: "You have successfully signed up!",
                     icon: "success",
-                    duration: 5000,
+                    duration: 3000,
                 });
 
                 navigation.reset({

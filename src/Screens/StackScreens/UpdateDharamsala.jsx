@@ -259,21 +259,28 @@ const UpdateDharamsala = ({ navigation, route }) => {
                 navigation.navigate("Dharmshala");
             }, 1000);
         } catch (error) {
-            console.error("Update error:", error);
-            console.log("Error response:", error.response?.data);
-
-            let errorMessage = "Failed to update Dharamsala.";
-            if (error.response) {
-                errorMessage = error.response.data.message || errorMessage;
-            }
-
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error("Error fetching biodata:", errorMsg);
             showMessage({
                 type: "danger",
                 message: "Update Failed",
-                description: errorMessage,
+                description: errorMsg,
                 icon: "danger",
                 duarion:5000
             });
+            const sessionExpiredMessages = [
+              "User does not Exist....!Please login again",
+              "Invalid token. Please login again",
+              "Token has expired. Please login again"
+            ];
+        
+            if (sessionExpiredMessages.includes(errorMsg)) {
+              await AsyncStorage.removeItem("userToken");
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "AuthStack" }],
+              });
+            }
         } finally {
             setIsLoading(false);
         }

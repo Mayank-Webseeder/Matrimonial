@@ -74,7 +74,7 @@ const UpdateProfile = ({ navigation }) => {
           message: "Success",
           description: "Profile Updated Successfully!",
           icon: "none",
-          duarion:5000
+          duarion: 5000
         });
 
         navigation.navigate("MainApp");
@@ -82,23 +82,30 @@ const UpdateProfile = ({ navigation }) => {
         throw new Error(response.data.message || "Your profile has been updated, but there was an issue.");
       }
     } catch (error) {
-      console.error("❌ API Error:", error.response?.data || error.message);
-
-      let errorMessage = "Unable to update profile. Please try again.";
-      if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      }
-
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching biodata:", errorMsg);
       showMessage({
         type: "danger",
-        message: errorMessage,
+        message: errorMsg,
         icon: "danger",
-        duarion:5000
+        duarion: 5000
       });
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
+
     }
   };
-
-
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || dob;

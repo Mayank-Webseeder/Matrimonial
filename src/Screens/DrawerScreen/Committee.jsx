@@ -138,7 +138,22 @@ const Committee = ({ navigation }) => {
         throw new Error(response.data.message || "Failed to fetch data.");
       }
     } catch (error) {
-      console.error("🚨 Error fetching committee data:", error?.response?.data || error.message);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching committee data:", errorMsg);
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      } 
       setMyCommitteeData([]);
     } finally {
       setIsLoading(false);
@@ -196,8 +211,23 @@ const Committee = ({ navigation }) => {
         setError("No Committee data found.");
       }
     } catch (error) {
-      console.error("Error fetching committee data:", error);
-      setError(error.response ? error.response.data.message : "Failed to fetch data. Please try again.");
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching committee data:", errorMsg);
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      } 
+      setError(errorMsg || "Failed to fetch data. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -236,7 +266,22 @@ const Committee = ({ navigation }) => {
         setSlider([]);
       }
     } catch (error) {
-      console.error("Error fetching advertisement:", error);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching advertisement:", errorMsg);
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      } 
     }
   };
 

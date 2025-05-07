@@ -96,13 +96,27 @@ const PanditDetailPage = ({ navigation, item, route }) => {
             }
         } catch (error) {
             setLoading(false)
-            console.error("Error fetching profile:", error);
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error("Error fetching pandit data:", errorMsg);
             showMessage({
                 type: "danger",
-                message: "Network Error",
+                message: errorMsg,
                 description: "Failed to load profile data",
                 duarion:5000
             });
+            const sessionExpiredMessages = [
+              "User does not Exist....!Please login again",
+              "Invalid token. Please login again",
+              "Token has expired. Please login again"
+            ];
+        
+            if (sessionExpiredMessages.includes(errorMsg)) {
+              await AsyncStorage.removeItem("userToken");
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "AuthStack" }],
+              });
+            }
         } finally {
             setLoading(false);
         }

@@ -98,12 +98,26 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
             }
         } catch (error) {
             setLoading(false)
-            console.error("Error fetching profile:", error);
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error("Error fetching kathavachak detials :", errorMsg);
             showMessage({
                 type: "danger",
-                message: "Network Error",
+                message:errorMsg,
                 description: "Failed to load profile data",
             });
+            const sessionExpiredMessages = [
+              "User does not Exist....!Please login again",
+              "Invalid token. Please login again",
+              "Token has expired. Please login again"
+            ];
+        
+            if (sessionExpiredMessages.includes(errorMsg)) {
+              await AsyncStorage.removeItem("userToken");
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "AuthStack" }],
+              });
+            }
         } finally {
             setLoading(false);
         }
@@ -166,7 +180,22 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                 setSlider([]);
             }
         } catch (error) {
-            console.error("Error fetching advertisement:", error);
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error("Error fetching advertisement:", errorMsg);
+        
+            const sessionExpiredMessages = [
+              "User does not Exist....!Please login again",
+              "Invalid token. Please login again",
+              "Token has expired. Please login again"
+            ];
+        
+            if (sessionExpiredMessages.includes(errorMsg)) {
+              await AsyncStorage.removeItem("userToken");
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "AuthStack" }],
+              });
+            }
         } finally {
             setLoading(false);
         }
@@ -215,22 +244,30 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                 throw new Error(response.data.message || "Something went wrong");
             }
         } catch (error) {
-            console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
-
-            // ❌ Rollback state if API fails
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error("Error fetching biodata:", errorMsg);
             setIsSaved((prev) => !prev);
-
-            let errorMessage = "Something went wrong!";
-            if (error.response?.status === 400) {
-                errorMessage = error.response.data?.message || "Bad request.";
-            }
-
+            
             showMessage({
                 type: "danger",
-                message: errorMessage,
+                message: errorMsg,
                 icon: "danger",
                 duarion:5000
             });
+
+            const sessionExpiredMessages = [
+              "User does not Exist....!Please login again",
+              "Invalid token. Please login again",
+              "Token has expired. Please login again"
+            ];
+        
+            if (sessionExpiredMessages.includes(errorMsg)) {
+              await AsyncStorage.removeItem("userToken");
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "AuthStack" }],
+              });
+            }
         }
     };
 

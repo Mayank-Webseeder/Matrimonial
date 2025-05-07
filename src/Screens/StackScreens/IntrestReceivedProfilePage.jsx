@@ -124,7 +124,22 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         setSlider([]);
       }
     } catch (error) {
-      console.error("Error fetching advertisement:", error);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching advertisement:", errorMsg);
+
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
     }
   };
 
@@ -153,14 +168,11 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
       }
     } catch (error) {
       console.error("❌ Error fetching profile");
-
       if (error.response) {
-        console.error("🔻 Server Error:");
-        console.error("Status Code:", error.response.status);
-        console.error("Message:", error.response.data?.message || "No message");
-        console.error("Data:", error.response.data);
+        const errorMsg = error.response?.data?.message || error.message;
+        console.error("Error fetching profile:", errorMsg);
 
-        if (error.response.data?.message === "Target user has not set any biodata or personal details.") {
+        if (errorMsg === "Target user has not set any biodata or personal details.") {
           setProfileData(null);
           setUserData(null);
           setLoading(false);
@@ -170,6 +182,19 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         console.error("Request Details:", error.request);
       } else {
         console.error("⚠️ Error Message:", error.message);
+      }
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
       }
       setLoading(false);
     } finally {
@@ -183,7 +208,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         type: "danger",
         message: "User ID not found!",
         icon: "danger",
-        duarion:5000
+        duarion: 5000
       });
       return;
     }
@@ -206,7 +231,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           message: "Success",
           description: response.data.message || "Profile saved successfully!",
           icon: "success",
-          duarion:5000
+          duarion: 5000
         });
 
         setIsSaved(response.data.message.includes("saved successfully"));
@@ -214,20 +239,28 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         throw new Error(response.data.message || "Something went wrong");
       }
     } catch (error) {
-      console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
-
-      let errorMessage = "Failed to save profile!";
-      if (error.response?.status === 400) {
-        errorMessage = error.response.data?.message || "Bad request.";
-      }
-
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching biodata:", errorMsg);
       showMessage({
         type: "danger",
         message: "Error",
-        description: errorMessage,
+        description: errorMsg,
         icon: "danger",
-        duarion:5000
+        duarion: 5000
       });
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
     }
   };
 
@@ -245,7 +278,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           type: "danger",
           message: "Error",
           description: "User token missing!",
-          duarion:5000
+          duarion: 5000
         });
         return;
       }
@@ -261,7 +294,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           message: "Success",
           description: response.data.message || "Request accepted successfully!",
           icon: "success",
-          duarion:5000
+          duarion: 5000
         });
         setTimeout(() => {
           navigation.goBack();
@@ -270,20 +303,30 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         throw new Error(response.data.message || "Something went wrong");
       }
     } catch (error) {
-      console.error("🚨 API Error:", error?.response?.data?.message || error.message);
-
-      let errorMessage = "Failed to accept request!";
-      if (error.response?.status === 400) {
-        errorMessage = error.response.data?.message || "Bad request.";
-      }
-
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error in accept request:", errorMsg);
+      
       showMessage({
         type: "danger",
         message: "Error",
-        description: errorMessage,
+        description: errorMsg,
         icon: "danger",
-        duarion:5000
+        duarion: 5000
       });
+
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
       setLoadingAccept(false);
     }
     finally {
@@ -305,7 +348,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           type: "danger",
           message: "Error",
           description: "User token missing!",
-          duarion:5000
+          duarion: 5000
         });
         return;
       }
@@ -321,7 +364,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           message: "Success",
           description: response.data.message || "Request rejected successfully!",
           icon: "success",
-          duarion:5000
+          duarion: 5000
         });
         setTimeout(() => {
           navigation.goBack();
@@ -330,20 +373,28 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         throw new Error(response.data.message || "Something went wrong");
       }
     } catch (error) {
-      console.error("🚨 API Error:", error?.response?.data?.message || error.message);
-
-      let errorMessage = "Failed to reject request!";
-      if (error.response?.status === 400) {
-        errorMessage = error.response.data?.message || "Bad request.";
-      }
-
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error in reject request:", errorMsg);
       showMessage({
         type: "error",
         message: "Error",
-        description: errorMessage,
+        description: errorMsg,
         icon: "danger",
-        duarion:5000
+        duarion: 5000
       });
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
       setLoadingDecline(false);
     }
     finally {
@@ -358,7 +409,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
       message: "Info",
       description: "Under development",
       icon: "info",
-      duarion:5000
+      duarion: 5000
     });
   };
 
@@ -680,7 +731,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
 
         </View>
 
-         {
+        {
           !hideOptionalDetails && personalDetails?.otherFamilyMemberInfo && (
             <View style={styles.detailbox}>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>

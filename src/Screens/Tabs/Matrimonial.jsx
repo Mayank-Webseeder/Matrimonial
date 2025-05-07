@@ -121,7 +121,22 @@ const Matrimonial = ({ navigation }) => {
         setSlider([]);
       }
     } catch (error) {
-      console.error("Error fetching advertisement:", error);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching advertisement:", errorMsg);
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      } 
     }
   };
 
@@ -189,7 +204,22 @@ const Matrimonial = ({ navigation }) => {
       console.log("res.data.Girls", JSON.stringify(res.data.feedUsers));
       setboysProfiles(res.data.feedUsers);
     } catch (error) {
-      console.error("Error fetching profiles:", error.message);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching profiles:", errorMsg);
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      } 
       setProfileLoading(false)
     }
     finally {
@@ -209,7 +239,21 @@ const Matrimonial = ({ navigation }) => {
       console.log("res.data.Boys", JSON.stringify(res.data.feedUsers));
       setgirlsProfiles(res.data.feedUsers);
     } catch (error) {
-      console.error("Error fetching profiles:", error.message);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching female biodata:", errorMsg);
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      } 
       setProfileLoading(false)
     }
     finally {

@@ -128,7 +128,22 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         setSlider([]);
       }
     } catch (error) {
-      console.error("Error fetching advertisement:", error);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("failed to fetch plans :", errorMsg);
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
     }
   };
 
@@ -170,19 +185,27 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         throw new Error(response.data.message || "Something went wrong");
       }
     } catch (error) {
-      console.error("🚨 API Error:", error?.response?.data?.message || error.message);
-
-      let errorMessage = "Failed to delete intrest!";
-      if (error.response?.status === 400) {
-        errorMessage = error.response.data?.message || "Bad request.";
-      }
-
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching biodata:", errorMsg);
       showMessage({
         type: "danger",
-        message: errorMessage,
+        message: errorMsg,
         icon: "danger",
         duarion:5000
       });
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
     }
     finally {
       setIntrestLoading(false);
@@ -241,16 +264,27 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
       return message;
     } catch (error) {
-      console.error(
-        "API Error:",
-        error?.response ? JSON.stringify(error.response.data) : error.message
-      );
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching biodata:", errorMsg);
       showMessage({
-        message: error.response?.data?.message,
+        message: errorMsg,
         type: "danger",
         icon: "danger",
         duarion:5000
       });
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
       return "";
     }
   };
@@ -313,12 +347,9 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       console.error("❌ Error fetching profile");
 
       if (error.response) {
-        console.error("🔻 Server Error:");
-        console.error("Status Code:", error.response.status);
-        console.error("Message:", error.response.data?.message || "No message");
-        console.error("Data:", error.response.data);
-
-        if (error.response.data?.message === "Target user has not set any biodata or personal details.") {
+        const errorMsg = error.response?.data?.message || error.message;
+        console.error("Error fetching biodata:", errorMsg);
+        if (errorMsg === "Target user has not set any biodata or personal details.") {
           setProfileData(null);
           setUserData(null);
           setLoading(false);
@@ -329,6 +360,20 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       } else {
         console.error("⚠️ Error Message:", error.message);
       }
+        const sessionExpiredMessages = [
+          "User does not Exist....!Please login again",
+          "Invalid token. Please login again",
+          "Token has expired. Please login again"
+        ];
+    
+        if (sessionExpiredMessages.includes(errorMsg)) {
+          await AsyncStorage.removeItem("userToken");
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "AuthStack" }],
+          });
+        }
+
       setLoading(false);
     } finally {
       setLoading(false);
@@ -383,15 +428,28 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         throw new Error("Unexpected response from server!");
       }
     } catch (error) {
-      console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
-
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching biodata:", errorMsg);
       showMessage({
         type: "danger",
         message: "Error",
-        description: error.response?.data?.message || "Failed to send interest!",
+        description: errorMsg|| "Failed to send interest!",
         icon: "danger",
         duarion:5000
       });
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
     } finally {
       setLoadingIntrest(false); // ✅ Hide Loader
     }
@@ -446,12 +504,24 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         });
       }
     } catch (error) {
-      console.error(
-        "API Error:",
-        error?.response ? JSON.stringify(error.response.data) : error.message
-      );
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching biodata:", errorMsg);
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
       showMessage({
-        message: error.response?.data?.message,
+        message: errorMsg,
         type: "danger",
         icon: "danger",
         duarion:5000

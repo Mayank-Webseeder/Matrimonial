@@ -19,35 +19,35 @@ const UpdateEventPost = ({ navigation, route }) => {
     const [eventData, setEventData] = useState(initialEventData || { title: '', description: '', images: [] });
     const [photos, setPhotos] = useState([]);
     const MAX_PHOTOS = 5;
-    
+
     // useEffect(() => {
     //     console.log("eventData", eventData);
     // }, [eventData]);
 
     const handleImageUpload = () => {
         ImageCropPicker.openPicker({
-          multiple: true,
-          cropping: true,
-          width: 400,
-          height: 400,
-          includeBase64: true,
-          compressImageQuality: 1,
+            multiple: true,
+            cropping: true,
+            width: 400,
+            height: 400,
+            includeBase64: true,
+            compressImageQuality: 1,
         })
-          .then((images) => {
-            const newPhotos = images.map(
-              (img) => `data:image/jpeg;base64,${img.data}` // keep data‑URI prefix
-            );
-      
-            if (newPhotos.length > MAX_PHOTOS) {
-              alert(`You can only upload up to ${MAX_PHOTOS} photos.`);
-              return;                  
-            }
-      
-            setPhotos(newPhotos);      
-            setEventData((prev) => ({ ...prev, images: [] }));
-          })
-          .catch((err) => console.log('Crop Picker Error:', err));
-      };
+            .then((images) => {
+                const newPhotos = images.map(
+                    (img) => `data:image/jpeg;base64,${img.data}` // keep data‑URI prefix
+                );
+
+                if (newPhotos.length > MAX_PHOTOS) {
+                    alert(`You can only upload up to ${MAX_PHOTOS} photos.`);
+                    return;
+                }
+
+                setPhotos(newPhotos);
+                setEventData((prev) => ({ ...prev, images: [] }));
+            })
+            .catch((err) => console.log('Crop Picker Error:', err));
+    };
 
     const convertToBase64 = async (imageUri) => {
         try {
@@ -123,7 +123,7 @@ const UpdateEventPost = ({ navigation, route }) => {
                     message: "Success",
                     description: response.data.message || "Event updated successfully!",
                     icon: "success",
-                    duarion:5000
+                    duarion: 5000
                 });
 
                 setTimeout(() => navigation.navigate("EventNews"), 2000);
@@ -132,19 +132,27 @@ const UpdateEventPost = ({ navigation, route }) => {
 
             throw new Error(response.data.message || "Something went wrong");
         } catch (error) {
-            console.error("❌ Error updating event:", error.response?.data || error.message);
-
-            let errorMessage = "Failed to update event. Please try again later.";
-            if (error.response?.status === 400) {
-                errorMessage = error.response.data?.message || "Bad request.";
-            }
-
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error("Error fetching biodata:", errorMsg);
             showMessage({
                 type: "danger",
-                message: errorMessage,
+                message: errorMsg,
                 icon: "danger",
-                duarion:5000
+                duarion: 5000
             });
+            const sessionExpiredMessages = [
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
+            ];
+
+            if (sessionExpiredMessages.includes(errorMsg)) {
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
+            }
         } finally {
             setLoading(false); // Stop Loader
         }

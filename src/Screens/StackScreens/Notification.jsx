@@ -55,7 +55,22 @@ const Notification = ({ navigation }) => {
       setNotificationData(notificationData);
       dispatch(setAllNotification(notificationData));
     } catch (error) {
-      console.error("Error fetching notifications:", error.response ? error.response.data : error.message);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching notifications:", errorMsg);
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -77,7 +92,22 @@ const Notification = ({ navigation }) => {
       console.log("notificationData", JSON.stringify(notificationData));
       setseenNotificationData(notificationData);
     } catch (error) {
-      console.error("Error fetching notifications:", error.response ? error.response.data : error.message);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching notifications:", errorMsg);
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -169,7 +199,22 @@ const Notification = ({ navigation }) => {
 
         console.log("✅ Notification marked as seen:", res.data.data);
       } catch (error) {
-        console.error("❌ Error marking notification as seen:", error.response ? error.response.data : error.message);
+        const errorMsg = error.response?.data?.message || error.message;
+      console.error("❌ Error marking notification as seen:", errorMsg);
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
       }
     }, 500);
   };

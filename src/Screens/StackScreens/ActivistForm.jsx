@@ -402,13 +402,24 @@ export default function ActivistForm({ navigation }) {
       throw new Error(response.data.message || "Something went wrong");
 
     } catch (error) {
-      console.error("Error saving activist data:", error?.response?.data || error.message);
-
-      let errorMessage = "Failed to save activist data.";
-      if (error.response && error.response.status === 400) {
-        errorMessage = error.response.data?.message || "Invalid request!";
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error saving activist data:", errorMsg);
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
       }
-      Alert.alert("Error", errorMessage);
+      
+      Alert.alert("Error", errorMsg);
 
     } finally {
       setIsLoading(false);

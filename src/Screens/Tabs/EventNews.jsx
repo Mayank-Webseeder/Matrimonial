@@ -171,7 +171,22 @@ const EventNews = ({ navigation }) => {
         setSlider([]);
       }
     } catch (error) {
-      console.error("Error fetching advertisement:", error);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching advertisement:", errorMsg);
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      } 
     }
   };
 
@@ -196,9 +211,8 @@ const EventNews = ({ navigation }) => {
 
       const { isLiked } = response.data.event;
       const { likesCount } = response.data;
-
       console.log("isLiked", isLiked, "likesCount", likesCount);
-
+      
       setLikeData((prev) => ({
         ...prev,
         [postId]: {
@@ -208,12 +222,28 @@ const EventNews = ({ navigation }) => {
       }));
 
     } catch (error) {
-      console.error("Error liking post:", error?.response?.data || error.message);
+      const errorMsg = error.response?.data?.message || error.message;
+      
+      console.error("Error liking post:", errorMsg);
       showMessage({
         type: "error",
         message: "Error",
-        description: error?.response?.data?.message || "Failed to like event.",
+        description: errorMsg || "Failed to like event.",
       });
+
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      } 
     } finally {
       setLikeLoading(false);
     }
@@ -253,23 +283,37 @@ const EventNews = ({ navigation }) => {
               : post
           )
         );
-
         showMessage({
           type: "success",
           message: "Success",
           description: fetchedData.message || "Comment added successfully!",
+          duration:3000
         });
       } else if (response.status === 400) {
         throw new Error(response.data.message || "Invalid request.");
       }
 
     } catch (error) {
-      console.error("Error adding comment:", error?.response?.data || error.message);
-
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error adding comment:", errorMsg);
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      } 
       showMessage({
         type: "error",
         message: "Error",
-        description: error?.response?.data?.message || "Failed to add comment. Please try again!",
+        description: errorMsg || "Failed to add comment. Please try again!",
       });
     } finally {
       setCommentLoading(false);
@@ -315,7 +359,9 @@ const EventNews = ({ navigation }) => {
         });
       }
     } catch (error) {
-      console.error("Error deleting comment:", error?.response?.data || error.message);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error deleting comment::", errorMsg);
+
       showMessage({
         type: "danger",
         message: "Error",
@@ -324,6 +370,20 @@ const EventNews = ({ navigation }) => {
           "Failed to delete comment. Please try again!",
         icon: "danger",
       });
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      } 
     } finally {
       setDeletingCommentId(null);
     }
@@ -344,7 +404,22 @@ const EventNews = ({ navigation }) => {
         setMyeventpost(postData);
       }
     } catch (error) {
-      console.error('Error fetching post data:', error);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching post data", errorMsg);
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      } 
     }
   };
 
@@ -370,7 +445,22 @@ const EventNews = ({ navigation }) => {
         setEventData([]);
       }
     } catch (error) {
-      console.error("Error fetching event news :", error);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching event news:", errorMsg);
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      } 
     }
     finally {
       setIsLoading(false)

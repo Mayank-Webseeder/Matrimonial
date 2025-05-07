@@ -46,7 +46,22 @@ const SuccessStories = ({ navigation }) => {
       console.log("sucess story data ", JSON.stringify(res.data.data))
       setStories(res.data.data);
     } catch (error) {
-      console.error("Error fetching success stories:", error.response ? error.response.data : error.message);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching success story:", errorMsg);
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      } 
     }
   };
 
@@ -66,11 +81,23 @@ const SuccessStories = ({ navigation }) => {
       } else {
         setMyStory(null);
       }
-    } catch (err) {
-      console.log(
-        'Error fetching my success story:',
-        err.response ? err.response.data : err.message
-      );
+    } catch (error) {
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching my success story:", errorMsg);
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      } 
       setMyStory(null);
     } finally {
       setLoadingMyStory(false);

@@ -90,18 +90,36 @@ const SavedProfile = ({ navigation }) => {
           icon: "success",
           duration: 5000,
         });
-        await fetchSavedProfiles();
+        setSavedProfiles(prev => prev.filter(p => p.saveProfile._id !== _id));
+        fetchSavedProfiles();
       } else {
         throw new Error(response.data.message || "Something went wrong!");
       }
     } catch (error) {
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching biodata:", errorMsg);
+
       showMessage({
         type: "danger",
         message: "Error",
-        description: error?.response?.data?.message || error.message || "Delete failed",
+        description: errorMsg || "Delete failed",
         icon: "danger",
         duration: 5000
       });
+
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
     } finally {
       setLoading(false);
       setDeletingId(null);
@@ -109,11 +127,13 @@ const SavedProfile = ({ navigation }) => {
   };
 
   const getFilteredData = () => {
+    const validProfiles = savedProfiles.filter((item) => item.saveProfile !== null);
+    
     if (["Biodata", "Pandit", "Jyotish", "Kathavachak", "Dharmshala", "Committee"].includes(activeCategory)) {
-      const filteredProfiles = savedProfiles.filter((item) => item.profileType === activeCategory);
+      const filteredProfiles = validProfiles.filter((item) => item.profileType === activeCategory);
       return filteredProfiles.length > 0 ? filteredProfiles : null;
     } else {
-      const filteredProfiles = savedProfiles.filter((item) => item.category === activeCategory);
+      const filteredProfiles = validProfiles.filter((item) => item.category === activeCategory);
       return filteredProfiles.length > 0 ? filteredProfiles : null;
     }
   };

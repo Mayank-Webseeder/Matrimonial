@@ -279,7 +279,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
             showMessage({
                 type: "danger",
                 message: "Invalid profile type selected.",
-                duarion:5000
+                duarion: 5000
             });
             setIsLoading(false);
             return;
@@ -346,7 +346,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                     message: "Success!",
                     description: `Successfully updated profile for ${profileType}.`,
                     icon: "success",
-                    duarion:5000
+                    duarion: 5000
                 });
 
                 setTimeout(() => {
@@ -359,23 +359,26 @@ const UpdateProfileDetails = ({ navigation, route }) => {
             }
 
         } catch (error) {
-            console.error("Error:", error);
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error("Error fetching biodata:", errorMsg);
+            showMessage({
+                type: "danger",
+                message: "Update Failed",
+                description: errorMsge || "Invalid request. Please check your input.",
+                icon: "danger",
+                duarion: 5000
+            });
+            const sessionExpiredMessages = [
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
+            ];
 
-            if (error.response?.status === 400) {
-                showMessage({
-                    type: "danger",
-                    message: "Update Failed",
-                    description: error.response.data.message || "Invalid request. Please check your input.",
-                    icon: "danger",
-                    duarion:5000
-                });
-            } else {
-                showMessage({
-                    type: "danger",
-                    message: "Error",
-                    description: error.message || "Something went wrong. Please try again.",
-                    icon: "danger",
-                    duarion:5000
+            if (sessionExpiredMessages.includes(errorMsg)) {
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
                 });
             }
         } finally {

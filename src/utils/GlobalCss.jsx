@@ -20,9 +20,9 @@ const Globalstyles = StyleSheet.create({
   },
   headerText: {
     color: Colors.theme_color,
-    fontSize: SF(15),
+    fontSize: SF(17),
     fontFamily: "Poppins-Regular",
-    marginHorizontal: SW(10)
+    marginHorizontal: SW(10),
   },
   suggestions: {
     padding: SW(10),

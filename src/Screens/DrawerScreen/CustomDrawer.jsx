@@ -45,7 +45,7 @@ const CustomDrawer = (props) => {
       : []
     ),
     { title: 'Saved Profile', screen: 'Saved Profile' },
-    { title: 'Pandit/Jyotish' },
+    { title: 'Pandit/Jyotish'},
     { title: 'Event/News', screen: 'EventNews' },
     { title: 'Dharmshala', screen: 'Dharmshala' },
     { title: 'Committees', screen: 'Committee' },
@@ -53,7 +53,7 @@ const CustomDrawer = (props) => {
     { title: 'Advertise with Us', screen: 'AdvertiseWithUs' },
     { title: 'Success Stories', screen: 'SuccessStories' },
     { title: 'Account & Settings' },
-    { title: 'About Us', screen: 'AboutJs' },
+    { title: 'About Us'},
     { title: 'Feedback/Suggestion', screen: 'FeedBack' },
     { title: 'Share App' },
     {title:'SubscriptionHistory', screen: 'SubscriptionHistory'},
@@ -63,6 +63,13 @@ const CustomDrawer = (props) => {
     { title: 'Pandit', screen: 'Pandit' },
     { title: 'Jyotish', screen: 'Jyotish' },
     { title: 'Kathavachak', screen: 'Kathavachak' },
+  ];
+
+  const AboutusOptions = [
+    { title: 'About Us', screen: 'AboutUs' },
+    { title: 'Privacy Policy', screen: 'PrivacyPolicy' },
+    { title: 'Terms & Conditions', screen: 'TermsConditions' },
+    { title: 'Subscription Policy', screen: 'SubscriptionPolicy' },
   ];
 
   const accountSettingsOptions = [
@@ -207,6 +214,33 @@ const CustomDrawer = (props) => {
                 </TouchableOpacity>
                 {openDropdown === 'panditOptions' &&
                   panditOptions.map((option, subIndex) => (
+                    <TouchableOpacity
+                      key={subIndex}
+                      style={styles.subOption}
+                      onPress={() => handleNavigation(option.screen)}
+                    >
+                      <Text style={styles.subOptionText}>{option.title}</Text>
+                    </TouchableOpacity>
+                  ))}
+              </View>
+            );
+          }
+          else if (item.title === 'About Us') {
+            return (
+              <View key={index}>
+                <TouchableOpacity
+                  style={styles.drawerButton}
+                  onPress={() => handleDropdownToggle('AboutusOptions')}
+                >
+                  <Text style={styles.buttonText}>{item.title}</Text>
+                  <AntDesign
+                    name={openDropdown === 'AboutusOptions' ? 'up' : 'down'}
+                    size={20}
+                    color={Colors.theme_color}
+                  />
+                </TouchableOpacity>
+                {openDropdown === 'AboutusOptions' &&
+                  AboutusOptions.map((option, subIndex) => (
                     <TouchableOpacity
                       key={subIndex}
                       style={styles.subOption}

@@ -55,6 +55,14 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins-Bold",
         fontSize: SF(20)
     },
+    linkText: {
+        color: Colors.theme_color,
+        textDecorationLine: 'underline',
+        fontFamily: "poppins-Regular",
+        fontSize: SF(13),
+        textAlign: "center",
+        marginTop: SH(80)
+    },
 });
 
 export default styles;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, TouchableOpacity, Modal, SafeAreaView, StatusBar } from 'react-native';
+import { Text, View, TouchableOpacity, Modal, SafeAreaView, StatusBar, Linking } from 'react-native';
 import Colors from '../../utils/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styles from '../StyleScreens/InactiveDeleteStyle';
@@ -55,71 +55,27 @@ const InActiveDelete = ({ navigation }) => {
             }
 
         } catch (error) {
-            console.error("❌ Error deleting Biodata:", error?.response?.data || error.message);
-
-            let errorMessage = "Failed to delete Biodata. Please try again!";
-            if (error.response && error.response.status === 400) {
-                errorMessage = error.response.data.message || errorMessage;
-            }
-
-            showMessage({
-                type: "danger",
-                message: "Error",
-                description: errorMessage,
-                icon:"danger",
-                duration: 5000
-            });
-
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const DELETE_USER_API = async () => {
-        try {
-            setIsLoading(true);
-            const token = await AsyncStorage.getItem("userToken");
-
-            if (!token) throw new Error("No token found");
-
-            const headers = {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            };
-
-            const response = await axios.delete(DELETE_USER, { headers });
-
-            if (response.status === 200 && response.data.status === true) {
-                showMessage({
-                    type: "success",
-                    message: "Success",
-                    description: "Your Account has been deleted successfully!",
-                    icon:"success",
-                    duration: 5000
-                });
-
-                await AsyncStorage.clear();
-                navigation.reset({
-                    index: 0,
-                    routes: [{ name: "AuthStack" }],
-                });
-
-            } else {
-                throw new Error(response.data.message || "Unexpected response from server");
-            }
-
-        } catch (error) {
-            console.error("❌ Error deleting Account:", error?.response?.data || error.message);
-
-            let errorMessage = "Failed to delete Account. Please try again!";
-            if (error.response && error.response.status === 400) {
-                errorMessage = error.response.data.message || errorMessage;
-            }
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error("Error deleting biodata:", errorMsg);
+        
+            const sessionExpiredMessages = [
+              "User does not Exist....!Please login again",
+              "Invalid token. Please login again",
+              "Token has expired. Please login again"
+            ];
+        
+            if (sessionExpiredMessages.includes(errorMsg)) {
+              await AsyncStorage.removeItem("userToken");
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "AuthStack" }],
+              });
+            } 
 
             showMessage({
                 type: "danger",
                 message: "Error",
-                description: errorMessage,
+                description: errorMsg,
                 icon:"danger",
                 duration: 5000
             });
@@ -140,7 +96,7 @@ const InActiveDelete = ({ navigation }) => {
         if (actionType === 'deleteBiodata') {
             await DELETE_BIODATA_API();
         } else if (actionType === 'deleteAccount') {
-            await DELETE_USER_API();
+            Linking.openURL("https://accounts.brahminmilan.in/");
         }
     };
 

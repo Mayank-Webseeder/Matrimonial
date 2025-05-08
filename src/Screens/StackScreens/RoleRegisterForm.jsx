@@ -98,13 +98,27 @@ const RoleRegisterForm = ({ navigation }) => {
             console.log("Selected Profile Data:", response.data.data);
 
         } catch (error) {
-            console.error("Error fetching profiles:", error);
-
+            const errorMsg = error.response?.data?.message || error.message;
             if (error.response) {
             } else if (error.request) {
                 console.error("No Response Received:", error.request);
             } else {
                 console.error("Error Message:", error.message);
+            }
+            console.error("Error fetching biodata:", errorMsg);
+
+            const sessionExpiredMessages = [
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
+            ];
+
+            if (sessionExpiredMessages.includes(errorMsg)) {
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
             }
         } finally {
             setIsLoading(false);
@@ -307,8 +321,8 @@ const RoleRegisterForm = ({ navigation }) => {
                     type: 'success',
                     message: 'Success!',
                     description: `Successfully registered for ${role}.`,
-                    icon:"success",
-                    duarion:5000
+                    icon: "success",
+                    duarion: 5000
                 });
             });
 
@@ -324,14 +338,27 @@ const RoleRegisterForm = ({ navigation }) => {
             }, 2000);
 
         } catch (error) {
-            console.error('Error:', error.response?.data || error.message);
-
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error("Error fetching biodata:", errorMsg);
             showMessage({
                 type: 'danger',
-                message:error.response?.data?.message || 'Something went wrong!',
-                icon:"danger",
-                duarion:5000
+                message: errorMsg || 'Something went wrong!',
+                icon: "danger",
+                duarion: 5000
             });
+            const sessionExpiredMessages = [
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
+            ];
+
+            if (sessionExpiredMessages.includes(errorMsg)) {
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
+            }
 
         } finally {
             console.log("Loader Stopped!");
@@ -454,8 +481,8 @@ const RoleRegisterForm = ({ navigation }) => {
                 type: "info",
                 message: "Invalid URL",
                 description: `Please enter a valid ${type.replace("Url", "")} link.`,
-                icon:"info",
-                duarion:5000
+                icon: "info",
+                duarion: 5000
             });
         }
     };

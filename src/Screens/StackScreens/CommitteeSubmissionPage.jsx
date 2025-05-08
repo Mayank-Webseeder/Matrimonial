@@ -236,8 +236,23 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                 });
             }
         } catch (error) {
-            console.error("🚨 Error Creating Committee:", error.response?.data || error.message);
-            showMessage({ type: "danger", message: "Error", description: "Failed to save committee data.", icon: "danger", duarion:5000 });
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error("Error fetching biodata:", errorMsg);
+            showMessage({ type: "danger", message: "Error", description: errorMsg, icon: "danger", duarion:5000 });
+        
+            const sessionExpiredMessages = [
+              "User does not Exist....!Please login again",
+              "Invalid token. Please login again",
+              "Token has expired. Please login again"
+            ];
+        
+            if (sessionExpiredMessages.includes(errorMsg)) {
+              await AsyncStorage.removeItem("userToken");
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "AuthStack" }],
+              });
+            }
         } finally {
             setIsLoading(false);
         }

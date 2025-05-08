@@ -186,8 +186,22 @@ const UpdateCommittee = ({ navigation, route }) => {
                 navigation.reset({ index: 0, routes: [{ name: "Committee" }] });
             }
         } catch (error) {
-            console.error("API Error:", error.response?.data || error);
-            showMessage({ type: "danger", message: "Failed to update committee.", icon: "danger" , duarion:5000 });
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error("Error fetching biodata:", errorMsg);
+            showMessage({ type: "danger", message: errorMsg, icon: "danger" , duarion:5000 });
+            const sessionExpiredMessages = [
+              "User does not Exist....!Please login again",
+              "Invalid token. Please login again",
+              "Token has expired. Please login again"
+            ];
+        
+            if (sessionExpiredMessages.includes(errorMsg)) {
+              await AsyncStorage.removeItem("userToken");
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "AuthStack" }],
+              });
+            }
         } finally {
             setIsLoading(false);
         }

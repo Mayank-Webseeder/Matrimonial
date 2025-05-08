@@ -43,7 +43,22 @@ const SubscriptionHistory = ({ navigation }) => {
             console.log("allSubscriptions", JSON.stringify(allSubscriptions));
             setSubscriptionData(allSubscriptions);
         } catch (error) {
-            console.error("Error fetching subscriptions:", error.response ? error.response.data : error.message);
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error("Error fetching subscriptions:", errorMsg);
+
+            const sessionExpiredMessages = [
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
+            ];
+
+            if (sessionExpiredMessages.includes(errorMsg)) {
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
+            }
         } finally {
             setIsLoading(false);
         }

@@ -78,39 +78,6 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
         setFilteredCities([]);
     };
 
-    const handleSubCasteInputChange = (text) => {
-        const filtered = subCasteOptions
-            .filter((item) =>
-                item?.label?.toLowerCase().includes(text.toLowerCase())
-            )
-            .map((item) => item.label);
-
-        if (filtered.length > 0) {
-            // Allow valid matches
-            setSubCasteInput(text);
-            setFilteredSubCaste(filtered);
-            setDharamsalaData((prev) => ({
-                ...prev,
-                subCaste: text,
-            }));
-        } else {
-            // Disallow unmatched text, show only "Other"
-            setFilteredSubCaste(['Other']);
-        }
-    };
-
-
-    const handleSubCasteSelect = (selectedItem) => {
-        const finalValue = selectedItem === 'Other' ? 'Other' : selectedItem;
-
-        setSubCasteInput(finalValue);
-        setFilteredSubCaste([]);
-        setDharamsalaData((prev) => ({
-            ...prev,
-            subCaste: finalValue,
-        }));
-    };
-
     const pickerOptions = {
         selectionLimit: 4,     // 🔒 hard cap at 4
         mediaType: 'photo',
@@ -273,14 +240,22 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                 throw new Error(response.data.message || "Something went wrong");
             }
         } catch (error) {
-            console.error("API Error:", error?.response ? JSON.stringify(error.response.data) : error.message);
-
-            let errorMessage = "Failed to create Dharamsala.";
-            if (error.response?.status === 400) {
-                errorMessage = error.response?.data?.message || "Bad request. Please check your input.";
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error("Error fetching biodata:", errorMsg);
+            showToast("danger", "Error", errorMsg, "danger");
+            const sessionExpiredMessages = [
+              "User does not Exist....!Please login again",
+              "Invalid token. Please login again",
+              "Token has expired. Please login again"
+            ];
+        
+            if (sessionExpiredMessages.includes(errorMsg)) {
+              await AsyncStorage.removeItem("userToken");
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "AuthStack" }],
+              });
             }
-
-            showToast("danger", "Error", errorMessage, "danger");
         } finally {
             setIsLoading(false);
         }

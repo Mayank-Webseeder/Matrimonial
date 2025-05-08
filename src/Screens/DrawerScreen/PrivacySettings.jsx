@@ -57,23 +57,34 @@ const PrivacySettings = ({ navigation }) => {
       
         } catch (error) {
           console.error(`Error updating ${settingType}:`, error?.response?.data || error.message);
-      
+          const errorMsg = error.response?.data?.message || error.message;
+          const sessionExpiredMessages = [
+            "User does not Exist....!Please login again",
+            "Invalid token. Please login again",
+            "Token has expired. Please login again"
+          ];
+        
+          if (sessionExpiredMessages.includes(errorMsg)) {
+            await AsyncStorage.removeItem("userToken");
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "AuthStack" }],
+            });
+            return;
+          }
           let errorMessage = `Failed to update ${settingType}. Please try again!`;
           if (error.response?.status === 400) {
             errorMessage = error.response.data?.message || "Invalid request!";
           }
-      
-         showMessage({
+          showMessage({
             type: "danger",
             message: "Info",
             description: errorMessage,
-            icon:"danger"
+            icon: "danger"
           });
-      
-          setter(currentValue); 
-        }
-      };
-       
+          setter(currentValue);
+        } 
+      }    
 
     if (isLoading) {
         return (

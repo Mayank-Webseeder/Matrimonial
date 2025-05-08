@@ -188,9 +188,23 @@ const Dharmshala = () => {
         setError("No Dharamsala profiles found.");
       }
     } catch (error) {
-      console.error("Error fetching Dharamsala data:", error);
-      const errorMessage = error.response ? error.response.data.message : "Failed to fetch data. Please try again.";
-      setError(errorMessage);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching Dharamsala data:", errorMsg);
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      } 
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -222,7 +236,22 @@ const Dharmshala = () => {
         setMyDharamsalaData(response.data.data);
       }
     } catch (error) {
-      console.error("Error fetching committee data:", error);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching dharamsala data:", errorMsg);
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      } 
     }
   };
 
@@ -259,7 +288,22 @@ const Dharmshala = () => {
         setSlider([]);
       }
     } catch (error) {
-      console.error("Error fetching advertisement:", error);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching advertisement:", errorMsg);
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      } 
     }
   };
 
@@ -341,15 +385,13 @@ const Dharmshala = () => {
         throw new Error(response.data?.message || "Something went wrong!");
       }
     } catch (error) {
-      console.error(
-        "API Error:",
-        error?.response ? JSON.stringify(error.response.data) : error.message
-      );
-
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching biodata:", errorMsg);
+  
       showMessage({
         type: "danger",
         message: "Error",
-        description: error?.response?.data?.message || "Failed to save profile!",
+        description: errorMsg || "Failed to save profile!",
         icon: "danger",
         duarion:5000
       });
@@ -358,6 +400,20 @@ const Dharmshala = () => {
           profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
         )
       );
+      
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      } 
     }
   };
 

@@ -41,7 +41,7 @@ const Home = ({ navigation }) => {
   const profile_data = ProfileData?.profiledata || {};
   const [Topslider, TopsetSlider] = useState([]);
   const [Bottomslider, BottomsetSlider] = useState([]);
-  const [activitData,setActivitData]=useState({});
+  const [activitData, setActivitData] = useState({});
   const isBiodataMissing = Object.keys(MyprofileData?.Biodata || {}).length > 0;
   const isBiodataExpired = profile_data?.serviceSubscriptions?.some(
     (sub) => sub.serviceType === "Biodata" && sub.status === "Expired"
@@ -127,8 +127,25 @@ const Home = ({ navigation }) => {
         dispatch(reseAllNotification());
       }
     } catch (error) {
-      console.error("Error fetching notifications:", error.response ? error.response.data : error.message);
-      dispatch(reseAllNotification());
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching notifications:", errorMsg);
+
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      } else {
+        setNotificationData({});
+        dispatch(reseAllNotification());
+      }
     } finally {
       setIsLoading(false);
     }
@@ -170,7 +187,22 @@ const Home = ({ navigation }) => {
       dispatch(setProfiledata(res.data.data));
 
     } catch (error) {
-      console.error("Error fetching profile:", error.response ? error.response.data : error.message);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching profile:", errorMsg);
+
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
     }
   };
 
@@ -197,7 +229,22 @@ const Home = ({ navigation }) => {
         setBiodata({});
       }
     } catch (error) {
-      console.error("Error fetching biodata:", error);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching biodata:", errorMsg);
+
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
     }
     finally {
       setLoading(false)
@@ -239,7 +286,22 @@ const Home = ({ navigation }) => {
         TopsetSlider([]);
       }
     } catch (error) {
-      console.error("Error fetching advertisement:", error);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching advertisement :", errorMsg);
+
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
     }
   };
 
@@ -267,7 +329,7 @@ const Home = ({ navigation }) => {
             image: `${PHOTO_URL}/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution, // 👈 yeh add kiya
             mediaType: mediaItem.mediaUrl.includes('.mp4') ? 'video' : 'image', // Determine media type
-            hyperlink: mediaItem.hyperlink, 
+            hyperlink: mediaItem.hyperlink,
           }))
         );
 
@@ -277,7 +339,22 @@ const Home = ({ navigation }) => {
         BottomsetSlider([]);
       }
     } catch (error) {
-      console.error("Error fetching advertisement:", error);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching advertisement :", errorMsg);
+
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
     }
   };
 
@@ -322,10 +399,22 @@ const Home = ({ navigation }) => {
       // console.log("biodata", biodata);
       dispatch(setAllBiodata(biodata));
     } catch (error) {
-      console.error(
-        "Error fetching profile:",
-        error.response ? error.response.data : error.message
-      );
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching biodata:", errorMsg);
+
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
       setLoading(false)
     }
     finally {
@@ -337,18 +426,18 @@ const Home = ({ navigation }) => {
     try {
       setActivitData({});
       setIsLoading(true);
-  
+
       const token = await AsyncStorage.getItem('userToken');
       if (!token) throw new Error('No token found');
-  
+
       const headers = {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       };
-  
+
       const response = await axios.get(GET_ACTIVIST, { headers });
       console.log("Activist data", JSON.stringify(response.data));
-  
+
       if (response.data && response.data.data) {
         const fetchedData = response.data.data;
         setActivitData(fetchedData);
@@ -358,17 +447,33 @@ const Home = ({ navigation }) => {
         dispatch(setActivistdata({}));
       }
     } catch (error) {
-      console.error("Error fetching Activist data:", error);
-  
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching activist profile:", errorMsg);
+
       // ✅ Clear Redux if 400 error (bad request / no data)
       if (error.response && error.response.status === 400) {
-        resetsetActivistdata();
+        dispatch(resetsetActivistdata()); // Corrected
       }
+
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
+
     } finally {
       setIsLoading(false);
     }
   };
-  
+
   useEffect(() => {
     if (slider.length === 0) return;
 
@@ -477,7 +582,7 @@ const Home = ({ navigation }) => {
                   data={Topslider}
                   renderItem={({ item }) => {
                     const { width, height } = item.resolution;
-                  
+
                     const handlePress = () => {
                       if (item.hyperlink) {
                         Linking.openURL(item.hyperlink).catch(err =>
@@ -485,7 +590,7 @@ const Home = ({ navigation }) => {
                         );
                       }
                     };
-                  
+
                     return (
                       <TouchableOpacity activeOpacity={0.9} onPress={handlePress}>
                         {item.mediaType === 'video' ? (
@@ -507,7 +612,7 @@ const Home = ({ navigation }) => {
                         )}
                       </TouchableOpacity>
                     );
-                  }}                  
+                  }}
                   showNextButton={false}
                   showDoneButton={false}
                   dotStyle={styles.dot}
@@ -621,7 +726,7 @@ const Home = ({ navigation }) => {
                 data={Bottomslider}
                 renderItem={({ item }) => {
                   const { width, height } = item.resolution;
-                
+
                   const handlePress = () => {
                     if (item.hyperlink) {
                       Linking.openURL(item.hyperlink).catch(err =>
@@ -629,7 +734,7 @@ const Home = ({ navigation }) => {
                       );
                     }
                   };
-                
+
                   return (
                     <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                       <Image

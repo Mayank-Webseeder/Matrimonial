@@ -128,33 +128,45 @@ const PostReview = ({ navigation, route }) => {
 
             // ✅ Check if response is successful
             if (response.status === 200 || response.data.status === true) {
-               showMessage({
+                showMessage({
                     type: "success",
                     message: "Success",
                     description: `Your review has been ${isEditMode ? "updated" : "posted"} successfully!`,
-                    icon:"success",
-                    duarion:5000
+                    icon: "success",
+                    duarion: 5000
                 });
-                navigation.goBack(); 
+                navigation.goBack();
             } else {
-               showMessage({
+                showMessage({
                     type: "danger",
                     message: "Failed to post/update the review. Please try again.",
-                    icon:"danger",
-                    duarion:5000
+                    icon: "danger",
+                    duarion: 5000
                 });
             }
         } catch (error) {
-            setIsLoading(false)
-            console.error("❌ Error posting review:", error);
-            const errorMessage = error.response?.data?.message || "An error occurred while posting the review.";
-
-           showMessage({
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error("Error fetching biodata:", errorMsg);
+            showMessage({
                 type: "danger",
-                message:errorMessage,
-                icon:"danger",
-                duarion:5000
+                message: errorMsg,
+                icon: "danger",
+                duarion: 5000
             });
+            const sessionExpiredMessages = [
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
+            ];
+
+            if (sessionExpiredMessages.includes(errorMsg)) {
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
+            }
+            setIsLoading(false)
         }
         finally {
             setIsLoading(false)

@@ -16,7 +16,8 @@ import { useDispatch } from 'react-redux';
 import {
     PartnerOccupationData, FamilyTypeData,
     FamilyFinancialStatusData, PartnersLiveinData, BodyStructureData, ComplexionData, PartnerQualificationData, PartnerDietHabit, Disabilities, subCasteOptions,
-    PartnermaritalStatusData, PartnersmokingStatusData, PartnerDrinkingHabit, PartnerManglikStatusData, PartnerFamliyIncome, Income, CityData, StateData
+    PartnermaritalStatusData, PartnersmokingStatusData, PartnerDrinkingHabit, PartnerManglikStatusData, PartnerFamliyIncome, Income, CityData, StateData,
+    PartnersubCasteOptions
 } from '../../DummyData/DropdownData';
 import { showMessage } from 'react-native-flash-message';
 
@@ -91,7 +92,22 @@ const PartnersPreference = ({ navigation, profileData }) => {
                 setMyBiodata({});
             }
         } catch (error) {
-            console.error("Error fetching biodata:", error);
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error("Error fetching biodata:", errorMsg);
+
+            const sessionExpiredMessages = [
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
+            ];
+
+            if (sessionExpiredMessages.includes(errorMsg)) {
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
+            }
         }
     };
 
@@ -267,7 +283,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
                 showMessage({
                     message: successMessage,
                     type: 'success',
-                    duarion:5000,
+                    duration: 5000,
                     icon: "success"
                 });
 
@@ -295,7 +311,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
                 message: errorMessage,
                 type: 'danger',
                 icon: 'danger',
-                duarion:5000
+                duration: 5000
             });
         } finally {
             setLoading(false);
@@ -320,7 +336,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
                     <Text style={Globalstyles.title}>Sub-Caste  </Text>
                     <Dropdown
                         style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                        data={subCasteOptions}
+                        data={PartnersubCasteOptions}
                         labelField="label"
                         valueField="value"
                         value={biodata?.partnerSubCaste}

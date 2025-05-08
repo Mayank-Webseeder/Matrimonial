@@ -81,7 +81,22 @@ const BioData = ({ navigation }) => {
         setAllprofiles({});
       }
     } catch (error) {
-      console.error("Error fetching biodata:", error);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching biodata:", errorMsg);
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      } 
     }
     finally {
       setIsLoading(false)
@@ -154,7 +169,22 @@ const BioData = ({ navigation }) => {
         TopsetSlider([]);
       }
     } catch (error) {
-      console.error("Error fetching advertisement:", error);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching advertisement:", errorMsg);
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      } 
     }
   };
 
@@ -192,7 +222,22 @@ const BioData = ({ navigation }) => {
         BottomsetSlider([]);
       }
     } catch (error) {
-      console.error("Error fetching advertisement:", error);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching advertisement :", errorMsg);
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      } 
     }
   };
 

@@ -120,7 +120,22 @@ const ProfileDetail = ({ route, navigation }) => {
                 console.warn("Empty response received.");
             }
         } catch (error) {
-            console.error("Error fetching details:", error.response?.data || error.message);
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error("Error fetching detials :", errorMsg);
+
+            const sessionExpiredMessages = [
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
+            ];
+
+            if (sessionExpiredMessages.includes(errorMsg)) {
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
+            }
         }
         setLoading(false);
     };
@@ -162,7 +177,7 @@ const ProfileDetail = ({ route, navigation }) => {
         showMessage({
             type: 'info',
             message: message,
-            duarion:5000,
+            duarion: 5000,
             autoHide: true,
             icon: "info"
         });
@@ -233,22 +248,26 @@ const ProfileDetail = ({ route, navigation }) => {
                 throw new Error(response.data.message || 'Something went wrong!');
             }
         } catch (error) {
-            console.error("❌ Error fetching profile:", error?.response?.data || error);
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error("Error fetching biodata:", errorMsg);
+            Alert.alert("Info", errorMsg);
+            const sessionExpiredMessages = [
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
+            ];
 
-            let errorMessage = "Something went wrong. Please try again later.";
-            if (error?.response) {
-                if (error?.response?.status === 400 && error?.response?.data?.status === false) {
-                    errorMessage = error.response.data?.message || "Failed to repost. Please try again!";
-                }
+            if (sessionExpiredMessages.includes(errorMsg)) {
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
             }
-
-            Alert.alert("Info", errorMessage);
         } finally {
             setPostLoading(false);
         }
     };
-
-
 
     return (
         <View style={Globalstyles.container}>
@@ -857,10 +876,10 @@ const ProfileDetail = ({ route, navigation }) => {
                                     </TouchableOpacity>
                                 ) : (
                                     <TouchableOpacity
-                                        style={[styles.editButton, { backgroundColor: '#c4f2e4' }]}
+                                        style={[styles.editButton, { backgroundColor: '#04AA6D' }]}
                                         disabled={true}
                                     >
-                                        <Text style={[styles.editButtonText, { color: 'green' }]}>Subscription Active</Text>
+                                        <Text style={[styles.editButtonText, { color: '#fff' }]}>Subscription Active</Text>
                                     </TouchableOpacity>
                                 )}
 
@@ -1064,7 +1083,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                     </>
                                 ) : null}
                             </View>
-                            
+
                             {profileData?.experience ? (
                                 <>
                                     <Text style={styles.sectionTitle}>Experience </Text>
@@ -1144,11 +1163,11 @@ const ProfileDetail = ({ route, navigation }) => {
                                     </>
                                 ) : (
                                     <View style={styles.noReviewsContainer}>
-                                    <Text style={styles.noReviewsTitle}>Reviews will show up here</Text>
-                                    <Text style={styles.noReviewsSubtitle}>You'll see others' feedback once they post it.</Text>
-                                  </View>
+                                        <Text style={styles.noReviewsTitle}>Reviews will show up here</Text>
+                                        <Text style={styles.noReviewsSubtitle}>You'll see others' feedback once they post it.</Text>
+                                    </View>
                                 )}
-                                
+
                             </View>
                         </View>
                         <View style={styles.container}>

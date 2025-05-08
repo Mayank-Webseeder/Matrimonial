@@ -145,7 +145,22 @@ const Pandit = ({ navigation }) => {
       console.log("response.data?.data ", JSON.stringify(response.data?.data))
 
     } catch (error) {
-      console.error("Error fetching Pandit data:", error);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching pandit data:", errorMsg);
+
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
       setPanditData([]); // Clear data on error
     } finally {
       setLoading(false);
@@ -208,7 +223,22 @@ const Pandit = ({ navigation }) => {
         setSlider([]);
       }
     } catch (error) {
-      console.error("Error fetching advertisement:", error);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching advertisement:", errorMsg);
+
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
     }
   };
 
@@ -254,15 +284,12 @@ const Pandit = ({ navigation }) => {
         throw new Error(response.data?.message || "Something went wrong!");
       }
     } catch (error) {
-      console.error(
-        "API Error:",
-        error?.response ? JSON.stringify(error.response.data) : error.message
-      );
-
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching biodata:", errorMsg);
       showMessage({
         type: "danger",
         message: "Error",
-        description: error?.response?.data?.message || "Failed to save profile!",
+        description: errorMsg || "Failed to save profile!",
         icon: "danger"
       });
       setPanditData((prevProfiles) =>
@@ -270,6 +297,20 @@ const Pandit = ({ navigation }) => {
           profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
         )
       );
+
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
     }
   };
 
@@ -487,7 +528,7 @@ const Pandit = ({ navigation }) => {
             data={slider}
             renderItem={({ item }) => {
               const { width, height } = item.resolution;
-            
+
               const handlePress = () => {
                 if (item.hyperlink) {
                   Linking.openURL(item.hyperlink).catch(err =>
@@ -495,7 +536,7 @@ const Pandit = ({ navigation }) => {
                   );
                 }
               };
-            
+
               return (
                 <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                   <Image
@@ -504,7 +545,7 @@ const Pandit = ({ navigation }) => {
                   />
                 </TouchableOpacity>
               );
-            }}            
+            }}
             showNextButton={false}
             showDoneButton={false}
             dotStyle={Globalstyles.dot}

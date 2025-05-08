@@ -75,7 +75,22 @@ const JyotishRegister = ({ navigation }) => {
                 setPlans(response.data.plans);
             }
         } catch (error) {
-            console.error('Failed to fetch plans:', error);
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error("Error fetching plans:", errorMsg);
+
+            const sessionExpiredMessages = [
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
+            ];
+
+            if (sessionExpiredMessages.includes(errorMsg)) {
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
+            }
         }
     };
 
@@ -133,6 +148,22 @@ const JyotishRegister = ({ navigation }) => {
                 console.error("No Response Received:", error.request);
             } else {
                 console.error("Error Message:", error.message);
+            }
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error("Error fetching biodata:", errorMsg);
+
+            const sessionExpiredMessages = [
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
+            ];
+
+            if (sessionExpiredMessages.includes(errorMsg)) {
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
             }
         } finally {
             setIsLoading(false);
@@ -739,7 +770,7 @@ const JyotishRegister = ({ navigation }) => {
                 type: "error",
                 message: "Invalid URL",
                 description: `Please enter a valid ${type.replace("Url", "")} link.`,
-                duarion:5000
+                duarion: 5000
             });
         }
     };

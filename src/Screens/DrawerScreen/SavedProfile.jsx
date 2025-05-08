@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, FlatList, ScrollView, Image, SafeAreaView, StatusBar, ActivityIndicator, RefreshControl } from "react-native";
+import { View, Text, TouchableOpacity, FlatList, ScrollView, Image, SafeAreaView, StatusBar, ActivityIndicator, RefreshControl, Alert } from "react-native";
 import React, { useState, useRef, useCallback } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -21,12 +21,12 @@ const SavedProfile = ({ navigation }) => {
   const [savedProfiles, setSavedProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const MyprofileData = useSelector((state) => state.getBiodata);
-  const partnerPreferences = MyprofileData?.Biodata?.partnerPreferences || null;
+  const partnerPreferences = MyprofileData?.Biodata?.partnerPreferences || {};
   const [refreshing, setRefreshing] = useState(false);
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
   const [deletingId, setDeletingId] = useState(null);
-
+  const isBiodataEmpty = !MyprofileData.Biodata || Object.keys(MyprofileData.Biodata).length === 0;
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchSavedProfiles();
@@ -68,21 +68,21 @@ const SavedProfile = ({ navigation }) => {
 
   const DeleteSaveProfile = async (_id) => {
     if (!_id || deletingId === _id) return;
-
+  
     setDeletingId(_id);
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found. Please log in again.");
-
+  
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-
+  
       const response = await axios.delete(`${DELETE_SAVED_PROFILE}/${_id}`, { headers });
-
-      if (response.status === 200 && response.data.status === true) {
+  
+      if (response?.status === 200 && response?.data?.status === true) {
         showMessage({
           type: "success",
           message: "Success",
@@ -90,30 +90,51 @@ const SavedProfile = ({ navigation }) => {
           icon: "success",
           duration: 5000,
         });
-        await fetchSavedProfiles();
+  
+        setSavedProfiles(prev => prev.filter(p => p.saveProfile?._id !== _id));
       } else {
-        throw new Error(response.data.message || "Something went wrong!");
+        throw new Error(response?.data?.message || "Something went wrong!");
       }
     } catch (error) {
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching biodata:", errorMsg);
+  
       showMessage({
         type: "danger",
         message: "Error",
-        description: error?.response?.data?.message || error.message || "Delete failed",
+        description: errorMsg || "Delete failed",
         icon: "danger",
         duration: 5000
       });
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
     } finally {
       setLoading(false);
       setDeletingId(null);
     }
   };
+  
 
   const getFilteredData = () => {
+    const validProfiles = savedProfiles.filter((item) => item?.saveProfile !== null) || {};
+
     if (["Biodata", "Pandit", "Jyotish", "Kathavachak", "Dharmshala", "Committee"].includes(activeCategory)) {
-      const filteredProfiles = savedProfiles.filter((item) => item.profileType === activeCategory);
+      const filteredProfiles = validProfiles.filter((item) => item?.profileType === activeCategory);
       return filteredProfiles.length > 0 ? filteredProfiles : null;
     } else {
-      const filteredProfiles = savedProfiles.filter((item) => item.category === activeCategory);
+      const filteredProfiles = validProfiles.filter((item) => item?.category === activeCategory);
       return filteredProfiles.length > 0 ? filteredProfiles : null;
     }
   };
@@ -125,6 +146,10 @@ const SavedProfile = ({ navigation }) => {
       <View style={styles.card}>
         <TouchableOpacity style={styles.detailsContainer}
           onPress={() => {
+            if (profileType === "Biodata" && isBiodataEmpty) {
+              Alert.alert("Create Biodata", "Please create biodata to see full information of this profile.");
+              return;
+            }
             if (profileType === "Biodata") {
               if (!partnerPreferences) {
                 navigation.navigate("ShortMatrimonialProfile", {
@@ -153,8 +178,8 @@ const SavedProfile = ({ navigation }) => {
             <>
               <Image
                 source={
-                  saveProfile?.personalDetails?.closeUpPhoto && saveProfile.personalDetails.closeUpPhoto.startsWith("http")
-                    ? { uri: saveProfile.personalDetails.closeUpPhoto }
+                  saveProfile?.personalDetails?.closeUpPhoto && saveProfile?.personalDetails?.closeUpPhoto.startsWith("http")
+                    ? { uri: saveProfile?.personalDetails?.closeUpPhoto }
                     : require("../../Images/NoImage.png")
                 }
                 style={styles.image}
@@ -168,8 +193,8 @@ const SavedProfile = ({ navigation }) => {
                 </Text>
                 <Text style={styles.text}>
                   Age:
-                  {saveProfile?.personalDetails?.dob && !isNaN(new Date(saveProfile.personalDetails.dob).getTime())
-                    ? ` ${new Date().getFullYear() - new Date(saveProfile.personalDetails.dob).getFullYear()} Years`
+                  {saveProfile?.personalDetails?.dob && !isNaN(new Date(saveProfile?.personalDetails?.dob).getTime())
+                    ? ` ${new Date().getFullYear() - new Date(saveProfile?.personalDetails?.dob).getFullYear()} Years`
                     : " NA"}
                 </Text>
                 <Text style={styles.text} numberOfLines={1}>
@@ -185,7 +210,7 @@ const SavedProfile = ({ navigation }) => {
               <Image
                 source={
                   saveProfile?.profilePhoto && saveProfile.profilePhoto.startsWith("http")
-                    ? { uri: saveProfile.profilePhoto }
+                    ? { uri: saveProfile?.profilePhoto }
                     : require("../../Images/NoImage.png")
                 }
                 style={styles.image}
@@ -349,7 +374,6 @@ const SavedProfile = ({ navigation }) => {
             }
           />
         )}
-
       </View>
     </SafeAreaView>
   );

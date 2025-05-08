@@ -57,7 +57,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
       message: "Info",
       message: "Under development",
       icon: "info",
-      duarion:5000
+      duarion: 5000
     });
   };
 
@@ -125,15 +125,8 @@ const ViewMyEventPost = ({ navigation, route }) => {
       }
 
     } catch (error) {
-      console.error("Error liking post:", error?.response?.data || error.message);
-
-      showMessage({
-        type: "danger",
-        message: "Error",
-        message: error?.response?.data?.message || "Failed to like event. Please try again!",
-        icon: "danger",
-        duarion:5000
-      });
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error on doing like:", errorMsg);
 
       // Reverse the like state on error
       setLikeData((prevState) => {
@@ -153,6 +146,28 @@ const ViewMyEventPost = ({ navigation, route }) => {
           },
         };
       });
+
+      showMessage({
+        type: "danger",
+        message: "Error",
+        message: errorMsg || "Failed to like event. Please try again!",
+        icon: "danger",
+        duarion: 5000
+      });
+
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
 
     } finally {
       setLikeLoading(false);
@@ -187,7 +202,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
           type: "success",
           message: "Success",
           message: fetchedData.message || "Comment added successfully!",
-          duarion:5000,
+          duarion: 5000,
           onHide: () => {
             navigation.reset({
               index: 0,
@@ -201,14 +216,27 @@ const ViewMyEventPost = ({ navigation, route }) => {
       }
 
     } catch (error) {
-      console.error("Error adding comment:", error?.response?.data || error.message);
-
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error adding comment:", errorMsg);
       showMessage({
         type: "danger",
-        message: error?.response?.data?.message || "Failed to add comment. Please try again!",
+        message: errorMsg || "Failed to add comment. Please try again!",
         icon: "danger",
-        duarion:5000
+        duarion: 5000
       });
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
     } finally {
       setCommentLoading(false);
     }
@@ -246,19 +274,32 @@ const ViewMyEventPost = ({ navigation, route }) => {
           message: "Success",
           message: "Comment deleted successfully!",
           position: "top",
-          duarion:5000
+          duarion: 5000
         });
       }
     } catch (error) {
-      console.error("Error deleting comment:", error?.response?.data || error.message);
-
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error deleting comment :", errorMsg);
       showMessage({
         type: "danger",
         message: "Error",
-        message: error?.response?.data?.message || "Failed to delete comment. Please try again!",
+        message: errorMsg || "Failed to delete comment. Please try again!",
         icon: "danger",
-        duarion:5000
+        duarion: 5000
       });
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
     } finally {
       setdeletecommentLoading(false);
     }
@@ -291,7 +332,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
           message: "Success",
           message: "Event post deleted successfully!",
           icon: "success",
-          duarion:5000
+          duarion: 5000
         });
 
         // ✅ Close modal if used
@@ -309,19 +350,27 @@ const ViewMyEventPost = ({ navigation, route }) => {
 
       throw new Error(response.data.message || "Failed to delete event post.");
     } catch (error) {
-      console.error("🚨 Error deleting event post:", error?.response?.data || error.message);
-
-      let errorMessage = "Failed to delete event post. Please try again!";
-      if (error.response?.status === 400) {
-        errorMessage = error.response.data?.message || "Bad request.";
-      }
-
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error deleting event:", errorMsg);
       showMessage({
         type: "danger",
         message: "Error",
-        message: errorMessage,
-        duarion:5000
+        message: errorMsg,
+        duarion: 5000
       });
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
     } finally {
       setIsLoading(false);
     }

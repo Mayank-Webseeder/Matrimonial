@@ -50,18 +50,27 @@ const NotificationSettings = ({ navigation }) => {
         throw new Error(response.data.message || "Something went wrong!");
       }
     } catch (error) {
-      console.error("Error updating profile interest notification:", error);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error updating profile interest notification:", errorMsg);
       setProfileInterest(!newState); // Revert UI if API fails
-
-      let errorMessage = "Failed to update setting. Try again!";
-      if (error.response && error.response.status === 400) {
-        errorMessage = error.response.data?.message || "Invalid request!";
-      }
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      } 
 
       showMessage({
         type: "danger",
         message: "Error",
-        description: errorMessage,
+        description: errorMsg,
         icon:"danger",
         duration: 5000
       });
@@ -93,21 +102,29 @@ const NotificationSettings = ({ navigation }) => {
         throw new Error(response.data.message || "Something went wrong!");
       }
     } catch (error) {
-      console.error("Error updating news/events notification:", error);
-      setNewsEvents(!newState); // Revert UI if API fails
-
-      let errorMessage = "Failed to update setting. Try again!";
-      if (error.response && error.response.status === 400) {
-        errorMessage = error.response.data?.message || "Invalid request!";
-      }
-
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error updating news/events notification:", errorMsg);
+      setNewsEvents(!newState);
       showMessage({
         type: "danger",
         message: "Error",
-        description: errorMessage,
+        description: errorMsg,
         icon:"danger",
         duration: 5000,
       });
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      } 
     } finally {
       setLoadingNewsEvents(false);
     }

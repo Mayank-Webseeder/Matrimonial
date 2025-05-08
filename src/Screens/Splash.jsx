@@ -1,18 +1,21 @@
 import React from 'react';
-import { Text, View, ImageBackground, TouchableOpacity, StatusBar,SafeAreaView } from 'react-native';
+import { Text, View, ImageBackground, TouchableOpacity, StatusBar, SafeAreaView, Linking } from 'react-native';
 import styles from './StyleScreens/SplashStyle';
 
 const Splash = ({ navigation }) => {
     const HandleLogin = () => {
         navigation.navigate('Login');
     };
+    const handlePress = () => {
+        Linking.openURL("https://www.appwin.in/policy.html");
+    };
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar 
-                barStyle="dark-content" 
-                backgroundColor="transparent" 
-                translucent 
+            <StatusBar
+                barStyle="dark-content"
+                backgroundColor="transparent"
+                translucent
             />
             <View>
                 <ImageBackground
@@ -35,6 +38,9 @@ const Splash = ({ navigation }) => {
                             <Text style={styles.boldSignupText}>Signup</Text>
                         </TouchableOpacity>
                     </View>
+                    <Text style={styles.linkText} onPress={handlePress}>
+                        Privacy Policy
+                    </Text>
                 </ImageBackground>
             </View>
         </SafeAreaView>

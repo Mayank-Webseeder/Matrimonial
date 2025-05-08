@@ -54,11 +54,23 @@ const MySuccessStory = ({ navigation, route }) => {
 
               Alert.alert('Deleted', 'Your story was removed.');
               navigation.goBack();
-            } catch (err) {
-              console.log(
-                'Delete error:',
-                err.response ? err.response.data : err.message
-              );
+            } catch (error) {
+              const errorMsg = error.response?.data?.message || error.message;
+              console.error("Error fetching biodata:", errorMsg);
+          
+              const sessionExpiredMessages = [
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
+              ];
+          
+              if (sessionExpiredMessages.includes(errorMsg)) {
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: "AuthStack" }],
+                });
+              } 
               Alert.alert('Error', 'Could not delete. Try again.');
             }
           },
@@ -66,17 +78,6 @@ const MySuccessStory = ({ navigation, route }) => {
       ]
     );
   };
-
-  const renderStars = (rating) =>
-    [...Array(rating).keys()].map((i) => (
-      <FontAwesome
-        key={i}
-        name="star"
-        size={20}
-        color="#FF9900"
-        style={{ marginHorizontal: 2 }}
-      />
-    ));
 
   return (
     <SafeAreaView style={Globalstyles.container}>

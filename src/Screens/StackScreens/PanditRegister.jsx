@@ -116,7 +116,22 @@ const PanditRegister = ({ navigation }) => {
             console.log("Selected Profile Data:", response.data.data);
 
         } catch (error) {
-            console.error("Error fetching profiles:", error);
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error("Error fetching biodata:", errorMsg);
+
+            const sessionExpiredMessages = [
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
+            ];
+
+            if (sessionExpiredMessages.includes(errorMsg)) {
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
+            }
 
             if (error.response) {
             } else if (error.request) {
@@ -385,21 +400,27 @@ const PanditRegister = ({ navigation }) => {
             }, 3000);
 
         } catch (error) {
-            const errorMessage =
-                error?.response?.data?.message ||
-                error?.response?.message ||
-                error?.message ||
-                "Something went wrong!";
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error("Error fetching biodata:", errorMsg);
+            Alert.alert("Please Wait", errorMsg);
 
-            console.error("❌ Error:", errorMessage);
-
-            // Show error with Alert (not flash message)
-            Alert.alert("Please Wait", errorMessage);
-
-            if (errorMessage.includes("valid Pandit subscription")) {
+            if (errorMsg.includes("valid Pandit subscription")) {
                 setTimeout(() => {
                     openModal();
                 }, 1000);
+            }
+            const sessionExpiredMessages = [
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
+            ];
+
+            if (sessionExpiredMessages.includes(errorMsg)) {
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
             }
 
         } finally {
@@ -603,13 +624,25 @@ const PanditRegister = ({ navigation }) => {
                 });
 
         } catch (error) {
-            const errorMsg = error?.response?.data?.message || error.message || "Please try again later.";
-
-            console.error("❌ [Error in buying subscription]:", error?.response?.data || error.message);
-            Alert.alert(
-                "Subscription Info",
-                errorMsg
-            );
+            const errorMsg = error.response?.data?.message || error.message;
+      console.error("❌ [Error in buying subscription]:", errorMsg);
+      Alert.alert(
+          "Subscription Info",
+          errorMsg
+      );
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
             setBuyLoading(false)
             setBuyingPlanId(false)
         }
@@ -668,39 +701,7 @@ const PanditRegister = ({ navigation }) => {
         }));
         setFilteredCities([]);
     };
-
-    const handleSubCasteInputChange = (text) => {
-        const filtered = subCasteOptions
-            .filter((item) =>
-                item?.label?.toLowerCase().includes(text.toLowerCase())
-            )
-            .map((item) => item.label);
-
-        // If matches found, allow input
-        if (filtered.length > 0) {
-            setSubCasteInput(text);
-            setFilteredSubCaste(filtered);
-            setRoleRegisterData((PrevRoleRegisterData) => ({
-                ...PrevRoleRegisterData,
-                subCaste: text,
-            }));
-        } else {
-            // Don't allow arbitrary input — only show "Other"
-            setFilteredSubCaste(['Other']);
-        }
-    };
-
-    const handleSubCasteSelect = (selectedItem) => {
-        const finalValue = selectedItem === 'Other' ? 'Other' : selectedItem;
-
-        setSubCasteInput(finalValue);
-        setFilteredSubCaste([]);
-        setRoleRegisterData((PrevRoleRegisterData) => ({
-            ...PrevRoleRegisterData,
-            subCaste: finalValue,
-        }));
-    };
-
+    
     const handleInputChange = (field, value) => {
         setRoleRegisterData((prev) => ({
             ...prev,
@@ -730,7 +731,7 @@ const PanditRegister = ({ navigation }) => {
                 type: "danger",
                 message: "Invalid URL",
                 description: `Please enter a valid ${type.replace("Url", "")} link.`,
-                duarion:5000
+                duarion: 5000
             });
         }
     };

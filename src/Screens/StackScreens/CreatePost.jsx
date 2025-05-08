@@ -107,27 +107,28 @@ const CreatePost = ({ navigation, route }) => {
             }
 
         } catch (error) {
-            console.error('Error submitting event:', error);
-            console.error('Error submitting event:', error.response.data.message);
-
-            let errorMessage = 'Failed to create event. Please try again later.';
-
-            if (error.response) {
-                console.error("API Error:", error.response.data);
-                if (error.response.status === 400) {
-                    errorMessage = error.response.data.message || "Bad request. Please check your input.";
-                } else {
-                    errorMessage = error.response.data.message || errorMessage;
-                }
-            }
-
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error("Error fetching biodata:", errorMsg);
             showMessage({
                 type: 'danger',
                 message: 'Error',
-                description: errorMessage,
+                description: errorMsg,
                 icon: "danger",
                 duarion:5000
             });
+            const sessionExpiredMessages = [
+              "User does not Exist....!Please login again",
+              "Invalid token. Please login again",
+              "Token has expired. Please login again"
+            ];
+        
+            if (sessionExpiredMessages.includes(errorMsg)) {
+              await AsyncStorage.removeItem("userToken");
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "AuthStack" }],
+              });
+            }
 
         } finally {
             setLoading(false);

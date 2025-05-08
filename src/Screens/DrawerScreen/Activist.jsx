@@ -94,11 +94,24 @@ const Activist = ({ navigation }) => {
         dispatch(setActivistdata({}));
       }
     } catch (error) {
-      console.error("Error fetching Activist data:", error);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching activist data:", errorMsg);
 
-      // ✅ Clear Redux if 400 error (bad request / no data)
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
       if (error.response && error.response.status === 400) {
-        resetsetActivistdata();
+       dispatch(resetsetActivistdata()); 
       }
     } finally {
       setIsLoading(false);
@@ -158,8 +171,23 @@ const Activist = ({ navigation }) => {
         setError("No activist profiles found.");
       }
     } catch (error) {
-      console.error("Error fetching Activist data:", error);
-      setError(error.response ? error.response.data.message : "Failed to fetch data. Please try again.");
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching activist data:", errorMsg);
+
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
+      setError(errorMsg || "Failed to fetch data. Please try again.");
     } finally {
       setLoading(false);
     }

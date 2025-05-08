@@ -141,7 +141,22 @@ const DetailedProfile = ({ navigation, profileData }) => {
         setMyBiodata({});
       }
     } catch (error) {
-      console.error("Error fetching biodata:", error);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error in creating personal detials :", errorMsg);
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
     }
   };
 
@@ -161,7 +176,22 @@ const DetailedProfile = ({ navigation, profileData }) => {
         setPlans(response.data.plans);
       }
     } catch (error) {
-      console.error('Failed to fetch plans:', error);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("failed to fetch plans :", errorMsg);
+  
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
     }
   };
 
@@ -182,21 +212,6 @@ const DetailedProfile = ({ navigation, profileData }) => {
     }, [myBiodata, profileData?.gender])
   );
 
-
-  const handleTimeChange = (event, selectedDate) => {
-    if (event.type === "set" && selectedDate) {
-      const formattedTime = moment(selectedDate).format("hh:mm A");
-      setBiodata((prevState) => ({
-        ...prevState,
-        timeOfBirth: formattedTime,
-      }));
-    } else if (event.type === "dismissed") {
-      // If the user cancels, clear the selected time
-      setBiodata((prevState) => ({ ...prevState, timeOfBirth: "" }));
-    }
-
-    setShowTimePicker(false);
-  };
 
   const handleImageSelection = (field) => {
     ImageCropPicker.openPicker({
@@ -311,28 +326,6 @@ const DetailedProfile = ({ navigation, profileData }) => {
     setFilteredCitiesOrVillages([]);
   };
 
-  const handleSubCasteInputChange = (text) => {
-    setSubCasteInput(text);
-    const filtered = subCasteOptions
-      .filter((item) => item.label.toLowerCase().includes(text.toLowerCase()))
-      .map((item) => item.label);
-
-    setFilteredSubCaste(filtered.length > 0 ? filtered : ['Other']);
-    setBiodata((prevState) => ({
-      ...prevState,
-      subCaste: '',
-    }));
-  };
-
-  const handleSubCasteSelect = (selectedItem) => {
-    setSubCasteInput(selectedItem);
-    setFilteredSubCaste([]);
-
-    setBiodata((prevState) => ({
-      ...prevState,
-      subCaste: selectedItem,
-    }));
-  };
 
   const heightData = Array.from({ length: 4 }, (_, feetIndex) =>
     Array.from({ length: 12 }, (_, inchesIndex) => ({
@@ -597,32 +590,36 @@ const DetailedProfile = ({ navigation, profileData }) => {
       throw new Error(response.data.message || "Something went wrong");
 
     } catch (error) {
-      const errorStatus = error.response?.status;
-      const errorData = error.response?.data;
-      const errorMessage =
-        errorData?.message ||
-        error.response?.message ||
-        error.message ||
-        "Something went wrong!";
-
-      console.error("🚨 API Error:");
-      console.error("Status Code:", errorStatus);
-      console.error("Error Message:", errorMessage);
-      console.error("Full Error Data:", errorData);
-
-      showMessage({
-        message: errorMessage,
-        type: 'danger',
-        icon: 'danger',
-        duarion: 5000
-      });
-
-      if (errorMessage === "You do not have an active subscription for Biodata service.") {
-        setTimeout(() => {
-          openModal();
-        }, 1000);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching biodata:", errorMsg);
+      Alert.alert(
+        "Error",
+        errorMsg,
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              if (errorMsg === "You do not have an active subscription for Biodata service.") {
+                openModal();
+              }
+            }
+          }
+        ],
+        { cancelable: true }
+      );
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+  
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
       }
-
     } finally {
       setIsLoading(false);
     }
@@ -944,7 +941,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
               >
                 <Text style={[styles.dateText]}>
-                  {biodata?.dob ? formatDate(biodata.dob) : "Select your date of birth"}
+                  {biodata?.dob ? formatDate(biodata.dob) : "Select Your Date"}
                 </Text>
               </TouchableOpacity>
             </View>

@@ -88,20 +88,28 @@ const AdvertiseWithUs = ({ navigation }) => {
             throw new Error(response.data.message || "Something went wrong");
 
         } catch (error) {
-            console.error('Error submitting Advertise:', error?.response?.data || error.message);
-
-            let errorMessage = 'Failed to submit Advertise. Please try again later.';
-            if (error.response && error.response.status === 400) {
-                errorMessage = error.response.data?.message || "Invalid request!";
-            }
-
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error("Error fetching biodata:", errorMsg);
             showMessage({
                 type: 'danger',
                 message: 'Error',
-                description: errorMessage,
+                description: errorMsg,
                 icon: "danger",
                 duarion:5000
             });
+            const sessionExpiredMessages = [
+              "User does not Exist....!Please login again",
+              "Invalid token. Please login again",
+              "Token has expired. Please login again"
+            ];
+        
+            if (sessionExpiredMessages.includes(errorMsg)) {
+              await AsyncStorage.removeItem("userToken");
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "AuthStack" }],
+              });
+            }
 
         }
     };

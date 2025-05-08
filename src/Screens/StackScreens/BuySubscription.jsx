@@ -41,7 +41,22 @@ const BuySubscription = ({ navigation, route }) => {
         setPlans(response.data.plans);
       }
     } catch (error) {
-      console.error('Failed to fetch plans:', error);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("failed to fetch plans :", errorMsg);
+
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
       setPlansLoading(false)
     }
     finally {
@@ -169,13 +184,26 @@ const BuySubscription = ({ navigation, route }) => {
         });
 
     } catch (error) {
-      const errorMsg = error?.response?.data?.message || error.message || "Please try again later.";
-
-      console.error("❌ [Error in buying subscription]:", error?.response?.data || error.message);
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("❌ [Error in buying subscription]:", errorMsg);
       Alert.alert(
         "Subscription Info",
         errorMsg
       );
+
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
       setBuyLoading(false)
       setBuyingPlanId(null);
     }

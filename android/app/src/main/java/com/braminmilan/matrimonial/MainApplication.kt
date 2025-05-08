@@ -1,4 +1,4 @@
-package com.braminmilan.matrimonial
+package com.brahminmilanbyappwin.app
 
 import android.app.Application
 import com.facebook.react.PackageList

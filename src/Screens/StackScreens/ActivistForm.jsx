@@ -38,19 +38,19 @@ export default function ActivistForm({ navigation }) {
     state: '',
     city: '',
     mobileNo: '',
-    knownActivistIds: '',
+    knownActivistId: '',
     engagedWithCommittee: '',
     profilePhoto: '',
   });
 
-  useEffect(() => {
-    if (!MyActivistProfile || Object.keys(MyActivistProfile).length === 0) {
-      Alert.alert(
-        "Pending Approval",
-        "Your request is pending for approval. Please wait for some time."
-      );
-    }
-  }, [MyActivistProfile]);
+  // useEffect(() => {
+  //   if (!MyActivistProfile || Object.keys(MyActivistProfile).length === 0) {
+  //     Alert.alert(
+  //       "Pending Approval",
+  //       "Your request is pending for approval. Please wait for some time."
+  //     );
+  //   }
+  // }, [MyActivistProfile]);
 
   useEffect(() => {
     console.log("MyActivistProfile", MyActivistProfile);
@@ -179,7 +179,7 @@ export default function ActivistForm({ navigation }) {
   const constructActivistPayload = async (ActivistData, isNew = false) => {
     const keys = [
       "fullname", "subCaste", "dob", "state", "city",
-      "mobileNo", "knownActivistIds", "engagedWithCommittee", "profilePhoto",
+      "mobileNo", "knownActivistId", "engagedWithCommittee", "profilePhoto",
     ];
 
     const payload = {};
@@ -206,15 +206,15 @@ export default function ActivistForm({ navigation }) {
         throw new Error("Invalid DOB format. Expected format is YYYY-MM-DD.");
       }
     }
-    if (payload.knownActivistIds) {
-      const id = payload.knownActivistIds.trim().toUpperCase();
+    if (payload.knownActivistId) {
+      const id = payload.knownActivistId.trim().toUpperCase();
     
       if (id === "") {
-        delete payload.knownActivistIds;
+        delete payload.knownActivistId;
       } else if (!/^[A-Z]{2}[0-9]{4}$/.test(id)) {
         throw new Error("Invalid activist ID format. It should look like 'AA0001'.");
       } else {
-        payload.knownActivistIds = id;
+        payload.knownActivistId = id;
       }
     }
     if (ActivistData.profilePhoto) {
@@ -372,14 +372,14 @@ export default function ActivistForm({ navigation }) {
     if (text.trim() !== "") {
       setActivistData((prev) => ({
         ...prev,
-        knownActivistIds: [...prev.knownActivistIds, { activistId: text.trim() }],
+        knownActivistId: [...prev.knownActivistId, { activistId: text.trim() }],
       }));
     }
   };
   const handleRemoveActivistId = (index) => {
     setActivistData((prev) => ({
       ...prev,
-      knownActivistIds: prev.knownActivistIds.filter((_, i) => i !== index),
+      knownActivistId: prev.knownActivistId.filter((_, i) => i !== index),
     }));
   };
 
@@ -611,9 +611,9 @@ export default function ActivistForm({ navigation }) {
         <TextInput
           style={Globalstyles.input}
           placeholder="Enter Activist ID (eg., Me AA0001)"
-          value={ActivistData.knownActivistIds}
+          value={ActivistData.knownActivistId}
           onChangeText={(text) =>
-            setActivistData({ ...ActivistData, knownActivistIds: text })
+            setActivistData({ ...ActivistData, knownActivistId: text })
           }
           placeholderTextColor={Colors.gray}
           autoComplete="off"

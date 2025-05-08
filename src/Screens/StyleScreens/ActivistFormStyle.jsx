@@ -1,24 +1,26 @@
 import { StyleSheet } from "react-native";
 import Colors from "../../utils/Colors";
 import { SH, SW, SF } from "../../utils/Dimensions";
+
 const styles = StyleSheet.create({
     tag: {
         flexDirection: "row",
         backgroundColor: "#E0E0E0",
-        paddingHorizontal: 10,
-        paddingVertical: 5,
+        paddingHorizontal: SW(10),
+        paddingVertical: SH(5),
         borderRadius: 20,
-        margin: 5,
+        marginVertical: SH(5),
+        marginHorizontal: SW(5),
         alignItems: "center",
     },
     tagText: {
-        color: "#333",
-        marginRight: 8,
+        color: "green",
+        marginRight: SW(8),
     },
     removeTag: {
         color: "red",
-        fontSize: 16,
-        fontWeight: "bold",
+        fontSize: SF(16),
+        fontFamily: "Poppins-Bold"
     },
     radioGroup: {
         flexDirection: 'row',
@@ -74,7 +76,6 @@ const styles = StyleSheet.create({
     photosContainer: {
         paddingVertical: SH(10),
     },
-
     photo: {
         width: SW(100),
         height: SH(100),
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
     dateText: {
         flex: 1,
         fontSize: SF(16),
-        color: Colors.dark,
+        color: "gray",
         paddingVertical: SH(10)
     },
     arrow: {

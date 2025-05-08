@@ -16,66 +16,69 @@ const FeedBack = ({ navigation }) => {
 
   const handleSubmit = async () => {
     try {
-        const token = await AsyncStorage.getItem('userToken'); // ✅ Fetch Token
-        if (!token) throw new Error('No token found');
+      const token = await AsyncStorage.getItem('userToken'); // ✅ Fetch Token
+      if (!token) throw new Error('No token found');
 
-        const payload = {
-            rating: rating,
-            comment: comment,
-        };
+      const payload = {
+        rating: rating,
+        comment: comment,
+      };
 
-        const headers = {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-        };
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      };
 
-        console.log('Payload:', payload);
+      console.log('Payload:', payload);
 
-        const response = await axios.post(FEEDBACK, payload, { headers });
-        console.log("✅ Feedback Response:", JSON.stringify(response.data));
+      const response = await axios.post(FEEDBACK, payload, { headers });
+      console.log("✅ Feedback Response:", JSON.stringify(response.data));
 
-        if (response.status === 200 && response.data.status === true) {
-           showMessage({
-                type: 'success',
-                message: 'Success',
-                description: response.data.message || 'Your Feedback has been submitted successfully!',
-                icon:"success",
-                duration: 5000
-            });
+      if (response.status === 200) {
+        showMessage({
+          type: 'success',
+          message: 'Success',
+          description: response.data.message || 'Your Feedback has been submitted successfully!',
+          icon: "success",
+          duration: 5000
+        });
+        setTimeout(() => {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "MainApp" }],
+          });
+        }, 2000);
 
-            setTimeout(() => {
-                navigation.navigate('MainApp');
-            }, 2000);
-        } else {
-            throw new Error(response.data.message || "Something went wrong!");
-        }
+      } else {
+        throw new Error(response.data.message || "Something went wrong!");
+      }
 
-    }catch (error) {
+    } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching biodata:", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
         });
-      } 
-        showMessage({
-          type: 'danger',
-          message: 'Error',
-          description: errorMsg,
-          icon: "danger",
-          duration: 5000
-        });
       }
-};
+      showMessage({
+        type: 'danger',
+        message: 'Error',
+        description: errorMsg,
+        icon: "danger",
+        duration: 5000
+      });
+    }
+  };
 
 
   const renderStars = () => {
@@ -111,7 +114,6 @@ const FeedBack = ({ navigation }) => {
           <Text style={Globalstyles.headerText}>Feedback</Text>
         </View>
       </View>
-
       <View style={Globalstyles.form}>
         <Text style={styles.Text}>Feedback</Text>
         <Text style={styles.description}>Share your experience in scaling</Text>

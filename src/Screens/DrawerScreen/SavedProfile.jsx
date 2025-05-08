@@ -21,7 +21,7 @@ const SavedProfile = ({ navigation }) => {
   const [savedProfiles, setSavedProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const MyprofileData = useSelector((state) => state.getBiodata);
-  const partnerPreferences = MyprofileData?.Biodata?.partnerPreferences || null;
+  const partnerPreferences = MyprofileData?.Biodata?.partnerPreferences || {};
   const [refreshing, setRefreshing] = useState(false);
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
@@ -82,7 +82,7 @@ const SavedProfile = ({ navigation }) => {
 
       const response = await axios.delete(`${DELETE_SAVED_PROFILE}/${_id}`, { headers });
 
-      if (response.status === 200 && response.data.status === true) {
+      if (response?.status === 200 && response?.data?.status === true) {
         showMessage({
           type: "success",
           message: "Success",
@@ -90,10 +90,14 @@ const SavedProfile = ({ navigation }) => {
           icon: "success",
           duration: 5000,
         });
-        setSavedProfiles(prev => prev.filter(p => p.saveProfile._id !== _id));
+        setSavedProfiles(prev => prev.filter(p => p.saveProfile?._id !== _id));
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "SavedProfile" }],
+        });
         fetchSavedProfiles();
       } else {
-        throw new Error(response.data.message || "Something went wrong!");
+        throw new Error(response?.data?.message || "Something went wrong!");
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
@@ -127,13 +131,13 @@ const SavedProfile = ({ navigation }) => {
   };
 
   const getFilteredData = () => {
-    const validProfiles = savedProfiles.filter((item) => item.saveProfile !== null);
-    
+    const validProfiles = savedProfiles.filter((item) => item?.saveProfile !== null) || {};
+
     if (["Biodata", "Pandit", "Jyotish", "Kathavachak", "Dharmshala", "Committee"].includes(activeCategory)) {
-      const filteredProfiles = validProfiles.filter((item) => item.profileType === activeCategory);
+      const filteredProfiles = validProfiles.filter((item) => item?.profileType === activeCategory);
       return filteredProfiles.length > 0 ? filteredProfiles : null;
     } else {
-      const filteredProfiles = validProfiles.filter((item) => item.category === activeCategory);
+      const filteredProfiles = validProfiles.filter((item) => item?.category === activeCategory);
       return filteredProfiles.length > 0 ? filteredProfiles : null;
     }
   };
@@ -173,8 +177,8 @@ const SavedProfile = ({ navigation }) => {
             <>
               <Image
                 source={
-                  saveProfile?.personalDetails?.closeUpPhoto && saveProfile.personalDetails.closeUpPhoto.startsWith("http")
-                    ? { uri: saveProfile.personalDetails.closeUpPhoto }
+                  saveProfile?.personalDetails?.closeUpPhoto && saveProfile?.personalDetails?.closeUpPhoto.startsWith("http")
+                    ? { uri: saveProfile?.personalDetails?.closeUpPhoto }
                     : require("../../Images/NoImage.png")
                 }
                 style={styles.image}
@@ -188,8 +192,8 @@ const SavedProfile = ({ navigation }) => {
                 </Text>
                 <Text style={styles.text}>
                   Age:
-                  {saveProfile?.personalDetails?.dob && !isNaN(new Date(saveProfile.personalDetails.dob).getTime())
-                    ? ` ${new Date().getFullYear() - new Date(saveProfile.personalDetails.dob).getFullYear()} Years`
+                  {saveProfile?.personalDetails?.dob && !isNaN(new Date(saveProfile?.personalDetails?.dob).getTime())
+                    ? ` ${new Date().getFullYear() - new Date(saveProfile?.personalDetails?.dob).getFullYear()} Years`
                     : " NA"}
                 </Text>
                 <Text style={styles.text} numberOfLines={1}>
@@ -205,7 +209,7 @@ const SavedProfile = ({ navigation }) => {
               <Image
                 source={
                   saveProfile?.profilePhoto && saveProfile.profilePhoto.startsWith("http")
-                    ? { uri: saveProfile.profilePhoto }
+                    ? { uri: saveProfile?.profilePhoto }
                     : require("../../Images/NoImage.png")
                 }
                 style={styles.image}
@@ -369,7 +373,6 @@ const SavedProfile = ({ navigation }) => {
             }
           />
         )}
-
       </View>
     </SafeAreaView>
   );

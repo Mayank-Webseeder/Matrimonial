@@ -941,7 +941,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
               >
                 <Text style={[styles.dateText]}>
-                  {biodata?.dob ? formatDate(biodata.dob) : "Select your date of birth"}
+                  {biodata?.dob ? formatDate(biodata.dob) : "Select Your Date"}
                 </Text>
               </TouchableOpacity>
             </View>

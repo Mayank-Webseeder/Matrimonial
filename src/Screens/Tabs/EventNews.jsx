@@ -32,7 +32,7 @@ const EventNews = ({ navigation }) => {
   const [myComment, setMyComment] = useState("");
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
   const [page, setPage] = useState(1);
-  const postsPerPage = 3;
+  const postsPerPage = 10;
   const [selectedPostId, setSelectedPostId] = useState(null)
   const [myeventpost, setMyeventpost] = useState([]);
   const ProfileData = useSelector((state) => state.profile);
@@ -838,7 +838,7 @@ const EventNews = ({ navigation }) => {
             // </View>
           }
         />
-        {getPostsForPage().length >= 3 && (
+        {getPostsForPage().length >= 10 && (
           <TouchableOpacity style={styles.loadMoreButton} onPress={loadNextPage}>
             <Text style={styles.loadMoreText}>Load More Posts</Text>
           </TouchableOpacity>

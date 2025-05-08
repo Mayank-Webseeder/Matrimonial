@@ -876,10 +876,10 @@ const ProfileDetail = ({ route, navigation }) => {
                                     </TouchableOpacity>
                                 ) : (
                                     <TouchableOpacity
-                                        style={[styles.editButton, { backgroundColor: '#c4f2e4' }]}
+                                        style={[styles.editButton, { backgroundColor: '#04AA6D' }]}
                                         disabled={true}
                                     >
-                                        <Text style={[styles.editButtonText, { color: 'green' }]}>Subscription Active</Text>
+                                        <Text style={[styles.editButtonText, { color: '#fff' }]}>Subscription Active</Text>
                                     </TouchableOpacity>
                                 )}
 

@@ -283,7 +283,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
                 showMessage({
                     message: successMessage,
                     type: 'success',
-                    duarion: 5000,
+                    duration: 5000,
                     icon: "success"
                 });
 
@@ -311,7 +311,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
                 message: errorMessage,
                 type: 'danger',
                 icon: 'danger',
-                duarion: 5000
+                duration: 5000
             });
         } finally {
             setLoading(false);

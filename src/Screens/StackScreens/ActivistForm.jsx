@@ -18,12 +18,10 @@ import { Dropdown } from 'react-native-element-dropdown';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
 export default function ActivistForm({ navigation }) {
-  const [subCasteInput, setSubCasteInput] = useState('');
   const [stateInput, setStateInput] = useState('');
   const [cityInput, setCityInput] = useState('');
   const [filteredStates, setFilteredStates] = useState([]);
   const [filteredCities, setFilteredCities] = useState([]);
-  const [filteredSubCaste, setFilteredSubCaste] = useState([]);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedState, setSelectedState] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -32,6 +30,7 @@ export default function ActivistForm({ navigation }) {
   const [tempId, setTempId] = useState("");
   const [errors, setErrors] = useState({});
   const [typingTimeout, setTypingTimeout] = useState(null);
+
   const [ActivistData, setActivistData] = useState({
     fullname: '',
     subCaste: '',
@@ -39,10 +38,19 @@ export default function ActivistForm({ navigation }) {
     state: '',
     city: '',
     mobileNo: '',
-    knownActivistIds: [],
+    knownActivistIds: '',
     engagedWithCommittee: '',
     profilePhoto: '',
   });
+
+  useEffect(() => {
+    if (!MyActivistProfile || Object.keys(MyActivistProfile).length === 0) {
+      Alert.alert(
+        "Pending Approval",
+        "Your request is pending for approval. Please wait for some time."
+      );
+    }
+  }, [MyActivistProfile]);
 
   useEffect(() => {
     console.log("MyActivistProfile", MyActivistProfile);
@@ -82,18 +90,6 @@ export default function ActivistForm({ navigation }) {
       if (error.code !== "E_PICKER_CANCELLED") {
         console.error("❌ Image Picking Error:", error.message || error);
       }
-    }
-  };
-
-
-  const handleDateChange = (event, selectedDate) => {
-    setShowDatePicker(false); // Always close the picker
-
-    if (event.type === "set" && selectedDate) {
-      setActivistData((prevState) => ({
-        ...prevState,
-        dob: moment(selectedDate).format("YYYY-MM-DD"),
-      }));
     }
   };
 
@@ -151,41 +147,6 @@ export default function ActivistForm({ navigation }) {
     setFilteredCities([]);
   };
 
-  const handleSubCasteInputChange = (text) => {
-    // Set the input text
-    setSubCasteInput(text);
-
-    // Filter subCasteOptions based on the input
-    const filtered = subCasteOptions
-      .filter((item) => item?.label?.toLowerCase().includes(text.toLowerCase()))
-      .map((item) => item.label);
-
-    // If matches are found, update filtered options
-    if (filtered.length > 0) {
-      setFilteredSubCaste(filtered);
-    } else {
-      // If no matches, only show "Other"
-      setFilteredSubCaste(['Other']);
-    }
-
-    // Update the activist data with the current input text
-    setActivistData((prevActivistData) => ({
-      ...prevActivistData,
-      subCaste: text,
-    }));
-  };
-
-  const handleSubCasteSelect = (selectedItem) => {
-    const finalValue = selectedItem === 'Other' ? 'Other' : selectedItem;
-    setSubCasteInput(finalValue);
-    setFilteredSubCaste([]);
-    setActivistData((prevActivistData) => ({
-      ...prevActivistData,
-      subCaste: finalValue,
-    }));
-  };
-
-
   const convertToBase64 = async (imageUri) => {
     try {
       if (!imageUri) return null;
@@ -220,7 +181,7 @@ export default function ActivistForm({ navigation }) {
       "fullname", "subCaste", "dob", "state", "city",
       "mobileNo", "knownActivistIds", "engagedWithCommittee", "profilePhoto",
     ];
-  
+
     const payload = {};
     for (const key of keys) {
       if (ActivistData[key] !== undefined && ActivistData[key] !== "") {
@@ -231,13 +192,13 @@ export default function ActivistForm({ navigation }) {
     }
     if (payload.dob) {
       let parsedDate;
-  
+
       if (moment(payload.dob, moment.ISO_8601, true).isValid()) {
         parsedDate = moment(payload.dob);
       } else if (moment(payload.dob, "DD/MM/YYYY", true).isValid()) {
         parsedDate = moment(payload.dob, "DD/MM/YYYY");
       }
-  
+
       if (parsedDate && parsedDate.isValid()) {
         payload.dob = parsedDate.format("DD/MM/YYYY");
       } else {
@@ -245,37 +206,17 @@ export default function ActivistForm({ navigation }) {
         throw new Error("Invalid DOB format. Expected format is YYYY-MM-DD.");
       }
     }
-  
-    // Constructing knownActivistIds array with objects like { "activistId": "AA0002" }
     if (payload.knownActivistIds) {
-      if (!Array.isArray(payload.knownActivistIds)) {
-        try {
-          payload.knownActivistIds = JSON.parse(payload.knownActivistIds);
-        } catch (error) {
-          console.error("❌ Invalid knownActivistIds format:", payload.knownActivistIds);
-          throw new Error("Invalid knownActivistIds format. Expected an array.");
-        }
-      }
-  
-      // Ensure that each ID is an object with "activistId"
-      payload.knownActivistIds = payload.knownActivistIds.map((id) => {
-        if (typeof id === "string") {
-          return { activistId: id };
-        }
-        return id;  // Keep it as is if it's already in the correct object format
-      });
-  
-      const invalidIds = payload.knownActivistIds.filter(
-        (obj) => !/^[A-Z]{2}[0-9]{4}$/.test(obj.activistId)
-      );
-  
-      if (invalidIds.length > 0) {
-        throw new Error(
-          `Invalid activistIds found: ${invalidIds.map(obj => obj.activistId).join(", ")}. Each should be in the format 'XX0001' to 'ZZ9999'.`
-        );
+      const id = payload.knownActivistIds.trim().toUpperCase();
+    
+      if (id === "") {
+        delete payload.knownActivistIds;
+      } else if (!/^[A-Z]{2}[0-9]{4}$/.test(id)) {
+        throw new Error("Invalid activist ID format. It should look like 'AA0001'.");
+      } else {
+        payload.knownActivistIds = id;
       }
     }
-  
     if (ActivistData.profilePhoto) {
       try {
         payload.profilePhoto = await convertToBase64(ActivistData.profilePhoto);
@@ -284,16 +225,17 @@ export default function ActivistForm({ navigation }) {
         console.error("❌ Base64 Conversion Error:", error);
       }
     }
-  
+
     return payload;
   };
-  
+
 
   const validateFields = () => {
     const newErrors = {};
-    if (!ActivistData.mobileNo) {
+    const cleanedMobile = ActivistData.mobileNo.trim();
+    if (!cleanedMobile) {
       newErrors.mobileNo = "Mobile number is required.";
-    } else if (!/^\d{10}$/.test(ActivistData.mobileNo)) {
+    } else if (!/^\d{10}$/.test(cleanedMobile)) {
       newErrors.mobileNo = "Enter a valid 10-digit mobile number.";
     }
     if (!ActivistData.fullname) {
@@ -404,13 +346,13 @@ export default function ActivistForm({ navigation }) {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error saving activist data:", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
@@ -418,7 +360,7 @@ export default function ActivistForm({ navigation }) {
           routes: [{ name: "AuthStack" }],
         });
       }
-      
+
       Alert.alert("Error", errorMsg);
 
     } finally {
@@ -529,58 +471,54 @@ export default function ActivistForm({ navigation }) {
           </Text>
         )}
 
-<View>
-  <Text style={Globalstyles.title}>
-    Date of Birth <Entypo name={'star'} color={'red'} size={12} />
-  </Text>
+        <View>
+          <Text style={Globalstyles.title}>
+            Date of Birth <Entypo name={'star'} color={'red'} size={12} />
+          </Text>
 
-  <TouchableOpacity
-    onPress={() => isEditing && setShowDatePicker(true)}
-    activeOpacity={0.8}
-  >
-    <View style={[
-      Globalstyles.inputContainer,
-      {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between"
-      }
-    ]}>
-      <Text style={styles.dateText}>
-        {ActivistData?.dob
-          ? moment(ActivistData.dob, "YYYY-MM-DD").format("DD/MM/YYYY")
-          : "Select your date of birth"}
-      </Text>
-    </View>
-  </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => isEditing && setShowDatePicker(true)}
+            activeOpacity={0.8}
+          >
+            <View style={[
+              Globalstyles.inputContainer,
+              {
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between"
+              }
+            ]}>
+              <Text style={styles.dateText}>
+                {ActivistData?.dob
+                  ? moment(ActivistData.dob, "YYYY-MM-DD").format("DD/MM/YYYY")
+                  : "Select Your Date"}
+              </Text>
+            </View>
+          </TouchableOpacity>
 
-  {errors?.dob && (
-    <Text style={styles.errorText}>{errors.dob}</Text>
-  )}
-
-  {showDatePicker && (
-    <DateTimePicker
-      value={
-        ActivistData?.dob
-          ? new Date(ActivistData.dob)
-          : new Date(2000, 0, 1)
-      }
-      mode="date"
-      display="default"
-      maximumDate={new Date()}
-      themeVariant="light"
-      onChange={(event, selectedDate) => {
-        setShowDatePicker(false);
-        if (event.type === "set" && selectedDate) {
-          setActivistData((prevState) => ({
-            ...prevState,
-            dob: moment(selectedDate).format("YYYY-MM-DD"),
-          }));
-        }
-      }}
-    />
-  )}
-</View>
+          {showDatePicker && (
+            <DateTimePicker
+              value={
+                ActivistData?.dob
+                  ? new Date(ActivistData.dob)
+                  : new Date(2000, 0, 1)
+              }
+              mode="date"
+              display="default"
+              maximumDate={new Date()}
+              themeVariant="light"
+              onChange={(event, selectedDate) => {
+                setShowDatePicker(false);
+                if (event.type === "set" && selectedDate) {
+                  setActivistData((prevState) => ({
+                    ...prevState,
+                    dob: moment(selectedDate).format("YYYY-MM-DD"),
+                  }));
+                }
+              }}
+            />
+          )}
+        </View>
 
 
         {errors?.dob && (
@@ -651,8 +589,6 @@ export default function ActivistForm({ navigation }) {
             {errors.city}
           </Text>
         )}
-
-        {/* Contact Input */}
         <Text style={Globalstyles.title}>Contact <Entypo name={'star'} color={'red'} size={12} /></Text>
         <TextInput
           style={Globalstyles.input}
@@ -674,7 +610,18 @@ export default function ActivistForm({ navigation }) {
         </Text>
         <TextInput
           style={Globalstyles.input}
-          placeholder="Enter Activist ID (e.g., XX0001)"
+          placeholder="Enter Activist ID (eg., Me AA0001)"
+          value={ActivistData.knownActivistIds}
+          onChangeText={(text) =>
+            setActivistData({ ...ActivistData, knownActivistIds: text })
+          }
+          placeholderTextColor={Colors.gray}
+          autoComplete="off"
+          textContentType="none"
+        />
+        {/* <TextInput
+          style={Globalstyles.input}
+          placeholder="Enter Activist ID (eg., Me AA0001)"
           value={tempId}
           onChangeText={handleChangeText}
           onSubmitEditing={() => {
@@ -684,9 +631,8 @@ export default function ActivistForm({ navigation }) {
           placeholderTextColor={Colors.gray}
           autoComplete="off"
           textContentType="none"
-        />
-
-        <View style={{ flexDirection: "row", flexWrap: "wrap", marginTop: 10 }}>
+        /> */}
+        {/* <View style={{ flexDirection: "row", flexWrap: "wrap", marginTop: 10 }}>
           {ActivistData.knownActivistIds.map((item, index) => (
             <View key={index} style={styles.tag}>
               <Text style={styles.tagText}>{item.activistId}</Text>
@@ -695,8 +641,7 @@ export default function ActivistForm({ navigation }) {
               </TouchableOpacity>
             </View>
           ))}
-        </View>
-
+        </View> */}
         <Text style={Globalstyles.title}>Are you engaged with any Brahmin committee? </Text>
         <View style={styles.radioGroup}>
           <TouchableOpacity
@@ -732,7 +677,6 @@ export default function ActivistForm({ navigation }) {
         {/* Profile Picture Upload */}
         <View>
           <Text>Profile Picture <Entypo name={'star'} color={'red'} size={12} /></Text>
-
           <TouchableOpacity style={styles.uploadButton} onPress={handleImagePick}>
             <Text>{ActivistData.profilePhoto ? "Change Image" : "Upload Image"}</Text>
           </TouchableOpacity>

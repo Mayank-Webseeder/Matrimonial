@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, TextInput, ActivityIndicator, RefreshControl ,Linking} from 'react-native';
+import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, TextInput, ActivityIndicator, RefreshControl, Linking } from 'react-native';
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import styles from '../StyleScreens/EventNewsStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -19,6 +19,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { showMessage } from 'react-native-flash-message';
 import AppIntroSlider from 'react-native-app-intro-slider';
+import { CommonActions } from '@react-navigation/native';
 
 const EventNews = ({ navigation }) => {
   const sheetRef = useRef(null);
@@ -173,20 +174,20 @@ const EventNews = ({ navigation }) => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching advertisement:", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
         });
-      } 
+      }
     }
   };
 
@@ -212,7 +213,7 @@ const EventNews = ({ navigation }) => {
       const { isLiked } = response.data.event;
       const { likesCount } = response.data;
       console.log("isLiked", isLiked, "likesCount", likesCount);
-      
+
       setLikeData((prev) => ({
         ...prev,
         [postId]: {
@@ -223,7 +224,7 @@ const EventNews = ({ navigation }) => {
 
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      
+
       console.error("Error liking post:", errorMsg);
       showMessage({
         type: "error",
@@ -236,14 +237,14 @@ const EventNews = ({ navigation }) => {
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
         });
-      } 
+      }
     } finally {
       setLikeLoading(false);
     }
@@ -287,7 +288,7 @@ const EventNews = ({ navigation }) => {
           type: "success",
           message: "Success",
           description: fetchedData.message || "Comment added successfully!",
-          duration:3000
+          duration: 3000
         });
       } else if (response.status === 400) {
         throw new Error(response.data.message || "Invalid request.");
@@ -296,20 +297,20 @@ const EventNews = ({ navigation }) => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error adding comment:", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
         });
-      } 
+      }
       showMessage({
         type: "error",
         message: "Error",
@@ -370,20 +371,20 @@ const EventNews = ({ navigation }) => {
           "Failed to delete comment. Please try again!",
         icon: "danger",
       });
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
         });
-      } 
+      }
     } finally {
       setDeletingCommentId(null);
     }
@@ -406,20 +407,20 @@ const EventNews = ({ navigation }) => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching post data", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
         });
-      } 
+      }
     }
   };
 
@@ -447,20 +448,20 @@ const EventNews = ({ navigation }) => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching event news:", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
         });
-      } 
+      }
     }
     finally {
       setIsLoading(false)
@@ -748,12 +749,16 @@ const EventNews = ({ navigation }) => {
       />
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: "center" }}>
-          <TouchableOpacity onPress={() => {
-            navigation.reset({
-              index: 0,
-              routes: [{ name: "MainApp" }],
-            });
-          }}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [{ name: 'MainApp' }],
+                })
+              );
+            }}
+          >
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>News & Events</Text>
@@ -849,25 +854,25 @@ const EventNews = ({ navigation }) => {
             ref={sliderRef}
             data={slider}
             renderItem={({ item }) => {
-                              const { width, height } = item.resolution;
-                            
-                              const handlePress = () => {
-                                if (item.hyperlink) {
-                                  Linking.openURL(item.hyperlink).catch(err =>
-                                    console.error("Failed to open URL:", err)
-                                  );
-                                }
-                              };
-                            
-                              return (
-                                <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
-                                  <Image
-                                    source={{ uri: item.image }}
-                                    style={{ width, height, resizeMode: 'cover' }}
-                                  />
-                                </TouchableOpacity>
-                              );
-                            }}
+              const { width, height } = item.resolution;
+
+              const handlePress = () => {
+                if (item.hyperlink) {
+                  Linking.openURL(item.hyperlink).catch(err =>
+                    console.error("Failed to open URL:", err)
+                  );
+                }
+              };
+
+              return (
+                <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                  <Image
+                    source={{ uri: item.image }}
+                    style={{ width, height, resizeMode: 'cover' }}
+                  />
+                </TouchableOpacity>
+              );
+            }}
             showNextButton={false}
             showDoneButton={false}
             dotStyle={Globalstyles.dot}

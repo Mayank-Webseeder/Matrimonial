@@ -577,12 +577,8 @@ const DetailedProfile = ({ navigation, profileData }) => {
         setErrors({});
 
         setTimeout(() => {
-          if (isUpdating) {
-            navigation.replace("ProfileDetail", { profileType: "Biodata" });
-          } else {
-            navigation.navigate("MainPartnerPrefrence");
-          }
-        }, 1000);
+          navigation.navigate(isUpdating ? "MyProfile" : "MainPartnerPrefrence");
+        }, 5000);
 
         return;
       }

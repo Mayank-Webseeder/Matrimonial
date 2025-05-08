@@ -292,9 +292,14 @@ const PartnersPreference = ({ navigation, profileData }) => {
                 }
 
                 setIsEditing(false);
+
                 setTimeout(() => {
-                    navigation.replace("ProfileDetail", { profileType: "Biodata" });
-                }, 1000);
+                    navigation.reset({
+                        index: 0,
+                        routes: [{ name: "MyProfile" }],
+                    });
+                }, 5000);
+
                 return;
             }
 

@@ -349,10 +349,16 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                     duarion: 5000
                 });
 
+                // setTimeout(() => {
+                //     navigation.replace("ProfileDetail", { profileType: profileType });
+                //     setIsLoading(false);
+                // }, 2000);
+
                 setTimeout(() => {
-                    navigation.replace("ProfileDetail", { profileType: profileType });
-                    setIsLoading(false);
-                }, 2000);
+                    navigation.navigate("MyProfile");
+                }, 5000);
+
+                setIsLoading(false);
 
             } else {
                 throw new Error(response.data.message || "Failed to update profile.");

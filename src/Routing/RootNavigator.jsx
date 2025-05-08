@@ -121,28 +121,28 @@ function MyTabs() {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
-  
+
       const headers = {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
       };
-  
+
       console.log("headers in profile", headers);
       const res = await axios.get(PROFILE_ENDPOINT, { headers });
       console.log("API Response:", JSON.stringify(res.data));
       setProfileData(res.data.data);
       dispatch(setProfiledata(res.data.data));
-  
+
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching profile:", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
@@ -154,22 +154,22 @@ function MyTabs() {
       setLoading(false);
     }
   };
-  
+
   const getBiodata = async () => {
     try {
       setMybiodata({});
       setLoading(true);
-  
+
       const token = await AsyncStorage.getItem('userToken');
       if (!token) throw new Error('No token found');
-  
+
       const headers = {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       };
-  
+
       const response = await axios.get(GET_BIODATA, { headers });
-  
+
       if (response.data) {
         const fetchedData = response.data.data;
         console.log("My bio data", fetchedData);
@@ -178,17 +178,17 @@ function MyTabs() {
       } else {
         setMybiodata({});
       }
-  
+
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching biodata:", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
@@ -196,12 +196,12 @@ function MyTabs() {
           routes: [{ name: "AuthStack" }],
         });
       }
-  
+
     } finally {
       setLoading(false);
     }
   };
-  
+
 
   useFocusEffect(
     useCallback(() => {
@@ -337,10 +337,10 @@ function MyDrawer() {
       <Drawer.Screen name="PrivacySettings" component={PrivacySettings} />
       <Drawer.Screen name="InActiveDelete" component={InActiveDelete} />
       <Drawer.Screen name="AboutUs" component={AboutUs} />
-      <Drawer.Screen name="PrivacyPolicy" component={PrivacyPolicy}/>
-      <Drawer.Screen name="TermsConditions" component={TermsConditions}/>
-      <Drawer.Screen name="SubscriptionPolicy" component={SubscriptionPolicy}/>
-      <Drawer.Screen name="MyProfile" component={MyProfile}/>
+      <Drawer.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
+      <Drawer.Screen name="TermsConditions" component={TermsConditions} />
+      <Drawer.Screen name="SubscriptionPolicy" component={SubscriptionPolicy} />
+      <Drawer.Screen name="MyProfile" component={MyProfile} />
       <Drawer.Screen name="SubscriptionHistory" component={SubscriptionHistory} />
       <Drawer.Screen name="MySuccessStory" component={MySuccessStory} />
     </Drawer.Navigator>

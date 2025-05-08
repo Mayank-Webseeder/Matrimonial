@@ -157,7 +157,7 @@ const Login = ({ navigation }) => {
                         value={mobileNumber}
                         onChangeText={(text) => setMobileNumber(text.replace(/[^0-9]/g, ''))}
                         placeholderTextColor={Colors.gray}
-                        maxLength={12}
+                        maxLength={10}
                         autoComplete="off"
                         textContentType="none"
                     />

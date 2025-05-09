@@ -75,9 +75,9 @@ const Globalstyles = StyleSheet.create({
   },
   input1: {
     color: Colors.dark,
-     display: "flex",
-      flexDirection: "row",
-       alignItems: "center"
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center"
   },
   inputContainer: {
     flexDirection: "row",
@@ -91,8 +91,8 @@ const Globalstyles = StyleSheet.create({
     // paddingVertical: SH(7),
   },
   bottomImage: {
-   paddingBottom:SH(30),
-   paddingTop:SH(10)
+    paddingBottom: SH(30),
+    paddingTop: SH(10)
   },
   sliderContainer: {
     marginBottom: SH(10)

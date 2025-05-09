@@ -57,13 +57,13 @@ const ForgotScreen = ({ navigation }) => {
 
             if (response.status === 200 && response.data.status === true) {
                 setOtpSent(true);
-                showMessage({ 
-                    type: "success", 
-                    message: "OTP Sent", 
-                    description: "Check your SMS for the OTP", 
+                showMessage({
+                    type: "success",
+                    message: "OTP Sent",
+                    description: "Check your SMS for the OTP",
                     icon: "success",
                     duration: 5000
-                 });
+                });
             } else {
                 throw new Error(response.data.message || "OTP request failed");
             }
@@ -71,9 +71,9 @@ const ForgotScreen = ({ navigation }) => {
             console.error("OTP Error:", error);
 
             if (error.response?.status === 400) {
-                showMessage({ type: "danger", message: "Invalid Request", description: error.response.data.message || "Mobile number is required",duration: 5000 });
+                showMessage({ type: "danger", message: "Invalid Request", description: error.response.data.message || "Mobile number is required", duration: 5000 });
             } else {
-                showMessage({ type: "danger", message: "OTP Failed", description: error.message || "Failed to send OTP. Try again.", icon: "danger",duration: 5000 });
+                showMessage({ type: "danger", message: "OTP Failed", description: error.message || "Failed to send OTP. Try again.", icon: "danger", duration: 5000 });
             }
         } finally {
             setIsOtpLoading(false);
@@ -184,7 +184,7 @@ const ForgotScreen = ({ navigation }) => {
                             <Text style={Globalstyles.title}>New Password  <Entypo name={'star'} color={'red'} size={12} /> </Text>
                             <View style={Globalstyles.inputContainer}>
                                 <TextInput
-                                    style={[Globalstyles.input1,{paddingVertical: Platform.OS === 'ios' ? SH(10) : SH(10),}]}
+                                    style={[Globalstyles.input1, { paddingVertical: Platform.OS === 'ios' ? SH(10) : SH(10), }]}
                                     secureTextEntry={!showPassword}
                                     placeholder="Enter Your New password"
                                     value={newPassword}

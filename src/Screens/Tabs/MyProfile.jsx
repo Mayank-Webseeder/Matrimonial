@@ -19,6 +19,7 @@ import ImageViewing from 'react-native-image-viewing';
 import { setProfiledata } from '../../ReduxStore/Slices/ProfileSlice';
 import { useDispatch } from 'react-redux';
 import { showMessage } from 'react-native-flash-message';
+import { SH, SW } from '../../utils/Dimensions';
 
 const MyProfile = ({ navigation }) => {
     const dispatch = useDispatch();
@@ -89,38 +90,6 @@ const MyProfile = ({ navigation }) => {
         }
     };
 
-    // ye pehle wala function h comment krle 
-    // const handlePress = async (profileType) => {
-    //     setSelectedButton(profileType);
-
-    //     const keyMap = {
-    //         Biodata: "isMatrimonial",
-    //         Jyotish: "isJyotish",
-    //         Kathavachak: "isKathavachak",
-    //         Pandit: "isPandit",
-    //         Activist: "isActivist",
-    //     };
-
-    //     const isRegistered = profileData?.[keyMap[profileType]];
-    //     console.log("isRegistered:", isRegistered);
-
-    //     if (profileType === "Biodata") {
-    //         if (!isRegistered) {
-    //             navigation.navigate("MatrimonyPage", { profileType });
-    //         } else {
-    //             navigation.navigate("ProfileDetail", { profileType });
-    //         }
-    //         return;
-    //     }
-    //     if (!isRegistered) {
-    //         navigation.navigate("RoleRegisterForm", { profileType });
-    //         return;
-    //     }
-    //     await fetchProfilesDetails(profileType);
-    //     navigation.navigate("ProfileDetail", { profileType });
-    // };
-
-    // ye abhi wala h aleg aleg page par bhajne h ke liye 
     const handlePress = async (profileType) => {
         setSelectedButton(profileType);
 
@@ -470,7 +439,7 @@ const MyProfile = ({ navigation }) => {
                         </View>
                     </View>
 
-                    <View style={{ padding: 10 }}>
+                    <View style={{ paddingVertical: SH(10), paddingHorizontal: SW(10) }}>
                         {/* First Row */}
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                             <TouchableOpacity style={styles.IconsButton} onPress={() => handlePress('Biodata')}>
@@ -483,9 +452,8 @@ const MyProfile = ({ navigation }) => {
                                 <Text style={styles.logotext}>{profileData.isPandit ? 'My Pandit Profile' : 'Register as Pandit'}</Text>
                             </TouchableOpacity>
                         </View>
-
                         {/* Second Row */}
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: SH(10) }}>
                             <TouchableOpacity style={styles.IconsButton} onPress={() => handlePress('Jyotish')}>
                                 <FontAwesome5 name={profileData.isJyotish ? "user" : "user-plus"} color={Colors.theme_color} size={25} style={styles.icon} />
                                 <Text style={styles.logotext}>{profileData.isJyotish ? 'My Jyotish Profile' : 'Register as Jyotish'}</Text>

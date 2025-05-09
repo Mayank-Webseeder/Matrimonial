@@ -91,8 +91,8 @@ const Globalstyles = StyleSheet.create({
     // paddingVertical: SH(7),
   },
   bottomImage: {
-   paddingBottom:SH(30),
-   paddingTop:SH(10)
+    paddingBottom: SH(30),
+    paddingTop: SH(10)
   },
   sliderContainer: {
     marginBottom: SH(10)

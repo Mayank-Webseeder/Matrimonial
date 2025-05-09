@@ -165,7 +165,12 @@ const BuySubscription = ({ navigation, route }) => {
                 {
                   text: "OK",
                   onPress: () => {
-                    navigation.navigate("MyProfile");
+                    navigation.navigate("MainApp", {
+                      screen: "Tabs",
+                      params: {
+                        screen: "MyProfile",
+                      },
+                    });
                   },
                 },
               ]);

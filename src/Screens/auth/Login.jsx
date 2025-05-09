@@ -149,49 +149,53 @@ const Login = ({ navigation }) => {
                     </Text>
 
                     {/* Mobile Number */}
-                    <Text style={styles.HeadingText}>Phone Number</Text>
-                    <TextInput
-                        style={styles.inputText}
-                        keyboardType="numeric"
-                        placeholder="Enter your mobile number"
-                        value={mobileNumber}
-                        onChangeText={(text) => setMobileNumber(text.replace(/[^0-9]/g, ''))}
-                        placeholderTextColor={Colors.gray}
-                        maxLength={10}
-                        autoComplete="off"
-                        textContentType="none"
-                    />
-                    {errors.mobileNumber && (
-                        <Text style={styles.errorText}>{errors.mobileNumber}</Text>
-                    )}
-
-                    {/* Password */}
-                    <Text style={styles.HeadingText}>Password</Text>
-
-                    <View style={styles.passwordContainer}>
+                    <View>
+                        <Text style={styles.HeadingText}>Phone Number</Text>
                         <TextInput
-                            style={styles.passwordInput}
-                            secureTextEntry={!passwordVisible}
-                            placeholder="Enter Your Password"
-                            value={password}
-                            onChangeText={setPassword}
+                            style={styles.inputText}
+                            keyboardType="numeric"
+                            placeholder="Enter your mobile number"
+                            value={mobileNumber}
+                            onChangeText={(text) => setMobileNumber(text.replace(/[^0-9]/g, ''))}
                             placeholderTextColor={Colors.gray}
+                            maxLength={10}
                             autoComplete="off"
                             textContentType="none"
                         />
-                        <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
-                            <AntDesign
-                                name={passwordVisible ? "eye" : "eyeo"}
-                                size={20}
-                                style={styles.eyeIcon}
-                                color={Colors.theme_color}
-                            />
-                        </TouchableOpacity>
+                        {errors.mobileNumber && (
+                            <Text style={styles.errorText}>{errors.mobileNumber}</Text>
+                        )}
                     </View>
-                    {errors.password && (
-                        <Text style={styles.errorText}>{errors.password}</Text>
-                    )}
 
+                    {/* Password */}
+                    <View>
+                        <Text style={styles.HeadingText}>Password</Text>
+
+                        <View style={styles.passwordContainer}>
+                            <TextInput
+                                style={styles.passwordInput}
+                                secureTextEntry={!passwordVisible}
+                                placeholder="Enter Your Password"
+                                value={password}
+                                onChangeText={setPassword}
+                                placeholderTextColor={Colors.gray}
+                                autoComplete="off"
+                                textContentType="none"
+                            />
+                            <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
+                                <AntDesign
+                                    name={passwordVisible ? "eye" : "eyeo"}
+                                    size={20}
+                                    style={styles.eyeIcon}
+                                    color={Colors.theme_color}
+                                />
+                            </TouchableOpacity>
+                        </View>
+                        {errors.password && (
+                            <Text style={styles.errorText}>{errors.password}</Text>
+                        )}
+
+                    </View>
                     <TouchableOpacity style={styles.forgotPasswordButton} onPress={() => navigation.navigate('ForgotScreen')}>
                         <Text style={styles.forgotPasswordText}>Forgot Password</Text>
                     </TouchableOpacity>
@@ -207,7 +211,6 @@ const Login = ({ navigation }) => {
                             <Text style={styles.buttonText}>Login</Text>
                         )}
                     </TouchableOpacity>
-
                 </ScrollView>
             </ImageBackground>
         </SafeAreaView>

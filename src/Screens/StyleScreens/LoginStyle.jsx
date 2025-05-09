@@ -1,4 +1,4 @@
-import { Platform, StyleSheet } from "react-native";
+import { StyleSheet ,Platform} from "react-native";
 import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 
@@ -61,11 +61,7 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins-Medium",
     },
     passwordContainer: {
-        // borderColor: Colors.theme_color,
         paddingHorizontal: SW(10),
-        // paddingVertical: SH(5),
-        // borderWidth: 1,
-        // borderRadius:10,
         marginHorizontal: SW(25),
         borderColor:Colors.theme_color,
         borderWidth: 1,
@@ -78,7 +74,7 @@ const styles = StyleSheet.create({
     passwordInput: {
         flex: 1,
         color: Colors.dark,
-        paddingVertical: Platform.OS === 'ios' ? SH(10) : 0,
+        paddingVertical: Platform.OS === 'ios' ? SH(10) : SH(10),
     },
     errorText: {
         color: "red",

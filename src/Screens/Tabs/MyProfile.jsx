@@ -425,21 +425,21 @@ const MyProfile = ({ navigation }) => {
                         </View>
                         <Text style={styles.editText} onPress={() => navigation.navigate('UpdateProfile')}>Update Profile</Text>
                     </View>
-                    <View style={styles.userDeatil}>
-                        <View style={styles.userData}>
-                            <Text style={styles.text}>User ID  {profileData.userId || 'NA'}</Text>
-                            <Text style={styles.text}>{capitalizeFirstLetter(profileData.username || 'NA')}</Text>
-                            <Text style={styles.text}>DOB: {formattedDate || 'NA'}</Text>
-                            <Text style={styles.text}>City: {capitalizeFirstLetter(profileData.city || 'NA')}</Text>
-                        </View>
-                        <View style={styles.userData}>
-                            <Text style={styles.text}>
-                                Contact: {profileData.mobileNo}</Text>
-                            <Text style={styles.text}>Gender: {capitalizeFirstLetter(profileData.gender || 'NA')}</Text>
-                        </View>
-                    </View>
 
-                    <ScrollView style={{ paddingVertical: SH(10), paddingHorizontal: SW(10) }} showsVerticalScrollIndicator={false}>
+                    <ScrollView style={{ paddingVertical: SH(5), paddingHorizontal: SW(10) }} showsVerticalScrollIndicator={false}>
+                        <View style={styles.userDeatil}>
+                            <View style={styles.userData}>
+                                <Text style={styles.text}>User ID  {profileData.userId || 'NA'}</Text>
+                                <Text style={styles.text}>{capitalizeFirstLetter(profileData.username || 'NA')}</Text>
+                                <Text style={styles.text}>DOB: {formattedDate || 'NA'}</Text>
+                                <Text style={styles.text}>City: {capitalizeFirstLetter(profileData.city || 'NA')}</Text>
+                            </View>
+                            <View style={styles.userData}>
+                                <Text style={styles.text}>
+                                    Contact: {profileData.mobileNo}</Text>
+                                <Text style={styles.text}>Gender: {capitalizeFirstLetter(profileData.gender || 'NA')}</Text>
+                            </View>
+                        </View>
                         {/* First Row */}
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                             <TouchableOpacity style={styles.IconsButton} onPress={() => handlePress('Biodata')}>

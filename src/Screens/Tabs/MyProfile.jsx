@@ -70,20 +70,20 @@ const MyProfile = ({ navigation }) => {
 
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching myprofile:", errorMsg);
-      const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
-      ];
-  
-      if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "AuthStack" }],
-        });
-      } 
+            console.error("Error fetching myprofile:", errorMsg);
+            const sessionExpiredMessages = [
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
+            ];
+
+            if (sessionExpiredMessages.includes(errorMsg)) {
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
+            }
         } finally {
             setProfileLoading(false);
         }
@@ -176,20 +176,20 @@ const MyProfile = ({ navigation }) => {
             setLoading(false);
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching profile:", errorMsg);
-      const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
-      ];
-  
-      if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "AuthStack" }],
-        });
-      } 
+            console.error("Error fetching profile:", errorMsg);
+            const sessionExpiredMessages = [
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
+            ];
+
+            if (sessionExpiredMessages.includes(errorMsg)) {
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
+            }
             setLoading(false);
         }
     };
@@ -252,7 +252,7 @@ const MyProfile = ({ navigation }) => {
                     type: "success",
                     message: "Profile Photo Deleted Successfully",
                     description: response.data.message || "Your profile photo has been removed.",
-                    icon:"success"
+                    icon: "success"
                 });
                 navigation.reset({
                     index: 0,
@@ -264,27 +264,27 @@ const MyProfile = ({ navigation }) => {
             }
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching female biodata:", errorMsg);
+            console.error("Error fetching female biodata:", errorMsg);
 
-      showMessage({
-        type: "danger",
-        message:errorMsg,
-        icon:"danger"
-    });
+            showMessage({
+                type: "danger",
+                message: errorMsg,
+                icon: "danger"
+            });
 
-      const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
-      ];
-  
-      if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "AuthStack" }],
-        });
-      } 
+            const sessionExpiredMessages = [
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
+            ];
+
+            if (sessionExpiredMessages.includes(errorMsg)) {
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
+            }
         } finally {
             setIsLoading(false);
         }
@@ -315,62 +315,62 @@ const MyProfile = ({ navigation }) => {
     const upload_profile_image = async (base64Data) => {
         console.log("Base64 Image Data:", base64Data);
         try {
-          const token = await AsyncStorage.getItem("userToken");
-          if (!token) throw new Error("Authorization token is missing.");
-      
-          const headers = {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          };
-      
-          const response = await axios.put(UPLOAD_PROFILE_PHOTO, { photoUrl: base64Data }, { headers });
-          console.log("Profile image updated successfully:", response.data);
-          const message = response?.data?.message;
-      
-          if (message === "Profile image updated successfully.") {
-            showMessage({
-              message: "Profile Updated!",
-              description: "Your image has been successfully uploaded.",
-              type: "success",
-              duration: 3000,
-              icon:"success"
-            });
-      
-            console.log("Navigating to MainApp...");
-            navigation.reset({
-              index: 0,
-              routes: [{ name: "MainApp" }],
-            });
-          }
+            const token = await AsyncStorage.getItem("userToken");
+            if (!token) throw new Error("Authorization token is missing.");
+
+            const headers = {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            };
+
+            const response = await axios.put(UPLOAD_PROFILE_PHOTO, { photoUrl: base64Data }, { headers });
+            console.log("Profile image updated successfully:", response.data);
+            const message = response?.data?.message;
+
+            if (message === "Profile image updated successfully.") {
+                showMessage({
+                    message: "Profile Updated!",
+                    description: "Your image has been successfully uploaded.",
+                    type: "success",
+                    duration: 3000,
+                    icon: "success"
+                });
+
+                console.log("Navigating to MainApp...");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "MainApp" }],
+                });
+            }
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
             console.error("Error fetching biodata:", errorMsg);
-            
+
             showMessage({
                 message: "Upload Failed!",
                 description: errorMsg,
                 type: "danger",
                 duration: 3000,
-                icon:"danger"
-              });
+                icon: "danger"
+            });
 
             const sessionExpiredMessages = [
-              "User does not Exist....!Please login again",
-              "Invalid token. Please login again",
-              "Token has expired. Please login again"
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
             ];
-        
+
             if (sessionExpiredMessages.includes(errorMsg)) {
-              await AsyncStorage.removeItem("userToken");
-              navigation.reset({
-                index: 0,
-                routes: [{ name: "AuthStack" }],
-              });
-            } 
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
+            }
         } finally {
-          setIsLoading(false);
+            setIsLoading(false);
         }
-      };
+    };
 
 
     const handleCameraCapture = () => {
@@ -392,16 +392,14 @@ const MyProfile = ({ navigation }) => {
     };
 
     const tryOpenDrawer = () => {
-        const parent = navigation.getParent();           // nearest parent navigator
-      
-        if (parent && parent?.openDrawer) {
-          // इस navigator में Drawer मौजूद है
-          navigation.dispatch(DrawerActions.openDrawer());
+        const parent = navigation.getParent();
+
+        if (parent && typeof parent.openDrawer === 'function') {
+            parent.openDrawer();
         } else {
-          // Drawer नहीं मिला → Main drawer‑stack पर लौट जायें
-          navigation.navigate('MainApp');                // root where Drawer lives
+            navigation.navigate('MainApp');
         }
-      };
+    };
 
     if (ProfileLoading) {
         return (

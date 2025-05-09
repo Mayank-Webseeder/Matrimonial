@@ -294,11 +294,13 @@ const PartnersPreference = ({ navigation, profileData }) => {
                 setIsEditing(false);
 
                 setTimeout(() => {
-                    navigation.reset({
-                        index: 0,
-                        routes: [{ name: "MyProfile" }],
-                    });
-                }, 5000);
+                    navigation.navigate("MainApp", {
+                        screen: "Tabs",
+                        params: {
+                          screen: "MyProfile",
+                        },
+                      });
+                  }, 5000);
 
                 return;
             }

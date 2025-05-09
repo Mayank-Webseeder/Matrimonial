@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: SF(16),
         color: "gray",
-        paddingVertical: SH(10)
+        // paddingVertical: SH(10)
     },
 
 })

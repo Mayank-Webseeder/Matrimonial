@@ -355,8 +355,13 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                 // }, 2000);
 
                 setTimeout(() => {
-                    navigation.navigate("MyProfile");
-                }, 5000);
+                    navigation.navigate("MainApp", {
+                        screen: "Tabs",
+                        params: {
+                          screen: "MyProfile",
+                        },
+                      });
+                  }, 5000);
 
                 setIsLoading(false);
 

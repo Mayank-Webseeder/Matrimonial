@@ -41,7 +41,6 @@ const EventNews = ({ navigation }) => {
   const myprofile_id = profileData?._id || null;
   const [LikeLoading, setLikeLoading] = useState(false);
   const [commentLoading, setCommentLoading] = useState(false);
-  const [deletecommentLoading, setdeletecommentLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [deletingCommentId, setDeletingCommentId] = useState(null);
   const [eventList, setEventList] = useState([]);
@@ -393,6 +392,7 @@ const EventNews = ({ navigation }) => {
 
   const fetchPostData = async () => {
     try {
+      setMyeventpost([]);
       const token = await AsyncStorage.getItem('userToken');
       if (!token) throw new Error('No token found');
 

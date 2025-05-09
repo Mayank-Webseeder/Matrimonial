@@ -32,8 +32,8 @@ const PanditRegister = ({ navigation }) => {
     const ProfileData = useSelector((state) => state.profile);
     const profileData = ProfileData?.profiledata || {};
     const hasTrial = profileData.serviceSubscriptions?.some(
-        (sub) => sub.subscriptionType === "Trial"
-    );
+        (sub) => sub.subscriptionType === "Trial" && sub.serviceType === "Pandit"
+      );
     const [fetchProfileDetails, setFetchProfileDetails] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState({});

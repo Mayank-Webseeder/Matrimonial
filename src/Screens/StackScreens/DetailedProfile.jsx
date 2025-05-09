@@ -62,7 +62,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
   const [TrialPlanId, setTrialPlanId] = useState(null);
   const [mybiodata, setMyBiodata] = useState({});
   const hasTrial = profile_data.serviceSubscriptions?.some(
-    (sub) => sub.subscriptionType === "Trial"
+    (sub) => sub.subscriptionType === "Trial" && sub.serviceType === "Biodata"
   );
   const myBiodata = profileData?.personalDetails || mybiodata?.personalDetails;
 

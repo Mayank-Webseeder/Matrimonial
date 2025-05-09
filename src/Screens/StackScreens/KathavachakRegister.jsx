@@ -32,7 +32,7 @@ const KathavachakRegister = ({ navigation }) => {
     const ProfileData = useSelector((state) => state.profile);
     const profileData = ProfileData?.profiledata || {};
     const hasTrial = profileData.serviceSubscriptions?.some(
-        (sub) => sub.subscriptionType === "Trial"
+        (sub) => sub.subscriptionType === "Trial" && sub.serviceType === "Kathavachak"
     );
     const [fetchProfileDetails, setFetchProfileDetails] = useState(null);
     const [isLoading, setIsLoading] = useState(false);

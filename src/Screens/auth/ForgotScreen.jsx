@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, ImageBackground, TouchableOpacity, TextInput, SafeAreaView, ActivityIndicator, ScrollView } from "react-native";
+import { Text, View, ImageBackground, TouchableOpacity, TextInput, SafeAreaView, ActivityIndicator, ScrollView, Platform } from "react-native";
 import styles from "../StyleScreens/RegisterStyle";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Colors from "../../utils/Colors";
@@ -184,7 +184,7 @@ const ForgotScreen = ({ navigation }) => {
                             <Text style={Globalstyles.title}>New Password  <Entypo name={'star'} color={'red'} size={12} /> </Text>
                             <View style={Globalstyles.inputContainer}>
                                 <TextInput
-                                    style={Globalstyles.input1}
+                                    style={[Globalstyles.input1,{paddingVertical: Platform.OS === 'ios' ? SH(10) : SH(10),}]}
                                     secureTextEntry={!showPassword}
                                     placeholder="Enter Your New password"
                                     value={newPassword}

@@ -74,9 +74,10 @@ const Globalstyles = StyleSheet.create({
     shadowRadius: 4,
   },
   input1: {
-    color: Colors.dark, display: "flex", flexDirection: "row", alignItems: "center",
-    paddingVertical: Platform.OS === 'ios' ? SH(7) : 0,
-
+    color: Colors.dark,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center"
   },
   inputContainer: {
     flexDirection: "row",

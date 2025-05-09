@@ -1,4 +1,4 @@
-import { Text, View, Image, SafeAreaView, StatusBar, Modal, PermissionsAndroid, Platform, FlatList, ActivityIndicator } from 'react-native';
+import { Text, View, Image, SafeAreaView, StatusBar, Modal, PermissionsAndroid, Platform, FlatList, ActivityIndicator, ScrollView } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Colors from '../../utils/Colors';
@@ -439,7 +439,7 @@ const MyProfile = ({ navigation }) => {
                         </View>
                     </View>
 
-                    <View style={{ paddingVertical: SH(10), paddingHorizontal: SW(10) }}>
+                    <ScrollView style={{ paddingVertical: SH(10), paddingHorizontal: SW(10) }} showsVerticalScrollIndicator={false}>
                         {/* First Row */}
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                             <TouchableOpacity style={styles.IconsButton} onPress={() => handlePress('Biodata')}>
@@ -464,7 +464,7 @@ const MyProfile = ({ navigation }) => {
                                 <Text style={styles.logotext}>{profileData.isKathavachak ? 'My Kathavachak Profile' : 'Register as Kathavachak'}</Text>
                             </TouchableOpacity>
                         </View>
-                    </View>
+                    </ScrollView>
 
                 </View>
             </View>

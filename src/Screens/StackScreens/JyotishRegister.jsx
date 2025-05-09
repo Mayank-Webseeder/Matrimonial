@@ -31,6 +31,9 @@ const JyotishRegister = ({ navigation }) => {
     const [selectedState, setSelectedState] = useState('');
     const ProfileData = useSelector((state) => state.profile);
     const profileData = ProfileData?.profiledata || {};
+    const hasTrial = profileData.serviceSubscriptions?.some(
+        (sub) => sub.subscriptionType === "Trial"
+    );
     const [fetchProfileDetails, setFetchProfileDetails] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState({});
@@ -1098,9 +1101,13 @@ const JyotishRegister = ({ navigation }) => {
                                                     <Text style={styles.description}>{plan.description}</Text>
 
                                                     <View style={styles.buttonRowAligned}>
-                                                        <TouchableOpacity style={styles.trialButton} onPress={() => handleFreeTrial(plan)}>
-                                                            <Text style={styles.trialText}>{TrialPlanId === plan._id ? 'Starting...' : 'Start Free Trial'}</Text>
-                                                        </TouchableOpacity>
+                                                        {!hasTrial && (
+                                                            <TouchableOpacity style={styles.trialButton} onPress={() => handleFreeTrial(plan)}>
+                                                                <Text style={styles.trialText}>
+                                                                    {TrialPlanId === plan._id ? 'Starting...' : 'Start Free Trial'}
+                                                                </Text>
+                                                            </TouchableOpacity>
+                                                        )}
 
                                                         <TouchableOpacity style={styles.buyButton} onPress={() => handleBuyNow(plan)}>
                                                             <Text style={styles.buyButtonText}>

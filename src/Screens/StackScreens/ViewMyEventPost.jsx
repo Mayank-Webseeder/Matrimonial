@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, Modal, TextInput } from 'react-native';
+import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, Modal, TextInput, RefreshControl } from 'react-native';
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import styles from '../StyleScreens/EventNewsStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -18,13 +18,17 @@ import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
 import { showMessage } from 'react-native-flash-message';
 import { CommonActions } from '@react-navigation/native';
+import { VIEW_EVENT } from '../../utils/BaseUrl';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const ViewMyEventPost = ({ navigation, route }) => {
   const sheetRef = useRef(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
   const [modalData, setModalData] = useState(null);
-  const { events } = route.params;
+  const [refreshing, setRefreshing] = useState(false);
+  const [myeventpost, setMyeventpost] = useState([]);
+  const events = route?.params?.events || myeventpost;
   const [commentData, setCommentData] = useState({});
   const [selectedPostId, setSelectedPostId] = useState(null)
   const [page, setPage] = useState(1);
@@ -40,16 +44,54 @@ const ViewMyEventPost = ({ navigation, route }) => {
   const profileData = ProfileData?.profiledata || {};
   const myprofile_id = profileData?._id || null;
 
-  const getTimeAgo = (createdAt) => {
-    const eventTime = moment(createdAt);
-    const currentTime = moment();
-    const diffInHours = currentTime.diff(eventTime, 'hours');
 
-    if (diffInHours >= 24) {
-      const diffInDays = Math.floor(diffInHours / 24);
-      return `${diffInDays} days ago`;
-    } else {
-      return `${diffInHours} hours ago`;
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+      fetchPostData();
+      setPage(1);
+    }, 2000);
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      setPage(1);
+      fetchPostData();
+    }, [])
+  );
+
+  const fetchPostData = async () => {
+    try {
+      setMyeventpost([]);
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const headers = { Authorization: `Bearer ${token}` };
+      const response = await axios.get(VIEW_EVENT, { headers });
+
+      if (response.status === 200 && response.data.status === true) {
+        const postData = response.data.data;
+        console.log("myeventpost", postData);
+        setMyeventpost(postData);
+      }
+    } catch (error) {
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching post data", errorMsg);
+
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
     }
   };
 
@@ -85,11 +127,6 @@ const ViewMyEventPost = ({ navigation, route }) => {
   const formatDateTime = (createdAt) => {
     return moment(createdAt).format('MMM D [at] hh:mm A');
   };
-  useFocusEffect(
-    useCallback(() => {
-      setPage(1);
-    }, [])
-  );
 
   const LIKE = async (postId, initialLikesCount) => {
     try {
@@ -341,8 +378,8 @@ const ViewMyEventPost = ({ navigation, route }) => {
         setModalVisible(false);
 
         // ✅ Ensure navigation is available before using it
-        if (navigation && navigation.navigate) {
-          navigation.navigate("EventNews");
+        if (navigation && navigation.replace) {
+          navigation.replace("ViewMyEventPost");
         } else {
           console.warn("⚠️ Navigation is not available");
         }
@@ -750,7 +787,30 @@ const ViewMyEventPost = ({ navigation, route }) => {
           renderItem={renderItem}
           keyExtractor={(item) => item._id}
           scrollEnabled={false}
+          nestedScrollEnabled={true}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Ionicons
+                name={'newspaper'}
+                size={60}
+                color={Colors.theme_color}
+                style={{ marginBottom: SH(10) }}
+              />
+              <Text style={[styles.emptyText, { fontFamily: "POppins-Bold", fontSize: SF(16) }]}>
+                No Event & News Posted Yet
+              </Text>
+              <Text style={{ color: 'gray', textAlign: 'center', marginTop: SH(5), paddingHorizontal: SW(20), fontFamily: "POppins-Medium" }}>
+                Events or news uploaded by Activists will be shown here.
+              </Text>
+            </View>
+            // <View style={styles.emptyContainer}>
+            //   <Text style={styles.emptyText}>No Event & News Posted Yet</Text>
+            // </View>
+          }
         />
 
         {getPostsForPage().length > 3 && (

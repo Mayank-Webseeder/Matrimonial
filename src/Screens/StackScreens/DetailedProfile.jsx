@@ -61,7 +61,9 @@ const DetailedProfile = ({ navigation, profileData }) => {
   const [buyingPlanId, setBuyingPlanId] = useState(null);
   const [TrialPlanId, setTrialPlanId] = useState(null);
   const [mybiodata, setMyBiodata] = useState({});
-
+  const hasTrial = profile_data.serviceSubscriptions?.some(
+    (sub) => sub.subscriptionType === "Trial"
+  );
   const myBiodata = profileData?.personalDetails || mybiodata?.personalDetails;
 
   const [biodata, setBiodata] = useState({
@@ -116,7 +118,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
   useEffect(() => {
     getBiodata();
-    console.log("mybiodata", JSON.stringify(mybiodata));
+    console.log("profile_data", JSON.stringify(profile_data));
   }, [])
 
 
@@ -143,13 +145,13 @@ const DetailedProfile = ({ navigation, profileData }) => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error in creating personal detials :", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
@@ -178,13 +180,13 @@ const DetailedProfile = ({ navigation, profileData }) => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("failed to fetch plans :", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
@@ -577,7 +579,16 @@ const DetailedProfile = ({ navigation, profileData }) => {
         setErrors({});
 
         setTimeout(() => {
-          navigation.navigate(isUpdating ? "MyProfile" : "MainPartnerPrefrence");
+          if (isUpdating) {
+            navigation.navigate("MainApp", {
+              screen: "Tabs",
+              params: {
+                screen: "MyProfile",
+              },
+            });
+          } else {
+            navigation.navigate("MainPartnerPrefrence");
+          }
         }, 5000);
 
         return;
@@ -608,7 +619,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
@@ -891,7 +902,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               value={biodata?.gender}
               editable={isEditing}
               onChange={(text) => handleInputChange("gender", text.value)}
-              placeholder="Enter Gender For Create Biodata"
+              placeholder="Select Gender"
               placeholderStyle={{ color: "#E7E7E7" }}
             />
 
@@ -965,62 +976,62 @@ const DetailedProfile = ({ navigation, profileData }) => {
           </View>
 
           <View>
-  <Text style={Globalstyles.title}>
-    Time of Birth <Entypo name={'star'} color={'red'} size={12} />
-  </Text>
+            <Text style={Globalstyles.title}>
+              Time of Birth <Entypo name={'star'} color={'red'} size={12} />
+            </Text>
 
-  <TouchableOpacity
-    onPress={() => isEditing && setShowTimePicker(true)}
-    activeOpacity={0.8}
-  >
-    <View
-      style={[
-        Globalstyles.input,
-        {
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }
-      ]}
-    >
-      <Text style={styles.dateText}>
-        {biodata?.timeOfBirth ? biodata.timeOfBirth : "HH:MM AM/PM"}
-      </Text>
-    </View>
-  </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => isEditing && setShowTimePicker(true)}
+              activeOpacity={0.8}
+            >
+              <View
+                style={[
+                  Globalstyles.input,
+                  {
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }
+                ]}
+              >
+                <Text style={styles.dateText}>
+                  {biodata?.timeOfBirth ? biodata.timeOfBirth : "HH:MM AM/PM"}
+                </Text>
+              </View>
+            </TouchableOpacity>
 
-  {errors.timeOfBirth && (
-    <Text style={styles.errorText}>{errors.timeOfBirth}</Text>
-  )}
+            {errors.timeOfBirth && (
+              <Text style={styles.errorText}>{errors.timeOfBirth}</Text>
+            )}
 
-{showTimePicker && (
-  <DateTimePicker
-    value={
-      biodata?.timeOfBirth
-        ? new Date(`1970-01-01T${biodata.timeOfBirth}:00`)
-        : new Date()
-    }
-    mode="time"
-    display="spinner"
-    is24Hour={false}
-    onChange={(event, selectedTime) => {
-      setShowTimePicker(false);
-      if (event.type === "set" && selectedTime) {
-        const hours = selectedTime.getHours();
-        const minutes = selectedTime.getMinutes();
-        const formattedTime = moment({ hour: hours, minute: minutes }).format("hh:mm A");
+            {showTimePicker && (
+              <DateTimePicker
+                value={
+                  biodata?.timeOfBirth
+                    ? new Date(`1970-01-01T${biodata.timeOfBirth}:00`)
+                    : new Date()
+                }
+                mode="time"
+                display="spinner"
+                is24Hour={false}
+                onChange={(event, selectedTime) => {
+                  setShowTimePicker(false);
+                  if (event.type === "set" && selectedTime) {
+                    const hours = selectedTime.getHours();
+                    const minutes = selectedTime.getMinutes();
+                    const formattedTime = moment({ hour: hours, minute: minutes }).format("hh:mm A");
 
-        setBiodata((prev) => ({
-          ...prev,
-          timeOfBirth: formattedTime,
-        }));
-      }
-    }}
-    themeVariant="light"
-  />
-)}
+                    setBiodata((prev) => ({
+                      ...prev,
+                      timeOfBirth: formattedTime,
+                    }));
+                  }
+                }}
+                themeVariant="light"
+              />
+            )}
 
-</View>
+          </View>
 
 
 
@@ -1798,10 +1809,13 @@ const DetailedProfile = ({ navigation, profileData }) => {
                           <Text style={styles.description}>{plan.description}</Text>
 
                           <View style={styles.buttonRowAligned}>
-                            <TouchableOpacity style={styles.trialButton} onPress={() => handleFreeTrial(plan)}>
-                              <Text style={styles.trialText}>{TrialPlanId === plan._id ? 'Starting...' : 'Start Free Trial'}</Text>
-                            </TouchableOpacity>
-
+                            {!hasTrial && (
+                              <TouchableOpacity style={styles.trialButton} onPress={() => handleFreeTrial(plan)}>
+                                <Text style={styles.trialText}>
+                                  {TrialPlanId === plan._id ? 'Starting...' : 'Start Free Trial'}
+                                </Text>
+                              </TouchableOpacity>
+                            )}
                             <TouchableOpacity style={styles.buyButton} onPress={() => handleBuyNow(plan)}>
                               <Text style={styles.buyButtonText}>
                                 {buyingPlanId === plan._id ? 'Buying...' : 'Buy Now'}

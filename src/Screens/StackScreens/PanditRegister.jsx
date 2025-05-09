@@ -31,6 +31,9 @@ const PanditRegister = ({ navigation }) => {
     const [selectedState, setSelectedState] = useState('');
     const ProfileData = useSelector((state) => state.profile);
     const profileData = ProfileData?.profiledata || {};
+    const hasTrial = profileData.serviceSubscriptions?.some(
+        (sub) => sub.subscriptionType === "Trial"
+    );
     const [fetchProfileDetails, setFetchProfileDetails] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState({});
@@ -625,24 +628,24 @@ const PanditRegister = ({ navigation }) => {
 
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-      console.error("❌ [Error in buying subscription]:", errorMsg);
-      Alert.alert(
-          "Subscription Info",
-          errorMsg
-      );
-      const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
-      ];
-  
-      if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "AuthStack" }],
-        });
-      }
+            console.error("❌ [Error in buying subscription]:", errorMsg);
+            Alert.alert(
+                "Subscription Info",
+                errorMsg
+            );
+            const sessionExpiredMessages = [
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
+            ];
+
+            if (sessionExpiredMessages.includes(errorMsg)) {
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
+            }
             setBuyLoading(false)
             setBuyingPlanId(false)
         }
@@ -701,7 +704,7 @@ const PanditRegister = ({ navigation }) => {
         }));
         setFilteredCities([]);
     };
-    
+
     const handleInputChange = (field, value) => {
         setRoleRegisterData((prev) => ({
             ...prev,
@@ -1069,9 +1072,13 @@ const PanditRegister = ({ navigation }) => {
                                                     <Text style={styles.description}>{plan.description}</Text>
 
                                                     <View style={styles.buttonRowAligned}>
-                                                        <TouchableOpacity style={styles.trialButton} onPress={() => handleFreeTrial(plan)}>
-                                                            <Text style={styles.trialText}>{TrialPlanId === plan._id ? 'Starting...' : 'Start Free Trial'}</Text>
-                                                        </TouchableOpacity>
+                                                        {!hasTrial && (
+                                                            <TouchableOpacity style={styles.trialButton} onPress={() => handleFreeTrial(plan)}>
+                                                                <Text style={styles.trialText}>
+                                                                    {TrialPlanId === plan._id ? 'Starting...' : 'Start Free Trial'}
+                                                                </Text>
+                                                            </TouchableOpacity>
+                                                        )}
 
                                                         <TouchableOpacity style={styles.buyButton} onPress={() => handleBuyNow(plan)}>
                                                             <Text style={styles.buyButtonText}>

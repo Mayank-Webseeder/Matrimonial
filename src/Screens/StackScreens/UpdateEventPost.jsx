@@ -126,7 +126,13 @@ const UpdateEventPost = ({ navigation, route }) => {
                     duarion: 5000
                 });
 
-                setTimeout(() => navigation.navigate("EventNews"), 2000);
+                if (navigation && navigation.replace) {
+                    navigation.replace("ViewMyEventPost");
+                  } else {
+                    console.warn("⚠️ Navigation is not available");
+                  }
+
+                // setTimeout(() => navigation.navigate("EventNews"), 2000);
                 return;
             }
 

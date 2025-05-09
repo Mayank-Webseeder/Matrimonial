@@ -101,7 +101,7 @@ const CreatePost = ({ navigation, route }) => {
                     description: response.data.message || 'Your event has been created successfully!',
                     duarion:5000
                 });
-                navigation.navigate('EventNews');
+                navigation.navigate('ViewMyEventPost');
             } else {
                 throw new Error(response.data.message || "Unexpected response from server");
             }

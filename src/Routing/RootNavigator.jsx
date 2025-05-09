@@ -95,7 +95,8 @@ const AuthStackNavigator = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
-function MyTabs() {
+function MyTabs({ route }) {
+  const initialRoute = route?.params?.initialTab || "Home";
   const dispatch = useDispatch();
   const [profiledata, setProfileData] = useState({});
   const ProfileData = useSelector((state) => state.profile);
@@ -229,7 +230,7 @@ function MyTabs() {
 
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+     initialRouteName={initialRoute}
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarShowLabel: true,

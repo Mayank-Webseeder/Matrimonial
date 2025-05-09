@@ -6,10 +6,10 @@ import Colors from '../../utils/Colors';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import { DrawerActions } from '@react-navigation/native';
 
-const AboutJs = ({ navigation }) => {
-    const handlePress = () => {
-        Linking.openURL("https://www.appwin.in/policy.html");
-    };
+const AboutUs = ({ navigation }) => {
+    // const handlePress = () => {
+    //     Linking.openURL("https://www.appwin.in/policy.html");
+    // };
     return (
         <View style={Globalstyles.container}>
             <View style={Globalstyles.header}>
@@ -40,10 +40,10 @@ const AboutJs = ({ navigation }) => {
                 <Text style={styles.text}>- समाज के हर वर्ग को एक ऐसा मंच प्रदान करना जो परंपरा को संरक्षित करते हुए सशक्त और जागरूक समुदाय का निर्माण करे।</Text>
                 <Text style={styles.text}>- ब्राह्मण समुदाय की आवाज और गतिविधियों को देशभर में फैलाना और लोगों को समाज के उत्थान के लिए प्रेरित करना।</Text>
                 <Text style={styles.text}>हम परंपरा और तकनीक के बीच का सेतु बनकर ब्राह्मण समाज के भविष्य को उज्जवल बनाने के लिए प्रतिबद्ध हैं।</Text>
-                <Text style={styles.heading}>प्राइवेसी पॉलिसी (Privacy Policy)</Text>
-                <Text style={styles.linkText} onPress={handlePress}>
+                {/* <Text style={styles.heading}>प्राइवेसी पॉलिसी (Privacy Policy)</Text> */}
+                {/* <Text style={styles.linkText} onPress={handlePress}>
                     Read Privacy Policy
-                </Text>
+                </Text> */}
                 <Text style={styles.heading}>संपर्क करें</Text>
                 <Text style={styles.text} onPress={() => Linking.openURL('tel:8871186630')}>📞 8871186630</Text>
                 <Text style={styles.text} onPress={() => Linking.openURL('mailto:brahminmilan.in@gmail.com')}>
@@ -57,7 +57,7 @@ const AboutJs = ({ navigation }) => {
     );
 };
 
-export default AboutJs;
+export default AboutUs;
 
 const styles = StyleSheet.create({
     content: {

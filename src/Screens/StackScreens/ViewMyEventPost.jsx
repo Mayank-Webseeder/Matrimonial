@@ -17,6 +17,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
 import { showMessage } from 'react-native-flash-message';
+import { CommonActions } from '@react-navigation/native';
+
 const ViewMyEventPost = ({ navigation, route }) => {
   const sheetRef = useRef(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -714,7 +716,16 @@ const ViewMyEventPost = ({ navigation, route }) => {
       />
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: "center" }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [{ name: 'MainApp' }],
+                })
+              );
+            }}
+          >
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>My News & Events</Text>

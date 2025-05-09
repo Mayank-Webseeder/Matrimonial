@@ -14,7 +14,7 @@ import { subCasteOptions } from '../../DummyData/DropdownData';
 import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { SH, SF, SW } from '../../utils/Dimensions';
-import {GET_ALL_DHARAMSALA, GET_DHARAMSALA, SAVED_PROFILES, TOP_DHARMSHALA_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
+import { GET_ALL_DHARAMSALA, GET_DHARAMSALA, SAVED_PROFILES, TOP_DHARMSHALA_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
@@ -82,21 +82,21 @@ const Dharmshala = () => {
   };
 
   const handleInputChange = (text) => {
-     setSubcaste(text);
-     if (text.trim() === '') {
-       setFilteredOptions([]);
-     } else {
-       const filtered = subCasteOptions.filter((option) =>
-         option.label.toLowerCase().includes(text.toLowerCase())
-       );
-       setFilteredOptions(filtered);
-     }
-   };
- 
-   const handleOptionSelect = (value) => {
-     setSubcaste(value.label);
-     setFilteredOptions([]);
-   };
+    setSubcaste(text);
+    if (text.trim() === '') {
+      setFilteredOptions([]);
+    } else {
+      const filtered = subCasteOptions.filter((option) =>
+        option.label.toLowerCase().includes(text.toLowerCase())
+      );
+      setFilteredOptions(filtered);
+    }
+  };
+
+  const handleOptionSelect = (value) => {
+    setSubcaste(value.label);
+    setFilteredOptions([]);
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -141,27 +141,27 @@ const Dharmshala = () => {
       setLoading(true);
       setDharamsalaData([]);
       setError(null);
-  
+
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
-  
+
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-  
+
       let queryParams = [];
-  
+
       if (filterType === "search") {
         const cleanedLocality = locality.trim();
         const cleanedSubCaste = subcaste.trim();
-  
+
         if (cleanedLocality) queryParams.push(`locality=${encodeURIComponent(cleanedLocality.toLowerCase())}`);
         if (cleanedSubCaste) queryParams.push(`subCaste=${encodeURIComponent(cleanedSubCaste.toLowerCase())}`);
       } else if (filterType === "modal") {
         const cleanedModalLocality = modalLocality.trim();
         const cleanedModalSubCaste = subcaste.trim();
-  
+
         if (cleanedModalLocality && cleanedModalSubCaste) {
           queryParams.push(`locality=${encodeURIComponent(cleanedModalLocality.toLowerCase())}`);
           queryParams.push(`subCaste=${encodeURIComponent(cleanedModalSubCaste.toLowerCase())}`);
@@ -171,16 +171,16 @@ const Dharmshala = () => {
           queryParams.push(`subCaste=${encodeURIComponent(cleanedModalSubCaste.toLowerCase())}`);
         }
       }
-  
+
       const url = filterType === "all" ? GET_ALL_DHARAMSALA : `${GET_ALL_DHARAMSALA}?${queryParams.join("&")}`;
-  
+
       console.log("Fetching Data from:", url);
-  
+
       const response = await axios.get(url, { headers });
-  
+
       // Log the complete response
       console.log("Response Data:", JSON.stringify(response.data));
-  
+
       if (response.data && response.data.data && response.data.data.length > 0) {
         setDharamsalaData(response.data.data);
       } else {
@@ -190,26 +190,26 @@ const Dharmshala = () => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching Dharamsala data:", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
         });
-      } 
+      }
       setError(errorMsg);
     } finally {
       setLoading(false);
     }
   };
-  
+
 
   const GetMyDharamsalaData = async () => {
     try {
@@ -220,7 +220,7 @@ const Dharmshala = () => {
           description: 'Authorization token is missing.',
           type: 'warning',
           icon: 'warning',
-          duarion:5000
+          duarion: 5000
         });
         return;
       }
@@ -238,20 +238,20 @@ const Dharmshala = () => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching dharamsala data:", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
         });
-      } 
+      }
     }
   };
 
@@ -290,20 +290,20 @@ const Dharmshala = () => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching advertisement:", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
         });
-      } 
+      }
     }
   };
 
@@ -334,7 +334,7 @@ const Dharmshala = () => {
         message: "You are not an activist!",
         description: "Create an activist profile if you want to upload Dharamsala.",
         position: "bottom",
-        duarion:5000,
+        duarion: 5000,
         autoHide: true,
       });
     }
@@ -348,7 +348,7 @@ const Dharmshala = () => {
         message: "Error",
         description: "User ID not found!",
         icon: "danger",
-        duarion:5000
+        duarion: 5000
       });
       return;
     }
@@ -379,7 +379,7 @@ const Dharmshala = () => {
           message: "Success",
           description: response.data?.message || "Profile saved successfully!",
           icon: "success",
-          duarion:5000
+          duarion: 5000
         });
       } else {
         throw new Error(response.data?.message || "Something went wrong!");
@@ -387,33 +387,33 @@ const Dharmshala = () => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching biodata:", errorMsg);
-  
+
       showMessage({
         type: "danger",
         message: "Error",
         description: errorMsg || "Failed to save profile!",
         icon: "danger",
-        duarion:5000
+        duarion: 5000
       });
       setDharamsalaData((prevProfiles) =>
         prevProfiles.map((profile) =>
           profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
         )
       );
-      
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
         });
-      } 
+      }
     }
   };
 
@@ -422,7 +422,7 @@ const Dharmshala = () => {
       message: 'Under development',
       type: 'info',
       icon: 'info',
-      duarion:5000
+      duarion: 5000
     });
   };
 
@@ -505,18 +505,18 @@ const Dharmshala = () => {
       {/* Fixed Header */}
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: "center" }}>
-        <TouchableOpacity
-  onPress={() => {
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [{ name: 'MainApp' }],
-      })
-    );
-  }}
->
-  <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
-</TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [{ name: 'MainApp' }],
+                })
+              );
+            }}
+          >
+            <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
+          </TouchableOpacity>
           <Text style={Globalstyles.headerText}>Dharmshala</Text>
         </View>
         <View style={styles.righticons}>
@@ -552,29 +552,29 @@ const Dharmshala = () => {
       <View>
         {/* Search and Filter Section */}
         <View style={styles.searchContainer}>
-        <View style={styles.searchbar}>
-          <TextInput
-            placeholder="Search in Your city"
-            value={locality}
-            onChangeText={(text) => setLocality(text)}
-            onSubmitEditing={() => fetchDharamsalaData("search")}
-            placeholderTextColor={"gray"}
-            style={{ flex: 1 }}
-            autoComplete="off"
-            textContentType="none"
-          />
-          {locality.length > 0 ? (
-            <AntDesign name={'close'} size={20} color={'gray'} onPress={() => {
-              setLocality('');
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'Committee' }],
-              });
-            }} />
-          ) : (
-            <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchDharamsalaData("search")} />
-          )}
-        </View>
+          <View style={styles.searchbar}>
+            <TextInput
+              placeholder="Search in Your city"
+              value={locality}
+              onChangeText={(text) => setLocality(text)}
+              onSubmitEditing={() => fetchDharamsalaData("search")}
+              placeholderTextColor={"gray"}
+              style={{ flex: 1 }}
+              autoComplete="off"
+              textContentType="none"
+            />
+            {locality.length > 0 ? (
+              <AntDesign name={'close'} size={20} color={'gray'} onPress={() => {
+                setLocality('');
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'Committee' }],
+                });
+              }} />
+            ) : (
+              <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchDharamsalaData("search")} />
+            )}
+          </View>
         </View>
 
         <View style={styles.ButtonContainer}>
@@ -616,7 +616,7 @@ const Dharmshala = () => {
             data={slider}
             renderItem={({ item }) => {
               const { width, height } = item.resolution;
-            
+
               const handlePress = () => {
                 if (item.hyperlink) {
                   Linking.openURL(item.hyperlink).catch(err =>
@@ -624,7 +624,7 @@ const Dharmshala = () => {
                   );
                 }
               };
-            
+
               return (
                 <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                   <Image
@@ -633,7 +633,7 @@ const Dharmshala = () => {
                   />
                 </TouchableOpacity>
               );
-            }}            
+            }}
             showNextButton={false}
             showDoneButton={false}
             dotStyle={styles.dot}

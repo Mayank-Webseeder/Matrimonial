@@ -38,9 +38,9 @@ const Splash = ({ navigation }) => {
                             <Text style={styles.boldSignupText}>Signup</Text>
                         </TouchableOpacity>
                     </View>
-                    <Text style={styles.linkText} onPress={handlePress}>
+                    {/* <Text style={styles.linkText} onPress={handlePress}>
                         Privacy Policy
-                    </Text>
+                    </Text> */}
                 </ImageBackground>
             </View>
         </SafeAreaView>

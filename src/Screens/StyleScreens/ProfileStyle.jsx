@@ -388,6 +388,12 @@ const styles = StyleSheet.create({
     arrow: {
         marginLeft: SW(10),
     },
+    dateText: {
+        flex: 1,
+        fontSize: SF(16),
+        color: "gray",
+        paddingVertical: SH(10)
+    },
 
 })
 export default styles

@@ -34,7 +34,6 @@ const ViewMyEventPost = ({ navigation, route }) => {
   const [page, setPage] = useState(1);
   const [IsLoading, setIsLoading] = useState(false);
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
-  const postsPerPage = 3;
   const [myComment, setMyComment] = useState("");
   const [likeData, setLikeData] = useState({});
   const [LikeLoading, setLikeLoading] = useState(false);
@@ -43,7 +42,6 @@ const ViewMyEventPost = ({ navigation, route }) => {
   const ProfileData = useSelector((state) => state.profile);
   const profileData = ProfileData?.profiledata || {};
   const myprofile_id = profileData?._id || null;
-
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -416,37 +414,6 @@ const ViewMyEventPost = ({ navigation, route }) => {
   };
 
 
-
-
-  const getPostsForPage = () => {
-    if (!Array.isArray(events)) {
-      console.error("eventdata is not an array:", events);
-      return []; // Return an empty array to prevent crashes
-    }
-    const startIndex = (page - 1) * postsPerPage;
-    const endIndex = startIndex + postsPerPage;
-    return events.slice(startIndex, endIndex);
-  };
-
-
-  const loadNextPage = () => {
-    if (!Array.isArray(events) || events.length === 0) {
-      Alert.alert('No event data available');
-      return;
-    }
-
-    if ((page * postsPerPage) < events.length) {
-      setPage(page + 1);
-    } else {
-      Alert.alert('No more posts available', '', [
-        {
-          text: 'OK',
-          onPress: () => setPage(1),
-        },
-      ]);
-    }
-  };
-
   const openBottomSheet = (postId, comments) => {
     console.log("commentData", commentData);
     console.log("postId", postId);
@@ -607,7 +574,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
                     style={styles.modalOption}
                     onPress={async () => {
                       try {
-                        await DELETE_EVENT_POST(item._id);
+                        await DELETE_EVENT_POST(modalData?._id);
                         setModalVisible(false);
                         console.log("Event Deleted: ", modalData?._id);
                       } catch (error) {
@@ -783,7 +750,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
       </View>
       <ScrollView style={styles.bottomContainer} showsVerticalScrollIndicator={false}>
         <FlatList
-          data={getPostsForPage()}
+          data={myeventpost}
           renderItem={renderItem}
           keyExtractor={(item) => item._id}
           scrollEnabled={false}
@@ -807,19 +774,8 @@ const ViewMyEventPost = ({ navigation, route }) => {
                 Events or news uploaded by Activists will be shown here.
               </Text>
             </View>
-            // <View style={styles.emptyContainer}>
-            //   <Text style={styles.emptyText}>No Event & News Posted Yet</Text>
-            // </View>
           }
         />
-
-        {getPostsForPage().length > 3 && (
-          <TouchableOpacity style={styles.loadMoreButton} onPress={loadNextPage}>
-            <Text style={styles.loadMoreText}>Load More Posts</Text>
-          </TouchableOpacity>
-        )}
-
-        {/* <Image source={require('../../Images/EventImage.png')} style={styles.bannerImage} /> */}
       </ScrollView>
     </SafeAreaView>
   );

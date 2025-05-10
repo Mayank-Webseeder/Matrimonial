@@ -92,8 +92,8 @@ const styles = StyleSheet.create({
   },
   RequestText: {
     color: Colors.light,
-    fontSize: SF(10),
-    fontFamily: "Poppins-Regular"
+    fontSize: SF(11),
+    fontFamily: "Poppins-Medium"
   },
   addWindowImage: {
     width: "100%",

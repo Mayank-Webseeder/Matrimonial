@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
   storyCard: {
     backgroundColor: '#fff',
     marginHorizontal: SW(3),
-    marginVertical: SH(10),
+    marginVertical: SH(5),
     borderRadius: 12,
     elevation: 3,
     shadowColor: '#000',

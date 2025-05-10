@@ -377,7 +377,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                         <Text style={styles.name} numberOfLines={2}>{profileData?.fullName}</Text>
 
                         <View style={styles.FlexContainer}>
-                            <Text style={styles.city}>{profileData?.city}, </Text>
+                        <Text style={[styles.city,{fontFamily:"Poppins-Bold"}]}>{profileData?.city}</Text>
                             <Text style={styles.city}>{profileData?.state}</Text>
                         </View>
 

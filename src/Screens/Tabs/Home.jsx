@@ -108,7 +108,6 @@ const Home = ({ navigation }) => {
       getBiodata();
       GetAll_Notification();
       GetAll_Biodata();
-      getActivistProfile();
       fetchProfile();
       Top_Advertisement_window();
       Bottom_Advertisement_window();
@@ -169,7 +168,6 @@ const Home = ({ navigation }) => {
       getBiodata();
       GetAll_Notification();
       GetAll_Biodata();
-      getActivistProfile();
       fetchProfile();
     }, [])
   );
@@ -433,58 +431,6 @@ const Home = ({ navigation }) => {
       setLoading(false)
     }
   }
-
-  const getActivistProfile = async () => {
-    try {
-      setActivitData({});
-      setIsLoading(true);
-
-      const token = await AsyncStorage.getItem('userToken');
-      if (!token) throw new Error('No token found');
-
-      const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      };
-
-      const response = await axios.get(GET_ACTIVIST, { headers });
-      console.log("Activist data", JSON.stringify(response.data));
-
-      if (response.data && response.data.data) {
-        const fetchedData = response.data.data;
-        setActivitData(fetchedData);
-        dispatch(setActivistdata(fetchedData));
-      } else {
-        setActivitData({});
-        dispatch(setActivistdata({}));
-      }
-    } catch (error) {
-      const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching activist profile:", errorMsg);
-
-      // ✅ Clear Redux if 400 error (bad request / no data)
-      if (error.response && error.response.status === 400) {
-        dispatch(resetsetActivistdata()); // Corrected
-      }
-
-      const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
-      ];
-
-      if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "AuthStack" }],
-        });
-      }
-
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   useEffect(() => {
     if (slider.length === 0) return;

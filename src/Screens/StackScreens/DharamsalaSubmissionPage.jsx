@@ -39,7 +39,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
             type,
             message,
             description,
-            duarion:5000,
+            duarion: 5000,
             icon
         });
     }, 500);
@@ -244,17 +244,17 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
             console.error("Error fetching biodata:", errorMsg);
             showToast("danger", "Error", errorMsg, "danger");
             const sessionExpiredMessages = [
-              "User does not Exist....!Please login again",
-              "Invalid token. Please login again",
-              "Token has expired. Please login again"
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
             ];
-        
+
             if (sessionExpiredMessages.includes(errorMsg)) {
-              await AsyncStorage.removeItem("userToken");
-              navigation.reset({
-                index: 0,
-                routes: [{ name: "AuthStack" }],
-              });
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
             }
         } finally {
             setIsLoading(false);
@@ -290,8 +290,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     placeholder="Enter Dharamsala Name"
                     value={DharamsalaData?.dharmshalaName}
                     onChangeText={(text) => {
-                        const cleanText = text.replace(/[^A-Za-z\s]/g, '');
-                        setDharamsalaData((prev) => ({ ...prev, dharmshalaName: cleanText }));
+                        setDharamsalaData((prev) => ({ ...prev, dharmshalaName: text }));
                     }}
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"

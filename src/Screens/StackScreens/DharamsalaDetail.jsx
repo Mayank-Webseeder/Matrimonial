@@ -358,7 +358,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${DharamsalaData.mobileNo}`)}>
-            <MaterialIcons name="call" size={20} color={Colors.light} />
+            <MaterialIcons name="call" size={18} color={Colors.light} />
             <Text style={styles.RequestText}>Request for call</Text>
           </TouchableOpacity>
         </View>

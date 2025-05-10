@@ -915,8 +915,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               value={biodata?.fullname}
               editable={isEditing}
               onChangeText={(text) => {
-                const cleanText = text.replace(/[^A-Za-z\s]/g, '');
-                handleInputChange("fullname", cleanText);
+                handleInputChange("fullname", text);
               }}
               placeholder="Enter Your Full Name"
               placeholderTextColor={Colors.gray}
@@ -1351,8 +1350,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata?.fatherName}
               onChangeText={(text) => {
-                const cleanText = text.replace(/[^A-Za-z\s]/g, '');
-                handleInputChange("fatherName", cleanText);
+                handleInputChange("fatherName", text);
               }}
               editable={isEditing}
               placeholderTextColor={Colors.gray}
@@ -1368,8 +1366,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata?.motherName}
               onChangeText={(text) => {
-                const cleanText = text.replace(/[^A-Za-z\s]/g, '');
-                handleInputChange("motherName", cleanText);
+                handleInputChange("motherName", text);
               }}
               editable={isEditing}
               placeholderTextColor={Colors.gray}

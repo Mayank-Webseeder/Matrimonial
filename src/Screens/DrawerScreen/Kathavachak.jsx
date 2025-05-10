@@ -132,7 +132,7 @@ const Kathavachak = ({ navigation }) => {
             description: item.description,
             image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution,
-            hyperlink: mediaItem.hyperlink, 
+            hyperlink: mediaItem.hyperlink,
           }))
         );
 
@@ -144,20 +144,20 @@ const Kathavachak = ({ navigation }) => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching advertisement:", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
         });
-      } 
+      }
     }
   };
 
@@ -196,20 +196,20 @@ const Kathavachak = ({ navigation }) => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching kathavachak:", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
         });
-      } 
+      }
     } finally {
       setLoading(false);
     }
@@ -275,14 +275,14 @@ const Kathavachak = ({ navigation }) => {
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
         });
-      } 
+      }
     }
   };
 
@@ -362,7 +362,7 @@ const Kathavachak = ({ navigation }) => {
                 <Text style={[styles.text, { fontFamily: 'Poppins-Regular' }]}> {rating} Star Rating</Text>
               </View>
               <View style={styles.CityArea}>
-                <Text style={styles.text}>{item?.city}</Text>
+                <Text style={[styles.text, { fontFamily: "Poppins-Bold" }]}>{item?.city}</Text>
                 <Text style={styles.text}>    {item?.state}</Text>
               </View>
               <Text style={styles.text} numberOfLines={1}>{item?.residentialAddress}</Text>
@@ -465,12 +465,12 @@ const Kathavachak = ({ navigation }) => {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }>
         <View style={Globalstyles.sliderContainer}>
-        <AppIntroSlider
+          <AppIntroSlider
             ref={sliderRef}
             data={slider}
             renderItem={({ item }) => {
               const { width, height } = item.resolution;
-            
+
               const handlePress = () => {
                 if (item.hyperlink) {
                   Linking.openURL(item.hyperlink).catch(err =>
@@ -478,7 +478,7 @@ const Kathavachak = ({ navigation }) => {
                   );
                 }
               };
-            
+
               return (
                 <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                   <Image
@@ -487,7 +487,7 @@ const Kathavachak = ({ navigation }) => {
                   />
                 </TouchableOpacity>
               );
-            }}            
+            }}
             showNextButton={false}
             showDoneButton={false}
             dotStyle={Globalstyles.dot}

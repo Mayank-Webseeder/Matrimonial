@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     maxWidth: SW(200),
   },
   city: {
-    fontSize: SF(12),
+    fontSize: SF(13),
     fontFamily: "Poppins-regular",
   },
   rating: {

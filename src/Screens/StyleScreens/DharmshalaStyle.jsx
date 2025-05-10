@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontFamily: "Poppins-Bold",
-    fontSize: SF(13)
+    fontSize: SF(14)
   },
   sliderContainer: {
     marginBottom: SH(10),
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   smalltext: {
-    fontFamily: "Poppins-Regular",
+    fontFamily: "Poppins-Bold",
     fontSize: SF(12)
   },
 

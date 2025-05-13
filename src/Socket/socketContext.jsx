@@ -159,6 +159,10 @@ export const SocketProvider = ({ children }) => {
       showToast(data?.message);
     });
 
+    socket.on("respondOnFeedBackByAdmin", (data) => {
+      showToast(data?.message);
+    });
+
     // socket.on("user-notification", (data) => {
     //   showToast(data?.message);
     // });

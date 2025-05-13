@@ -57,13 +57,13 @@ const Notification = ({ navigation }) => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching notifications:", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
@@ -94,13 +94,13 @@ const Notification = ({ navigation }) => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching notifications:", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
@@ -200,21 +200,21 @@ const Notification = ({ navigation }) => {
         console.log("✅ Notification marked as seen:", res.data.data);
       } catch (error) {
         const errorMsg = error.response?.data?.message || error.message;
-      console.error("❌ Error marking notification as seen:", errorMsg);
-  
-      const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
-      ];
-  
-      if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "AuthStack" }],
-        });
-      }
+        console.error("❌ Error marking notification as seen:", errorMsg);
+
+        const sessionExpiredMessages = [
+          "User does not Exist....!Please login again",
+          "Invalid token. Please login again",
+          "Token has expired. Please login again"
+        ];
+
+        if (sessionExpiredMessages.includes(errorMsg)) {
+          await AsyncStorage.removeItem("userToken");
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "AuthStack" }],
+          });
+        }
       }
     }, 500);
   };
@@ -316,9 +316,9 @@ const Notification = ({ navigation }) => {
             }}
           />
 
-          <View style={{ marginLeft: SW(10) }}>
+          <View style={{ marginLeft:SW(10), flex: 1 }}>
             <Text style={styles.name}>{item.relatedData.username || item?.relatedData?.likedBy?.name || item?.relatedData?.commentBy?.name}</Text>
-            <Text style={styles.message}>{item?.message}</Text>
+            <Text style={styles.message} ellipsizeMode="tail">{item?.message}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -330,8 +330,7 @@ const Notification = ({ navigation }) => {
       ? item.relatedData.photoUrl[0]
       : item?.relatedData?.photoUrl;
     return (
-      <TouchableOpacity style={styles.card}
-        onPress={() => handleNavigation(item)}>
+      <TouchableOpacity style={styles.card} onPress={() => handleNavigation(item)}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Image
             source={
@@ -345,12 +344,19 @@ const Notification = ({ navigation }) => {
               setImageError(true);
             }}
           />
-          <View style={{ marginLeft: 10 }}>
-            <Text style={styles.name}>{item.relatedData.username || item.relatedData.likedBy?.name || item.relatedData.commentBy?.name}</Text>
-            <Text style={styles.message}>{item.message}</Text>
+          <View style={{ marginLeft:SW(10), flex: 1 }}>
+            <Text style={styles.name}>
+              {item.relatedData.username ||
+                item.relatedData.likedBy?.name ||
+                item.relatedData.commentBy?.name}
+            </Text>
+            <Text style={styles.message}>
+              {item.message}
+            </Text>
           </View>
         </View>
       </TouchableOpacity>
+
     );
   };
 
@@ -367,10 +373,11 @@ const Notification = ({ navigation }) => {
       </View>
       <View style={{ flex: 1 }}>
         {/* Toggle Buttons */}
-        <View style={{ flexDirection: "row", justifyContent: "space-around", marginVertical: 10 }}>
+        <View style={{ flexDirection: "row", justifyContent:"space-evenly", marginVertical: 10 }}>
           <TouchableOpacity
             onPress={() => setShowSeen(false)}
             style={{
+              width:SW(150),
               paddingVertical: SH(10),
               paddingHorizontal: (10),
               backgroundColor: !showSeen ? Colors.theme_color : "lightgray",
@@ -382,6 +389,7 @@ const Notification = ({ navigation }) => {
           <TouchableOpacity
             onPress={() => setShowSeen(true)}
             style={{
+              width:SW(150),
               paddingVertical: SH(10),
               paddingHorizontal: (13),
               backgroundColor: showSeen ? Colors.theme_color : "lightgray",
@@ -391,8 +399,6 @@ const Notification = ({ navigation }) => {
             <Text style={{ color: "white" }}>Seen Notifications</Text>
           </TouchableOpacity>
         </View>
-
-        {/* Notification List */}
         {IsLoading ? (
           renderSkeleton()
         ) : (
@@ -405,9 +411,9 @@ const Notification = ({ navigation }) => {
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
             ListEmptyComponent={
-              <View style={{ alignItems: "center", marginTop: 20 }}>
+              <View style={{ alignItems: "center", marginTop: SH(20) }}>
                 <Ionicons name={'notifications-circle-sharp'} color={Colors.theme_color} size={100} />
-                <Text style={{ color: "gray", fontWeight: '600', fontSize: SF(15), fontFamily: "Poppins-Bold" }}>Notifications will appear here</Text>
+                <Text style={{ color: "gray", fontSize: SF(15), fontFamily: "Poppins-Bold" }}>Notifications will appear here</Text>
               </View>
             }
           />

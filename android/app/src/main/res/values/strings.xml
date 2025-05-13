@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">Matrimonial</string>
+	<string name="app_name">
+		BrahminMilan by AppWin
+	</string>
 </resources>

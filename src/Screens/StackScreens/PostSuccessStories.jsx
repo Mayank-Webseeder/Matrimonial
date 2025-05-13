@@ -112,9 +112,8 @@ const PostSuccessStories = ({ navigation }) => {
                     message: 'Success',
                     description: response.data.message || 'Your success story has been submitted!',
                     icon: "success",
-                    duarion:5000
+                    duarion: 5000
                 });
-
                 setTimeout(() => {
                     navigation.goBack();
                 }, 2000);
@@ -129,20 +128,20 @@ const PostSuccessStories = ({ navigation }) => {
                 type: 'danger',
                 message: errorMsg,
                 icon: "danger",
-                duarion:5000
+                duarion: 5000
             });
             const sessionExpiredMessages = [
-              "User does not Exist....!Please login again",
-              "Invalid token. Please login again",
-              "Token has expired. Please login again"
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
             ];
-        
+
             if (sessionExpiredMessages.includes(errorMsg)) {
-              await AsyncStorage.removeItem("userToken");
-              navigation.reset({
-                index: 0,
-                routes: [{ name: "AuthStack" }],
-              });
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
             }
         }
     };
@@ -150,7 +149,7 @@ const PostSuccessStories = ({ navigation }) => {
     const handleImagePick = () => {
         ImageCropPicker.openPicker({
             width: 300,
-            height: 250,
+            height: 300,
             cropping: true,
             compressImageQuality: 1,
             includeBase64: true,

@@ -140,20 +140,20 @@ const Committee = ({ navigation }) => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching committee data:", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
         });
-      } 
+      }
       setMyCommitteeData([]);
     } finally {
       setIsLoading(false);
@@ -213,20 +213,20 @@ const Committee = ({ navigation }) => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching committee data:", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
         });
-      } 
+      }
       setError(errorMsg || "Failed to fetch data. Please try again.");
     } finally {
       setLoading(false);
@@ -268,20 +268,20 @@ const Committee = ({ navigation }) => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching advertisement:", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
         });
-      } 
+      }
     }
   };
 
@@ -310,7 +310,7 @@ const Committee = ({ navigation }) => {
         type: "info",
         message: "You are not an activist!",
         description: "Create an activist profile if you want to upload a committee.",
-        duarion:5000,
+        duarion: 5000,
         autoHide: true,
         icon: "info"
       });
@@ -326,7 +326,7 @@ const Committee = ({ navigation }) => {
         message: "Error",
         description: "User ID not found!",
         icon: "danger",
-        duarion:5000
+        duarion: 5000
       });
       return;
     }
@@ -357,7 +357,7 @@ const Committee = ({ navigation }) => {
           message: "Success",
           description: response.data?.message || "Profile saved successfully!",
           icon: "success",
-          duarion:5000
+          duarion: 5000
         });
       } else {
         throw new Error(response.data?.message || "Something went wrong!");
@@ -373,7 +373,7 @@ const Committee = ({ navigation }) => {
         message: "Error",
         description: error?.response?.data?.message || "Failed to save profile!",
         icon: "danger",
-        duarion:5000
+        duarion: 5000
       });
       setCommitteeData((prevProfiles) =>
         prevProfiles.map((profile) =>
@@ -388,7 +388,7 @@ const Committee = ({ navigation }) => {
       message: 'Under development',
       type: 'info',
       icon: 'info',
-      duarion:5000
+      duarion: 5000
     });
   };
 
@@ -419,7 +419,7 @@ const Committee = ({ navigation }) => {
             <Text style={styles.title}>{item?.committeeTitle}</Text>
             <Text style={styles.Nametext}>President - {item?.presidentName}</Text>
             <View style={styles.CityArea}>
-              <Text style={styles.text}>{item?.city}</Text>
+              <Text style={[styles.text, { fontFamily: "Poppins-Bold" }]}>{item?.city}</Text>
               <Text style={styles.text}>{item?.subCaste}</Text>
             </View>
             <Text style={styles.text}>{item?.area}</Text>
@@ -582,7 +582,7 @@ const Committee = ({ navigation }) => {
             data={slider}
             renderItem={({ item }) => {
               const { width, height } = item.resolution;
-            
+
               const handlePress = () => {
                 if (item.hyperlink) {
                   Linking.openURL(item.hyperlink).catch(err =>
@@ -590,7 +590,7 @@ const Committee = ({ navigation }) => {
                   );
                 }
               };
-            
+
               return (
                 <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                   <Image

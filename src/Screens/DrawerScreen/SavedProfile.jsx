@@ -68,20 +68,20 @@ const SavedProfile = ({ navigation }) => {
 
   const DeleteSaveProfile = async (_id) => {
     if (!_id || deletingId === _id) return;
-  
+
     setDeletingId(_id);
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found. Please log in again.");
-  
+
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-  
+
       const response = await axios.delete(`${DELETE_SAVED_PROFILE}/${_id}`, { headers });
-  
+
       if (response?.status === 200 && response?.data?.status === true) {
         showMessage({
           type: "success",
@@ -90,7 +90,7 @@ const SavedProfile = ({ navigation }) => {
           icon: "success",
           duration: 5000,
         });
-  
+
         setSavedProfiles(prev => prev.filter(p => p.saveProfile?._id !== _id));
       } else {
         throw new Error(response?.data?.message || "Something went wrong!");
@@ -98,7 +98,7 @@ const SavedProfile = ({ navigation }) => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching biodata:", errorMsg);
-  
+
       showMessage({
         type: "danger",
         message: "Error",
@@ -106,13 +106,13 @@ const SavedProfile = ({ navigation }) => {
         icon: "danger",
         duration: 5000
       });
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
@@ -125,7 +125,7 @@ const SavedProfile = ({ navigation }) => {
       setDeletingId(null);
     }
   };
-  
+
 
   const getFilteredData = () => {
     const validProfiles = savedProfiles.filter((item) => item?.saveProfile !== null) || {};

@@ -370,7 +370,7 @@ const Jyotish = ({ navigation }) => {
                 <Text style={[styles.text, { fontFamily: 'Poppins-Regular' }]}> {rating} Star Rating</Text>
               </View>
               <View style={styles.CityArea}>
-                <Text style={styles.text}>{item?.city}</Text>
+                <Text style={[styles.text, { fontFamily: "Poppins-Bold" }]}>{item?.city}</Text>
                 <Text style={styles.text}>    {item?.state}</Text>
               </View>
               <Text style={styles.text} numberOfLines={1}>{item?.residentialAddress}</Text>

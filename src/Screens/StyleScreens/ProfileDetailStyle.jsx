@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-regular"
   },
   city: {
-    fontSize: SF(12),
+    fontSize: SF(13),
     fontFamily: "Poppins-regular",
     marginRight: SW(5)
   },

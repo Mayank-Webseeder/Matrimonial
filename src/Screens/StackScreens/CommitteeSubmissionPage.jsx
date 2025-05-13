@@ -288,8 +288,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     autoComplete="off"
                     textContentType="none"
                     onChangeText={(text) => {
-                        const cleanText = text.replace(/[^A-Za-z\s]/g, '');
-                        setCommitteeData((prev) => ({ ...prev, committeeTitle: cleanText }));
+                        setCommitteeData((prev) => ({ ...prev, committeeTitle: text }));
                     }}
                     placeholderTextColor={Colors.gray}
                 />
@@ -305,8 +304,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     placeholder="Enter President Name"
                     value={CommitteeData?.presidentName}
                     onChangeText={(text) => {
-                        const cleanText = text.replace(/[^A-Za-z\s]/g, '');
-                        setCommitteeData((prev) => ({ ...prev, presidentName: cleanText }));
+                        setCommitteeData((prev) => ({ ...prev, presidentName: text }));
                     }}
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"

@@ -11,7 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { CREATE_EVENT_NEWS } from '../../utils/BaseUrl';
 import { showMessage } from 'react-native-flash-message';
-import {launchImageLibrary} from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 const CreatePost = ({ navigation, route }) => {
     const MyActivistProfile = useSelector((state) => state.activist.activist_data);
@@ -25,13 +25,13 @@ const CreatePost = ({ navigation, route }) => {
     })
 
     const pickerOptions = {
-        selectionLimit: 5,        
-        mediaType: 'photo',       
-        includeBase64: true,     
-        maxWidth: 400,           
+        selectionLimit: 5,
+        mediaType: 'photo',
+        includeBase64: true,
+        maxWidth: 400,
         maxHeight: 400,
-        quality: 1,              
-      };
+        quality: 1,
+    };
 
     // const handleImageUpload = () => {
     //     ImageCropPicker.openPicker({
@@ -53,21 +53,21 @@ const CreatePost = ({ navigation, route }) => {
 
     const handleImageUpload = () => {
         launchImageLibrary(pickerOptions, (response) => {
-          if (response.didCancel) return;                 // user backed out
-          if (response.errorCode) {
-            console.log('ImagePicker Error:', response.errorMessage);
-            return;
-          }
-      
-          // response.assets is an array (max 5 because of selectionLimit)
-          const newPhotos = response.assets.map(
-            (asset) => asset.base64                       // plain base64
-          );
-      
-          setPhotos(newPhotos);                           // overwrite old photos
+            if (response.didCancel) return;                 // user backed out
+            if (response.errorCode) {
+                console.log('ImagePicker Error:', response.errorMessage);
+                return;
+            }
+
+            // response.assets is an array (max 5 because of selectionLimit)
+            const newPhotos = response.assets.map(
+                (asset) => asset.base64                       // plain base64
+            );
+
+            setPhotos(newPhotos);                           // overwrite old photos
         });
-      };
-      
+    };
+
     const handleSubmit = async () => {
         try {
             setLoading(true);
@@ -99,7 +99,7 @@ const CreatePost = ({ navigation, route }) => {
                     type: 'success',
                     message: 'Success',
                     description: response.data.message || 'Your event has been created successfully!',
-                    duarion:5000
+                    duarion: 5000
                 });
                 navigation.navigate('ViewMyEventPost');
             } else {
@@ -114,20 +114,20 @@ const CreatePost = ({ navigation, route }) => {
                 message: 'Error',
                 description: errorMsg,
                 icon: "danger",
-                duarion:5000
+                duarion: 5000
             });
             const sessionExpiredMessages = [
-              "User does not Exist....!Please login again",
-              "Invalid token. Please login again",
-              "Token has expired. Please login again"
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
             ];
-        
+
             if (sessionExpiredMessages.includes(errorMsg)) {
-              await AsyncStorage.removeItem("userToken");
-              navigation.reset({
-                index: 0,
-                routes: [{ name: "AuthStack" }],
-              });
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
             }
 
         } finally {

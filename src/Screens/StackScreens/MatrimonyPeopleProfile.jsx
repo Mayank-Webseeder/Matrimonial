@@ -27,7 +27,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slider, setSlider] = useState([]);
   const route = useRoute();
-  const { userId } = route.params || {};
+  const { userId ,isSaved } = route.params || {};
   const [loading, setLoading] = useState(false);
   const [loadingIntrest, setLoadingIntrest] = useState(false);
   const [intrestLoading, setIntrestLoading] = useState(false);
@@ -50,7 +50,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   // console.log("_id", User_Id);
   const personalDetails = userData?.personalDetails || {};
   const partnerPreferences = userData?.partnerPreferences || {};
-  const initialSavedState = profileData?.isSaved;
+  const initialSavedState = profileData?.isSaved || isSaved;
   const status = profileData?.requestStatus;
   const requestId = profileData?.requestId;
   const isVisible = profileData?.isVisible;

@@ -416,8 +416,7 @@ export default function ActivistForm({ navigation }) {
           placeholder="Enter your Full Name"
           value={ActivistData.fullname}
           onChangeText={(text) => {
-            const cleanText = text.replace(/[^A-Za-z\s]/g, '');
-            setActivistData((prev) => ({ ...prev, fullname: cleanText }));
+            setActivistData((prev) => ({ ...prev, fullname: text }));
           }}
           placeholderTextColor={Colors.gray}
           autoComplete="off"

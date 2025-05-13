@@ -759,8 +759,7 @@ const PanditRegister = ({ navigation }) => {
                     <TextInput style={Globalstyles.input}
                         value={RoleRegisterData?.fullName}
                         onChangeText={(text) => {
-                            const cleanText = text.replace(/[^A-Za-z\s]/g, '');
-                            setRoleRegisterData((prev) => ({ ...prev, fullName: cleanText }));
+                            setRoleRegisterData((prev) => ({ ...prev, fullName: text }));
                         }}
                         placeholder='Enter Your Full Name'
                         placeholderTextColor={Colors.gray}

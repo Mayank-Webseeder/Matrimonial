@@ -48,20 +48,20 @@ const SuccessStories = ({ navigation }) => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching success story:", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
         });
-      } 
+      }
     }
   };
 
@@ -84,20 +84,20 @@ const SuccessStories = ({ navigation }) => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching my success story:", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
         });
-      } 
+      }
       setMyStory(null);
     } finally {
       setLoadingMyStory(false);
@@ -129,7 +129,7 @@ const SuccessStories = ({ navigation }) => {
     const groom = item?.groomDetails || {};
 
     const bride = item?.brideDetails || {};
-    
+
     return (
       <View style={styles.storyCard}>
         <View style={styles.collabHeader}>
@@ -195,7 +195,11 @@ const SuccessStories = ({ navigation }) => {
         >
           <Image
             source={{ uri: item?.photoUrl }}
-            style={{ width: '100%', height: SH(300) }}
+            style={{
+              width: "100%",
+              height: undefined,
+              aspectRatio: 1,
+            }}
             resizeMode="cover"
           />
         </TouchableOpacity>
@@ -216,7 +220,7 @@ const SuccessStories = ({ navigation }) => {
             🌟 {item.rating}/5 App Rating
           </Text>
           <Text style={styles.ratingQuote}>
-          “ Brahmin Milan helped us find each other — <Text style={styles.thought}>{item.thought}</Text>”
+            “ Brahmin Milan helped us find each other — <Text style={styles.thought}>{item.thought}</Text>”
           </Text>
         </View>
       </View>

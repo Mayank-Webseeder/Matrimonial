@@ -274,7 +274,10 @@ const SuccessStories = ({ navigation }) => {
       {!loadingMyStory && myStory && (
         <TouchableOpacity
           onPress={() =>
-            navigation.navigate('MySuccessStory', { story: myStory })
+            navigation.navigate('MainApp', {
+              screen: 'MySuccessStory',
+              params: { story: myStory },
+            })
           }
         >
           <Text style={[styles.postText, { alignSelf: "flex-end" }]}>View Your Story</Text>

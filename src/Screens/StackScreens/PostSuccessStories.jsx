@@ -1,4 +1,4 @@
-import { Text, View, TextInput, TouchableOpacity, Image, SafeAreaView, StatusBar, StyleSheet } from 'react-native';
+import { Text, View, TextInput, TouchableOpacity, Image, SafeAreaView, StatusBar, StyleSheet, Alert } from 'react-native';
 import React, { useState } from 'react';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -107,16 +107,17 @@ const PostSuccessStories = ({ navigation }) => {
             console.log("✅ Success Story Response:", JSON.stringify(response.data));
 
             if (response.status === 200 && response.data.status === true) {
-                showMessage({
-                    type: 'success',
-                    message: 'Success',
-                    description: response.data.message || 'Your success story has been submitted!',
-                    icon: "success",
-                    duarion: 5000
-                });
-                setTimeout(() => {
-                    navigation.goBack();
-                }, 2000);
+                Alert.alert(
+                    'Success',
+                    response?.data?.message || 'Your success story has been submitted!',
+                    [
+                        {
+                            text: 'OK',
+                            onPress: () => navigation.goBack(),
+                        }
+                    ],
+                    { cancelable: false }
+                );
             } else {
                 throw new Error(response.data.message || "Something went wrong!");
             }
@@ -148,8 +149,8 @@ const PostSuccessStories = ({ navigation }) => {
 
     const handleImagePick = () => {
         ImageCropPicker.openPicker({
-            width: 300,
-            height: 300,
+            width: 1000,
+            height: 1000,
             cropping: true,
             compressImageQuality: 1,
             includeBase64: true,
@@ -223,7 +224,7 @@ const PostSuccessStories = ({ navigation }) => {
                     {errors.gromname && (
                         <Text style={styles.errorText}>{errors.gromname}</Text>
                     )}
-                    <Text style={Globalstyles.title}>Groom Biodata ID  <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                    <Text style={Globalstyles.title}>Groom User ID  <Entypo name={'star'} color={'red'} size={12} /> </Text>
                     <TextInput
                         style={Globalstyles.input}
                         placeholder="Enter Groom Biodata ID"
@@ -255,7 +256,7 @@ const PostSuccessStories = ({ navigation }) => {
                     {errors.bridename && (
                         <Text style={styles.errorText}>{errors.bridename}</Text>
                     )}
-                    <Text style={Globalstyles.title}>Bride Biodata ID  <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                    <Text style={Globalstyles.title}>Bride User ID  <Entypo name={'star'} color={'red'} size={12} /> </Text>
                     <TextInput
                         style={Globalstyles.input}
                         placeholder="Enter Bride Biodata ID"

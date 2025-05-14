@@ -397,7 +397,6 @@ export const AppStack = () => (
     <AppStackNavigator.Screen name="PanditRegister" component={PanditRegister} />
     <AppStackNavigator.Screen name="JyotishRegister" component={JyotishRegister} />
     <AppStackNavigator.Screen name="KathavachakRegister" component={KathavachakRegister} />
-    <AppStackNavigator.Screen name="MySuccessStory" component={MySuccessStory} />
   </AppStackNavigator.Navigator>
 );
 

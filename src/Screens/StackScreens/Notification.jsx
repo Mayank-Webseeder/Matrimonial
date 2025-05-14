@@ -114,27 +114,18 @@ const Notification = ({ navigation }) => {
   };
 
   const VIEW_Notification = (notification) => {
-    // Logging the entire notification object for inspection
     console.log("📬 Received notification object:", JSON.stringify(notification, null, 2));
 
     const { notificationType, _id, userId } = notification;
-
-    // Check if _id exists
     if (!_id) {
       console.warn("❌ Notification ID is missing!", { _id });
       return;
     }
-
-    // Check if userId exists
     if (!userId) {
       console.warn("❌ User ID is missing!", { userId });
       return;
     }
-
-    // Logging the details of the notification
     console.log("✅ Notification Details - Type:", notificationType, "ID:", _id, "User ID:", userId);
-
-    // Navigate based on the notification type
     switch (notificationType) {
       case 'comment':
       case 'like':
@@ -178,11 +169,20 @@ const Notification = ({ navigation }) => {
         navigation.navigate('PanditDetailPage', { pandit_id: notification?.relatedData?.panditId, userId });
         break;
 
+      case 'successStoryApproved':
+        navigation.navigate('MainApp', { screen: 'MySuccessStory' });
+        break;
+
+      case 'successStoryRejected':
+        navigation.navigate('MainApp', {
+          screen: 'SuccessStories',
+        });
+        break;
+
       default:
         console.log('⚠️ Unknown notification type:', notificationType);
     }
 
-    // Mark the notification as seen
     setTimeout(async () => {
       try {
         console.log("📤 Marking notification as seen for ID:", _id);
@@ -265,6 +265,16 @@ const Notification = ({ navigation }) => {
         navigation.navigate('PanditDetailPage', { pandit_id: notification?.relatedData?.panditId, userId });
         break;
 
+      case 'successStoryApproved':
+        navigation.navigate('MainApp', { screen: 'MySuccessStory' });
+        break;
+
+      case 'successStoryRejected':
+        navigation.navigate('MainApp', {
+          screen: 'SuccessStories',
+        });
+        break;
+
       default:
         console.log('Unknown notification type:', notificationType);
     }
@@ -300,6 +310,7 @@ const Notification = ({ navigation }) => {
     const photoUrl = Array.isArray(item?.relatedData?.photoUrl)
       ? item.relatedData.photoUrl[0]
       : item?.relatedData?.photoUrl;
+
     return (
       <TouchableOpacity style={styles.card} onPress={() => VIEW_Notification(item)}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -316,7 +327,7 @@ const Notification = ({ navigation }) => {
             }}
           />
 
-          <View style={{ marginLeft:SW(10), flex: 1 }}>
+          <View style={{ marginLeft: SW(10), flex: 1 }}>
             <Text style={styles.name}>{item.relatedData.username || item?.relatedData?.likedBy?.name || item?.relatedData?.commentBy?.name}</Text>
             <Text style={styles.message} ellipsizeMode="tail">{item?.message}</Text>
           </View>
@@ -344,7 +355,7 @@ const Notification = ({ navigation }) => {
               setImageError(true);
             }}
           />
-          <View style={{ marginLeft:SW(10), flex: 1 }}>
+          <View style={{ marginLeft: SW(10), flex: 1 }}>
             <Text style={styles.name}>
               {item.relatedData.username ||
                 item.relatedData.likedBy?.name ||
@@ -372,12 +383,11 @@ const Notification = ({ navigation }) => {
         </View>
       </View>
       <View style={{ flex: 1 }}>
-        {/* Toggle Buttons */}
-        <View style={{ flexDirection: "row", justifyContent:"space-evenly", marginVertical: 10 }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-evenly", marginVertical: 10 }}>
           <TouchableOpacity
             onPress={() => setShowSeen(false)}
             style={{
-              width:SW(150),
+              width: SW(150),
               paddingVertical: SH(10),
               paddingHorizontal: (10),
               backgroundColor: !showSeen ? Colors.theme_color : "lightgray",
@@ -389,7 +399,7 @@ const Notification = ({ navigation }) => {
           <TouchableOpacity
             onPress={() => setShowSeen(true)}
             style={{
-              width:SW(150),
+              width: SW(150),
               paddingVertical: SH(10),
               paddingHorizontal: (13),
               backgroundColor: showSeen ? Colors.theme_color : "lightgray",

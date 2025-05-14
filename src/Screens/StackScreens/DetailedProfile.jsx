@@ -217,12 +217,12 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
   const handleImageSelection = (field) => {
     ImageCropPicker.openPicker({
-      width: 2000,
-      height: 3000,
+      width: 1000,
+      height: 1000,
       cropping: true,
+      compressImageQuality: 1,
       includeBase64: true,
       mediaType: "photo",
-      compressImageQuality: 1
     })
       .then(image => {
         if (!image || !image.data) {

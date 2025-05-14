@@ -45,7 +45,7 @@ const Globalstyles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: SH(5),
     paddingHorizontal: SW(10),
-    paddingVertical: SH(10),
+    paddingVertical: SH(12),
     borderRadius: 5,
     color: Colors.dark,
     letterSpacing: 0, textAlign: "left"

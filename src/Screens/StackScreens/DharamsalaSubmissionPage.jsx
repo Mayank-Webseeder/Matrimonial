@@ -284,9 +284,14 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
             <View style={Globalstyles.form}>
                 <Text style={styles.title}>Upload Your Dharamsala Details</Text>
 
-                <Text style={Globalstyles.title}>Dharamsala Name <Entypo name={'star'} color={'red'} size={12} /></Text>
+                <Text style={Globalstyles.title}>
+                    Dharamsala Name <Entypo name={'star'} color={'red'} size={12} />
+                </Text>
                 <TextInput
-                    style={Globalstyles.input}
+                    style={[
+                        Globalstyles.input,
+                        errors.dharmshalaName && styles.errorInput,
+                    ]}
                     placeholder="Enter Dharamsala Name"
                     value={DharamsalaData?.dharmshalaName}
                     onChangeText={(text) => {
@@ -303,7 +308,10 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
 
                 <Text style={Globalstyles.title}>Sub-Caste Name <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <Dropdown
-                    style={Globalstyles.input}
+                   style={[
+                        Globalstyles.input,
+                        errors.subCaste && styles.errorInput,
+                    ]}
                     data={subCasteOptions}
                     labelField="label"
                     valueField="value"
@@ -315,38 +323,16 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     showsVerticalScrollIndicator={false}
                 />
 
-                {/* <TextInput
-                    style={Globalstyles.input}
-                    value={DharamsalaData?.subCaste} // `myBiodata?.subCaste` ki jagah `subCasteInput` use karein
-                    onChangeText={handleSubCasteInputChange}
-                    placeholder="Type your sub caste"
-                    placeholderTextColor={Colors.gray}
-                    autoComplete="off"
-                    textContentType="none"
-                /> */}
-
-                {/* Agar user type karega toh list dikhegi */}
-                {/* {filteredSubCaste.length > 0 ? (
-                    <FlatList
-                        data={filteredSubCaste.slice(0, 5)}
-                        scrollEnabled={false}
-                        keyExtractor={(item, index) => index.toString()}
-                        renderItem={({ item }) => (
-                            <TouchableOpacity onPress={() => handleSubCasteSelect(item)}>
-                                <Text style={Globalstyles.listItem}>{item}</Text>
-                            </TouchableOpacity>
-                        )}
-                        style={Globalstyles.suggestions}
-                    />
-                ) : null} */}
-
                 {errors.subCaste && (
                     <Text style={styles.errorText}>{errors.subCaste}</Text>
                 )}
 
                 <Text style={Globalstyles.title}>City <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
-                    style={Globalstyles.input}
+                     style={[
+                        Globalstyles.input,
+                        errors.city && styles.errorInput,
+                    ]}
                     value={DharamsalaData?.city}
                     onChangeText={handleCityInputChange}
                     placeholder="Enter your city"
@@ -373,7 +359,10 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
 
                 <Text style={Globalstyles.title}>Contact <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
-                    style={Globalstyles.input}
+                     style={[
+                        Globalstyles.input,
+                        errors.mobileNo && styles.errorInput,
+                    ]}
                     placeholder="Enter Person's Contact No."
                     keyboardType="numeric"
                     maxLength={10}
@@ -388,7 +377,9 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
 
                 <Text style={Globalstyles.title}>Description</Text>
                 <TextInput
-                    style={[Globalstyles.input, styles.textArea]}
+                  style={[
+                        Globalstyles.input,styles.textArea
+                    ]}
                     placeholder="Enter Description"
                     placeholderTextColor={Colors.gray}
                     value={DharamsalaData.description} onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, description: text }))}
@@ -495,7 +486,11 @@ const styles = StyleSheet.create({
     contentContainer: {
         margin: SW(15),
         marginTop: 0
-    }
+    },
+    errorInput: {
+        borderColor: 'red',
+        borderWidth: 1,
+    },
 });
 
 export default DharamsalaSubmissionPage;

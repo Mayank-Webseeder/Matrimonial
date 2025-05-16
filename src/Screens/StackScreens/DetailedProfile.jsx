@@ -526,12 +526,12 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
         if (Object.keys(errors).length > 0) {
           const errorMessages = Object.values(errors).join('\n');
-          showMessage({
-            message: errorMessages,
-            type: "danger",
-            duration: 5000,
-            icon: "danger"
-          });
+          // showMessage({
+          //   message: errorMessages,
+          //   type: "danger",
+          //   duration: 5000,
+          //   icon: "danger"
+          // });
           console.log("❌ Validation failed. Errors:", errors);
           setErrors(errors);
           setIsLoading(false);
@@ -860,7 +860,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           </View>
           <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
           <Dropdown
-            style={[Globalstyles.input, !isEditing && styles.readOnly]}
+            style={[Globalstyles.input, !isEditing && styles.readOnly,errors.subCaste && styles.errorInput]}
             data={subCasteOptions}
             labelField="label"
             valueField="value"
@@ -895,7 +895,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Gender <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.gender && styles.errorInput]}
               data={genderData}
               labelField="label"
               valueField="value"
@@ -911,7 +911,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Full Name <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <TextInput
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.fullname && styles.errorInput]}
               value={biodata?.fullname}
               editable={isEditing}
               onChangeText={(text) => {
@@ -932,7 +932,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
             <View
               style={[
-                Globalstyles.input,
+                Globalstyles.input,errors.dob && styles.errorInput,
                 {
                   flexDirection: "row",
                   alignItems: "center",
@@ -985,7 +985,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
             >
               <View
                 style={[
-                  Globalstyles.input,
+                  Globalstyles.input,errors.dob && styles.errorInput,
                   {
                     flexDirection: "row",
                     alignItems: "center",
@@ -1037,7 +1037,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Place of Birth <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <TextInput
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.placeofbirth && styles.errorInput]}
               value={biodata?.placeofbirth}
               editable={isEditing}
               onChangeText={(text) => handleInputChange("placeofbirth", text)}
@@ -1051,7 +1051,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Marital Status <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.maritalStatus && styles.errorInput]}
               data={maritalStatusData}
               labelField="label"
               valueField="value"
@@ -1071,7 +1071,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
             <Text style={Globalstyles.title}>
               Disabilities (physical, mental, etc.) <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.disabilities && styles.errorInput]}
               data={MyDisabilities}
               labelField="label"
               valueField="value"
@@ -1088,7 +1088,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Height <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.heightFeet && styles.errorInput]}
               data={heightData}
               labelField="label"
               valueField="value"
@@ -1141,7 +1141,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Manglik Status <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.manglikStatus && styles.errorInput]}
               data={ManglikStatusData}
               labelField="label"
               valueField="value"
@@ -1202,7 +1202,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Qualification <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.qualification && styles.errorInput]}
               data={QualificationData}
               labelField="label"
               valueField="value"
@@ -1222,7 +1222,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Occupation <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.occupation && styles.errorInput]}
               data={OccupationData}
               labelField="label"
               valueField="value"
@@ -1242,7 +1242,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Income (Annually) <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.annualIncome && styles.errorInput]}
               data={Income}
               labelField="label"
               valueField="value"
@@ -1262,7 +1262,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Are you living with Family <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.livingStatus && styles.errorInput]}
               data={LivingData}
               labelField="label"
               valueField="value"
@@ -1282,7 +1282,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Which city do you currently live in? <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <TextInput
-              style={Globalstyles.input}
+              style={[Globalstyles.input,errors.currentCity && styles.errorInput]}
               value={biodata?.currentCity}
               onChangeText={handleCityInputChange}
               placeholder="Enter your city"
@@ -1326,7 +1326,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Profile created by <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.profileCreatedBy && styles.errorInput]}
               data={ProfileCreatedData}
               labelField="label"
               valueField="value"
@@ -1347,7 +1347,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Father Full Name <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <TextInput
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.fatherName && styles.errorInput]}
               value={biodata?.fatherName}
               onChangeText={(text) => {
                 handleInputChange("fatherName", text);
@@ -1363,7 +1363,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Mother Full Name <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <TextInput
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.motherName && styles.errorInput]}
               value={biodata?.motherName}
               onChangeText={(text) => {
                 handleInputChange("motherName", text);
@@ -1379,7 +1379,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Father Occupation <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.fatherOccupation && styles.errorInput]}
               data={MotherOccupationData}
               labelField="label"
               valueField="value"
@@ -1399,7 +1399,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Father Income (Annually) <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.fatherIncomeAnnually && styles.errorInput]}
               data={Income}
               labelField="label"
               valueField="value"
@@ -1420,7 +1420,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Mother Occupation <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.motherOccupation && styles.errorInput]}
               data={MotherOccupationData}
               labelField="label"
               valueField="value"
@@ -1440,7 +1440,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Mother Income (Annually) <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.motherIncomeAnnually && styles.errorInput]}
               data={Income}
               labelField="label"
               valueField="value"
@@ -1461,7 +1461,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Family Type <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.familyType && styles.errorInput]}
               data={FamilyType}
               labelField="label"
               valueField="value"
@@ -1481,7 +1481,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Siblings <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.siblings && styles.errorInput]}
               data={siblings}
               labelField="label"
               valueField="value"
@@ -1519,7 +1519,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
             </View>
 
             <TextInput
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.contactNumber1 && styles.errorInput]}
               value={biodata?.contactNumber1}
               onChangeText={(text) => {
                 const cleanText = text.replace(/[^0-9]/g, '');
@@ -1539,7 +1539,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Contact No. 2 <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <TextInput
-              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.contactNumber2 && styles.errorInput]}
               value={biodata?.contactNumber2}
               onChangeText={(text) => {
                 const cleanText = text.replace(/[^0-9]/g, '');
@@ -1560,7 +1560,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
             <Text style={Globalstyles.title}>State <Entypo name={'star'} color={'red'} size={12} /></Text>
             <TextInput
-              style={Globalstyles.input}
+              style={[Globalstyles.input,errors.state && styles.errorInput]}
               value={biodata?.state} // `biodata?.state` ki jagah `stateInput` use karein
               onChangeText={handleStateInputChange}
               placeholder="Type your State"
@@ -1586,7 +1586,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>City/Village <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <TextInput
-              style={Globalstyles.input}
+              style={[Globalstyles.input,errors.cityOrVillage && styles.errorInput]}
               value={biodata?.cityOrVillage}
               onChangeText={handleCityOrVillageInputChange}
               placeholder="Type your city/village"
@@ -1728,7 +1728,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Upload Your One Closeup Image <Entypo name={'star'} color={'red'} size={12} /> </Text>
 
-            <View style={Globalstyles.input}>
+            <View style={[Globalstyles.input,errors.closeUpPhoto && styles.errorInput]}>
               <TouchableOpacity onPress={() => handleImageSelection('closeUpPhoto')}>
                 {biodata?.closeUpPhoto ? (
                   <Image

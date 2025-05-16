@@ -3,6 +3,10 @@ import Colors from "../../utils/Colors";
 import { SH, SW, SF } from "../../utils/Dimensions";
 
 const styles = StyleSheet.create({
+    errorInput: {
+        borderColor: 'red',
+        borderWidth: 1,
+    },
     tag: {
         flexDirection: "row",
         backgroundColor: "#E0E0E0",

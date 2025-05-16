@@ -159,8 +159,8 @@ const SuccessStories = ({ navigation }) => {
             </View>
           </TouchableOpacity>
 
-          <View style={{ marginLeft: SW(8) }}>
-            <View style={{ flexDirection: 'row', marginLeft: SW(8) }}>
+          <View style={{ marginLeft: SW(3) }}>
+            <View style={{ flexDirection: 'row'}}>
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate('MatrimonyPeopleProfile', { userId: groom?.userId })

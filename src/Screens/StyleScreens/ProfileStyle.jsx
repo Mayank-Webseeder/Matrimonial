@@ -394,6 +394,10 @@ const styles = StyleSheet.create({
         color: "gray",
         // paddingVertical: SH(10)
     },
+    errorInput: {
+        borderColor: 'red',
+        borderWidth: 1,
+    },
 
 })
 export default styles

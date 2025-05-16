@@ -33,7 +33,7 @@ const PanditRegister = ({ navigation }) => {
     const profileData = ProfileData?.profiledata || {};
     const hasTrial = profileData.serviceSubscriptions?.some(
         (sub) => sub.subscriptionType === "Trial" && sub.serviceType === "Pandit"
-      );
+    );
     const [fetchProfileDetails, setFetchProfileDetails] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState({});
@@ -756,7 +756,7 @@ const PanditRegister = ({ navigation }) => {
                 <View style={Globalstyles.form}>
                     {/* <Text style={styles.editText}>Edit Details</Text> */}
                     <Text style={Globalstyles.title}>Name <Entypo name={'star'} color={'red'} size={12} /></Text>
-                    <TextInput style={Globalstyles.input}
+                    <TextInput style={[Globalstyles.input, errors.fullName && styles.errorInput]}
                         value={RoleRegisterData?.fullName}
                         onChangeText={(text) => {
                             setRoleRegisterData((prev) => ({ ...prev, fullName: text }));
@@ -765,11 +765,11 @@ const PanditRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
-                    />a
+                    />
                     {errors.fullName && <Text style={styles.errorText}>{errors.fullName}</Text>}
 
                     <Text style={Globalstyles.title}>Mobile No. <Entypo name={'star'} color={'red'} size={12} /></Text>
-                    <TextInput style={Globalstyles.input}
+                    <TextInput style={[Globalstyles.input, errors.mobileNo && styles.errorInput]}
                         value={RoleRegisterData?.mobileNo}
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
                         keyboardType="phone-pad"
@@ -782,7 +782,7 @@ const PanditRegister = ({ navigation }) => {
 
                     <Text style={Globalstyles.title}>State <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput
-                        style={Globalstyles.input}
+                        style={[Globalstyles.input, errors.state && styles.errorInput]}
                         value={RoleRegisterData?.state} // `biodata?.state` ki jagah `stateInput` use karein
                         onChangeText={handleStateInputChange}
                         placeholder="Type your State"
@@ -808,7 +808,7 @@ const PanditRegister = ({ navigation }) => {
 
                     <Text style={Globalstyles.title}>Village / City <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput
-                        style={Globalstyles.input}
+                        style={[Globalstyles.input, errors.city && styles.errorInput]}
                         value={RoleRegisterData?.city}
                         onChangeText={handleCityInputChange}
                         placeholder="Enter your city"
@@ -833,7 +833,7 @@ const PanditRegister = ({ navigation }) => {
 
 
                     <Text style={Globalstyles.title}>Area</Text>
-                    <TextInput style={Globalstyles.input}
+                    <TextInput style={[Globalstyles.input]}
                         value={RoleRegisterData?.residentialAddress}
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, residentialAddress: text }))}
                         placeholder='Enter Your Area'
@@ -863,7 +863,7 @@ const PanditRegister = ({ navigation }) => {
                         textContentType="none"
                     /> */}
                     <Dropdown
-                        style={Globalstyles.input}
+                        style={[Globalstyles.input, errors.subCaste && styles.errorInput]}
                         data={subCasteOptions}
                         labelField="label"
                         valueField="value"
@@ -894,7 +894,7 @@ const PanditRegister = ({ navigation }) => {
 
                     {/* Role Selection with Checkboxes */}
                     <Text style={Globalstyles.title}>Select Pandit Services <Entypo name={'star'} color={'red'} size={12} /></Text>
-                    <View style={styles.checkboxContainer}>
+                    <View style={[styles.checkboxContainer, errors.selectedRoles && styles.errorInput]}>
                         {roleOptions.map(role => (
                             <View key={role.value} style={styles.checkboxItem}>
                                 <Checkbox
@@ -941,7 +941,7 @@ const PanditRegister = ({ navigation }) => {
                     </View>
 
                     <Text style={Globalstyles.title}>Profile Photo <Entypo name={'star'} color={'red'} size={12} /></Text>
-                    <View style={Globalstyles.input}>
+                    <View style={[Globalstyles.input, errors.profilePhoto && styles.errorInput]}>
                         <TouchableOpacity onPress={handleProfilePhotoPick}>
                             {RoleRegisterData.profilePhoto ? (
                                 <Image

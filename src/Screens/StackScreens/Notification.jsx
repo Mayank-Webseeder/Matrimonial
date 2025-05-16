@@ -387,11 +387,11 @@ const Notification = ({ navigation }) => {
         </View>
       </View>
       <View style={{ flex: 1 }}>
-        <View style={{ flexDirection: "row", justifyContent: "space-evenly", marginVertical: 10 }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: SH(10) }}>
           <TouchableOpacity
             onPress={() => setShowSeen(false)}
             style={{
-              width: SW(150),
+              // width: SW(150),
               paddingVertical: SH(10),
               paddingHorizontal: (10),
               backgroundColor: !showSeen ? Colors.theme_color : "lightgray",
@@ -403,7 +403,7 @@ const Notification = ({ navigation }) => {
           <TouchableOpacity
             onPress={() => setShowSeen(true)}
             style={{
-              width: SW(150),
+              // width: SW(150),
               paddingVertical: SH(10),
               paddingHorizontal: (13),
               backgroundColor: showSeen ? Colors.theme_color : "lightgray",

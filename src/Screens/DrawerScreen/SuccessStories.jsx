@@ -151,7 +151,7 @@ const SuccessStories = ({ navigation }) => {
             }
           >
             <Image
-              source={{ uri: bride.profileImage || require('../../Images/NoImage.png') }}
+              source={{ uri: bride?.profileImage || require('../../Images/NoImage.png') }}
               style={styles.avatar}
             />
             <View style={styles.collabIcon}>
@@ -189,7 +189,7 @@ const SuccessStories = ({ navigation }) => {
         <TouchableOpacity
           activeOpacity={0.9}
           onPress={() => {
-            setCurrentImg(item.photoUrl);
+            setCurrentImg(item?.photoUrl);
             setViewerVisible(true);
           }}
         >
@@ -217,7 +217,7 @@ const SuccessStories = ({ navigation }) => {
 
         <View style={styles.ratingRow}>
           <Text style={styles.ratingText}>
-            🌟 {item.rating}/5 App Rating
+            🌟 {item?.rating}/5 App Rating
           </Text>
           <Text style={styles.ratingQuote}>
             “ Brahmin Milan helped us find each other — <Text style={styles.thought}>{item.thought}</Text>”

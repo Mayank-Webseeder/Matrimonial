@@ -12,6 +12,7 @@ import axios from 'axios';
 import { CREATE_EVENT_NEWS } from '../../utils/BaseUrl';
 import { showMessage } from 'react-native-flash-message';
 import { launchImageLibrary } from 'react-native-image-picker';
+import { CommonActions } from '@react-navigation/native';
 
 const CreatePost = ({ navigation, route }) => {
     const MyActivistProfile = useSelector((state) => state.activist.activist_data);
@@ -101,7 +102,12 @@ const CreatePost = ({ navigation, route }) => {
                     description: response.data.message || 'Your event has been created successfully!',
                     duarion: 5000
                 });
-                navigation.navigate('ViewMyEventPost');
+                navigation.dispatch(
+                    CommonActions.reset({
+                        index: 0,
+                        routes: [{ name: 'EventNews' }],
+                    })
+                );
             } else {
                 throw new Error(response.data.message || "Unexpected response from server");
             }
@@ -145,7 +151,12 @@ const CreatePost = ({ navigation, route }) => {
 
             <View style={Globalstyles.header}>
                 <View style={{ flexDirection: 'row', alignItems: "center" }}>
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <TouchableOpacity onPress={() => navigation.navigate("MainApp", {
+                        screen: "Tabs",
+                        params: {
+                            screen: "EventNews",
+                        },
+                    })}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
                     <Text style={Globalstyles.headerText}>Create Post</Text>

@@ -44,7 +44,10 @@ const SuccessStories = ({ navigation }) => {
 
       const res = await axios.get(SUCESS_STORIES, { headers });
       console.log("sucess story data ", JSON.stringify(res.data.data))
-      setStories(res.data.data);
+      const filteredStories = res.data.data.filter(
+        story => story.groomDetails !== null && story.brideDetails !== null
+      );
+      setStories(filteredStories);
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching success story:", errorMsg);
@@ -109,22 +112,6 @@ const SuccessStories = ({ navigation }) => {
     fetchSuccessStories().finally(() => setRefreshing(false));
   }, []);
 
-  const renderStars = (rating) => {
-    const stars = [];
-    for (let i = 1; i <= rating; i++) {
-      stars.push(
-        <FontAwesome
-          key={i}
-          name={'star'}
-          size={20}
-          color={'#FF9900'}
-          style={{ marginHorizontal: 2 }}
-        />
-      );
-    }
-    return stars;
-  };
-
   const renderItem = ({ item }) => {
     const groom = item?.groomDetails || {};
 
@@ -160,7 +147,7 @@ const SuccessStories = ({ navigation }) => {
           </TouchableOpacity>
 
           <View style={{ marginLeft: SW(3) }}>
-            <View style={{ flexDirection: 'row'}}>
+            <View style={{ flexDirection: 'row' }}>
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate('MatrimonyPeopleProfile', { userId: groom?.userId })

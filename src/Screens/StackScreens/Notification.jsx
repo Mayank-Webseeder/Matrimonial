@@ -129,8 +129,13 @@ const Notification = ({ navigation }) => {
     switch (notificationType) {
       case 'comment':
       case 'like':
-        console.log("🚀 Navigating to EventNews with ID:", _id, "User ID:", userId);
-        navigation.navigate('EventNews', { id: _id, userId });
+        const postId = notification?.relatedData?.postId;
+        if (!postId) {
+          console.warn("❌ Post ID is missing in relatedData:", notification);
+          return;
+        }
+        console.log("🚀 Navigating to EventNews with postId:", postId);
+        navigation.navigate('EventNews', { id: postId, userId });
         break;
 
       case 'activistApproved':
@@ -229,7 +234,13 @@ const Notification = ({ navigation }) => {
     switch (notificationType) {
       case 'comment':
       case 'like':
-        navigation.navigate('EventNews', { id: _id, userId });
+        const postId = notification?.relatedData?.postId;
+        if (!postId) {
+          console.warn("❌ Post ID is missing in relatedData:", notification);
+          return;
+        }
+        console.log("🚀 Navigating to EventNews with postId:", postId);
+        navigation.navigate('EventNews', { id: postId, userId });
         break;
 
       case 'activistApproved':
@@ -387,7 +398,7 @@ const Notification = ({ navigation }) => {
         </View>
       </View>
       <View style={{ flex: 1 }}>
-        <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: SH(10) }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-around", marginVertical: SH(10) }}>
           <TouchableOpacity
             onPress={() => setShowSeen(false)}
             style={{

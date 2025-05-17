@@ -272,7 +272,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
     console.log("✅ Accepting request for userId:", requestId);
 
     try {
-      const token = await AsyncStorager.getItem("userToken");
+      const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         showMessage({
           type: "danger",

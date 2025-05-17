@@ -94,7 +94,7 @@ const Home = ({ navigation }) => {
           },
         ]
       );
-    }    
+    }
   }, [isBiodataExpired, isPanditExpired, isJyotishExpired, isKathavachakExpired]);
 
 
@@ -128,6 +128,7 @@ const Home = ({ navigation }) => {
   useEffect(() => {
     Top_Advertisement_window();
     Bottom_Advertisement_window();
+    GetAll_Notification();
   }, []);
 
   const GetAll_Notification = async () => {
@@ -176,7 +177,7 @@ const Home = ({ navigation }) => {
       setIsLoading(false);
     }
   };
-  
+
   const fetchProfile = async () => {
     setProfileData({});
     try {
@@ -367,55 +368,55 @@ const Home = ({ navigation }) => {
     }
   };
 
-    const getActivistProfile = async () => {
-      try {
+  const getActivistProfile = async () => {
+    try {
+      setActivitData({});
+      setIsLoading(true);
+
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+      const response = await axios.get(GET_ACTIVIST, { headers });
+      console.log("Activist data", JSON.stringify(response.data));
+
+      if (response.data && response.data.data) {
+        const fetchedData = response.data.data;
+        setActivitData(fetchedData);
+        dispatch(setActivistdata(fetchedData));
+      } else {
         setActivitData({});
-        setIsLoading(true);
-  
-        const token = await AsyncStorage.getItem('userToken');
-        if (!token) throw new Error('No token found');
-  
-        const headers = {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        };
-  
-        const response = await axios.get(GET_ACTIVIST, { headers });
-        console.log("Activist data", JSON.stringify(response.data));
-  
-        if (response.data && response.data.data) {
-          const fetchedData = response.data.data;
-          setActivitData(fetchedData);
-          dispatch(setActivistdata(fetchedData));
-        } else {
-          setActivitData({});
-          dispatch(setActivistdata({}));
-        }
-      } catch (error) {
-        const errorMsg = error.response?.data?.message || error.message;
-        console.error("Error fetching activist data:", errorMsg);
-  
-        const sessionExpiredMessages = [
-          "User does not Exist....!Please login again",
-          "Invalid token. Please login again",
-          "Token has expired. Please login again"
-        ];
-  
-        if (sessionExpiredMessages.includes(errorMsg)) {
-          await AsyncStorage.removeItem("userToken");
-          navigation.reset({
-            index: 0,
-            routes: [{ name: "AuthStack" }],
-          });
-        }
-        if (error.response && error.response.status === 400) {
-         dispatch(resetsetActivistdata()); 
-        }
-      } finally {
-        setIsLoading(false);
+        dispatch(setActivistdata({}));
       }
-    };
-    
+    } catch (error) {
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching activist data:", errorMsg);
+
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
+      if (error.response && error.response.status === 400) {
+        dispatch(resetsetActivistdata());
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleNavigateToProfile = (item) => {
     console.log("item", item);
     if (!navigation.isFocused()) return;

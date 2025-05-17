@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, FlatList, SafeAreaView, StatusBar, Image, ActivityIndicator, RefreshControl } from 'react-native';
+import { Text, View, TouchableOpacity, FlatList, SafeAreaView, StatusBar, Image, ActivityIndicator, RefreshControl, Alert } from 'react-native';
 import React, { useEffect, useState, useCallback } from 'react';
 import styles from '../StyleScreens/NotificationsStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -143,6 +143,10 @@ const Notification = ({ navigation }) => {
         navigation.navigate('Activist', { id: _id, userId });
         break;
 
+      case 'activistRejected':
+        navigation.navigate('Activist', { id: _id, userId });
+        break;
+
       case 'connectionRequestResponse':
         console.log("Navigating to MatrimonyPeopleProfile with ID:", notification._id, "User ID:", notification.relatedData.toUserId);
         navigation.navigate('MainApp', { screen: 'Interested Profile' });
@@ -168,6 +172,36 @@ const Notification = ({ navigation }) => {
         navigation.navigate('PanditDetailPage', { pandit_id: notification?.relatedData?.panditId, userId });
         break;
 
+      case 'kathavachakRejected':
+        console.log("Navigating to KathavachakDetailsPage with kathavachak_id:", notification?.relatedData?.kathavachakId, "User ID:", userId);
+        navigation.navigate("MainApp", {
+          screen: "Tabs",
+          params: {
+            screen: "MyProfile",
+          },
+        });
+        break;
+
+      case 'jyotishRejected':
+        console.log("Navigating to JyotishDetailsPage with jyotish_id:", notification?.relatedData?.jyotishId, "User ID:", userId);
+        navigation.navigate("MainApp", {
+          screen: "Tabs",
+          params: {
+            screen: "MyProfile",
+          },
+        });
+        break;
+
+      case 'panditRejected':
+        console.log("Navigating to PanditDetailPage with pandit_id:", notification?.relatedData?.panditId, "User ID:", userId);
+        navigation.navigate("MainApp", {
+          screen: "Tabs",
+          params: {
+            screen: "MyProfile",
+          },
+        });
+        break;
+
       case 'successStoryApproved':
         navigation.navigate('MainApp', { screen: 'MySuccessStory' });
         break;
@@ -176,6 +210,20 @@ const Notification = ({ navigation }) => {
         navigation.navigate('MainApp', {
           screen: 'SuccessStories',
         });
+        break;
+
+      case 'respondOnFeedBackByAdmin':
+        Alert.alert(
+          "Feedback Response",
+          notification?.message || "You have a new message from admin.",
+          [
+            {
+              text: "OK",
+              onPress: () => navigation.navigate('MainApp'),
+            },
+          ],
+          { cancelable: false }
+        );
         break;
 
       default:
@@ -239,6 +287,10 @@ const Notification = ({ navigation }) => {
         navigation.navigate('Activist', { id: _id, userId });
         break;
 
+      case 'activistRejected':
+        navigation.navigate('Activist', { id: _id, userId });
+        break;
+
       case 'connectionRequestResponse':
         console.log("Navigating to MatrimonyPeopleProfile with ID:", notification._id, "User ID:", notification.relatedData.fromUserId);
         // navigation.navigate('MatrimonyPeopleProfile', {
@@ -272,6 +324,36 @@ const Notification = ({ navigation }) => {
         navigation.navigate('PanditDetailPage', { pandit_id: notification?.relatedData?.panditId, userId });
         break;
 
+      case 'KathavachakRejected':
+        console.log("Navigating to KathavachakDetailsPage with kathavachak_id:", notification?.relatedData?.kathavachakId, "User ID:", userId);
+        navigation.navigate("MainApp", {
+          screen: "Tabs",
+          params: {
+            screen: "MyProfile",
+          },
+        });
+        break;
+
+      case 'jyotishRejected':
+        console.log("Navigating to JyotishDetailsPage with jyotish_id:", notification?.relatedData?.jyotishId, "User ID:", userId);
+        navigation.navigate("MainApp", {
+          screen: "Tabs",
+          params: {
+            screen: "MyProfile",
+          },
+        });
+        break;
+
+      case 'panditRejected':
+        console.log("Navigating to PanditDetailPage with pandit_id:", notification?.relatedData?.panditId, "User ID:", userId);
+        navigation.navigate("MainApp", {
+          screen: "Tabs",
+          params: {
+            screen: "MyProfile",
+          },
+        });
+        break;
+
       case 'successStoryApproved':
         navigation.navigate('MainApp', { screen: 'MySuccessStory' });
         break;
@@ -280,6 +362,20 @@ const Notification = ({ navigation }) => {
         navigation.navigate('MainApp', {
           screen: 'SuccessStories',
         });
+        break;
+
+      case 'respondOnFeedBackByAdmin':
+        Alert.alert(
+          "Feedback Response",
+          notification?.message || "You have a new message from admin.",
+          [
+            {
+              text: "OK",
+              onPress: () => navigation.navigate('MainApp'),
+            },
+          ],
+          { cancelable: false }
+        );
         break;
 
       default:

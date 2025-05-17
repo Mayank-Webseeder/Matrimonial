@@ -23,7 +23,7 @@ import { CommonActions } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/native';
 
 const EventNews = ({ navigation }) => {
-   const route = useRoute();
+  const route = useRoute();
   const { postId } = route.params || {};
   const sheetRef = useRef(null);
   const sliderRef = useRef(null);
@@ -836,7 +836,7 @@ const EventNews = ({ navigation }) => {
         contentContainerStyle={{ flexGrow: 1 }}
       >
         <FlatList
-         data={postId ? eventdata : getPostsForPage()}
+          data={postId ? eventdata : getPostsForPage()}
           renderItem={renderItem}
           keyExtractor={(item) => item._id}
           scrollEnabled={false}

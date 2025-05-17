@@ -435,11 +435,9 @@ const ViewMyEventPost = ({ navigation, route }) => {
   }
 
   const showModal = (event, item) => {
-    event.stopPropagation(); // Stop event bubbling
-    setModalData(item); // Set the correct event data
+    event.stopPropagation();
+    setModalData(item); 
     setModalVisible(true);
-
-    // Get button position
     event.target.measure((fx, fy, width, height, px, py) => {
       setModalPosition({ top: py + height + 5, left: px - 130 });
     });
@@ -515,8 +513,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
 
   const renderItem = ({ item }) => {
     const isLiked = item.isLiked || null;
-    // Ensure images are properly extracted from the array
-    const images = item.images || []; // Use the 'images' array directly
+    const images = item.images || [];
 
     return (
       <View style={styles.card}>

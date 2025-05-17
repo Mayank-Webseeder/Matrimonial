@@ -88,6 +88,7 @@ import AboutUs from '../Screens/DrawerScreen/AboutUs';
 import PrivacyPolicy from '../Screens/DrawerScreen/PrivacyPolicy';
 import TermsConditions from '../Screens/DrawerScreen/TermsConditions';
 import SubscriptionPolicy from '../Screens/DrawerScreen/SubscriptionPolicy';
+import LikeCommentEventPost from '../Screens/StackScreens/LikeCommentEventPost';
 
 const Stack = createNativeStackNavigator();
 const AppStackNavigator = createNativeStackNavigator();
@@ -230,7 +231,7 @@ function MyTabs({ route }) {
 
   return (
     <Tab.Navigator
-     initialRouteName={initialRoute}
+      initialRouteName={initialRoute}
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarShowLabel: true,
@@ -397,6 +398,7 @@ export const AppStack = () => (
     <AppStackNavigator.Screen name="PanditRegister" component={PanditRegister} />
     <AppStackNavigator.Screen name="JyotishRegister" component={JyotishRegister} />
     <AppStackNavigator.Screen name="KathavachakRegister" component={KathavachakRegister} />
+    <AppStackNavigator.Screen name="LikeCommentEventPost" component={LikeCommentEventPost} />
   </AppStackNavigator.Navigator>
 );
 

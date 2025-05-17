@@ -31,7 +31,6 @@ const ViewMyEventPost = ({ navigation, route }) => {
   const events = route?.params?.events || myeventpost;
   const [commentData, setCommentData] = useState({});
   const [selectedPostId, setSelectedPostId] = useState(null)
-  const [page, setPage] = useState(1);
   const [IsLoading, setIsLoading] = useState(false);
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
   const [myComment, setMyComment] = useState("");
@@ -48,16 +47,18 @@ const ViewMyEventPost = ({ navigation, route }) => {
     setTimeout(() => {
       setRefreshing(false);
       fetchPostData();
-      setPage(1);
     }, 2000);
   }, []);
 
   useFocusEffect(
     useCallback(() => {
-      setPage(1);
       fetchPostData();
     }, [])
   );
+
+  useEffect(() => {
+    fetchPostData();
+  }, [])
 
   const fetchPostData = async () => {
     try {
@@ -436,7 +437,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
 
   const showModal = (event, item) => {
     event.stopPropagation();
-    setModalData(item); 
+    setModalData(item);
     setModalVisible(true);
     event.target.measure((fx, fy, width, height, px, py) => {
       setModalPosition({ top: py + height + 5, left: px - 130 });
@@ -671,9 +672,9 @@ const ViewMyEventPost = ({ navigation, route }) => {
                       disabled={deletecommentLoading}
                     >
                       {deletecommentLoading ? (
-                        <Text style={{ color: Colors.theme_color, fontSize: 12 }}>Deleting...</Text>
+                        <Text style={{ color: Colors.theme_color, fontSize: SF(13), fontFamily: "Poppins-Regular" }}>Deleting...</Text>
                       ) : (
-                        <Entypo name={'cross'} color={Colors.theme_color} size={15} />
+                        <Entypo name={'cross'} color={Colors.theme_color} size={17} />
                       )}
                     </TouchableOpacity>
 
@@ -747,7 +748,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
       </View>
       <ScrollView style={styles.bottomContainer} showsVerticalScrollIndicator={false}>
         <FlatList
-          data={myeventpost}
+          data={events}
           renderItem={renderItem}
           keyExtractor={(item) => item._id}
           scrollEnabled={false}

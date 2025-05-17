@@ -27,10 +27,8 @@ const LikeCommentEventPost = ({ navigation, route }) => {
     const [modalData, setModalData] = useState(null);
     const [refreshing, setRefreshing] = useState(false);
     const [myeventpost, setMyeventpost] = useState([]);
-    const { id } = route?.params || null;
     const [commentData, setCommentData] = useState({});
     const [selectedPostId, setSelectedPostId] = useState(null)
-    const [page, setPage] = useState(1);
     const [IsLoading, setIsLoading] = useState(false);
     const MyActivistProfile = useSelector((state) => state.activist.activist_data);
     const [myComment, setMyComment] = useState("");
@@ -48,16 +46,18 @@ const LikeCommentEventPost = ({ navigation, route }) => {
         setTimeout(() => {
             setRefreshing(false);
             fetchPostData();
-            setPage(1);
         }, 2000);
     }, []);
 
     useFocusEffect(
         useCallback(() => {
-            setPage(1);
             fetchPostData();
         }, [])
     );
+    useEffect(() => {
+        fetchPostData();
+    }, [])
+
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
@@ -704,9 +704,9 @@ const LikeCommentEventPost = ({ navigation, route }) => {
                                             disabled={deletecommentLoading}
                                         >
                                             {deletecommentLoading ? (
-                                                <Text style={{ color: Colors.theme_color, fontSize: 12 }}>Deleting...</Text>
+                                                <Text style={{ color: Colors.theme_color, fontSize: SF(13), fontFamily: "Poppins-Regular" }}>Deleting...</Text>
                                             ) : (
-                                                <Entypo name={'cross'} color={Colors.theme_color} size={15} />
+                                                <Entypo name={'cross'} color={Colors.theme_color} size={17} />
                                             )}
                                         </TouchableOpacity>
 

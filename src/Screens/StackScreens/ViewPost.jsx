@@ -16,7 +16,7 @@ const ViewPost = ({ navigation, route }) => {
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
   const isLiked = post?.isLiked;
   console.log("post", JSON.stringify(post));
-  const author = post.activistDetails;
+  const author = post?.activistDetails;
 
   // ✅ Get images from API response correctly
   const images = post?.images || [];

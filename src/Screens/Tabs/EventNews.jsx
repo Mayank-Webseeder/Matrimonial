@@ -423,7 +423,7 @@ const EventNews = ({ navigation }) => {
 
       if (response.status === 200 && response.data.status === true) {
         const postData = response.data.data;
-        console.log("myeventpost", postData);
+        console.log("myeventpost",JSON.stringify(postData));
         setMyeventpost(postData);
       }
     } catch (error) {
@@ -714,11 +714,11 @@ const EventNews = ({ navigation }) => {
                       disabled={deletingCommentId === item?._id}
                     >
                       {deletingCommentId === item?._id ? (
-                        <Text style={{ color: Colors.theme_color, fontSize: 12 }}>
+                        <Text style={{ color: Colors.theme_color, fontSize: SF(13), fontFamily: "Poppins-Regular" }}>
                           Deleting...
                         </Text>
                       ) : (
-                        <Entypo name={"cross"} color={Colors.theme_color} size={15} />
+                        <Entypo name={"cross"} color={Colors.theme_color} size={17} />
                       )}
                     </TouchableOpacity>
                   )}

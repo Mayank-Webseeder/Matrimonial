@@ -41,6 +41,7 @@ const LoadingScreen = () => {
         repeat
         muted
         paused={false}
+        controls={false}
       />
 
     </View>

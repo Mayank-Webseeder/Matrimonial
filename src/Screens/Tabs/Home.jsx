@@ -606,7 +606,7 @@ const Home = ({ navigation }) => {
                             resizeMode="cover"
                             repeat
                             muted={false}
-                            controls={true}
+                            controls={false}
                             paused={false}
                           />
                         ) : (

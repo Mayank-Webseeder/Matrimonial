@@ -114,32 +114,28 @@ const Notification = ({ navigation }) => {
   };
 
   const VIEW_Notification = (notification) => {
-    // Logging the entire notification object for inspection
     console.log("📬 Received notification object:", JSON.stringify(notification, null, 2));
 
     const { notificationType, _id, userId } = notification;
-
-    // Check if _id exists
     if (!_id) {
       console.warn("❌ Notification ID is missing!", { _id });
       return;
     }
-
-    // Check if userId exists
     if (!userId) {
       console.warn("❌ User ID is missing!", { userId });
       return;
     }
-
-    // Logging the details of the notification
     console.log("✅ Notification Details - Type:", notificationType, "ID:", _id, "User ID:", userId);
-
-    // Navigate based on the notification type
     switch (notificationType) {
       case 'comment':
       case 'like':
-        console.log("🚀 Navigating to EventNews with ID:", _id, "User ID:", userId);
-        navigation.navigate('EventNews', { id: _id, userId });
+        const postId = notification?.relatedData?.postId;
+        if (!postId) {
+          console.warn("❌ Post ID is missing in relatedData:", notification);
+          return;
+        }
+        console.log("🚀 Navigating to EventNews with postId:", postId);
+        navigation.navigate('EventNews', { id: postId, userId });
         break;
 
       case 'activistApproved':
@@ -149,18 +145,20 @@ const Notification = ({ navigation }) => {
 
       case 'connectionRequestResponse':
         console.log("🚀 Navigating to MatrimonyPeopleProfile with ID:", notification._id, "User ID:", notification.relatedData.toUserId);
-        navigation.navigate('MatrimonyPeopleProfile', {
-          id: notification._id,
-          userId: notification?.relatedData?.fromUserId,
-        });
+        // navigation.navigate('MatrimonyPeopleProfile', {
+        //   id: notification._id,
+        //   userId: notification?.relatedData?.fromUserId,
+        // });
+        navigation.navigate('MainApp', { screen: 'Interested Profile' });
         break;
 
       case 'connectionRequest':
         console.log("📩 Navigating to IntrestReceivedProfilePage with ID:", notification._id, "User ID:", notification.relatedData.fromUserId);
-        navigation.navigate('IntrestReceivedProfilePage', {
-          id: notification._id,
-          userId: notification?.relatedData?.fromUserId, // 👈 correct key
-        });
+        // navigation.navigate('IntrestReceivedProfilePage', {
+        //   id: notification._id,
+        //   userId: notification?.relatedData?.fromUserId, // 👈 correct key
+        // });
+        navigation.navigate('MainApp', { screen: 'Interested Profile' });
         break;
 
       case 'kathavachakApproved':
@@ -178,11 +176,20 @@ const Notification = ({ navigation }) => {
         navigation.navigate('PanditDetailPage', { pandit_id: notification?.relatedData?.panditId, userId });
         break;
 
+      case 'successStoryApproved':
+        navigation.navigate('MainApp', { screen: 'MySuccessStory' });
+        break;
+
+      case 'successStoryRejected':
+        navigation.navigate('MainApp', {
+          screen: 'SuccessStories',
+        });
+        break;
+
       default:
         console.log('⚠️ Unknown notification type:', notificationType);
     }
 
-    // Mark the notification as seen
     setTimeout(async () => {
       try {
         console.log("📤 Marking notification as seen for ID:", _id);
@@ -227,7 +234,13 @@ const Notification = ({ navigation }) => {
     switch (notificationType) {
       case 'comment':
       case 'like':
-        navigation.navigate('EventNews', { id: _id, userId });
+        const postId = notification?.relatedData?.postId;
+        if (!postId) {
+          console.warn("❌ Post ID is missing in relatedData:", notification);
+          return;
+        }
+        console.log("🚀 Navigating to EventNews with postId:", postId);
+        navigation.navigate('EventNews', { id: postId, userId });
         break;
 
       case 'activistApproved':
@@ -236,18 +249,20 @@ const Notification = ({ navigation }) => {
 
       case 'connectionRequestResponse':
         console.log("🚀 Navigating to MatrimonyPeopleProfile with ID:", notification._id, "User ID:", notification.relatedData.fromUserId);
-        navigation.navigate('MatrimonyPeopleProfile', {
-          id: notification._id,
-          userId: notification?.relatedData?.fromUserId,
-        });
+        // navigation.navigate('MatrimonyPeopleProfile', {
+        //   id: notification._id,
+        //   userId: notification?.relatedData?.fromUserId,
+        // });
+        navigation.navigate('MainApp', { screen: 'Interested Profile' });
         break;
 
       case 'connectionRequest':
         console.log("📩 Navigating to IntrestReceivedProfilePage with ID:", notification._id, "User ID:", notification.relatedData.fromUserId);
-        navigation.navigate('IntrestReceivedProfilePage', {
-          id: notification._id,
-          userId: notification?.relatedData?.fromUserId,
-        });
+        // navigation.navigate('IntrestReceivedProfilePage', {
+        //   id: notification._id,
+        //   userId: notification?.relatedData?.fromUserId,
+        // });
+        navigation.navigate('MainApp', { screen: 'Interested Profile' });
         break;
 
       case 'kathavachakApproved':
@@ -263,6 +278,16 @@ const Notification = ({ navigation }) => {
       case 'panditApproved':
         console.log("🚀 Navigating to PanditDetailPage with pandit_id:", notification?.relatedData?.panditId, "User ID:", userId);
         navigation.navigate('PanditDetailPage', { pandit_id: notification?.relatedData?.panditId, userId });
+        break;
+
+      case 'successStoryApproved':
+        navigation.navigate('MainApp', { screen: 'MySuccessStory' });
+        break;
+
+      case 'successStoryRejected':
+        navigation.navigate('MainApp', {
+          screen: 'SuccessStories',
+        });
         break;
 
       default:
@@ -300,6 +325,7 @@ const Notification = ({ navigation }) => {
     const photoUrl = Array.isArray(item?.relatedData?.photoUrl)
       ? item.relatedData.photoUrl[0]
       : item?.relatedData?.photoUrl;
+
     return (
       <TouchableOpacity style={styles.card} onPress={() => VIEW_Notification(item)}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -316,7 +342,7 @@ const Notification = ({ navigation }) => {
             }}
           />
 
-          <View style={{ marginLeft:SW(10), flex: 1 }}>
+          <View style={{ marginLeft: SW(10), flex: 1 }}>
             <Text style={styles.name}>{item.relatedData.username || item?.relatedData?.likedBy?.name || item?.relatedData?.commentBy?.name}</Text>
             <Text style={styles.message} ellipsizeMode="tail">{item?.message}</Text>
           </View>
@@ -344,7 +370,7 @@ const Notification = ({ navigation }) => {
               setImageError(true);
             }}
           />
-          <View style={{ marginLeft:SW(10), flex: 1 }}>
+          <View style={{ marginLeft: SW(10), flex: 1 }}>
             <Text style={styles.name}>
               {item.relatedData.username ||
                 item.relatedData.likedBy?.name ||
@@ -372,12 +398,11 @@ const Notification = ({ navigation }) => {
         </View>
       </View>
       <View style={{ flex: 1 }}>
-        {/* Toggle Buttons */}
-        <View style={{ flexDirection: "row", justifyContent:"space-evenly", marginVertical: 10 }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-around", marginVertical: SH(10) }}>
           <TouchableOpacity
             onPress={() => setShowSeen(false)}
             style={{
-              width:SW(150),
+              // width: SW(150),
               paddingVertical: SH(10),
               paddingHorizontal: (10),
               backgroundColor: !showSeen ? Colors.theme_color : "lightgray",
@@ -389,7 +414,7 @@ const Notification = ({ navigation }) => {
           <TouchableOpacity
             onPress={() => setShowSeen(true)}
             style={{
-              width:SW(150),
+              // width: SW(150),
               paddingVertical: SH(10),
               paddingHorizontal: (13),
               backgroundColor: showSeen ? Colors.theme_color : "lightgray",

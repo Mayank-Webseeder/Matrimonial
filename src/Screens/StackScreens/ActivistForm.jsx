@@ -206,17 +206,18 @@ export default function ActivistForm({ navigation }) {
         throw new Error("Invalid DOB format. Expected format is YYYY-MM-DD.");
       }
     }
-    if (payload.knownActivistId) {
-      const id = payload.knownActivistId.trim().toUpperCase();
-    
-      if (id === "") {
-        delete payload.knownActivistId;
-      } else if (!/^[A-Z]{2}[0-9]{4}$/.test(id)) {
+    if (ActivistData.knownActivistId && ActivistData.knownActivistId.trim() !== "") {
+      const id = ActivistData.knownActivistId.trim().toUpperCase();
+
+      if (!/^[A-Z]{2}[0-9]{4}$/.test(id)) {
         throw new Error("Invalid activist ID format. It should look like 'AA0001'.");
-      } else {
-        payload.knownActivistId = id;
       }
+
+      payload.knownActivistId = id;
+    } else {
+      delete payload.knownActivistId;
     }
+
     if (ActivistData.profilePhoto) {
       try {
         payload.profilePhoto = await convertToBase64(ActivistData.profilePhoto);
@@ -412,7 +413,7 @@ export default function ActivistForm({ navigation }) {
       </View>
       <ScrollView style={Globalstyles.form} showsVerticalScrollIndicator={false}>
         <Text style={Globalstyles.title}>Full Name <Entypo name={'star'} color={'red'} size={12} /></Text>
-        <TextInput style={Globalstyles.input}
+        <TextInput style={[Globalstyles.input, errors.fullname && styles.errorInput]}
           placeholder="Enter your Full Name"
           value={ActivistData.fullname}
           onChangeText={(text) => {
@@ -428,7 +429,7 @@ export default function ActivistForm({ navigation }) {
         )}
         <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
         <Dropdown
-          style={[Globalstyles.input, !isEditing && styles.readOnly]}
+          style={[Globalstyles.input, !isEditing && styles.readOnly, errors.subCaste && styles.errorInput]}
           data={subCasteOptions}
           labelField="label"
           valueField="value"
@@ -480,7 +481,7 @@ export default function ActivistForm({ navigation }) {
             activeOpacity={0.8}
           >
             <View style={[
-              Globalstyles.inputContainer,
+              Globalstyles.inputContainer, errors.dob && styles.errorInput,
               {
                 flexDirection: "row",
                 alignItems: "center",
@@ -529,7 +530,7 @@ export default function ActivistForm({ navigation }) {
         {/* State Dropdown */}
         <Text style={Globalstyles.title}>State <Entypo name={'star'} color={'red'} size={12} /></Text>
         <TextInput
-          style={Globalstyles.input}
+          style={[Globalstyles.input, errors.state && styles.errorInput]}
           value={ActivistData?.state} // `biodata?.state` ki jagah `stateInput` use karein
           onChangeText={handleStateInputChange}
           placeholder="Type your State"
@@ -561,7 +562,7 @@ export default function ActivistForm({ navigation }) {
         {/* City/Village Input */}
         <Text style={Globalstyles.title}>City/Village <Entypo name={'star'} color={'red'} size={12} /></Text>
         <TextInput
-          style={Globalstyles.input}
+          style={[Globalstyles.input, errors.city && styles.errorInput]}
           value={ActivistData?.city}
           onChangeText={handleCityInputChange}
           placeholder="Enter your city"
@@ -590,7 +591,7 @@ export default function ActivistForm({ navigation }) {
         )}
         <Text style={Globalstyles.title}>Contact <Entypo name={'star'} color={'red'} size={12} /></Text>
         <TextInput
-          style={Globalstyles.input}
+          style={[Globalstyles.input, errors.mobileNo && styles.errorInput]}
           placeholder="Enter contact number"
           keyboardType="numeric"
           maxLength={10}

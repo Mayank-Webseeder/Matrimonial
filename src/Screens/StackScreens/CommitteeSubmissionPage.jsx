@@ -32,11 +32,11 @@ const CommitteeSubmissionPage = ({ navigation }) => {
 
     const handleInputChange = (field, value) => {
         setCommitteeData(prev => ({
-          ...prev,
-          [field]: value,
+            ...prev,
+            [field]: value,
         }));
-      };
-      
+    };
+
 
     const handleCityInputChange = (text) => {
         setCityInput(text);
@@ -70,7 +70,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                 item?.label?.toLowerCase().includes(text.toLowerCase())
             )
             .map((item) => item.label);
-    
+
         if (filtered.length > 0) {
             setSubCasteInput(text);
             setFilteredSubCaste(filtered);
@@ -82,11 +82,11 @@ const CommitteeSubmissionPage = ({ navigation }) => {
             setFilteredSubCaste(['Other']);
         }
     };
-    
+
 
     const handleSubCasteSelect = (selectedItem) => {
         const finalValue = selectedItem === 'Other' ? 'Other' : selectedItem;
-    
+
         setSubCasteInput(finalValue);
         setFilteredSubCaste([]);
         setCommitteeData((prevCommitteeData) => ({
@@ -201,7 +201,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
 
             const token = await AsyncStorage.getItem("userToken");
             if (!token) {
-                showMessage({ type: "danger", message: "Error", description: "Authorization token is missing.", duarion:5000 });
+                showMessage({ type: "danger", message: "Error", description: "Authorization token is missing.", duarion: 5000 });
                 return;
             }
 
@@ -222,7 +222,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     type: "success",
                     message: "Committee Created Successfully",
                     description: response.data.message || "Your committee profile has been saved!",
-                    duarion:5000,
+                    duarion: 5000,
                     icon: "success",
                 });
                 navigation.navigate("Committee");
@@ -232,26 +232,26 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     message: "Error",
                     description: response.data?.message || "Failed to save committee.",
                     icon: "danger",
-                    duarion:5000
+                    duarion: 5000
                 });
             }
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
             console.error("Error fetching biodata:", errorMsg);
-            showMessage({ type: "danger", message: "Error", description: errorMsg, icon: "danger", duarion:5000 });
-        
+            showMessage({ type: "danger", message: "Error", description: errorMsg, icon: "danger", duarion: 5000 });
+
             const sessionExpiredMessages = [
-              "User does not Exist....!Please login again",
-              "Invalid token. Please login again",
-              "Token has expired. Please login again"
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
             ];
-        
+
             if (sessionExpiredMessages.includes(errorMsg)) {
-              await AsyncStorage.removeItem("userToken");
-              navigation.reset({
-                index: 0,
-                routes: [{ name: "AuthStack" }],
-              });
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
             }
         } finally {
             setIsLoading(false);
@@ -282,7 +282,10 @@ const CommitteeSubmissionPage = ({ navigation }) => {
 
                 <Text style={Globalstyles.title}>Committee title <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
-                    style={Globalstyles.input}
+                    style={[
+                        Globalstyles.input,
+                        errors.committeeTitle && styles.errorInput,
+                    ]}
                     placeholder="Enter title"
                     value={CommitteeData.committeeTitle}
                     autoComplete="off"
@@ -300,7 +303,10 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                 {/* Dharamsala Name */}
                 <Text style={Globalstyles.title}>Committee President Name <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
-                    style={Globalstyles.input}
+                    style={[
+                        Globalstyles.input,
+                        errors.presidentName && styles.errorInput,
+                    ]}
                     placeholder="Enter President Name"
                     value={CommitteeData?.presidentName}
                     onChangeText={(text) => {
@@ -326,8 +332,11 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     textContentType="none"
                 /> */}
 
-<Dropdown
-                    style={Globalstyles.input}
+                <Dropdown
+                    style={[
+                        Globalstyles.input,
+                        errors.subCaste && styles.errorInput,
+                    ]}
                     data={subCasteOptions}
                     labelField="label"
                     valueField="value"
@@ -361,7 +370,10 @@ const CommitteeSubmissionPage = ({ navigation }) => {
 
                 <Text style={Globalstyles.title}>City <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
-                    style={Globalstyles.input}
+                    style={[
+                        Globalstyles.input,
+                        errors.city && styles.errorInput,
+                    ]}
                     value={CommitteeData?.city}
                     onChangeText={handleCityInputChange}
                     placeholder="Enter your city"
@@ -388,7 +400,10 @@ const CommitteeSubmissionPage = ({ navigation }) => {
 
                 <Text style={Globalstyles.title}>Area <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
-                    style={Globalstyles.input}
+                    style={[
+                        Globalstyles.input,
+                        errors.area && styles.errorInput,
+                    ]}
                     placeholder="Enter Your Area"
                     value={CommitteeData?.area} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, area: text }))}
                     placeholderTextColor={Colors.gray}
@@ -418,7 +433,10 @@ const CommitteeSubmissionPage = ({ navigation }) => {
 
                 <Text style={Globalstyles.title}>Contact Number Of President <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
-                    style={Globalstyles.input}
+                    style={[
+                        Globalstyles.input,
+                        errors.mobileNo && styles.errorInput,
+                    ]}
                     placeholder="Enter contact number"
                     keyboardType="numeric"
                     maxLength={10}
@@ -531,6 +549,10 @@ const styles = StyleSheet.create({
     contentContainer: {
         margin: SW(15),
         marginTop: 0,
+    },
+    errorInput: {
+        borderColor: 'red',
+        borderWidth: 1,
     },
 });
 

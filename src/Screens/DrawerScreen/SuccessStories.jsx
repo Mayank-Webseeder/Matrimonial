@@ -44,7 +44,10 @@ const SuccessStories = ({ navigation }) => {
 
       const res = await axios.get(SUCESS_STORIES, { headers });
       console.log("sucess story data ", JSON.stringify(res.data.data))
-      setStories(res.data.data);
+      const filteredStories = res.data.data.filter(
+        story => story.groomDetails !== null && story.brideDetails !== null
+      );
+      setStories(filteredStories);
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching success story:", errorMsg);
@@ -109,22 +112,6 @@ const SuccessStories = ({ navigation }) => {
     fetchSuccessStories().finally(() => setRefreshing(false));
   }, []);
 
-  const renderStars = (rating) => {
-    const stars = [];
-    for (let i = 1; i <= rating; i++) {
-      stars.push(
-        <FontAwesome
-          key={i}
-          name={'star'}
-          size={20}
-          color={'#FF9900'}
-          style={{ marginHorizontal: 2 }}
-        />
-      );
-    }
-    return stars;
-  };
-
   const renderItem = ({ item }) => {
     const groom = item?.groomDetails || {};
 
@@ -151,7 +138,7 @@ const SuccessStories = ({ navigation }) => {
             }
           >
             <Image
-              source={{ uri: bride.profileImage || require('../../Images/NoImage.png') }}
+              source={{ uri: bride?.profileImage || require('../../Images/NoImage.png') }}
               style={styles.avatar}
             />
             <View style={styles.collabIcon}>
@@ -159,8 +146,8 @@ const SuccessStories = ({ navigation }) => {
             </View>
           </TouchableOpacity>
 
-          <View style={{ marginLeft: SW(8) }}>
-            <View style={{ flexDirection: 'row', marginLeft: SW(8) }}>
+          <View style={{ marginLeft: SW(3) }}>
+            <View style={{ flexDirection: 'row' }}>
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate('MatrimonyPeopleProfile', { userId: groom?.userId })
@@ -189,7 +176,7 @@ const SuccessStories = ({ navigation }) => {
         <TouchableOpacity
           activeOpacity={0.9}
           onPress={() => {
-            setCurrentImg(item.photoUrl);
+            setCurrentImg(item?.photoUrl);
             setViewerVisible(true);
           }}
         >
@@ -217,7 +204,7 @@ const SuccessStories = ({ navigation }) => {
 
         <View style={styles.ratingRow}>
           <Text style={styles.ratingText}>
-            🌟 {item.rating}/5 App Rating
+            🌟 {item?.rating}/5 App Rating
           </Text>
           <Text style={styles.ratingQuote}>
             “ Brahmin Milan helped us find each other — <Text style={styles.thought}>{item.thought}</Text>”
@@ -274,7 +261,10 @@ const SuccessStories = ({ navigation }) => {
       {!loadingMyStory && myStory && (
         <TouchableOpacity
           onPress={() =>
-            navigation.navigate('MySuccessStory', { story: myStory })
+            navigation.navigate('MainApp', {
+              screen: 'MySuccessStory',
+              params: { story: myStory },
+            })
           }
         >
           <Text style={[styles.postText, { alignSelf: "flex-end" }]}>View Your Story</Text>

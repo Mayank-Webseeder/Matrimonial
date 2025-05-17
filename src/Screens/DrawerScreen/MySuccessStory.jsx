@@ -7,31 +7,99 @@ import {
   SafeAreaView,
   StatusBar,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import styles from '../StyleScreens/SuccessStoriesStyle';
 import Globalstyles from '../../utils/GlobalCss';
-import { DrawerActions } from '@react-navigation/native';
+import { DrawerActions, useFocusEffect } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import ImageViewing from 'react-native-image-viewing';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { DELETE_SUCCESS_STORY } from '../../utils/BaseUrl';
+import { DELETE_SUCCESS_STORY, MY_SUCCESS_STORY } from '../../utils/BaseUrl';
 
 const MySuccessStory = ({ navigation, route }) => {
-  const { story } = route.params;
-  const { groomDetails: groom, brideDetails: bride } = story;
+  const [myStory, setMyStory] = useState(route.params?.story || null);
+  const [loadingMyStory, setLoadingMyStory] = useState(!route.params?.story);
 
-  const notifications = useSelector(
+  const story = route.params?.story || myStory;
+
+  const { groomDetails: groom = {}, brideDetails: bride = {} } = story || {};
+
+   const notifications = useSelector(
     (state) => state.GetAllNotification.AllNotification
   );
   const notificationCount = notifications ? notifications.length : 0;
 
   const [viewerVisible, setViewerVisible] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!route.params?.story) {
+        fetchMySuccessStory();
+      }
+    }, [])
+  );
+
+  const fetchMySuccessStory = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const res = await axios.get(MY_SUCCESS_STORY, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.data.data && res.data.data.length > 0) {
+        setMyStory(res.data.data[0]);
+      } else {
+        setMyStory(null);
+      }
+    } catch (error) {
+      const errorMsg = error.response?.data?.message || error.message;
+
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
+      setMyStory(null);
+    } finally {
+      setLoadingMyStory(false);
+    }
+  };
+
+  if (loadingMyStory) {
+    return (
+      <SafeAreaView style={Globalstyles.container}>
+        <Text style={{ textAlign: 'center', marginTop: 100 }}>Loading your story...</Text>
+      </SafeAreaView>
+    );
+  }
+
+  if (!story) {
+    return (
+      <SafeAreaView style={Globalstyles.container}>
+        <Text style={{ textAlign: 'center', marginTop: 100 }}>No success story found.</Text>
+      </SafeAreaView>
+    );
+  }
+
   const handleDelete = () => {
     Alert.alert(
       'Delete Story',
@@ -57,20 +125,20 @@ const MySuccessStory = ({ navigation, route }) => {
             } catch (error) {
               const errorMsg = error.response?.data?.message || error.message;
               console.error("Error fetching biodata:", errorMsg);
-          
+
               const sessionExpiredMessages = [
                 "User does not Exist....!Please login again",
                 "Invalid token. Please login again",
                 "Token has expired. Please login again"
               ];
-          
+
               if (sessionExpiredMessages.includes(errorMsg)) {
                 await AsyncStorage.removeItem("userToken");
                 navigation.reset({
                   index: 0,
                   routes: [{ name: "AuthStack" }],
                 });
-              } 
+              }
               Alert.alert('Error', 'Could not delete. Try again.');
             }
           },
@@ -82,8 +150,6 @@ const MySuccessStory = ({ navigation, route }) => {
   return (
     <SafeAreaView style={Globalstyles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
-
-      {/* ---------- Header ---------- */}
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity

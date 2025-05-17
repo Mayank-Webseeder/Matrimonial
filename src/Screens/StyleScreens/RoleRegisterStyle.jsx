@@ -2,6 +2,10 @@ import { StyleSheet } from "react-native";
 import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 const styles = StyleSheet.create({
+  errorInput: {
+    borderColor: 'red',
+    borderWidth: 1,
+  },
   errorText: {
     fontFamily: "Poppins-Medium",
     fontSize: SF(13),

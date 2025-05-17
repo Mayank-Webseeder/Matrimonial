@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SafeAreaView, View, Text, TextInput, TouchableOpacity, ScrollView, Image, Linking } from "react-native";
+import { SafeAreaView, View, Text, TextInput, TouchableOpacity, ScrollView, Image, Linking, ActivityIndicator } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Globalstyles from "../../utils/GlobalCss";
@@ -12,12 +12,12 @@ import { ADVERTISE_WITH_US } from "../../utils/BaseUrl";
 import { showMessage } from "react-native-flash-message";
 
 const AdvertiseWithUs = ({ navigation }) => {
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
+    const [fullName, setFullname] = useState("");
     const [mobileNo, setMobileNo] = useState("");
     const [email, setEmail] = useState("");
     const [message, setMessage] = useState("");
     const [errors, setErrors] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
 
     const validateFields = () => {
         const newErrors = {};
@@ -25,19 +25,12 @@ const AdvertiseWithUs = ({ navigation }) => {
         if (!mobileNo) newErrors.mobileNo = "Mobile number is required.";
         else if (!/^\d{10}$/.test(mobileNo)) newErrors.mobileNo = "Enter a valid 10-digit mobile number.";
 
-        if (!firstName) {
-            newErrors.firstName = "firstName is required.";
-        } else if (!/^[A-Za-z\s]+$/.test(firstName)) {
-            newErrors.firstName = "firstName must contain only letters.";
-        } else if (firstName.length > 15) {
-            newErrors.firstName = "firstName cannot exceed 15 characters.";
-        }
-        if (!lastName) {
-            newErrors.lastName = "lastName is required.";
-        } else if (!/^[A-Za-z\s]+$/.test(lastName)) {
-            newErrors.lastName = "lastName must contain only letters.";
-        } else if (lastName.length > 15) {
-            newErrors.lastName = "lastName cannot exceed 15 characters.";
+        if (!fullName) {
+            newErrors.fullName = "fullName is required.";
+        } else if (!/^[A-Za-z\s]+$/.test(fullName)) {
+            newErrors.fullName = "fullName must contain only letters.";
+        } else if (fullName.length > 15) {
+            newErrors.fullName = "fullName cannot exceed 15 characters.";
         }
         if (!email.trim()) newErrors.email = "email is required.";
         setErrors(newErrors);
@@ -46,13 +39,13 @@ const AdvertiseWithUs = ({ navigation }) => {
 
     const handleSubmit = async () => {
         try {
+            setIsLoading(true)
             if (!validateFields()) return;
             const token = await AsyncStorage.getItem('userToken'); // ✅ Fetch Token
             if (!token) throw new Error('No token found');
 
             const payload = {
-                firstName,
-                lastName,
+                fullName,
                 email,
                 phoneNumber: mobileNo,
                 message
@@ -75,7 +68,7 @@ const AdvertiseWithUs = ({ navigation }) => {
                     message: 'Success',
                     description: response.data.message || 'Your Advertise Request has been submitted successfully!',
                     icon: "success",
-                    duarion:5000
+                    duarion: 5000
                 });
 
                 setTimeout(() => {
@@ -95,21 +88,25 @@ const AdvertiseWithUs = ({ navigation }) => {
                 message: 'Error',
                 description: errorMsg,
                 icon: "danger",
-                duarion:5000
+                duarion: 5000
             });
             const sessionExpiredMessages = [
-              "User does not Exist....!Please login again",
-              "Invalid token. Please login again",
-              "Token has expired. Please login again"
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
             ];
-        
+
             if (sessionExpiredMessages.includes(errorMsg)) {
-              await AsyncStorage.removeItem("userToken");
-              navigation.reset({
-                index: 0,
-                routes: [{ name: "AuthStack" }],
-              });
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
             }
+            setIsLoading(false)
+        }
+        finally {
+            setIsLoading(false)
 
         }
     };
@@ -201,43 +198,33 @@ const AdvertiseWithUs = ({ navigation }) => {
                     </View>
 
                 </ImageBackground>
-
-                {/* Form Fields */}
                 <View style={Globalstyles.form}>
-                    <Text style={Globalstyles.title}>First Name</Text>
-                    <TextInput style={Globalstyles.input} placeholder="Enter First Name" 
-                    value={firstName} 
-                    onChangeText={(text) => {
-                        const cleanText = text.replace(/[^A-Za-z\s]/g, '');
-                        setFirstName(cleanText);
-                    }}
-                        placeholderTextColor={Colors.gray} />
+                    <Text style={Globalstyles.title}>Full Name</Text>
+                    <TextInput style={Globalstyles.input} placeholder="Enter Full Name"
+                        value={fullName}
+                        onChangeText={(text) => {
+                            const cleanText = text.replace(/[^A-Za-z\s]/g, '');
+                            setFullname(cleanText);
+                        }}
+                        placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none" />
 
-                    {errors.firstName && (
-                        <Text style={styles.errorText}>{errors.firstName}</Text>
+                    {errors.fullName && (
+                        <Text style={styles.errorText}>{errors.fullName}</Text>
                     )}
-
-                    <Text style={Globalstyles.title}>Last Name</Text>
-                    <TextInput style={Globalstyles.input} placeholder="Enter Last Name" value={lastName} 
-                    onChangeText={(text) => {
-                        const cleanText = text.replace(/[^A-Za-z\s]/g, '');
-                        setLastName(cleanText);
-                    }}
-                     placeholderTextColor={Colors.gray} />
-                    {errors.lastName && (
-                        <Text style={styles.errorText}>{errors.lastName}</Text>
-                    )}
-
                     <Text style={Globalstyles.title}>Email</Text>
                     <TextInput style={Globalstyles.input} placeholder="Enter Email" value={email} onChangeText={setEmail} keyboardType="email-address"
-                        placeholderTextColor={Colors.gray} />
+                        placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none" />
                     {errors.email && (
                         <Text style={styles.errorText}>{errors.email}</Text>
                     )}
 
                     <Text style={Globalstyles.title}>Phone No</Text>
                     <TextInput style={Globalstyles.input} placeholder="Enter Mobile Number" value={mobileNo}
-                     onChangeText={(text) => setMobileNo(text.replace(/[^0-9]/g, ''))}
+                        onChangeText={(text) => setMobileNo(text.replace(/[^0-9]/g, ''))}
                         keyboardType="numeric" maxLength={10}
                         placeholderTextColor={Colors.gray} />
 
@@ -249,11 +236,20 @@ const AdvertiseWithUs = ({ navigation }) => {
                     <TextInput style={[Globalstyles.textInput]} placeholder="Write your message..." value={message}
                         textAlignVertical='top'
                         placeholderTextColor={Colors.gray}
-                        onChangeText={setMessage} multiline />
+                        onChangeText={setMessage} multiline
 
-                    {/* Submit Button */}
-                    <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                        <Text style={styles.buttonText}>Send Message</Text>
+                        autoComplete="off"
+                        textContentType="none" />
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={handleSubmit}
+                        disabled={isLoading}
+                    >
+                        {isLoading ? (
+                            <ActivityIndicator size="large" color="#ffffff" />
+                        ) : (
+                            <Text style={styles.buttonText}>Send Message</Text>
+                        )}
                     </TouchableOpacity>
                 </View>
             </ScrollView>

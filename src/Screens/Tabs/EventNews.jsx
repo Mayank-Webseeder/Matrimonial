@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, TextInput, ActivityIndicator, RefreshControl, Linking } from 'react-native';
+import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, TextInput, ActivityIndicator, RefreshControl, Linking, BackHandler } from 'react-native';
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import styles from '../StyleScreens/EventNewsStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -20,8 +20,11 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { showMessage } from 'react-native-flash-message';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import { CommonActions } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 
 const EventNews = ({ navigation }) => {
+   const route = useRoute();
+  const { postId } = route.params || {};
   const sheetRef = useRef(null);
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -60,6 +63,25 @@ const EventNews = ({ navigation }) => {
       setPage(1);
     }, 2000);
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: 'MainApp' }],
+          })
+        );
+        return true;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [])
+  );
 
   const handlePress = async () => {
     if (MyActivistProfile && MyActivistProfile._id) {
@@ -814,7 +836,7 @@ const EventNews = ({ navigation }) => {
         contentContainerStyle={{ flexGrow: 1 }}
       >
         <FlatList
-          data={getPostsForPage()}
+         data={postId ? eventdata : getPostsForPage()}
           renderItem={renderItem}
           keyExtractor={(item) => item._id}
           scrollEnabled={false}

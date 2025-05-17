@@ -765,6 +765,7 @@ const PanditRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
                     />
                     {errors.fullName && <Text style={styles.errorText}>{errors.fullName}</Text>}
 
@@ -776,7 +777,9 @@ const PanditRegister = ({ navigation }) => {
                         placeholder="Enter Your Mobile No." maxLength={10}
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none" />
+                        textContentType="none"
+                        importantForAutofill="no" />
+
                     {errors.mobileNo && <Text style={styles.errorText}>{errors.mobileNo}</Text>}
                     <Text style={[Globalstyles.title, { color: Colors.theme_color }]}>Address</Text>
 
@@ -789,6 +792,7 @@ const PanditRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
                     />
                     {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
 
@@ -815,6 +819,7 @@ const PanditRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
                     />
                     {errors.city && <Text style={styles.errorText}>{errors.city}</Text>}
                     {filteredCities.length > 0 && cityInput ? (
@@ -840,6 +845,7 @@ const PanditRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
                     />
 
                     <Text style={Globalstyles.title}>Aadhar No. </Text>
@@ -850,6 +856,7 @@ const PanditRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
                     />
 
                     <Text style={Globalstyles.title}>Sub Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
@@ -964,6 +971,7 @@ const PanditRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray} multiline={true}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
                     />
 
                     <View style={styles.photopickContainer}>
@@ -997,6 +1005,7 @@ const PanditRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
                     />
 
                     <Text style={Globalstyles.title}>Youtube Link</Text>
@@ -1019,6 +1028,7 @@ const PanditRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
                     />
 
                     <Text style={Globalstyles.title}>Facebook Link</Text>
@@ -1031,6 +1041,7 @@ const PanditRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
                     />
 
                     <Text style={Globalstyles.title}>Instagram Link</Text>
@@ -1043,6 +1054,7 @@ const PanditRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
                     />
                     <TouchableOpacity
                         style={styles.button}

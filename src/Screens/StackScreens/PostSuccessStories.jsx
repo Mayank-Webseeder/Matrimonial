@@ -219,7 +219,7 @@ const PostSuccessStories = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
-
+                        importantForAutofill="no"
                     />
                     {errors.gromname && (
                         <Text style={styles.errorText}>{errors.gromname}</Text>
@@ -234,6 +234,7 @@ const PostSuccessStories = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
 
                     />
                     {errors.groomBiodataId && (
@@ -252,6 +253,7 @@ const PostSuccessStories = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
                     />
                     {errors.bridename && (
                         <Text style={styles.errorText}>{errors.bridename}</Text>
@@ -266,6 +268,7 @@ const PostSuccessStories = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
                     />
                     {errors.brideBiodataId && (
                         <Text style={styles.errorText}>{errors.brideBiodataId}</Text>
@@ -299,6 +302,7 @@ const PostSuccessStories = ({ navigation }) => {
                         placeholderTextColor={Colors.gray} textAlignVertical='top'
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
                     />
                     {errors.comment && (
                         <Text style={styles.errorText}>{errors.comment}</Text>

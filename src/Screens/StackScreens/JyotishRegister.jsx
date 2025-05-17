@@ -315,7 +315,7 @@ const JyotishRegister = ({ navigation }) => {
 
                 if (updated.length > ADDL_LIMIT) {
                     Alert.alert(`You can only upload up to ${ADDL_LIMIT} additional photos.`);
-                    return prev;                                           // refuse update
+                    return prev;                                         
                 }
 
                 return { ...prev, additionalPhotos: updated };
@@ -804,6 +804,7 @@ const JyotishRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
                     />
                     {errors.fullName && <Text style={styles.errorText}>{errors.fullName}</Text>}
 
@@ -828,6 +829,7 @@ const JyotishRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
                     />
                     {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
 
@@ -854,6 +856,7 @@ const JyotishRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
                     />
                     {errors.city && <Text style={styles.errorText}>{errors.city}</Text>}
                     {filteredCities.length > 0 && cityInput ? (
@@ -879,6 +882,7 @@ const JyotishRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
                     />
 
                     <Text style={Globalstyles.title}>Aadhar No. </Text>
@@ -889,6 +893,7 @@ const JyotishRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
                     />
 
                     <Text style={Globalstyles.title}>Sub Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
@@ -924,7 +929,7 @@ const JyotishRegister = ({ navigation }) => {
 
                     {/* Role Selection with Checkboxes */}
                     <Text style={Globalstyles.title}>Select Jyotish Services <Entypo name={'star'} color={'red'} size={12} /></Text>
-                     <View style={[styles.checkboxContainer,errors.selectedRoles && styles.errorInput]}>
+                    <View style={[styles.checkboxContainer, errors.selectedRoles && styles.errorInput]}>
                         {roleOptions.map(role => (
                             <View key={role.value} style={styles.checkboxItem}>
                                 <Checkbox
@@ -971,7 +976,7 @@ const JyotishRegister = ({ navigation }) => {
                     </View>
 
                     <Text style={Globalstyles.title}>Profile Photo <Entypo name={'star'} color={'red'} size={12} /></Text>
-                    <View  style={[Globalstyles.input, errors.profilePhoto && styles.errorInput]}>
+                    <View style={[Globalstyles.input, errors.profilePhoto && styles.errorInput]}>
                         <TouchableOpacity onPress={handleProfilePhotoPick}>
                             {RoleRegisterData.profilePhoto ? (
                                 <Image
@@ -994,6 +999,7 @@ const JyotishRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray} multiline={true}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
                     />
 
                     <View style={styles.photopickContainer}>
@@ -1027,6 +1033,7 @@ const JyotishRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
                     />
 
                     <Text style={Globalstyles.title}>Youtube Link</Text>
@@ -1037,6 +1044,9 @@ const JyotishRegister = ({ navigation }) => {
                         onBlur={() => handleBlur("youtubeUrl")}
                         placeholder="Give Your Youtube Link"
                         placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none"
+                        importantForAutofill="no"
                     />
 
                     <Text style={Globalstyles.title}>Whatsapp Link</Text>
@@ -1049,6 +1059,7 @@ const JyotishRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
                     />
 
                     <Text style={Globalstyles.title}>Facebook Link</Text>
@@ -1061,6 +1072,7 @@ const JyotishRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
                     />
 
                     <Text style={Globalstyles.title}>Instagram Link</Text>
@@ -1073,6 +1085,7 @@ const JyotishRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
                     />
                     <TouchableOpacity
                         style={styles.button}

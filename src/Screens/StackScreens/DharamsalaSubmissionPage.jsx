@@ -300,6 +300,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
                     textContentType="none"
+                    importantForAutofill="no"
                 />
 
                 {errors.dharmshalaName && (
@@ -339,6 +340,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
                     textContentType="none"
+                    importantForAutofill="no"
                 />
                 {filteredCities.length > 0 && cityInput ? (
                     <FlatList
@@ -370,6 +372,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     value={DharamsalaData.mobileNo} onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
                     autoComplete="off"
                     textContentType="none"
+                    importantForAutofill="no"
                 />
                 {errors.mobileNo && (
                     <Text style={styles.errorText}>{errors.mobileNo}</Text>

@@ -57,7 +57,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 type: "danger",
                 message: "Pandit ID not found!",
                 icon: "danger",
-                duarion:5000
+                duarion: 5000
             });
             return;
         }
@@ -68,7 +68,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 type: "danger",
                 message: "Authentication Error",
                 description: "No token found. Please log in again.",
-                duarion:5000
+                duarion: 5000
             });
             return;
         }
@@ -91,7 +91,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                     type: "danger",
                     message: "No Profile Found",
                     description: response.data.message || "Something went wrong!",
-                    duarion:5000
+                    duarion: 5000
                 });
             }
         } catch (error) {
@@ -102,20 +102,20 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 type: "danger",
                 message: errorMsg,
                 description: "Failed to load profile data",
-                duarion:5000
+                duarion: 5000
             });
             const sessionExpiredMessages = [
-              "User does not Exist....!Please login again",
-              "Invalid token. Please login again",
-              "Token has expired. Please login again"
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
             ];
-        
+
             if (sessionExpiredMessages.includes(errorMsg)) {
-              await AsyncStorage.removeItem("userToken");
-              navigation.reset({
-                index: 0,
-                routes: [{ name: "AuthStack" }],
-              });
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
             }
         } finally {
             setLoading(false);
@@ -191,7 +191,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 type: "danger",
                 message: "Error",
                 description: "User ID not found!",
-                duarion:5000
+                duarion: 5000
             });
             return;
         }
@@ -219,7 +219,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                     message: "Success",
                     description: response.data.message || "Profile saved successfully!",
                     icon: "success",
-                    duarion:5000
+                    duarion: 5000
                 });
 
                 // ✅ API response ke hisaab se state update karo
@@ -243,7 +243,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 message: "Error",
                 description: errorMessage,
                 icon: "danger",
-                duarion:5000
+                duarion: 5000
             });
         }
     };
@@ -260,7 +260,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
         showMessage({
             type: 'info',
             message: message,
-            duarion:5000,
+            duarion: 5000,
             autoHide: true,
             icon: "info"
         });
@@ -307,7 +307,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
             type: "info",
             message: "Under development",
             icon: "info",
-            duarion:5000
+            duarion: 5000
         })
     };
 
@@ -379,7 +379,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                         <Text style={styles.name} numberOfLines={2}>{profileData?.fullName}</Text>
 
                         <View style={styles.FlexContainer}>
-                            <Text style={[styles.city,{fontFamily:"Poppins-Bold"}]}>{profileData?.city}</Text>
+                            <Text style={[styles.city, { fontFamily: "Poppins-Bold" }]}>{profileData?.city}</Text>
                             <Text style={styles.city}>{profileData?.state}</Text>
                         </View>
                         {profileData?.residentialAddress ? (
@@ -413,47 +413,41 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                         <TouchableOpacity
                             style={[styles.iconContainer, my_id === profileData?.userId]}
                             onPress={() => savedProfiles(profileData._id)}
-                            disabled={my_id === profileData?.userId} // ✅ Disable button for self
+                            disabled={my_id === profileData?.userId}
                         >
                             <FontAwesome
                                 name={Save ? "bookmark" : "bookmark-o"}
                                 size={19}
-                                color={my_id === profileData?.userId ? Colors.gray : Colors.dark} // ✅ Gray if disabled
+                                color={my_id === profileData?.userId ? Colors.gray : Colors.dark}
                             />
                             <Text style={[styles.iconText, my_id === profileData?.userId && styles.disabledText]}>
                                 {Save ? "Saved" : "Save"}
                             </Text>
                         </TouchableOpacity>
-
-                        {/* ✅ Share button (Always Active) */}
                         <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
                             <Feather name="send" size={20} color={Colors.dark} />
                             <Text style={styles.iconText}>Shares</Text>
                         </TouchableOpacity>
-
-                        {/* ✅ Call Button (Disabled for self profile) */}
                         <TouchableOpacity
                             style={[styles.Button, my_id === profileData?.userId && styles.disabledButton]}
                             onPress={() => Linking.openURL(`tel:${profileData?.mobileNo}`)}
-                            disabled={my_id === profileData?.userId} // ✅ Disable button
+                            disabled={my_id === profileData?.userId}
                         >
                             <MaterialIcons
                                 name="call"
                                 size={20}
-                                color={my_id === profileData?.userId ? Colors.gray : Colors.light} // ✅ Gray if disabled
+                                color={my_id === profileData?.userId ? Colors.gray : Colors.light}
                             />
                         </TouchableOpacity>
-
-                        {/* ✅ Report Button (Disabled for self profile) */}
                         <TouchableOpacity
                             style={[styles.iconContainer, my_id === profileData?.userId]}
                             onPress={() => navigation.navigate('ReportPage', { profileId: profileData?._id })}
-                            disabled={my_id === profileData?.userId} // ✅ Disable button
+                            disabled={my_id === profileData?.userId}
                         >
                             <MaterialIcons
                                 name="error-outline"
                                 size={20}
-                                color={my_id === profileData?.userId ? Colors.gray : Colors.dark} // ✅ Gray if disabled
+                                color={my_id === profileData?.userId ? Colors.gray : Colors.dark}
                             />
                             <Text style={[styles.iconText, my_id === profileData?.userId && styles.disabledText]}>
                                 Report
@@ -593,9 +587,9 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                         </>
                     ) : (
                         <View style={styles.noReviewsContainer}>
-                        <Text style={styles.noReviewsTitle}>Reviews will show up here</Text>
-                        <Text style={styles.noReviewsSubtitle}>You'll see others' feedback once they post it.</Text>
-                      </View>
+                            <Text style={styles.noReviewsTitle}>Reviews will show up here</Text>
+                            <Text style={styles.noReviewsSubtitle}>You'll see others' feedback once they post it.</Text>
+                        </View>
                     )}
 
                 </View>
@@ -655,7 +649,6 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                         dotStyle={Globalstyles.dot}
                         activeDotStyle={Globalstyles.activeDot}
                     />
-
                 </View>
             </ScrollView>
         </SafeAreaView>

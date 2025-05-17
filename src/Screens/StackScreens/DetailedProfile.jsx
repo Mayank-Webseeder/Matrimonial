@@ -600,7 +600,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching biodata:", errorMsg);
       Alert.alert(
-        "Error",
+        "Continue",
         errorMsg,
         [
           {
@@ -921,6 +921,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholderTextColor={Colors.gray}
               autoComplete="off"
               textContentType="none"
+              importantForAutofill="no"
             />
 
             {errors.fullname && <Text style={styles.errorText}>{errors.fullname}</Text>}
@@ -1045,6 +1046,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholder='Enter Your Birth Place'
               autoComplete="off"
               textContentType="none"
+              importantForAutofill="no"
             />
             {errors.placeofbirth && <Text style={styles.errorText}>{errors.placeofbirth}</Text>}
           </View>
@@ -1168,7 +1170,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholder='Enter Your Nadi'
               autoComplete="off"
               textContentType="none"
-
+importantForAutofill="no"
             />
           </View>
           <View>
@@ -1182,7 +1184,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholder={'Enter Your Self Gotra'}
               autoComplete="off"
               textContentType="none"
-
+importantForAutofill="no"
             />
           </View>
           <View>
@@ -1196,7 +1198,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholder={'Enter Your Mother Gotra'}
               autoComplete="off"
               textContentType="none"
-
+importantForAutofill="no"
             />
           </View>
           <View>
@@ -1289,6 +1291,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholderTextColor={Colors.gray}
               autoComplete="off"
               textContentType="none"
+              importantForAutofill="no"
             />
             {errors.currentCity && <Text style={styles.errorText}>{errors.currentCity}</Text>}
             {filteredCities.length > 0 && cityInput ? (
@@ -1319,7 +1322,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               textAlignVertical="top"
               autoComplete="off"
               textContentType="none"
-
+importantForAutofill="no"
             />
           </View>
 
@@ -1357,6 +1360,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholder='Enter Your Father Name'
               autoComplete="off"
               textContentType="none"
+              importantForAutofill="no"
             />
             {errors.fatherName && <Text style={styles.errorText}>{errors.fatherName}</Text>}
           </View>
@@ -1373,6 +1377,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholder='Enter Your Mother Name'
               autoComplete="off"
               textContentType="none"
+              importantForAutofill="no"
             />
             {errors.motherName && <Text style={styles.errorText}>{errors.motherName}</Text>}
           </View>
@@ -1509,6 +1514,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholder='Enter Your Family Info.'
               autoComplete="off"
               textContentType="none"
+              importantForAutofill="no"
             />
           </View>
           <View>
@@ -1532,6 +1538,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholder='Enter Your Contact No. 1'
               autoComplete="off"
               textContentType="none"
+              importantForAutofill="no"
             />
             {errors.contactNumber1 && <Text style={styles.errorText}>{errors.contactNumber1}</Text>}
           </View>
@@ -1552,6 +1559,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholder='Enter Your Contact No. 2'
               autoComplete="off"
               textContentType="none"
+              importantForAutofill="no"
             />
             {errors.contactNumber2 && <Text style={styles.errorText}>{errors.contactNumber2}</Text>}
           </View>
@@ -1567,6 +1575,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholderTextColor={Colors.gray}
               autoComplete="off"
               textContentType="none"
+              importantForAutofill="no"
             />
             {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
             {filteredStates.length > 0 ? (
@@ -1593,6 +1602,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholderTextColor={Colors.gray}
               autoComplete="off"
               textContentType="none"
+              importantForAutofill="no"
             />
             {errors.cityOrVillage && <Text style={styles.errorText}>{errors.cityOrVillage}</Text>}
             {filteredCitiesOrVillages.length > 0 && cityOrVillageInput ? (
@@ -1720,9 +1730,9 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholder='Enter Your Hobbies'
               autoComplete="off"
               textContentType="none"
+              importantForAutofill="no"
               autoScroll={false}
               showsVerticalScrollIndicator={false}
-
             />
           </View>
           <View>

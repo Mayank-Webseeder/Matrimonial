@@ -183,11 +183,11 @@ export default function ActivistForm({ navigation }) {
     ];
 
     const payload = {};
+
     for (const key of keys) {
-      if (ActivistData[key] !== undefined && ActivistData[key] !== "") {
-        payload[key] = ActivistData[key];
-      } else if (isNew) {
-        payload[key] = "";
+      const value = ActivistData[key];
+      if (value !== undefined && value !== "") {
+        payload[key] = value;
       }
     }
     if (payload.dob) {
@@ -202,7 +202,7 @@ export default function ActivistForm({ navigation }) {
       if (parsedDate && parsedDate.isValid()) {
         payload.dob = parsedDate.format("DD/MM/YYYY");
       } else {
-        console.error("❌ Invalid DOB format received:", payload.dob);
+        console.error("Invalid DOB format received:", payload.dob);
         throw new Error("Invalid DOB format. Expected format is YYYY-MM-DD.");
       }
     }
@@ -217,18 +217,18 @@ export default function ActivistForm({ navigation }) {
     } else {
       delete payload.knownActivistId;
     }
-
     if (ActivistData.profilePhoto) {
       try {
         payload.profilePhoto = await convertToBase64(ActivistData.profilePhoto);
         console.log("📸 Converted Base64 Image:", payload.profilePhoto);
       } catch (error) {
-        console.error("❌ Base64 Conversion Error:", error);
+        console.error("Base64 Conversion Error:", error);
       }
     }
 
     return payload;
   };
+
 
 
   const validateFields = () => {
@@ -421,7 +421,9 @@ export default function ActivistForm({ navigation }) {
           }}
           placeholderTextColor={Colors.gray}
           autoComplete="off"
-          textContentType="none" />
+          textContentType="none"
+          importantForAutofill="no"
+        />
         {errors?.fullname && (
           <Text style={styles.errorText}>
             {errors.fullname}
@@ -537,6 +539,7 @@ export default function ActivistForm({ navigation }) {
           placeholderTextColor={Colors.gray}
           autoComplete="off"
           textContentType="none"
+          importantForAutofill="no"
         />
 
         {filteredStates.length > 0 ? (
@@ -569,6 +572,7 @@ export default function ActivistForm({ navigation }) {
           placeholderTextColor={Colors.gray}
           autoComplete="off"
           textContentType="none"
+          importantForAutofill="no"
         />
         {filteredCities.length > 0 && cityInput ? (
           <FlatList
@@ -599,6 +603,7 @@ export default function ActivistForm({ navigation }) {
           value={ActivistData.mobileNo} onChangeText={(text) => setActivistData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
           autoComplete="off"
           textContentType="none"
+          importantForAutofill="no"
         />
         {errors?.mobileNo && (
           <Text style={styles.errorText}>
@@ -618,6 +623,7 @@ export default function ActivistForm({ navigation }) {
           placeholderTextColor={Colors.gray}
           autoComplete="off"
           textContentType="none"
+          importantForAutofill="no"
         />
         {/* <TextInput
           style={Globalstyles.input}

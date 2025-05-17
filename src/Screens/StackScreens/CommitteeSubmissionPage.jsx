@@ -315,6 +315,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
                     textContentType="none"
+                    importantForAutofill="no"
                 />
 
                 {errors.presidentName && (
@@ -380,6 +381,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
                     textContentType="none"
+                    importantForAutofill="no"
                 />
                 {errors.city && (
                     <Text style={styles.errorText}>{errors.city}</Text>
@@ -409,6 +411,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
                     textContentType="none"
+                    importantForAutofill="no"
                 />
                 {errors.area && (
                     <Text style={styles.errorText}>{errors.area}</Text>
@@ -443,6 +446,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
                     textContentType="none"
+                    importantForAutofill="no"
                     value={CommitteeData?.mobileNo} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
                 />
 

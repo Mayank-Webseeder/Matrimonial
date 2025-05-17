@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         marginVertical: SH(5),
-        marginHorizontal:SW(5)
+        marginHorizontal: SW(5)
     },
     contactText: {
         color: Colors.light,
@@ -65,6 +65,10 @@ const styles = StyleSheet.create({
         color: 'red',
         fontSize: SF(13),
         fontFamily: "Poppins-Regular"
+    },
+    errorInput: {
+        borderColor: 'red',
+        borderWidth: 1,
     },
 
 });

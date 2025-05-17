@@ -297,10 +297,10 @@ const PartnersPreference = ({ navigation, profileData }) => {
                     navigation.navigate("MainApp", {
                         screen: "Tabs",
                         params: {
-                          screen: "MyProfile",
+                            screen: "MyProfile",
                         },
-                      });
-                  }, 5000);
+                    });
+                }, 5000);
 
                 return;
             }
@@ -556,6 +556,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
                             textContentType="none"
+                            importantForAutofill="no"
                         />
                         {filteredStates.length > 0 && stateInput ? (
                             <FlatList
@@ -579,6 +580,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
                             textContentType="none"
+                            importantForAutofill="no"
                         />
                         {filteredCities.length > 0 && cityInput ? (
                             <FlatList

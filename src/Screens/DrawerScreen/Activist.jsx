@@ -111,7 +111,7 @@ const Activist = ({ navigation }) => {
         });
       }
       if (error.response && error.response.status === 400) {
-       dispatch(resetsetActivistdata()); 
+        dispatch(resetsetActivistdata());
       }
     } finally {
       setIsLoading(false);
@@ -260,11 +260,13 @@ const Activist = ({ navigation }) => {
             />
           )}
           <View style={{ marginLeft: SW(10) }}>
-            <Text style={styles.text}>{item?.fullname}</Text>
-            <Text style={styles.smalltext}>{item?.subCaste}</Text>
+            {item?.fullname && <Text style={styles.text}>{item.fullname}</Text>}
+
+            {item?.subCaste && <Text style={styles.smalltext}>{item.subCaste}</Text>}
+
             <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-around" }}>
-              <Text style={styles.smalltext}>{item?.city}</Text>
-              <Text style={styles.IDText}>Id : {item?.activistId}</Text>
+              {item?.city && <Text style={styles.smalltext}>{item.city}</Text>}
+              {item?.activistId && <Text style={styles.IDText}>Id : {item.activistId}</Text>}
             </View>
           </View>
         </View>

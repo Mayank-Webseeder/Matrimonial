@@ -12,11 +12,11 @@ import { showMessage } from 'react-native-flash-message';
 import { useSelector } from 'react-redux';
 
 const ViewPost = ({ navigation, route }) => {
-  const { post } = route.params;
+  const { post } = route.params || {};
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
   const isLiked = post?.isLiked;
   console.log("post", JSON.stringify(post));
-  const author = post?.activistDetails;
+  const author = post?.activistDetails || {};
 
   // ✅ Get images from API response correctly
   const images = post?.images || [];
@@ -33,7 +33,7 @@ const ViewPost = ({ navigation, route }) => {
       type: "info",
       message: "Under development",
       icon: "info",
-      duarion:5000
+      duarion: 5000
     });
   };
 
@@ -85,8 +85,14 @@ const ViewPost = ({ navigation, route }) => {
           <View style={styles.postHeader}>
             <View style={{ display: "flex", flexDirection: 'row', alignItems: 'center' }}>
               <View>
-                <Image source={{ uri: author.profilePhoto }} style={styles.EventheaderImage} />
-
+                <Image
+                  source={
+                    author.profilePhoto
+                      ? { uri: author.profilePhoto }
+                      : require('../../Images/NoImage.png')
+                  }
+                  style={styles.EventheaderImage}
+                />
               </View>
               <View>
                 <Text style={styles.name}>

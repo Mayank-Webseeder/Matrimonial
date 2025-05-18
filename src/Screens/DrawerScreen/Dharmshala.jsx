@@ -1,4 +1,4 @@
-import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, RefreshControl,BackHandler } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, RefreshControl, BackHandler } from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 import { slider } from '../../DummyData/DummyData';
 import { Image } from 'react-native';
@@ -77,24 +77,24 @@ const Dharmshala = () => {
   }, []);
 
 
-    useFocusEffect(
-      React.useCallback(() => {
-        const onBackPress = () => {
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{ name: 'MainApp' }],
-            })
-          );
-          return true;
-        };
-  
-        BackHandler.addEventListener('hardwareBackPress', onBackPress);
-  
-        return () =>
-          BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-      }, [])
-    );
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: 'MainApp' }],
+          })
+        );
+        return true;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [])
+  );
 
   const openImageViewer = (imageUri) => {
     setSelectedImage(imageUri);
@@ -469,11 +469,19 @@ const Dharmshala = () => {
             />
           )}
           <View style={styles.leftContainer}>
-            <Text style={styles.text}>{item?.dharmshalaName}</Text>
-            <Text style={[styles.smalltext, { fontFamily: 'Poppins-Medium' }]}>
-              {item?.subCaste}
-            </Text>
-            <Text style={styles.smalltext}>{item?.city}</Text>
+            {item?.dharmshalaName && (
+              <Text style={styles.text}>{item.dharmshalaName}</Text>
+            )}
+
+            {item?.subCaste && (
+              <Text style={[styles.smalltext, { fontFamily: 'Poppins-Medium' }]}>
+                {item.subCaste}
+              </Text>
+            )}
+
+            {item?.city && (
+              <Text style={styles.smalltext}>{item.city}</Text>
+            )}
           </View>
         </Pressable>
         <View style={styles.sharecontainer}>

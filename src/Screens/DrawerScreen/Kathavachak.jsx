@@ -355,17 +355,48 @@ const Kathavachak = ({ navigation }) => {
                 }
               }}
             >
-              <Text style={styles.name}>{item?.fullName}</Text>
-              <Text style={styles.text}>ID : {item?.kathavachakId}</Text>
-              <View style={styles.rating}>
-                <Rating type="star" ratingCount={5} imageSize={15} startingValue={rating} readonly />
-                <Text style={[styles.text, { fontFamily: 'Poppins-Regular' }]}> {rating} Star Rating</Text>
-              </View>
-              <View style={styles.CityArea}>
-                <Text style={[styles.text, { fontFamily: "Poppins-Bold" }]}>{item?.city}</Text>
-                <Text style={styles.text}>    {item?.state}</Text>
-              </View>
-              <Text style={styles.text} numberOfLines={1}>{item?.residentialAddress}</Text>
+              {item?.fullName && (
+                <Text style={styles.name}>{item.fullName}</Text>
+              )}
+
+              {item?.kathavachakId && (
+                <Text style={styles.text}>ID : {item.kathavachakId}</Text>
+              )}
+
+              {typeof rating === 'number' && (
+                <View style={styles.rating}>
+                  <Rating
+                    type="star"
+                    ratingCount={5}
+                    imageSize={15}
+                    startingValue={rating}
+                    readonly
+                  />
+                  <Text style={[styles.text, { fontFamily: 'Poppins-Regular' }]}>
+                    {rating} Star Rating
+                  </Text>
+                </View>
+              )}
+
+              {(item?.city || item?.state) && (
+                <View style={styles.CityArea}>
+                  {item?.city && (
+                    <Text style={[styles.text, { fontFamily: "Poppins-Bold" }]}>
+                      {item.city}
+                    </Text>
+                  )}
+                  {item?.state && (
+                    <Text style={styles.text}>  {item.state}</Text>
+                  )}
+                </View>
+              )}
+
+              {item?.residentialAddress && (
+                <Text style={styles.text} numberOfLines={1}>
+                  {item.residentialAddress}
+                </Text>
+              )}
+
             </Pressable>
             <View style={styles.sharecontainer}>
               <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>

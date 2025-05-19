@@ -14,6 +14,7 @@ import _ from "lodash";
 import { showMessage } from 'react-native-flash-message';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { Dropdown } from 'react-native-element-dropdown';
+import { duration } from 'moment';
 
 const DharamsalaSubmissionPage = ({ navigation }) => {
     const [subCasteInput, setSubCasteInput] = useState('');
@@ -39,10 +40,10 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
             type,
             message,
             description,
-            duarion: 5000,
+            duarion: 7000,
             icon
         });
-    }, 500);
+    }, 7000);
 
 
     const handleInputChange = (field, value) => {
@@ -82,8 +83,8 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
         selectionLimit: 4,     // 🔒 hard cap at 4
         mediaType: 'photo',
         includeBase64: false,  // you only need file‑URIs
-        maxWidth: 400,         // resize so you don’t need in‑picker cropping
-        maxHeight: 400,
+        maxWidth: 1000,         // resize so you don’t need in‑picker cropping
+        maxHeight: 1000,
         quality: 1,
     };
 
@@ -240,7 +241,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                 throw new Error(response.data.message || "Something went wrong");
             }
         } catch (error) {
-            const errorMsg = error.response?.data?.message || error.message;
+            const errorMsg = error.response?.data?.message || error.message; c
             console.error("Error fetching biodata:", errorMsg);
             showToast("danger", "Error", errorMsg, "danger");
             const sessionExpiredMessages = [
@@ -309,7 +310,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
 
                 <Text style={Globalstyles.title}>Sub-Caste Name <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <Dropdown
-                   style={[
+                    style={[
                         Globalstyles.input,
                         errors.subCaste && styles.errorInput,
                     ]}
@@ -330,7 +331,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
 
                 <Text style={Globalstyles.title}>City <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
-                     style={[
+                    style={[
                         Globalstyles.input,
                         errors.city && styles.errorInput,
                     ]}
@@ -361,7 +362,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
 
                 <Text style={Globalstyles.title}>Contact <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
-                     style={[
+                    style={[
                         Globalstyles.input,
                         errors.mobileNo && styles.errorInput,
                     ]}
@@ -380,8 +381,8 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
 
                 <Text style={Globalstyles.title}>Description</Text>
                 <TextInput
-                  style={[
-                        Globalstyles.input,styles.textArea
+                    style={[
+                        Globalstyles.input, styles.textArea
                     ]}
                     placeholder="Enter Description"
                     placeholderTextColor={Colors.gray}

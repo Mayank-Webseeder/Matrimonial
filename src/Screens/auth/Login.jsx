@@ -11,7 +11,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { showMessage } from "react-native-flash-message";
 
 const Login = ({ navigation }) => {
-
     const [mobileNumber, setMobileNumber] = useState("");
     const [password, setPassword] = useState("");
     const [passwordVisible, setPasswordVisible] = useState(false);
@@ -158,7 +157,7 @@ const Login = ({ navigation }) => {
                             value={mobileNumber}
                             onChangeText={(text) => setMobileNumber(text.replace(/[^0-9]/g, ''))}
                             placeholderTextColor={Colors.gray}
-                            maxLength={10}
+                            maxLength={12}
                             autoComplete="off"
                             textContentType="none"
                         />

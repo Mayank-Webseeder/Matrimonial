@@ -774,7 +774,7 @@ const PanditRegister = ({ navigation }) => {
                         value={RoleRegisterData?.mobileNo}
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
                         keyboardType="phone-pad"
-                        placeholder="Enter Your Mobile No." maxLength={10}
+                        placeholder="Enter Your Mobile No." maxLength={12}
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"

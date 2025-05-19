@@ -59,7 +59,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                 type: "danger",
                 message: "Kathavachak ID not found!",
                 icon: "danger",
-                duarion:5000
+                duarion: 5000
             });
             return;
         }
@@ -70,7 +70,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                 type: "danger",
                 message: "Authentication Error",
                 description: "No token found. Please log in again.",
-                duarion:5000
+                duarion: 5000
             });
             return;
         }
@@ -102,21 +102,21 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
             console.error("Error fetching kathavachak detials :", errorMsg);
             showMessage({
                 type: "danger",
-                message:errorMsg,
+                message: errorMsg,
                 description: "Failed to load profile data",
             });
             const sessionExpiredMessages = [
-              "User does not Exist....!Please login again",
-              "Invalid token. Please login again",
-              "Token has expired. Please login again"
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
             ];
-        
+
             if (sessionExpiredMessages.includes(errorMsg)) {
-              await AsyncStorage.removeItem("userToken");
-              navigation.reset({
-                index: 0,
-                routes: [{ name: "AuthStack" }],
-              });
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
             }
         } finally {
             setLoading(false);
@@ -182,19 +182,19 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
             console.error("Error fetching advertisement:", errorMsg);
-        
+
             const sessionExpiredMessages = [
-              "User does not Exist....!Please login again",
-              "Invalid token. Please login again",
-              "Token has expired. Please login again"
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
             ];
-        
+
             if (sessionExpiredMessages.includes(errorMsg)) {
-              await AsyncStorage.removeItem("userToken");
-              navigation.reset({
-                index: 0,
-                routes: [{ name: "AuthStack" }],
-              });
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
             }
         } finally {
             setLoading(false);
@@ -208,7 +208,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                 type: "danger",
                 message: "User ID not found!",
                 icon: "danger",
-                duarion:5000
+                duarion: 5000
             });
             return;
         }
@@ -235,7 +235,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                     type: "success",
                     message: response.data.message || "Profile saved successfully!",
                     icon: "success",
-                    duarion:5000
+                    duarion: 7000
                 });
 
                 // ✅ API response ke hisaab se state update karo
@@ -247,26 +247,26 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
             const errorMsg = error.response?.data?.message || error.message;
             console.error("Error fetching biodata:", errorMsg);
             setIsSaved((prev) => !prev);
-            
+
             showMessage({
                 type: "danger",
                 message: errorMsg,
                 icon: "danger",
-                duarion:5000
+                duarion: 7000
             });
 
             const sessionExpiredMessages = [
-              "User does not Exist....!Please login again",
-              "Invalid token. Please login again",
-              "Token has expired. Please login again"
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
             ];
-        
+
             if (sessionExpiredMessages.includes(errorMsg)) {
-              await AsyncStorage.removeItem("userToken");
-              navigation.reset({
-                index: 0,
-                routes: [{ name: "AuthStack" }],
-              });
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
             }
         }
     };
@@ -283,7 +283,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
         showMessage({
             type: 'info',
             message: message,
-            duarion:5000,
+            duarion: 7000,
             autoHide: true,
         });
     };
@@ -330,7 +330,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
             type: "info",
             message: "Info",
             description: "Under development",
-            duarion:5000
+            duarion: 5000
         });
     };
 
@@ -401,7 +401,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                         <Text style={styles.name} numberOfLines={2}>{profileData?.fullName}</Text>
 
                         <View style={styles.FlexContainer}>
-                        <Text style={[styles.city,{fontFamily:"Poppins-Bold"}]}>{profileData?.city}</Text>
+                            <Text style={[styles.city, { fontFamily: "Poppins-Bold" }]}>{profileData?.city}</Text>
                             <Text style={styles.city}>{profileData?.state}</Text>
                         </View>
 

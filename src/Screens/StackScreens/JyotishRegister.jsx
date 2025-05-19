@@ -315,7 +315,7 @@ const JyotishRegister = ({ navigation }) => {
 
                 if (updated.length > ADDL_LIMIT) {
                     Alert.alert(`You can only upload up to ${ADDL_LIMIT} additional photos.`);
-                    return prev;                                         
+                    return prev;
                 }
 
                 return { ...prev, additionalPhotos: updated };
@@ -418,14 +418,14 @@ const JyotishRegister = ({ navigation }) => {
                 description: response.data?.message || "Registered as Jyotish. Your approval request has been sent.",
                 type: "success",
                 icon: "success",
-                duration: 5000,
+                duration: 7000,
             });
 
             await AsyncStorage.removeItem("RoleRegisterData");
 
             setTimeout(() => {
                 navigation.navigate("MainApp");
-            }, 3000);
+            }, 5000);
 
         } catch (error) {
             const errorMessage =
@@ -813,7 +813,7 @@ const JyotishRegister = ({ navigation }) => {
                         value={RoleRegisterData?.mobileNo}
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
                         keyboardType="phone-pad"
-                        placeholder="Enter Your Mobile No." maxLength={10}
+                        placeholder="Enter Your Mobile No." maxLength={12}
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none" />

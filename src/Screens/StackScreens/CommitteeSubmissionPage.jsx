@@ -97,8 +97,8 @@ const CommitteeSubmissionPage = ({ navigation }) => {
 
     const handleImagePick = () => {
         ImageCropPicker.openPicker({
-            width: 300,
-            height: 250,
+            width: 1000,
+            height: 1000,
             cropping: true,
             includeBase64: true,
             mediaType: "photo",
@@ -222,7 +222,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     type: "success",
                     message: "Committee Created Successfully",
                     description: response.data.message || "Your committee profile has been saved!",
-                    duarion: 5000,
+                    duarion: 7000,
                     icon: "success",
                 });
                 navigation.navigate("Committee");
@@ -232,7 +232,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     message: "Error",
                     description: response.data?.message || "Failed to save committee.",
                     icon: "danger",
-                    duarion: 5000
+                    duarion: 9000
                 });
             }
         } catch (error) {

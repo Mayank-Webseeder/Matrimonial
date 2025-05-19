@@ -39,13 +39,13 @@ const ChangePassword = ({ navigation }) => {
   const handleChangePassword = async () => {
     if (!oldPassword || !newPassword || !confirmPassword) {
       setPasswordError("All fields are required!");
-     showMessage({ type: 'danger', message: 'Validation Error', description: 'All fields are required!',icon:"danger",duration: 5000 });
+      showMessage({ type: 'danger', message: 'Validation Error', description: 'All fields are required!', icon: "danger", duration: 7000 });
       return;
     }
 
     if (newPassword !== confirmPassword) {
       setPasswordError("Passwords do not match!");
-     showMessage({ type:"danger", message: 'Validation Error', description: 'Passwords do not match!',duration: 5000 });
+      showMessage({ type: "danger", message: 'Validation Error', description: 'Passwords do not match!', duration: 7000 });
       return;
     }
 
@@ -55,7 +55,7 @@ const ChangePassword = ({ navigation }) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) {
-       showMessage({ type:"danger", message: 'Authentication Error', description: 'No token found! Please log in again.',duration: 5000 });
+        showMessage({ type: "danger", message: 'Authentication Error', description: 'No token found! Please log in again.', duration: 5000 });
         setLoading(false);
         return;
       }
@@ -70,37 +70,37 @@ const ChangePassword = ({ navigation }) => {
       setLoading(false);
 
       if (response.status === 200 && response.data.status === true) {
-       showMessage({ type: 'success', message: 'Success', description: 'Password changed successfully!',icon:"success",duration: 5000 });
+        showMessage({ type: 'success', message: 'Success', description: 'Password changed successfully!', icon: "success", duration: 7000 });
         setIsModalVisible(true);
       } else {
-       showMessage({ type: 'danger', message: 'Error', description: response.data.message || "Something went wrong!" , icon:"danger",duration: 5000 });
+        showMessage({ type: 'danger', message: 'Error', description: response.data.message || "Something went wrong!", icon: "danger", duration: 5000 });
       }
 
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching biodata:", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
         });
-      } 
+      }
       setLoading(false);
 
       if (error.response && error.response.status === 400) {
         console.log("❌ API Error Response:", error.response.data);
-       showMessage({ type:"danger", message: 'Error', description: errorMsg || "Error changing password!",duration: 5000 });
+        showMessage({ type: "danger", message: 'Error', description: errorMsg || "Error changing password!", duration: 7000 });
       } else {
         console.log("❌ Network Error:", error);
-       showMessage({ type:"danger", message: 'Network Error', description: 'Please try again.',icon:"danger",duration: 5000 });
+        showMessage({ type: "danger", message: 'Network Error', description: 'Please try again.', icon: "danger", duration: 7000 });
       }
     }
   };

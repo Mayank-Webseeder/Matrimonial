@@ -326,7 +326,7 @@ export default function ActivistForm({ navigation }) {
             : "Your activist approval request is on its way! Stay tuned.",
           description: response.data.message || "Your changes have been saved!",
           icon: "success",
-          duration: 5000, // shows for 3 seconds
+          duration: 7000, // shows for 3 seconds
         });
 
         setIsEditing(false);
@@ -598,7 +598,7 @@ export default function ActivistForm({ navigation }) {
           style={[Globalstyles.input, errors.mobileNo && styles.errorInput]}
           placeholder="Enter contact number"
           keyboardType="numeric"
-          maxLength={10}
+          maxLength={12}
           placeholderTextColor={Colors.gray}
           value={ActivistData.mobileNo} onChangeText={(text) => setActivistData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
           autoComplete="off"

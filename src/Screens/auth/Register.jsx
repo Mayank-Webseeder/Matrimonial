@@ -504,9 +504,9 @@ const Register = ({ navigation }) => {
                                 placeholder="Enter your mobile number"
                                 value={mobileNumber}
                                 onChangeText={(text) => setMobileNumber(text.replace(/[^0-9]/g, ''))}
-                                maxLength={10}
+                                maxLength={12}
                                 placeholderTextColor={Colors.gray}
-                                editable={!otpSent}
+                                editable={!otpSent}aa
                                 autoComplete="off"
                                 textContentType="none"
                             />

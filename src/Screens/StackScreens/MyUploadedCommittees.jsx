@@ -49,7 +49,7 @@ const MyUploadedCommittees = ({ navigation, route }) => {
                     type: "success",
                     message: "Committee deleted successfully!",
                     icon: "success",
-                    duarion:5000
+                    duarion:7000
                 });
 
                 setModalVisible(false);  // Close modal
@@ -73,7 +73,7 @@ const MyUploadedCommittees = ({ navigation, route }) => {
                 type: "danger",
                 message:errorMsg,
                 icon: "danger",
-                duarion:5000
+                duarion:7000
             });
             const sessionExpiredMessages = [
               "User does not Exist....!Please login again",

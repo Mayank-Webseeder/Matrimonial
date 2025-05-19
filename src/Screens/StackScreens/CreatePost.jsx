@@ -100,7 +100,7 @@ const CreatePost = ({ navigation, route }) => {
                     type: 'success',
                     message: 'Success',
                     description: response.data.message || 'Your event has been created successfully!',
-                    duarion: 5000
+                    duarion: 7000
                 });
                 navigation.dispatch(
                     CommonActions.reset({
@@ -120,7 +120,7 @@ const CreatePost = ({ navigation, route }) => {
                 message: 'Error',
                 description: errorMsg,
                 icon: "danger",
-                duarion: 5000
+                duarion: 7000
             });
             const sessionExpiredMessages = [
                 "User does not Exist....!Please login again",

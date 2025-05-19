@@ -567,7 +567,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
         showMessage({
           message: successMessage,
           type: "success",
-          duarion: 5000,
+          duarion: 7000,
           icon: "success"
         });
 
@@ -1532,7 +1532,7 @@ importantForAutofill="no"
                 handleInputChange("contactNumber1", cleanText);
               }}
               keyboardType="phone-pad"
-              maxLength={10}
+              maxLength={12}
               editable={isEditing}
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Contact No. 1'
@@ -1553,7 +1553,7 @@ importantForAutofill="no"
                 handleInputChange("contactNumber2", cleanText);
               }}
               keyboardType="phone-pad"
-              maxLength={10}
+              maxLength={12}
               editable={isEditing}
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Contact No. 2'

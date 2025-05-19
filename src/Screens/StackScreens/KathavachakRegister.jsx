@@ -415,7 +415,7 @@ const KathavachakRegister = ({ navigation }) => {
                 description: response.data?.message || "Registered as Kathavachak. Your approval request has been sent.",
                 type: "success",
                 icon: "success",
-                duration: 5000,
+                duration: 7000,
             });
 
             await AsyncStorage.removeItem("RoleRegisterData");
@@ -767,7 +767,7 @@ const KathavachakRegister = ({ navigation }) => {
                 type: "error",
                 message: "Invalid URL",
                 description: `Please enter a valid ${type.replace("Url", "")} link.`,
-                duarion: 5000
+                duarion: 7000
             });
         }
     };
@@ -807,7 +807,7 @@ const KathavachakRegister = ({ navigation }) => {
                         value={RoleRegisterData?.mobileNo}
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
                         keyboardType="phone-pad"
-                        placeholder="Enter Your Mobile No." maxLength={10}
+                        placeholder="Enter Your Mobile No." maxLength={12}
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none" />

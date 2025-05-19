@@ -208,7 +208,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         type: "danger",
         message: "User ID not found!",
         icon: "danger",
-        duarion: 5000
+        duarion: 7000
       });
       return;
     }
@@ -231,7 +231,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           message: "Success",
           description: response.data.message || "Profile saved successfully!",
           icon: "success",
-          duarion: 5000
+          duarion: 7000
         });
 
         setIsSaved(response.data.message.includes("saved successfully"));
@@ -246,14 +246,14 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         message: "Error",
         description: errorMsg,
         icon: "danger",
-        duarion: 5000
+        duarion: 7000
       });
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
@@ -294,7 +294,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           message: "Success",
           description: response.data.message || "Request accepted successfully!",
           icon: "success",
-          duarion: 5000
+          duarion: 7000
         });
         setTimeout(() => {
           navigation.goBack();
@@ -305,13 +305,13 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error in accept request:", errorMsg);
-      
+
       showMessage({
         type: "danger",
         message: "Error",
         description: errorMsg,
         icon: "danger",
-        duarion: 5000
+        duarion: 7000
       });
 
       const sessionExpiredMessages = [
@@ -319,7 +319,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
@@ -364,11 +364,11 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           message: "Success",
           description: response.data.message || "Request rejected successfully!",
           icon: "success",
-          duarion: 5000
+          duarion: 7000
         });
         setTimeout(() => {
           navigation.goBack();
-        }, 500);
+        }, 7000);
       } else {
         throw new Error(response.data.message || "Something went wrong");
       }
@@ -380,14 +380,14 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         message: "Error",
         description: errorMsg,
         icon: "danger",
-        duarion: 5000
+        duarion: 7000
       });
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
@@ -409,7 +409,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
       message: "Info",
       description: "Under development",
       icon: "info",
-      duarion: 5000
+      duarion: 7000
     });
   };
 

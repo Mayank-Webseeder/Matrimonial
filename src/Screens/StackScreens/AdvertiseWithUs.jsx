@@ -68,7 +68,7 @@ const AdvertiseWithUs = ({ navigation }) => {
                     message: 'Success',
                     description: response.data.message || 'Your Advertise Request has been submitted successfully!',
                     icon: "success",
-                    duarion: 5000
+                    duarion: 7000
                 });
 
                 setTimeout(() => {
@@ -88,7 +88,7 @@ const AdvertiseWithUs = ({ navigation }) => {
                 message: 'Error',
                 description: errorMsg,
                 icon: "danger",
-                duarion: 5000
+                duarion: 7000
             });
             const sessionExpiredMessages = [
                 "User does not Exist....!Please login again",

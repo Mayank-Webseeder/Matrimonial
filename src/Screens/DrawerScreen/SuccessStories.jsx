@@ -121,9 +121,9 @@ const SuccessStories = ({ navigation }) => {
       <View style={styles.storyCard}>
         <View style={styles.collabHeader}>
           <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('MatrimonyPeopleProfile', { userId: groom?.userId })
-            }
+            // onPress={() =>
+            //   navigation.navigate('MatrimonyPeopleProfile', { userId: groom?.userId })
+            // }
           >
             <Image
               source={{ uri: groom?.profileImage || require('../../Images/NoImage.png') }}
@@ -133,9 +133,9 @@ const SuccessStories = ({ navigation }) => {
 
           <TouchableOpacity
             style={{ marginLeft: -SW(20) }}
-            onPress={() =>
-              navigation.navigate('MatrimonyPeopleProfile', { userId: bride?.userId })
-            }
+            // onPress={() =>
+            //   navigation.navigate('MatrimonyPeopleProfile', { userId: bride?.userId })
+            // }
           >
             <Image
               source={{ uri: bride?.profileImage || require('../../Images/NoImage.png') }}

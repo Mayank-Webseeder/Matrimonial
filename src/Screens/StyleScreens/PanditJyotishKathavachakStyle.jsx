@@ -60,9 +60,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: Colors.gray,
-    borderRadius: 50,
+    borderRadius: 8,
     paddingHorizontal: SW(10),
-    width: SW(250),
+    width: SW(260),
     justifyContent: "space-between"
   },
   activeText: {
@@ -87,6 +87,7 @@ const styles = StyleSheet.create({
     flexDirection: "row"
   },
   CityArea: {
+    display:"flex",
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
@@ -106,7 +107,7 @@ const styles = StyleSheet.create({
     paddingVertical: SH(3),
     borderRadius: 8,
     alignItems: "center",
-    width: SW(50)
+    width: SW(80)
   },
   buttonText: {
     color: Colors.light,

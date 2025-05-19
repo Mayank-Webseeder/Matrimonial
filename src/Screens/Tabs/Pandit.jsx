@@ -407,10 +407,9 @@ const Pandit = ({ navigation }) => {
                 }
               }}>
               <Text style={styles.name}>{item?.fullName}</Text>
-              <Text style={styles.text}>ID : {item?.panditId}</Text>
+              <Text style={styles.text}>ID: {item?.panditId}</Text>
               <View style={styles.rating}>
                 <Rating type="star" ratingCount={5} imageSize={15} startingValue={rating} readonly />
-                <Text style={[styles.text, { fontFamily: 'Poppins-Regular' }]}> {rating} Star Rating</Text>
               </View>
               <View style={styles.CityArea}>
                 <Text style={[styles.text, { fontFamily: "Poppins-Bold" }]}>{item?.city}</Text>
@@ -419,22 +418,21 @@ const Pandit = ({ navigation }) => {
               <Text style={styles.text} numberOfLines={1}>{item?.residentialAddress}</Text>
             </Pressable>
             <View style={styles.sharecontainer}>
-              <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
+              <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
+                <MaterialIcons name="call" size={17} color={Colors.light} />
+              </TouchableOpacity>
+              <View style={{display:"flex",flexDirection:"row",width:"30%",justifyContent:"space-between"}}>
+               <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
                 <FontAwesome
                   name={item.isSaved ? "bookmark" : "bookmark-o"}
                   size={19}
                   color={Colors.dark}
                 />
               </TouchableOpacity>
-
-
               <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
                 <Feather name="send" size={18} color={Colors.dark} />
               </TouchableOpacity>
-
-              <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
-                <MaterialIcons name="call" size={17} color={Colors.light} />
-              </TouchableOpacity>
+             </View>
             </View>
           </View>
         </View>
@@ -492,7 +490,7 @@ const Pandit = ({ navigation }) => {
 
         <View style={styles.searchbar}>
           <TextInput
-            placeholder="Search in Your city"
+            placeholder="Search in your city"
             value={locality}
             onChangeText={(text) => setLocality(text)}
             onSubmitEditing={() => fetchPanditData("search")}
@@ -502,7 +500,7 @@ const Pandit = ({ navigation }) => {
           {locality.length > 0 ? (
             <AntDesign
               name={'close'}
-              size={20}
+              size={15}
               color={'gray'}
               onPress={() => {
                 setLocality('');

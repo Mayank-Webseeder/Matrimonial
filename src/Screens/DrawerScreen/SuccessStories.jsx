@@ -146,30 +146,16 @@ const SuccessStories = ({ navigation }) => {
             </View>
           </TouchableOpacity>
 
-          <View style={{ marginLeft: SW(3) }}>
-            <View style={{ flexDirection: 'row' }}>
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate('MatrimonyPeopleProfile', { userId: groom?.userId })
-                }
-              >
-                <Text style={styles.nameText}>{groom?.name || NA}</Text>
+          <View style={{ marginLeft: SW(10) }}>
+            <TouchableOpacity>
+                <Text style={styles.nameText}>{groom?.name || 'NA'} &</Text>
               </TouchableOpacity>
 
-              <Text style={styles.nameText}> & </Text>
+              {/* <Text style={styles.nameText}> & </Text> */}
 
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate('MatrimonyPeopleProfile', { userId: bride?.userId })
-                }
-              >
+              <TouchableOpacity>
                 <Text style={styles.nameText}>{bride?.name || 'NA'}</Text>
               </TouchableOpacity>
-            </View>
-
-            <Text style={{ fontSize: SF(10), color: '#888', marginLeft: SW(9) }}>
-              {groom?.bioDataId || 'NA'} · {bride?.bioDataId || 'NA'}
-            </Text>
           </View>
         </View>
 

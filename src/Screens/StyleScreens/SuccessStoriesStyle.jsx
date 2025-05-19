@@ -51,9 +51,12 @@ const styles = StyleSheet.create({
   },
   nameText: {
     fontFamily: 'Poppins-Medium',
-    fontSize: SF(14),
+    fontSize: SF(15),
     color: '#000',
-    textTransform: "capitalize"
+    textTransform: 'capitalize',
+    flexShrink: 1,
+    flexWrap: 'wrap',
+    lineHeight: SF(24),
   },
   thought: {
     fontFamily: 'Poppins-Regular',

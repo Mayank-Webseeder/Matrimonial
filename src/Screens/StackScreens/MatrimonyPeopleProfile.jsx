@@ -717,22 +717,17 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             </View>
           )
         )}
-
-
-
-
         <View style={styles.flexContainer}>
           <View style={styles.flex}>
             <Text style={styles.Idtext}>
               {"ID NO. :-".toUpperCase()} {userData?.bioDataId}
             </Text>
 
-            <Text style={styles.toptext}>{matchPercentage > 0 && (
+           {matchPercentage > 0 && (
               <Text style={styles.toptext}>
                 {matchPercentage}% Compatible according to your preference
               </Text>
             )}
-            </Text>
           </View>
           <View style={styles.sharecontainer}>
             <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles()}>

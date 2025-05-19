@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     paddingVertical: SW(2),
     borderRadius: 5,
     alignSelf: "flex-end",
-    width:SW(130)
+    width: SW(130)
   },
   verifiedBadge: {
     width: SW(20),
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
   },
-  familyDiv:{
+  familyDiv: {
     paddingHorizontal: SW(8),
     paddingVertical: SH(10),
     borderRadius: 10,
@@ -148,9 +148,9 @@ const styles = StyleSheet.create({
   },
 
   text: {
-    fontfamily:"Poppins-Regular",
+    fontfamily: "Poppins-Regular",
     color: '#000',
-    fontSize:SF(15)
+    fontSize: SF(15)
   },
 
   flexContainer: {
@@ -169,10 +169,10 @@ const styles = StyleSheet.create({
   flex: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center"
-
+    alignItems: "center",
+    flexWrap: "wrap",
+    marginRight: SW(5)
   },
-
   toptext: {
     fontSize: SF(10),
     fontFamily: "Poppins-Regular",
@@ -181,6 +181,7 @@ const styles = StyleSheet.create({
   Idtext: {
     fontSize: SF(12),
     fontFamily: "Poppins-Bold",
+    color: Colors.dark
   },
   flexContainer2: {
     width: "100%",
@@ -327,16 +328,15 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     width: SW(150),
-    fontfamily:"Poppins-Regular",
+    fontfamily: "Poppins-Regular",
     color: '#000',
-    fontSize:SF(15)
+    fontSize: SF(15)
   },
   infoValue: {
     flex: 1,
     color: '#000',
     flexWrap: 'wrap',
   },
-
 });
 
 export default styles;

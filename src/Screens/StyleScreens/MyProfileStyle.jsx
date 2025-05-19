@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: SW(10),
         paddingVertical: SH(5),
         borderRadius: 10,
-        marginHorizontal: SW(10),
+        // marginHorizontal: SW(10),
         marginVertical: SH(10),
         flexDirection: "row",
         justifyContent: "space-between",

@@ -379,8 +379,10 @@ const ProfileDetail = ({ route, navigation }) => {
                                             <Text style={styles.editButtonText}>Buy Subscription</Text>
                                         </TouchableOpacity>
                                     ) : (
-                                        <TouchableOpacity style={[styles.editButton, { backgroundColor: "#04AA6D" }]} disabled={true}>
-                                            <Text style={[styles.editButtonText, { color: "#fff" }]}>Subscription Active</Text>
+                                        <TouchableOpacity disabled={true}>
+                                            <View style={styles.ActiveButton}>
+                                                <Text style={styles.ActiveButtonText}>Subscription Active</Text>
+                                            </View>
                                         </TouchableOpacity>
                                     )}
                                 </View>
@@ -396,7 +398,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                     </Text>
 
                                     <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('MatrimonyPage', { profileData })}>
-                                        <Text style={styles.editButtonText}>Edit Biodata</Text>
+                                        <Text style={[styles.editButtonText, { color: Colors.light }]}>Edit Biodata</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -875,16 +877,15 @@ const ProfileDetail = ({ route, navigation }) => {
                                         <Text style={[styles.editButtonText, { color: "red" }]}>Subscription Pending</Text>
                                     </TouchableOpacity>
                                 ) : (
-                                    <TouchableOpacity
-                                        style={[styles.editButton, { backgroundColor: '#04AA6D' }]}
-                                        disabled={true}
-                                    >
-                                        <Text style={[styles.editButtonText, { color: '#fff' }]}>Subscription Active</Text>
+                                    <TouchableOpacity disabled={true}>
+                                        <View style={styles.ActiveButton}>
+                                            <Text style={styles.ActiveButtonText}>Subscription Active</Text>
+                                        </View>
                                     </TouchableOpacity>
                                 )}
 
                                 <TouchableOpacity style={[styles.editButton]} onPress={() => navigation.navigate('UpdateProfileDetails', { profileData, profileType })}>
-                                    <Text style={styles.editButtonText}>Edit Profile</Text>
+                                    <Text style={[styles.editButtonText, { color: Colors.light }]}>Edit Profile</Text>
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.section}>
@@ -1064,15 +1065,14 @@ const ProfileDetail = ({ route, navigation }) => {
                                         <Text style={[styles.editButtonText, { color: "red" }]}>Subscription Pending</Text>
                                     </TouchableOpacity>
                                 ) : (
-                                    <TouchableOpacity
-                                        style={[styles.editButton, { backgroundColor: '#04AA6D' }]}
-                                        disabled={true}
-                                    >
-                                        <Text style={[styles.editButtonText, { color: '#fff' }]}>Subscription Active</Text>
+                                    <TouchableOpacity disabled={true}>
+                                        <View style={styles.ActiveButton}>
+                                            <Text style={styles.ActiveButtonText}>Subscription Active</Text>
+                                        </View>
                                     </TouchableOpacity>
                                 )}
                                 <TouchableOpacity style={[styles.editButton]} onPress={() => navigation.navigate('UpdateProfileDetails', { profileData, profileType })}>
-                                    <Text style={styles.editButtonText}>Edit Profile</Text>
+                                    <Text style={[styles.editButtonText, { color: Colors.light }]}>Edit Profile</Text>
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.section}>
@@ -1250,15 +1250,14 @@ const ProfileDetail = ({ route, navigation }) => {
                                         <Text style={[styles.editButtonText, { color: "red" }]}>Subscription Pending</Text>
                                     </TouchableOpacity>
                                 ) : (
-                                    <TouchableOpacity
-                                        style={[styles.editButton, { backgroundColor: '#04AA6D' }]}
-                                        disabled={true}
-                                    >
-                                        <Text style={[styles.editButtonText, { color: '#fff' }]}>Subscription Active</Text>
+                                    <TouchableOpacity disabled={true}>
+                                        <View style={styles.ActiveButton}>
+                                            <Text style={styles.ActiveButtonText}>Subscription Active</Text>
+                                        </View>
                                     </TouchableOpacity>
                                 )}
                                 <TouchableOpacity style={[styles.editButton]} onPress={() => navigation.navigate('UpdateProfileDetails', { profileData, profileType })}>
-                                    <Text style={styles.editButtonText}>Edit Profile</Text>
+                                    <Text style={[styles.editButtonText, { color: Colors.light }]}>Edit Profile</Text>
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.section}>

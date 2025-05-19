@@ -96,7 +96,7 @@ const ViewPost = ({ navigation, route }) => {
               </View>
               <View>
                 <Text style={styles.name}>
-                  {author?.activistId} <Text style={styles.hour}>{author?.activistId}</Text>
+                 <Text style={styles.hour}>{author?.activistId}</Text>
                 </Text>
                 <Text style={styles.date_time}>{formatDateTime(post.createdAt)}</Text>
               </View>

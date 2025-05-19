@@ -70,7 +70,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
       const response = await axios.get(VIEW_EVENT, { headers });
 
       if (response.status === 200 && response.data.status === true) {
-        const postData = response.data.data;
+         const postData = response.data.data.eventPosts;
         console.log("myeventpost", postData);
         setMyeventpost(postData);
       }
@@ -528,7 +528,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
                 {item.activistName} <Text style={styles.hour}>{getTimeAgo(item.createdAt)}</Text>
               </Text> */}
               <Text style={styles.name}>
-                {item.activistName} <Text style={styles.hour}>{MyActivistProfile?.activistId}</Text>
+                {item.activistName} <Text style={styles.hour}>{MyActivistProfile?.activistName}</Text>
               </Text>
               <Text style={styles.date_time}>{formatDateTime(item.createdAt)}</Text>
             </View>

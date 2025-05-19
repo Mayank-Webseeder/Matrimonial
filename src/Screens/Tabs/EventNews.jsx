@@ -422,7 +422,7 @@ const EventNews = ({ navigation }) => {
       const response = await axios.get(VIEW_EVENT, { headers });
 
       if (response.status === 200 && response.data.status === true) {
-        const postData = response.data.data;
+        const postData = response.data.data.eventPosts;
         console.log("myeventpost",JSON.stringify(postData));
         setMyeventpost(postData);
       }

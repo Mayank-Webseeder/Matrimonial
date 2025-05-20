@@ -46,12 +46,6 @@ const Jyotish = ({ navigation }) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      setLocality('');
-      setModalLocality('')
-      setRating(' ')
-      setExperience(' ')
-      setServices('')
-      JyotishDataAPI("all");
       Advertisement_window();
     }, [])
   );
@@ -87,6 +81,7 @@ const Jyotish = ({ navigation }) => {
   };
 
   useEffect(() => {
+    JyotishDataAPI("all");
     Advertisement_window();
   }, []);
 
@@ -377,17 +372,15 @@ const Jyotish = ({ navigation }) => {
                 </View>
               )}
 
-              {(item?.city || item?.state) && (
+              {(item?.city && item?.state) && (
                 <View style={styles.CityArea}>
-                  {item?.city && (
-                    <Text style={[styles.text, { fontFamily: "Poppins-Bold" }]}>
-                      {item.city}
-                    </Text>
-                  )}
-                  {item?.state && (
-                    <Text style={styles.text}>  {item.state}</Text>
-                  )}
-                </View>
+                <Text style={[styles.text, { fontFamily: "Poppins-Bold" }]}>
+                  {item?.city} ,
+                </Text>
+                <Text style={styles.text}>
+                  {item?.state}
+                </Text>
+              </View>
               )}
 
               {item?.residentialAddress && (
@@ -401,18 +394,18 @@ const Jyotish = ({ navigation }) => {
               <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
                 <MaterialIcons name="call" size={17} color={Colors.light} />
               </TouchableOpacity>
-              <View style={{display:"flex",flexDirection:"row",width:"30%",justifyContent:"space-between"}}>
-               <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
-                <FontAwesome
-                  name={item.isSaved ? "bookmark" : "bookmark-o"}
-                  size={19}
-                  color={Colors.dark}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
-                <Feather name="send" size={18} color={Colors.dark} />
-              </TouchableOpacity>
-             </View>
+              <View style={{ display: "flex", flexDirection: "row", width: "30%", justifyContent: "space-between" }}>
+                <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
+                  <FontAwesome
+                    name={item.isSaved ? "bookmark" : "bookmark-o"}
+                    size={19}
+                    color={Colors.dark}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
+                  <Feather name="send" size={18} color={Colors.dark} />
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </View>
@@ -480,10 +473,7 @@ const Jyotish = ({ navigation }) => {
           {locality.length > 0 ? (
             <AntDesign name={'close'} size={20} color={'gray'} onPress={() => {
               setLocality('');
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'Jyotish' }],
-              });
+              JyotishDataAPI("all")
             }} />
           ) : (
             <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => JyotishDataAPI("search")} />
@@ -613,7 +603,17 @@ const Jyotish = ({ navigation }) => {
               <TouchableOpacity style={styles.applyButton} onPress={handleCloseFilter}>
                 <Text style={styles.applyButtonText}>See results</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.crossButton}>
+              <TouchableOpacity
+                onPress={() => {
+                  setModalVisible(false)
+                  setLocality('');
+                  setModalLocality('')
+                  setRating(' ')
+                  setExperience(' ')
+                  setServices('')
+                  JyotishDataAPI("all");
+                }}
+                style={styles.crossButton}>
                 <View style={styles.circle}>
                   <Entypo name="cross" size={25} color={Colors.light} />
                 </View>

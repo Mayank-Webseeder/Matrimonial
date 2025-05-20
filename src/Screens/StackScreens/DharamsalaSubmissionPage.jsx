@@ -300,8 +300,9 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     }}
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
-                    textContentType="none"
+                    textContentType="dharmshalaName"
                     importantForAutofill="no"
+                    autoCorrect={false}
                 />
 
                 {errors.dharmshalaName && (
@@ -340,8 +341,9 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     placeholder="Enter your city"
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
-                    textContentType="none"
+                    textContentType="city"
                     importantForAutofill="no"
+                    autoCorrect={false}
                 />
                 {filteredCities.length > 0 && cityInput ? (
                     <FlatList
@@ -372,8 +374,9 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     placeholderTextColor={Colors.gray}
                     value={DharamsalaData.mobileNo} onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
                     autoComplete="off"
-                    textContentType="none"
+                    textContentType="mobileNo"
                     importantForAutofill="no"
+                    autoCorrect={false}
                 />
                 {errors.mobileNo && (
                     <Text style={styles.errorText}>{errors.mobileNo}</Text>
@@ -388,6 +391,10 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     placeholderTextColor={Colors.gray}
                     value={DharamsalaData.description} onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, description: text }))}
                     multiline={true}
+                    autoComplete="off"
+                    textContentType="description"
+                    importantForAutofill="no"
+                    autoCorrect={false}
                 />
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                     <Text style={Globalstyles.title}>

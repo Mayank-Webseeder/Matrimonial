@@ -415,7 +415,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                             <Rating
                                 type="star"
                                 ratingCount={5}
-                                imageSize={15}
+                                imageSize={18}
                                 startingValue={profileData?.averageRating}
                                 readonly
                             />

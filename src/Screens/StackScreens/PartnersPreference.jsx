@@ -122,8 +122,9 @@ const PartnersPreference = ({ navigation, profileData }) => {
     }, [myPartnerPreferences]);
 
     const handleStateInputChange = (text) => {
-        setStateInput(text);
-        if (text) {
+        const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+        setStateInput(filteredText);
+        if (filteredText) {
             const filtered = StateData.filter((item) =>
                 item?.label?.toLowerCase().includes(text.toLowerCase())
             ).map(item => item.label);
@@ -133,7 +134,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
         }
         setBiodata(prevState => ({
             ...prevState,
-            partnerState: text,
+            partnerState: filteredText,
         }));
     };
 
@@ -149,8 +150,9 @@ const PartnersPreference = ({ navigation, profileData }) => {
     };
 
     const handleCityInputChange = (text) => {
-        setCityInput(text);
-        if (text) {
+        const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+        setCityInput(filteredText);
+        if (filteredText) {
             const filtered = CityData.filter((item) =>
                 item?.label?.toLowerCase().includes(text.toLowerCase())
             ).map(item => item.label);
@@ -161,7 +163,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
 
         setBiodata(prevState => ({
             ...prevState,
-            partnerCity: text, // Save in biodata
+            partnerCity: filteredText,
         }));
     };
 
@@ -172,36 +174,6 @@ const PartnersPreference = ({ navigation, profileData }) => {
             partnerCity: item,
         }));
         setFilteredCities([]);
-    };
-
-    const handleSubCasteInputChange = (text) => {
-        const filtered = subCasteOptions
-            .filter((item) =>
-                item?.label?.toLowerCase().includes(text.toLowerCase())
-            )
-            .map((item) => item.label);
-
-        // Only allow typing if there's a match
-        if (filtered.length > 0) {
-            setSubCasteInput(text);
-            setFilteredSubCaste(filtered);
-            setBiodata((prevState) => ({
-                ...prevState,
-                partnerSubCaste: text,
-            }));
-        } else {
-            // Show only "Other" when no match found
-            setFilteredSubCaste(['Other']);
-        }
-    };
-    const handleSubCasteSelect = (item) => {
-        setSubCasteInput(item === 'Other' ? 'Other' : item);
-        setSelectedSubCaste(item);
-        setBiodata((prevBiodata) => ({
-            ...prevBiodata,
-            partnerSubCaste: item === 'Other' ? 'Other' : item,
-        }));
-        setFilteredSubCaste([]);
     };
 
     const ageData = Array.from({ length: 82 }, (_, i) => ({

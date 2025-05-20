@@ -50,113 +50,7 @@ const Dharmshala = () => {
   const notificationCount = notifications ? notifications.length : 0;
   const [slider, setSlider] = useState([]);
 
-
-
-  useFocusEffect(
-    React.useCallback(() => {
-      setLocality('');
-      setSubcaste('');
-      setDharamsalaData([]);
-      fetchDharamsalaData("all");
-      GetMyDharamsalaData();
-      Advertisement_window();
-    }, [])
-  );
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-      setLocality('');
-      setSubcaste('');
-      setDharamsalaData([]);
-      fetchDharamsalaData("all");
-      GetMyDharamsalaData();
-      Advertisement_window();
-    }, 2000);
-  }, []);
-
-
-  useFocusEffect(
-    React.useCallback(() => {
-      const onBackPress = () => {
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: 'MainApp' }],
-          })
-        );
-        return true;
-      };
-
-      BackHandler.addEventListener('hardwareBackPress', onBackPress);
-
-      return () =>
-        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-    }, [])
-  );
-
-  const openImageViewer = (imageUri) => {
-    setSelectedImage(imageUri);
-    setImageVisible(true);
-  };
-
-  const handleInputChange = (text) => {
-    setSubcaste(text);
-    if (text.trim() === '') {
-      setFilteredOptions([]);
-    } else {
-      const filtered = subCasteOptions.filter((option) =>
-        option.label.toLowerCase().includes(text.toLowerCase())
-      );
-      setFilteredOptions(filtered);
-    }
-  };
-
-  const handleOptionSelect = (value) => {
-    setSubcaste(value.label);
-    setFilteredOptions([]);
-  };
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (currentIndex < slider.length - 1) {
-        setCurrentIndex((prevIndex) => prevIndex + 1);
-        sliderRef.current?.goToSlide(currentIndex + 1);
-      } else {
-        setCurrentIndex(0);
-        sliderRef.current?.goToSlide(0);
-      }
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, [currentIndex]);
-
-
-  useEffect(() => {
-    Advertisement_window();
-  }, []);
-
-
-  useEffect(() => {
-    if (slider.length === 0) return;
-
-    const currentSlide = slider[currentIndex];
-    const durationInSeconds = currentSlide?.duration || 2;
-    const durationInMilliseconds = durationInSeconds * 1000;
-
-    const timeout = setTimeout(() => {
-      const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
-      setCurrentIndex(nextIndex);
-      sliderRef.current?.goToSlide(nextIndex);
-    }, durationInMilliseconds);
-
-    return () => clearTimeout(timeout);
-  }, [currentIndex, slider]);
-
-
-
-  const fetchDharamsalaData = async (filterType = "search") => {
+    const fetchDharamsalaData = async (filterType = "search") => {
     try {
       setLoading(true);
       setDharamsalaData([]);
@@ -326,6 +220,109 @@ const Dharmshala = () => {
       }
     }
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // setLocality('');
+      // setSubcaste('');
+      // setDharamsalaData([]);
+      // fetchDharamsalaData("all");
+      GetMyDharamsalaData();
+      Advertisement_window();
+    }, [])
+  );
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+      setLocality('');
+      setSubcaste('');
+      setDharamsalaData([]);
+      fetchDharamsalaData("all");
+      GetMyDharamsalaData();
+      Advertisement_window();
+    }, 2000);
+  }, []);
+
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: 'MainApp' }],
+          })
+        );
+        return true;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [])
+  );
+
+  const openImageViewer = (imageUri) => {
+    setSelectedImage(imageUri);
+    setImageVisible(true);
+  };
+
+  const handleInputChange = (text) => {
+    setSubcaste(text);
+    if (text.trim() === '') {
+      setFilteredOptions([]);
+    } else {
+      const filtered = subCasteOptions.filter((option) =>
+        option.label.toLowerCase().includes(text.toLowerCase())
+      );
+      setFilteredOptions(filtered);
+    }
+  };
+
+  const handleOptionSelect = (value) => {
+    setSubcaste(value.label);
+    setFilteredOptions([]);
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (currentIndex < slider.length - 1) {
+        setCurrentIndex((prevIndex) => prevIndex + 1);
+        sliderRef.current?.goToSlide(currentIndex + 1);
+      } else {
+        setCurrentIndex(0);
+        sliderRef.current?.goToSlide(0);
+      }
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [currentIndex]);
+
+
+  useEffect(() => {
+    fetchDharamsalaData("all");
+    Advertisement_window();
+  }, []);
+
+
+  useEffect(() => {
+    if (slider.length === 0) return;
+
+    const currentSlide = slider[currentIndex];
+    const durationInSeconds = currentSlide?.duration || 2;
+    const durationInMilliseconds = durationInSeconds * 1000;
+
+    const timeout = setTimeout(() => {
+      const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
+      setCurrentIndex(nextIndex);
+      sliderRef.current?.goToSlide(nextIndex);
+    }, durationInMilliseconds);
+
+    return () => clearTimeout(timeout);
+  }, [currentIndex, slider]);
 
 
   const renderSkeleton = () => (
@@ -592,12 +589,10 @@ const Dharmshala = () => {
               textContentType="none"
             />
             {locality.length > 0 ? (
-              <AntDesign name={'close'} size={20} color={'gray'} onPress={() => {
+              <AntDesign name={'close'} size={20} color={'gray'} 
+              onPress={() => {
                 setLocality('');
-                navigation.reset({
-                  index: 0,
-                  routes: [{ name: 'Committee' }],
-                });
+                fetchDharamsalaData("all");
               }} />
             ) : (
               <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchDharamsalaData("search")} />

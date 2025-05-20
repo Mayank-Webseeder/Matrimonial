@@ -523,7 +523,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                             <Rating
                                 type="star"
                                 ratingCount={5}
-                                imageSize={15}
+                                  imageSize={18}
                                 startingValue={myRatings[0]?.rating}
                                 readonly
                             />

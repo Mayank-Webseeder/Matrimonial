@@ -30,16 +30,16 @@ const styles = StyleSheet.create({
     marginVertical: SH(10)
   },
   ButtonContainer: {
-    flexDirection: "row", // Row layout for Filter & Search Bar
+    flexDirection: "row", 
     alignItems: "center",
-    justifyContent: "space-between", // Spread out elements
+    justifyContent: "space-between",
     marginHorizontal: SW(10),
     marginBottom: SW(10),
   },
 
   button: {
     width: SW(70),
-    height: SH(30),
+    height: SH(35),
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: '#fff',
-    marginHorizontal: SW(15),
+    // marginHorizontal: SW(10),
     marginTop: -SH(5)
   },
   iconContainer: {
@@ -87,9 +87,10 @@ const styles = StyleSheet.create({
     flexDirection: "row"
   },
   CityArea: {
-    display:"flex",
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+ flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  width: '100%',
   },
   rating: {
     flexDirection: 'row',
@@ -146,7 +147,8 @@ const styles = StyleSheet.create({
   },
   text: {
     fontFamily: "Poppins-Medium",
-    fontSize: SF(11)
+    fontSize: SF(11),
+    marginHorizontal:SW(2)
   },
   name: {
     fontFamily: "Poppins-Bold",
@@ -156,7 +158,6 @@ const styles = StyleSheet.create({
     marginVertical: SH(10),
   },
   leftContainer: {
-    marginHorizontal: SW(10),
     marginVertical: SH(10),
     width: "55%"
   },

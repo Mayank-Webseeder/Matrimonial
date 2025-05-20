@@ -659,9 +659,9 @@ const JyotishRegister = ({ navigation }) => {
 
 
     const handleStateInputChange = (text) => {
-        setStateInput(text);
-
-        if (text) {
+        const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+        setStateInput(filteredText);
+        if (filteredText) {
             const filtered = StateData.filter((item) =>
                 item?.label?.toLowerCase().includes(text.toLowerCase())
             ).map(item => item.label);
@@ -672,7 +672,7 @@ const JyotishRegister = ({ navigation }) => {
 
         setRoleRegisterData(PrevRoleRegisterData => ({
             ...PrevRoleRegisterData,
-            state: text,
+            state: filteredText,
         }));
     };
 
@@ -687,8 +687,9 @@ const JyotishRegister = ({ navigation }) => {
     };
 
     const handleCityInputChange = (text) => {
-        setCityInput(text);
-        if (text) {
+        const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+        setCityInput(filteredText);
+        if (filteredText) {
             const filtered = CityData.filter((item) =>
                 item?.label?.toLowerCase().includes(text.toLowerCase())
             ).map(item => item.label);
@@ -699,7 +700,7 @@ const JyotishRegister = ({ navigation }) => {
 
         setRoleRegisterData(PrevRoleRegisterData => ({
             ...PrevRoleRegisterData,
-            city: text,
+            city: filteredText,
         }));
     };
 
@@ -712,38 +713,6 @@ const JyotishRegister = ({ navigation }) => {
         setFilteredCities([]);
     };
 
-    const handleSubCasteInputChange = (text) => {
-        const filtered = subCasteOptions
-            .filter((item) =>
-                item?.label?.toLowerCase().includes(text.toLowerCase())
-            )
-            .map((item) => item.label);
-
-        // If matches found, allow input
-        if (filtered.length > 0) {
-            setSubCasteInput(text);
-            setFilteredSubCaste(filtered);
-            setRoleRegisterData((PrevRoleRegisterData) => ({
-                ...PrevRoleRegisterData,
-                subCaste: text,
-            }));
-        } else {
-            // Don't allow arbitrary input — only show "Other"
-            setFilteredSubCaste(['Other']);
-        }
-    };
-
-    const handleSubCasteSelect = (selectedItem) => {
-        const finalValue = selectedItem === 'Other' ? 'Other' : selectedItem;
-
-        setSubCasteInput(finalValue);
-        setFilteredSubCaste([]);
-        setRoleRegisterData((PrevRoleRegisterData) => ({
-            ...PrevRoleRegisterData,
-            subCaste: finalValue,
-        }));
-    };
-
     const handleInputChange = (field, value) => {
         setRoleRegisterData((prev) => ({
             ...prev,
@@ -751,10 +720,10 @@ const JyotishRegister = ({ navigation }) => {
         }));
     };
 
-    const [tempUrlData, setTempUrlData] = useState({}); // Temporarily store input
+    const [tempUrlData, setTempUrlData] = useState({});
 
     const validateAndSetUrl = (text, type) => {
-        setTempUrlData((prev) => ({ ...prev, [type]: text })); // Update temp state
+        setTempUrlData((prev) => ({ ...prev, [type]: text }));
     };
 
     const handleBlur = (type) => {
@@ -798,7 +767,8 @@ const JyotishRegister = ({ navigation }) => {
                     <TextInput style={[Globalstyles.input, errors.fullName && styles.errorInput]}
                         value={RoleRegisterData?.fullName}
                         onChangeText={(text) => {
-                            setRoleRegisterData((prev) => ({ ...prev, fullName: text }));
+                            const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+                            setRoleRegisterData((prev) => ({ ...prev, fullName: filteredText }));
                         }}
                         placeholder='Enter Your Full Name'
                         placeholderTextColor={Colors.gray}

@@ -653,9 +653,10 @@ const KathavachakRegister = ({ navigation }) => {
     };
 
     const handleStateInputChange = (text) => {
-        setStateInput(text);
+        const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+        setStateInput(filteredText);
 
-        if (text) {
+        if (filteredText) {
             const filtered = StateData.filter((item) =>
                 item?.label?.toLowerCase().includes(text.toLowerCase())
             ).map(item => item.label);
@@ -666,7 +667,7 @@ const KathavachakRegister = ({ navigation }) => {
 
         setRoleRegisterData(PrevRoleRegisterData => ({
             ...PrevRoleRegisterData,
-            state: text,
+            state: filteredText,
         }));
     };
 
@@ -681,8 +682,9 @@ const KathavachakRegister = ({ navigation }) => {
     };
 
     const handleCityInputChange = (text) => {
-        setCityInput(text);
-        if (text) {
+        const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+        setCityInput(filteredText);
+        if (filteredText) {
             const filtered = CityData.filter((item) =>
                 item?.label?.toLowerCase().includes(text.toLowerCase())
             ).map(item => item.label);
@@ -693,7 +695,7 @@ const KathavachakRegister = ({ navigation }) => {
 
         setRoleRegisterData(PrevRoleRegisterData => ({
             ...PrevRoleRegisterData,
-            city: text,
+            city: filteredText,
         }));
     };
 
@@ -792,7 +794,8 @@ const KathavachakRegister = ({ navigation }) => {
                     <TextInput style={[Globalstyles.input, errors.fullName && styles.errorInput]}
                         value={RoleRegisterData?.fullName}
                         onChangeText={(text) => {
-                            setRoleRegisterData((prev) => ({ ...prev, fullName: text }));
+                            const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+                            setRoleRegisterData((prev) => ({ ...prev, fullName: filteredText }));
                         }}
                         placeholder='Enter Your Full Name'
                         placeholderTextColor={Colors.gray}
@@ -807,10 +810,12 @@ const KathavachakRegister = ({ navigation }) => {
                         value={RoleRegisterData?.mobileNo}
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
                         keyboardType="phone-pad"
-                        placeholder="Enter Your Mobile No." maxLength={12}
+                        placeholder="Enter Your Mobile No." maxLength={10}
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none" />
+                        textContentType="none"
+                        autoCorrect={false}
+                    />
                     {errors.mobileNo && <Text style={styles.errorText}>{errors.mobileNo}</Text>}
                     <Text style={[Globalstyles.title, { color: Colors.theme_color }]}>Address</Text>
 
@@ -824,6 +829,7 @@ const KathavachakRegister = ({ navigation }) => {
                         autoComplete="off"
                         textContentType="none"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
                     {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
 
@@ -851,6 +857,7 @@ const KathavachakRegister = ({ navigation }) => {
                         autoComplete="off"
                         textContentType="none"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
                     {errors.city && <Text style={styles.errorText}>{errors.city}</Text>}
                     {filteredCities.length > 0 && cityInput ? (
@@ -877,8 +884,8 @@ const KathavachakRegister = ({ navigation }) => {
                         autoComplete="off"
                         textContentType="none"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
-
                     <Text style={Globalstyles.title}>Aadhar No. </Text>
                     <TextInput style={Globalstyles.input}
                         value={RoleRegisterData?.aadharNo}
@@ -888,18 +895,12 @@ const KathavachakRegister = ({ navigation }) => {
                         autoComplete="off"
                         textContentType="none"
                         importantForAutofill="no"
+                        keyboardType="phone-pad"
+                        maxLength={12}
+                        autoCorrect={false}
                     />
-
                     <Text style={Globalstyles.title}>Sub Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
-                    {/* <TextInput
-                        style={Globalstyles.input}
-                        value={RoleRegisterData?.subCaste} // `myBiodata?.subCaste` ki jagah `subCasteInput` use karein
-                        onChangeText={handleSubCasteInputChange}
-                        placeholder="Type your sub caste"
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                    /> */}
+
                     <Dropdown
                         style={[Globalstyles.input, errors.subCaste && styles.errorInput]}
                         data={subCasteOptions}
@@ -913,22 +914,6 @@ const KathavachakRegister = ({ navigation }) => {
                         showsVerticalScrollIndicator={false}
                     />
                     {errors.subCaste && <Text style={styles.errorText}>{errors.subCaste}</Text>}
-
-                    {/* Agar user type karega toh list dikhegi */}
-                    {/* {filteredSubCaste.length > 0 ? (
-                        <FlatList
-                            data={filteredSubCaste.slice(0, 5)}
-                            scrollEnabled={false}
-                            keyExtractor={(item, index) => index.toString()}
-                            renderItem={({ item }) => (
-                                <TouchableOpacity onPress={() => handleSubCasteSelect(item)}>
-                                    <Text style={Globalstyles.listItem}>{item}</Text>
-                                </TouchableOpacity>
-                            )}
-                            style={Globalstyles.suggestions}
-                        />
-                    ) : null} */}
-
 
                     {/* Role Selection with Checkboxes */}
                     <Text style={Globalstyles.title}>Select Kathavachak Services <Entypo name={'star'} color={'red'} size={12} /></Text>
@@ -1003,6 +988,7 @@ const KathavachakRegister = ({ navigation }) => {
                         autoComplete="off"
                         textContentType="none"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
 
                     <View style={styles.photopickContainer}>
@@ -1037,6 +1023,7 @@ const KathavachakRegister = ({ navigation }) => {
                         autoComplete="off"
                         textContentType="none"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
 
                     <Text style={Globalstyles.title}>Youtube Link</Text>
@@ -1050,6 +1037,7 @@ const KathavachakRegister = ({ navigation }) => {
                         autoComplete="off"
                         textContentType="none"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
 
                     <Text style={Globalstyles.title}>Whatsapp Link</Text>
@@ -1063,6 +1051,7 @@ const KathavachakRegister = ({ navigation }) => {
                         autoComplete="off"
                         textContentType="none"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
 
                     <Text style={Globalstyles.title}>Facebook Link</Text>
@@ -1075,6 +1064,7 @@ const KathavachakRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        autoCorrect={false}
                     />
 
                     <Text style={Globalstyles.title}>Instagram Link</Text>
@@ -1088,6 +1078,7 @@ const KathavachakRegister = ({ navigation }) => {
                         autoComplete="off"
                         textContentType="none"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
                     <TouchableOpacity
                         style={styles.button}

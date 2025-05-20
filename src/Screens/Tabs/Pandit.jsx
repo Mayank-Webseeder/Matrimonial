@@ -50,13 +50,6 @@ const Pandit = ({ navigation }) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      setLocality('');
-      setModalLocality('')
-      setRating(' ')
-      setExperience(' ')
-      setServices('')
-      setPanditData([]);
-      fetchPanditData("all");
       Top_Advertisement_window();
     }, [])
   );
@@ -169,6 +162,7 @@ const Pandit = ({ navigation }) => {
 
 
   useEffect(() => {
+    fetchPanditData("all");
     Top_Advertisement_window();
   }, []);
 
@@ -411,28 +405,34 @@ const Pandit = ({ navigation }) => {
               <View style={styles.rating}>
                 <Rating type="star" ratingCount={5} imageSize={15} startingValue={rating} readonly />
               </View>
-              <View style={styles.CityArea}>
-                <Text style={[styles.text, { fontFamily: "Poppins-Bold" }]}>{item?.city}</Text>
-                <Text style={styles.text}>    {item?.state}</Text>
+              {(item?.city && item?.state) && (
+                <View style={styles.CityArea}>
+                <Text style={[styles.text, { fontFamily: "Poppins-Bold" }]}>
+                  {item?.city} ,
+                </Text>
+                <Text style={styles.text}>
+                  {item?.state}
+                </Text>
               </View>
+              )}
               <Text style={styles.text} numberOfLines={1}>{item?.residentialAddress}</Text>
             </Pressable>
             <View style={styles.sharecontainer}>
               <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
                 <MaterialIcons name="call" size={17} color={Colors.light} />
               </TouchableOpacity>
-              <View style={{display:"flex",flexDirection:"row",width:"30%",justifyContent:"space-between"}}>
-               <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
-                <FontAwesome
-                  name={item.isSaved ? "bookmark" : "bookmark-o"}
-                  size={19}
-                  color={Colors.dark}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
-                <Feather name="send" size={18} color={Colors.dark} />
-              </TouchableOpacity>
-             </View>
+              <View style={{ display: "flex", flexDirection: "row", width: "30%", justifyContent: "space-between" }}>
+                <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
+                  <FontAwesome
+                    name={item.isSaved ? "bookmark" : "bookmark-o"}
+                    size={19}
+                    color={Colors.dark}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
+                  <Feather name="send" size={18} color={Colors.dark} />
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </View>
@@ -504,10 +504,7 @@ const Pandit = ({ navigation }) => {
               color={'gray'}
               onPress={() => {
                 setLocality('');
-                navigation.reset({
-                  index: 0,
-                  routes: [{ name: 'Pandit' }],
-                });
+                fetchPanditData("all");
               }}
             />
           ) : (
@@ -641,7 +638,17 @@ const Pandit = ({ navigation }) => {
               <TouchableOpacity style={styles.applyButton} onPress={handleCloseFilter}>
                 <Text style={styles.applyButtonText}>See results</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.crossButton}>
+              <TouchableOpacity
+                onPress={() => {
+                  setModalVisible(false);
+                  setLocality('');
+                  setModalLocality('');
+                  setRating('');
+                  setExperience('');
+                  setServices('');
+                  fetchPanditData("all");
+                }}
+                style={styles.crossButton}>
                 <View style={styles.circle}>
                   <Entypo name="cross" size={25} color={Colors.light} />
                 </View>

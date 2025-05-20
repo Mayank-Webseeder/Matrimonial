@@ -140,6 +140,7 @@ const EventNews = ({ navigation }) => {
 
 
   useEffect(() => {
+    fetchPostData();
     Advertisement_window();
   }, []);
 

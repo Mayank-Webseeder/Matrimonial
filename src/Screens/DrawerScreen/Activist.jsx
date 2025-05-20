@@ -244,38 +244,28 @@ const Activist = ({ navigation }) => {
   const renderItem = ({ item }) => {
     return (
       <View style={styles.card}>
-        <View style={styles.cardData}>
-          <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
-            <Image
-              source={item.profilePhoto ? { uri: item.profilePhoto } : require('../../Images/NoImage.png')}
-              style={styles.image}
-            />
-          </TouchableOpacity>
-          {selectedImage && (
-            <ImageViewing
-              images={[{ uri: selectedImage }]}
-              imageIndex={0}
-              visible={isImageVisible}
-              onRequestClose={() => setImageVisible(false)}
-            />
-          )}
-          <View style={{ marginLeft: SW(10) }}>
-            {item?.fullname && <Text style={styles.text}>{item.fullname}</Text>}
+  <View style={styles.cardLeft}>
+    <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
+      <Image
+        source={item.profilePhoto ? { uri: item.profilePhoto } : require('../../Images/NoImage.png')}
+        style={styles.image}
+      />
+    </TouchableOpacity>
+    <View style={{ marginLeft: SW(10), flex: 1 }}>
+      {item?.fullname && <Text style={styles.text}>{item.fullname}</Text>}
+      {item?.subCaste && <Text style={styles.smalltext}>{item.subCaste}</Text>}
 
-            {item?.subCaste && <Text style={styles.smalltext}>{item.subCaste}</Text>}
-
-            <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-around" }}>
-              {item?.city && <Text style={styles.smalltext}>{item.city}</Text>}
-              {item?.activistId && <Text style={styles.IDText}>Id : {item.activistId}</Text>}
-            </View>
-          </View>
-        </View>
-        <View>
-          <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
-            <Text style={styles.buttonText}>Connect</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: 'center' }}>
+        {item?.city && <Text style={styles.smalltext}>{item.city}</Text>}
+        {item?.activistId && <Text style={styles.IDText}>Id: {item.activistId}</Text>}
       </View>
+    </View>
+  </View>
+  <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
+    <Text style={styles.buttonText}>Connect</Text>
+  </TouchableOpacity>
+</View>
+
     );
   };
 

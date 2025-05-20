@@ -94,9 +94,10 @@ export default function ActivistForm({ navigation }) {
   };
 
   const handleStateInputChange = (text) => {
-    setStateInput(text);
+    const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+    setStateInput(filteredText);
 
-    if (text) {
+    if (filteredText) {
       const filtered = StateData.filter((item) =>
         item?.label?.toLowerCase().includes(text.toLowerCase())
       ).map(item => item.label);
@@ -107,7 +108,7 @@ export default function ActivistForm({ navigation }) {
 
     setActivistData(prevActivistData => ({
       ...prevActivistData,
-      state: text,
+      state: filteredText,
     }));
   };
 
@@ -122,8 +123,9 @@ export default function ActivistForm({ navigation }) {
   };
 
   const handleCityInputChange = (text) => {
-    setCityInput(text);
-    if (text) {
+    const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+    setCityInput(filteredText);
+    if (filteredText) {
       const filtered = CityData.filter((item) =>
         item?.label?.toLowerCase().includes(text.toLowerCase())
       ).map(item => item.label);
@@ -134,7 +136,7 @@ export default function ActivistForm({ navigation }) {
 
     setActivistData(prevActivistData => ({
       ...prevActivistData,
-      city: text,
+      city: filteredText,
     }));
   };
 
@@ -377,28 +379,6 @@ export default function ActivistForm({ navigation }) {
       }));
     }
   };
-  const handleRemoveActivistId = (index) => {
-    setActivistData((prev) => ({
-      ...prev,
-      knownActivistId: prev.knownActivistId.filter((_, i) => i !== index),
-    }));
-  };
-
-  const handleChangeText = (text) => {
-    setTempId(text);
-    if (typingTimeout) {
-      clearTimeout(typingTimeout);
-    }
-
-    setTypingTimeout(
-      setTimeout(() => {
-        if (text.trim()) {
-          handleAddActivistId(text.trim());
-          setTempId("");
-        }
-      }, 5000)
-    );
-  };
 
   return (
     <SafeAreaView style={Globalstyles.container}>
@@ -417,12 +397,14 @@ export default function ActivistForm({ navigation }) {
           placeholder="Enter your Full Name"
           value={ActivistData.fullname}
           onChangeText={(text) => {
-            setActivistData((prev) => ({ ...prev, fullname: text }));
+            const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+            setActivistData((prev) => ({ ...prev, fullname: filteredText }));
           }}
           placeholderTextColor={Colors.gray}
           autoComplete="off"
-          textContentType="none"
+          textContentType="fullname"
           importantForAutofill="no"
+          autoCorrect={false}
         />
         {errors?.fullname && (
           <Text style={styles.errorText}>
@@ -442,30 +424,8 @@ export default function ActivistForm({ navigation }) {
           placeholderStyle={{ color: '#E7E7E7' }}
           autoScroll={false}
           showsVerticalScrollIndicator={false}
+          autoCorrect={false}
         />
-        {/* <TextInput
-          style={Globalstyles.input}
-          value={ActivistData?.subCaste}
-          onChangeText={handleSubCasteInputChange}
-          placeholder="Type your sub caste"
-          placeholderTextColor={Colors.gray}
-          autoComplete="off"
-          textContentType="none"
-        />
-
-        {filteredSubCaste.length > 0 ? (
-          <FlatList
-            data={filteredSubCaste.slice(0, 5)}
-            scrollEnabled={false}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => handleSubCasteSelect(item)}>
-                <Text style={Globalstyles.listItem}>{item}</Text>
-              </TouchableOpacity>
-            )}
-            style={Globalstyles.suggestions}
-          />
-        ) : null} */}
 
         {errors?.subCaste && (
           <Text style={styles.errorText}>
@@ -507,7 +467,7 @@ export default function ActivistForm({ navigation }) {
               }
               mode="date"
               display="default"
-              maximumDate={new Date()}
+              maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))}
               themeVariant="light"
               onChange={(event, selectedDate) => {
                 setShowDatePicker(false);
@@ -521,7 +481,6 @@ export default function ActivistForm({ navigation }) {
             />
           )}
         </View>
-
 
         {errors?.dob && (
           <Text style={styles.errorText}>
@@ -538,8 +497,9 @@ export default function ActivistForm({ navigation }) {
           placeholder="Type your State"
           placeholderTextColor={Colors.gray}
           autoComplete="off"
-          textContentType="none"
+          textContentType="state"
           importantForAutofill="no"
+          autoCorrect={false}
         />
 
         {filteredStates.length > 0 ? (
@@ -571,8 +531,9 @@ export default function ActivistForm({ navigation }) {
           placeholder="Enter your city"
           placeholderTextColor={Colors.gray}
           autoComplete="off"
-          textContentType="none"
+          textContentType="city"
           importantForAutofill="no"
+          autoCorrect={false}
         />
         {filteredCities.length > 0 && cityInput ? (
           <FlatList
@@ -598,12 +559,13 @@ export default function ActivistForm({ navigation }) {
           style={[Globalstyles.input, errors.mobileNo && styles.errorInput]}
           placeholder="Enter contact number"
           keyboardType="numeric"
-          maxLength={12}
+          maxLength={10}
           placeholderTextColor={Colors.gray}
           value={ActivistData.mobileNo} onChangeText={(text) => setActivistData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
           autoComplete="off"
-          textContentType="none"
+          textContentType="mobileNo"
           importantForAutofill="no"
+          autoCorrect={false}
         />
         {errors?.mobileNo && (
           <Text style={styles.errorText}>
@@ -622,32 +584,10 @@ export default function ActivistForm({ navigation }) {
           }
           placeholderTextColor={Colors.gray}
           autoComplete="off"
-          textContentType="none"
+          textContentType="knownActivistId"
           importantForAutofill="no"
+          autoCorrect={false}
         />
-        {/* <TextInput
-          style={Globalstyles.input}
-          placeholder="Enter Activist ID (eg., Me AA0001)"
-          value={tempId}
-          onChangeText={handleChangeText}
-          onSubmitEditing={() => {
-            handleAddActivistId(tempId);
-            setTempId("");
-          }}
-          placeholderTextColor={Colors.gray}
-          autoComplete="off"
-          textContentType="none"
-        /> */}
-        {/* <View style={{ flexDirection: "row", flexWrap: "wrap", marginTop: 10 }}>
-          {ActivistData.knownActivistIds.map((item, index) => (
-            <View key={index} style={styles.tag}>
-              <Text style={styles.tagText}>{item.activistId}</Text>
-              <TouchableOpacity onPress={() => handleRemoveActivistId(index)}>
-                <Text style={styles.removeTag}>✖</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
-        </View> */}
         <Text style={Globalstyles.title}>Are you engaged with any Brahmin committee? </Text>
         <View style={styles.radioGroup}>
           <TouchableOpacity

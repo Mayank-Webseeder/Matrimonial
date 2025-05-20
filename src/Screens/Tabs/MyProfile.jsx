@@ -429,7 +429,7 @@ const MyProfile = ({ navigation }) => {
                     <ScrollView style={{ paddingVertical: SH(5), paddingHorizontal: SW(10) }} showsVerticalScrollIndicator={false}>
                         <View style={styles.userDeatil}>
                             <View style={styles.userData}>
-                                <Text style={styles.text}>User ID  {profileData.userId || 'NA'}</Text>
+                                <Text style={styles.text}>User ID:  {profileData.userId || 'NA'}</Text>
                                 <Text style={styles.text}>{capitalizeFirstLetter(profileData.username || 'NA')}</Text>
                                 <Text style={styles.text}>DOB: {formattedDate || 'NA'}</Text>
                                 <Text style={styles.text}>City: {capitalizeFirstLetter(profileData.city || 'NA')}</Text>

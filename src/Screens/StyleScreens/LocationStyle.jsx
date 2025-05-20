@@ -144,7 +144,9 @@ const styles = StyleSheet.create({
   HeadingText: {
     fontSize: SF(15),
     fontFamily: "Poppins-Bold",
-    textTransform: "capitalize"
+    textTransform: "capitalize",
+    lineHeight: SF(18),
+    paddingTop:SH(2)
   },
 
   text: {
@@ -196,6 +198,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: SW(3),
     paddingVertical: SH(3),
     backgroundColor: Colors.light,
+    marginTop:SH(5)
   },
   iconContainer: {
     alignItems: 'center',

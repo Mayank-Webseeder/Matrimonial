@@ -63,15 +63,21 @@ const Register = ({ navigation }) => {
     };
 
     const handleCityInputChange = (text) => {
-        setCityInput(text);
+        const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+        setCityInput(filteredText);
+
         const filtered = CityData.filter((item) =>
-            item.label.toLowerCase().includes(text.toLowerCase())
+            item.label.toLowerCase().includes(filteredText.toLowerCase())
         ).map((item) => item.label);
 
         setFilteredCities(filtered);
-        const exactMatch = CityData.find((item) => item.label.toLowerCase() === text.toLowerCase());
+
+        const exactMatch = CityData.find(
+            (item) => item.label.toLowerCase() === filteredText.toLowerCase()
+        );
         setSelectedCity(exactMatch ? exactMatch.label : null);
     };
+
 
     const validateFields = () => {
         const newErrors = {};
@@ -323,7 +329,9 @@ const Register = ({ navigation }) => {
                             }}
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
-                            textContentType="none"
+                            textContentType="fullName"
+                            importantForAutofill="no"
+                            autoCorrect={false}
                         />
                         {errors.fullName && (
                             <Text style={styles.errorText}>{errors.fullName}</Text>
@@ -361,11 +369,11 @@ const Register = ({ navigation }) => {
 
                         {showDatePicker && (
                             <DateTimePicker
-                                value={selectedDate || new Date(1990, 0, 1)}
+                                value={selectedDate || new Dadte(2000, 0, 1)}
                                 mode="date"
                                 display="default"
                                 onChange={handleDateChange}
-                                maximumDate={new Date()}
+                                maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))}
                                 themeVariant="light"
                             />
                         )}
@@ -380,7 +388,9 @@ const Register = ({ navigation }) => {
                             placeholder="Enter your city"
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
-                            textContentType="none"
+                            textContentType="city"
+                            importantForAutofill="no"
+                            autoCorrect={false}
                             maxLength={30}
                         />
                         {filteredCities.length > 0 && cityInput ? (
@@ -445,7 +455,9 @@ const Register = ({ navigation }) => {
                                     placeholder="Create a strong password"
                                     placeholderTextColor={Colors.gray}
                                     autoComplete="off"
-                                    textContentType="none"
+                                    textContentType="password"
+                                    importantForAutofill="no"
+                                    autoCorrect={false}
                                 />
                                 <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                                     <AntDesign
@@ -473,7 +485,9 @@ const Register = ({ navigation }) => {
                                     placeholder="Confirm your password"
                                     placeholderTextColor={Colors.gray}
                                     autoComplete="off"
-                                    textContentType="none"
+                                    textContentType="confirmPassword"
+                                    importantForAutofill="no"
+                                    autoCorrect={false}
                                 />
                                 <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
                                     <AntDesign
@@ -504,11 +518,13 @@ const Register = ({ navigation }) => {
                                 placeholder="Enter your mobile number"
                                 value={mobileNumber}
                                 onChangeText={(text) => setMobileNumber(text.replace(/[^0-9]/g, ''))}
-                                maxLength={12}
+                                maxLength={10}
                                 placeholderTextColor={Colors.gray}
-                                editable={!otpSent}aa
+                                editable={!otpSent}
                                 autoComplete="off"
-                                textContentType="none"
+                                textContentType="mobileNumber"
+                                importantForAutofill="no"
+                                autoCorrect={false}
                             />
                             <TouchableOpacity style={styles.otpButton} onPress={handleSendOtp} disabled={isOtpLoading}>
                                 {isOtpLoading ? <ActivityIndicator size="small" color={Colors.theme_color} /> : <Text style={styles.otpButtonText}>Send OTP</Text>}
@@ -521,8 +537,15 @@ const Register = ({ navigation }) => {
                         {/* Mobile Number */}
                         <Text style={Globalstyles.title}>OTP <Entypo name={'star'} color={'red'} size={12} /></Text>
 
-                        <TextInput style={Globalstyles.input} keyboardType="numeric" placeholder="Enter Your Otp " placeholderTextColor={Colors.gray}
-                            value={otp} onChangeText={setOtp} maxLength={6} />
+                        <TextInput style={Globalstyles.input} keyboardType="numeric"
+                            placeholder="Enter Your Otp "
+                            placeholderTextColor={Colors.gray}
+                            value={otp}
+                            onChangeText={setOtp} maxLength={6}
+                            autoComplete="off"
+                            textContentType="otp"
+                            importantForAutofill="no"
+                            autoCorrect={false} />
 
                         {errors.otp && (
                             <Text style={styles.errorText}>{errors.otp}</Text>

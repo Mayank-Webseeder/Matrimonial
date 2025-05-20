@@ -376,7 +376,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                             style={styles.editButton}
                                             onPress={() => navigation.navigate("BuySubscription", { serviceType: profileType })}
                                         >
-                                            <Text style={styles.editButtonText}>Buy Subscription</Text>
+                                            <Text style={[styles.editButtonText, { color: Colors.light }]}>Buy Subscription</Text>
                                         </TouchableOpacity>
                                     ) : (
                                         <TouchableOpacity disabled={true}>
@@ -850,7 +850,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                     <Rating
                                         type="star"
                                         ratingCount={5}
-                                        imageSize={15}
+                                        imageSize={18}
                                         startingValue={profileData?.averageRating}
                                         readonly
                                     />
@@ -867,7 +867,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                         style={styles.editButton}
                                         onPress={() => navigation.navigate('BuySubscription', { serviceType: profileType })}
                                     >
-                                        <Text style={styles.editButtonText}>Buy Subscription</Text>
+                                        <Text style={[styles.editButtonText, { color: Colors.light }]}>Buy Subscription</Text>
                                     </TouchableOpacity>
                                 ) : panditStatus === 'Pending' ? (
                                     <TouchableOpacity
@@ -1055,7 +1055,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                         style={styles.editButton}
                                         onPress={() => navigation.navigate('BuySubscription', { serviceType: profileType })}
                                     >
-                                        <Text style={styles.editButtonText}>Buy Subscription</Text>
+                                        <Text style={[styles.editButtonText, { color: Colors.light }]}>Buy Subscription</Text>
                                     </TouchableOpacity>
                                 ) : KathavachakStatus === 'Pending' ? (
                                     <TouchableOpacity
@@ -1240,7 +1240,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                         style={styles.editButton}
                                         onPress={() => navigation.navigate('BuySubscription', { serviceType: profileType })}
                                     >
-                                        <Text style={styles.editButtonText}>Buy Subscription</Text>
+                                        <Text style={[styles.editButtonText, { color: Colors.light }]}>Buy Subscription</Text>
                                     </TouchableOpacity>
                                 ) : JyotishStatus === 'Pending' ? (
                                     <TouchableOpacity

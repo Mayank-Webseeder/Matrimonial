@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     IconFlex: {
         flexDirection: "row",
         justifyContent: "space-between",
-
+        marginHorizontal:SW(5)
     },
     contentContainer: {
         marginHorizontal: SW(10),

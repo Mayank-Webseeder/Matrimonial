@@ -111,7 +111,9 @@ const styles = StyleSheet.create({
   HeadingText: {
     fontSize: SF(15),
     fontFamily: "Poppins-Bold",
-    marginBottom: SH(5),
+    textTransform: "capitalize",
+    lineHeight: SF(18),
+    paddingTop:SH(2)
   },
 
   text: {

@@ -652,9 +652,10 @@ const PanditRegister = ({ navigation }) => {
     };
 
     const handleStateInputChange = (text) => {
-        setStateInput(text);
+        const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+        setStateInput(filteredText);
 
-        if (text) {
+        if (filteredText) {
             const filtered = StateData.filter((item) =>
                 item?.label?.toLowerCase().includes(text.toLowerCase())
             ).map(item => item.label);
@@ -665,7 +666,7 @@ const PanditRegister = ({ navigation }) => {
 
         setRoleRegisterData(PrevRoleRegisterData => ({
             ...PrevRoleRegisterData,
-            state: text,
+            state: filteredText,
         }));
     };
 
@@ -680,8 +681,9 @@ const PanditRegister = ({ navigation }) => {
     };
 
     const handleCityInputChange = (text) => {
-        setCityInput(text);
-        if (text) {
+        const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+        setCityInput(filteredText);
+        if (filteredText) {
             const filtered = CityData.filter((item) =>
                 item?.label?.toLowerCase().includes(text.toLowerCase())
             ).map(item => item.label);
@@ -692,7 +694,7 @@ const PanditRegister = ({ navigation }) => {
 
         setRoleRegisterData(PrevRoleRegisterData => ({
             ...PrevRoleRegisterData,
-            city: text,
+            city: filteredText,
         }));
     };
 
@@ -712,10 +714,10 @@ const PanditRegister = ({ navigation }) => {
         }));
     };
 
-    const [tempUrlData, setTempUrlData] = useState({}); // Temporarily store input
+    const [tempUrlData, setTempUrlData] = useState({});
 
     const validateAndSetUrl = (text, type) => {
-        setTempUrlData((prev) => ({ ...prev, [type]: text })); // Update temp state
+        setTempUrlData((prev) => ({ ...prev, [type]: text }));
     };
 
     const handleBlur = (type) => {
@@ -754,32 +756,34 @@ const PanditRegister = ({ navigation }) => {
 
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={Globalstyles.form}>
-                    {/* <Text style={styles.editText}>Edit Details</Text> */}
                     <Text style={Globalstyles.title}>Name <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput style={[Globalstyles.input, errors.fullName && styles.errorInput]}
                         value={RoleRegisterData?.fullName}
                         onChangeText={(text) => {
-                            setRoleRegisterData((prev) => ({ ...prev, fullName: text }));
+                            const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+                            setRoleRegisterData((prev) => ({ ...prev, fullName: filteredText }));
                         }}
                         placeholder='Enter Your Full Name'
                         placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
+                        autoCorrect={false}
+                        autoCapitalize='none'
+                        keyboardType='default'
+                        importantForAutofill='no'
+                        textContentType='fullName'
                     />
                     {errors.fullName && <Text style={styles.errorText}>{errors.fullName}</Text>}
-
                     <Text style={Globalstyles.title}>Mobile No. <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput style={[Globalstyles.input, errors.mobileNo && styles.errorInput]}
                         value={RoleRegisterData?.mobileNo}
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
                         keyboardType="phone-pad"
-                        placeholder="Enter Your Mobile No." maxLength={12}
+                        placeholder="Enter Your Mobile No." maxLength={10}
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no" />
-
+                        textContentType="mobileNo"
+                        importantForAutofill="no"
+                        autoCorrect={false}
+                    />
                     {errors.mobileNo && <Text style={styles.errorText}>{errors.mobileNo}</Text>}
                     <Text style={[Globalstyles.title, { color: Colors.theme_color }]}>Address</Text>
 
@@ -791,8 +795,9 @@ const PanditRegister = ({ navigation }) => {
                         placeholder="Type your State"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="state"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
                     {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
 
@@ -818,8 +823,9 @@ const PanditRegister = ({ navigation }) => {
                         placeholder="Enter your city"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="city"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
                     {errors.city && <Text style={styles.errorText}>{errors.city}</Text>}
                     {filteredCities.length > 0 && cityInput ? (
@@ -844,19 +850,23 @@ const PanditRegister = ({ navigation }) => {
                         placeholder='Enter Your Area'
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="area"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
 
                     <Text style={Globalstyles.title}>Aadhar No. </Text>
                     <TextInput style={Globalstyles.input}
                         value={RoleRegisterData?.aadharNo}
-                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, aadharNo: text }))}
+                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, aadharNo: text.replace(/[^0-9]/g, '') }))}
                         placeholder='Enter Your Aadhar No.'
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="aadharNo"
                         importantForAutofill="no"
+                        autoCorrect={false}
+                        keyboardType="phone-pad"
+                        maxLength={12}
                     />
 
                     <Text style={Globalstyles.title}>Sub Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
@@ -880,26 +890,9 @@ const PanditRegister = ({ navigation }) => {
                         placeholderStyle={{ color: '#E7E7E7' }}
                         autoScroll={false}
                         showsVerticalScrollIndicator={false}
+                        autoCorrect={false}
                     />
                     {errors.subCaste && <Text style={styles.errorText}>{errors.subCaste}</Text>}
-
-                    {/* Agar user type karega toh list dikhegi */}
-                    {/* {filteredSubCaste.length > 0 ? (
-                        <FlatList
-                            data={filteredSubCaste.slice(0, 5)}
-                            scrollEnabled={false}
-                            keyExtractor={(item, index) => index.toString()}
-                            renderItem={({ item }) => (
-                                <TouchableOpacity onPress={() => handleSubCasteSelect(item)}>
-                                    <Text style={Globalstyles.listItem}>{item}</Text>
-                                </TouchableOpacity>
-                            )}
-                            style={Globalstyles.suggestions}
-                        />
-                    ) : null} */}
-
-
-                    {/* Role Selection with Checkboxes */}
                     <Text style={Globalstyles.title}>Select Pandit Services <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <View style={[styles.checkboxContainer, errors.selectedRoles && styles.errorInput]}>
                         {roleOptions.map(role => (
@@ -913,8 +906,6 @@ const PanditRegister = ({ navigation }) => {
                             </View>
                         ))}
                     </View>
-
-                    {/* Show services for selected roles */}
                     {selectedRoles.map(role => (
                         <View key={role} style={styles.roleServices}>
                             <Text style={styles.servicesLabel}>{role} Services</Text>
@@ -970,8 +961,9 @@ const PanditRegister = ({ navigation }) => {
                         textAlignVertical='top' placeholder="Add Your Description"
                         placeholderTextColor={Colors.gray} multiline={true}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="description"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
 
                     <View style={styles.photopickContainer}>
@@ -1004,8 +996,9 @@ const PanditRegister = ({ navigation }) => {
                         placeholder="Give Your Website Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="websiteUrl"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
 
                     <Text style={Globalstyles.title}>Youtube Link</Text>
@@ -1016,6 +1009,10 @@ const PanditRegister = ({ navigation }) => {
                         onBlur={() => handleBlur("youtubeUrl")}
                         placeholder="Give Your Youtube Link"
                         placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="youtubeUrl"
+                        importantForAutofill="no"
+                        autoCorrect={false}
                     />
 
                     <Text style={Globalstyles.title}>Whatsapp Link</Text>
@@ -1027,8 +1024,9 @@ const PanditRegister = ({ navigation }) => {
                         placeholder="Give Your Whatsapp Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="whatsapp"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
 
                     <Text style={Globalstyles.title}>Facebook Link</Text>
@@ -1040,8 +1038,9 @@ const PanditRegister = ({ navigation }) => {
                         placeholder="Give Your Facebook Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="facebookUrl"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
 
                     <Text style={Globalstyles.title}>Instagram Link</Text>
@@ -1053,8 +1052,9 @@ const PanditRegister = ({ navigation }) => {
                         placeholder="Give Your Instagram Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="instagramUrl"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
                     <TouchableOpacity
                         style={styles.button}

@@ -108,11 +108,12 @@ const UpdateProfile = ({ navigation }) => {
   };
 
   const handleDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || dob;
     setShowDatePicker(false);
-    setDob(currentDate);
+    if (event.type === "set" && selectedDate) {
+      const formattedDate = moment(selectedDate).format("YYYY-MM-DD");
+      setDob(formattedDate);
+    }
   };
-
   return (
     <SafeAreaView style={Globalstyles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
@@ -150,10 +151,12 @@ const UpdateProfile = ({ navigation }) => {
         </TouchableOpacity>
         {showDatePicker && (
           <DateTimePicker
-            value={dob}
+            value={dob ? new Date(dob) : new Date(2000, 0, 1)}
             mode="date"
             display="default"
+            maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))} // Prevents age < 18
             onChange={handleDateChange}
+            themeVariant="light"
           />
         )}
         <Text style={Globalstyles.title}>City</Text>

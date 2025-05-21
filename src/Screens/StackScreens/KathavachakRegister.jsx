@@ -800,8 +800,9 @@ const KathavachakRegister = ({ navigation }) => {
                         placeholder='Enter Your Full Name'
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="fullName"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
                     {errors.fullName && <Text style={styles.errorText}>{errors.fullName}</Text>}
 
@@ -813,7 +814,8 @@ const KathavachakRegister = ({ navigation }) => {
                         placeholder="Enter Your Mobile No." maxLength={10}
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="mobileNo"
+                        importantForAutofill="no"
                         autoCorrect={false}
                     />
                     {errors.mobileNo && <Text style={styles.errorText}>{errors.mobileNo}</Text>}
@@ -827,7 +829,7 @@ const KathavachakRegister = ({ navigation }) => {
                         placeholder="Type your State"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="state"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -855,7 +857,7 @@ const KathavachakRegister = ({ navigation }) => {
                         placeholder="Enter your city"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="city"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -882,7 +884,7 @@ const KathavachakRegister = ({ navigation }) => {
                         placeholder='Enter Your Area'
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="residentialAddress"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -892,11 +894,11 @@ const KathavachakRegister = ({ navigation }) => {
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, aadharNo: text }))}
                         placeholder='Enter Your Aadhar No.'
                         placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
                         keyboardType="phone-pad"
                         maxLength={12}
+                        autoComplete="off"
+                        textContentType="aadharNo"
+                        importantForAutofill="no"
                         autoCorrect={false}
                     />
                     <Text style={Globalstyles.title}>Sub Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
@@ -986,7 +988,7 @@ const KathavachakRegister = ({ navigation }) => {
                         textAlignVertical='top' placeholder="Add Your Description"
                         placeholderTextColor={Colors.gray} multiline={true}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="description"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -1021,7 +1023,7 @@ const KathavachakRegister = ({ navigation }) => {
                         placeholder="Give Your Website Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="websiteUrl"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -1035,7 +1037,7 @@ const KathavachakRegister = ({ navigation }) => {
                         placeholder="Give Your Youtube Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="youtubeUrl"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -1049,7 +1051,7 @@ const KathavachakRegister = ({ navigation }) => {
                         placeholder="Give Your Whatsapp Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="whatsapp"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -1063,7 +1065,8 @@ const KathavachakRegister = ({ navigation }) => {
                         placeholder="Give Your Facebook Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="facebookUrl"
+                        importantForAutofill="no"
                         autoCorrect={false}
                     />
 
@@ -1076,7 +1079,7 @@ const KathavachakRegister = ({ navigation }) => {
                         placeholder="Give Your Instagram Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="instagramUrl"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />

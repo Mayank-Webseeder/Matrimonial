@@ -54,8 +54,9 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
     };
 
     const handleCityInputChange = (text) => {
-        setCityInput(text);
-        if (text) {
+         const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+        setCityInput(filteredText);
+        if (filteredText) {
             const filtered = CityData.filter((item) =>
                 item?.label?.toLowerCase().includes(text.toLowerCase())
             ).map(item => item.label);
@@ -66,7 +67,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
 
         setDharamsalaData(prevDharamsalaData => ({
             ...prevDharamsalaData,
-            city: text,
+            city: filteredText,
         }));
     };
 
@@ -369,7 +370,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                         errors.mobileNo && styles.errorInput,
                     ]}
                     placeholder="Enter Person's Contact No."
-                    keyboardType="numeric"
+                    keyboardType="phone-pad"
                     maxLength={10}
                     placeholderTextColor={Colors.gray}
                     value={DharamsalaData.mobileNo} onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}

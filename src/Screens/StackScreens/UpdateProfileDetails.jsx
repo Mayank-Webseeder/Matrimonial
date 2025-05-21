@@ -412,6 +412,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
                         placeholder="Enter Your Mobile No." maxLength={12}
                         placeholderTextColor={Colors.gray}
+                        keyboardType="phone-pad"
                         autoComplete="off"
                         textContentType="mobileNo"
                         importantForAutofill="no"

@@ -773,8 +773,9 @@ const JyotishRegister = ({ navigation }) => {
                         placeholder='Enter Your Full Name'
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="fullName"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
                     {errors.fullName && <Text style={styles.errorText}>{errors.fullName}</Text>}
 
@@ -783,10 +784,13 @@ const JyotishRegister = ({ navigation }) => {
                         value={RoleRegisterData?.mobileNo}
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
                         keyboardType="phone-pad"
-                        placeholder="Enter Your Mobile No." maxLength={12}
+                        placeholder="Enter Your Mobile No." maxLength={10}
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none" />
+                        textContentType="mobileNo"
+                        importantForAutofill="no"
+                        autoCorrect={false}
+                    />
                     {errors.mobileNo && <Text style={styles.errorText}>{errors.mobileNo}</Text>}
                     <Text style={[Globalstyles.title, { color: Colors.theme_color }]}>Address</Text>
 
@@ -798,8 +802,9 @@ const JyotishRegister = ({ navigation }) => {
                         placeholder="Type your State"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="state"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
                     {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
 
@@ -825,8 +830,9 @@ const JyotishRegister = ({ navigation }) => {
                         placeholder="Enter your city"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="city"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
                     {errors.city && <Text style={styles.errorText}>{errors.city}</Text>}
                     {filteredCities.length > 0 && cityInput ? (
@@ -851,8 +857,9 @@ const JyotishRegister = ({ navigation }) => {
                         placeholder='Enter Your Area'
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="residentialAddress"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
 
                     <Text style={Globalstyles.title}>Aadhar No. </Text>
@@ -862,8 +869,9 @@ const JyotishRegister = ({ navigation }) => {
                         placeholder='Enter Your Aadhar No.'
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="aadharNo"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
 
                     <Text style={Globalstyles.title}>Sub Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
@@ -968,8 +976,9 @@ const JyotishRegister = ({ navigation }) => {
                         textAlignVertical='top' placeholder="Add Your Description"
                         placeholderTextColor={Colors.gray} multiline={true}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="description"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
 
                     <View style={styles.photopickContainer}>
@@ -1002,8 +1011,9 @@ const JyotishRegister = ({ navigation }) => {
                         placeholder="Give Your Website Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="websiteUrl"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
 
                     <Text style={Globalstyles.title}>Youtube Link</Text>
@@ -1015,8 +1025,9 @@ const JyotishRegister = ({ navigation }) => {
                         placeholder="Give Your Youtube Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="youtubeUrl"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
 
                     <Text style={Globalstyles.title}>Whatsapp Link</Text>
@@ -1028,8 +1039,9 @@ const JyotishRegister = ({ navigation }) => {
                         placeholder="Give Your Whatsapp Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="whatsapp"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
 
                     <Text style={Globalstyles.title}>Facebook Link</Text>
@@ -1041,8 +1053,9 @@ const JyotishRegister = ({ navigation }) => {
                         placeholder="Give Your Facebook Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="facebookUrl"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
 
                     <Text style={Globalstyles.title}>Instagram Link</Text>
@@ -1054,8 +1067,9 @@ const JyotishRegister = ({ navigation }) => {
                         placeholder="Give Your Instagram Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="instagramUrl"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
                     <TouchableOpacity
                         style={styles.button}

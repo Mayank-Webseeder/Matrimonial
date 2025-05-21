@@ -157,9 +157,11 @@ const Login = ({ navigation }) => {
                             value={mobileNumber}
                             onChangeText={(text) => setMobileNumber(text.replace(/[^0-9]/g, ''))}
                             placeholderTextColor={Colors.gray}
-                            maxLength={12}
+                            maxLength={10}
                             autoComplete="off"
-                            textContentType="none"
+                            textContentType="mobileNumber"
+                            importantForAutofill="no"
+                            autoCorrect={false}
                         />
                         {errors.mobileNumber && (
                             <Text style={styles.errorText}>{errors.mobileNumber}</Text>
@@ -179,7 +181,9 @@ const Login = ({ navigation }) => {
                                 onChangeText={setPassword}
                                 placeholderTextColor={Colors.gray}
                                 autoComplete="off"
-                                textContentType="none"
+                                textContentType="password"
+                                importantForAutofill="no"
+                                autoCorrect={false}
                             />
                             <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
                                 <AntDesign

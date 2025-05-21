@@ -1568,7 +1568,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 handleInputChange("contactNumber1", cleanText);
               }}
               keyboardType="phone-pad"
-              maxLength={12}
+              maxLength={10}
               editable={isEditing}
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Contact No. 1'
@@ -1589,7 +1589,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 handleInputChange("contactNumber2", cleanText);
               }}
               keyboardType="phone-pad"
-              maxLength={12}
+              maxLength={10}
               editable={isEditing}
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Contact No. 2'

@@ -37,8 +37,6 @@ const ForgotScreen = ({ navigation }) => {
         } else if (!/^\d{6}$/.test(otp.trim())) {
             newErrors.otp = "Enter a valid 6-digit OTP.";
         }
-
-        // Set errors & return validation status
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -116,8 +114,6 @@ const ForgotScreen = ({ navigation }) => {
             throw new Error(response.data.message || "Password reset failed.");
         } catch (error) {
             console.error("Forgot Password Error:", error);
-
-            // ✅ Show appropriate error messages
             showMessage({
                 type: "danger",
                 message: "Password Reset Failed",
@@ -129,8 +125,6 @@ const ForgotScreen = ({ navigation }) => {
             setIsLoading(false);
         }
     };
-
-
 
     return (
         <SafeAreaView style={styles.container}>
@@ -148,13 +142,12 @@ const ForgotScreen = ({ navigation }) => {
                     />
                     <View style={{ marginTop: SH(320), marginHorizontal: SW(20) }}>
                         <Text style={[styles.text, { textAlign: "left", fontSize: SF(17) }]}>Reset Your Password</Text>
-                        {/* Mobile Number */}
                         <View style={{ marginTop: SH(20) }}>
                             <Text style={Globalstyles.title}>Mobile Number <Entypo name={'star'} color={'red'} size={12} /></Text>
                             <View style={{ flexDirection: "row", alignItems: "center" }}>
                                 <TextInput
                                     style={[Globalstyles.input, { flex: 1 }]}
-                                    keyboardType="numeric"
+                                    keyboardType="phone-pad"
                                     placeholder="Enter your mobile number"
                                     value={mobileNumber}
                                     onChangeText={setMobileNumber}
@@ -162,7 +155,9 @@ const ForgotScreen = ({ navigation }) => {
                                     placeholderTextColor={Colors.gray}
                                     editable={!otpSent}
                                     autoComplete="off"
-                                    textContentType="none"
+                                    textContentType="mobileNumber"
+                                    importantForAutofill="no"
+                                    autoCorrect={false}
                                 />
                                 <TouchableOpacity style={styles.otpButton} onPress={handleSendOtp} disabled={isOtpLoading}>
                                     {isOtpLoading ? <ActivityIndicator size="small" color={Colors.theme_color} /> : <Text style={styles.otpButtonText}>Send OTP</Text>}
@@ -173,25 +168,35 @@ const ForgotScreen = ({ navigation }) => {
                         {/* Mobile Number */}
                         <Text style={Globalstyles.title}>Otp <Entypo name={'star'} color={'red'} size={12} /></Text>
 
-                        <TextInput style={Globalstyles.input} keyboardType="numeric"
-                            placeholder="Enter Your OTP" value={otp} onChangeText={setOtp} maxLength={6}
-                            placeholderTextColor={Colors.gray} />
+                        <TextInput style={Globalstyles.input}
+                            placeholder="Enter Your OTP"
+                            value={otp} onChangeText={setOtp} maxLength={6}
+                            placeholderTextColor={Colors.gray}
+                            keyboardType="phone-pad"
+                            autoComplete="off"
+                            textContentType="otp"
+                            importantForAutofill="no"
+                            autoCorrect={false}
+                        />
 
                         {errors.Otp && (
                             <Text style={styles.errorText}>{errors.Otp}</Text>
                         )}
                         <View>
                             <Text style={Globalstyles.title}>New Password  <Entypo name={'star'} color={'red'} size={12} /> </Text>
-                            <View style={Globalstyles.inputContainer}>
+                            <View style={styles.passwordContainer}>
                                 <TextInput
-                                    style={[Globalstyles.input1, { paddingVertical: Platform.OS === 'ios' ? SH(10) : SH(10), }]}
+                                    style={[styles.passwordInput, { paddingVertical: Platform.OS === 'ios' ? SH(10) : SH(10), }]}
                                     secureTextEntry={!showPassword}
                                     placeholder="Enter Your New password"
                                     value={newPassword}
                                     onChangeText={setNewPassword}
                                     placeholderTextColor={Colors.gray}
+                                    keyboardType="phone-pad"
                                     autoComplete="off"
-                                    textContentType="none"
+                                    textContentType="newPassword"
+                                    importantForAutofill="no"
+                                    autoCorrect={false}
                                 />
                                 <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                                     <AntDesign

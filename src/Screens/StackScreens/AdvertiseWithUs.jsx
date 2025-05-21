@@ -182,18 +182,6 @@ const AdvertiseWithUs = ({ navigation }) => {
                                     appwin.in@gmail.com
                                 </Text>
                             </View>
-
-                            {/* <View style={styles.iconContainer}>
-                                <MaterialIcons name="location-on" size={22} color={Colors.light} />
-                                <Text style={styles.contactText}>132 Dartmouth Street Boston, MA</Text>
-                            </View> */}
-
-                            {/* Social Media Icons */}
-                            {/* <View style={styles.socialContainer}>
-                                <AntDesign name="twitter" size={20} color={Colors.light} style={styles.socialIcon} />
-                                <AntDesign name="instagram" size={20} color={Colors.light} style={styles.socialIcon} />
-                                <MaterialIcons name="discord" size={20} color={Colors.light} style={styles.socialIcon} />
-                            </View> */}
                         </View>
                     </View>
 
@@ -208,8 +196,9 @@ const AdvertiseWithUs = ({ navigation }) => {
                         }}
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="fullName"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
 
                     {errors.fullName && (
@@ -219,8 +208,9 @@ const AdvertiseWithUs = ({ navigation }) => {
                     <TextInput style={[Globalstyles.input, errors.email && styles.errorInput]} placeholder="Enter Email" value={email} onChangeText={setEmail} keyboardType="email-address"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentType="email"
                         importantForAutofill="no"
+                        autoCorrect={false}
                     />
                     {errors.email && (
                         <Text style={styles.errorText}>{errors.email}</Text>
@@ -229,8 +219,13 @@ const AdvertiseWithUs = ({ navigation }) => {
                     <Text style={Globalstyles.title}>Phone No</Text>
                     <TextInput style={[Globalstyles.input, errors.email && styles.errorInput]} placeholder="Enter Mobile Number" value={mobileNo}
                         onChangeText={(text) => setMobileNo(text.replace(/[^0-9]/g, ''))}
-                        keyboardType="numeric" maxLength={10}
-                        placeholderTextColor={Colors.gray} />
+                        keyboardType="phone-pad" maxLength={10}
+                        placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="mobileNo"
+                        importantForAutofill="no"
+                        autoCorrect={false}
+                    />
 
                     {errors.mobileNo && (
                         <Text style={styles.errorText}>{errors.mobileNo}</Text>
@@ -242,8 +237,9 @@ const AdvertiseWithUs = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         onChangeText={setMessage} multiline
                         autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no" />
+                        textContentType="message"
+                        importantForAutofill="no"
+                        autoCorrect={false} />
                     <TouchableOpacity
                         style={styles.button}
                         onPress={handleSubmit}

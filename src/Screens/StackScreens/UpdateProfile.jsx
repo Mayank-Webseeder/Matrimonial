@@ -154,7 +154,7 @@ const UpdateProfile = ({ navigation }) => {
             value={dob ? new Date(dob) : new Date(2000, 0, 1)}
             mode="date"
             display="default"
-            maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))} // Prevents age < 18
+            maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))} 
             onChange={handleDateChange}
             themeVariant="light"
           />

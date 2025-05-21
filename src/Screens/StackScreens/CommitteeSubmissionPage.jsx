@@ -392,7 +392,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                         errors.mobileNo && styles.errorInput,
                     ]}
                     placeholder="Enter contact number"
-                    keyboardType="numeric"
+                    keyboardType="phone-pad"
                     maxLength={10}
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"

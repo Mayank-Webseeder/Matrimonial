@@ -38,7 +38,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
     };
 
 
-    const handleCityInputChange = (text) => {
+     const handleCityInputChange = (text) => {
         const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
         setCityInput(filteredText);
         if (filteredText) {
@@ -395,11 +395,10 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     keyboardType="phone-pad"
                     maxLength={10}
                     placeholderTextColor={Colors.gray}
-                    autoComplete="off"
-                    textContentType="mobileNo"
-                    importantForAutofill="no"
-                    autoCorrect={false}
                     value={CommitteeData?.mobileNo} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
+                    autoComplete="off" importantForAutofill="no"
+                    autoCorrect={false}
+                    textContentType="mobileNo"
                 />
 
                 {errors.mobileNo && (

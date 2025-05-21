@@ -7,19 +7,15 @@ import Globalstyles from '../../utils/GlobalCss';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { SH, SW, SF } from '../../utils/Dimensions';
+import { SH, SW, SF } from '../../utils/Dimensions'
 import { UPDATE_COMMITTEE } from '../../utils/BaseUrl';
 import { CityData, subCasteOptions } from '../../DummyData/DropdownData';
 import { showMessage } from 'react-native-flash-message';
-
+import { Dropdown } from 'react-native-element-dropdown';
 const UpdateCommittee = ({ navigation, route }) => {
     const { committeeData } = route.params;
-    const [subCasteInput, setSubCasteInput] = useState('');
     const [cityInput, setCityInput] = useState('');
     const [filteredCities, setFilteredCities] = useState([]);
-    const [filteredSubCaste, setFilteredSubCaste] = useState([]);
-    const [selectedCity, setSelectedCity] = useState('');
-    const [selectedSubCaste, setSelectedSubCaste] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     const [CommitteeData, setCommitteeData] = useState({
@@ -33,21 +29,22 @@ const UpdateCommittee = ({ navigation, route }) => {
     });
 
     const handleCityInputChange = (text) => {
-        setCityInput(text);
-        if (text) {
-            const filtered = CityData.filter((item) =>
-                item?.label?.toLowerCase().includes(text.toLowerCase())
-            ).map(item => item.label);
-            setFilteredCities(filtered);
-        } else {
-            setFilteredCities([]);
-        }
-
-        setCommitteeData(prevDharamsalaData => ({
-            ...prevDharamsalaData,
-            city: text,
-        }));
-    };
+            const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+            setCityInput(filteredText);
+            if (filteredText) {
+                const filtered = CityData.filter((item) =>
+                    item?.label?.toLowerCase().includes(text.toLowerCase())
+                ).map(item => item.label);
+                setFilteredCities(filtered);
+            } else {
+                setFilteredCities([]);
+            }
+    
+            setCommitteeData(prevActivistData => ({
+                ...prevActivistData,
+                city: filteredText,
+            }));
+        };
 
     const handleCitySelect = (item) => {
         setCityInput(item);
@@ -57,33 +54,14 @@ const UpdateCommittee = ({ navigation, route }) => {
         }));
         setFilteredCities([]);
     };
-
-    const handleSubCasteInputChange = (text) => {
-        setSubCasteInput(text);
-
-        if (text) {
-            const filtered = subCasteOptions
-                .filter((item) => item?.label?.toLowerCase().includes(text.toLowerCase()))
-                .map((item) => item.label);
-
-            setFilteredSubCaste(filtered);
-        } else {
-            setFilteredSubCaste([]);
-        }
-        setCommitteeData((prevDharamsalaData) => ({
-            ...prevDharamsalaData,
-            subCaste: text,
+ 
+    const handleInputChange = (field, value) => {
+        setCommitteeData(prev => ({
+            ...prev,
+            [field]: value,
         }));
     };
 
-    const handleSubCasteSelect = (selectedItem) => {
-        setSubCasteInput(selectedItem);
-        setFilteredSubCaste([]);
-        setCommitteeData((prevDharamsalaData) => ({
-            ...prevDharamsalaData,
-            subCaste: selectedItem,
-        }));
-    };
 
 
     // Function to Convert Image to Base64
@@ -244,31 +222,20 @@ const UpdateCommittee = ({ navigation, route }) => {
                 />
 
                 <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
-                <TextInput
-                    style={Globalstyles.input}
-                    value={CommitteeData?.subCaste} // `myBiodata?.subCaste` ki jagah `subCasteInput` use karein
-                    onChangeText={handleSubCasteInputChange}
-                    placeholder="Type your sub caste"
-                    placeholderTextColor={Colors.gray}
-                    autoComplete="off"
-                    textContentType="none"
+                <Dropdown
+                    style={[
+                        Globalstyles.input,
+                    ]}
+                    data={subCasteOptions}
+                    labelField="label"
+                    valueField="value"
+                    value={CommitteeData?.subCaste}
+                    onChange={(text) => handleInputChange("subCaste", text.value)}
+                    placeholder="Select Your subCaste"
+                    placeholderStyle={{ color: '#E7E7E7' }}
+                    autoScroll={false}
+                    showsVerticalScrollIndicator={false}
                 />
-
-                {/* Agar user type karega toh list dikhegi */}
-                {filteredSubCaste.length > 0 ? (
-                    <FlatList
-                        data={filteredSubCaste.slice(0, 5)}
-                        scrollEnabled={false}
-                        keyExtractor={(item, index) => index.toString()}
-                        renderItem={({ item }) => (
-                            <TouchableOpacity onPress={() => handleSubCasteSelect(item)}>
-                                <Text style={Globalstyles.listItem}>{item}</Text>
-                            </TouchableOpacity>
-                        )}
-                        style={Globalstyles.suggestions}
-                    />
-                ) : null}
-
 
                 <Text style={Globalstyles.title}>City <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
@@ -321,7 +288,7 @@ const UpdateCommittee = ({ navigation, route }) => {
                 <TextInput
                     style={Globalstyles.input}
                     placeholder="Enter contact number"
-                    keyboardType="numeric"
+                    keyboardType='phone-pad'
                     maxLength={10}
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"

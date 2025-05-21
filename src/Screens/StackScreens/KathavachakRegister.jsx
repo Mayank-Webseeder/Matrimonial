@@ -708,38 +708,6 @@ const KathavachakRegister = ({ navigation }) => {
         setFilteredCities([]);
     };
 
-    const handleSubCasteInputChange = (text) => {
-        const filtered = subCasteOptions
-            .filter((item) =>
-                item?.label?.toLowerCase().includes(text.toLowerCase())
-            )
-            .map((item) => item.label);
-
-        // If matches found, allow input
-        if (filtered.length > 0) {
-            setSubCasteInput(text);
-            setFilteredSubCaste(filtered);
-            setRoleRegisterData((PrevRoleRegisterData) => ({
-                ...PrevRoleRegisterData,
-                subCaste: text,
-            }));
-        } else {
-            // Don't allow arbitrary input — only show "Other"
-            setFilteredSubCaste(['Other']);
-        }
-    };
-
-    const handleSubCasteSelect = (selectedItem) => {
-        const finalValue = selectedItem === 'Other' ? 'Other' : selectedItem;
-
-        setSubCasteInput(finalValue);
-        setFilteredSubCaste([]);
-        setRoleRegisterData((PrevRoleRegisterData) => ({
-            ...PrevRoleRegisterData,
-            subCaste: finalValue,
-        }));
-    };
-
     const handleInputChange = (field, value) => {
         setRoleRegisterData((prev) => ({
             ...prev,
@@ -800,7 +768,7 @@ const KathavachakRegister = ({ navigation }) => {
                         placeholder='Enter Your Full Name'
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="fullName"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -811,10 +779,11 @@ const KathavachakRegister = ({ navigation }) => {
                         value={RoleRegisterData?.mobileNo}
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
                         keyboardType="phone-pad"
-                        placeholder="Enter Your Mobile No." maxLength={10}
+                        placeholder="Enter Your Mobile No."
+                        maxLength={10}
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="mobileNo"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -829,7 +798,7 @@ const KathavachakRegister = ({ navigation }) => {
                         placeholder="Type your State"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="state"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -857,7 +826,7 @@ const KathavachakRegister = ({ navigation }) => {
                         placeholder="Enter your city"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="city"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -884,20 +853,20 @@ const KathavachakRegister = ({ navigation }) => {
                         placeholder='Enter Your Area'
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="residentialAddress"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
                     <Text style={Globalstyles.title}>Aadhar No. </Text>
                     <TextInput style={Globalstyles.input}
                         value={RoleRegisterData?.aadharNo}
-                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, aadharNo: text }))}
+                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, aadharNo: text.replace(/[^0-9]/g, '') }))}
                         placeholder='Enter Your Aadhar No.'
                         placeholderTextColor={Colors.gray}
                         keyboardType="phone-pad"
                         maxLength={12}
                         autoComplete="off"
-                        textContentType="aadharNo"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -988,7 +957,7 @@ const KathavachakRegister = ({ navigation }) => {
                         textAlignVertical='top' placeholder="Add Your Description"
                         placeholderTextColor={Colors.gray} multiline={true}
                         autoComplete="off"
-                        textContentType="description"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -1023,7 +992,7 @@ const KathavachakRegister = ({ navigation }) => {
                         placeholder="Give Your Website Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="websiteUrl"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -1037,7 +1006,7 @@ const KathavachakRegister = ({ navigation }) => {
                         placeholder="Give Your Youtube Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="youtubeUrl"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -1051,7 +1020,7 @@ const KathavachakRegister = ({ navigation }) => {
                         placeholder="Give Your Whatsapp Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="whatsapp"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -1065,7 +1034,7 @@ const KathavachakRegister = ({ navigation }) => {
                         placeholder="Give Your Facebook Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="facebookUrl"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -1079,7 +1048,7 @@ const KathavachakRegister = ({ navigation }) => {
                         placeholder="Give Your Instagram Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="instagramUrl"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />

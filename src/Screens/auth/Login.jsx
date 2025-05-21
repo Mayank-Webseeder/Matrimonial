@@ -152,14 +152,14 @@ const Login = ({ navigation }) => {
                         <Text style={styles.HeadingText}>Phone Number</Text>
                         <TextInput
                             style={styles.inputText}
-                            keyboardType="numeric"
+                            keyboardType='phone-pad'
                             placeholder="Enter your mobile number"
                             value={mobileNumber}
                             onChangeText={(text) => setMobileNumber(text.replace(/[^0-9]/g, ''))}
                             placeholderTextColor={Colors.gray}
                             maxLength={10}
                             autoComplete="off"
-                            textContentType="mobileNumber"
+                            textContentType="none"
                             importantForAutofill="no"
                             autoCorrect={false}
                         />
@@ -181,7 +181,7 @@ const Login = ({ navigation }) => {
                                 onChangeText={setPassword}
                                 placeholderTextColor={Colors.gray}
                                 autoComplete="off"
-                                textContentType="password"
+                                textContentType="none"
                                 importantForAutofill="no"
                                 autoCorrect={false}
                             />

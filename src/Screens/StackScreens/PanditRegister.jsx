@@ -769,7 +769,7 @@ const PanditRegister = ({ navigation }) => {
                         autoCapitalize='none'
                         keyboardType='default'
                         importantForAutofill='no'
-                        textContentType='fullName'
+                        textContentType="none"
                     />
                     {errors.fullName && <Text style={styles.errorText}>{errors.fullName}</Text>}
                     <Text style={Globalstyles.title}>Mobile No. <Entypo name={'star'} color={'red'} size={12} /></Text>
@@ -780,7 +780,7 @@ const PanditRegister = ({ navigation }) => {
                         placeholder="Enter Your Mobile No." maxLength={10}
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="mobileNo"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -795,7 +795,7 @@ const PanditRegister = ({ navigation }) => {
                         placeholder="Type your State"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="state"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -823,7 +823,7 @@ const PanditRegister = ({ navigation }) => {
                         placeholder="Enter your city"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="city"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -850,7 +850,7 @@ const PanditRegister = ({ navigation }) => {
                         placeholder='Enter Your Area'
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="area"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -861,12 +861,12 @@ const PanditRegister = ({ navigation }) => {
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, aadharNo: text.replace(/[^0-9]/g, '') }))}
                         placeholder='Enter Your Aadhar No.'
                         placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="aadharNo"
-                        importantForAutofill="no"
-                        autoCorrect={false}
                         keyboardType="phone-pad"
                         maxLength={12}
+                        autoComplete="off"
+                        textContentType="none"
+                        importantForAutofill="no"
+                        autoCorrect={false}
                     />
 
                     <Text style={Globalstyles.title}>Sub Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
@@ -961,7 +961,7 @@ const PanditRegister = ({ navigation }) => {
                         textAlignVertical='top' placeholder="Add Your Description"
                         placeholderTextColor={Colors.gray} multiline={true}
                         autoComplete="off"
-                        textContentType="description"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -996,7 +996,7 @@ const PanditRegister = ({ navigation }) => {
                         placeholder="Give Your Website Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="websiteUrl"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -1010,7 +1010,7 @@ const PanditRegister = ({ navigation }) => {
                         placeholder="Give Your Youtube Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="youtubeUrl"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -1024,7 +1024,7 @@ const PanditRegister = ({ navigation }) => {
                         placeholder="Give Your Whatsapp Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="whatsapp"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -1038,7 +1038,7 @@ const PanditRegister = ({ navigation }) => {
                         placeholder="Give Your Facebook Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="facebookUrl"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -1052,7 +1052,7 @@ const PanditRegister = ({ navigation }) => {
                         placeholder="Give Your Instagram Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="instagramUrl"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />

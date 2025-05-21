@@ -773,7 +773,7 @@ const JyotishRegister = ({ navigation }) => {
                         placeholder='Enter Your Full Name'
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="fullName"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -787,7 +787,7 @@ const JyotishRegister = ({ navigation }) => {
                         placeholder="Enter Your Mobile No." maxLength={10}
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="mobileNo"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -802,7 +802,7 @@ const JyotishRegister = ({ navigation }) => {
                         placeholder="Type your State"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="state"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -830,7 +830,7 @@ const JyotishRegister = ({ navigation }) => {
                         placeholder="Enter your city"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="city"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -857,7 +857,7 @@ const JyotishRegister = ({ navigation }) => {
                         placeholder='Enter Your Area'
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="residentialAddress"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -865,11 +865,13 @@ const JyotishRegister = ({ navigation }) => {
                     <Text style={Globalstyles.title}>Aadhar No. </Text>
                     <TextInput style={Globalstyles.input}
                         value={RoleRegisterData?.aadharNo}
-                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, aadharNo: text }))}
+                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, aadharNo: text.replace(/[^0-9]/g, '') }))}
                         placeholder='Enter Your Aadhar No.'
                         placeholderTextColor={Colors.gray}
+                        keyboardType="phone-pad"
+                        maxLength={12}
                         autoComplete="off"
-                        textContentType="aadharNo"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -976,7 +978,7 @@ const JyotishRegister = ({ navigation }) => {
                         textAlignVertical='top' placeholder="Add Your Description"
                         placeholderTextColor={Colors.gray} multiline={true}
                         autoComplete="off"
-                        textContentType="description"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -1011,7 +1013,7 @@ const JyotishRegister = ({ navigation }) => {
                         placeholder="Give Your Website Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="websiteUrl"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -1025,7 +1027,7 @@ const JyotishRegister = ({ navigation }) => {
                         placeholder="Give Your Youtube Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="youtubeUrl"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -1039,7 +1041,7 @@ const JyotishRegister = ({ navigation }) => {
                         placeholder="Give Your Whatsapp Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="whatsapp"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -1053,7 +1055,7 @@ const JyotishRegister = ({ navigation }) => {
                         placeholder="Give Your Facebook Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="facebookUrl"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -1067,7 +1069,7 @@ const JyotishRegister = ({ navigation }) => {
                         placeholder="Give Your Instagram Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="instagramUrl"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />

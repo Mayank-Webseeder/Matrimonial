@@ -558,7 +558,7 @@ export default function ActivistForm({ navigation }) {
         <TextInput
           style={[Globalstyles.input, errors.mobileNo && styles.errorInput]}
           placeholder="Enter contact number"
-          keyboardType="numeric"
+          keyboardType='phone-pad'
           maxLength={10}
           placeholderTextColor={Colors.gray}
           value={ActivistData.mobileNo} onChangeText={(text) => setActivistData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}

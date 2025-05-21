@@ -17,12 +17,8 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { duration } from 'moment';
 
 const DharamsalaSubmissionPage = ({ navigation }) => {
-    const [subCasteInput, setSubCasteInput] = useState('');
     const [cityInput, setCityInput] = useState('');
     const [filteredCities, setFilteredCities] = useState([]);
-    const [filteredSubCaste, setFilteredSubCaste] = useState([]);
-    const [selectedCity, setSelectedCity] = useState('');
-    const [selectedSubCaste, setSelectedSubCaste] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState({});
 
@@ -373,7 +369,8 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     keyboardType="phone-pad"
                     maxLength={10}
                     placeholderTextColor={Colors.gray}
-                    value={DharamsalaData.mobileNo} onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
+                    value={DharamsalaData?.mobileNo} 
+                    onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
                     autoComplete="off"
                     textContentType="mobileNo"
                     importantForAutofill="no"

@@ -155,7 +155,7 @@ const ForgotScreen = ({ navigation }) => {
                                     placeholderTextColor={Colors.gray}
                                     editable={!otpSent}
                                     autoComplete="off"
-                                    textContentType="mobileNumber"
+                                    textContentType="none"
                                     importantForAutofill="no"
                                     autoCorrect={false}
                                 />
@@ -174,7 +174,7 @@ const ForgotScreen = ({ navigation }) => {
                             placeholderTextColor={Colors.gray}
                             keyboardType="phone-pad"
                             autoComplete="off"
-                            textContentType="otp"
+                            textContentType="none"
                             importantForAutofill="no"
                             autoCorrect={false}
                         />
@@ -192,9 +192,8 @@ const ForgotScreen = ({ navigation }) => {
                                     value={newPassword}
                                     onChangeText={setNewPassword}
                                     placeholderTextColor={Colors.gray}
-                                    keyboardType="phone-pad"
                                     autoComplete="off"
-                                    textContentType="newPassword"
+                                    textContentType="none"
                                     importantForAutofill="no"
                                     autoCorrect={false}
                                 />

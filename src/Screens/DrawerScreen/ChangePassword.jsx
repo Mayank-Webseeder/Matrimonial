@@ -135,6 +135,10 @@ const ChangePassword = ({ navigation }) => {
             value={oldPassword}
             onChangeText={setOldPassword}
             placeholderTextColor={Colors.gray}
+            autoComplete="off"
+            textContentType="oldPassword"
+            importantForAutofill="no"
+            autoCorrect={false}
           />
           <TouchableOpacity onPress={() => togglePasswordVisibility("old")} style={styles.eyeIcon}>
             <AntDesign name={showOldPassword ? "eye" : "eyeo"} size={24} color={Colors.theme_color} />
@@ -150,6 +154,10 @@ const ChangePassword = ({ navigation }) => {
             value={newPassword}
             onChangeText={setNewPassword}
             placeholderTextColor={Colors.gray}
+            autoComplete="off"
+            textContentType="newPassword"
+            importantForAutofill="no"
+            autoCorrect={false}
           />
           <TouchableOpacity onPress={() => togglePasswordVisibility("new")} style={styles.eyeIcon}>
             <AntDesign name={showNewPassword ? "eye" : "eyeo"} size={24} color={Colors.theme_color} />
@@ -165,6 +173,10 @@ const ChangePassword = ({ navigation }) => {
             value={confirmPassword}
             onChangeText={setConfirmPassword}
             placeholderTextColor={Colors.gray}
+            autoComplete="off"
+            textContentType="confirmPassword"
+            importantForAutofill="no"
+            autoCorrect={false}
           />
           <TouchableOpacity onPress={() => togglePasswordVisibility("confirm")} style={styles.eyeIcon}>
             <AntDesign name={showConfirmPassword ? "eye" : "eyeo"} size={24} color={Colors.theme_color} />

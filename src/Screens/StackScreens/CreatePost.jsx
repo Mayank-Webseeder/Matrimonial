@@ -177,6 +177,10 @@ const CreatePost = ({ navigation, route }) => {
                     placeholderTextColor={Colors.gray}
                     value={title}
                     onChangeText={setTitle}
+                    autoComplete="off"
+                    textContentType="title"
+                    importantForAutofill="no"
+                    autoCorrect={false}
                 />
                 <TextInput
                     style={Globalstyles.textInput}
@@ -186,6 +190,10 @@ const CreatePost = ({ navigation, route }) => {
                     multiline={true}
                     value={description}
                     onChangeText={setDescription}
+                    autoComplete="off"
+                    textContentType="description"
+                    importantForAutofill="no"
+                    autoCorrect={false}
                 />
             </View>
 

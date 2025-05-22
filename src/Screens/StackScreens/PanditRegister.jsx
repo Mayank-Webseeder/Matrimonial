@@ -63,6 +63,12 @@ const PanditRegister = ({ navigation }) => {
         whatsapp: ''
     });
 
+    const [tempUrlData, setTempUrlData] = useState({});
+
+    const validateAndSetUrl = (text, type) => {
+        setTempUrlData((prev) => ({ ...prev, [type]: text }));
+    };
+
     const fetchPlans = async () => {
         try {
             const token = await AsyncStorage.getItem("userToken");
@@ -202,8 +208,8 @@ const PanditRegister = ({ navigation }) => {
         selectionLimit: ADDL_LIMIT,        // gallery stops user at 5
         mediaType: 'photo',
         includeBase64: true,               // we still need base‑64
-        maxWidth: 400,                     // optional resize
-        maxHeight: 400,
+        maxWidth: 1000,                     // optional resize
+        maxHeight: 1000,
         quality: 1,
     };
 
@@ -212,8 +218,8 @@ const PanditRegister = ({ navigation }) => {
             const image = await ImageCropPicker.openPicker({
                 multiple: false,
                 cropping: true,
-                width: 400,
-                height: 400,
+                width: 1000,
+                height: 1000,
                 includeBase64: true,
                 compressImageQuality: 1
             });
@@ -235,91 +241,69 @@ const PanditRegister = ({ navigation }) => {
         }
     };
 
-
-    // Additional Photos Picker
-    // const handleAdditionalPhotosPick = async () => {
-    //     try {
-    //         const images = await ImageCropPicker.openPicker({
-    //             multiple: true,
-    //             cropping: true,
-    //             includeBase64: true,
-    //         });
-
-    //         if (!images || images.length === 0) {
-    //             console.error("No images selected!");
-    //             return;
-    //         }
-
-    //         setRoleRegisterData(prevData => {
-    //             const newPhotos = images.map(img => `data:${img.mime};base64,${img.data}`);
-    //             const updatedPhotos = [...prevData.additionalPhotos, ...newPhotos];
-
-    //             if (updatedPhotos.length <= 5) {
-    //                 return { ...prevData, additionalPhotos: updatedPhotos };
-    //             } else {
-    //                 Alert.alert('You can only upload up to 5 additional photos.');
-    //                 return prevData;
-    //             }
-    //         });
-
-    //     } catch (err) {
-    //         console.log("Additional Photos Picker Error:", err);
-    //     }
-    // };
-
     const handleAdditionalPhotosPick = () => {
         launchImageLibrary(pickerOpts, (response) => {
-            if (response.didCancel) return;                            // user aborted
+            if (response.didCancel) return;
             if (response.errorCode) {
                 console.log('ImagePicker Error:', response.errorMessage);
                 return;
             }
 
             const incoming = response.assets ?? [];
+            const incomingCount = incoming.length;
 
-            setRoleRegisterData((prev) => {
-                // Convert each asset to data‑URI just like before
-                const newPhotos = incoming.map(
-                    (img) => `data:${img.type};base64,${img.base64}`
-                );
+            if (incomingCount > ADDL_LIMIT) {
+                Alert.alert(`You can only upload up to ${ADDL_LIMIT} additional photos.`);
+                return;
+            }
 
-                const updated = [...prev.additionalPhotos, ...newPhotos];
+            const newPhotos = incoming.map(
+                (img) => `data:${img.type};base64,${img.base64}`
+            );
 
-                if (updated.length > ADDL_LIMIT) {
-                    Alert.alert(`You can only upload up to ${ADDL_LIMIT} additional photos.`);
-                    return prev;                                           // refuse update
-                }
-
-                return { ...prev, additionalPhotos: updated };
-            });
+            setRoleRegisterData((prev) => ({
+                ...prev,
+                additionalPhotos: newPhotos, // Replace previous photos
+            }));
         });
     };
 
-    const OPTIONAL_FIELDS = [
-        "residentialAddress", "additionalPhotos", "experience", "websiteUrl",
-        "facebookUrl", "youtubeUrl", "instagramUrl", "whatsapp", "description", "aadharNo"
-    ];
-
-    const validateForm = (data) => {
+    const validateForm = (data, checked, servicesOptions) => {
         let errors = {};
 
         if (!data) return errors;
 
         const allFields = Object.keys(data);
+        const OPTIONAL_FIELDS = [
+            "residentialAddress", "additionalPhotos", "experience", "websiteUrl",
+            "facebookUrl", "youtubeUrl", "instagramUrl", "whatsapp", "description", "aadharNo"
+        ];
         const MANDATORY_FIELDS = allFields.filter(field => !OPTIONAL_FIELDS.includes(field));
 
+        const urlPatterns = {
+            websiteUrl: /^(https?:\/\/)?(?!.*(youtube\.com|youtu\.be|facebook\.com|instagram\.com|wa\.me|api\.whatsapp\.com))([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/\S*)?$/,
+
+            youtubeUrl: /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/\S+$/,
+
+            facebookUrl: /^(https?:\/\/)?(www\.|m\.)?facebook\.com\/[A-Za-z0-9_.-]+\/?$/,
+
+            instagramUrl: /^(https?:\/\/)?(www\.)?instagram\.com\/[A-Za-z0-9_.]+(\/)?(\?.*)?$/,
+
+
+            whatsapp: /^(https?:\/\/)?(api\.whatsapp\.com\/send\?phone=\d+|wa\.me\/\d+)\/?$/,
+        };
+
+
+        // ✅ Validate MANDATORY FIELDS
         MANDATORY_FIELDS.forEach((field) => {
             const value = String(data[field] || "").trim();
             if (!value) {
                 errors[field] = `${field} is required.`;
                 return;
             }
-            if (field === "mobileNo") {
-                if (!/^\d{10}$/.test(value)) {
-                    errors[field] = "Enter a valid 10-digit mobile number.";
-                }
+            if (field === "mobileNo" && !/^\d{10}$/.test(value)) {
+                errors[field] = "Enter a valid 10-digit mobile number.";
             }
-
             if (field === "fullName") {
                 if (!/^[A-Za-z\s]+$/.test(value)) {
                     errors[field] = `${field} must contain only letters and spaces.`;
@@ -328,6 +312,47 @@ const PanditRegister = ({ navigation }) => {
                 }
             }
         });
+
+        // ✅ Validate URLs and check for duplicates across all url fields
+        const urlFields = ["websiteUrl", "facebookUrl", "youtubeUrl", "instagramUrl", "whatsapp"];
+        const validUrlValues = {}; // Only collect valid URLs here
+
+        // Step 1: Validate each URL field first
+        urlFields.forEach((field) => {
+            const value = String(data[field] || "").trim();
+            const pattern = urlPatterns[field];
+            const label = field.replace("Url", "");
+
+            if (value) {
+                if (!pattern.test(value)) {
+                    errors[field] = `Enter a valid ${label} URL.`; // ✅ Invalid message
+                } else {
+                    validUrlValues[field] = value; // ✅ Only store valid URLs
+                }
+            }
+        });
+
+        // Step 2: Check for duplicates ONLY among valid URLs
+        const seenUrls = new Set();
+
+        Object.entries(validUrlValues).forEach(([field, value]) => {
+            if (seenUrls.has(value)) {
+                // ✅ Only set duplicate error if no error already exists
+                if (!errors[field]) {
+                    errors[field] = `This URL is already used in another field.`;
+                }
+            } else {
+                seenUrls.add(value);
+            }
+        });
+
+        // ✅ Ensure at least one service is selected
+        const selectedServices = Object.keys(checked).filter(
+            service => servicesOptions["Pandit"].some(opt => opt.value === service) && checked[service]
+        );
+        if (selectedServices.length === 0) {
+            errors["panditServices"] = "Please select at least one service.";
+        }
 
         return errors;
     };
@@ -367,9 +392,10 @@ const PanditRegister = ({ navigation }) => {
                 status: "pending",
             };
 
-            const errors = validateForm(commonPayload);
+            const mergedPayload = { ...commonPayload, ...tempUrlData };
+            const errors = validateForm(mergedPayload, checked, servicesOptions);
+            console.log("mergedPayload:", JSON.stringify(mergedPayload));
             console.log("Validation Errors:", errors);
-
             if (Object.keys(errors).length > 0) {
                 setErrors(errors);
                 setIsLoading(false);
@@ -378,12 +404,13 @@ const PanditRegister = ({ navigation }) => {
 
             const payload = {
                 ...commonPayload,
+                ...tempUrlData,
                 panditServices: Object.keys(checked).filter(service =>
                     servicesOptions["Pandit"].some(option => option.value === service) && checked[service]
                 ),
             };
 
-            console.log("commonPayload", JSON.stringify(payload));
+            console.log("payload", JSON.stringify(payload));
 
             const response = await axios.post(CREATE_PANDIT, payload, { headers });
             console.log("Response:", JSON.stringify(response.data));
@@ -714,33 +741,6 @@ const PanditRegister = ({ navigation }) => {
         }));
     };
 
-    const [tempUrlData, setTempUrlData] = useState({});
-
-    const validateAndSetUrl = (text, type) => {
-        setTempUrlData((prev) => ({ ...prev, [type]: text }));
-    };
-
-    const handleBlur = (type) => {
-        const urlPatterns = {
-            websiteUrl: /^(https?:\/\/)?([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(\/\S*)?$/,
-            youtubeUrl: /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/\S+$/,
-            whatsapp: /^(https?:\/\/)?(api\.whatsapp\.com|wa\.me)\/\S+$/,
-            facebookUrl: /^(https?:\/\/)?(www\.)?facebook\.com\/\S+$/,
-            instagramUrl: /^(https?:\/\/)?(www\.)?instagram\.com\/\S+$/,
-        };
-
-        if (!tempUrlData[type] || urlPatterns[type].test(tempUrlData[type])) {
-            setRoleRegisterData((prev) => ({ ...prev, [type]: tempUrlData[type] }));
-        } else {
-            showMessage({
-                type: "danger",
-                message: "Invalid URL",
-                description: `Please enter a valid ${type.replace("Url", "")} link.`,
-                duarion: 5000
-            });
-        }
-    };
-
 
     return (
         <SafeAreaView style={Globalstyles.container}>
@@ -773,17 +773,28 @@ const PanditRegister = ({ navigation }) => {
                     />
                     {errors.fullName && <Text style={styles.errorText}>{errors.fullName}</Text>}
                     <Text style={Globalstyles.title}>Mobile No. <Entypo name={'star'} color={'red'} size={12} /></Text>
-                    <TextInput style={[Globalstyles.input, errors.mobileNo && styles.errorInput]}
+                    <TextInput
+                        style={[Globalstyles.input, errors.mobileNo && styles.errorInput]}
                         value={RoleRegisterData?.mobileNo}
-                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
+                        onChangeText={(text) => {
+                            // Prevent duplicate paste (only digits, and max 10)
+                            const digits = text.replace(/[^0-9]/g, '').slice(0, 10);
+                            if (digits !== RoleRegisterData.mobileNo) {
+                                setRoleRegisterData((prev) => ({ ...prev, mobileNo: digits }));
+                            }
+                        }}
                         keyboardType="phone-pad"
-                        placeholder="Enter Your Mobile No." maxLength={10}
+                        placeholder="Enter Your Mobile No."
+                        maxLength={10}
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
                         autoCorrect={false}
+                        importantForAutofill="no"
+                        textContentType="none"
+                        inputMode="numeric"
+                        autoCapitalize="none"
                     />
+
                     {errors.mobileNo && <Text style={styles.errorText}>{errors.mobileNo}</Text>}
                     <Text style={[Globalstyles.title, { color: Colors.theme_color }]}>Address</Text>
 
@@ -856,17 +867,25 @@ const PanditRegister = ({ navigation }) => {
                     />
 
                     <Text style={Globalstyles.title}>Aadhar No. </Text>
-                    <TextInput style={Globalstyles.input}
+                    <TextInput
+                        style={Globalstyles.input}
                         value={RoleRegisterData?.aadharNo}
-                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, aadharNo: text.replace(/[^0-9]/g, '') }))}
-                        placeholder='Enter Your Aadhar No.'
-                        placeholderTextColor={Colors.gray}
+                        onChangeText={(text) => {
+                            const digits = text.replace(/[^0-9]/g, '').slice(0, 12);
+                            if (digits !== RoleRegisterData.aadharNo) {
+                                setRoleRegisterData((prev) => ({ ...prev, aadharNo: digits }));
+                            }
+                        }}
                         keyboardType="phone-pad"
+                        placeholder="Enter Your Aadhar No."
                         maxLength={12}
+                        placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
                         autoCorrect={false}
+                        importantForAutofill="no"
+                        textContentType="none"
+                        inputMode="numeric"
+                        autoCapitalize="none"
                     />
 
                     <Text style={Globalstyles.title}>Sub Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
@@ -921,6 +940,7 @@ const PanditRegister = ({ navigation }) => {
                             ))}
                         </View>
                     ))}
+                    {errors?.panditServices && <Text style={styles.errorText}>{errors.panditServices}</Text>}
 
                     <Text style={Globalstyles.title}>Experience</Text>
                     <View>
@@ -989,10 +1009,9 @@ const PanditRegister = ({ navigation }) => {
 
                     <Text style={Globalstyles.title}>Website Link</Text>
                     <TextInput
-                        style={Globalstyles.input}
+                        style={[Globalstyles.input, errors.websiteUrl && styles.errorInput]}
                         value={tempUrlData.websiteUrl || RoleRegisterData.websiteUrl}
                         onChangeText={(text) => validateAndSetUrl(text, "websiteUrl")}
-                        onBlur={() => handleBlur("websiteUrl")}
                         placeholder="Give Your Website Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
@@ -1000,13 +1019,14 @@ const PanditRegister = ({ navigation }) => {
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
-
+                    {errors.websiteUrl && (
+                        <Text style={styles.errorText}>{errors.websiteUrl}</Text>
+                    )}
                     <Text style={Globalstyles.title}>Youtube Link</Text>
                     <TextInput
-                        style={Globalstyles.input}
+                        style={[Globalstyles.input, errors.youtubeUrl && styles.errorInput]}
                         value={tempUrlData.youtubeUrl || RoleRegisterData.youtubeUrl}
                         onChangeText={(text) => validateAndSetUrl(text, "youtubeUrl")}
-                        onBlur={() => handleBlur("youtubeUrl")}
                         placeholder="Give Your Youtube Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
@@ -1014,13 +1034,14 @@ const PanditRegister = ({ navigation }) => {
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
-
+                    {errors.youtubeUrl && (
+                        <Text style={styles.errorText}>{errors.youtubeUrl}</Text>
+                    )}
                     <Text style={Globalstyles.title}>Whatsapp Link</Text>
                     <TextInput
-                        style={Globalstyles.input}
+                        style={[Globalstyles.input, errors.whatsapp && styles.errorInput]}
                         value={tempUrlData.whatsapp || RoleRegisterData.whatsapp}
                         onChangeText={(text) => validateAndSetUrl(text, "whatsapp")}
-                        onBlur={() => handleBlur("whatsapp")}
                         placeholder="Give Your Whatsapp Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
@@ -1028,13 +1049,14 @@ const PanditRegister = ({ navigation }) => {
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
-
+                    {errors.whatsapp && (
+                        <Text style={styles.errorText}>{errors.whatsapp}</Text>
+                    )}
                     <Text style={Globalstyles.title}>Facebook Link</Text>
                     <TextInput
-                        style={Globalstyles.input}
+                        style={[Globalstyles.input, errors.facebookUrl && styles.errorInput]}
                         value={tempUrlData.facebookUrl || RoleRegisterData.facebookUrl}
                         onChangeText={(text) => validateAndSetUrl(text, "facebookUrl")}
-                        onBlur={() => handleBlur("facebookUrl")}
                         placeholder="Give Your Facebook Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
@@ -1042,13 +1064,14 @@ const PanditRegister = ({ navigation }) => {
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
-
+                    {errors.facebookUrl && (
+                        <Text style={styles.errorText}>{errors.facebookUrl}</Text>
+                    )}
                     <Text style={Globalstyles.title}>Instagram Link</Text>
                     <TextInput
-                        style={Globalstyles.input}
+                        style={[Globalstyles.input, errors.instagramUrl && styles.errorInput]}
                         value={tempUrlData.instagramUrl || RoleRegisterData.instagramUrl}
                         onChangeText={(text) => validateAndSetUrl(text, "instagramUrl")}
-                        onBlur={() => handleBlur("instagramUrl")}
                         placeholder="Give Your Instagram Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
@@ -1056,6 +1079,9 @@ const PanditRegister = ({ navigation }) => {
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
+                    {errors.instagramUrl && (
+                        <Text style={styles.errorText}>{errors.instagramUrl}</Text>
+                    )}
                     <TouchableOpacity
                         style={styles.button}
                         onPress={handleSubmit}

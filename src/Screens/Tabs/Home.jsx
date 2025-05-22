@@ -68,34 +68,34 @@ const Home = ({ navigation }) => {
 
   const sections = ["dummy"];
 
-  useEffect(() => {
-    const expiredServices = [];
+  // useEffect(() => {
+  //   const expiredServices = [];
 
-    if (isBiodataExpired) expiredServices.push('Biodata');
-    if (isPanditExpired) expiredServices.push('Pandit');
-    if (isJyotishExpired) expiredServices.push('Jyotish');
-    if (isKathavachakExpired) expiredServices.push('Kathavachak');
-    if (expiredServices.length > 0) {
-      Alert.alert(
-        'Subscription Expired',
-        `Your ${expiredServices.join(', ')} subscription(s) have expired. Please renew to continue using the services.`,
-        [
-          {
-            text: 'OK',
-            style: 'default',
-            onPress: () => {
-              navigation.navigate("MainApp", {
-                screen: "Tabs",
-                params: {
-                  screen: "MyProfile",
-                },
-              });
-            },
-          },
-        ]
-      );
-    }
-  }, [isBiodataExpired, isPanditExpired, isJyotishExpired, isKathavachakExpired]);
+  //   if (isBiodataExpired) expiredServices.push('Biodata');
+  //   if (isPanditExpired) expiredServices.push('Pandit');
+  //   if (isJyotishExpired) expiredServices.push('Jyotish');
+  //   if (isKathavachakExpired) expiredServices.push('Kathavachak');
+  //   if (expiredServices.length > 0) {
+  //     Alert.alert(
+  //       'Subscription Expired',
+  //       `Your ${expiredServices.join(', ')} subscription(s) have expired. Please renew to continue using the services.`,
+  //       [
+  //         {
+  //           text: 'OK',
+  //           style: 'default',
+  //           onPress: () => {
+  //             navigation.navigate("MainApp", {
+  //               screen: "Tabs",
+  //               params: {
+  //                 screen: "MyProfile",
+  //               },
+  //             });
+  //           },
+  //         },
+  //       ]
+  //     );
+  //   }
+  // }, [isBiodataExpired, isPanditExpired, isJyotishExpired, isKathavachakExpired]);
 
 
   const onRefresh = useCallback(() => {

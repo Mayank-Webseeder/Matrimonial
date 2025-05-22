@@ -227,7 +227,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
       .then(image => {
         if (!image || !image.data) {
           console.error(`No image selected for ${field}`);
-          return;
+          return;s
         }
 
         const base64Image = `data:${image.mime};base64,${image.data}`;
@@ -1559,7 +1559,6 @@ const DetailedProfile = ({ navigation, profileData }) => {
               <MaterialIcons name="call" color="#000" size={15} style={{ paddingVertical: SW(5) }} />
               <Entypo name="star" color="red" size={12} />
             </View>
-
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly, errors.contactNumber1 && styles.errorInput]}
               value={biodata?.contactNumber1}

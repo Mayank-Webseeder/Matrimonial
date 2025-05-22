@@ -1,4 +1,4 @@
-import { Text, View, TextInput, TouchableOpacity, Image, SafeAreaView, StatusBar, StyleSheet, Alert } from 'react-native';
+import { Text, View, TextInput, TouchableOpacity, Image, SafeAreaView, StatusBar, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import React, { useState } from 'react';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -21,9 +21,8 @@ const PostSuccessStories = ({ navigation }) => {
     const [groomBiodataId, setGroomBiodataId] = useState('');
     const [brideBiodataId, setBrideBiodataId] = useState('');
     const [selectedImage, setSelectedImage] = useState(null);
-    const [weddingDate, setWeddingDate] = useState('');
-    const [showDatePicker, setShowDatePicker] = useState(false);
     const [errors, setErrors] = useState({});
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const validateFields = () => {
         const newErrors = {};
@@ -51,17 +50,6 @@ const PostSuccessStories = ({ navigation }) => {
         if (!comment) {
             newErrors.comment = "Your thought is required.";
         }
-
-        // if (!weddingDate) {
-        //     newErrors.weddingDate = "Wedding date is required.";
-        // } else {
-        //     const today = new Date();
-        //     const selected = new Date(weddingDate);
-        //     if (selected > today) {
-        //         newErrors.weddingDate = "Wedding date cannot be in the future.";
-        //     }
-        // }
-
         if (!rating) {
             newErrors.rating = "Rating is required.";
         } else if (isNaN(rating) || rating < 1 || rating > 5) {
@@ -76,6 +64,7 @@ const PostSuccessStories = ({ navigation }) => {
     const handleSubmit = async () => {
         if (!validateFields()) return;
         try {
+            setIsSubmitting(true);
             const token = await AsyncStorage.getItem('userToken'); // ✅ Fetch Token
             if (!token) throw new Error('No token found');
 
@@ -87,7 +76,6 @@ const PostSuccessStories = ({ navigation }) => {
                 thought: comment,
                 rating: rating,
                 photoUrl: selectedImage,
-                weddingDate: weddingDate,
             };
 
             const headers = {
@@ -144,6 +132,10 @@ const PostSuccessStories = ({ navigation }) => {
                     routes: [{ name: "AuthStack" }],
                 });
             }
+            setIsSubmitting(true);
+        }
+        finally {
+            setIsSubmitting(true);
         }
     };
 
@@ -321,8 +313,16 @@ const PostSuccessStories = ({ navigation }) => {
                             />
                         </View>
                     )}
-                    <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-                        <Text style={styles.submitText}>Post Story</Text>
+                    <TouchableOpacity
+                        style={styles.submitButton}
+                        onPress={handleSubmit}
+                        disabled={isSubmitting}
+                    >
+                        {isSubmitting ? (
+                            <ActivityIndicator size="small" color="#fff" />
+                        ) : (
+                            <Text style={styles.submitText}>Post Story</Text>
+                        )}
                     </TouchableOpacity>
                 </View>
             </ScrollView>

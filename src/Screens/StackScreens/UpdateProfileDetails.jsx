@@ -52,6 +52,16 @@ const UpdateProfileDetails = ({ navigation, route }) => {
         setTempUrlData((prev) => ({ ...prev, [type]: text }));
     };
 
+    useEffect(() => {
+    setTempUrlData({
+        websiteUrl: profileData?.websiteUrl || '',
+        facebookUrl: profileData?.facebookUrl || '',
+        youtubeUrl: profileData?.youtubeUrl || '',
+        instagramUrl: profileData?.instagramUrl || '',
+        whatsapp: profileData?.whatsapp || ''
+    });
+}, [profileData]);
+
     const servicesOptions = {
         Pandit: panditServices,
         Jyotish: jyotishServices,
@@ -707,7 +717,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                     <Text style={Globalstyles.title}>Website Link</Text>
                     <TextInput
                         style={[Globalstyles.input, errors.websiteUrl && styles.errorInput]}
-                        value={tempUrlData.websiteUrl || RoleRegisterData.websiteUrl}
+                        value={tempUrlData.websiteUrl}
                         onChangeText={(text) => validateAndSetUrl(text, "websiteUrl")}
                         placeholder="Give Your Website Link"
                         placeholderTextColor={Colors.gray}
@@ -722,7 +732,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                     <Text style={Globalstyles.title}>Youtube Link</Text>
                     <TextInput
                         style={[Globalstyles.input, errors.youtubeUrl && styles.errorInput]}
-                        value={tempUrlData.youtubeUrl || RoleRegisterData.youtubeUrl}
+                        value={tempUrlData.youtubeUrl}
                         onChangeText={(text) => validateAndSetUrl(text, "youtubeUrl")}
                         placeholder="Give Your Youtube Link"
                         placeholderTextColor={Colors.gray}
@@ -737,7 +747,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                     <Text style={Globalstyles.title}>Whatsapp Link</Text>
                     <TextInput
                         style={[Globalstyles.input, errors.whatsapp && styles.errorInput]}
-                        value={tempUrlData.whatsapp || RoleRegisterData.whatsapp}
+                        value={tempUrlData.whatsapp}
                         onChangeText={(text) => validateAndSetUrl(text, "whatsapp")}
                         placeholder="Give Your Whatsapp Link"
                         placeholderTextColor={Colors.gray}
@@ -752,7 +762,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                     <Text style={Globalstyles.title}>Facebook Link</Text>
                     <TextInput
                         style={[Globalstyles.input, errors.facebookUrl && styles.errorInput]}
-                        value={tempUrlData.facebookUrl || RoleRegisterData.facebookUrl}
+                        value={tempUrlData.facebookUrl}
                         onChangeText={(text) => validateAndSetUrl(text, "facebookUrl")}
                         placeholder="Give Your Facebook Link"
                         placeholderTextColor={Colors.gray}
@@ -767,7 +777,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                     <Text style={Globalstyles.title}>Instagram Link</Text>
                     <TextInput
                         style={[Globalstyles.input, errors.instagramUrl && styles.errorInput]}
-                        value={tempUrlData.instagramUrl || RoleRegisterData.instagramUrl}
+                        value={tempUrlData.instagramUrl}
                         onChangeText={(text) => validateAndSetUrl(text, "instagramUrl")}
                         placeholder="Give Your Instagram Link"
                         placeholderTextColor={Colors.gray}

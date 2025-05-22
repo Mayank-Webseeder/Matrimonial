@@ -38,7 +38,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
     };
 
 
-     const handleCityInputChange = (text) => {
+    const handleCityInputChange = (text) => {
         const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
         setCityInput(filteredText);
         if (filteredText) {
@@ -259,7 +259,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     placeholder="Enter title"
                     value={CommitteeData.committeeTitle}
                     autoComplete="off"
-                    textContentType="committeeTitle"
+                    textContentType="none"
                     importantForAutofill="no"
                     autoCorrect={false}
                     onChangeText={(text) => {
@@ -287,7 +287,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     }}
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
-                    textContentType="presidentName"
+                    textContentType="none"
                     importantForAutofill="no"
                     autoCorrect={false}
                 />
@@ -329,7 +329,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     placeholder="Enter your city"
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
-                    textContentType="city"
+                    textContentType="none"
                     importantForAutofill="no"
                     autoCorrect={false}
                 />
@@ -360,7 +360,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     value={CommitteeData?.area} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, area: text }))}
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
-                    textContentType="area"
+                    textContentType="none"
                     importantForAutofill="no"
                     autoCorrect={false}
                 />
@@ -398,7 +398,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     value={CommitteeData?.mobileNo} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
                     autoComplete="off" importantForAutofill="no"
                     autoCorrect={false}
-                    textContentType="mobileNo"
+                    textContentType="none"
                 />
 
                 {errors.mobileNo && (

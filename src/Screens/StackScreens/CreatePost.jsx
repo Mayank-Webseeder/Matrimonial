@@ -178,7 +178,7 @@ const CreatePost = ({ navigation, route }) => {
                     value={title}
                     onChangeText={setTitle}
                     autoComplete="off"
-                    textContentType="title"
+                    textContentType="none"
                     importantForAutofill="no"
                     autoCorrect={false}
                 />
@@ -191,7 +191,7 @@ const CreatePost = ({ navigation, route }) => {
                     value={description}
                     onChangeText={setDescription}
                     autoComplete="off"
-                    textContentType="description"
+                    textContentType="none"
                     importantForAutofill="no"
                     autoCorrect={false}
                 />

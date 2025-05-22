@@ -535,6 +535,15 @@ ActiveButtonText: {
     elevation: 4,
     marginVertical: SH(5),
   },
+  sliderContainer: {
+      marginBottom: SH(30),
+      height: SH(290),
+    },
+    sliderImage: {
+      width: "100%",
+      height: SH(290),
+      resizeMode: 'cover',
+    },
 });
 
 export default styles;

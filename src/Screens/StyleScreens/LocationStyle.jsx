@@ -11,17 +11,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginTop: 15,
+    fontSize:SF(22),
+   fontFamily:"Poppins-Bold",
+    marginTop:SH(15),
     color: '#333',
   },
   message: {
-    fontSize: 16,
-    marginTop: 8,
+    fontSize:SF(16),
+    marginTop:SH(8),
     textAlign: 'center',
     color: '#666',
-    lineHeight: 22,
+    lineHeight:SH(22),
   },
   righticons: {
     flexDirection: 'row',
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
   },
   verifiedContainer: {
     position: "absolute",
-    top: SH(315),
+    top: SH(255),
     left: SW(228),
     flexDirection: "row",
     alignItems: "center",
@@ -165,7 +165,6 @@ const styles = StyleSheet.create({
     elevation: 4,
     borderRadius: 10,
     backgroundColor: "#fff",
-    marginTop: SH(10),
     width: "99%"
   },
   flex: {
@@ -340,6 +339,15 @@ const styles = StyleSheet.create({
     color: '#000',
     flexWrap: 'wrap',
   },
+   sliderContainer: {
+      marginBottom: SH(30),
+      height: SH(290),
+    },
+    sliderImage: {
+      width: "100%",
+      height: SH(290),
+      resizeMode: 'cover',
+    },
 });
 
 export default styles;

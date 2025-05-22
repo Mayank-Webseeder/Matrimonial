@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
   },
 
   leftContainer: {
-    marginHorizontal: SW(10),
+    marginHorizontal: SW(5),
     marginVertical: SH(15)
   },
   RequestText: {

@@ -402,7 +402,7 @@ export default function ActivistForm({ navigation }) {
           }}
           placeholderTextColor={Colors.gray}
           autoComplete="off"
-          textContentType="fullname"
+          textContentType="none"
           importantForAutofill="no"
           autoCorrect={false}
         />
@@ -497,7 +497,7 @@ export default function ActivistForm({ navigation }) {
           placeholder="Type your State"
           placeholderTextColor={Colors.gray}
           autoComplete="off"
-          textContentType="state"
+          textContentType="none"
           importantForAutofill="no"
           autoCorrect={false}
         />
@@ -531,7 +531,7 @@ export default function ActivistForm({ navigation }) {
           placeholder="Enter your city"
           placeholderTextColor={Colors.gray}
           autoComplete="off"
-          textContentType="city"
+          textContentType="none"
           importantForAutofill="no"
           autoCorrect={false}
         />
@@ -563,7 +563,7 @@ export default function ActivistForm({ navigation }) {
           placeholderTextColor={Colors.gray}
           value={ActivistData.mobileNo} onChangeText={(text) => setActivistData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
           autoComplete="off"
-          textContentType="mobileNo"
+          textContentType="none"
           importantForAutofill="no"
           autoCorrect={false}
         />
@@ -584,7 +584,7 @@ export default function ActivistForm({ navigation }) {
           }
           placeholderTextColor={Colors.gray}
           autoComplete="off"
-          textContentType="knownActivistId"
+          textContentType="none"
           importantForAutofill="no"
           autoCorrect={false}
         />

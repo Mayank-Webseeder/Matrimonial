@@ -934,7 +934,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholder="Enter Your Full Name"
               placeholderTextColor={Colors.gray}
               autoComplete="off"
-              textContentType="fullname"
+              textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}
             />
@@ -1061,7 +1061,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 handleInputChange("placeofbirth", filteredText);
               }}
               autoComplete="off"
-              textContentType="placeofbirth"
+              textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}
             />
@@ -1189,7 +1189,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 handleInputChange("nadi", filteredText);
               }}
               autoComplete="off"
-              textContentType="nadi"
+              textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}
             />
@@ -1207,7 +1207,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 handleInputChange("gotraSelf", filteredText);
               }}
               autoComplete="off"
-              textContentType="gotraSelf"
+              textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}
             />
@@ -1225,7 +1225,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 handleInputChange("gotraMother", filteredText);
               }}
               autoComplete="off"
-              textContentType="gotraMother"
+              textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}
             />
@@ -1319,7 +1319,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholder="Enter your city"
               placeholderTextColor={Colors.gray}
               autoComplete="off"
-              textContentType="currentCity"
+              textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}
             />
@@ -1351,7 +1351,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholderTextColor={Colors.gray}
               textAlignVertical="top"
               autoComplete="off"
-              textContentType="aboutMe"
+              textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}
             />
@@ -1391,7 +1391,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 handleInputChange("fatherName", filteredText);
               }}
               autoComplete="off"
-              textContentType="fatherName"
+              textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}
             />
@@ -1410,7 +1410,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 handleInputChange("motherName", filteredText);
               }}
               autoComplete="off"
-              textContentType="motherName"
+              textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}
             />
@@ -1548,7 +1548,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Family Info.'
               autoComplete="off"
-              textContentType="otherFamilyMemberInfo"
+              textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}
             />
@@ -1573,7 +1573,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Contact No. 1'
               autoComplete="off"
-              textContentType="contactNumber1"
+              textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}
             />
@@ -1594,7 +1594,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Contact No. 2'
               autoComplete="off"
-              textContentType="contactNumber2"
+              textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}
             />
@@ -1611,7 +1611,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholder="Type your State"
               placeholderTextColor={Colors.gray}
               autoComplete="off"
-              textContentType="state"
+              textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}
             />
@@ -1639,7 +1639,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholder="Type your city/village"
               placeholderTextColor={Colors.gray}
               autoComplete="off"
-              textContentType="city"
+              textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}
             />
@@ -1768,7 +1768,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Hobbies'
               autoComplete="off"
-              textContentType="hobbies"
+              textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}
               autoScroll={false}

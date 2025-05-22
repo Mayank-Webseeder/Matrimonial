@@ -24,6 +24,7 @@ import AppIntroSlider from 'react-native-app-intro-slider';
 
 const MatrimonyPeopleProfile = ({ navigation }) => {
   const sliderRef = useRef(null);
+   const topSliderRef=useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slider, setSlider] = useState([]);
   const route = useRoute();
@@ -59,6 +60,14 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const [Save, setIsSaved] = useState(initialSavedState || false);
   const hasOtherDetails = personalDetails?.knowCooking || personalDetails?.dietaryHabit || personalDetails?.smokingHabit || personalDetails?.drinkingHabit || personalDetails?.tobaccoHabits || personalDetails?.hobbies;
 
+  const formattedImages = [
+  personalDetails?.closeUpPhoto,
+  !hideOptionalDetails && personalDetails?.fullPhoto,
+  !hideOptionalDetails && personalDetails?.bestPhoto
+]
+  .filter(Boolean)
+  .map((url) => ({ uri: url })); 
+
   const handleToggle = async () => {
     const newValue = !isSwitchOn;
     setIsSwitchOn(newValue);
@@ -74,9 +83,26 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
 
   useEffect(() => {
+    console.log("formattedImages",formattedImages);
     Advertisement_window();
   }, []);
 
+
+  useEffect(() => {
+    if (!formattedImages || formattedImages.length === 0) return;
+  
+    const duration = (formattedImages[currentIndex]?.duration || 1) * 1000;
+  
+    const timeout = setTimeout(() => {
+      const nextIndex =
+        currentIndex < formattedImages.length - 1 ? currentIndex + 1 : 0;
+      setCurrentIndex(nextIndex);
+      topSliderRef.current?.goToSlide(nextIndex);
+    }, duration);
+  
+    return () => clearTimeout(timeout);
+  }, [currentIndex, formattedImages]);
+  
 
   useEffect(() => {
     if (slider.length === 0) return;
@@ -288,32 +314,34 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       return "";
     }
   };
-
-  const images = [
-    personalDetails?.closeUpPhoto,
-    !hideOptionalDetails && personalDetails?.fullPhoto,
-    !hideOptionalDetails && personalDetails?.bestPhoto
-  ].filter(Boolean);
-
-
-  const openImageViewer = (index) => {
+    const openImageViewer = (index) => {
     setImageIndex(index);
     setModalVisible(true);
   };
+
+   const SliderrenderItem = ({ item, index }) => (
+      <TouchableOpacity onPress={() => openImageViewer(index)}>
+        <Image
+          source={{ uri: item.uri }}
+          style={styles.sliderImage}
+        />
+      </TouchableOpacity>
+    );
+
 
   // console.log("MyprofileData", MyprofileData);
 
   useFocusEffect(
     useCallback(() => {
-      console.log("====== Profile Data Debug ======");
-      console.log("isVerified:", userData?.verified);
-      console.log("verifiedBy:", userData?.verifiedBy);
-      console.log("initialSavedState:", profileData?.isSaved);
-      console.log("status:", profileData?.requestStatus);
-      console.log("requestId:", profileData?.requestId);
-      console.log("isBlur:", userData?.isBlur);
-      console.log("userId:", userData?.userId);
-      console.log("userData?.personalDetails", userData?.personalDetails);
+      // console.log("====== Profile Data Debug ======");
+      // console.log("isVerified:", userData?.verified);
+      // console.log("verifiedBy:", userData?.verifiedBy);
+      // console.log("initialSavedState:", profileData?.isSaved);
+      // console.log("status:", profileData?.requestStatus);
+      // console.log("requestId:", profileData?.requestId);
+      // console.log("isBlur:", userData?.isBlur);
+      // console.log("userId:", userData?.userId);
+      // console.log("userData?.personalDetails", userData?.personalDetails);
       if (userId) {
         fetchUserProfile(userId);
       }
@@ -596,36 +624,31 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={{ alignItems: "center" }}>
-          {images.length > 0 && (
-            <TouchableOpacity onPress={() => openImageViewer(0)}>
-              <Image
-                source={{ uri: images[0] }}
-                style={{ width: SW(370), height: SH(350), borderRadius: 10, resizeMode: "cover" }}
-                blurRadius={isBlurCondition ? 5 : 0}
-              />
-            </TouchableOpacity>
-          )}
-          <Modal visible={modalVisible} transparent animationType="fade">
-            <View
-              style={{
-                flex: 1,
-                backgroundColor: 'rgba(0,0,0,0.8)',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            >
+         <View style={styles.sliderContainer}>
+          <AppIntroSlider
+            ref={topSliderRef}
+            data={formattedImages}
+            renderItem={SliderrenderItem}
+            showNextButton={false}
+            showDoneButton={false}
+            dotStyle={Globalstyles.dot}
+            activeDotStyle={Globalstyles.activeDot}
+            onSlideChange={(index) => setCurrentIndex(index)}
+          />
+
+          {/* Modal for Full Image View */}
+          <Modal visible={modalVisible} transparent={true} animationType="fade">
+            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.8)" }}>
               <ScrollView
                 horizontal
                 pagingEnabled
                 showsHorizontalScrollIndicator={false}
+                contentOffset={{ x: imageIndex * SCREEN_W, y: 0 }}
                 onMomentumScrollEnd={(e) =>
                   setImageIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W))
                 }
-                contentOffset={{ x: imageIndex * SCREEN_W, y: 0 }}   // current slide
-                style={{ width: SCREEN_W, height: SCREEN_H }}
               >
-                {images.map((uri, idx) => (
+                {formattedImages.map((img, idx) => (
                   <View
                     key={idx}
                     style={{
@@ -633,45 +656,32 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                       height: SCREEN_H,
                       justifyContent: 'center',
                       alignItems: 'center',
+                      marginTop: SH(15)
                     }}
                   >
                     <Image
-                      source={{ uri }}
-                      resizeMode="contain"            // या "cover" अगर crop चाहिये
+                      source={{ uri: img.uri }}
+                      resizeMode="contain"
                       style={{ width: '100%', height: '100%' }}
-                      blurRadius={isBlurCondition ? 5 : 0}
                     />
                   </View>
                 ))}
               </ScrollView>
 
-              {/* index badge */}
-              <View
-                style={{
-                  position: 'absolute',
-                  top: SH(40),
-                  alignSelf: 'center',
-                  backgroundColor: 'rgba(0,0,0,0.6)',
-                  paddingHorizontal: SW(8),
-                  paddingVertical: SH(8),
-                  borderRadius: 5,
-                }}
-              >
-                <Text style={{ color: '#fff' }}>
-                  {imageIndex + 1} / {images.length}
-                </Text>
+              <View style={{
+                position: "absolute", top: SH(30), alignSelf: "center", backgroundColor: "rgba(0,0,0,0.6)",
+                paddingHorizontal: SW(8), borderRadius: 5, paddingVertical: SH(8)
+              }}>
+                <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>{imageIndex + 1} / {formattedImages.length}</Text>
               </View>
 
-              {/* close button */}
-              <TouchableOpacity
-                onPress={() => setModalVisible(false)}
-                style={{ position: 'absolute', top: 40, right: 20 }}
-              >
-                <Text style={{ color: '#fff' }}>Close</Text>
+              <TouchableOpacity onPress={() => setModalVisible(false)} style={{ position: "absolute", top: SH(40), right: SW(20) }}>
+                <Text style={{ color: "white", fontSize: SF(13), fontFamily: "Poppins-Regular" }}>Close</Text>
               </TouchableOpacity>
             </View>
           </Modal>
         </View>
+
 
         {isActivist ? (
           <View style={styles.verifiedContainer}>

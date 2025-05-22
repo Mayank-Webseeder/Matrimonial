@@ -333,7 +333,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
                         placeholder="Enter your sub caste"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none"
+                        textContentTyape="none"
                     />
                     {filteredSubCaste.length > 0 && subCasteInput ? (
                         <FlatList

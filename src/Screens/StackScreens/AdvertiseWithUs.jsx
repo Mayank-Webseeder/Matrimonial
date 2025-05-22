@@ -196,7 +196,7 @@ const AdvertiseWithUs = ({ navigation }) => {
                         }}
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="fullName"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -222,7 +222,7 @@ const AdvertiseWithUs = ({ navigation }) => {
                         keyboardType="phone-pad" maxLength={10}
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="mobileNo"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false}
                     />
@@ -237,7 +237,7 @@ const AdvertiseWithUs = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         onChangeText={setMessage} multiline
                         autoComplete="off"
-                        textContentType="message"
+                        textContentType="none"
                         importantForAutofill="no"
                         autoCorrect={false} />
                     <TouchableOpacity

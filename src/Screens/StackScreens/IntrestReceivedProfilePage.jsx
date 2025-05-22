@@ -18,10 +18,11 @@ import { SH, SW, SF } from '../../utils/Dimensions';
 import moment from 'moment';
 import { useFocusEffect } from '@react-navigation/native';
 import { showMessage } from 'react-native-flash-message';
-const { width, height } = Dimensions.get("window");
+const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 
 const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const sliderRef = useRef(null);
+  const topSliderRef=useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slider, setSlider] = useState([]);
   const { userId } = route.params || {};
@@ -45,16 +46,28 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const hasOtherDetails = personalDetails?.knowCooking || personalDetails?.dietaryHabit || personalDetails?.smokingHabit || personalDetails?.drinkingHabit || personalDetails?.tobaccoHabits || personalDetails?.hobbies;
 
-  const images = [
-    personalDetails?.closeUpPhoto,
-    !hideOptionalDetails && personalDetails?.fullPhoto,
-    !hideOptionalDetails && personalDetails?.bestPhoto
-  ].filter(Boolean);
+  const formattedImages = [
+  personalDetails?.closeUpPhoto,
+  !hideOptionalDetails && personalDetails?.fullPhoto,
+  !hideOptionalDetails && personalDetails?.bestPhoto
+]
+  .filter(Boolean)
+  .map((url) => ({ uri: url })); 
 
-  const openImageViewer = (index) => {
+   const openImageViewer = (index) => {
     setImageIndex(index);
     setModalVisible(true);
   };
+
+   const SliderrenderItem = ({ item, index }) => (
+      <TouchableOpacity onPress={() => openImageViewer(index)}>
+        <Image
+          source={{ uri: item.uri }}
+          style={styles.sliderImage}
+        />
+      </TouchableOpacity>
+    );
+
 
   useFocusEffect(
     useCallback(() => {
@@ -74,6 +87,22 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
       fetchUserProfile(userId);
     }
   }, [userId]);
+
+useEffect(() => {
+    if (!formattedImages || formattedImages.length === 0) return;
+  
+    const duration = (formattedImages[currentIndex]?.duration || 2) * 1000;
+  
+    const timeout = setTimeout(() => {
+      const nextIndex =
+        currentIndex < formattedImages.length - 1 ? currentIndex + 1 : 0;
+      setCurrentIndex(nextIndex);
+      topSliderRef.current?.goToSlide(nextIndex);
+    }, duration);
+  
+    return () => clearTimeout(timeout);
+  }, [currentIndex, formattedImages]);
+  
 
   useEffect(() => {
     if (slider.length === 0) return;
@@ -459,45 +488,60 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         </View>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={{ alignItems: "center" }}>
-          {images.length > 0 && (
-            <TouchableOpacity onPress={() => openImageViewer(0)}>
-              <Image
-                source={{ uri: images[0] }}
-                style={{ width: SW(350), height: SH(330), borderRadius: 10 }}
-              // blurRadius={!isBlur ? 5 : 0}
-              />
-            </TouchableOpacity>
-          )}
+         <View style={styles.sliderContainer}>
+          <AppIntroSlider
+            ref={topSliderRef}
+            data={formattedImages}
+            renderItem={SliderrenderItem}
+            showNextButton={false}
+            showDoneButton={false}
+            dotStyle={Globalstyles.dot}
+            activeDotStyle={Globalstyles.activeDot}
+            onSlideChange={(index) => setCurrentIndex(index)}
+          />
+
+          {/* Modal for Full Image View */}
           <Modal visible={modalVisible} transparent={true} animationType="fade">
-            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.8)", justifyContent: "center", alignItems: "center" }}>
+            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.8)" }}>
               <ScrollView
                 horizontal
                 pagingEnabled
                 showsHorizontalScrollIndicator={false}
-                onMomentumScrollEnd={(event) => {
-                  const newIndex = Math.round(event.nativeEvent.contentOffset.x / width);
-                  setImageIndex(newIndex);
-                }}
-                style={{ width, height }}
+                contentOffset={{ x: imageIndex * SCREEN_W, y: 0 }}
+                onMomentumScrollEnd={(e) =>
+                  setImageIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W))
+                }
               >
-                {images.map((img, idx) => (
-                  <View key={idx} style={{ width, height, justifyContent: "center", alignItems: "center" }}>
+                {formattedImages.map((img, idx) => (
+                  <View
+                    key={idx}
+                    style={{
+                      width: SCREEN_W,
+                      height: SCREEN_H,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginTop: SH(15)
+                    }}
+                  >
                     <Image
-                      source={{ uri: img }}
-                      style={{ width: width * 0.9, height: height * 0.8, borderRadius: 10, resizeMode: "contain" }}
-                    // blurRadius={!isBlur ? 5 : 0}
+                      source={{ uri: img.uri }}
+                      resizeMode="contain"
+                      style={{ width: '100%', height: '100%' }}
                     />
                   </View>
                 ))}
               </ScrollView>
-              <View style={{ position: "absolute", top: 40, alignSelf: "center", backgroundColor: "rgba(0,0,0,0.6)", padding: 8, borderRadius: 5 }}>
-                <Text style={{ color: "white", fontSize: SF(13), fontFamily: "Poppins-Regular" }}>{imageIndex + 1} / {images.length}</Text>
+
+              <View style={{
+                position: "absolute", top: SH(30), alignSelf: "center", backgroundColor: "rgba(0,0,0,0.6)",
+                paddingHorizontal: SW(8), borderRadius: 5, paddingVertical: SH(8)
+              }}>
+                <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>{imageIndex + 1} / {formattedImages.length}</Text>
               </View>
-              <TouchableOpacity onPress={() => setModalVisible(false)} style={{ position: "absolute", top: 40, right: 20 }}>
+
+              <TouchableOpacity onPress={() => setModalVisible(false)} style={{ position: "absolute", top: SH(40), right: SW(20) }}>
                 <Text style={{ color: "white", fontSize: SF(13), fontFamily: "Poppins-Regular" }}>Close</Text>
               </TouchableOpacity>
-
             </View>
           </Modal>
         </View>

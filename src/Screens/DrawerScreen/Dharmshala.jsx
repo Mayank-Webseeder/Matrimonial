@@ -50,7 +50,7 @@ const Dharmshala = () => {
   const notificationCount = notifications ? notifications.length : 0;
   const [slider, setSlider] = useState([]);
 
-    const fetchDharamsalaData = async (filterType = "search") => {
+  const fetchDharamsalaData = async (filterType = "search") => {
     try {
       setLoading(true);
       setDharamsalaData([]);
@@ -467,7 +467,11 @@ const Dharmshala = () => {
           )}
           <View style={styles.leftContainer}>
             {item?.dharmshalaName && (
-              <Text style={styles.text}>{item.dharmshalaName}</Text>
+              <Text style={styles.text}>
+                {item.dharmshalaName.length > 25
+                  ? item.dharmshalaName.substring(0, 25) + '...'
+                  : item.dharmshalaName}
+              </Text>
             )}
 
             {item?.subCaste && (
@@ -589,11 +593,11 @@ const Dharmshala = () => {
               textContentType="none"
             />
             {locality.length > 0 ? (
-              <AntDesign name={'close'} size={20} color={'gray'} 
-              onPress={() => {
-                setLocality('');
-                fetchDharamsalaData("all");
-              }} />
+              <AntDesign name={'close'} size={20} color={'gray'}
+                onPress={() => {
+                  setLocality('');
+                  fetchDharamsalaData("all");
+                }} />
             ) : (
               <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchDharamsalaData("search")} />
             )}

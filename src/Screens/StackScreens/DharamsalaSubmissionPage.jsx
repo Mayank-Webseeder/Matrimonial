@@ -50,7 +50,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
     };
 
     const handleCityInputChange = (text) => {
-         const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+        const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
         setCityInput(filteredText);
         if (filteredText) {
             const filtered = CityData.filter((item) =>
@@ -297,7 +297,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     }}
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
-                    textContentType="dharmshalaName"
+                    textContentType="none"
                     importantForAutofill="no"
                     autoCorrect={false}
                 />
@@ -338,7 +338,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     placeholder="Enter your city"
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
-                    textContentType="city"
+                    textContentType="none"
                     importantForAutofill="no"
                     autoCorrect={false}
                 />
@@ -369,10 +369,10 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     keyboardType="phone-pad"
                     maxLength={10}
                     placeholderTextColor={Colors.gray}
-                    value={DharamsalaData?.mobileNo} 
+                    value={DharamsalaData?.mobileNo}
                     onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
                     autoComplete="off"
-                    textContentType="mobileNo"
+                    textContentType="none"
                     importantForAutofill="no"
                     autoCorrect={false}
                 />
@@ -390,7 +390,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     value={DharamsalaData.description} onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, description: text }))}
                     multiline={true}
                     autoComplete="off"
-                    textContentType="description"
+                    textContentType="none"
                     importantForAutofill="no"
                     autoCorrect={false}
                 />

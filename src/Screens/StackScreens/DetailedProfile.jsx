@@ -1074,9 +1074,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={maritalStatusData}
               labelField="label"
               valueField="value"
-              value={
-                maritalStatusData.find(item => item.label === biodata?.maritalStatus)?.value || ''
-              }
+               value={biodata?.maritalStatus}
               editable={isEditing}
               onChange={(text) => handleInputChange("maritalStatus", text.value)}
               placeholder="Select marital status"
@@ -1094,9 +1092,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={MyDisabilities}
               labelField="label"
               valueField="value"
-              value={
-                MyDisabilities.find(item => item.label === biodata?.disabilities)?.value || ''
-              }
+               value={biodata?.disabilities}
               editable={isEditing}
               onChange={(text) => handleInputChange("disabilities", text.value)}
               placeholder="Select disability"
@@ -1111,9 +1107,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={heightData}
               labelField="label"
               valueField="value"
-              value={
-                heightData.find(item => item.label === biodata?.heightFeet)?.value || ''
-              }
+              value={biodata?.heightFeet}
               editable={isEditing}
               onChange={(text) => handleInputChange("heightFeet", text.value)}
               placeholder="Height"
@@ -1146,9 +1140,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={MyComplexionData}
               labelField="label"
               valueField="value"
-              value={
-                MyComplexionData.find(item => item.label === biodata?.complexion)?.value || ''
-              }
+              value={biodata?.complexion}
               editable={isEditing}
               onChange={(text) => handleInputChange("complexion", text.value)}
               placeholder="Select Complexion"
@@ -1164,9 +1156,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={ManglikStatusData}
               labelField="label"
               valueField="value"
-              value={
-                ManglikStatusData.find(item => item.label === biodata?.manglikStatus)?.value || ''
-              }
+              value={biodata?.manglikStatus}
               editable={isEditing}
               onChange={(text) => handleInputChange("manglikStatus", text.value)}
               placeholder="Select status"
@@ -1237,9 +1227,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={QualificationData}
               labelField="label"
               valueField="value"
-              value={
-                QualificationData.find(item => item.label === biodata?.qualification)?.value || ''
-              }
+              value={biodata?.qualification}
               editable={isEditing}
               onChange={(text) => handleInputChange("qualification", text.value)}
               placeholder="Select Qualification"

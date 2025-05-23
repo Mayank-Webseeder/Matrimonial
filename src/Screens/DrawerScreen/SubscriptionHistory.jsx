@@ -188,10 +188,6 @@ const SubscriptionHistory = ({ navigation }) => {
                     ))}
                 </ScrollView>
             </View>
-
-
-
-
             <FlatList
                 data={filteredData}
                 keyExtractor={(item, index) => index.toString()}
@@ -230,6 +226,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: SW(19),
         borderRadius: 5,
         backgroundColor: '#e0e0e0',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     activeTabButton: {
         backgroundColor: Colors.theme_color,

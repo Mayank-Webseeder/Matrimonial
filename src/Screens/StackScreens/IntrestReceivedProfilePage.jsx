@@ -22,7 +22,7 @@ const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 
 const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const sliderRef = useRef(null);
-  const topSliderRef=useRef(null);
+  const topSliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slider, setSlider] = useState([]);
   const { userId } = route.params || {};
@@ -32,13 +32,19 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const [profileData, setProfileData] = useState([]);
   const [userData, setUserData] = useState({});
   const [Save, setIsSaved] = useState(initialSavedState || false);
-  const hideContact = !!(userData?.hideContact || userData?.hideContact);
-  const hideOptionalDetails = !!(userData?.hideOptionalDetails || userData?.hideOptionalDetails)
   const _id = userData?._id;
   const personalDetails = userData?.personalDetails || {};
   const partnerPreferences = userData?.partnerPreferences || {};
   const initialSavedState = profileData?.isSaved;
   const status = profileData?.requestStatus;
+  const hideContact = userData?.hideContact === true && status === 'accepted'
+    ? false
+    : !!userData?.hideContact;
+
+  const hideOptionalDetails = userData?.hideOptionalDetails === true && status === 'accepted'
+    ? false
+    : !!userData?.hideOptionalDetails;
+
   const requestId = profileData?.requestId;
   const isBlur = userData?.isBlur;
   const MyprofileData = useSelector((state) => state.getBiodata);
@@ -47,26 +53,26 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const hasOtherDetails = personalDetails?.knowCooking || personalDetails?.dietaryHabit || personalDetails?.smokingHabit || personalDetails?.drinkingHabit || personalDetails?.tobaccoHabits || personalDetails?.hobbies;
 
   const formattedImages = [
-  personalDetails?.closeUpPhoto,
-  !hideOptionalDetails && personalDetails?.fullPhoto,
-  !hideOptionalDetails && personalDetails?.bestPhoto
-]
-  .filter(Boolean)
-  .map((url) => ({ uri: url })); 
+    personalDetails?.closeUpPhoto,
+    !hideOptionalDetails && personalDetails?.fullPhoto,
+    !hideOptionalDetails && personalDetails?.bestPhoto
+  ]
+    .filter(Boolean)
+    .map((url) => ({ uri: url }));
 
-   const openImageViewer = (index) => {
+  const openImageViewer = (index) => {
     setImageIndex(index);
     setModalVisible(true);
   };
 
-   const SliderrenderItem = ({ item, index }) => (
-      <TouchableOpacity onPress={() => openImageViewer(index)}>
-        <Image
-          source={{ uri: item.uri }}
-          style={styles.sliderImage}
-        />
-      </TouchableOpacity>
-    );
+  const SliderrenderItem = ({ item, index }) => (
+    <TouchableOpacity onPress={() => openImageViewer(index)}>
+      <Image
+        source={{ uri: item.uri }}
+        style={styles.sliderImage}
+      />
+    </TouchableOpacity>
+  );
 
 
   useFocusEffect(
@@ -88,21 +94,21 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
     }
   }, [userId]);
 
-useEffect(() => {
+  useEffect(() => {
     if (!formattedImages || formattedImages.length === 0) return;
-  
+
     const duration = (formattedImages[currentIndex]?.duration || 2) * 1000;
-  
+
     const timeout = setTimeout(() => {
       const nextIndex =
         currentIndex < formattedImages.length - 1 ? currentIndex + 1 : 0;
       setCurrentIndex(nextIndex);
       topSliderRef.current?.goToSlide(nextIndex);
     }, duration);
-  
+
     return () => clearTimeout(timeout);
   }, [currentIndex, formattedImages]);
-  
+
 
   useEffect(() => {
     if (slider.length === 0) return;
@@ -488,7 +494,7 @@ useEffect(() => {
         </View>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
-         <View style={styles.sliderContainer}>
+        <View style={styles.sliderContainer}>
           <AppIntroSlider
             ref={topSliderRef}
             data={formattedImages}

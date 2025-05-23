@@ -24,11 +24,11 @@ import AppIntroSlider from 'react-native-app-intro-slider';
 
 const MatrimonyPeopleProfile = ({ navigation }) => {
   const sliderRef = useRef(null);
-   const topSliderRef=useRef(null);
+  const topSliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slider, setSlider] = useState([]);
   const route = useRoute();
-  const { userId ,isSaved } = route.params || {};
+  const { userId, isSaved } = route.params || {};
   const [loading, setLoading] = useState(false);
   const [loadingIntrest, setLoadingIntrest] = useState(false);
   const [intrestLoading, setIntrestLoading] = useState(false);
@@ -42,8 +42,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const [isSwitchOn, setIsSwitchOn] = useState(isVerified);
   const _id = userData?._id;
   const Biodata_id = userData?.bioDataId || null;
-  const hideContact = !!(userData?.hideContact);
-  const hideOptionalDetails = !!(userData?.hideOptionalDetails)
+
   const isActivist = MyActivistProfile?._id;
   const activistId = MyActivistProfile?._id;
   const isVerified = userData?.verified;
@@ -53,6 +52,13 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const partnerPreferences = userData?.partnerPreferences || {};
   const initialSavedState = profileData?.isSaved || isSaved;
   const status = profileData?.requestStatus;
+  const hideContact = userData?.hideContact === true && status === 'accepted'
+    ? false
+    : !!userData?.hideContact;
+
+  const hideOptionalDetails = userData?.hideOptionalDetails === true && status === 'accepted'
+    ? false
+    : !!userData?.hideOptionalDetails;
   const requestId = profileData?.requestId;
   const isVisible = profileData?.isVisible;
   const isBlur = userData?.isBlur;
@@ -61,12 +67,12 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const hasOtherDetails = personalDetails?.knowCooking || personalDetails?.dietaryHabit || personalDetails?.smokingHabit || personalDetails?.drinkingHabit || personalDetails?.tobaccoHabits || personalDetails?.hobbies;
 
   const formattedImages = [
-  personalDetails?.closeUpPhoto,
-  !hideOptionalDetails && personalDetails?.fullPhoto,
-  !hideOptionalDetails && personalDetails?.bestPhoto
-]
-  .filter(Boolean)
-  .map((url) => ({ uri: url })); 
+    personalDetails?.closeUpPhoto,
+    !hideOptionalDetails && personalDetails?.fullPhoto,
+    !hideOptionalDetails && personalDetails?.bestPhoto
+  ]
+    .filter(Boolean)
+    .map((url) => ({ uri: url }));
 
   const handleToggle = async () => {
     const newValue = !isSwitchOn;
@@ -83,26 +89,26 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
 
   useEffect(() => {
-    console.log("formattedImages",formattedImages);
+    console.log("formattedImages", formattedImages);
     Advertisement_window();
   }, []);
 
 
   useEffect(() => {
     if (!formattedImages || formattedImages.length === 0) return;
-  
+
     const duration = (formattedImages[currentIndex]?.duration || 1) * 1000;
-  
+
     const timeout = setTimeout(() => {
       const nextIndex =
         currentIndex < formattedImages.length - 1 ? currentIndex + 1 : 0;
       setCurrentIndex(nextIndex);
       topSliderRef.current?.goToSlide(nextIndex);
     }, duration);
-  
+
     return () => clearTimeout(timeout);
   }, [currentIndex, formattedImages]);
-  
+
 
   useEffect(() => {
     if (slider.length === 0) return;
@@ -156,13 +162,13 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("failed to fetch plans :", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
@@ -186,7 +192,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           type: "error",
           message: "User token missing!",
           icon: "danger",
-          duarion:5000
+          duarion: 5000
         });
         return;
       }
@@ -202,7 +208,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           message: "Success",
           description: response.data.message || "Intrest Deleted successfully!",
           icon: "success",
-          duarion:5000
+          duarion: 5000
         });
         setTimeout(() => {
           navigation.goBack();
@@ -217,14 +223,14 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         type: "danger",
         message: errorMsg,
         icon: "danger",
-        duarion:5000
+        duarion: 5000
       });
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
@@ -244,7 +250,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         message: "Error: User ID not found!",
         type: "danger",
         icon: "danger",
-        duarion:5000
+        duarion: 5000
       });
       return "";
     }
@@ -268,7 +274,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           message: "Matrimonial Profile Approved ✅",
           type: "success",
           icon: "success",
-          duarion:5000
+          duarion: 5000
         });
       }
       else if (message.toLowerCase().includes("disapproved")) {
@@ -276,7 +282,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           message: "Matrimonial Profile Disapproved ❌",
           type: "danger",
           icon: "danger",
-          duarion:5000
+          duarion: 5000
         });
       }
       else {
@@ -284,7 +290,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           message: message,
           type: "success",
           icon: "success",
-          duarion:5000
+          duarion: 5000
         });
       }
 
@@ -296,14 +302,14 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         message: errorMsg,
         type: "danger",
         icon: "danger",
-        duarion:5000
+        duarion: 5000
       });
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
@@ -314,19 +320,19 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       return "";
     }
   };
-    const openImageViewer = (index) => {
+  const openImageViewer = (index) => {
     setImageIndex(index);
     setModalVisible(true);
   };
 
-   const SliderrenderItem = ({ item, index }) => (
-      <TouchableOpacity onPress={() => openImageViewer(index)}>
-        <Image
-          source={{ uri: item.uri }}
-          style={styles.sliderImage}
-        />
-      </TouchableOpacity>
-    );
+  const SliderrenderItem = ({ item, index }) => (
+    <TouchableOpacity onPress={() => openImageViewer(index)}>
+      <Image
+        source={{ uri: item.uri }}
+        style={styles.sliderImage}
+      />
+    </TouchableOpacity>
+  );
 
 
   // console.log("MyprofileData", MyprofileData);
@@ -388,19 +394,19 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       } else {
         console.error("⚠️ Error Message:", error.message);
       }
-        const sessionExpiredMessages = [
-          "User does not Exist....!Please login again",
-          "Invalid token. Please login again",
-          "Token has expired. Please login again"
-        ];
-    
-        if (sessionExpiredMessages.includes(errorMsg)) {
-          await AsyncStorage.removeItem("userToken");
-          navigation.reset({
-            index: 0,
-            routes: [{ name: "AuthStack" }],
-          });
-        }
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
 
       setLoading(false);
     } finally {
@@ -417,7 +423,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         type: "danger",
         message: "Error",
         description: "User ID not found!",
-        duarion:5000,
+        duarion: 5000,
         autoHide: true
       });
       setLoadingIntrest(false);
@@ -444,7 +450,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           type: "success",
           message: "Success",
           description: response.data.message,
-          duarion:5000,
+          duarion: 5000,
           autoHide: true,
           onHide: () => {
             setTimeout(() => {
@@ -461,16 +467,16 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       showMessage({
         type: "danger",
         message: "Error",
-        description: errorMsg|| "Failed to send interest!",
+        description: errorMsg || "Failed to send interest!",
         icon: "danger",
-        duarion:5000
+        duarion: 5000
       });
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
@@ -489,7 +495,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         message: "Error: User ID not found!",
         type: "danger",
         icon: "danger",
-        duarion:5000
+        duarion: 5000
       });
       return;
     }
@@ -516,7 +522,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           message: response.data.message,
           type: "success",
           icon: "success",
-          duarion:5000
+          duarion: 5000
         });
         if (response.data.message === "Profile saved successfully.") {
           setIsSaved(true);
@@ -528,19 +534,19 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           message: "Something went wrong!",
           type: "danger",
           icon: "danger",
-          duarion:5000
+          duarion: 5000
         });
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching biodata:", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
@@ -552,7 +558,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         message: errorMsg,
         type: "danger",
         icon: "danger",
-        duarion:5000
+        duarion: 5000
       });
     }
   };
@@ -562,7 +568,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       message: "Under development",
       type: "info",
       icon: "info",
-      duarion:5000
+      duarion: 5000
     });
   };
 
@@ -624,7 +630,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-         <View style={styles.sliderContainer}>
+        <View style={styles.sliderContainer}>
           <AppIntroSlider
             ref={topSliderRef}
             data={formattedImages}
@@ -733,7 +739,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               {"ID NO. :-".toUpperCase()} {userData?.bioDataId}
             </Text>
 
-           {matchPercentage > 0 && (
+            {matchPercentage > 0 && (
               <Text style={styles.toptext}>
                 {matchPercentage}% Compatible according to your preference
               </Text>
@@ -757,7 +763,11 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             <TouchableOpacity
               style={styles.interestedButton}
               onPress={requestId ? () => DeleteIntrest(requestId) : sendInterestRequest}
-              disabled={requestId ? intrestLoading : loadingIntrest}
+              disabled={
+                status === "accepted" ||
+                status === "rejected" ||
+                (requestId ? intrestLoading : loadingIntrest)
+              }
             >
               {(requestId ? intrestLoading : loadingIntrest) ? (
                 <ActivityIndicator size="small" color={Colors.theme_color} />
@@ -775,6 +785,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                 </Text>
               )}
             </TouchableOpacity>
+
 
             <TouchableOpacity
               style={[styles.iconContainer, hideContact && { opacity: 0.5 }]}

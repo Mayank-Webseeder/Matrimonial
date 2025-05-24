@@ -5,51 +5,68 @@ import Colors from "../../utils/Colors";
 const styles = StyleSheet.create({
 
   Text: {
-    fontSize: SF(24),
+    fontSize: SF(22),
     fontFamily: "Poppins-Bold",
     color: Colors.theme_color,
+    textAlign: 'center',
+    marginBottom: SH(5),
   },
- 
+
   description: {
-    fontSize: SF(13),
-    color: Colors.theme_color,
-    marginBottom: SH(10),
-    fontFamily: "Poppins-Bold"
+    fontSize: SF(14),
+    color: "gray",
+    fontFamily: "Poppins-Regular",
+    textAlign: "center",
+    marginTop: SH(10),
+
   },
-  textInput: {
+  inputWrapper: {
+    backgroundColor: '#f9f9f9',
+    borderRadius: 10,
     borderColor: Colors.gray,
     borderWidth: 1,
-    paddingBottom: SH(60),
-    borderRadius: 10,
-    marginBottom: SH(50)
+    paddingHorizontal: SW(10),
+    paddingVertical: SH(10),
+    marginBottom: SH(30),
+
+    // Cross-platform shadow
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5, // Android only
   },
   submitButton: {
     backgroundColor: Colors.theme_color,
-    paddingHorizontal: SW(15),
-    paddingVertical:SH(7),
-    borderRadius: 5,
+    paddingHorizontal: SW(50),
+    paddingVertical: SH(10),
+    borderRadius: 50,
     alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: SH(10),
+    alignSelf: 'center',
   },
   submitText: {
     color: 'white',
     fontSize: SF(15),
-   fontFamily:"Poppins-Bold"
+    fontFamily: "Poppins-Medium"
   },
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: SH(25)
+    marginVertical: SH(10),
+    justifyContent: "center"
   },
   star: {
     marginHorizontal: SW(3),
   },
-  menuIcon:{
-    width:SW(30),
-    height:SH(30)
+  menuIcon: {
+    width: SW(30),
+    height: SH(30)
   },
-  feedBackContainer:{
-    paddingHorizontal:SW(10),
-    paddingVertical:SH(10)
+  feedBackContainer: {
+    paddingHorizontal: SW(10),
+    paddingVertical: SH(10)
   }
 
 });

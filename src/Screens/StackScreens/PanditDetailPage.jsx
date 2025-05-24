@@ -41,7 +41,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
     const profilePhoto = profileData?.profilePhoto
         ? { uri: profileData.profilePhoto }
         : require('../../Images/NoImage.png');
-
+    const validSlides = slider.filter(item => !!item.image);
 
     useFocusEffect(
         useCallback(() => {
@@ -523,7 +523,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                             <Rating
                                 type="star"
                                 ratingCount={5}
-                                  imageSize={18}
+                                imageSize={18}
                                 startingValue={myRatings[0]?.rating}
                                 readonly
                             />
@@ -536,7 +536,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
 
                     {otherRatings?.length > 0 ? (
                         <>
-                            {otherRatings?.slice(0, 2).map((review, index) => (
+                            {otherRatings?.slice(0, 3).map((review, index) => (
                                 <View key={review._id || index} style={styles.reviewContainer}>
                                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
                                         <View>
@@ -577,7 +577,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                                 </View>
                             ))}
 
-                            {otherRatings.length > 2 && (
+                            {otherRatings.length > 3 && (
                                 <TouchableOpacity
                                     onPress={() => navigation.navigate('AllReviewsPage', { reviews: otherRatings })}
                                     style={styles.viewMoreButton}>
@@ -618,38 +618,39 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                         <FontAwesome5 name="instagram" size={30} color="#E4405F" />
                     </TouchableOpacity>
                 </View>
-                {/* <Image source={require('../../Images/slider.png')} style={styles.Bottomimage} /> */}
+                {validSlides.length > 0 && (
+                    <View style={styles.Bottomimage}>
+                        <AppIntroSlider
+                            ref={sliderRef}
+                            data={validSlides}
+                            renderItem={({ item }) => {
+                                const { width = 300, height = 150 } = item.resolution || {};
 
-                <View style={styles.Bottomimage}>
-                    <AppIntroSlider
-                        ref={sliderRef}
-                        data={slider}
-                        renderItem={({ item }) => {
-                            const { width, height } = item.resolution;
+                                const handlePress = () => {
+                                    if (item.hyperlink) {
+                                        Linking.openURL(item.hyperlink).catch(err =>
+                                            console.error("Failed to open URL:", err)
+                                        );
+                                    }
+                                };
 
-                            const handlePress = () => {
-                                if (item.hyperlink) {
-                                    Linking.openURL(item.hyperlink).catch(err =>
-                                        console.error("Failed to open URL:", err)
-                                    );
-                                }
-                            };
+                                return (
+                                    <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                                        <Image
+                                            source={{ uri: item.image }}
+                                            style={{ width, height, resizeMode: 'cover' }}
+                                        />
+                                    </TouchableOpacity>
+                                );
+                            }}
+                            showNextButton={false}
+                            showDoneButton={false}
+                            dotStyle={Globalstyles.dot}
+                            activeDotStyle={Globalstyles.activeDot}
+                        />
+                    </View>
+                )}
 
-                            return (
-                                <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
-                                    <Image
-                                        source={{ uri: item.image }}
-                                        style={{ width, height, resizeMode: 'cover' }}
-                                    />
-                                </TouchableOpacity>
-                            );
-                        }}
-                        showNextButton={false}
-                        showDoneButton={false}
-                        dotStyle={Globalstyles.dot}
-                        activeDotStyle={Globalstyles.activeDot}
-                    />
-                </View>
             </ScrollView>
         </SafeAreaView>
     );

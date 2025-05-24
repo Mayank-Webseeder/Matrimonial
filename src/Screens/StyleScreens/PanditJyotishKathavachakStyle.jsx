@@ -84,13 +84,8 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     alignItems: 'center',
-    flexDirection: "row"
-  },
-  CityArea: {
- flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  width: '100%',
+    flexDirection: "row",
+    marginRight:SW(20)
   },
   rating: {
     flexDirection: 'row',
@@ -159,7 +154,7 @@ const styles = StyleSheet.create({
   },
   leftContainer: {
     marginVertical: SH(10),
-    width: "55%"
+    width: "65%"
   },
   searchContainer: {
     flexDirection: "row",

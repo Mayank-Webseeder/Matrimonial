@@ -835,17 +835,17 @@ const EventNews = ({ navigation }) => {
         style={styles.bottomContainer}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ flexGrow: 1 }}
+        refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
       >
         <FlatList
           data={postId ? eventdata : getPostsForPage()}
           renderItem={renderItem}
           keyExtractor={(item) => item._id}
-          scrollEnabled={false}
+          scrollEnabled={true}
           nestedScrollEnabled={true}
           showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Ionicons

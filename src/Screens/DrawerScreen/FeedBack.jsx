@@ -1,7 +1,7 @@
-import { Text, View, TextInput, TouchableOpacity, Image, SafeAreaView, StatusBar } from 'react-native'
+import { Text, View, TextInput, TouchableOpacity, Image, SafeAreaView, StatusBar, ActivityIndicator } from 'react-native'
 import React, { useState } from 'react'
 import styles from '../StyleScreens/FeedbackStyle';
-import Entypo from 'react-native-vector-icons/Entypo';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import { DrawerActions } from '@react-navigation/native';
 import Globalstyles from '../../utils/GlobalCss';
 import Colors from '../../utils/Colors';
@@ -9,13 +9,16 @@ import { FEEDBACK } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { showMessage } from 'react-native-flash-message';
+import { SH } from '../../utils/Dimensions';
 
 const FeedBack = ({ navigation }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
     try {
+      setLoading(true)
       const token = await AsyncStorage.getItem('userToken'); // ✅ Fetch Token
       if (!token) throw new Error('No token found');
 
@@ -77,6 +80,10 @@ const FeedBack = ({ navigation }) => {
         icon: "danger",
         duration: 5000
       });
+      setLoading(false)
+    }
+    finally {
+      setLoading
     }
   };
 
@@ -86,9 +93,9 @@ const FeedBack = ({ navigation }) => {
     for (let i = 1; i <= 5; i++) {
       stars.push(
         <TouchableOpacity key={i} onPress={() => setRating(i)}>
-          <Entypo
-            name={i <= rating ? 'star' : 'star-outlined'}
-            size={30}
+          <AntDesign
+            name={i <= rating ? 'star' : 'staro'}
+            size={45}
             color={'#FF9900'}
             style={styles.star}
           />
@@ -115,24 +122,35 @@ const FeedBack = ({ navigation }) => {
         </View>
       </View>
       <View style={Globalstyles.form}>
-        <Text style={styles.Text}>Feedback</Text>
-        <Text style={styles.description}>Share your experience in scaling</Text>
+        <Text style={styles.Text}>Rate your experience</Text>
+        <Text style={styles.description}>we highly value your feedback kindly take a moment to rate your experience and provide us with your valuable fedback</Text>
         <View style={styles.ratingContainer}>
           <View style={styles.ratingContainer}>
             {renderStars()}
           </View>
         </View>
-        <TextInput
-          style={styles.textInput}
-          placeholder="Add your comments..."
-          multiline
-          value={comment}
-          onChangeText={setComment}
-          placeholderTextColor={Colors.gray}
-        />
-        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={styles.submitText}>Submit FeedBack</Text>
+        <View style={styles.inputWrapper}>
+          <TextInput
+            style={{ minHeight: SH(100), textAlignVertical: 'top' }}
+            placeholder="Tell us about your experience !"
+            multiline
+            value={comment}
+            onChangeText={setComment}
+            placeholderTextColor={"gray"}
+          />
+        </View>
+        <TouchableOpacity
+          style={styles.submitButton}
+          onPress={handleSubmit}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator size="large" color="#fff" />
+          ) : (
+            <Text style={styles.submitText}>Send</Text>
+          )}
         </TouchableOpacity>
+
       </View>
     </SafeAreaView>
   )

@@ -372,16 +372,14 @@ const Jyotish = ({ navigation }) => {
                 </View>
               )}
 
-              {(item?.city && item?.state) && (
-                <View style={styles.CityArea}>
+               <View>
                 <Text style={[styles.text, { fontFamily: "Poppins-Bold" }]}>
-                  {item?.city} ,
-                </Text>
-                <Text style={styles.text}>
-                  {item?.state}
+                  {item?.city}
+                  <Text style={[styles.text, { fontFamily: "Poppins-Regular" }]}>
+                    {` , ${item?.state}`}
+                  </Text>
                 </Text>
               </View>
-              )}
 
               {item?.residentialAddress && (
                 <Text style={styles.text} numberOfLines={1}>
@@ -394,7 +392,7 @@ const Jyotish = ({ navigation }) => {
               <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
                 <MaterialIcons name="call" size={17} color={Colors.light} />
               </TouchableOpacity>
-              <View style={{ display: "flex", flexDirection: "row", width: "30%", justifyContent: "space-between" }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start',marginRight:SW(10) }}>
                 <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
                   <FontAwesome
                     name={item.isSaved ? "bookmark" : "bookmark-o"}

@@ -382,7 +382,8 @@ const Pandit = ({ navigation }) => {
           )}
 
           <View>
-            <Pressable style={styles.leftContainer}
+            <View>
+              <Pressable style={styles.leftContainer}
               onPress={() => {
                 if (isExpired) {
                   showMessage({
@@ -405,23 +406,22 @@ const Pandit = ({ navigation }) => {
               <View style={styles.rating}>
                 <Rating type="star" ratingCount={5} imageSize={15} startingValue={rating} readonly />
               </View>
-              {(item?.city && item?.state) && (
-                <View style={styles.CityArea}>
+              <View>
                 <Text style={[styles.text, { fontFamily: "Poppins-Bold" }]}>
-                  {item?.city} ,
-                </Text>
-                <Text style={styles.text}>
-                  {item?.state}
+                  {item?.city}
+                  <Text style={[styles.text, { fontFamily: "Poppins-Regular" }]}>
+                    {` , ${item?.state}`}
+                  </Text>
                 </Text>
               </View>
-              )}
               <Text style={styles.text} numberOfLines={1}>{item?.residentialAddress}</Text>
             </Pressable>
+            </View>
             <View style={styles.sharecontainer}>
               <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
                 <MaterialIcons name="call" size={17} color={Colors.light} />
               </TouchableOpacity>
-              <View style={{ display: "flex", flexDirection: "row", width: "30%", justifyContent: "space-between" }}>
+           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start',marginRight:SW(10) }}>
                 <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
                   <FontAwesome
                     name={item.isSaved ? "bookmark" : "bookmark-o"}
@@ -432,7 +432,7 @@ const Pandit = ({ navigation }) => {
                 <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
                   <Feather name="send" size={18} color={Colors.dark} />
                 </TouchableOpacity>
-              </View>
+            </View>
             </View>
           </View>
         </View>

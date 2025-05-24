@@ -418,7 +418,7 @@ const Home = ({ navigation }) => {
   };
 
   const handleNavigateToProfile = (item) => {
-    console.log("item", item);
+    // console.log("item", item);
     if (!navigation.isFocused()) return;
 
     if (!isBiodataMissing || isBiodataExpired) {
@@ -428,11 +428,11 @@ const Home = ({ navigation }) => {
       });
     }
     else {
-      console.log("Navigating to MatrimonyPeopleProfile");
+      // console.log("Navigating to MatrimonyPeopleProfile");
       navigation.navigate("MatrimonyPeopleProfile", {
         // userDetails: item,
         userId: item?.userId,
-        // isSaved: item?.isSaved,
+        isSaved: item?.isSaved,
         // isBlur: item?.isBlur
       });
     }

@@ -76,8 +76,12 @@ const UpdateProfile = ({ navigation }) => {
           icon: "none",
           duarion: 5000
         });
-
-        navigation.navigate("MainApp");
+        navigation.navigate("MainApp", {
+          screen: "Tabs",
+          params: {
+            screen: "MyProfile",
+          },
+        });
       } else {
         throw new Error(response.data.message || "Your profile has been updated, but there was an issue.");
       }
@@ -154,7 +158,7 @@ const UpdateProfile = ({ navigation }) => {
             value={dob ? new Date(dob) : new Date(2000, 0, 1)}
             mode="date"
             display="default"
-            maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))} 
+            maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))}
             onChange={handleDateChange}
             themeVariant="light"
           />

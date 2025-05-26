@@ -35,6 +35,14 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     borderRadius: 50
   },
+  searchContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between"
+  },
+  Filterheader: {
+    display: "flex", flexDirection: "row", justifyContent: "space-between"
+  }
+  ,
   searchbar: {
     display: "flex",
     flexDirection: "row",

@@ -1,5 +1,5 @@
 
-import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, RefreshControl ,BackHandler } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, RefreshControl, BackHandler } from 'react-native';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { slider } from '../../DummyData/DummyData';
 import { Image } from 'react-native';
@@ -49,7 +49,7 @@ const Committee = ({ navigation }) => {
   const notificationCount = notifications ? notifications.length : 0;
   const [slider, setSlider] = useState([]);
 
-  
+
   const fetchMyCommitteeData = async () => {
     try {
       setIsLoading(true);
@@ -242,28 +242,28 @@ const Committee = ({ navigation }) => {
     }, [])
   );
 
-     useFocusEffect(
-        React.useCallback(() => {
-          const onBackPress = () => {
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{ name: 'MainApp' }],
-              })
-            );
-            return true;
-          };
-    
-          BackHandler.addEventListener('hardwareBackPress', onBackPress);
-    
-          return () =>
-            BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-        }, [])
-      );
-  
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: 'MainApp' }],
+          })
+        );
+        return true;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [])
+  );
+
 
   useEffect(() => {
-   fetchComitteeData("all");
+    fetchComitteeData("all");
     Advertisement_window();
   }, []);
 
@@ -483,6 +483,13 @@ const Committee = ({ navigation }) => {
     fetchComitteeData("modal");
   };
 
+  const resetFilter = () => {
+    setLocality('');
+    setModalLocality('');
+    setSubcaste('');
+    fetchComitteeData();
+  }
+
   return (
     <SafeAreaView style={Globalstyles.container}>
       <StatusBar
@@ -650,6 +657,9 @@ const Committee = ({ navigation }) => {
                 <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                 <Text style={Globalstyles.headerText}>Filter</Text>
               </TouchableOpacity>
+              <TouchableOpacity onPress={resetFilter}>
+                <Text style={Globalstyles.headerText}>Reset Filter</Text>
+              </TouchableOpacity>
             </View>
 
             <View style={Globalstyles.form}>
@@ -708,7 +718,7 @@ const Committee = ({ navigation }) => {
                 <Text style={styles.applyButtonText}>See Results</Text>
               </TouchableOpacity>
               <TouchableOpacity
-              onPress={() => {
+                onPress={() => {
                   setModalVisible(false);
                   setLocality('');
                   setSubcaste('');

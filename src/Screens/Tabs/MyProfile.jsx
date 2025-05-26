@@ -345,8 +345,8 @@ const MyProfile = ({ navigation }) => {
     const handleCameraCapture = () => {
         ImageCropPicker.openCamera({
             cropping: true,
-            width: 300,
-            height: 250,
+            width: 1000,
+            height: 1000,
             includeBase64: true,
         })
             .then(image => {

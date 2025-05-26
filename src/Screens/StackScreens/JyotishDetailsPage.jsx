@@ -467,7 +467,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                     {profileData?.experience ? (
                         <>
                             <Text style={styles.sectionTitle}>Experience </Text>
-                            <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} years of experience` : ''}</Text>
+                            <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} + kathyears of experience` : ''}</Text>
                         </>
                     ) : null}
 

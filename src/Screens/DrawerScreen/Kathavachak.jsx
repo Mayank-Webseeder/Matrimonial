@@ -58,6 +58,14 @@ const Kathavachak = ({ navigation }) => {
     KathavachakDataAPI("modal");
   };
 
+  const resetFilter = () => {
+    setModalLocality('')
+    setRating(' ')
+    setExperience(' ')
+    setServices('')
+    KathavachakDataAPI()
+  }
+
   useEffect(() => {
     KathavachakDataAPI("all");
     Advertisement_window();
@@ -369,7 +377,7 @@ const Kathavachak = ({ navigation }) => {
                 </View>
               )}
 
-               <View>
+              <View>
                 <Text style={[styles.text, { fontFamily: "Poppins-Bold" }]}>
                   {item?.city}
                   <Text style={[styles.text, { fontFamily: "Poppins-Regular" }]}>
@@ -389,7 +397,7 @@ const Kathavachak = ({ navigation }) => {
               <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
                 <MaterialIcons name="call" size={17} color={Colors.light} />
               </TouchableOpacity>
-               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start',marginRight:SW(10) }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginRight: SW(10) }}>
                 <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
                   <FontAwesome
                     name={item.isSaved ? "bookmark" : "bookmark-o"}
@@ -539,6 +547,9 @@ const Kathavachak = ({ navigation }) => {
               <TouchableOpacity onPress={handleCloseFilter} style={{ flexDirection: 'row' }}>
                 <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                 <Text style={Globalstyles.headerText}>Filter</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={resetFilter}>
+                <Text style={Globalstyles.headerText}>Reset Filter</Text>
               </TouchableOpacity>
             </View>
 

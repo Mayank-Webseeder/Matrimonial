@@ -227,7 +227,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
       .then(image => {
         if (!image || !image.data) {
           console.error(`No image selected for ${field}`);
-          return;s
+          return; s
         }
 
         const base64Image = `data:${image.mime};base64,${image.data}`;
@@ -535,12 +535,12 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
         if (Object.keys(errors).length > 0) {
           const errorMessages = Object.values(errors).join('\n');
-          // showMessage({
-          //   message: errorMessages,
-          //   type: "danger",
-          //   duration: 5000,
-          //   icon: "danger"
-          // });
+          showMessage({
+            message: errorMessages,
+            type: "danger",
+            duration: 5000,
+            icon: "danger"
+          });
           console.log("❌ Validation failed. Errors:", errors);
           setErrors(errors);
           setIsLoading(false);
@@ -863,7 +863,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
       />
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
 
-        <View style={Globalstyles.form}>
+        <View style={Globalstyles.form} importantForAutofill="no">
           <View style={styles.detail}>
             <Text style={styles.Formtitle}>Create Biodata</Text>
           </View>
@@ -1074,7 +1074,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={maritalStatusData}
               labelField="label"
               valueField="value"
-               value={biodata?.maritalStatus}
+              value={biodata?.maritalStatus}
               editable={isEditing}
               onChange={(text) => handleInputChange("maritalStatus", text.value)}
               placeholder="Select marital status"
@@ -1092,7 +1092,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={MyDisabilities}
               labelField="label"
               valueField="value"
-               value={biodata?.disabilities}
+              value={biodata?.disabilities}
               editable={isEditing}
               onChange={(text) => handleInputChange("disabilities", text.value)}
               placeholder="Select disability"
@@ -1559,8 +1559,8 @@ const DetailedProfile = ({ navigation, profileData }) => {
               editable={isEditing}
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Contact No. 1'
-              autoComplete="off"
-              textContentType="none"
+              autoComplete="tel"
+              textContentType="telephoneNumber"
               importantForAutofill="no"
               autoCorrect={false}
             />
@@ -1580,7 +1580,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               editable={isEditing}
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Contact No. 2'
-              autoComplete="off"
+              autoComplete="tel-device"
               textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}

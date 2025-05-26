@@ -284,8 +284,8 @@ const Home = ({ navigation }) => {
             title: item.title,
             description: item.description,
             image: `${PHOTO_URL}/${mediaItem.mediaUrl}`,
-            resolution: mediaItem.resolution, // 👈 yeh add kiya
-            mediaType: mediaItem.mediaUrl.includes('.mp4') ? 'video' : 'image', // Determine media type
+            resolution: mediaItem.resolution, 
+            mediaType: mediaItem.mediaUrl.includes('.mp4') ? 'video' : 'image',
             hyperlink: mediaItem.hyperlink,
           }))
         );

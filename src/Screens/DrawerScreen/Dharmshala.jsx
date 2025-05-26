@@ -516,12 +516,16 @@ const Dharmshala = () => {
 
   const handleCloseFilter = () => {
     setModalVisible(false);
-    setLocality('');
-    setModalLocality('');
-    setSubcaste('');
     setDharamsalaData([]);
     fetchDharamsalaData("modal");
   };
+
+  const resetFilter =()=>{
+     setLocality('');
+    setModalLocality('');
+    setSubcaste('');
+    fetchDharamsalaData();
+  }
 
 
   return (
@@ -701,6 +705,9 @@ const Dharmshala = () => {
                 <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                 <Text style={Globalstyles.headerText}>Filter</Text>
               </TouchableOpacity>
+              <TouchableOpacity onPress={resetFilter}>
+                <Text style={Globalstyles.headerText}>Reset Filter</Text>
+              </TouchableOpacity>
             </View>
 
             <View style={Globalstyles.form}>
@@ -748,7 +755,6 @@ const Dharmshala = () => {
               <TouchableOpacity
                 style={styles.applyButton}
                 onPress={() => {
-                  fetchDharamsalaData();
                   handleCloseFilter();
                 }}
               >

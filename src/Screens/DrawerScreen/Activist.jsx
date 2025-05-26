@@ -1,4 +1,4 @@
-import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, Linking, SafeAreaView, StatusBar, ActivityIndicator, ScrollView, RefreshControl } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, Linking, SafeAreaView, StatusBar, BackHandler, ScrollView, RefreshControl } from 'react-native';
 import React, { useState, useCallback } from 'react';
 import { Image } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -44,6 +44,20 @@ const Activist = ({ navigation }) => {
     setSelectedImage(imageUri);
     setImageVisible(true);
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.openDrawer();
+        return true;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [navigation])
+  );
 
   useFocusEffect(
     React.useCallback(() => {
@@ -200,12 +214,16 @@ const Activist = ({ navigation }) => {
 
   const handleCloseFilter = () => {
     setModalVisible(false);
-    setLocality('');
-    setModalLocality('');
-    setSubcaste('');
     setActivistData([]);
     fetchActivistData("modal");
   };
+
+  const resetFilter = () => {
+    setLocality('');
+    setModalLocality('');
+    setSubcaste('');
+    fetchActivistData();
+  }
 
   const handleInputChange = (text) => {
     setSubcaste(text);
@@ -244,27 +262,27 @@ const Activist = ({ navigation }) => {
   const renderItem = ({ item }) => {
     return (
       <View style={styles.card}>
-  <View style={styles.cardLeft}>
-    <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
-      <Image
-        source={item.profilePhoto ? { uri: item.profilePhoto } : require('../../Images/NoImage.png')}
-        style={styles.image}
-      />
-    </TouchableOpacity>
-    <View style={{ marginLeft: SW(10), flex: 1 }}>
-      {item?.fullname && <Text style={styles.text}>{item.fullname}</Text>}
-      {item?.subCaste && <Text style={styles.smalltext}>{item.subCaste}</Text>}
+        <View style={styles.cardLeft}>
+          <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
+            <Image
+              source={item.profilePhoto ? { uri: item.profilePhoto } : require('../../Images/NoImage.png')}
+              style={styles.image}
+            />
+          </TouchableOpacity>
+          <View style={{ marginLeft: SW(10), flex: 1 }}>
+            {item?.fullname && <Text style={styles.text}>{item.fullname}</Text>}
+            {item?.subCaste && <Text style={styles.smalltext}>{item.subCaste}</Text>}
 
-      <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: 'center' }}>
-        {item?.city && <Text style={styles.smalltext}>{item.city}</Text>}
-        {item?.activistId && <Text style={styles.IDText}>Id: {item.activistId}</Text>}
+            <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: 'center' }}>
+              {item?.city && <Text style={styles.smalltext}>{item.city}</Text>}
+              {item?.activistId && <Text style={styles.IDText}>Id: {item.activistId}</Text>}
+            </View>
+          </View>
+        </View>
+        <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
+          <Text style={styles.buttonText}>Connect</Text>
+        </TouchableOpacity>
       </View>
-    </View>
-  </View>
-  <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
-    <Text style={styles.buttonText}>Connect</Text>
-  </TouchableOpacity>
-</View>
 
     );
   };
@@ -308,33 +326,35 @@ const Activist = ({ navigation }) => {
           </TouchableOpacity>
         </View>
         <View>
-          <View style={styles.searchbar}>
-            <TextInput
-              placeholder='Search in Your City'
-              placeholderTextColor="gray"
-              value={locality}
-              onChangeText={(text) => {
-                setLocality(text);
-                fetchActivistData("search");
-              }}
-            />
-
-            {locality.length > 0 ? (
-              <AntDesign
-                name={'close'}
-                size={20}
-                color={'gray'}
-                onPress={() => {
-                  setLocality('');
-                  navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'Activist' }],
-                  });
+          <View style={styles.searchContainer}>
+            <View style={styles.searchbar}>
+              <TextInput
+                placeholder='Search in Your City'
+                placeholderTextColor="gray"
+                value={locality}
+                onChangeText={(text) => {
+                  setLocality(text);
+                  fetchActivistData("search");
                 }}
               />
-            ) : (
-              <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchActivistData("search")} />
-            )}
+
+              {locality.length > 0 ? (
+                <AntDesign
+                  name={'close'}
+                  size={20}
+                  color={'gray'}
+                  onPress={() => {
+                    setLocality('');
+                    navigation.reset({
+                      index: 0,
+                      routes: [{ name: 'Activist' }],
+                    });
+                  }}
+                />
+              ) : (
+                <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchActivistData("search")} />
+              )}
+            </View>
           </View>
 
           <View style={styles.ButtonContainer}>
@@ -353,7 +373,10 @@ const Activist = ({ navigation }) => {
           </View>
         </View>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
 
         {loading ? renderSkeleton() : (
           <FlatList
@@ -363,9 +386,6 @@ const Activist = ({ navigation }) => {
             scrollEnabled={false}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.ActivistDataList}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
                 <FontAwesome name="user" size={60} color="#ccc" style={{ marginBottom: 15 }} />
@@ -388,6 +408,9 @@ const Activist = ({ navigation }) => {
                 <TouchableOpacity onPress={handleCloseFilter} style={{ flexDirection: 'row' }}>
                   <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                   <Text style={Globalstyles.headerText}>Filter</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={resetFilter}>
+                  <Text style={Globalstyles.headerText}>Reset Filter</Text>
                 </TouchableOpacity>
               </View>
 
@@ -440,7 +463,6 @@ const Activist = ({ navigation }) => {
                 <TouchableOpacity
                   style={styles.applyButton}
                   onPress={() => {
-                    fetchActivistData();
                     handleCloseFilter();
                   }}
                 >

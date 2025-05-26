@@ -8,8 +8,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: SW(5),
-    paddingVertical: SH(5)
   },
   headerContainer: {
     flexDirection: "row",

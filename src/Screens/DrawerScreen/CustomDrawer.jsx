@@ -45,7 +45,7 @@ const CustomDrawer = (props) => {
       : []
     ),
     { title: 'Saved Profile', screen: 'Saved Profile' },
-    { title: 'Pandit/Jyotish'},
+    { title: 'Pandit/Jyotish' },
     { title: 'Event/News', screen: 'EventNews' },
     { title: 'Dharmshala', screen: 'Dharmshala' },
     { title: 'Committees', screen: 'Committee' },
@@ -53,10 +53,10 @@ const CustomDrawer = (props) => {
     { title: 'Advertise with Us', screen: 'AdvertiseWithUs' },
     { title: 'Success Stories', screen: 'SuccessStories' },
     { title: 'Account & Settings' },
-    { title: 'About Us'},
+    { title: 'About Us' },
     { title: 'Feedback/Suggestion', screen: 'FeedBack' },
     { title: 'Share App' },
-    {title:'SubscriptionHistory', screen: 'SubscriptionHistory'},
+    { title: 'SubscriptionHistory', screen: 'SubscriptionHistory' },
   ];
 
   const panditOptions = [
@@ -87,7 +87,7 @@ const CustomDrawer = (props) => {
       await AsyncStorage.removeItem("profileInterest");
       await AsyncStorage.removeItem("newsEvents");
 
-      dispatch(resetBioData()); 
+      dispatch(resetBioData());
       dispatch(resetsetActivistdata());
       dispatch(resetAllBiodata());
       dispatch(reseAllNotification());
@@ -154,15 +154,16 @@ const CustomDrawer = (props) => {
             source={image ? { uri: image } : require('../../Images/Profile.png')}
             style={styles.profileImage}
           />
-
-          {/* Name and ID in Center */}
           <View>
             <Text style={styles.name}>{name}</Text>
             <Text style={styles.idText}>ID Number: {Id}</Text>
           </View>
-
-          {/* Edit Icon on the Right */}
-          <TouchableOpacity onPress={() => navigation.navigate('MyProfile')}>
+          <TouchableOpacity onPress={() => navigation.navigate("MainApp", {
+            screen: "Tabs",
+            params: {
+              screen: "MyProfile",
+            },
+          })}>
             <AntDesign name="edit" size={20} color={Colors.theme_color} />
           </TouchableOpacity>
 

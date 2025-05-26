@@ -231,6 +231,12 @@ export default function ActivistForm({ navigation }) {
     return payload;
   };
 
+  const handleInputChange = (field, value) => {
+    setActivistData(prev => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
 
 
   const validateFields = () => {
@@ -278,20 +284,19 @@ export default function ActivistForm({ navigation }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleInputChange = (field, value) => {
-    setActivistData(prev => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-
   const handleActivistSave = async () => {
     try {
-      let payload;
       if (!validateFields()) {
+        showMessage({
+          message: "Please complete all mandatory sections before submitting.",
+          type: "danger",
+          duration: 4000,
+          icon: "danger",
+          position: 'bottom'
+        });
         return;
       }
+      let payload;
 
       setIsLoading(true);
       const token = await AsyncStorage.getItem("userToken");

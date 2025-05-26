@@ -285,7 +285,7 @@ const PanditRegister = ({ navigation }) => {
 
             youtubeUrl: /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/\S+$/,
 
-            facebookUrl: /^(https?:\/\/)?(www\.|m\.)?facebook\.com\/[A-Za-z0-9_.-]+\/?$/,
+            facebookUrl: /^(https?:\/\/)?(www\.|m\.)?facebook\.com\/.+$/,
 
             instagramUrl: /^(https?:\/\/)?(www\.)?instagram\.com\/[A-Za-z0-9_.]+(\/)?(\?.*)?$/,
 
@@ -398,6 +398,13 @@ const PanditRegister = ({ navigation }) => {
             console.log("Validation Errors:", errors);
             if (Object.keys(errors).length > 0) {
                 setErrors(errors);
+                showMessage({
+                    message: "Please complete all mandatory sections before submitting.",
+                    type: "danger",
+                    duration: 4000,
+                    icon: "danger",
+                    position:'bottom'
+                });
                 setIsLoading(false);
                 return;
             }
@@ -755,7 +762,7 @@ const PanditRegister = ({ navigation }) => {
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false}>
-                <View style={Globalstyles.form}>
+                <View style={Globalstyles.form} importantForAutofill="no">
                     <Text style={Globalstyles.title}>Name <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput style={[Globalstyles.input, errors.fullName && styles.errorInput]}
                         value={RoleRegisterData?.fullName}

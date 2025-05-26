@@ -6,9 +6,6 @@ const Splash = ({ navigation }) => {
     const HandleLogin = () => {
         navigation.navigate('Login');
     };
-    const handlePress = () => {
-        Linking.openURL("https://www.appwin.in/policy.html");
-    };
 
     return (
         <SafeAreaView style={styles.container}>

@@ -902,7 +902,7 @@ const ProfileDetail = ({ route, navigation }) => {
                             {profileData?.experience ? (
                                 <>
                                     <Text style={styles.sectionTitle}>Experience </Text>
-                                    <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} years of experience` : ''}</Text>
+                                    <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} + years of experience` : ''}</Text>
                                 </>
                             ) : null}
 
@@ -1089,7 +1089,7 @@ const ProfileDetail = ({ route, navigation }) => {
                             {profileData?.experience ? (
                                 <>
                                     <Text style={styles.sectionTitle}>Experience </Text>
-                                    <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} years of experience` : ''}</Text>
+                                      <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} + years of experience` : ''}</Text>
                                 </>
                             ) : null}
 
@@ -1273,7 +1273,7 @@ const ProfileDetail = ({ route, navigation }) => {
                             {profileData?.experience ? (
                                 <>
                                     <Text style={styles.sectionTitle}>Experience </Text>
-                                    <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} years of experience` : ''}</Text>
+                                      <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} + years of experience` : ''}</Text>
                                 </>
                             ) : null}
 

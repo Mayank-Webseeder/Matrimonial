@@ -53,14 +53,14 @@ const UpdateProfileDetails = ({ navigation, route }) => {
     };
 
     useEffect(() => {
-    setTempUrlData({
-        websiteUrl: profileData?.websiteUrl || '',
-        facebookUrl: profileData?.facebookUrl || '',
-        youtubeUrl: profileData?.youtubeUrl || '',
-        instagramUrl: profileData?.instagramUrl || '',
-        whatsapp: profileData?.whatsapp || ''
-    });
-}, [profileData]);
+        setTempUrlData({
+            websiteUrl: profileData?.websiteUrl || '',
+            facebookUrl: profileData?.facebookUrl || '',
+            youtubeUrl: profileData?.youtubeUrl || '',
+            instagramUrl: profileData?.instagramUrl || '',
+            whatsapp: profileData?.whatsapp || ''
+        });
+    }, [profileData]);
 
     const servicesOptions = {
         Pandit: panditServices,
@@ -269,7 +269,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
 
             youtubeUrl: /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/\S+$/,
 
-            facebookUrl: /^(https?:\/\/)?(www\.|m\.)?facebook\.com\/[A-Za-z0-9_.-]+\/?$/,
+            facebookUrl: /^(https?:\/\/)?(www\.|m\.)?facebook\.com\/.+$/,
 
             instagramUrl: /^(https?:\/\/)?(www\.)?instagram\.com\/[A-Za-z0-9_.]+(\/)?(\?.*)?$/,
 
@@ -405,6 +405,13 @@ const UpdateProfileDetails = ({ navigation, route }) => {
 
             if (Object.keys(errors).length > 0) {
                 setErrors(errors);
+                showMessage({
+                    message: "Please complete all mandatory sections before submitting.",
+                    type: "danger",
+                    duration: 4000,
+                    icon: "danger",
+                    position: 'bottom'
+                });
                 setIsLoading(false);
                 return;
             }

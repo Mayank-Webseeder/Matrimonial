@@ -251,6 +251,9 @@ const styles = StyleSheet.create({
     fontSize: SF(13),
     marginBottom: SH(5),
     fontFamily: "Poppins-Medium"
+  },
+  Filterheader:{
+    display:"flex",flexDirection:"row",justifyContent:"space-between"
   }
 
 });

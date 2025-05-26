@@ -36,7 +36,16 @@ const PartnersPreference = ({ navigation, profileData }) => {
     const [loading, setLoading] = useState(false);
     const MyprofileData = useSelector((state) => state.getBiodata);
     const [mybiodata, setMyBiodata] = useState({});
+    const ProfileData = useSelector((state) => state.profile);
+    const profile_data = ProfileData?.profiledata || {};
+
     const myPartnerPreferences = profileData?.partnerPreferences || mybiodata?.partnerPreferences;
+    const activeTabName = isBiodataExpired || isBiodataEmpty ? "Matrimonial" : "BioData";
+    const isBiodataExpired = profile_data?.serviceSubscriptions?.some(
+        (sub) => sub.serviceType === "Biodata" && sub.status === "Expired"
+    );
+
+    const isBiodataEmpty = Object.keys(MyprofileData?.Biodata || {}).length === 0;
 
     const [biodata, setBiodata] = useState({
         partnerSubCaste: '',
@@ -269,7 +278,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
                     navigation.navigate("MainApp", {
                         screen: "Tabs",
                         params: {
-                            screen: "MyProfile",
+                            screen: activeTabName,
                         },
                     });
                 }, 5000);
@@ -419,7 +428,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
                         />
                     </View>
                     <View>
-                        <Text style={Globalstyles.title}>Partners Marital Status  </Text>
+                        <Text style={Globalstyles.title}>Partner Marital Status  </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={PartnermaritalStatusData}

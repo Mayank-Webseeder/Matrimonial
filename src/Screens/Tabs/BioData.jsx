@@ -266,7 +266,7 @@ const BioData = ({ navigation }) => {
     navigation.navigate("MatrimonyPeopleProfile", {
       // userDetails: item,
       userId: item?.userId,
-      // isSaved: item.isSaved,
+      isSaved: item.isSaved,
       // isBlur: item?.isBlur,
       // isVisible: item?.isVisible,
       // status: item?.status,

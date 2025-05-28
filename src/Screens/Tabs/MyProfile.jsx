@@ -304,11 +304,11 @@ const MyProfile = ({ navigation }) => {
                     duration: 3000,
                     icon: "success"
                 });
-
-                console.log("Navigating to MainApp...");
-                navigation.reset({
-                    index: 0,
-                    routes: [{ name: "MainApp" }],
+                navigation.navigate("MainApp", {
+                    screen: "Tabs",
+                    params: {
+                        screen: "MyProfile",
+                    },
                 });
             }
         } catch (error) {

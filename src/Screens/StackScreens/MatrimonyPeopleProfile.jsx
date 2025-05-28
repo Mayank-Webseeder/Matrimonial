@@ -51,15 +51,15 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const personalDetails = userData?.personalDetails || {};
   const partnerPreferences = userData?.partnerPreferences || {};
   const initialSavedState = profileData?.isSaved || isSaved;
-  const status = profileData?.requestStatus;
-  const hideContact = userData?.hideContact === true && status === 'accepted'
+  const [requestId, setRequestId] = useState(null);
+  const [status, setStatus] = useState(null);
+   const hideContact = userData?.hideContact === true && status === 'accepted'
     ? false
     : !!userData?.hideContact;
 
   const hideOptionalDetails = userData?.hideOptionalDetails === true && status === 'accepted'
     ? false
     : !!userData?.hideOptionalDetails;
-  const requestId = profileData?.requestId;
   const isVisible = profileData?.isVisible;
   const isBlur = userData?.isBlur;
   const isBlurCondition = status === "accepted" ? !isVisible : isBlur;
@@ -179,71 +179,6 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
     }
   };
 
-  const DeleteIntrest = async (requestId) => {
-    setIntrestLoading(true);
-    if (!requestId) return;
-
-    console.log("✅ Accepting request for userId:", requestId);
-
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) {
-        showMessage({
-          type: "error",
-          message: "User token missing!",
-          icon: "danger",
-          duarion: 5000
-        });
-        return;
-      }
-
-      const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` };
-      const response = await axios.delete(`${DELETE_SEND_REQUEST}/${requestId}`, { headers });
-
-      console.log("🚀 Response Status:", response.status);
-
-      if (response.status === 200 && response.data.status === true) {
-        showMessage({
-          type: "success",
-          message: "Success",
-          description: response.data.message || "Intrest Deleted successfully!",
-          icon: "success",
-          duarion: 5000
-        });
-        setTimeout(() => {
-          navigation.goBack();
-        }, 5000);
-      } else {
-        throw new Error(response.data.message || "Something went wrong");
-      }
-    } catch (error) {
-      const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching biodata:", errorMsg);
-      showMessage({
-        type: "danger",
-        message: errorMsg,
-        icon: "danger",
-        duarion: 5000
-      });
-      const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
-      ];
-
-      if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "AuthStack" }],
-        });
-      }
-    }
-    finally {
-      setIntrestLoading(false);
-    }
-  };
-
   const VerifiedProfiles = async (Biodata_id) => {
     if (!Biodata_id) {
       showMessage({
@@ -330,6 +265,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       <Image
         source={{ uri: item.uri }}
         style={styles.sliderImage}
+        blurRadius={isBlurCondition ? 10 : 0}
       />
     </TouchableOpacity>
   );
@@ -369,8 +305,11 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       console.log("response", JSON.stringify(response.data));
 
       if (response.data.status) {
-        setProfileData(response.data);
+        setStatus(profileData?.requestStatus);
         setUserData(response?.data?.targetUserBioData);
+        setProfileData(response.data);
+        setStatus(response.data?.requestStatus || null);
+        setRequestId(response.data?.requestId || null);  
       } else {
         setProfileData(null);
         setUserData(null);
@@ -423,8 +362,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         type: "danger",
         message: "Error",
         description: "User ID not found!",
-        duarion: 5000,
-        autoHide: true
+        duration: 5000,
       });
       setLoadingIntrest(false);
       return;
@@ -432,60 +370,98 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
     try {
       const token = await AsyncStorage.getItem("userToken");
-      if (!token) {
-        throw new Error("No token found");
-      }
+      if (!token) throw new Error("No token found");
 
       const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       };
 
       const response = await axios.post(`${SEND_REQUEST}/${userId}`, {}, { headers });
 
-      console.log("Response Data:", JSON.stringify(response?.data));
-
       if (response.status === 200 && response.data.status === true) {
+        const newRequestId = response.data?.data?._id;
+
+       setRequestId(newRequestId);
+setStatus("pending");
+
         showMessage({
           type: "success",
           message: "Success",
           description: response.data.message,
-          duarion: 5000,
-          autoHide: true,
-          onHide: () => {
-            setTimeout(() => {
-              navigation.goBack();
-            }, 500);
-          }
+          duration: 3000,
         });
       } else {
         throw new Error("Unexpected response from server!");
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching biodata:", errorMsg);
       showMessage({
         type: "danger",
         message: "Error",
         description: errorMsg || "Failed to send interest!",
-        icon: "danger",
-        duarion: 5000
       });
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "AuthStack" }],
-        });
+        navigation.reset({ index: 0, routes: [{ name: "AuthStack" }] });
       }
     } finally {
-      setLoadingIntrest(false); // ✅ Hide Loader
+      setLoadingIntrest(false);
+    }
+  };
+
+  const DeleteIntrest = async (requestId) => {
+    setIntrestLoading(true);
+    if (!requestId) return;
+
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) throw new Error("No token found");
+
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+      const response = await axios.delete(`${DELETE_SEND_REQUEST}/${requestId}`, { headers });
+
+      if (response.status === 200 && response.data.status === true) {
+       setRequestId(null);
+setStatus(null);
+
+        showMessage({
+          type: "success",
+          message: "Interest removed successfully!",
+          duration: 3000,
+        });
+      } else {
+        throw new Error(response.data.message || "Something went wrong");
+      }
+    } catch (error) {
+      const errorMsg = error.response?.data?.message || error.message;
+      showMessage({
+        type: "danger",
+        message: "Error",
+        description: errorMsg,
+      });
+
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({ index: 0, routes: [{ name: "AuthStack" }] });
+      }
+    } finally {
+      setIntrestLoading(false);
     }
   };
 
@@ -773,14 +749,12 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                 <ActivityIndicator size="small" color={Colors.theme_color} />
               ) : (
                 <Text style={styles.buttonText}>
-                  {(status === "accepted" || status === "rejected") ? (
-                    <Text style={[styles.buttonText, { color: '#fff' }]}>
-                      {status.charAt(0).toUpperCase() + status.slice(1)}
-                    </Text>
+                  {status === "accepted" || status === "rejected" ? (
+                    status.charAt(0).toUpperCase() + status.slice(1)
+                  ) : requestId ? (
+                    "Cancel Interest"
                   ) : (
-                    <Text style={styles.buttonText}>
-                      {requestId ? "Cancel Interest" : status ? status : "Send Interest"}
-                    </Text>
+                    "Send Interest"
                   )}
                 </Text>
               )}

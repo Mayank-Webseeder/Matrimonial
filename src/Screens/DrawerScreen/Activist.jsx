@@ -19,6 +19,7 @@ import { useSelector } from 'react-redux';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { resetsetActivistdata, setActivistdata } from '../../ReduxStore/Slices/ActivistSlice';
 import { useDispatch } from 'react-redux';
+import { Dropdown } from 'react-native-element-dropdown';
 
 const Activist = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -222,24 +223,12 @@ const Activist = ({ navigation }) => {
     setLocality('');
     setModalLocality('');
     setSubcaste('');
-    fetchActivistData();
+    fetchActivistData("all");
   }
-
-  const handleInputChange = (text) => {
-    setSubcaste(text);
-    if (text.trim() === '') {
-      setFilteredOptions([]);
-    } else {
-      const filtered = subCasteOptions.filter((option) =>
-        option.label.toLowerCase().includes(text.toLowerCase())
-      );
-      setFilteredOptions(filtered);
+  const handleInputChange = (field, value) => {
+    if (field === "subCaste") {
+      setSubcaste(value);
     }
-  };
-
-  const handleOptionSelect = (value) => {
-    setSubcaste(value.label);
-    setFilteredOptions([]);
   };
 
   const renderSkeleton = () => (
@@ -431,32 +420,18 @@ const Activist = ({ navigation }) => {
                 <View>
                   <Text style={Globalstyles.title}>Sub-Caste</Text>
                   <View>
-                    <TextInput
-                      value={subcaste}
-                      onChangeText={handleInputChange}
-                      placeholder="Type your caste"
-                      placeholderTextColor={Colors.gray}
-                      style={Globalstyles.input}
-                      autoComplete="off"
-                      textContentType="none"
-                    />
-                    {filteredOptions.length > 0 && (
-                      <FlatList
-                        data={filteredOptions.slice(0, 2)}
-                        scrollEnabled={false}
-                        keyExtractor={(item) => item?.value}
-                        style={[Globalstyles.suggestions, { marginBottom: 10 }]}
-                        renderItem={({ item }) => (
-                          <TouchableOpacity onPress={() => handleOptionSelect(item)}>
-                            <Text style={styles.label}>{item?.label}</Text>
-                          </TouchableOpacity>
-                        )}
-                        onLayout={(event) => {
-                          const height = event.nativeEvent.layout.height;
-                          setListHeight(height);
-                        }}
-                      />
-                    )}
+                     <Dropdown
+  style={[Globalstyles.input]}
+  data={subCasteOptions}
+  labelField="label"
+  valueField="value"
+  value={subcaste}
+  onChange={(text) => handleInputChange("subCaste", text.value)}
+  placeholder="Select Your subCaste"
+  placeholderStyle={{ color: '#E7E7E7' }}
+  autoScroll={false}
+  showsVerticalScrollIndicator={false}
+/>
                   </View>
                 </View>
 

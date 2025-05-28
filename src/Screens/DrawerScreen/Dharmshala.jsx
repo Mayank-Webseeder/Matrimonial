@@ -270,21 +270,11 @@ const Dharmshala = () => {
     setImageVisible(true);
   };
 
-  const handleInputChange = (text) => {
-    setSubcaste(text);
-    if (text.trim() === '') {
-      setFilteredOptions([]);
-    } else {
-      const filtered = subCasteOptions.filter((option) =>
-        option.label.toLowerCase().includes(text.toLowerCase())
-      );
-      setFilteredOptions(filtered);
-    }
-  };
 
-  const handleOptionSelect = (value) => {
-    setSubcaste(value.label);
-    setFilteredOptions([]);
+  const handleInputChange = (field, value) => {
+    if (field === "subCaste") {
+      setSubcaste(value);
+    }
   };
 
   useEffect(() => {
@@ -520,11 +510,11 @@ const Dharmshala = () => {
     fetchDharamsalaData("modal");
   };
 
-  const resetFilter =()=>{
-     setLocality('');
+  const resetFilter = () => {
+    setLocality('');
     setModalLocality('');
     setSubcaste('');
-    fetchDharamsalaData();
+    fetchDharamsalaData("all");
   }
 
 
@@ -725,30 +715,18 @@ const Dharmshala = () => {
               <View>
                 <Text style={Globalstyles.title}>Sub-Caste</Text>
                 <View>
-                  <TextInput
+                  <Dropdown
+                    style={[Globalstyles.input]}
+                    data={subCasteOptions}
+                    labelField="label"
+                    valueField="value"
                     value={subcaste}
-                    onChangeText={handleInputChange}
-                    placeholder="Type your caste"
-                    placeholderTextColor={Colors.gray}
-                    style={Globalstyles.input}
+                    onChange={(text) => handleInputChange("subCaste", text.value)}
+                    placeholder="Select Your subCaste"
+                    placeholderStyle={{ color: '#E7E7E7' }}
+                    autoScroll={false}
+                    showsVerticalScrollIndicator={false}
                   />
-                  {filteredOptions.length > 0 && (
-                    <FlatList
-                      data={filteredOptions.slice(0, 2)}
-                      scrollEnabled={false}
-                      keyExtractor={(item) => item.value}
-                      style={[Globalstyles.suggestions, { marginBottom: 10 }]}
-                      renderItem={({ item }) => (
-                        <TouchableOpacity onPress={() => handleOptionSelect(item)}>
-                          <Text style={styles.label}>{item.label}</Text>
-                        </TouchableOpacity>
-                      )}
-                      onLayout={(event) => {
-                        const height = event.nativeEvent.layout.height;
-                        setListHeight(height);
-                      }}
-                    />
-                  )}
                 </View>
               </View>
 

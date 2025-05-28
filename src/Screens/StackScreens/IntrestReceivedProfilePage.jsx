@@ -46,7 +46,9 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
     : !!userData?.hideOptionalDetails;
 
   const requestId = profileData?.requestId;
+  const isVisible = profileData?.isVisible;
   const isBlur = userData?.isBlur;
+  const isBlurCondition = status === "accepted" ? !isVisible : isBlur;
   const MyprofileData = useSelector((state) => state.getBiodata);
   const [imageIndex, setImageIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
@@ -70,6 +72,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
       <Image
         source={{ uri: item.uri }}
         style={styles.sliderImage}
+        blurRadius={isBlurCondition ? 10 : 0}
       />
     </TouchableOpacity>
   );

@@ -383,6 +383,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                 mobileNo: RoleRegisterData.mobileNo,
                 fullName: RoleRegisterData.fullName,
                 residentialAddress: RoleRegisterData.residentialAddress,
+                aadharNo: RoleRegisterData.aadharNo,
                 state: RoleRegisterData.state,
                 city: RoleRegisterData.city,
                 subCaste: RoleRegisterData.subCaste,

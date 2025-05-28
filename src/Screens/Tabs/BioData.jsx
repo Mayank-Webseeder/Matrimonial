@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { View, Text, TouchableOpacity, Image, FlatList, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, RefreshControl,Linking } from 'react-native';
+import { View, Text, TouchableOpacity, Image, FlatList, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, RefreshControl, Linking } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
@@ -83,20 +83,20 @@ const BioData = ({ navigation }) => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching biodata:", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
         });
-      } 
+      }
     }
     finally {
       setIsLoading(false)
@@ -159,7 +159,7 @@ const BioData = ({ navigation }) => {
             image: `${PHOTO_URL}/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution, // 👈 yeh add kiya
             mediaType: mediaItem.mediaUrl.includes('.mp4') ? 'video' : 'image', // Determine media type
-            hyperlink: mediaItem.hyperlink, 
+            hyperlink: mediaItem.hyperlink,
           }))
         );
 
@@ -171,20 +171,20 @@ const BioData = ({ navigation }) => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching advertisement:", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
         });
-      } 
+      }
     }
   };
 
@@ -212,7 +212,7 @@ const BioData = ({ navigation }) => {
             image: `${PHOTO_URL}/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution, // 👈 yeh add kiya
             mediaType: mediaItem.mediaUrl.includes('.mp4') ? 'video' : 'image', // Determine media type
-            hyperlink: mediaItem.hyperlink, 
+            hyperlink: mediaItem.hyperlink,
           }))
         );
 
@@ -224,20 +224,20 @@ const BioData = ({ navigation }) => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching advertisement :", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
         });
-      } 
+      }
     }
   };
 
@@ -251,7 +251,7 @@ const BioData = ({ navigation }) => {
         );
       }
     };
-  
+
     return (
       <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
         <Image
@@ -263,16 +263,19 @@ const BioData = ({ navigation }) => {
   };
 
   const handleNavigateToProfile = (item) => {
-    navigation.navigate("MatrimonyPeopleProfile", {
-      // userDetails: item,
-      userId: item?.userId,
-      isSaved: item.isSaved,
-      // isBlur: item?.isBlur,
-      // isVisible: item?.isVisible,
-      // status: item?.status,
-      // requestId: item?.requestId,
-    });
+    if (item?.status === 'interested') {
+      navigation.navigate('IntrestReceivedProfilePage', {
+        userId: item?.userId,
+        isSaved: item?.isSaved,
+      });
+    } else {
+      navigation.navigate('MatrimonyPeopleProfile', {
+        userId: item?.userId,
+        isSaved: item?.isSaved,
+      });
+    }
   };
+
 
 
   const calculateAge = (dob) => {
@@ -294,41 +297,6 @@ const BioData = ({ navigation }) => {
 
     return (
       <TouchableOpacity style={styles.card} onPress={() => handleNavigateToProfile(item)}>
-        <Image style={styles.image} source={{ uri: item?.personalDetails?.closeUpPhoto }}
-          blurRadius={isBlurCondition ? 5 : 0} />
-
-        <View style={styles.detailsContainer}>
-          <Text style={styles.name}>{item?.personalDetails?.fullname}</Text>
-
-          <View style={styles.row2}>
-            <Text style={styles.city}>{item?.personalDetails?.cityOrVillage}</Text>
-            <Text style={styles.text}>{item?.personalDetails?.subCaste}</Text>
-          </View>
-
-          <View style={styles.row2}>
-            <Text style={styles.text}>Height: {formattedHeight}</Text>
-            <Text style={styles.text}>{calculateAge(item?.personalDetails?.dob)} Years</Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
-  const IntrestProfileData = ({ item }) => {
-    const formattedHeight = item?.personalDetails?.heightFeet
-      ?.replace(/\s*-\s*/, "")
-      ?.replace(/\s+/g, "");
-    const isBlur = item?.isBlur;
-    const status = item?.status;
-    const isVisible = item?.isVisible;
-    const isBlurCondition = status === "accepted" ? !isVisible : isBlur;
-
-    return (
-      <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("IntrestReceivedProfilePage", {
-        userId: item?.userId,
-        // requestId: item?.requestId,
-        // biodata: item
-      })}>
         <Image style={styles.image} source={{ uri: item?.personalDetails?.closeUpPhoto }}
           blurRadius={isBlurCondition ? 5 : 0} />
 
@@ -462,7 +430,7 @@ const BioData = ({ navigation }) => {
             <FlatList
               // data={showAllInterested ? interestedProfiles : interestedProfiles.slice(0, 2)}
               data={interestedProfiles}
-              renderItem={IntrestProfileData}
+              renderItem={renderProfileData}
               keyExtractor={(item) => item._id}
               contentContainerStyle={styles.ProfileContainer}
               showsHorizontalScrollIndicator={false}

@@ -11,7 +11,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { showMessage } from "react-native-flash-message";
 
 const Login = ({ navigation }) => {
-
     const [mobileNumber, setMobileNumber] = useState("");
     const [password, setPassword] = useState("");
     const [passwordVisible, setPasswordVisible] = useState(false);
@@ -153,7 +152,7 @@ const Login = ({ navigation }) => {
                         <Text style={styles.HeadingText}>Phone Number</Text>
                         <TextInput
                             style={styles.inputText}
-                            keyboardType="numeric"
+                            keyboardType='phone-pad'
                             placeholder="Enter your mobile number"
                             value={mobileNumber}
                             onChangeText={(text) => setMobileNumber(text.replace(/[^0-9]/g, ''))}
@@ -161,6 +160,8 @@ const Login = ({ navigation }) => {
                             maxLength={10}
                             autoComplete="off"
                             textContentType="none"
+                            importantForAutofill="no"
+                            autoCorrect={false}
                         />
                         {errors.mobileNumber && (
                             <Text style={styles.errorText}>{errors.mobileNumber}</Text>
@@ -181,6 +182,8 @@ const Login = ({ navigation }) => {
                                 placeholderTextColor={Colors.gray}
                                 autoComplete="off"
                                 textContentType="none"
+                                importantForAutofill="no"
+                                autoCorrect={false}
                             />
                             <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
                                 <AntDesign

@@ -46,12 +46,6 @@ const Jyotish = ({ navigation }) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      setLocality('');
-      setModalLocality('')
-      setRating(' ')
-      setExperience(' ')
-      setServices('')
-      JyotishDataAPI("all");
       Advertisement_window();
     }, [])
   );
@@ -86,7 +80,16 @@ const Jyotish = ({ navigation }) => {
     JyotishDataAPI("modal");
   };
 
+  const resetFilter = () => {
+    setModalLocality('')
+    setRating(' ')
+    setExperience(' ')
+    setServices('')
+    JyotishDataAPI()
+  }
+
   useEffect(() => {
+    JyotishDataAPI("all");
     Advertisement_window();
   }, []);
 
@@ -363,35 +366,52 @@ const Jyotish = ({ navigation }) => {
                   });
                 }
               }}>
-              <Text style={styles.name}>{item?.fullName}</Text>
-              <Text style={styles.text}>ID : {item?.jyotishId}</Text>
-              <View style={styles.rating}>
-                <Rating type="star" ratingCount={5} imageSize={15} startingValue={rating} readonly />
-                <Text style={[styles.text, { fontFamily: 'Poppins-Regular' }]}> {rating} Star Rating</Text>
+              {item?.fullName && (
+                <Text style={styles.name}>{item.fullName}</Text>
+              )}
+
+              {item?.jyotishId && (
+                <Text style={styles.text}>ID : {item.jyotishId}</Text>
+              )}
+
+              {typeof rating === 'number' && (
+                <View style={styles.rating}>
+                  <Rating type="star" ratingCount={5} imageSize={15} startingValue={rating} readonly />
+                </View>
+              )}
+
+              <View>
+                <Text style={[styles.text, { fontFamily: "Poppins-Bold" }]}>
+                  {item?.city}
+                  <Text style={[styles.text, { fontFamily: "Poppins-Regular" }]}>
+                    {` , ${item?.state}`}
+                  </Text>
+                </Text>
               </View>
-              <View style={styles.CityArea}>
-                <Text style={[styles.text, { fontFamily: "Poppins-Bold" }]}>{item?.city}</Text>
-                <Text style={styles.text}>    {item?.state}</Text>
-              </View>
-              <Text style={styles.text} numberOfLines={1}>{item?.residentialAddress}</Text>
+
+              {item?.residentialAddress && (
+                <Text style={styles.text} numberOfLines={1}>
+                  {item.residentialAddress}
+                </Text>
+              )}
+
             </Pressable>
             <View style={styles.sharecontainer}>
-              <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
-                <FontAwesome
-                  name={item.isSaved ? "bookmark" : "bookmark-o"}
-                  size={19}
-                  color={Colors.dark}
-                />
-                {/* <Text style={styles.iconText}>{isSaved ? "Saved" : "Save"}</Text> */}
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
-                <Feather name="send" size={18} color={Colors.dark} />
-                {/* <Text style={styles.iconText}>Shares</Text> */}
-              </TouchableOpacity>
-
               <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
                 <MaterialIcons name="call" size={17} color={Colors.light} />
               </TouchableOpacity>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginRight: SW(10) }}>
+                <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
+                  <FontAwesome
+                    name={item.isSaved ? "bookmark" : "bookmark-o"}
+                    size={19}
+                    color={Colors.dark}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
+                  <Feather name="send" size={18} color={Colors.dark} />
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </View>
@@ -459,10 +479,7 @@ const Jyotish = ({ navigation }) => {
           {locality.length > 0 ? (
             <AntDesign name={'close'} size={20} color={'gray'} onPress={() => {
               setLocality('');
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'Jyotish' }],
-              });
+              JyotishDataAPI("all")
             }} />
           ) : (
             <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => JyotishDataAPI("search")} />
@@ -534,6 +551,9 @@ const Jyotish = ({ navigation }) => {
                 <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                 <Text style={Globalstyles.headerText}>Filter</Text>
               </TouchableOpacity>
+              <TouchableOpacity onPress={resetFilter}>
+                <Text style={Globalstyles.headerText}>Reset Filter</Text>
+              </TouchableOpacity>
             </View>
 
             <View style={Globalstyles.form}>
@@ -592,7 +612,17 @@ const Jyotish = ({ navigation }) => {
               <TouchableOpacity style={styles.applyButton} onPress={handleCloseFilter}>
                 <Text style={styles.applyButtonText}>See results</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.crossButton}>
+              <TouchableOpacity
+                onPress={() => {
+                  setModalVisible(false)
+                  setLocality('');
+                  setModalLocality('')
+                  setRating(' ')
+                  setExperience(' ')
+                  setServices('')
+                  JyotishDataAPI("all");
+                }}
+                style={styles.crossButton}>
                 <View style={styles.circle}>
                   <Entypo name="cross" size={25} color={Colors.light} />
                 </View>

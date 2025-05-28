@@ -63,6 +63,13 @@ const JyotishRegister = ({ navigation }) => {
         whatsapp: ''
     });
 
+
+    const [tempUrlData, setTempUrlData] = useState({});
+
+    const validateAndSetUrl = (text, type) => {
+        setTempUrlData((prev) => ({ ...prev, [type]: text }));
+    };
+
     const fetchPlans = async () => {
         try {
             const token = await AsyncStorage.getItem("userToken");
@@ -229,8 +236,8 @@ const JyotishRegister = ({ navigation }) => {
             const image = await ImageCropPicker.openPicker({
                 multiple: false,
                 cropping: true,
-                width: 400,
-                height: 400,
+                width: 1000,
+                height: 1000,
                 includeBase64: true,
                 compressImageQuality: 1
             });
@@ -252,102 +259,77 @@ const JyotishRegister = ({ navigation }) => {
         }
     };
 
-
-    // Additional Photos Picker
-    // const handleAdditionalPhotosPick = async () => {
-    //     try {
-    //         const images = await ImageCropPicker.openPicker({
-    //             multiple: true,
-    //             cropping: true,
-    //             includeBase64: true,
-    //         });
-
-    //         if (!images || images.length === 0) {
-    //             console.error("No images selected!");
-    //             return;
-    //         }
-
-    //         setRoleRegisterData(prevData => {
-    //             const newPhotos = images.map(img => `data:${img.mime};base64,${img.data}`);
-    //             const updatedPhotos = [...prevData.additionalPhotos, ...newPhotos];
-
-    //             if (updatedPhotos.length <= 5) {
-    //                 return { ...prevData, additionalPhotos: updatedPhotos };
-    //             } else {
-    //                 alert('You can only upload up to 5 additional photos.');
-    //                 return prevData;
-    //             }
-    //         });
-
-    //     } catch (err) {
-    //         console.log("Additional Photos Picker Error:", err);
-    //     }
-    // };
-
     const ADDL_LIMIT = 5;                // max extra photos
 
     const pickerOpts = {
         selectionLimit: ADDL_LIMIT,        // gallery stops user at 5
         mediaType: 'photo',
         includeBase64: true,               // we still need base‑64
-        maxWidth: 400,                     // optional resize
-        maxHeight: 400,
+        maxWidth: 1000,                     // optional resize
+        maxHeight: 1000,
         quality: 1,
     };
 
     const handleAdditionalPhotosPick = () => {
         launchImageLibrary(pickerOpts, (response) => {
-            if (response.didCancel) return;                            // user aborted
+            if (response.didCancel) return;
             if (response.errorCode) {
                 console.log('ImagePicker Error:', response.errorMessage);
                 return;
             }
 
             const incoming = response.assets ?? [];
+            const incomingCount = incoming.length;
 
-            setRoleRegisterData((prev) => {
-                // Convert each asset to data‑URI just like before
-                const newPhotos = incoming.map(
-                    (img) => `data:${img.type};base64,${img.base64}`
-                );
+            if (incomingCount > ADDL_LIMIT) {
+                Alert.alert(`You can only upload up to ${ADDL_LIMIT} additional photos.`);
+                return;
+            }
 
-                const updated = [...prev.additionalPhotos, ...newPhotos];
+            const newPhotos = incoming.map(
+                (img) => `data:${img.type};base64,${img.base64}`
+            );
 
-                if (updated.length > ADDL_LIMIT) {
-                    Alert.alert(`You can only upload up to ${ADDL_LIMIT} additional photos.`);
-                    return prev;                                           // refuse update
-                }
-
-                return { ...prev, additionalPhotos: updated };
-            });
+            setRoleRegisterData((prev) => ({
+                ...prev,
+                additionalPhotos: newPhotos, // Replace previous photos
+            }));
         });
     };
 
-    const OPTIONAL_FIELDS = [
-        "residentialAddress", "additionalPhotos", "experience", "websiteUrl",
-        "facebookUrl", "youtubeUrl", "instagramUrl", "whatsapp", "description", "aadharNo"
-    ];
-
-    const validateForm = (data) => {
+    const validateForm = (data, checked, servicesOptions) => {
         let errors = {};
 
         if (!data) return errors;
 
         const allFields = Object.keys(data);
+        const OPTIONAL_FIELDS = [
+            "residentialAddress", "additionalPhotos", "experience", "websiteUrl",
+            "facebookUrl", "youtubeUrl", "instagramUrl", "whatsapp", "description", "aadharNo"
+        ];
         const MANDATORY_FIELDS = allFields.filter(field => !OPTIONAL_FIELDS.includes(field));
 
+        const urlPatterns = {
+            websiteUrl: /^(https?:\/\/)?(?!.*(youtube\.com|youtu\.be|facebook\.com|instagram\.com|wa\.me|api\.whatsapp\.com))([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/\S*)?$/,
+
+            youtubeUrl: /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/\S+$/,
+
+            facebookUrl: /^(https?:\/\/)?(www\.|m\.)?facebook\.com\/.+$/,
+
+            instagramUrl: /^(https?:\/\/)?(www\.)?instagram\.com\/[A-Za-z0-9_.]+(\/)?(\?.*)?$/,
+
+            whatsapp: /^(https?:\/\/)?(api\.whatsapp\.com\/send\?phone=\d+|wa\.me\/\d+)\/?$/,
+        };
+        // ✅ Validate MANDATORY FIELDS
         MANDATORY_FIELDS.forEach((field) => {
             const value = String(data[field] || "").trim();
             if (!value) {
                 errors[field] = `${field} is required.`;
                 return;
             }
-            if (field === "mobileNo") {
-                if (!/^\d{10}$/.test(value)) {
-                    errors[field] = "Enter a valid 10-digit mobile number.";
-                }
+            if (field === "mobileNo" && !/^\d{10}$/.test(value)) {
+                errors[field] = "Enter a valid 10-digit mobile number.";
             }
-
             if (field === "fullName") {
                 if (!/^[A-Za-z\s]+$/.test(value)) {
                     errors[field] = `${field} must contain only letters and spaces.`;
@@ -356,9 +338,49 @@ const JyotishRegister = ({ navigation }) => {
                 }
             }
         });
+        const urlFields = ["websiteUrl", "facebookUrl", "youtubeUrl", "instagramUrl", "whatsapp"];
+        const validUrlValues = {}; // Only collect valid URLs here
+
+        // Step 1: Validate each URL field first
+        urlFields.forEach((field) => {
+            const value = String(data[field] || "").trim();
+            const pattern = urlPatterns[field];
+            const label = field.replace("Url", "");
+
+            if (value) {
+                if (!pattern.test(value)) {
+                    errors[field] = `Enter a valid ${label} URL.`; // ✅ Invalid message
+                } else {
+                    validUrlValues[field] = value; // ✅ Only store valid URLs
+                }
+            }
+        });
+
+        // Step 2: Check for duplicates ONLY among valid URLs
+        const seenUrls = new Set();
+
+        Object.entries(validUrlValues).forEach(([field, value]) => {
+            if (seenUrls.has(value)) {
+                // ✅ Only set duplicate error if no error already exists
+                if (!errors[field]) {
+                    errors[field] = `This URL is already used in another field.`;
+                }
+            } else {
+                seenUrls.add(value);
+            }
+        });
+        // ✅ Ensure at least one service is selected
+        const selectedServices = Object.keys(checked).filter(
+            service => servicesOptions["Jyotish"].some(opt => opt.value === service) && checked[service]
+        );
+        if (selectedServices.length === 0) {
+            errors["jyotishServices"] = "Please select at least one service.";
+        }
 
         return errors;
     };
+
+
 
     const handleSubmit = async () => {
         try {
@@ -394,21 +416,32 @@ const JyotishRegister = ({ navigation }) => {
                 status: "pending",
             };
 
-            const errors = validateForm(commonPayload);
+            const mergedPayload = { ...commonPayload, ...tempUrlData };
+            const errors = validateForm(mergedPayload, checked, servicesOptions);
+            console.log("mergedPayload:", JSON.stringify(mergedPayload));
             console.log("Validation Errors:", errors);
 
             if (Object.keys(errors).length > 0) {
                 setErrors(errors);
+                showMessage({
+                    message: "Please complete all mandatory sections before submitting.",
+                    type: "danger",
+                    duration: 4000,
+                    icon: "danger",
+                    position: 'bottom'
+                });
                 setIsLoading(false);
                 return;
             }
 
             const payload = {
                 ...commonPayload,
+                ...tempUrlData,
                 jyotishServices: Object.keys(checked).filter(service =>
                     servicesOptions["Jyotish"].some(option => option.value === service) && checked[service]
                 ),
             };
+            console.log("payload", JSON.stringify(payload));
 
             const response = await axios.post(CREATE_JYOTISH, payload, { headers });
             console.log("Response:", JSON.stringify(response.data));
@@ -418,14 +451,14 @@ const JyotishRegister = ({ navigation }) => {
                 description: response.data?.message || "Registered as Jyotish. Your approval request has been sent.",
                 type: "success",
                 icon: "success",
-                duration: 5000,
+                duration: 7000,
             });
 
             await AsyncStorage.removeItem("RoleRegisterData");
 
             setTimeout(() => {
                 navigation.navigate("MainApp");
-            }, 3000);
+            }, 5000);
 
         } catch (error) {
             const errorMessage =
@@ -659,9 +692,9 @@ const JyotishRegister = ({ navigation }) => {
 
 
     const handleStateInputChange = (text) => {
-        setStateInput(text);
-
-        if (text) {
+        const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+        setStateInput(filteredText);
+        if (filteredText) {
             const filtered = StateData.filter((item) =>
                 item?.label?.toLowerCase().includes(text.toLowerCase())
             ).map(item => item.label);
@@ -672,7 +705,7 @@ const JyotishRegister = ({ navigation }) => {
 
         setRoleRegisterData(PrevRoleRegisterData => ({
             ...PrevRoleRegisterData,
-            state: text,
+            state: filteredText,
         }));
     };
 
@@ -687,8 +720,9 @@ const JyotishRegister = ({ navigation }) => {
     };
 
     const handleCityInputChange = (text) => {
-        setCityInput(text);
-        if (text) {
+        const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+        setCityInput(filteredText);
+        if (filteredText) {
             const filtered = CityData.filter((item) =>
                 item?.label?.toLowerCase().includes(text.toLowerCase())
             ).map(item => item.label);
@@ -699,7 +733,7 @@ const JyotishRegister = ({ navigation }) => {
 
         setRoleRegisterData(PrevRoleRegisterData => ({
             ...PrevRoleRegisterData,
-            city: text,
+            city: filteredText,
         }));
     };
 
@@ -712,72 +746,12 @@ const JyotishRegister = ({ navigation }) => {
         setFilteredCities([]);
     };
 
-    const handleSubCasteInputChange = (text) => {
-        const filtered = subCasteOptions
-            .filter((item) =>
-                item?.label?.toLowerCase().includes(text.toLowerCase())
-            )
-            .map((item) => item.label);
-
-        // If matches found, allow input
-        if (filtered.length > 0) {
-            setSubCasteInput(text);
-            setFilteredSubCaste(filtered);
-            setRoleRegisterData((PrevRoleRegisterData) => ({
-                ...PrevRoleRegisterData,
-                subCaste: text,
-            }));
-        } else {
-            // Don't allow arbitrary input — only show "Other"
-            setFilteredSubCaste(['Other']);
-        }
-    };
-
-    const handleSubCasteSelect = (selectedItem) => {
-        const finalValue = selectedItem === 'Other' ? 'Other' : selectedItem;
-
-        setSubCasteInput(finalValue);
-        setFilteredSubCaste([]);
-        setRoleRegisterData((PrevRoleRegisterData) => ({
-            ...PrevRoleRegisterData,
-            subCaste: finalValue,
-        }));
-    };
-
     const handleInputChange = (field, value) => {
         setRoleRegisterData((prev) => ({
             ...prev,
             [field]: value,
         }));
     };
-
-    const [tempUrlData, setTempUrlData] = useState({}); // Temporarily store input
-
-    const validateAndSetUrl = (text, type) => {
-        setTempUrlData((prev) => ({ ...prev, [type]: text })); // Update temp state
-    };
-
-    const handleBlur = (type) => {
-        const urlPatterns = {
-            websiteUrl: /^(https?:\/\/)?([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(\/\S*)?$/,
-            youtubeUrl: /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/\S+$/,
-            whatsapp: /^(https?:\/\/)?(api\.whatsapp\.com|wa\.me)\/\S+$/,
-            facebookUrl: /^(https?:\/\/)?(www\.)?facebook\.com\/\S+$/,
-            instagramUrl: /^(https?:\/\/)?(www\.)?instagram\.com\/\S+$/,
-        };
-
-        if (!tempUrlData[type] || urlPatterns[type].test(tempUrlData[type])) {
-            setRoleRegisterData((prev) => ({ ...prev, [type]: tempUrlData[type] }));
-        } else {
-            showMessage({
-                type: "error",
-                message: "Invalid URL",
-                description: `Please enter a valid ${type.replace("Url", "")} link.`,
-                duarion: 5000
-            });
-        }
-    };
-
 
     return (
         <SafeAreaView style={Globalstyles.container}>
@@ -792,30 +766,46 @@ const JyotishRegister = ({ navigation }) => {
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false}>
-                <View style={Globalstyles.form}>
+                <View style={Globalstyles.form} importantForAutofill="no">
                     {/* <Text style={styles.editText}>Edit Details</Text> */}
                     <Text style={Globalstyles.title}>Name <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput style={[Globalstyles.input, errors.fullName && styles.errorInput]}
                         value={RoleRegisterData?.fullName}
                         onChangeText={(text) => {
-                            setRoleRegisterData((prev) => ({ ...prev, fullName: text }));
+                            const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+                            setRoleRegisterData((prev) => ({ ...prev, fullName: filteredText }));
                         }}
                         placeholder='Enter Your Full Name'
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
+                        autoCorrect={false}
                     />
                     {errors.fullName && <Text style={styles.errorText}>{errors.fullName}</Text>}
 
                     <Text style={Globalstyles.title}>Mobile No. <Entypo name={'star'} color={'red'} size={12} /></Text>
-                    <TextInput style={[Globalstyles.input, errors.mobileNo && styles.errorInput]}
+                    <TextInput
+                        style={[Globalstyles.input, errors.mobileNo && styles.errorInput]}
                         value={RoleRegisterData?.mobileNo}
-                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
+                        onChangeText={(text) => {
+                            const digits = text.replace(/[^0-9]/g, '').slice(0, 10);
+                            if (digits !== RoleRegisterData.mobileNo) {
+                                setRoleRegisterData((prev) => ({ ...prev, mobileNo: digits }));
+                            }
+                        }}
                         keyboardType="phone-pad"
-                        placeholder="Enter Your Mobile No." maxLength={10}
+                        placeholder="Enter Your Mobile No."
+                        maxLength={10}
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none" />
+                        autoCorrect={false}
+                        importantForAutofill="no"
+                        textContentType="none"
+                        inputMode="numeric"
+                        autoCapitalize="none"
+                    />
+
                     {errors.mobileNo && <Text style={styles.errorText}>{errors.mobileNo}</Text>}
                     <Text style={[Globalstyles.title, { color: Colors.theme_color }]}>Address</Text>
 
@@ -828,6 +818,8 @@ const JyotishRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
+                        autoCorrect={false}
                     />
                     {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
 
@@ -854,6 +846,8 @@ const JyotishRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
+                        autoCorrect={false}
                     />
                     {errors.city && <Text style={styles.errorText}>{errors.city}</Text>}
                     {filteredCities.length > 0 && cityInput ? (
@@ -879,17 +873,32 @@ const JyotishRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
+                        autoCorrect={false}
                     />
 
                     <Text style={Globalstyles.title}>Aadhar No. </Text>
-                    <TextInput style={Globalstyles.input}
+                    <TextInput
+                        style={Globalstyles.input}
                         value={RoleRegisterData?.aadharNo}
-                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, aadharNo: text }))}
-                        placeholder='Enter Your Aadhar No.'
+                        onChangeText={(text) => {
+                            const digits = text.replace(/[^0-9]/g, '').slice(0, 12);
+                            if (digits !== RoleRegisterData.aadharNo) {
+                                setRoleRegisterData((prev) => ({ ...prev, aadharNo: digits }));
+                            }
+                        }}
+                        keyboardType="phone-pad"
+                        placeholder="Enter Your Aadhar No."
+                        maxLength={12}
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
+                        autoCorrect={false}
+                        importantForAutofill="no"
                         textContentType="none"
+                        inputMode="numeric"
+                        autoCapitalize="none"
                     />
+
 
                     <Text style={Globalstyles.title}>Sub Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <Dropdown
@@ -924,7 +933,7 @@ const JyotishRegister = ({ navigation }) => {
 
                     {/* Role Selection with Checkboxes */}
                     <Text style={Globalstyles.title}>Select Jyotish Services <Entypo name={'star'} color={'red'} size={12} /></Text>
-                     <View style={[styles.checkboxContainer,errors.selectedRoles && styles.errorInput]}>
+                    <View style={[styles.checkboxContainer, errors.selectedRoles && styles.errorInput]}>
                         {roleOptions.map(role => (
                             <View key={role.value} style={styles.checkboxItem}>
                                 <Checkbox
@@ -954,6 +963,8 @@ const JyotishRegister = ({ navigation }) => {
                         </View>
                     ))}
 
+                    {errors?.jyotishServices && <Text style={styles.errorText}>{errors.jyotishServices}</Text>}
+
                     <Text style={Globalstyles.title}>Experience</Text>
                     <View>
                         <Dropdown
@@ -971,7 +982,7 @@ const JyotishRegister = ({ navigation }) => {
                     </View>
 
                     <Text style={Globalstyles.title}>Profile Photo <Entypo name={'star'} color={'red'} size={12} /></Text>
-                    <View  style={[Globalstyles.input, errors.profilePhoto && styles.errorInput]}>
+                    <View style={[Globalstyles.input, errors.profilePhoto && styles.errorInput]}>
                         <TouchableOpacity onPress={handleProfilePhotoPick}>
                             {RoleRegisterData.profilePhoto ? (
                                 <Image
@@ -994,6 +1005,8 @@ const JyotishRegister = ({ navigation }) => {
                         placeholderTextColor={Colors.gray} multiline={true}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
+                        autoCorrect={false}
                     />
 
                     <View style={styles.photopickContainer}>
@@ -1019,61 +1032,79 @@ const JyotishRegister = ({ navigation }) => {
 
                     <Text style={Globalstyles.title}>Website Link</Text>
                     <TextInput
-                        style={Globalstyles.input}
+                        style={[Globalstyles.input, errors.websiteUrl && styles.errorInput]}
                         value={tempUrlData.websiteUrl || RoleRegisterData.websiteUrl}
                         onChangeText={(text) => validateAndSetUrl(text, "websiteUrl")}
-                        onBlur={() => handleBlur("websiteUrl")}
                         placeholder="Give Your Website Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
+                        autoCorrect={false}
                     />
-
+                    {errors.websiteUrl && (
+                        <Text style={styles.errorText}>{errors.websiteUrl}</Text>
+                    )}
                     <Text style={Globalstyles.title}>Youtube Link</Text>
                     <TextInput
-                        style={Globalstyles.input}
+                        style={[Globalstyles.input, errors.youtubeUrl && styles.errorInput]}
                         value={tempUrlData.youtubeUrl || RoleRegisterData.youtubeUrl}
                         onChangeText={(text) => validateAndSetUrl(text, "youtubeUrl")}
-                        onBlur={() => handleBlur("youtubeUrl")}
                         placeholder="Give Your Youtube Link"
                         placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none"
+                        importantForAutofill="no"
+                        autoCorrect={false}
                     />
-
+                    {errors.youtubeUrl && (
+                        <Text style={styles.errorText}>{errors.youtubeUrl}</Text>
+                    )}
                     <Text style={Globalstyles.title}>Whatsapp Link</Text>
                     <TextInput
-                        style={Globalstyles.input}
+                        style={[Globalstyles.input, errors.whatsapp && styles.errorInput]}
                         value={tempUrlData.whatsapp || RoleRegisterData.whatsapp}
                         onChangeText={(text) => validateAndSetUrl(text, "whatsapp")}
-                        onBlur={() => handleBlur("whatsapp")}
                         placeholder="Give Your Whatsapp Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
+                        autoCorrect={false}
                     />
-
+                    {errors.whatsapp && (
+                        <Text style={styles.errorText}>{errors.whatsapp}</Text>
+                    )}
                     <Text style={Globalstyles.title}>Facebook Link</Text>
                     <TextInput
-                        style={Globalstyles.input}
+                        style={[Globalstyles.input, errors.facebookUrl && styles.errorInput]}
                         value={tempUrlData.facebookUrl || RoleRegisterData.facebookUrl}
                         onChangeText={(text) => validateAndSetUrl(text, "facebookUrl")}
-                        onBlur={() => handleBlur("facebookUrl")}
                         placeholder="Give Your Facebook Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
+                        autoCorrect={false}
                     />
-
+                    {errors.facebookUrl && (
+                        <Text style={styles.errorText}>{errors.facebookUrl}</Text>
+                    )}
                     <Text style={Globalstyles.title}>Instagram Link</Text>
                     <TextInput
-                        style={Globalstyles.input}
+                        style={[Globalstyles.input, errors.instagramUrl && styles.errorInput]}
                         value={tempUrlData.instagramUrl || RoleRegisterData.instagramUrl}
                         onChangeText={(text) => validateAndSetUrl(text, "instagramUrl")}
-                        onBlur={() => handleBlur("instagramUrl")}
                         placeholder="Give Your Instagram Link"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
                         textContentType="none"
+                        importantForAutofill="no"
+                        autoCorrect={false}
                     />
+                    {errors.instagramUrl && (
+                        <Text style={styles.errorText}>{errors.instagramUrl}</Text>
+                    )}
                     <TouchableOpacity
                         style={styles.button}
                         onPress={handleSubmit}

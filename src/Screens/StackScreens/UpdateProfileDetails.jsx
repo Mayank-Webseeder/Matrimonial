@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, SafeAreaView, StatusBar, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, SafeAreaView, StatusBar, FlatList, ActivityIndicator, Alert } from 'react-native';
 import styles from '../StyleScreens/RoleRegisterStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
@@ -18,15 +18,13 @@ import { launchImageLibrary } from 'react-native-image-picker';
 const UpdateProfileDetails = ({ navigation, route }) => {
     const [stateInput, setStateInput] = useState('');
     const [cityInput, setCityInput] = useState('');
-    const [subCasteInput, setSubCasteInput] = useState('');
     const [filteredStates, setFilteredStates] = useState([]);
     const [filteredCities, setFilteredCities] = useState([]);
-    const [filteredSubCaste, setFilteredSubCaste] = useState([]);
     const [selectedState, setSelectedState] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const { profileData, profileType } = route.params || {};
-    console.log("profileData", profileType);
-
+    console.log("profileData", JSON.stringify(profileData));
+    const [errors, setErrors] = useState({});
 
     const [RoleRegisterData, setRoleRegisterData] = useState({
         mobileNo: profileData?.mobileNo || '',
@@ -48,6 +46,21 @@ const UpdateProfileDetails = ({ navigation, route }) => {
         whatsapp: profileData?.whatsapp || ''
     });
 
+    const [tempUrlData, setTempUrlData] = useState({});
+
+    const validateAndSetUrl = (text, type) => {
+        setTempUrlData((prev) => ({ ...prev, [type]: text }));
+    };
+
+    useEffect(() => {
+        setTempUrlData({
+            websiteUrl: profileData?.websiteUrl || '',
+            facebookUrl: profileData?.facebookUrl || '',
+            youtubeUrl: profileData?.youtubeUrl || '',
+            instagramUrl: profileData?.instagramUrl || '',
+            whatsapp: profileData?.whatsapp || ''
+        });
+    }, [profileData]);
 
     const servicesOptions = {
         Pandit: panditServices,
@@ -75,81 +88,11 @@ const UpdateProfileDetails = ({ navigation, route }) => {
     }, [profileData]);
 
 
-    const handleProfilePhotoPick = async () => {
-        try {
-            const image = await ImageCropPicker.openPicker({
-                multiple: false,
-                cropping: true,
-                width: 400,
-                height: 400,
-                includeBase64: true,
-                compressImageQuality: 1
-            });
-
-            if (!image.data) {
-                console.error("Base64 data missing!");
-                return;
-            }
-
-            const base64Image = `data:${image.mime};base64,${image.data}`;
-
-            setRoleRegisterData(prevData => ({
-                ...prevData,
-                profilePhoto: base64Image, // ✅ Base64 photo set
-            }));
-
-        } catch (err) {
-            console.log("Profile Photo Picker Error:", err);
-        }
-    };
-
-
-    const ADDL_LIMIT = 5;                // max extra photos
-
-    const pickerOpts = {
-        selectionLimit: ADDL_LIMIT,        // gallery stops user at 5
-        mediaType: 'photo',
-        includeBase64: true,               // we still need base‑64
-        maxWidth: 400,                     // optional resize
-        maxHeight: 400,
-        quality: 1,
-    };
-
-
-    // Additional Photos Picker
-    const handleAdditionalPhotosPick = () => {
-        launchImageLibrary(pickerOpts, (response) => {
-            if (response.didCancel) return;                            // user aborted
-            if (response.errorCode) {
-                console.log('ImagePicker Error:', response.errorMessage);
-                return;
-            }
-
-            const incoming = response.assets ?? [];
-
-            setRoleRegisterData((prev) => {
-                // Convert each asset to data‑URI just like before
-                const newPhotos = incoming.map(
-                    (img) => `data:${img.type};base64,${img.base64}`
-                );
-
-                const updated = [...prev.additionalPhotos, ...newPhotos];
-
-                if (updated.length > ADDL_LIMIT) {
-                    Alert.alert(`You can only upload up to ${ADDL_LIMIT} additional photos.`);
-                    return prev;                                           // refuse update
-                }
-
-                return { ...prev, additionalPhotos: updated };
-            });
-        });
-    };
-
-
     const handleStateInputChange = (text) => {
-        setStateInput(text);
+        const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+        setStateInput(filteredText);
 
-        if (text) {
+        if (filteredText) {
             const filtered = StateData.filter((item) =>
                 item?.label?.toLowerCase().includes(text.toLowerCase())
             ).map(item => item.label);
@@ -160,7 +103,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
 
         setRoleRegisterData(PrevRoleRegisterData => ({
             ...PrevRoleRegisterData,
-            state: text,
+            state: filteredText,
         }));
     };
 
@@ -175,7 +118,8 @@ const UpdateProfileDetails = ({ navigation, route }) => {
     };
 
     const handleCityInputChange = (text) => {
-        setCityInput(text);
+        const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+        setCityInput(filteredText);
         if (text) {
             const filtered = CityData.filter((item) =>
                 item?.label?.toLowerCase().includes(text.toLowerCase())
@@ -187,7 +131,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
 
         setRoleRegisterData(PrevRoleRegisterData => ({
             ...PrevRoleRegisterData,
-            city: text,
+            city: filteredText,
         }));
     };
 
@@ -198,34 +142,6 @@ const UpdateProfileDetails = ({ navigation, route }) => {
             city: item,
         }));
         setFilteredCities([]);
-    };
-
-    const handleSubCasteInputChange = (text) => {
-        setSubCasteInput(text);
-
-        if (text) {
-            const filtered = subCasteOptions
-                .filter((item) => item?.label?.toLowerCase().includes(text.toLowerCase()))
-                .map((item) => item.label);
-
-            setFilteredSubCaste(filtered);
-        } else {
-            setFilteredSubCaste([]);
-        }
-        setRoleRegisterData((PrevRoleRegisterData) => ({
-            ...PrevRoleRegisterData,
-            subCaste: text,
-        }));
-    };
-
-    const handleSubCasteSelect = (selectedItem) => {
-        setSubCasteInput(selectedItem);
-        setFilteredSubCaste([]);
-
-        setRoleRegisterData((PrevRoleRegisterData) => ({
-            ...PrevRoleRegisterData,
-            subCaste: selectedItem,
-        }));
     };
 
     const handleInputChange = (field, value) => {
@@ -265,6 +181,153 @@ const UpdateProfileDetails = ({ navigation, route }) => {
             console.error("Error converting image to Base64:", error);
             return null;
         }
+    };
+
+    const handleProfilePhotoPick = async () => {
+        try {
+            const image = await ImageCropPicker.openPicker({
+                multiple: false,
+                cropping: true,
+                width: 1000,
+                height: 1000,
+                includeBase64: true,
+                compressImageQuality: 1
+            });
+
+            if (!image.data) {
+                console.error("Base64 data missing!");
+                return;
+            }
+
+            const base64Image = `data:${image.mime};base64,${image.data}`;
+
+            setRoleRegisterData(prevData => ({
+                ...prevData,
+                profilePhoto: base64Image,
+            }));
+
+        } catch (err) {
+            console.log("Profile Photo Picker Error:", err);
+        }
+    };
+
+
+    const ADDL_LIMIT = 5;
+
+    const pickerOpts = {
+        selectionLimit: ADDL_LIMIT,
+        mediaType: 'photo',
+        includeBase64: true,
+        maxWidth: 1000,
+        maxHeight: 1000,
+        quality: 1,
+    };
+
+    const handleAdditionalPhotosPick = () => {
+        launchImageLibrary(pickerOpts, (response) => {
+            if (response.didCancel) return;
+            if (response.errorCode) {
+                console.log('ImagePicker Error:', response.errorMessage);
+                return;
+            }
+
+            const incoming = response.assets ?? [];
+            const incomingCount = incoming.length;
+
+            if (incomingCount > ADDL_LIMIT) {
+                Alert.alert(`You can only upload up to ${ADDL_LIMIT} additional photos.`);
+                return;
+            }
+
+            const newPhotos = incoming.map(
+                (img) => `data:${img.type};base64,${img.base64}`
+            );
+
+            setRoleRegisterData((prev) => ({
+                ...prev,
+                additionalPhotos: newPhotos, // Replace previous photos
+            }));
+        });
+    };
+
+
+    const OPTIONAL_FIELDS = [
+        "residentialAddress", "additionalPhotos", "experience", "websiteUrl",
+        "facebookUrl", "youtubeUrl", "instagramUrl", "whatsapp", "description", "aadharNo"
+    ];
+
+    const validateForm = (data) => {
+        let errors = {};
+
+        if (!data) return errors;
+
+        const allFields = Object.keys(data);
+        const MANDATORY_FIELDS = allFields.filter(field => !OPTIONAL_FIELDS.includes(field));
+
+        const urlPatterns = {
+            websiteUrl: /^(https?:\/\/)?(?!.*(youtube\.com|youtu\.be|facebook\.com|instagram\.com|wa\.me|api\.whatsapp\.com))([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/\S*)?$/,
+
+            youtubeUrl: /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/\S+$/,
+
+            facebookUrl: /^(https?:\/\/)?(www\.|m\.)?facebook\.com\/.+$/,
+
+            instagramUrl: /^(https?:\/\/)?(www\.)?instagram\.com\/[A-Za-z0-9_.]+(\/)?(\?.*)?$/,
+
+            whatsapp: /^(https?:\/\/)?(api\.whatsapp\.com\/send\?phone=\d+|wa\.me\/\d+)\/?$/,
+        };
+
+        // ✅ Validate MANDATORY FIELDS
+        MANDATORY_FIELDS.forEach((field) => {
+            const value = String(data[field] || "").trim();
+            if (!value) {
+                errors[field] = `${field} is required.`;
+                return;
+            }
+            if (field === "mobileNo" && !/^\d{10}$/.test(value)) {
+                errors[field] = "Enter a valid 10-digit mobile number.";
+            }
+            if (field === "fullName") {
+                if (!/^[A-Za-z\s]+$/.test(value)) {
+                    errors[field] = `${field} must contain only letters and spaces.`;
+                } else if (value.length > 30) {
+                    errors[field] = `${field} cannot exceed 30 characters.`;
+                }
+            }
+        });
+
+        const urlFields = ["websiteUrl", "facebookUrl", "youtubeUrl", "instagramUrl", "whatsapp"];
+        const validUrlValues = {}; // Only collect valid URLs here
+
+        // Step 1: Validate each URL field first
+        urlFields.forEach((field) => {
+            const value = String(data[field] || "").trim();
+            const pattern = urlPatterns[field];
+            const label = field.replace("Url", "");
+
+            if (value) {
+                if (!pattern.test(value)) {
+                    errors[field] = `Enter a valid ${label} URL.`; // ✅ Invalid message
+                } else {
+                    validUrlValues[field] = value; // ✅ Only store valid URLs
+                }
+            }
+        });
+
+        // Step 2: Check for duplicates ONLY among valid URLs
+        const seenUrls = new Set();
+
+        Object.entries(validUrlValues).forEach(([field, value]) => {
+            if (seenUrls.has(value)) {
+                // ✅ Only set duplicate error if no error already exists
+                if (!errors[field]) {
+                    errors[field] = `This URL is already used in another field.`;
+                }
+            } else {
+                seenUrls.add(value);
+            }
+        });
+
+        return errors;
     };
 
     const handleSubmit = async () => {
@@ -316,10 +379,11 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                 );
             }
 
-            const payload = {
+            const commonPayload = {
                 mobileNo: RoleRegisterData.mobileNo,
                 fullName: RoleRegisterData.fullName,
                 residentialAddress: RoleRegisterData.residentialAddress,
+                aadharNo: RoleRegisterData.aadharNo,
                 state: RoleRegisterData.state,
                 city: RoleRegisterData.city,
                 subCaste: RoleRegisterData.subCaste,
@@ -333,6 +397,28 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                 instagramUrl: RoleRegisterData.instagramUrl,
                 whatsapp: RoleRegisterData.whatsapp,
                 [servicesKey]: filteredServices.length > 0 ? filteredServices : existingServices,
+            };
+
+            const mergedPayload = { ...commonPayload, ...tempUrlData };
+            const errors = validateForm(mergedPayload, checked, servicesOptions);
+            console.log("mergedPayload:", JSON.stringify(mergedPayload));
+            console.log("Validation Errors:", errors);
+
+            if (Object.keys(errors).length > 0) {
+                setErrors(errors);
+                showMessage({
+                    message: "Please complete all mandatory sections before submitting.",
+                    type: "danger",
+                    duration: 4000,
+                    icon: "danger",
+                    position: 'bottom'
+                });
+                setIsLoading(false);
+                return;
+            }
+            const payload = {
+                ...commonPayload,
+                ...tempUrlData,
             };
 
             console.log("Final Payload to be Sent:", payload);
@@ -358,10 +444,10 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                     navigation.navigate("MainApp", {
                         screen: "Tabs",
                         params: {
-                          screen: "MyProfile",
+                            screen: "MyProfile",
                         },
-                      });
-                  }, 5000);
+                    });
+                }, 5000);
 
                 setIsLoading(false);
 
@@ -375,7 +461,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
             showMessage({
                 type: "danger",
                 message: "Update Failed",
-                description: errorMsge || "Invalid request. Please check your input.",
+                description: errorMsg || "Invalid request. Please check your input.",
                 icon: "danger",
                 duarion: 5000
             });
@@ -427,15 +513,34 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                         }}
                         placeholder='Enter Your Full Name'
                         placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none"
+                        importantForAutofill="no"
+                        autoCorrect={false}
                     />
 
                     <Text style={Globalstyles.title}>Mobile No.</Text>
-                    <TextInput style={Globalstyles.input}
+                    <TextInput
+                        style={[Globalstyles.input, errors.mobileNo && styles.errorInput]}
                         value={RoleRegisterData?.mobileNo}
-                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
+                        onChangeText={(text) => {
+                            // Prevent duplicate paste (only digits, and max 10)
+                            const digits = text.replace(/[^0-9]/g, '').slice(0, 10);
+                            if (digits !== RoleRegisterData.mobileNo) {
+                                setRoleRegisterData((prev) => ({ ...prev, mobileNo: digits }));
+                            }
+                        }}
                         keyboardType="phone-pad"
-                        placeholder="Enter Your Mobile No." maxLength={10}
-                        placeholderTextColor={Colors.gray} />
+                        placeholder="Enter Your Mobile No."
+                        maxLength={10}
+                        placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        autoCorrect={false}
+                        importantForAutofill="no"
+                        textContentType="none"
+                        inputMode="numeric"
+                        autoCapitalize="none"
+                    />
 
                     <Text style={[Globalstyles.title, { color: Colors.theme_color }]}>Address</Text>
 
@@ -446,6 +551,10 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                         onChangeText={handleStateInputChange}
                         placeholder="Type your State"
                         placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none"
+                        importantForAutofill="no"
+                        autoCorrect={false}
                     />
 
                     {filteredStates.length > 0 ? (
@@ -469,6 +578,10 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                         onChangeText={handleCityInputChange}
                         placeholder="Enter your city"
                         placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none"
+                        importantForAutofill="no"
+                        autoCorrect={false}
                     />
                     {filteredCities.length > 0 && cityInput ? (
                         <FlatList
@@ -491,40 +604,48 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, residentialAddress: text }))}
                         placeholder='Enter Your Area'
                         placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none"
+                        importantForAutofill="no"
+                        autoCorrect={false}
                     />
 
                     <Text style={Globalstyles.title}>Aadhar No. </Text>
-                    <TextInput style={Globalstyles.input}
+                    <TextInput
+                        style={Globalstyles.input}
                         value={RoleRegisterData?.aadharNo}
-                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, aadharNo: text }))}
-                        placeholder='Enter Your Aadhar No.'
+                        onChangeText={(text) => {
+                            const digits = text.replace(/[^0-9]/g, '').slice(0, 12);
+                            if (digits !== RoleRegisterData.aadharNo) {
+                                setRoleRegisterData((prev) => ({ ...prev, aadharNo: digits }));
+                            }
+                        }}
+                        keyboardType="phone-pad"
+                        placeholder="Enter Your Aadhar No."
+                        maxLength={12}
                         placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        autoCorrect={false}
+                        importantForAutofill="no"
+                        textContentType="none"
+                        inputMode="numeric"
+                        autoCapitalize="none"
                     />
 
                     <Text style={Globalstyles.title}>Sub Caste</Text>
-                    <TextInput
-                        style={Globalstyles.input}
-                        value={RoleRegisterData?.subCaste} // `myBiodata?.subCaste` ki jagah `subCasteInput` use karein
-                        onChangeText={handleSubCasteInputChange}
-                        placeholder="Type your sub caste"
-                        placeholderTextColor={Colors.gray}
+                    <Dropdown
+                        style={[Globalstyles.input]}
+                        data={subCasteOptions}
+                        labelField="label"
+                        valueField="value"
+                        value={RoleRegisterData?.subCaste}
+                        onChange={(text) => handleInputChange("subCaste", text.value)}
+                        placeholder="Select Your subCaste"
+                        placeholderStyle={{ color: '#E7E7E7' }}
+                        autoScroll={false}
+                        showsVerticalScrollIndicator={false}
+                        autoCorrect={false}
                     />
-
-                    {/* Agar user type karega toh list dikhegi */}
-                    {filteredSubCaste.length > 0 ? (
-                        <FlatList
-                            data={filteredSubCaste.slice(0, 5)}
-                            scrollEnabled={false}
-                            keyExtractor={(item, index) => index.toString()}
-                            renderItem={({ item }) => (
-                                <TouchableOpacity onPress={() => handleSubCasteSelect(item)}>
-                                    <Text style={Globalstyles.listItem}>{item}</Text>
-                                </TouchableOpacity>
-                            )}
-                            style={Globalstyles.suggestions}
-                        />
-                    ) : null}
-
                     <View>
                         <Text style={styles.servicesLabel}>{profileData.profileType} Services</Text>
                         {servicesOptions[profileData.profileType]?.map(service => (
@@ -573,6 +694,10 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                         onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, description: text }))}
                         textAlignVertical='top' placeholder="Add Your Description"
                         placeholderTextColor={Colors.gray} multiline={true}
+                        autoComplete="off"
+                        textContentType="none"
+                        importantForAutofill="no"
+                        autoCorrect={false}
                     />
 
 
@@ -598,36 +723,80 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                     )}
 
                     <Text style={Globalstyles.title}>Website Link</Text>
-                    <TextInput style={Globalstyles.input}
-                        value={RoleRegisterData.websiteUrl}
-                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, websiteUrl: text }))}
-                        placeholder="give Your Website Link"
-                        placeholderTextColor={Colors.gray} />
+                    <TextInput
+                        style={[Globalstyles.input, errors.websiteUrl && styles.errorInput]}
+                        value={tempUrlData.websiteUrl}
+                        onChangeText={(text) => validateAndSetUrl(text, "websiteUrl")}
+                        placeholder="Give Your Website Link"
+                        placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none"
+                        importantForAutofill="no"
+                        autoCorrect={false}
+                    />
+                    {errors.websiteUrl && (
+                        <Text style={styles.errorText}>{errors.websiteUrl}</Text>
+                    )}
                     <Text style={Globalstyles.title}>Youtube Link</Text>
-                    <TextInput style={Globalstyles.input}
-                        value={RoleRegisterData.youtubeUrl}
-                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, youtubeUrl: text }))}
-                        placeholder="give Your Youtube Link"
-                        placeholderTextColor={Colors.gray} />
+                    <TextInput
+                        style={[Globalstyles.input, errors.youtubeUrl && styles.errorInput]}
+                        value={tempUrlData.youtubeUrl}
+                        onChangeText={(text) => validateAndSetUrl(text, "youtubeUrl")}
+                        placeholder="Give Your Youtube Link"
+                        placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none"
+                        importantForAutofill="no"
+                        autoCorrect={false}
+                    />
+                    {errors.youtubeUrl && (
+                        <Text style={styles.errorText}>{errors.youtubeUrl}</Text>
+                    )}
                     <Text style={Globalstyles.title}>Whatsapp Link</Text>
-                    <TextInput style={Globalstyles.input}
-                        value={RoleRegisterData.whatsapp}
-                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, whatsapp: text }))}
-                        placeholder="give Your Whatsapp Link"
-                        placeholderTextColor={Colors.gray} />
+                    <TextInput
+                        style={[Globalstyles.input, errors.whatsapp && styles.errorInput]}
+                        value={tempUrlData.whatsapp}
+                        onChangeText={(text) => validateAndSetUrl(text, "whatsapp")}
+                        placeholder="Give Your Whatsapp Link"
+                        placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none"
+                        importantForAutofill="no"
+                        autoCorrect={false}
+                    />
+                    {errors.whatsapp && (
+                        <Text style={styles.errorText}>{errors.whatsapp}</Text>
+                    )}
                     <Text style={Globalstyles.title}>Facebook Link</Text>
-                    <TextInput style={Globalstyles.input}
-                        value={RoleRegisterData.facebookUrl}
-                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, facebookUrl: text }))}
-                        placeholder="give Your Facebook Link"
-                        placeholderTextColor={Colors.gray} />
+                    <TextInput
+                        style={[Globalstyles.input, errors.facebookUrl && styles.errorInput]}
+                        value={tempUrlData.facebookUrl}
+                        onChangeText={(text) => validateAndSetUrl(text, "facebookUrl")}
+                        placeholder="Give Your Facebook Link"
+                        placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none"
+                        importantForAutofill="no"
+                        autoCorrect={false}
+                    />
+                    {errors.facebookUrl && (
+                        <Text style={styles.errorText}>{errors.facebookUrl}</Text>
+                    )}
                     <Text style={Globalstyles.title}>Instagram Link</Text>
-                    <TextInput style={Globalstyles.input}
-                        value={RoleRegisterData.instagramUrl}
-                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, instagramUrl: text }))}
-                        placeholder="give Your Instagram Link"
-                        placeholderTextColor={Colors.gray} />
-
+                    <TextInput
+                        style={[Globalstyles.input, errors.instagramUrl && styles.errorInput]}
+                        value={tempUrlData.instagramUrl}
+                        onChangeText={(text) => validateAndSetUrl(text, "instagramUrl")}
+                        placeholder="Give Your Instagram Link"
+                        placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none"
+                        importantForAutofill="no"
+                        autoCorrect={false}
+                    />
+                    {errors.instagramUrl && (
+                        <Text style={styles.errorText}>{errors.instagramUrl}</Text>
+                    )}
 
                     <TouchableOpacity
                         style={styles.button}
@@ -640,7 +809,6 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                             <Text style={styles.buttonText}>submit</Text>
                         )}
                     </TouchableOpacity>
-
 
                 </View>
             </ScrollView>

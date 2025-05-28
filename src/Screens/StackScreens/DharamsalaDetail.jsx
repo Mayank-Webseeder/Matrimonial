@@ -19,6 +19,7 @@ import { useSelector } from 'react-redux';
 const DharamsalaDetail = ({ navigation, route }) => {
   const { DharamsalaData, _id, isSaved: initialSavedState } = route.params;
   const sliderRef = useRef(null);
+  const topSliderRef=useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showFullText, setShowFullText] = useState(false);
   const [Save, setIsSaved] = useState(initialSavedState || false);
@@ -39,29 +40,24 @@ const DharamsalaDetail = ({ navigation, route }) => {
   useEffect(() => {
     console.log("DharamsalaData", DharamsalaData);
   }, [])
+  
+useEffect(() => {
+  if (!formattedImages || formattedImages.length === 0) return;
 
-  // Automatically slide images every 2 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (currentIndex < DharamsalaData.images.length - 1) {
-        setCurrentIndex((prevIndex) => prevIndex + 1);
-        sliderRef.current?.goToSlide(currentIndex + 1);
-      } else {
-        setCurrentIndex(0);
-        sliderRef.current?.goToSlide(0);
-      }
-    }, 2000);
+  const duration = (formattedImages[currentIndex]?.duration || 1) * 1000;
 
-    return () => clearInterval(interval);
-  }, [currentIndex]);
+  const timeout = setTimeout(() => {
+    const nextIndex =
+      currentIndex < formattedImages.length - 1 ? currentIndex + 1 : 0;
+    setCurrentIndex(nextIndex);
+    topSliderRef.current?.goToSlide(nextIndex);
+  }, duration);
 
-
-  useEffect(() => {
-    Advertisement_window();
-  }, []);
+  return () => clearTimeout(timeout);
+}, [currentIndex, formattedImages]);
 
 
-  useEffect(() => {
+   useEffect(() => {
     if (slider.length === 0) return;
 
     const currentSlide = slider[currentIndex];
@@ -77,6 +73,11 @@ const DharamsalaDetail = ({ navigation, route }) => {
     return () => clearTimeout(timeout);
   }, [currentIndex, slider]);
 
+
+  
+  useEffect(() => {
+    Advertisement_window();
+  }, []);
 
   const Advertisement_window = async () => {
     try {
@@ -174,22 +175,17 @@ const DharamsalaDetail = ({ navigation, route }) => {
       const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
 
       console.log("Response Data:", response?.data);
-
-      // ✅ Ensure response is successful
       if (response.status === 200 && response.data.status === true) {
         showMessage({
           type: "success",
           message: "Success",
           description: response.data.message || "Profile saved successfully!",
         });
-
-        // ✅ Update state correctly based on success message
         setIsSaved(response.data.message.toLowerCase().includes("saved successfully"));
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching biodata:", errorMsg);
-      // ❌ Rollback State If API Fails
       setIsSaved((prev) => !prev);
 
       showMessage({
@@ -258,10 +254,9 @@ const DharamsalaDetail = ({ navigation, route }) => {
 
       <ScrollView showsVerticalScrollIndicator={false}>
 
-        {/* Image Slider */}
         <View style={styles.sliderContainer}>
           <AppIntroSlider
-            ref={sliderRef}
+            ref={topSliderRef}
             data={formattedImages}
             renderItem={SliderrenderItem}
             showNextButton={false}

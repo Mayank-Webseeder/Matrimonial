@@ -100,7 +100,7 @@ const CreatePost = ({ navigation, route }) => {
                     type: 'success',
                     message: 'Success',
                     description: response.data.message || 'Your event has been created successfully!',
-                    duarion: 5000
+                    duarion: 7000
                 });
                 navigation.dispatch(
                     CommonActions.reset({
@@ -120,7 +120,7 @@ const CreatePost = ({ navigation, route }) => {
                 message: 'Error',
                 description: errorMsg,
                 icon: "danger",
-                duarion: 5000
+                duarion: 7000
             });
             const sessionExpiredMessages = [
                 "User does not Exist....!Please login again",
@@ -177,6 +177,10 @@ const CreatePost = ({ navigation, route }) => {
                     placeholderTextColor={Colors.gray}
                     value={title}
                     onChangeText={setTitle}
+                    autoComplete="off"
+                    textContentType="none"
+                    importantForAutofill="no"
+                    autoCorrect={false}
                 />
                 <TextInput
                     style={Globalstyles.textInput}
@@ -186,6 +190,10 @@ const CreatePost = ({ navigation, route }) => {
                     multiline={true}
                     value={description}
                     onChangeText={setDescription}
+                    autoComplete="off"
+                    textContentType="none"
+                    importantForAutofill="no"
+                    autoCorrect={false}
                 />
             </View>
 

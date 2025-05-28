@@ -17,9 +17,8 @@ const styles = StyleSheet.create({
         height: SH(30)
     },
     image: {
-        width: SW(310),
+        width: SW(320),
         height: SH(300),
-        // aspectRatio: 1.5,
         resizeMode: 'cover',
         borderRadius: 10,
         alignSelf: "center"
@@ -51,7 +50,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: SW(10),
         paddingVertical: SH(5),
         borderRadius: 10,
-        marginHorizontal: SW(10),
+        // marginHorizontal: SW(10),
         marginVertical: SH(10),
         flexDirection: "row",
         justifyContent: "space-between",

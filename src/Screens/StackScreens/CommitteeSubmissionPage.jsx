@@ -39,8 +39,9 @@ const CommitteeSubmissionPage = ({ navigation }) => {
 
 
     const handleCityInputChange = (text) => {
-        setCityInput(text);
-        if (text) {
+        const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+        setCityInput(filteredText);
+        if (filteredText) {
             const filtered = CityData.filter((item) =>
                 item?.label?.toLowerCase().includes(text.toLowerCase())
             ).map(item => item.label);
@@ -51,7 +52,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
 
         setCommitteeData(prevActivistData => ({
             ...prevActivistData,
-            city: text,
+            city: filteredText,
         }));
     };
 
@@ -64,41 +65,10 @@ const CommitteeSubmissionPage = ({ navigation }) => {
         setFilteredCities([]);
     };
 
-    const handleSubCasteInputChange = (text) => {
-        const filtered = subCasteOptions
-            .filter((item) =>
-                item?.label?.toLowerCase().includes(text.toLowerCase())
-            )
-            .map((item) => item.label);
-
-        if (filtered.length > 0) {
-            setSubCasteInput(text);
-            setFilteredSubCaste(filtered);
-            setCommitteeData((prevCommitteeData) => ({
-                ...prevCommitteeData,
-                subCaste: text,
-            }));
-        } else {
-            setFilteredSubCaste(['Other']);
-        }
-    };
-
-
-    const handleSubCasteSelect = (selectedItem) => {
-        const finalValue = selectedItem === 'Other' ? 'Other' : selectedItem;
-
-        setSubCasteInput(finalValue);
-        setFilteredSubCaste([]);
-        setCommitteeData((prevCommitteeData) => ({
-            ...prevCommitteeData,
-            subCaste: finalValue,
-        }));
-    };
-
     const handleImagePick = () => {
         ImageCropPicker.openPicker({
-            width: 300,
-            height: 250,
+            width: 1000,
+            height: 1000,
             cropping: true,
             includeBase64: true,
             mediaType: "photo",
@@ -222,7 +192,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     type: "success",
                     message: "Committee Created Successfully",
                     description: response.data.message || "Your committee profile has been saved!",
-                    duarion: 5000,
+                    duarion: 7000,
                     icon: "success",
                 });
                 navigation.navigate("Committee");
@@ -232,7 +202,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     message: "Error",
                     description: response.data?.message || "Failed to save committee.",
                     icon: "danger",
-                    duarion: 5000
+                    duarion: 9000
                 });
             }
         } catch (error) {
@@ -290,6 +260,8 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     value={CommitteeData.committeeTitle}
                     autoComplete="off"
                     textContentType="none"
+                    importantForAutofill="no"
+                    autoCorrect={false}
                     onChangeText={(text) => {
                         setCommitteeData((prev) => ({ ...prev, committeeTitle: text }));
                     }}
@@ -310,11 +282,14 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     placeholder="Enter President Name"
                     value={CommitteeData?.presidentName}
                     onChangeText={(text) => {
-                        setCommitteeData((prev) => ({ ...prev, presidentName: text }));
+                        const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+                        setCommitteeData((prev) => ({ ...prev, presidentName: filteredText }));
                     }}
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
                     textContentType="none"
+                    importantForAutofill="no"
+                    autoCorrect={false}
                 />
 
                 {errors.presidentName && (
@@ -322,15 +297,6 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                 )}
 
                 <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
-                {/* <TextInput
-                    style={Globalstyles.input}
-                    value={CommitteeData?.subCaste} // `myBiodata?.subCaste` ki jagah `subCasteInput` use karein
-                    onChangeText={handleSubCasteInputChange}
-                    placeholder="Type your sub caste"
-                    placeholderTextColor={Colors.gray}
-                    autoComplete="off"
-                    textContentType="none"
-                /> */}
 
                 <Dropdown
                     style={[
@@ -352,22 +318,6 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     <Text style={styles.errorText}>{errors.subCaste}</Text>
                 )}
 
-                {/* Agar user type karega toh list dikhegi */}
-                {/* {filteredSubCaste.length > 0 ? (
-                    <FlatList
-                        data={filteredSubCaste.slice(0, 5)}
-                        scrollEnabled={false}
-                        keyExtractor={(item, index) => index.toString()}
-                        renderItem={({ item }) => (
-                            <TouchableOpacity onPress={() => handleSubCasteSelect(item)}>
-                                <Text style={Globalstyles.listItem}>{item}</Text>
-                            </TouchableOpacity>
-                        )}
-                        style={Globalstyles.suggestions}
-                    />
-                ) : null} */}
-
-
                 <Text style={Globalstyles.title}>City <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
                     style={[
@@ -380,6 +330,8 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
                     textContentType="none"
+                    importantForAutofill="no"
+                    autoCorrect={false}
                 />
                 {errors.city && (
                     <Text style={styles.errorText}>{errors.city}</Text>
@@ -409,6 +361,8 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
                     textContentType="none"
+                    importantForAutofill="no"
+                    autoCorrect={false}
                 />
                 {errors.area && (
                     <Text style={styles.errorText}>{errors.area}</Text>
@@ -438,12 +392,13 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                         errors.mobileNo && styles.errorInput,
                     ]}
                     placeholder="Enter contact number"
-                    keyboardType="numeric"
+                    keyboardType="phone-pad"
                     maxLength={10}
                     placeholderTextColor={Colors.gray}
-                    autoComplete="off"
-                    textContentType="none"
                     value={CommitteeData?.mobileNo} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
+                    autoComplete="off" importantForAutofill="no"
+                    autoCorrect={false}
+                    textContentType="none"
                 />
 
                 {errors.mobileNo && (

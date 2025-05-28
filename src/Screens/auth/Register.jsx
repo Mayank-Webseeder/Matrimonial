@@ -25,11 +25,11 @@ const Register = ({ navigation }) => {
     const [filteredCities, setFilteredCities] = useState(CityData);
     const [selectedCity, setSelectedCity] = useState(null);
     const [gender, setGender] = useState(null);
-    const [mobileNumber, setMobileNumber] = useState("");
-    const [fullName, setFullName] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmpassword] = useState("");
-    const [otp, setOtp] = useState("");
+    const [mobileNumber, setMobileNumber] = useState(null);
+    const [fullName, setFullName] = useState(null);
+    const [password, setPassword] = useState(null);
+    const [confirmPassword, setConfirmpassword] = useState(null);
+    const [otp, setOtp] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [errors, setErrors] = useState({});
@@ -63,15 +63,21 @@ const Register = ({ navigation }) => {
     };
 
     const handleCityInputChange = (text) => {
-        setCityInput(text);
+        const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+        setCityInput(filteredText);
+
         const filtered = CityData.filter((item) =>
-            item.label.toLowerCase().includes(text.toLowerCase())
+            item.label.toLowerCase().includes(filteredText.toLowerCase())
         ).map((item) => item.label);
 
         setFilteredCities(filtered);
-        const exactMatch = CityData.find((item) => item.label.toLowerCase() === text.toLowerCase());
+
+        const exactMatch = CityData.find(
+            (item) => item.label.toLowerCase() === filteredText.toLowerCase()
+        );
         setSelectedCity(exactMatch ? exactMatch.label : null);
     };
+
 
     const validateFields = () => {
         const newErrors = {};
@@ -323,7 +329,9 @@ const Register = ({ navigation }) => {
                             }}
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
-                            textContentType="none"
+                             textContentType="none"
+                            importantForAutofill="no"
+                            autoCorrect={false}
                         />
                         {errors.fullName && (
                             <Text style={styles.errorText}>{errors.fullName}</Text>
@@ -361,11 +369,11 @@ const Register = ({ navigation }) => {
 
                         {showDatePicker && (
                             <DateTimePicker
-                                value={selectedDate || new Date(1990, 0, 1)}
+                                value={selectedDate || new Date(2000, 0, 1)}
                                 mode="date"
                                 display="default"
                                 onChange={handleDateChange}
-                                maximumDate={new Date()}
+                                maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))}
                                 themeVariant="light"
                             />
                         )}
@@ -381,6 +389,8 @@ const Register = ({ navigation }) => {
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
                             textContentType="none"
+                            importantForAutofill="no"
+                            autoCorrect={false}
                             maxLength={30}
                         />
                         {filteredCities.length > 0 && cityInput ? (
@@ -446,6 +456,8 @@ const Register = ({ navigation }) => {
                                     placeholderTextColor={Colors.gray}
                                     autoComplete="off"
                                     textContentType="none"
+                                    importantForAutofill="no"
+                                    autoCorrect={false}
                                 />
                                 <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                                     <AntDesign
@@ -474,6 +486,8 @@ const Register = ({ navigation }) => {
                                     placeholderTextColor={Colors.gray}
                                     autoComplete="off"
                                     textContentType="none"
+                                    importantForAutofill="no"
+                                    autoCorrect={false}
                                 />
                                 <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
                                     <AntDesign
@@ -500,7 +514,7 @@ const Register = ({ navigation }) => {
                         <View style={{ flexDirection: "row", alignItems: "center" }}>
                             <TextInput
                                 style={[Globalstyles.input, { flex: 1 }]}
-                                keyboardType="numeric"
+                                keyboardType='phone-pad'
                                 placeholder="Enter your mobile number"
                                 value={mobileNumber}
                                 onChangeText={(text) => setMobileNumber(text.replace(/[^0-9]/g, ''))}
@@ -509,6 +523,8 @@ const Register = ({ navigation }) => {
                                 editable={!otpSent}
                                 autoComplete="off"
                                 textContentType="none"
+                                importantForAutofill="no"
+                                autoCorrect={false}
                             />
                             <TouchableOpacity style={styles.otpButton} onPress={handleSendOtp} disabled={isOtpLoading}>
                                 {isOtpLoading ? <ActivityIndicator size="small" color={Colors.theme_color} /> : <Text style={styles.otpButtonText}>Send OTP</Text>}
@@ -521,8 +537,16 @@ const Register = ({ navigation }) => {
                         {/* Mobile Number */}
                         <Text style={Globalstyles.title}>OTP <Entypo name={'star'} color={'red'} size={12} /></Text>
 
-                        <TextInput style={Globalstyles.input} keyboardType="numeric" placeholder="Enter Your Otp " placeholderTextColor={Colors.gray}
-                            value={otp} onChangeText={setOtp} maxLength={6} />
+                        <TextInput style={Globalstyles.input}
+                            keyboardType='phone-pad'
+                            placeholder="Enter Your Otp"
+                            placeholderTextColor={Colors.gray}
+                            value={otp}
+                            onChangeText={setOtp} maxLength={6}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
+                            autoCorrect={false} />
 
                         {errors.otp && (
                             <Text style={styles.errorText}>{errors.otp}</Text>

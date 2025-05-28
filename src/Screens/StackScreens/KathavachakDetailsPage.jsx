@@ -45,6 +45,8 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
         ? { uri: profileData.profilePhoto }
         : require('../../Images/NoImage.png');
 
+    const validSlides = slider.filter(item => !!item.image);
+
     useFocusEffect(
         useCallback(() => {
             fetchkathavachakProfile();
@@ -59,7 +61,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                 type: "danger",
                 message: "Kathavachak ID not found!",
                 icon: "danger",
-                duarion:5000
+                duarion: 5000
             });
             return;
         }
@@ -70,7 +72,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                 type: "danger",
                 message: "Authentication Error",
                 description: "No token found. Please log in again.",
-                duarion:5000
+                duarion: 5000
             });
             return;
         }
@@ -102,21 +104,21 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
             console.error("Error fetching kathavachak detials :", errorMsg);
             showMessage({
                 type: "danger",
-                message:errorMsg,
+                message: errorMsg,
                 description: "Failed to load profile data",
             });
             const sessionExpiredMessages = [
-              "User does not Exist....!Please login again",
-              "Invalid token. Please login again",
-              "Token has expired. Please login again"
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
             ];
-        
+
             if (sessionExpiredMessages.includes(errorMsg)) {
-              await AsyncStorage.removeItem("userToken");
-              navigation.reset({
-                index: 0,
-                routes: [{ name: "AuthStack" }],
-              });
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
             }
         } finally {
             setLoading(false);
@@ -182,19 +184,19 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
             console.error("Error fetching advertisement:", errorMsg);
-        
+
             const sessionExpiredMessages = [
-              "User does not Exist....!Please login again",
-              "Invalid token. Please login again",
-              "Token has expired. Please login again"
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
             ];
-        
+
             if (sessionExpiredMessages.includes(errorMsg)) {
-              await AsyncStorage.removeItem("userToken");
-              navigation.reset({
-                index: 0,
-                routes: [{ name: "AuthStack" }],
-              });
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
             }
         } finally {
             setLoading(false);
@@ -208,7 +210,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                 type: "danger",
                 message: "User ID not found!",
                 icon: "danger",
-                duarion:5000
+                duarion: 5000
             });
             return;
         }
@@ -235,7 +237,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                     type: "success",
                     message: response.data.message || "Profile saved successfully!",
                     icon: "success",
-                    duarion:5000
+                    duarion: 7000
                 });
 
                 // ✅ API response ke hisaab se state update karo
@@ -247,26 +249,26 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
             const errorMsg = error.response?.data?.message || error.message;
             console.error("Error fetching biodata:", errorMsg);
             setIsSaved((prev) => !prev);
-            
+
             showMessage({
                 type: "danger",
                 message: errorMsg,
                 icon: "danger",
-                duarion:5000
+                duarion: 7000
             });
 
             const sessionExpiredMessages = [
-              "User does not Exist....!Please login again",
-              "Invalid token. Please login again",
-              "Token has expired. Please login again"
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
             ];
-        
+
             if (sessionExpiredMessages.includes(errorMsg)) {
-              await AsyncStorage.removeItem("userToken");
-              navigation.reset({
-                index: 0,
-                routes: [{ name: "AuthStack" }],
-              });
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
             }
         }
     };
@@ -283,7 +285,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
         showMessage({
             type: 'info',
             message: message,
-            duarion:5000,
+            duarion: 7000,
             autoHide: true,
         });
     };
@@ -330,7 +332,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
             type: "info",
             message: "Info",
             description: "Under development",
-            duarion:5000
+            duarion: 5000
         });
     };
 
@@ -401,7 +403,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                         <Text style={styles.name} numberOfLines={2}>{profileData?.fullName}</Text>
 
                         <View style={styles.FlexContainer}>
-                        <Text style={[styles.city,{fontFamily:"Poppins-Bold"}]}>{profileData?.city}</Text>
+                            <Text style={[styles.city, { fontFamily: "Poppins-Bold" }]}>{profileData?.city}</Text>
                             <Text style={styles.city}>{profileData?.state}</Text>
                         </View>
 
@@ -415,7 +417,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                             <Rating
                                 type="star"
                                 ratingCount={5}
-                                imageSize={15}
+                                imageSize={18}
                                 startingValue={profileData?.averageRating}
                                 readonly
                             />
@@ -488,7 +490,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                     {profileData?.experience ? (
                         <>
                             <Text style={styles.sectionTitle}>Experience </Text>
-                            <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} years of experience` : ''}</Text>
+                            <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} + years of experience` : ''}</Text>
                         </>
                     ) : null}
 
@@ -562,7 +564,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
 
                     {otherRatings?.length > 0 ? (
                         <>
-                            {otherRatings?.slice(0, 2).map((review, index) => (
+                            {otherRatings?.slice(0, 3).map((review, index) => (
                                 <View key={review._id || index} style={styles.reviewContainer}>
                                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
                                         <View>
@@ -603,7 +605,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                                 </View>
                             ))}
 
-                            {otherRatings.length > 2 && (
+                            {otherRatings.length > 3 && (
                                 <TouchableOpacity
                                     onPress={() => navigation.navigate('AllReviewsPage', { reviews: otherRatings })}
                                     style={styles.viewMoreButton}>
@@ -643,37 +645,39 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                         <FontAwesome5 name="instagram" size={30} color="#E4405F" />
                     </TouchableOpacity>
                 </View>
-                <View style={[styles.Bottomimage, { paddingBottom: SH(15) }]}>
-                    <AppIntroSlider
-                        ref={sliderRef}
-                        data={slider}
-                        renderItem={({ item }) => {
-                            const { width, height } = item.resolution;
+                {validSlides.length > 0 && (
+                    <View style={[styles.Bottomimage, { paddingBottom: SH(15) }]}>
+                        <AppIntroSlider
+                            ref={sliderRef}
+                            data={slider}
+                            renderItem={({ item }) => {
+                                const { width, height } = item.resolution;
 
-                            const handlePress = () => {
-                                if (item.hyperlink) {
-                                    Linking.openURL(item.hyperlink).catch(err =>
-                                        console.error("Failed to open URL:", err)
-                                    );
-                                }
-                            };
+                                const handlePress = () => {
+                                    if (item.hyperlink) {
+                                        Linking.openURL(item.hyperlink).catch(err =>
+                                            console.error("Failed to open URL:", err)
+                                        );
+                                    }
+                                };
 
-                            return (
-                                <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
-                                    <Image
-                                        source={{ uri: item.image }}
-                                        style={{ width, height, resizeMode: 'cover' }}
-                                    />
-                                </TouchableOpacity>
-                            );
-                        }}
-                        showNextButton={false}
-                        showDoneButton={false}
-                        dotStyle={Globalstyles.dot}
-                        activeDotStyle={Globalstyles.activeDot}
-                    />
+                                return (
+                                    <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                                        <Image
+                                            source={{ uri: item.image }}
+                                            style={{ width, height, resizeMode: 'cover' }}
+                                        />
+                                    </TouchableOpacity>
+                                );
+                            }}
+                            showNextButton={false}
+                            showDoneButton={false}
+                            dotStyle={Globalstyles.dot}
+                            activeDotStyle={Globalstyles.activeDot}
+                        />
 
-                </View>
+                    </View>
+                )}
             </ScrollView>
         </SafeAreaView>
     );

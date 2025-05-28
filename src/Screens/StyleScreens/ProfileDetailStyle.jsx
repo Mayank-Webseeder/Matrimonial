@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginHorizontal: SW(10),
     marginBottom: 0
-},
+  },
   biodataname: {
     fontSize: SF(15),
     color: Colors.dark,
@@ -111,13 +111,15 @@ const styles = StyleSheet.create({
   HeadingText: {
     fontSize: SF(15),
     fontFamily: "Poppins-Bold",
-    marginBottom: SH(5),
+    textTransform: "capitalize",
+    lineHeight: SF(18),
+    paddingTop:SH(2)
   },
 
   text: {
-    fontfamily:"Poppins-Regular",
+    fontfamily: "Poppins-Regular",
     color: '#000',
-    fontSize:SF(15)
+    fontSize: SF(15)
   },
   flexContainer: {
     paddingHorizontal: SW(10),
@@ -211,13 +213,34 @@ const styles = StyleSheet.create({
     paddingHorizontal: SW(10),
     paddingVertical: SH(5),
     borderRadius: 5,
-    alignSelf:"flex-end"
+    alignSelf: "flex-end"
     //  marginVertical:SH(10)
   },
+   ActiveButton: {
+  backgroundColor: '#E6F9F0',          // Light green tint background
+  paddingHorizontal: SW(12),
+  paddingVertical: SH(6),
+  borderRadius: 20,                    // Pill-style rounded edges
+  borderColor: '#04AA6D',
+  borderWidth: 1,                      // Thicker border for visibility
+  alignSelf: 'flex-end',
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 1 },
+  shadowOpacity: 0.2,
+  shadowRadius: 2,
+  elevation: 2,                      
+},
+ActiveButtonText: {
+  color: '#04AA6D',
+  fontSize: SF(12),
+  fontFamily: 'Poppins-SemiBold',
+  textAlign: 'center',
+  textTransform: 'capitalize',
+},
   editButtonText: {
-    color: Colors.light,
+    colr: Colors.light,
     fontSize: SF(13),
-    textAlign:"center"
+    textAlign: "center"
   },
   link: {
     color: "#4948b8",
@@ -271,10 +294,10 @@ const styles = StyleSheet.create({
     marginBottom: SH(8),
   },
   text: {
-     fontfamily:"Poppins-Regular",
+    fontfamily: "Poppins-Regular",
     color: '#000',
-    fontSize:SF(15),
-    textTransform:"capitalize"
+    fontSize: SF(15),
+    textTransform: "capitalize"
   },
   servicesGrid: {
     flexDirection: 'row',
@@ -287,10 +310,11 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     elevation: 5,
     paddingHorizontal: SW(10),
-    paddingVertical: SH(5),
+    paddingVertical: SH(6),
     marginHorizontal: SW(5),
     marginVertical: SH(5),
-    width: '30%',
+    maxWidth: '80%',
+    alignSelf: 'flex-start',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -301,7 +325,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: Colors.dark,
     textAlign: "center",
-    textTransform:"capitalize"
+    textTransform: "capitalize"
   },
   ratingCount: {
     marginRight: SW(260),
@@ -323,7 +347,7 @@ const styles = StyleSheet.create({
     paddingVertical: SH(7),
   },
   reviewRating: {
-   alignSelf:"flex-start"
+    alignSelf: "flex-start"
   },
   reviewName: {
     fontSize: SF(12),
@@ -415,7 +439,7 @@ const styles = StyleSheet.create({
     marginRight: SW(10),
     borderRadius: 3
   },
-  detailbox:{
+  detailbox: {
     // paddingHorizontal: SW(10),
     // paddingVertical: SH(10),
     // borderColor: Colors.gray,
@@ -441,12 +465,12 @@ const styles = StyleSheet.create({
   noImagesContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal:SW(20),
-    paddingVertical:SH(20)
+    paddingHorizontal: SW(20),
+    paddingVertical: SH(20)
   },
   noImagesText: {
-    fontSize:SF(18),
-    color:Colors.gray,
+    fontSize: SF(18),
+    color: Colors.gray,
     textAlign: 'center',
   },
   icon: {
@@ -481,35 +505,44 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: SH(10),
   },
-   infoRow: {
-      flexDirection: 'row',
-      marginBottom: SH(5),
-    },
-    infoLabel: {
-      width: SW(150),
-      fontfamily:"Poppins-Regular",
+  infoRow: {
+    flexDirection: 'row',
+    marginBottom: SH(5),
+  },
+  infoLabel: {
+    width: SW(150),
+    fontfamily: "Poppins-Regular",
     color: '#000',
-    fontSize:SF(15)
+    fontSize: SF(15)
+  },
+  infoValue: {
+    flex: 1,
+    color: '#000',
+    flexWrap: 'wrap',
+  },
+  familyDiv: {
+    paddingHorizontal: SW(8),
+    paddingVertical: SH(10),
+    borderRadius: 10,
+    width: "99%",
+    backgroundColor: "#fff", // Ensure background for shadow to show properly
+    marginHorizontal: SW(2),
+    // Updated shadow
+    shadowColor: Colors.theme_color,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 4,
+    marginVertical: SH(5),
+  },
+  sliderContainer: {
+      marginBottom: SH(30),
+      height: SH(290),
     },
-    infoValue: {
-      flex: 1,
-      color: '#000',
-      flexWrap: 'wrap',
-    },
-   familyDiv:{
-      paddingHorizontal: SW(8),
-      paddingVertical: SH(10),
-      borderRadius: 10,
-      width: "99%",
-      backgroundColor: "#fff", // Ensure background for shadow to show properly
-      marginHorizontal: SW(2),
-      // Updated shadow
-      shadowColor: Colors.theme_color,
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.08,
-      shadowRadius: 8,
-      elevation: 4,
-      marginVertical: SH(5),
+    sliderImage: {
+      width: "100%",
+      height: SH(290),
+      resizeMode: 'cover',
     },
 });
 

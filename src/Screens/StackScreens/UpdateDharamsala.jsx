@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, StatusBar, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, StatusBar, SafeAreaView, FlatList, ActivityIndicator} from 'react-native';
 import Colors from '../../utils/Colors';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -12,15 +12,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import _ from "lodash";
 import { showMessage } from 'react-native-flash-message';
+import { Dropdown } from 'react-native-element-dropdown';
 
 const UpdateDharamsala = ({ navigation, route }) => {
     const { DharmshalaData } = route.params || {};
-    const [subCasteInput, setSubCasteInput] = useState('');
     const [cityInput, setCityInput] = useState('');
     const [filteredCities, setFilteredCities] = useState([]);
-    const [filteredSubCaste, setFilteredSubCaste] = useState([]);
-    const [selectedCity, setSelectedCity] = useState('');
-    const [selectedSubCaste, setSelectedSubCaste] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     const [DharamsalaData, setDharamsalaData] = useState({
@@ -57,8 +54,9 @@ const UpdateDharamsala = ({ navigation, route }) => {
 
 
     const handleCityInputChange = (text) => {
-        setCityInput(text);
-        if (text) {
+        const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+        setCityInput(filteredText);
+        if (filteredText) {
             const filtered = CityData.filter((item) =>
                 item?.label?.toLowerCase().includes(text.toLowerCase())
             ).map(item => item.label);
@@ -69,7 +67,7 @@ const UpdateDharamsala = ({ navigation, route }) => {
 
         setDharamsalaData(prevDharamsalaData => ({
             ...prevDharamsalaData,
-            city: text,
+            city: filteredText,
         }));
     };
 
@@ -82,30 +80,10 @@ const UpdateDharamsala = ({ navigation, route }) => {
         setFilteredCities([]);
     };
 
-    const handleSubCasteInputChange = (text) => {
-        setSubCasteInput(text);
-
-        if (text) {
-            const filtered = subCasteOptions
-                .filter((item) => item?.label?.toLowerCase().includes(text.toLowerCase()))
-                .map((item) => item.label);
-
-            setFilteredSubCaste(filtered);
-        } else {
-            setFilteredSubCaste([]);
-        }
-        setDharamsalaData((prevDharamsalaData) => ({
-            ...prevDharamsalaData,
-            subCaste: text,
-        }));
-    };
-
-    const handleSubCasteSelect = (selectedItem) => {
-        setSubCasteInput(selectedItem);
-        setFilteredSubCaste([]);
-        setDharamsalaData((prevDharamsalaData) => ({
-            ...prevDharamsalaData,
-            subCaste: selectedItem,
+      const handleInputChange = (field, value) => {
+        setDharamsalaData(prev => ({
+            ...prev,
+            [field]: value,
         }));
     };
 
@@ -223,7 +201,7 @@ const UpdateDharamsala = ({ navigation, route }) => {
                     type: "danger",
                     message: "Authorization Error",
                     description: "Token is missing! Please login again.",
-                    duarion:5000
+                    duarion: 5000
                 });
                 setIsLoading(false);
                 return;
@@ -252,7 +230,7 @@ const UpdateDharamsala = ({ navigation, route }) => {
                 message: "Success",
                 description: "Dharamsala Updated Successfully! 🎉",
                 icon: "success",
-                duarion:5000
+                duarion: 5000
             });
 
             setTimeout(() => {
@@ -266,20 +244,20 @@ const UpdateDharamsala = ({ navigation, route }) => {
                 message: "Update Failed",
                 description: errorMsg,
                 icon: "danger",
-                duarion:5000
+                duarion: 5000
             });
             const sessionExpiredMessages = [
-              "User does not Exist....!Please login again",
-              "Invalid token. Please login again",
-              "Token has expired. Please login again"
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
             ];
-        
+
             if (sessionExpiredMessages.includes(errorMsg)) {
-              await AsyncStorage.removeItem("userToken");
-              navigation.reset({
-                index: 0,
-                routes: [{ name: "AuthStack" }],
-              });
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
             }
         } finally {
             setIsLoading(false);
@@ -319,34 +297,26 @@ const UpdateDharamsala = ({ navigation, route }) => {
                     onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, dharmshalaName: text }))}
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
-                    textContentType="none"
+                    textContentType="dharmshalaName"
+                    importantForAutofill="no"
+                    autoCorrect={false}
                 />
 
                 <Text style={Globalstyles.title}>Sub-Caste Name <Entypo name={'star'} color={'red'} size={12} /></Text>
-                <TextInput
-                    style={Globalstyles.input}
-                    value={DharamsalaData?.subCaste} // `myBiodata?.subCaste` ki jagah `subCasteInput` use karein
-                    onChangeText={handleSubCasteInputChange}
-                    placeholder="Type your sub caste"
-                    placeholderTextColor={Colors.gray}
-                    autoComplete="off"
-                    textContentType="none"
+               <Dropdown
+                    style={[
+                        Globalstyles.input,
+                    ]}
+                    data={subCasteOptions}
+                    labelField="label"
+                    valueField="value"
+                    value={DharamsalaData?.subCaste}
+                    onChange={(text) => handleInputChange("subCaste", text.value)}
+                    placeholder="Select Your subCaste"
+                    placeholderStyle={{ color: '#E7E7E7' }}
+                    autoScroll={false}
+                    showsVerticalScrollIndicator={false}
                 />
-
-                {/* Agar user type karega toh list dikhegi */}
-                {filteredSubCaste.length > 0 ? (
-                    <FlatList
-                        data={filteredSubCaste.slice(0, 5)}
-                        scrollEnabled={false}
-                        keyExtractor={(item, index) => index.toString()}
-                        renderItem={({ item }) => (
-                            <TouchableOpacity onPress={() => handleSubCasteSelect(item)}>
-                                <Text style={Globalstyles.listItem}>{item}</Text>
-                            </TouchableOpacity>
-                        )}
-                        style={Globalstyles.suggestions}
-                    />
-                ) : null}
 
                 <Text style={Globalstyles.title}>City <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
@@ -356,7 +326,9 @@ const UpdateDharamsala = ({ navigation, route }) => {
                     placeholder="Enter your city"
                     placeholderTextColor={Colors.gray}
                     autoComplete="off"
-                    textContentType="none"
+                    textContentType="city"
+                    importantForAutofill="no"
+                    autoCorrect={false}
                 />
                 {filteredCities.length > 0 && cityInput ? (
                     <FlatList
@@ -376,12 +348,14 @@ const UpdateDharamsala = ({ navigation, route }) => {
                 <TextInput
                     style={Globalstyles.input}
                     placeholder="Enter Person's Contact No."
-                    keyboardType="numeric"
+                    keyboardType='phone-pad'
                     maxLength={10}
                     placeholderTextColor={Colors.gray}
                     value={DharamsalaData.mobileNo} onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, mobileNo: text }))}
                     autoComplete="off"
-                    textContentType="none"
+                    textContentType="mobileNo"
+                    importantForAutofill="no"
+                    autoCorrect={false}
                 />
 
                 <Text style={Globalstyles.title}>Description (Optional)</Text>
@@ -391,6 +365,10 @@ const UpdateDharamsala = ({ navigation, route }) => {
                     placeholderTextColor={Colors.gray}
                     value={DharamsalaData.description} onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, description: text }))}
                     multiline={true}
+                    autoComplete="off"
+                    textContentType="description"
+                    importantForAutofill="no"
+                    autoCorrect={false}
                 />
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                     <Text style={Globalstyles.title}>

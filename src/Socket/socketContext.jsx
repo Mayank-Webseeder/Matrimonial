@@ -57,27 +57,27 @@ export const SocketProvider = ({ children }) => {
         const userId = await AsyncStorage.getItem("userId");
 
         if (!userId) {
-          console.error("❌ No user ID found in storage.");
+          console.error("No user ID found in storage.");
           setLoading(false);
           return;
         }
 
-        console.log(`✅ User ID found: ${userId}`);
+        console.log(`User ID found: ${userId}`);
         initializeSocket(userId);
 
         const activeSocket = getSocket();
         if (activeSocket) {
           setSocket(activeSocket);
-          console.log("✅ Socket successfully initialized.");
+          console.log("Socket successfully initialized.");
         } else {
-          console.error("❌ Failed to get active socket after initialization.");
+          console.error("Failed to get active socket after initialization.");
         }
 
       } catch (error) {
-        console.error("🚨 Error initializing socket:", error);
+        console.error("Error initializing socket:", error);
       } finally {
         setLoading(false);
-        console.log("🔁 Socket initialization process completed.");
+        console.log("Socket initialization process completed.");
       }
     };
 
@@ -92,11 +92,11 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     if (!socket || loading || connReqNotification === "" || eventPostNotification === "") {
-      console.log("⏳ Waiting to bind socket events until all are ready...");
+      console.log("Waiting to bind socket events until all are ready...");
       return;
     }
 
-    console.log("📡 Binding all socket events...");
+    console.log("Binding all socket events...");
 
     const showToast = (message, type = "success") => {
       showMessage({
@@ -111,14 +111,10 @@ export const SocketProvider = ({ children }) => {
     socket.removeAllListeners();
 
     socket.onAny((event, data) => {
-      console.log(`📥 Received event: '${event}' with data:`, data);
+      console.log(`Received event: '${event}' with data:`, data);
     });
 
     if (connReqNotification) {
-      socket.on("newMatch", (data) => {
-        console.log("📩 newMatch:", data);
-        showToast(`🎉 Matched with ${data?.name || "someone"}`);
-      });
 
       socket.on("connectionRequest", (data) => {
         console.log("📩 connectionRequest:", data);
@@ -151,6 +147,18 @@ export const SocketProvider = ({ children }) => {
       showToast(data?.message);
     });
 
+    socket.on("jyotishRequestRejected", (data) => {
+      showToast(data?.message);
+    });
+
+    socket.on("panditRequestRejected", (data) => {
+      showToast(data?.message);
+    });
+
+    socket.on("kathavachakRequestRejected", (data) => {
+      showToast(data?.message);
+    });
+
     socket.on("jyotishRequestApproved", (data) => {
       showToast(data?.message);
     });
@@ -159,18 +167,20 @@ export const SocketProvider = ({ children }) => {
       showToast(data?.message);
     });
 
-    socket.on("respondOnFeedBackByAdmin", (data) => {
+    socket.on("activistRequestRejected", (data) => {
       showToast(data?.message);
     });
 
-    // socket.on("user-notification", (data) => {
-    //   showToast(data?.message);
-    // });
+    socket.on("successStoryApproved", (data) => {
+      showToast(data?.message);
+    });
+    socket.on("successStoryRejected", (data) => {
+      showToast(data?.message);
+    });
 
-    // socket.on("eventCreation-notification", (data) => {
-    //   showToast(data?.message);
-    // });
-
+    socket.on("respondOnFeedBackByAdmin", (data) => {
+      showToast(data?.message);
+    });
     return () => {
       console.log("🧹 Cleaning up socket event listeners...");
       socket.offAny();

@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, FlatList, ScrollView } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { DrawerActions, useFocusEffect } from '@react-navigation/native';
 import Globalstyles from '../../utils/GlobalCss';
@@ -158,29 +158,36 @@ const SubscriptionHistory = ({ navigation }) => {
                 </View>
             </View>
 
-            {/* Tabs */}
-            <View style={styles.tabContainer}>
-                {tabs.map((tab) => (
-                    <TouchableOpacity
-                        key={tab}
-                        style={[
-                            styles.tabButton,
-                            activeTab === tab && styles.activeTabButton,
-                        ]}
-                        onPress={() => setActiveTab(tab)}
-                    >
-                        <Text
+            <View style={{ width: "100%" }}>
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={[
+                        styles.tabContainer,
+                        { paddingLeft: SW(10), paddingRight: SW(10) }
+                    ]}
+                >
+                    {tabs.map((tab) => (
+                        <TouchableOpacity
+                            key={tab}
                             style={[
-                                styles.tabText,
-                                activeTab === tab && styles.activeTabText,
+                                styles.tabButton,
+                                activeTab === tab && styles.activeTabButton,
                             ]}
+                            onPress={() => setActiveTab(tab)}
                         >
-                            {tab}
-                        </Text>
-                    </TouchableOpacity>
-                ))}
+                            <Text
+                                style={[
+                                    styles.tabText,
+                                    activeTab === tab && styles.activeTabText,
+                                ]}
+                            >
+                                {tab}
+                            </Text>
+                        </TouchableOpacity>
+                    ))}
+                </ScrollView>
             </View>
-
             <FlatList
                 data={filteredData}
                 keyExtractor={(item, index) => index.toString()}
@@ -211,12 +218,16 @@ const styles = StyleSheet.create({
         paddingVertical: SH(12),
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
+        gap: SW(10),
+        // marginHorizontal: SW(10),
     },
     tabButton: {
         paddingVertical: SH(8),
         paddingHorizontal: SW(19),
         borderRadius: 5,
         backgroundColor: '#e0e0e0',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     activeTabButton: {
         backgroundColor: Colors.theme_color,

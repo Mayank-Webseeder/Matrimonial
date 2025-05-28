@@ -41,7 +41,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
     const profilePhoto = profileData?.profilePhoto
         ? { uri: profileData.profilePhoto }
         : require('../../Images/NoImage.png');
-
+    const validSlides = slider.filter(item => !!item.image);
 
     useFocusEffect(
         useCallback(() => {
@@ -57,7 +57,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 type: "danger",
                 message: "Pandit ID not found!",
                 icon: "danger",
-                duarion:5000
+                duarion: 5000
             });
             return;
         }
@@ -68,7 +68,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 type: "danger",
                 message: "Authentication Error",
                 description: "No token found. Please log in again.",
-                duarion:5000
+                duarion: 5000
             });
             return;
         }
@@ -91,7 +91,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                     type: "danger",
                     message: "No Profile Found",
                     description: response.data.message || "Something went wrong!",
-                    duarion:5000
+                    duarion: 5000
                 });
             }
         } catch (error) {
@@ -102,20 +102,20 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 type: "danger",
                 message: errorMsg,
                 description: "Failed to load profile data",
-                duarion:5000
+                duarion: 5000
             });
             const sessionExpiredMessages = [
-              "User does not Exist....!Please login again",
-              "Invalid token. Please login again",
-              "Token has expired. Please login again"
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
             ];
-        
+
             if (sessionExpiredMessages.includes(errorMsg)) {
-              await AsyncStorage.removeItem("userToken");
-              navigation.reset({
-                index: 0,
-                routes: [{ name: "AuthStack" }],
-              });
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
             }
         } finally {
             setLoading(false);
@@ -191,7 +191,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 type: "danger",
                 message: "Error",
                 description: "User ID not found!",
-                duarion:5000
+                duarion: 5000
             });
             return;
         }
@@ -219,7 +219,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                     message: "Success",
                     description: response.data.message || "Profile saved successfully!",
                     icon: "success",
-                    duarion:5000
+                    duarion: 5000
                 });
 
                 // ✅ API response ke hisaab se state update karo
@@ -243,7 +243,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 message: "Error",
                 description: errorMessage,
                 icon: "danger",
-                duarion:5000
+                duarion: 5000
             });
         }
     };
@@ -260,7 +260,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
         showMessage({
             type: 'info',
             message: message,
-            duarion:5000,
+            duarion: 5000,
             autoHide: true,
             icon: "info"
         });
@@ -307,7 +307,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
             type: "info",
             message: "Under development",
             icon: "info",
-            duarion:5000
+            duarion: 5000
         })
     };
 
@@ -379,7 +379,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                         <Text style={styles.name} numberOfLines={2}>{profileData?.fullName}</Text>
 
                         <View style={styles.FlexContainer}>
-                            <Text style={[styles.city,{fontFamily:"Poppins-Bold"}]}>{profileData?.city}</Text>
+                            <Text style={[styles.city, { fontFamily: "Poppins-Bold" }]}>{profileData?.city}</Text>
                             <Text style={styles.city}>{profileData?.state}</Text>
                         </View>
                         {profileData?.residentialAddress ? (
@@ -413,47 +413,41 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                         <TouchableOpacity
                             style={[styles.iconContainer, my_id === profileData?.userId]}
                             onPress={() => savedProfiles(profileData._id)}
-                            disabled={my_id === profileData?.userId} // ✅ Disable button for self
+                            disabled={my_id === profileData?.userId}
                         >
                             <FontAwesome
                                 name={Save ? "bookmark" : "bookmark-o"}
                                 size={19}
-                                color={my_id === profileData?.userId ? Colors.gray : Colors.dark} // ✅ Gray if disabled
+                                color={my_id === profileData?.userId ? Colors.gray : Colors.dark}
                             />
                             <Text style={[styles.iconText, my_id === profileData?.userId && styles.disabledText]}>
                                 {Save ? "Saved" : "Save"}
                             </Text>
                         </TouchableOpacity>
-
-                        {/* ✅ Share button (Always Active) */}
                         <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
                             <Feather name="send" size={20} color={Colors.dark} />
                             <Text style={styles.iconText}>Shares</Text>
                         </TouchableOpacity>
-
-                        {/* ✅ Call Button (Disabled for self profile) */}
                         <TouchableOpacity
                             style={[styles.Button, my_id === profileData?.userId && styles.disabledButton]}
                             onPress={() => Linking.openURL(`tel:${profileData?.mobileNo}`)}
-                            disabled={my_id === profileData?.userId} // ✅ Disable button
+                            disabled={my_id === profileData?.userId}
                         >
                             <MaterialIcons
                                 name="call"
                                 size={20}
-                                color={my_id === profileData?.userId ? Colors.gray : Colors.light} // ✅ Gray if disabled
+                                color={my_id === profileData?.userId ? Colors.gray : Colors.light}
                             />
                         </TouchableOpacity>
-
-                        {/* ✅ Report Button (Disabled for self profile) */}
                         <TouchableOpacity
                             style={[styles.iconContainer, my_id === profileData?.userId]}
                             onPress={() => navigation.navigate('ReportPage', { profileId: profileData?._id })}
-                            disabled={my_id === profileData?.userId} // ✅ Disable button
+                            disabled={my_id === profileData?.userId}
                         >
                             <MaterialIcons
                                 name="error-outline"
                                 size={20}
-                                color={my_id === profileData?.userId ? Colors.gray : Colors.dark} // ✅ Gray if disabled
+                                color={my_id === profileData?.userId ? Colors.gray : Colors.dark}
                             />
                             <Text style={[styles.iconText, my_id === profileData?.userId && styles.disabledText]}>
                                 Report
@@ -464,7 +458,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                     {profileData?.experience ? (
                         <>
                             <Text style={styles.sectionTitle}>Experience </Text>
-                            <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} years of experience` : ''}</Text>
+                            <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} + years of experience` : ''}</Text>
                         </>
                     ) : null}
 
@@ -529,7 +523,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                             <Rating
                                 type="star"
                                 ratingCount={5}
-                                imageSize={15}
+                                imageSize={18}
                                 startingValue={myRatings[0]?.rating}
                                 readonly
                             />
@@ -542,7 +536,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
 
                     {otherRatings?.length > 0 ? (
                         <>
-                            {otherRatings?.slice(0, 2).map((review, index) => (
+                            {otherRatings?.slice(0, 3).map((review, index) => (
                                 <View key={review._id || index} style={styles.reviewContainer}>
                                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
                                         <View>
@@ -583,7 +577,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                                 </View>
                             ))}
 
-                            {otherRatings.length > 2 && (
+                            {otherRatings.length > 3 && (
                                 <TouchableOpacity
                                     onPress={() => navigation.navigate('AllReviewsPage', { reviews: otherRatings })}
                                     style={styles.viewMoreButton}>
@@ -593,9 +587,9 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                         </>
                     ) : (
                         <View style={styles.noReviewsContainer}>
-                        <Text style={styles.noReviewsTitle}>Reviews will show up here</Text>
-                        <Text style={styles.noReviewsSubtitle}>You'll see others' feedback once they post it.</Text>
-                      </View>
+                            <Text style={styles.noReviewsTitle}>Reviews will show up here</Text>
+                            <Text style={styles.noReviewsSubtitle}>You'll see others' feedback once they post it.</Text>
+                        </View>
                     )}
 
                 </View>
@@ -624,39 +618,39 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                         <FontAwesome5 name="instagram" size={30} color="#E4405F" />
                     </TouchableOpacity>
                 </View>
-                {/* <Image source={require('../../Images/slider.png')} style={styles.Bottomimage} /> */}
+                {validSlides.length > 0 && (
+                    <View style={styles.Bottomimage}>
+                        <AppIntroSlider
+                            ref={sliderRef}
+                            data={validSlides}
+                            renderItem={({ item }) => {
+                                const { width = 300, height = 150 } = item.resolution || {};
 
-                <View style={styles.Bottomimage}>
-                    <AppIntroSlider
-                        ref={sliderRef}
-                        data={slider}
-                        renderItem={({ item }) => {
-                            const { width, height } = item.resolution;
+                                const handlePress = () => {
+                                    if (item.hyperlink) {
+                                        Linking.openURL(item.hyperlink).catch(err =>
+                                            console.error("Failed to open URL:", err)
+                                        );
+                                    }
+                                };
 
-                            const handlePress = () => {
-                                if (item.hyperlink) {
-                                    Linking.openURL(item.hyperlink).catch(err =>
-                                        console.error("Failed to open URL:", err)
-                                    );
-                                }
-                            };
+                                return (
+                                    <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                                        <Image
+                                            source={{ uri: item.image }}
+                                            style={{ width, height, resizeMode: 'cover' }}
+                                        />
+                                    </TouchableOpacity>
+                                );
+                            }}
+                            showNextButton={false}
+                            showDoneButton={false}
+                            dotStyle={Globalstyles.dot}
+                            activeDotStyle={Globalstyles.activeDot}
+                        />
+                    </View>
+                )}
 
-                            return (
-                                <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
-                                    <Image
-                                        source={{ uri: item.image }}
-                                        style={{ width, height, resizeMode: 'cover' }}
-                                    />
-                                </TouchableOpacity>
-                            );
-                        }}
-                        showNextButton={false}
-                        showDoneButton={false}
-                        dotStyle={Globalstyles.dot}
-                        activeDotStyle={Globalstyles.activeDot}
-                    />
-
-                </View>
             </ScrollView>
         </SafeAreaView>
     );

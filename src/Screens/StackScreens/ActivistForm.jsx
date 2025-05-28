@@ -94,9 +94,10 @@ export default function ActivistForm({ navigation }) {
   };
 
   const handleStateInputChange = (text) => {
-    setStateInput(text);
+    const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+    setStateInput(filteredText);
 
-    if (text) {
+    if (filteredText) {
       const filtered = StateData.filter((item) =>
         item?.label?.toLowerCase().includes(text.toLowerCase())
       ).map(item => item.label);
@@ -107,7 +108,7 @@ export default function ActivistForm({ navigation }) {
 
     setActivistData(prevActivistData => ({
       ...prevActivistData,
-      state: text,
+      state: filteredText,
     }));
   };
 
@@ -122,8 +123,9 @@ export default function ActivistForm({ navigation }) {
   };
 
   const handleCityInputChange = (text) => {
-    setCityInput(text);
-    if (text) {
+    const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+    setCityInput(filteredText);
+    if (filteredText) {
       const filtered = CityData.filter((item) =>
         item?.label?.toLowerCase().includes(text.toLowerCase())
       ).map(item => item.label);
@@ -134,7 +136,7 @@ export default function ActivistForm({ navigation }) {
 
     setActivistData(prevActivistData => ({
       ...prevActivistData,
-      city: text,
+      city: filteredText,
     }));
   };
 
@@ -183,11 +185,11 @@ export default function ActivistForm({ navigation }) {
     ];
 
     const payload = {};
+
     for (const key of keys) {
-      if (ActivistData[key] !== undefined && ActivistData[key] !== "") {
-        payload[key] = ActivistData[key];
-      } else if (isNew) {
-        payload[key] = "";
+      const value = ActivistData[key];
+      if (value !== undefined && value !== "") {
+        payload[key] = value;
       }
     }
     if (payload.dob) {
@@ -202,7 +204,7 @@ export default function ActivistForm({ navigation }) {
       if (parsedDate && parsedDate.isValid()) {
         payload.dob = parsedDate.format("DD/MM/YYYY");
       } else {
-        console.error("❌ Invalid DOB format received:", payload.dob);
+        console.error("Invalid DOB format received:", payload.dob);
         throw new Error("Invalid DOB format. Expected format is YYYY-MM-DD.");
       }
     }
@@ -217,17 +219,23 @@ export default function ActivistForm({ navigation }) {
     } else {
       delete payload.knownActivistId;
     }
-
     if (ActivistData.profilePhoto) {
       try {
         payload.profilePhoto = await convertToBase64(ActivistData.profilePhoto);
         console.log("📸 Converted Base64 Image:", payload.profilePhoto);
       } catch (error) {
-        console.error("❌ Base64 Conversion Error:", error);
+        console.error("Base64 Conversion Error:", error);
       }
     }
 
     return payload;
+  };
+
+  const handleInputChange = (field, value) => {
+    setActivistData(prev => ({
+      ...prev,
+      [field]: value,
+    }));
   };
 
 
@@ -276,20 +284,19 @@ export default function ActivistForm({ navigation }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleInputChange = (field, value) => {
-    setActivistData(prev => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-
   const handleActivistSave = async () => {
     try {
-      let payload;
       if (!validateFields()) {
+        showMessage({
+          message: "Please complete all mandatory sections before submitting.",
+          type: "danger",
+          duration: 4000,
+          icon: "danger",
+          position: 'bottom'
+        });
         return;
       }
+      let payload;
 
       setIsLoading(true);
       const token = await AsyncStorage.getItem("userToken");
@@ -326,7 +333,7 @@ export default function ActivistForm({ navigation }) {
             : "Your activist approval request is on its way! Stay tuned.",
           description: response.data.message || "Your changes have been saved!",
           icon: "success",
-          duration: 5000, // shows for 3 seconds
+          duration: 7000, // shows for 3 seconds
         });
 
         setIsEditing(false);
@@ -377,28 +384,6 @@ export default function ActivistForm({ navigation }) {
       }));
     }
   };
-  const handleRemoveActivistId = (index) => {
-    setActivistData((prev) => ({
-      ...prev,
-      knownActivistId: prev.knownActivistId.filter((_, i) => i !== index),
-    }));
-  };
-
-  const handleChangeText = (text) => {
-    setTempId(text);
-    if (typingTimeout) {
-      clearTimeout(typingTimeout);
-    }
-
-    setTypingTimeout(
-      setTimeout(() => {
-        if (text.trim()) {
-          handleAddActivistId(text.trim());
-          setTempId("");
-        }
-      }, 5000)
-    );
-  };
 
   return (
     <SafeAreaView style={Globalstyles.container}>
@@ -417,11 +402,15 @@ export default function ActivistForm({ navigation }) {
           placeholder="Enter your Full Name"
           value={ActivistData.fullname}
           onChangeText={(text) => {
-            setActivistData((prev) => ({ ...prev, fullname: text }));
+            const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+            setActivistData((prev) => ({ ...prev, fullname: filteredText }));
           }}
           placeholderTextColor={Colors.gray}
           autoComplete="off"
-          textContentType="none" />
+          textContentType="none"
+          importantForAutofill="no"
+          autoCorrect={false}
+        />
         {errors?.fullname && (
           <Text style={styles.errorText}>
             {errors.fullname}
@@ -440,30 +429,8 @@ export default function ActivistForm({ navigation }) {
           placeholderStyle={{ color: '#E7E7E7' }}
           autoScroll={false}
           showsVerticalScrollIndicator={false}
+          autoCorrect={false}
         />
-        {/* <TextInput
-          style={Globalstyles.input}
-          value={ActivistData?.subCaste}
-          onChangeText={handleSubCasteInputChange}
-          placeholder="Type your sub caste"
-          placeholderTextColor={Colors.gray}
-          autoComplete="off"
-          textContentType="none"
-        />
-
-        {filteredSubCaste.length > 0 ? (
-          <FlatList
-            data={filteredSubCaste.slice(0, 5)}
-            scrollEnabled={false}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => handleSubCasteSelect(item)}>
-                <Text style={Globalstyles.listItem}>{item}</Text>
-              </TouchableOpacity>
-            )}
-            style={Globalstyles.suggestions}
-          />
-        ) : null} */}
 
         {errors?.subCaste && (
           <Text style={styles.errorText}>
@@ -505,7 +472,7 @@ export default function ActivistForm({ navigation }) {
               }
               mode="date"
               display="default"
-              maximumDate={new Date()}
+              maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))}
               themeVariant="light"
               onChange={(event, selectedDate) => {
                 setShowDatePicker(false);
@@ -519,7 +486,6 @@ export default function ActivistForm({ navigation }) {
             />
           )}
         </View>
-
 
         {errors?.dob && (
           <Text style={styles.errorText}>
@@ -537,6 +503,8 @@ export default function ActivistForm({ navigation }) {
           placeholderTextColor={Colors.gray}
           autoComplete="off"
           textContentType="none"
+          importantForAutofill="no"
+          autoCorrect={false}
         />
 
         {filteredStates.length > 0 ? (
@@ -569,6 +537,8 @@ export default function ActivistForm({ navigation }) {
           placeholderTextColor={Colors.gray}
           autoComplete="off"
           textContentType="none"
+          importantForAutofill="no"
+          autoCorrect={false}
         />
         {filteredCities.length > 0 && cityInput ? (
           <FlatList
@@ -593,12 +563,14 @@ export default function ActivistForm({ navigation }) {
         <TextInput
           style={[Globalstyles.input, errors.mobileNo && styles.errorInput]}
           placeholder="Enter contact number"
-          keyboardType="numeric"
+          keyboardType='phone-pad'
           maxLength={10}
           placeholderTextColor={Colors.gray}
           value={ActivistData.mobileNo} onChangeText={(text) => setActivistData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
           autoComplete="off"
           textContentType="none"
+          importantForAutofill="no"
+          autoCorrect={false}
         />
         {errors?.mobileNo && (
           <Text style={styles.errorText}>
@@ -618,30 +590,9 @@ export default function ActivistForm({ navigation }) {
           placeholderTextColor={Colors.gray}
           autoComplete="off"
           textContentType="none"
+          importantForAutofill="no"
+          autoCorrect={false}
         />
-        {/* <TextInput
-          style={Globalstyles.input}
-          placeholder="Enter Activist ID (eg., Me AA0001)"
-          value={tempId}
-          onChangeText={handleChangeText}
-          onSubmitEditing={() => {
-            handleAddActivistId(tempId);
-            setTempId("");
-          }}
-          placeholderTextColor={Colors.gray}
-          autoComplete="off"
-          textContentType="none"
-        /> */}
-        {/* <View style={{ flexDirection: "row", flexWrap: "wrap", marginTop: 10 }}>
-          {ActivistData.knownActivistIds.map((item, index) => (
-            <View key={index} style={styles.tag}>
-              <Text style={styles.tagText}>{item.activistId}</Text>
-              <TouchableOpacity onPress={() => handleRemoveActivistId(index)}>
-                <Text style={styles.removeTag}>✖</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
-        </View> */}
         <Text style={Globalstyles.title}>Are you engaged with any Brahmin committee? </Text>
         <View style={styles.radioGroup}>
           <TouchableOpacity

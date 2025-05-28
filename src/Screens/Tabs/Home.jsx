@@ -68,34 +68,34 @@ const Home = ({ navigation }) => {
 
   const sections = ["dummy"];
 
-  useEffect(() => {
-    const expiredServices = [];
+  // useEffect(() => {
+  //   const expiredServices = [];
 
-    if (isBiodataExpired) expiredServices.push('Biodata');
-    if (isPanditExpired) expiredServices.push('Pandit');
-    if (isJyotishExpired) expiredServices.push('Jyotish');
-    if (isKathavachakExpired) expiredServices.push('Kathavachak');
-    if (expiredServices.length > 0) {
-      Alert.alert(
-        'Subscription Expired',
-        `Your ${expiredServices.join(', ')} subscription(s) have expired. Please renew to continue using the services.`,
-        [
-          {
-            text: 'OK',
-            style: 'default',
-            onPress: () => {
-              navigation.navigate("MainApp", {
-                screen: "Tabs",
-                params: {
-                  screen: "MyProfile",
-                },
-              });
-            },
-          },
-        ]
-      );
-    }    
-  }, [isBiodataExpired, isPanditExpired, isJyotishExpired, isKathavachakExpired]);
+  //   if (isBiodataExpired) expiredServices.push('Biodata');
+  //   if (isPanditExpired) expiredServices.push('Pandit');
+  //   if (isJyotishExpired) expiredServices.push('Jyotish');
+  //   if (isKathavachakExpired) expiredServices.push('Kathavachak');
+  //   if (expiredServices.length > 0) {
+  //     Alert.alert(
+  //       'Subscription Expired',
+  //       `Your ${expiredServices.join(', ')} subscription(s) have expired. Please renew to continue using the services.`,
+  //       [
+  //         {
+  //           text: 'OK',
+  //           style: 'default',
+  //           onPress: () => {
+  //             navigation.navigate("MainApp", {
+  //               screen: "Tabs",
+  //               params: {
+  //                 screen: "MyProfile",
+  //               },
+  //             });
+  //           },
+  //         },
+  //       ]
+  //     );
+  //   }
+  // }, [isBiodataExpired, isPanditExpired, isJyotishExpired, isKathavachakExpired]);
 
 
   const onRefresh = useCallback(() => {
@@ -128,6 +128,7 @@ const Home = ({ navigation }) => {
   useEffect(() => {
     Top_Advertisement_window();
     Bottom_Advertisement_window();
+    GetAll_Notification();
   }, []);
 
   const GetAll_Notification = async () => {
@@ -176,7 +177,7 @@ const Home = ({ navigation }) => {
       setIsLoading(false);
     }
   };
-  
+
   const fetchProfile = async () => {
     setProfileData({});
     try {
@@ -283,8 +284,8 @@ const Home = ({ navigation }) => {
             title: item.title,
             description: item.description,
             image: `${PHOTO_URL}/${mediaItem.mediaUrl}`,
-            resolution: mediaItem.resolution, // 👈 yeh add kiya
-            mediaType: mediaItem.mediaUrl.includes('.mp4') ? 'video' : 'image', // Determine media type
+            resolution: mediaItem.resolution, 
+            mediaType: mediaItem.mediaUrl.includes('.mp4') ? 'video' : 'image',
             hyperlink: mediaItem.hyperlink,
           }))
         );
@@ -367,57 +368,57 @@ const Home = ({ navigation }) => {
     }
   };
 
-    const getActivistProfile = async () => {
-      try {
+  const getActivistProfile = async () => {
+    try {
+      setActivitData({});
+      setIsLoading(true);
+
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+      const response = await axios.get(GET_ACTIVIST, { headers });
+      console.log("Activist data", JSON.stringify(response.data));
+
+      if (response.data && response.data.data) {
+        const fetchedData = response.data.data;
+        setActivitData(fetchedData);
+        dispatch(setActivistdata(fetchedData));
+      } else {
         setActivitData({});
-        setIsLoading(true);
-  
-        const token = await AsyncStorage.getItem('userToken');
-        if (!token) throw new Error('No token found');
-  
-        const headers = {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        };
-  
-        const response = await axios.get(GET_ACTIVIST, { headers });
-        console.log("Activist data", JSON.stringify(response.data));
-  
-        if (response.data && response.data.data) {
-          const fetchedData = response.data.data;
-          setActivitData(fetchedData);
-          dispatch(setActivistdata(fetchedData));
-        } else {
-          setActivitData({});
-          dispatch(setActivistdata({}));
-        }
-      } catch (error) {
-        const errorMsg = error.response?.data?.message || error.message;
-        console.error("Error fetching activist data:", errorMsg);
-  
-        const sessionExpiredMessages = [
-          "User does not Exist....!Please login again",
-          "Invalid token. Please login again",
-          "Token has expired. Please login again"
-        ];
-  
-        if (sessionExpiredMessages.includes(errorMsg)) {
-          await AsyncStorage.removeItem("userToken");
-          navigation.reset({
-            index: 0,
-            routes: [{ name: "AuthStack" }],
-          });
-        }
-        if (error.response && error.response.status === 400) {
-         dispatch(resetsetActivistdata()); 
-        }
-      } finally {
-        setIsLoading(false);
+        dispatch(setActivistdata({}));
       }
-    };
-    
+    } catch (error) {
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("Error fetching activist data:", errorMsg);
+
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
+      if (error.response && error.response.status === 400) {
+        dispatch(resetsetActivistdata());
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleNavigateToProfile = (item) => {
-    console.log("item", item);
+    // console.log("item", item);
     if (!navigation.isFocused()) return;
 
     if (!isBiodataMissing || isBiodataExpired) {
@@ -427,11 +428,11 @@ const Home = ({ navigation }) => {
       });
     }
     else {
-      console.log("Navigating to MatrimonyPeopleProfile");
+      // console.log("Navigating to MatrimonyPeopleProfile");
       navigation.navigate("MatrimonyPeopleProfile", {
         // userDetails: item,
         userId: item?.userId,
-        // isSaved: item?.isSaved,
+        isSaved: item?.isSaved,
         // isBlur: item?.isBlur
       });
     }
@@ -606,7 +607,7 @@ const Home = ({ navigation }) => {
                             resizeMode="cover"
                             repeat
                             muted={false}
-                            controls={true}
+                            controls={false}
                             paused={false}
                           />
                         ) : (

@@ -31,7 +31,6 @@ const ViewMyEventPost = ({ navigation, route }) => {
   const events = route?.params?.events || myeventpost;
   const [commentData, setCommentData] = useState({});
   const [selectedPostId, setSelectedPostId] = useState(null)
-  const [page, setPage] = useState(1);
   const [IsLoading, setIsLoading] = useState(false);
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
   const [myComment, setMyComment] = useState("");
@@ -48,16 +47,18 @@ const ViewMyEventPost = ({ navigation, route }) => {
     setTimeout(() => {
       setRefreshing(false);
       fetchPostData();
-      setPage(1);
     }, 2000);
   }, []);
 
   useFocusEffect(
     useCallback(() => {
-      setPage(1);
       fetchPostData();
     }, [])
   );
+
+  useEffect(() => {
+    fetchPostData();
+  }, [])
 
   const fetchPostData = async () => {
     try {
@@ -69,7 +70,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
       const response = await axios.get(VIEW_EVENT, { headers });
 
       if (response.status === 200 && response.data.status === true) {
-        const postData = response.data.data;
+         const postData = response.data.data.eventPosts;
         console.log("myeventpost", postData);
         setMyeventpost(postData);
       }
@@ -435,11 +436,9 @@ const ViewMyEventPost = ({ navigation, route }) => {
   }
 
   const showModal = (event, item) => {
-    event.stopPropagation(); // Stop event bubbling
-    setModalData(item); // Set the correct event data
+    event.stopPropagation();
+    setModalData(item);
     setModalVisible(true);
-
-    // Get button position
     event.target.measure((fx, fy, width, height, px, py) => {
       setModalPosition({ top: py + height + 5, left: px - 130 });
     });
@@ -515,8 +514,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
 
   const renderItem = ({ item }) => {
     const isLiked = item.isLiked || null;
-    // Ensure images are properly extracted from the array
-    const images = item.images || []; // Use the 'images' array directly
+    const images = item.images || [];
 
     return (
       <View style={styles.card}>
@@ -530,7 +528,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
                 {item.activistName} <Text style={styles.hour}>{getTimeAgo(item.createdAt)}</Text>
               </Text> */}
               <Text style={styles.name}>
-                {item.activistName} <Text style={styles.hour}>{MyActivistProfile?.activistId}</Text>
+                {item.activistName} <Text style={styles.hour}>{MyActivistProfile?.activistName}</Text>
               </Text>
               <Text style={styles.date_time}>{formatDateTime(item.createdAt)}</Text>
             </View>
@@ -674,9 +672,9 @@ const ViewMyEventPost = ({ navigation, route }) => {
                       disabled={deletecommentLoading}
                     >
                       {deletecommentLoading ? (
-                        <Text style={{ color: Colors.theme_color, fontSize: 12 }}>Deleting...</Text>
+                        <Text style={{ color: Colors.theme_color, fontSize: SF(13), fontFamily: "Poppins-Regular" }}>Deleting...</Text>
                       ) : (
-                        <Entypo name={'cross'} color={Colors.theme_color} size={15} />
+                        <Entypo name={'cross'} color={Colors.theme_color} size={17} />
                       )}
                     </TouchableOpacity>
 
@@ -750,7 +748,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
       </View>
       <ScrollView style={styles.bottomContainer} showsVerticalScrollIndicator={false}>
         <FlatList
-          data={myeventpost}
+          data={events}
           renderItem={renderItem}
           keyExtractor={(item) => item._id}
           scrollEnabled={false}

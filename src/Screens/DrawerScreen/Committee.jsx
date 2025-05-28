@@ -1,5 +1,5 @@
 
-import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, RefreshControl ,BackHandler } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, RefreshControl, BackHandler } from 'react-native';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { slider } from '../../DummyData/DummyData';
 import { Image } from 'react-native';
@@ -25,6 +25,7 @@ import { SW } from '../../utils/Dimensions';
 import _ from "lodash";
 import { showMessage } from 'react-native-flash-message';
 import { CommonActions } from '@react-navigation/native';
+import { Dropdown } from 'react-native-element-dropdown';
 
 const Committee = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -48,91 +49,6 @@ const Committee = ({ navigation }) => {
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
   const [slider, setSlider] = useState([]);
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-      setLocality('');
-      setSubcaste('');
-      fetchComitteeData("all");
-      fetchMyCommitteeData();
-      Advertisement_window();
-    }, 2000);
-  }, []);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      setLocality('');
-      setSubcaste('');
-      fetchComitteeData("all");
-      fetchMyCommitteeData();
-      Advertisement_window();
-    }, [])
-  );
-
-     useFocusEffect(
-        React.useCallback(() => {
-          const onBackPress = () => {
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{ name: 'MainApp' }],
-              })
-            );
-            return true;
-          };
-    
-          BackHandler.addEventListener('hardwareBackPress', onBackPress);
-    
-          return () =>
-            BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-        }, [])
-      );
-  
-
-  useEffect(() => {
-    Advertisement_window();
-  }, []);
-
-  const openImageViewer = (imageUri) => {
-    setSelectedImage(imageUri);
-    setImageVisible(true);
-  };
-
-  const handleInputChange = (text) => {
-    setSubcaste(text);
-    if (text.trim() === '') {
-      setFilteredOptions([]);
-    } else {
-      const filtered = subCasteOptions.filter((option) =>
-        option.label.toLowerCase().includes(text.toLowerCase())
-      );
-      setFilteredOptions(filtered);
-    }
-  };
-
-  const handleOptionSelect = (value) => {
-    setSubcaste(value.label);
-    setFilteredOptions([]);
-  };
-
-
-  useEffect(() => {
-    if (slider.length === 0) return;
-
-    const currentSlide = slider[currentIndex];
-    const durationInSeconds = currentSlide?.duration || 2;
-    const durationInMilliseconds = durationInSeconds * 1000;
-
-    const timeout = setTimeout(() => {
-      const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
-      setCurrentIndex(nextIndex);
-      sliderRef.current?.goToSlide(nextIndex);
-    }, durationInMilliseconds);
-
-    return () => clearTimeout(timeout);
-  }, [currentIndex, slider]);
 
 
   const fetchMyCommitteeData = async () => {
@@ -304,6 +220,81 @@ const Committee = ({ navigation }) => {
       }
     }
   };
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+      setLocality('');
+      setSubcaste('');
+      fetchComitteeData("all");
+      fetchMyCommitteeData();
+      Advertisement_window();
+    }, 2000);
+  }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // setLocality('');
+      // setSubcaste('');
+      // fetchComitteeData("all");
+      fetchMyCommitteeData();
+      Advertisement_window();
+    }, [])
+  );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: 'MainApp' }],
+          })
+        );
+        return true;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [])
+  );
+
+
+  useEffect(() => {
+    fetchComitteeData("all");
+    Advertisement_window();
+  }, []);
+
+  const openImageViewer = (imageUri) => {
+    setSelectedImage(imageUri);
+    setImageVisible(true);
+  };
+
+  const handleInputChange = (field, value) => {
+    if (field === "subCaste") {
+      setSubcaste(value);
+    }
+  };
+
+
+  useEffect(() => {
+    if (slider.length === 0) return;
+
+    const currentSlide = slider[currentIndex];
+    const durationInSeconds = currentSlide?.duration || 2;
+    const durationInMilliseconds = durationInSeconds * 1000;
+
+    const timeout = setTimeout(() => {
+      const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
+      setCurrentIndex(nextIndex);
+      sliderRef.current?.goToSlide(nextIndex);
+    }, durationInMilliseconds);
+
+    return () => clearTimeout(timeout);
+  }, [currentIndex, slider]);
 
   const renderSkeleton = () => (
     <SkeletonPlaceholder>
@@ -479,12 +470,15 @@ const Committee = ({ navigation }) => {
 
   const handleCloseFilter = () => {
     setModalVisible(false);
+    fetchComitteeData("modal");
+  };
+
+  const resetFilter = () => {
     setLocality('');
     setModalLocality('');
     setSubcaste('');
-    setCommitteeData([]);
-    fetchComitteeData("modal");
-  };
+    fetchComitteeData("all");
+  }
 
   return (
     <SafeAreaView style={Globalstyles.container}>
@@ -554,10 +548,7 @@ const Committee = ({ navigation }) => {
           {locality.length > 0 ? (
             <AntDesign name={'close'} size={20} color={'gray'} onPress={() => {
               setLocality('');
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'Committee' }],
-              });
+              fetchComitteeData("all");
             }} />
           ) : (
             <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchComitteeData("search")} />
@@ -656,6 +647,9 @@ const Committee = ({ navigation }) => {
                 <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                 <Text style={Globalstyles.headerText}>Filter</Text>
               </TouchableOpacity>
+              <TouchableOpacity onPress={resetFilter}>
+                <Text style={Globalstyles.headerText}>Reset Filter</Text>
+              </TouchableOpacity>
             </View>
 
             <View style={Globalstyles.form}>
@@ -675,46 +669,37 @@ const Committee = ({ navigation }) => {
               <View>
                 <Text style={Globalstyles.title}>Sub-Caste</Text>
                 <View>
-                  <TextInput
+                  <Dropdown
+                    style={[Globalstyles.input]}
+                    data={subCasteOptions}
+                    labelField="label"
+                    valueField="value"
                     value={subcaste}
-                    onChangeText={handleInputChange}
-                    placeholder="Type your caste"
-                    placeholderTextColor={Colors.gray}
-                    style={Globalstyles.input}
-                    autoComplete="off"
-                    textContentType="none"
+                    onChange={(text) => handleInputChange("subCaste", text.value)}
+                    placeholder="Select Your subCaste"
+                    placeholderStyle={{ color: '#E7E7E7' }}
+                    autoScroll={false}
+                    showsVerticalScrollIndicator={false}
                   />
-                  {filteredOptions.length > 0 && (
-                    <FlatList
-                      data={filteredOptions.slice(0, 2)}
-                      scrollEnabled={false}
-                      keyExtractor={(item) => item.value}
-                      style={[Globalstyles.suggestions, { marginBottom: 10 }]}
-                      renderItem={({ item }) => (
-                        <TouchableOpacity onPress={() => handleOptionSelect(item)}>
-                          <Text style={styles.label}>{item.label}</Text>
-                        </TouchableOpacity>
-                      )}
-                      onLayout={(event) => {
-                        const height = event.nativeEvent.layout.height;
-                        setListHeight(height);
-                      }}
-                    />
-                  )}
                 </View>
               </View>
 
               <TouchableOpacity
                 style={styles.applyButton}
                 onPress={() => {
-                  fetchComitteeData();
                   handleCloseFilter();
                 }}
               >
                 <Text style={styles.applyButtonText}>See Results</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => setModalVisible(false)}
+                onPress={() => {
+                  setModalVisible(false);
+                  setLocality('');
+                  setSubcaste('');
+                  setCommitteeData([]);
+                  fetchComitteeData("all");
+                }}
                 style={[
                   styles.crossButton,
                   { top: SH(200) + listHeight + 100 },

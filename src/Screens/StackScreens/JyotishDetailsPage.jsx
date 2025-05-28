@@ -43,6 +43,8 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
     const profilePhoto = profileData?.profilePhoto
         ? { uri: profileData.profilePhoto }
         : require('../../Images/NoImage.png');
+    const validSlides = slider.filter(item => !!item.image);
+
 
     useFocusEffect(
         useCallback(() => {
@@ -58,7 +60,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
             showMessage({
                 type: "error",
                 message: "Jyotish ID not found!",
-                duarion:5000
+                duarion: 7000
             });
             return;
         }
@@ -69,7 +71,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                 type: "danger",
                 message: "No token found. Please log in again.",
                 icon: "danger",
-                duarion:5000
+                duarion: 5000
             });
             return;
         }
@@ -92,7 +94,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                     type: "danger",
                     message: "No Profile Found",
                     description: response.data.message || "Something went wrong!",
-                    duarion:5000
+                    duarion: 7000
                 });
             }
         } catch (error) {
@@ -100,22 +102,22 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
             console.error("Error fetching jyotish detials :", errorMsg);
             showMessage({
                 type: "danger",
-                message:errorMsg,
+                message: errorMsg,
                 description: "Failed to load profile data",
-                duarion:5000
+                duarion: 5000
             });
             const sessionExpiredMessages = [
-              "User does not Exist....!Please login again",
-              "Invalid token. Please login again",
-              "Token has expired. Please login again"
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
             ];
-        
+
             if (sessionExpiredMessages.includes(errorMsg)) {
-              await AsyncStorage.removeItem("userToken");
-              navigation.reset({
-                index: 0,
-                routes: [{ name: "AuthStack" }],
-              });
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
             }
             setLoading(false)
         } finally {
@@ -191,7 +193,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                 type: "danger",
                 message: "User ID not found!",
                 icon: "danger",
-                duarion:5000
+                duarion: 7000
             });
             return;
         }
@@ -218,7 +220,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                     type: "success",
                     message: response.data.message || "Profile saved successfully!",
                     icon: "success",
-                    duarion:5000
+                    duarion: 7000
                 });
 
                 // ✅ API response ke hisaab se state update karo
@@ -241,7 +243,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                 type: "danger",
                 message: errorMessage,
                 icon: "danger",
-                duarion:5000
+                duarion: 7000
             });
         }
     };
@@ -259,7 +261,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
         showMessage({
             type: 'info',
             message: message,
-            duarion:5000,
+            duarion: 7000,
             autoHide: true,
             icon: "info"
         });
@@ -306,7 +308,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
             type: "info",
             message: "Under development",
             icon: "info",
-            duarion:5000
+            duarion: 7000
         });
     };
 
@@ -377,7 +379,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                         <Text style={styles.name} numberOfLines={2}>{profileData?.fullName}</Text>
 
                         <View style={styles.FlexContainer}>
-                        <Text style={[styles.city,{fontFamily:"Poppins-Bold"}]}>{profileData?.city}</Text>
+                            <Text style={[styles.city, { fontFamily: "Poppins-Bold" }]}>{profileData?.city}</Text>
                             <Text style={styles.city}>{profileData?.state}</Text>
                         </View>
 
@@ -465,7 +467,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                     {profileData?.experience ? (
                         <>
                             <Text style={styles.sectionTitle}>Experience </Text>
-                            <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} years of experience` : ''}</Text>
+                            <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} + kathyears of experience` : ''}</Text>
                         </>
                     ) : null}
 
@@ -525,7 +527,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                             <Rating
                                 type="star"
                                 ratingCount={5}
-                                imageSize={15}
+                                imageSize={18}
                                 startingValue={myRatings[0]?.rating}
                                 readonly
                             />
@@ -589,9 +591,9 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                         </>
                     ) : (
                         <View style={styles.noReviewsContainer}>
-                        <Text style={styles.noReviewsTitle}>Reviews will show up here</Text>
-                        <Text style={styles.noReviewsSubtitle}>You'll see others' feedback once they post it.</Text>
-                      </View>
+                            <Text style={styles.noReviewsTitle}>Reviews will show up here</Text>
+                            <Text style={styles.noReviewsSubtitle}>You'll see others' feedback once they post it.</Text>
+                        </View>
                     )}
 
                 </View>
@@ -620,37 +622,39 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                         <FontAwesome5 name="instagram" size={30} color="#E4405F" />
                     </TouchableOpacity>
                 </View>
-                <View style={[styles.Bottomimage, { paddingBottom: SH(15) }]}>
-                    <AppIntroSlider
-                        ref={sliderRef}
-                        data={slider}
-                        renderItem={({ item }) => {
-                            const { width, height } = item.resolution;
+                {validSlides.length > 0 && (
+                    <View style={[styles.Bottomimage, { paddingBottom: SH(15) }]}>
+                        <AppIntroSlider
+                            ref={sliderRef}
+                            data={slider}
+                            renderItem={({ item }) => {
+                                const { width, height } = item.resolution;
 
-                            const handlePress = () => {
-                                if (item.hyperlink) {
-                                    Linking.openURL(item.hyperlink).catch(err =>
-                                        console.error("Failed to open URL:", err)
-                                    );
-                                }
-                            };
+                                const handlePress = () => {
+                                    if (item.hyperlink) {
+                                        Linking.openURL(item.hyperlink).catch(err =>
+                                            console.error("Failed to open URL:", err)
+                                        );
+                                    }
+                                };
 
-                            return (
-                                <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
-                                    <Image
-                                        source={{ uri: item.image }}
-                                        style={{ width, height, resizeMode: 'cover' }}
-                                    />
-                                </TouchableOpacity>
-                            );
-                        }}
-                        showNextButton={false}
-                        showDoneButton={false}
-                        dotStyle={Globalstyles.dot}
-                        activeDotStyle={Globalstyles.activeDot}
-                    />
+                                return (
+                                    <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                                        <Image
+                                            source={{ uri: item.image }}
+                                            style={{ width, height, resizeMode: 'cover' }}
+                                        />
+                                    </TouchableOpacity>
+                                );
+                            }}
+                            showNextButton={false}
+                            showDoneButton={false}
+                            dotStyle={Globalstyles.dot}
+                            activeDotStyle={Globalstyles.activeDot}
+                        />
 
-                </View>
+                    </View>
+                )}
             </ScrollView>
         </SafeAreaView>
     );

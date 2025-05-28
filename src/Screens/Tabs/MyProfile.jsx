@@ -304,11 +304,11 @@ const MyProfile = ({ navigation }) => {
                     duration: 3000,
                     icon: "success"
                 });
-
-                console.log("Navigating to MainApp...");
-                navigation.reset({
-                    index: 0,
-                    routes: [{ name: "MainApp" }],
+                navigation.navigate("MainApp", {
+                    screen: "Tabs",
+                    params: {
+                        screen: "MyProfile",
+                    },
                 });
             }
         } catch (error) {
@@ -345,8 +345,8 @@ const MyProfile = ({ navigation }) => {
     const handleCameraCapture = () => {
         ImageCropPicker.openCamera({
             cropping: true,
-            width: 300,
-            height: 250,
+            width: 1000,
+            height: 1000,
             includeBase64: true,
         })
             .then(image => {
@@ -429,7 +429,7 @@ const MyProfile = ({ navigation }) => {
                     <ScrollView style={{ paddingVertical: SH(5), paddingHorizontal: SW(10) }} showsVerticalScrollIndicator={false}>
                         <View style={styles.userDeatil}>
                             <View style={styles.userData}>
-                                <Text style={styles.text}>User ID  {profileData.userId || 'NA'}</Text>
+                                <Text style={styles.text}>User ID:  {profileData.userId || 'NA'}</Text>
                                 <Text style={styles.text}>{capitalizeFirstLetter(profileData.username || 'NA')}</Text>
                                 <Text style={styles.text}>DOB: {formattedDate || 'NA'}</Text>
                                 <Text style={styles.text}>City: {capitalizeFirstLetter(profileData.city || 'NA')}</Text>

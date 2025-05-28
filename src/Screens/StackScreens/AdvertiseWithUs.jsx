@@ -68,7 +68,7 @@ const AdvertiseWithUs = ({ navigation }) => {
                     message: 'Success',
                     description: response.data.message || 'Your Advertise Request has been submitted successfully!',
                     icon: "success",
-                    duarion: 5000
+                    duarion: 7000
                 });
 
                 setTimeout(() => {
@@ -88,7 +88,7 @@ const AdvertiseWithUs = ({ navigation }) => {
                 message: 'Error',
                 description: errorMsg,
                 icon: "danger",
-                duarion: 5000
+                duarion: 7000
             });
             const sessionExpiredMessages = [
                 "User does not Exist....!Please login again",
@@ -182,25 +182,13 @@ const AdvertiseWithUs = ({ navigation }) => {
                                     appwin.in@gmail.com
                                 </Text>
                             </View>
-
-                            {/* <View style={styles.iconContainer}>
-                                <MaterialIcons name="location-on" size={22} color={Colors.light} />
-                                <Text style={styles.contactText}>132 Dartmouth Street Boston, MA</Text>
-                            </View> */}
-
-                            {/* Social Media Icons */}
-                            {/* <View style={styles.socialContainer}>
-                                <AntDesign name="twitter" size={20} color={Colors.light} style={styles.socialIcon} />
-                                <AntDesign name="instagram" size={20} color={Colors.light} style={styles.socialIcon} />
-                                <MaterialIcons name="discord" size={20} color={Colors.light} style={styles.socialIcon} />
-                            </View> */}
                         </View>
                     </View>
 
                 </ImageBackground>
                 <View style={Globalstyles.form}>
                     <Text style={Globalstyles.title}>Full Name</Text>
-                    <TextInput style={Globalstyles.input} placeholder="Enter Full Name"
+                    <TextInput style={[Globalstyles.input, errors.fullName && styles.errorInput]} placeholder="Enter Full Name"
                         value={fullName}
                         onChangeText={(text) => {
                             const cleanText = text.replace(/[^A-Za-z\s]/g, '');
@@ -208,25 +196,36 @@ const AdvertiseWithUs = ({ navigation }) => {
                         }}
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none" />
+                        textContentType="none"
+                        importantForAutofill="no"
+                        autoCorrect={false}
+                    />
 
                     {errors.fullName && (
                         <Text style={styles.errorText}>{errors.fullName}</Text>
                     )}
                     <Text style={Globalstyles.title}>Email</Text>
-                    <TextInput style={Globalstyles.input} placeholder="Enter Email" value={email} onChangeText={setEmail} keyboardType="email-address"
+                    <TextInput style={[Globalstyles.input, errors.email && styles.errorInput]} placeholder="Enter Email" value={email} onChangeText={setEmail} keyboardType="email-address"
                         placeholderTextColor={Colors.gray}
                         autoComplete="off"
-                        textContentType="none" />
+                        textContentType="email"
+                        importantForAutofill="no"
+                        autoCorrect={false}
+                    />
                     {errors.email && (
                         <Text style={styles.errorText}>{errors.email}</Text>
                     )}
 
                     <Text style={Globalstyles.title}>Phone No</Text>
-                    <TextInput style={Globalstyles.input} placeholder="Enter Mobile Number" value={mobileNo}
+                    <TextInput style={[Globalstyles.input, errors.email && styles.errorInput]} placeholder="Enter Mobile Number" value={mobileNo}
                         onChangeText={(text) => setMobileNo(text.replace(/[^0-9]/g, ''))}
-                        keyboardType="numeric" maxLength={10}
-                        placeholderTextColor={Colors.gray} />
+                        keyboardType="phone-pad" maxLength={10}
+                        placeholderTextColor={Colors.gray}
+                        autoComplete="off"
+                        textContentType="none"
+                        importantForAutofill="no"
+                        autoCorrect={false}
+                    />
 
                     {errors.mobileNo && (
                         <Text style={styles.errorText}>{errors.mobileNo}</Text>
@@ -237,9 +236,10 @@ const AdvertiseWithUs = ({ navigation }) => {
                         textAlignVertical='top'
                         placeholderTextColor={Colors.gray}
                         onChangeText={setMessage} multiline
-
                         autoComplete="off"
-                        textContentType="none" />
+                        textContentType="none"
+                        importantForAutofill="no"
+                        autoCorrect={false} />
                     <TouchableOpacity
                         style={styles.button}
                         onPress={handleSubmit}

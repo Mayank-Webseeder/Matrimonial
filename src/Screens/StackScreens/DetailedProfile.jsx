@@ -227,7 +227,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
       .then(image => {
         if (!image || !image.data) {
           console.error(`No image selected for ${field}`);
-          return;
+          return; s
         }
 
         const base64Image = `data:${image.mime};base64,${image.data}`;
@@ -248,23 +248,25 @@ const DetailedProfile = ({ navigation, profileData }) => {
   };
 
   const handleStateInputChange = (text) => {
-    setStateInput(text); // Input field ko update karein
+    const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
 
-    if (text) {
+    setStateInput(filteredText);
+
+    if (filteredText) {
       const filtered = StateData.filter((item) =>
-        item?.label?.toLowerCase().includes(text.toLowerCase())
+        item?.label?.toLowerCase().includes(filteredText.toLowerCase())
       ).map(item => item.label);
       setFilteredStates(filtered);
     } else {
       setFilteredStates([]);
     }
 
-    // User jo bhi likhega, vo biodata me save hoga
     setBiodata(prevState => ({
       ...prevState,
-      state: text,
+      state: filteredText,
     }));
   };
+
 
   const handleStateSelect = (item) => {
     setStateInput(item);
@@ -277,10 +279,13 @@ const DetailedProfile = ({ navigation, profileData }) => {
   };
 
   const handleCityInputChange = (text) => {
-    setCityInput(text);
-    if (text) {
+    const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+
+    setCityInput(filteredText);
+
+    if (filteredText) {
       const filtered = CityData.filter((item) =>
-        item?.label?.toLowerCase().includes(text.toLowerCase())
+        item?.label?.toLowerCase().includes(filteredText.toLowerCase())
       ).map(item => item.label);
       setFilteredCities(filtered);
     } else {
@@ -289,9 +294,10 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
     setBiodata(prevState => ({
       ...prevState,
-      currentCity: text, // Save in biodata
+      currentCity: filteredText,
     }));
   };
+
 
   const handleCitySelect = (item) => {
     setCityInput(item);
@@ -303,10 +309,12 @@ const DetailedProfile = ({ navigation, profileData }) => {
   };
 
   const handleCityOrVillageInputChange = (text) => {
-    setCityOrVillageInput(text);
-    if (text) {
+    const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+    setCityOrVillageInput(filteredText);
+
+    if (filteredText) {
       const filtered = CityData.filter((item) =>
-        item?.label?.toLowerCase().includes(text.toLowerCase())
+        item?.label?.toLowerCase().includes(filteredText.toLowerCase())
       ).map(item => item.label);
       setFilteredCitiesOrVillages(filtered);
     } else {
@@ -315,9 +323,10 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
     setBiodata(prevState => ({
       ...prevState,
-      cityOrVillage: text,
+      cityOrVillage: filteredText,
     }));
   };
+
 
   const handleCityOrVillageSelect = (item) => {
     setCityOrVillageInput(item);
@@ -526,12 +535,12 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
         if (Object.keys(errors).length > 0) {
           const errorMessages = Object.values(errors).join('\n');
-          // showMessage({
-          //   message: errorMessages,
-          //   type: "danger",
-          //   duration: 5000,
-          //   icon: "danger"
-          // });
+          showMessage({
+            message: errorMessages,
+            type: "danger",
+            duration: 5000,
+            icon: "danger"
+          });
           console.log("❌ Validation failed. Errors:", errors);
           setErrors(errors);
           setIsLoading(false);
@@ -567,7 +576,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
         showMessage({
           message: successMessage,
           type: "success",
-          duarion: 5000,
+          duarion: 7000,
           icon: "success"
         });
 
@@ -600,7 +609,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching biodata:", errorMsg);
       Alert.alert(
-        "Error",
+        "Continue",
         errorMsg,
         [
           {
@@ -854,13 +863,13 @@ const DetailedProfile = ({ navigation, profileData }) => {
       />
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
 
-        <View style={Globalstyles.form}>
+        <View style={Globalstyles.form} importantForAutofill="no">
           <View style={styles.detail}>
             <Text style={styles.Formtitle}>Create Biodata</Text>
           </View>
           <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
           <Dropdown
-            style={[Globalstyles.input, !isEditing && styles.readOnly,errors.subCaste && styles.errorInput]}
+            style={[Globalstyles.input, !isEditing && styles.readOnly, errors.subCaste && styles.errorInput]}
             data={subCasteOptions}
             labelField="label"
             valueField="value"
@@ -895,7 +904,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Gender <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.gender && styles.errorInput]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.gender && styles.errorInput]}
               data={genderData}
               labelField="label"
               valueField="value"
@@ -911,16 +920,23 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Full Name <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <TextInput
-              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.fullname && styles.errorInput]}
+              style={[
+                Globalstyles.input,
+                !isEditing && styles.readOnly,
+                errors.fullname && styles.errorInput
+              ]}
               value={biodata?.fullname}
               editable={isEditing}
               onChangeText={(text) => {
-                handleInputChange("fullname", text);
+                const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+                handleInputChange("fullname", filteredText);
               }}
               placeholder="Enter Your Full Name"
               placeholderTextColor={Colors.gray}
               autoComplete="off"
               textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
             />
 
             {errors.fullname && <Text style={styles.errorText}>{errors.fullname}</Text>}
@@ -932,7 +948,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
             <View
               style={[
-                Globalstyles.input,errors.dob && styles.errorInput,
+                Globalstyles.input, errors.dob && styles.errorInput,
                 {
                   flexDirection: "row",
                   alignItems: "center",
@@ -959,19 +975,20 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 value={biodata?.dob ? new Date(biodata?.dob) : new Date(2000, 0, 1)}
                 mode="date"
                 display="default"
+                maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))}
+                themeVariant="light"
                 onChange={(event, selectedDate) => {
                   setShowDatePicker(false);
                   if (event.type === "set" && selectedDate) {
                     setBiodata((prev) => ({
                       ...prev,
-                      dob: selectedDate,
+                      dob: moment(selectedDate).format("YYYY-MM-DD"),
                     }));
                   }
                 }}
-                maximumDate={new Date()}
-                themeVariant="light"
               />
             )}
+
           </View>
 
           <View>
@@ -985,7 +1002,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
             >
               <View
                 style={[
-                  Globalstyles.input,errors.dob && styles.errorInput,
+                  Globalstyles.input, errors.dob && styles.errorInput,
                   {
                     flexDirection: "row",
                     alignItems: "center",
@@ -1031,33 +1048,33 @@ const DetailedProfile = ({ navigation, profileData }) => {
             )}
 
           </View>
-
-
-
           <View>
             <Text style={Globalstyles.title}>Place of Birth <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <TextInput
-              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.placeofbirth && styles.errorInput]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.placeofbirth && styles.errorInput]}
               value={biodata?.placeofbirth}
               editable={isEditing}
-              onChangeText={(text) => handleInputChange("placeofbirth", text)}
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Birth Place'
+              onChangeText={(text) => {
+                const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+                handleInputChange("placeofbirth", filteredText);
+              }}
               autoComplete="off"
               textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
             />
             {errors.placeofbirth && <Text style={styles.errorText}>{errors.placeofbirth}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Marital Status <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.maritalStatus && styles.errorInput]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.maritalStatus && styles.errorInput]}
               data={maritalStatusData}
               labelField="label"
               valueField="value"
-              value={
-                maritalStatusData.find(item => item.label === biodata?.maritalStatus)?.value || ''
-              }
+              value={biodata?.maritalStatus}
               editable={isEditing}
               onChange={(text) => handleInputChange("maritalStatus", text.value)}
               placeholder="Select marital status"
@@ -1071,13 +1088,11 @@ const DetailedProfile = ({ navigation, profileData }) => {
             <Text style={Globalstyles.title}>
               Disabilities (physical, mental, etc.) <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.disabilities && styles.errorInput]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.disabilities && styles.errorInput]}
               data={MyDisabilities}
               labelField="label"
               valueField="value"
-              value={
-                MyDisabilities.find(item => item.label === biodata?.disabilities)?.value || ''
-              }
+              value={biodata?.disabilities}
               editable={isEditing}
               onChange={(text) => handleInputChange("disabilities", text.value)}
               placeholder="Select disability"
@@ -1088,13 +1103,11 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Height <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.heightFeet && styles.errorInput]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.heightFeet && styles.errorInput]}
               data={heightData}
               labelField="label"
               valueField="value"
-              value={
-                heightData.find(item => item.label === biodata?.heightFeet)?.value || ''
-              }
+              value={biodata?.heightFeet}
               editable={isEditing}
               onChange={(text) => handleInputChange("heightFeet", text.value)}
               placeholder="Height"
@@ -1127,9 +1140,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               data={MyComplexionData}
               labelField="label"
               valueField="value"
-              value={
-                MyComplexionData.find(item => item.label === biodata?.complexion)?.value || ''
-              }
+              value={biodata?.complexion}
               editable={isEditing}
               onChange={(text) => handleInputChange("complexion", text.value)}
               placeholder="Select Complexion"
@@ -1141,13 +1152,11 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Manglik Status <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.manglikStatus && styles.errorInput]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.manglikStatus && styles.errorInput]}
               data={ManglikStatusData}
               labelField="label"
               valueField="value"
-              value={
-                ManglikStatusData.find(item => item.label === biodata?.manglikStatus)?.value || ''
-              }
+              value={biodata?.manglikStatus}
               editable={isEditing}
               onChange={(text) => handleInputChange("manglikStatus", text.value)}
               placeholder="Select status"
@@ -1163,12 +1172,16 @@ const DetailedProfile = ({ navigation, profileData }) => {
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata?.nadi}
               editable={isEditing}
-              onChangeText={(text) => handleInputChange("nadi", text)}
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Nadi'
+              onChangeText={(text) => {
+                const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+                handleInputChange("nadi", filteredText);
+              }}
               autoComplete="off"
               textContentType="none"
-
+              importantForAutofill="no"
+              autoCorrect={false}
             />
           </View>
           <View>
@@ -1177,12 +1190,16 @@ const DetailedProfile = ({ navigation, profileData }) => {
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata?.gotraSelf}
               editable={isEditing}
-              onChangeText={(text) => handleInputChange("gotraSelf", text)}
               placeholderTextColor={Colors.gray}
               placeholder={'Enter Your Self Gotra'}
+              onChangeText={(text) => {
+                const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+                handleInputChange("gotraSelf", filteredText);
+              }}
               autoComplete="off"
               textContentType="none"
-
+              importantForAutofill="no"
+              autoCorrect={false}
             />
           </View>
           <View>
@@ -1191,24 +1208,26 @@ const DetailedProfile = ({ navigation, profileData }) => {
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
               value={biodata?.gotraMother}
               editable={isEditing}
-              onChangeText={(text) => handleInputChange("gotraMother", text)}
               placeholderTextColor={Colors.gray}
               placeholder={'Enter Your Mother Gotra'}
+              onChangeText={(text) => {
+                const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+                handleInputChange("gotraMother", filteredText);
+              }}
               autoComplete="off"
               textContentType="none"
-
+              importantForAutofill="no"
+              autoCorrect={false}
             />
           </View>
           <View>
             <Text style={Globalstyles.title}>Qualification <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.qualification && styles.errorInput]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.qualification && styles.errorInput]}
               data={QualificationData}
               labelField="label"
               valueField="value"
-              value={
-                QualificationData.find(item => item.label === biodata?.qualification)?.value || ''
-              }
+              value={biodata?.qualification}
               editable={isEditing}
               onChange={(text) => handleInputChange("qualification", text.value)}
               placeholder="Select Qualification"
@@ -1222,7 +1241,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Occupation <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.occupation && styles.errorInput]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.occupation && styles.errorInput]}
               data={OccupationData}
               labelField="label"
               valueField="value"
@@ -1242,7 +1261,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Income (Annually) <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.annualIncome && styles.errorInput]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.annualIncome && styles.errorInput]}
               data={Income}
               labelField="label"
               valueField="value"
@@ -1262,7 +1281,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Are you living with Family <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.livingStatus && styles.errorInput]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.livingStatus && styles.errorInput]}
               data={LivingData}
               labelField="label"
               valueField="value"
@@ -1282,13 +1301,15 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Which city do you currently live in? <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <TextInput
-              style={[Globalstyles.input,errors.currentCity && styles.errorInput]}
+              style={[Globalstyles.input, errors.currentCity && styles.errorInput]}
               value={biodata?.currentCity}
               onChangeText={handleCityInputChange}
               placeholder="Enter your city"
               placeholderTextColor={Colors.gray}
               autoComplete="off"
               textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
             />
             {errors.currentCity && <Text style={styles.errorText}>{errors.currentCity}</Text>}
             {filteredCities.length > 0 && cityInput ? (
@@ -1319,14 +1340,15 @@ const DetailedProfile = ({ navigation, profileData }) => {
               textAlignVertical="top"
               autoComplete="off"
               textContentType="none"
-
+              importantForAutofill="no"
+              autoCorrect={false}
             />
           </View>
 
           <View>
             <Text style={Globalstyles.title}>Profile created by <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.profileCreatedBy && styles.errorInput]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.profileCreatedBy && styles.errorInput]}
               data={ProfileCreatedData}
               labelField="label"
               valueField="value"
@@ -1347,39 +1369,45 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Father Full Name <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <TextInput
-              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.fatherName && styles.errorInput]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.fatherName && styles.errorInput]}
               value={biodata?.fatherName}
-              onChangeText={(text) => {
-                handleInputChange("fatherName", text);
-              }}
               editable={isEditing}
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Father Name'
+              onChangeText={(text) => {
+                const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+                handleInputChange("fatherName", filteredText);
+              }}
               autoComplete="off"
               textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
             />
             {errors.fatherName && <Text style={styles.errorText}>{errors.fatherName}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Mother Full Name <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <TextInput
-              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.motherName && styles.errorInput]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.motherName && styles.errorInput]}
               value={biodata?.motherName}
-              onChangeText={(text) => {
-                handleInputChange("motherName", text);
-              }}
               editable={isEditing}
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Mother Name'
+              onChangeText={(text) => {
+                const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+                handleInputChange("motherName", filteredText);
+              }}
               autoComplete="off"
               textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
             />
             {errors.motherName && <Text style={styles.errorText}>{errors.motherName}</Text>}
           </View>
           <View>
             <Text style={Globalstyles.title}>Father Occupation <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.fatherOccupation && styles.errorInput]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.fatherOccupation && styles.errorInput]}
               data={MotherOccupationData}
               labelField="label"
               valueField="value"
@@ -1399,7 +1427,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Father Income (Annually) <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.fatherIncomeAnnually && styles.errorInput]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.fatherIncomeAnnually && styles.errorInput]}
               data={Income}
               labelField="label"
               valueField="value"
@@ -1420,7 +1448,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Mother Occupation <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.motherOccupation && styles.errorInput]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.motherOccupation && styles.errorInput]}
               data={MotherOccupationData}
               labelField="label"
               valueField="value"
@@ -1440,7 +1468,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Mother Income (Annually) <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.motherIncomeAnnually && styles.errorInput]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.motherIncomeAnnually && styles.errorInput]}
               data={Income}
               labelField="label"
               valueField="value"
@@ -1461,7 +1489,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Family Type <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.familyType && styles.errorInput]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.familyType && styles.errorInput]}
               data={FamilyType}
               labelField="label"
               valueField="value"
@@ -1481,7 +1509,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>Siblings <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.siblings && styles.errorInput]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.siblings && styles.errorInput]}
               data={siblings}
               labelField="label"
               valueField="value"
@@ -1509,6 +1537,8 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholder='Enter Your Family Info.'
               autoComplete="off"
               textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
             />
           </View>
           <View>
@@ -1517,9 +1547,8 @@ const DetailedProfile = ({ navigation, profileData }) => {
               <MaterialIcons name="call" color="#000" size={15} style={{ paddingVertical: SW(5) }} />
               <Entypo name="star" color="red" size={12} />
             </View>
-
             <TextInput
-              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.contactNumber1 && styles.errorInput]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.contactNumber1 && styles.errorInput]}
               value={biodata?.contactNumber1}
               onChangeText={(text) => {
                 const cleanText = text.replace(/[^0-9]/g, '');
@@ -1530,16 +1559,17 @@ const DetailedProfile = ({ navigation, profileData }) => {
               editable={isEditing}
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Contact No. 1'
-              autoComplete="off"
-              textContentType="none"
+              autoComplete="tel"
+              textContentType="telephoneNumber"
+              importantForAutofill="no"
+              autoCorrect={false}
             />
             {errors.contactNumber1 && <Text style={styles.errorText}>{errors.contactNumber1}</Text>}
           </View>
-
           <View>
             <Text style={Globalstyles.title}>Contact No. 2 <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <TextInput
-              style={[Globalstyles.input, !isEditing && styles.readOnly,errors.contactNumber2 && styles.errorInput]}
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.contactNumber2 && styles.errorInput]}
               value={biodata?.contactNumber2}
               onChangeText={(text) => {
                 const cleanText = text.replace(/[^0-9]/g, '');
@@ -1550,8 +1580,10 @@ const DetailedProfile = ({ navigation, profileData }) => {
               editable={isEditing}
               placeholderTextColor={Colors.gray}
               placeholder='Enter Your Contact No. 2'
-              autoComplete="off"
+              autoComplete="tel-device"
               textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
             />
             {errors.contactNumber2 && <Text style={styles.errorText}>{errors.contactNumber2}</Text>}
           </View>
@@ -1560,13 +1592,15 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
             <Text style={Globalstyles.title}>State <Entypo name={'star'} color={'red'} size={12} /></Text>
             <TextInput
-              style={[Globalstyles.input,errors.state && styles.errorInput]}
+              style={[Globalstyles.input, errors.state && styles.errorInput]}
               value={biodata?.state} // `biodata?.state` ki jagah `stateInput` use karein
               onChangeText={handleStateInputChange}
               placeholder="Type your State"
               placeholderTextColor={Colors.gray}
               autoComplete="off"
               textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
             />
             {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
             {filteredStates.length > 0 ? (
@@ -1586,13 +1620,15 @@ const DetailedProfile = ({ navigation, profileData }) => {
           <View>
             <Text style={Globalstyles.title}>City/Village <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <TextInput
-              style={[Globalstyles.input,errors.cityOrVillage && styles.errorInput]}
+              style={[Globalstyles.input, errors.cityOrVillage && styles.errorInput]}
               value={biodata?.cityOrVillage}
               onChangeText={handleCityOrVillageInputChange}
               placeholder="Type your city/village"
               placeholderTextColor={Colors.gray}
               autoComplete="off"
               textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
             />
             {errors.cityOrVillage && <Text style={styles.errorText}>{errors.cityOrVillage}</Text>}
             {filteredCitiesOrVillages.length > 0 && cityOrVillageInput ? (
@@ -1720,15 +1756,15 @@ const DetailedProfile = ({ navigation, profileData }) => {
               placeholder='Enter Your Hobbies'
               autoComplete="off"
               textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
               autoScroll={false}
               showsVerticalScrollIndicator={false}
-
             />
           </View>
           <View>
             <Text style={Globalstyles.title}>Upload Your One Closeup Image <Entypo name={'star'} color={'red'} size={12} /> </Text>
-
-            <View style={[Globalstyles.input,errors.closeUpPhoto && styles.errorInput]}>
+            <View style={[Globalstyles.input, errors.closeUpPhoto && styles.errorInput]}>
               <TouchableOpacity onPress={() => handleImageSelection('closeUpPhoto')}>
                 {biodata?.closeUpPhoto ? (
                   <Image
@@ -1742,10 +1778,8 @@ const DetailedProfile = ({ navigation, profileData }) => {
             </View>
             {errors.closeUpPhoto && <Text style={styles.errorText}>{errors.closeUpPhoto}</Text>}
           </View>
-
           <View>
             <Text style={Globalstyles.title}>Upload Your One Full Image</Text>
-
             <View style={Globalstyles.input}>
               <TouchableOpacity onPress={() => handleImageSelection('fullPhoto')}>
                 {biodata?.fullPhoto ? (
@@ -1757,13 +1791,10 @@ const DetailedProfile = ({ navigation, profileData }) => {
                   <Text style={styles.imagePlaceholder}>Upload One Full Image</Text>
                 )}
               </TouchableOpacity>
-
             </View>
           </View>
-
           <View>
             <Text style={Globalstyles.title}>Upload Your One Best Image </Text>
-
             <View style={Globalstyles.input}>
               <TouchableOpacity onPress={() => handleImageSelection('bestPhoto')}>
                 {biodata?.bestPhoto ? (
@@ -1776,7 +1807,6 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 )}
               </TouchableOpacity>
             </View>
-
           </View>
           <TouchableOpacity
             style={styles.button}
@@ -1804,7 +1834,6 @@ const DetailedProfile = ({ navigation, profileData }) => {
                         <Text style={styles.Text}>Amount: ₹{plan.amount}</Text>
                         <View style={{ flex: 1, justifyContent: 'space-between' }}>
                           <Text style={styles.description}>{plan.description}</Text>
-
                           <View style={styles.buttonRowAligned}>
                             {!hasTrial && (
                               <TouchableOpacity style={styles.trialButton} onPress={() => handleFreeTrial(plan)}>
@@ -1820,12 +1849,10 @@ const DetailedProfile = ({ navigation, profileData }) => {
                             </TouchableOpacity>
                           </View>
                         </View>
-
                       </View>
                     ))}
                   </View>
                 </ScrollView>
-
                 <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
                   <Text style={styles.closeText}>Close</Text>
                 </TouchableOpacity>

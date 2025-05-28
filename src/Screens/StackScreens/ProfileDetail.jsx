@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { View, Text, ActivityIndicator, ScrollView, Image, TouchableOpacity, Linking, ToastAndroid, Alert, Modal, Dimensions } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -20,9 +20,12 @@ import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
 import { showMessage } from 'react-native-flash-message';
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
+import AppIntroSlider from 'react-native-app-intro-slider';
 
 const ProfileDetail = ({ route, navigation }) => {
     const { profileType } = route.params || {};
+    const topSliderRef = useRef(null);
+    const [currentIndex, setCurrentIndex] = useState(0);
     const [profileData, setProfileData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [postloading, setPostLoading] = useState(false);
@@ -34,11 +37,20 @@ const ProfileDetail = ({ route, navigation }) => {
         profileData?.personalDetails?.drinkingHabit || profileData?.personalDetails?.tobaccoHabits || profileData?.personalDetails?.hobbies;
     const personalDetails = profileData?.personalDetails;
 
-    const Myimages = [
-        profileData?.personalDetails?.closeUpPhoto,
-        profileData?.personalDetails?.fullPhoto,
-        profileData?.personalDetails?.bestPhoto
-    ].filter(Boolean);
+    useEffect(() => {
+        if (!formattedImages || formattedImages.length === 0) return;
+
+        const duration = (formattedImages[currentIndex]?.duration || 2) * 1000;
+
+        const timeout = setTimeout(() => {
+            const nextIndex =
+                currentIndex < formattedImages.length - 1 ? currentIndex + 1 : 0;
+            setCurrentIndex(nextIndex);
+            topSliderRef.current?.goToSlide(nextIndex);
+        }, duration);
+
+        return () => clearTimeout(timeout);
+    }, [currentIndex, formattedImages]);
 
 
     const profilePhoto = profileData?.profilePhoto
@@ -64,11 +76,27 @@ const ProfileDetail = ({ route, navigation }) => {
         (sub) => sub.serviceType === 'Kathavachak'
     )?.status;
 
+    const formattedImages = [
+        profileData?.personalDetails?.closeUpPhoto,
+        profileData?.personalDetails?.fullPhoto,
+        profileData?.personalDetails?.bestPhoto
+    ]
+        .filter(Boolean)
+        .map((url) => ({ uri: url }));
+
     const openImageViewer = (index) => {
         setImageIndex(index);
         setModalVisible(true);
     };
 
+    const SliderrenderItem = ({ item, index }) => (
+        <TouchableOpacity onPress={() => openImageViewer(index)}>
+            <Image
+                source={{ uri: item.uri }}
+                style={styles.sliderImage}
+            />
+        </TouchableOpacity>
+    );
 
     useEffect(() => {
         let isExpired = false;
@@ -284,89 +312,63 @@ const ProfileDetail = ({ route, navigation }) => {
             <ScrollView showsVerticalScrollIndicator={false}>
                 {profileType === 'Biodata' && (
                     <>
-                        {Myimages.length > 0 && (
-                            <View style={{ alignItems: 'center' }}>
-                                {/* Only show the first image outside */}
-                                <TouchableOpacity onPress={() => openImageViewer(0)}>
-                                    <Image
-                                        source={{ uri: Myimages[0] }}
-                                        style={{
-                                            width: SW(350),
-                                            height: SH(300),
-                                            borderRadius: 10,
-                                            resizeMode: 'cover',
-                                            marginBottom: SH(10),
-                                        }}
-                                    />
-                                </TouchableOpacity>
+                        <View style={styles.sliderContainer}>
+          <AppIntroSlider
+            ref={topSliderRef}
+            data={formattedImages}
+            renderItem={SliderrenderItem}
+            showNextButton={false}
+            showDoneButton={false}
+            dotStyle={Globalstyles.dot}
+            activeDotStyle={Globalstyles.activeDot}
+            onSlideChange={(index) => setCurrentIndex(index)}
+          />
 
-                                {/* Modal to show all images */}
-                                <Modal visible={modalVisible} transparent animationType="fade">
-                                    <View
-                                        style={{
-                                            flex: 1,
-                                            backgroundColor: 'rgba(0,0,0,0.8)',
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                        }}
-                                    >
-                                        <ScrollView
-                                            horizontal
-                                            pagingEnabled
-                                            showsHorizontalScrollIndicator={false}
-                                            onMomentumScrollEnd={(e) =>
-                                                setImageIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W))
-                                            }
-                                            contentOffset={{ x: imageIndex * SCREEN_W, y: 0 }}
-                                            style={{ width: SCREEN_W, height: SCREEN_H }}
-                                        >
-                                            {Myimages.map((uri, idx) => (
-                                                <View
-                                                    key={idx}
-                                                    style={{
-                                                        width: SCREEN_W,
-                                                        height: SCREEN_H,
-                                                        justifyContent: 'center',
-                                                        alignItems: 'center',
-                                                    }}
-                                                >
-                                                    <Image
-                                                        source={{ uri }}
-                                                        resizeMode="contain"
-                                                        style={{ width: '100%', height: '100%' }}
-                                                    />
-                                                </View>
-                                            ))}
-                                        </ScrollView>
+          {/* Modal for Full Image View */}
+          <Modal visible={modalVisible} transparent={true} animationType="fade">
+            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.8)" }}>
+              <ScrollView
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator={false}
+                contentOffset={{ x: imageIndex * SCREEN_W, y: 0 }}
+                onMomentumScrollEnd={(e) =>
+                  setImageIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W))
+                }
+              >
+                {formattedImages.map((img, idx) => (
+                  <View
+                    key={idx}
+                    style={{
+                      width: SCREEN_W,
+                      height: SCREEN_H,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginTop: SH(15)
+                    }}
+                  >
+                    <Image
+                      source={{ uri: img.uri }}
+                      resizeMode="contain"
+                      style={{ width: '100%', height: '100%' }}
+                    />
+                  </View>
+                ))}
+              </ScrollView>
 
-                                        {/* Index Badge */}
-                                        <View
-                                            style={{
-                                                position: 'absolute',
-                                                top: SH(40),
-                                                alignSelf: 'center',
-                                                backgroundColor: 'rgba(0,0,0,0.6)',
-                                                paddingHorizontal: SW(8),
-                                                paddingVertical: SH(8),
-                                                borderRadius: 5,
-                                            }}
-                                        >
-                                            <Text style={{ color: '#fff' }}>
-                                                {imageIndex + 1} / {Myimages.length}
-                                            </Text>
-                                        </View>
+              <View style={{
+                position: "absolute", top: SH(30), alignSelf: "center", backgroundColor: "rgba(0,0,0,0.6)",
+                paddingHorizontal: SW(8), borderRadius: 5, paddingVertical: SH(8)
+              }}>
+                <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>{imageIndex + 1} / {formattedImages.length}</Text>
+              </View>
 
-                                        {/* Close Button */}
-                                        <TouchableOpacity
-                                            onPress={() => setModalVisible(false)}
-                                            style={{ position: 'absolute', top: 40, right: 20 }}
-                                        >
-                                            <Text style={{ color: '#fff' }}>Close</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                </Modal>
-                            </View>
-                        )}
+              <TouchableOpacity onPress={() => setModalVisible(false)} style={{ position: "absolute", top: SH(40), right: SW(20) }}>
+                <Text style={{ color: "white", fontSize: SF(13), fontFamily: "Poppins-Regular" }}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </Modal>
+        </View>
 
                         <View>
                             <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
@@ -376,11 +378,13 @@ const ProfileDetail = ({ route, navigation }) => {
                                             style={styles.editButton}
                                             onPress={() => navigation.navigate("BuySubscription", { serviceType: profileType })}
                                         >
-                                            <Text style={styles.editButtonText}>Buy Subscription</Text>
+                                            <Text style={[styles.editButtonText, { color: Colors.light }]}>Buy Subscription</Text>
                                         </TouchableOpacity>
                                     ) : (
-                                        <TouchableOpacity style={[styles.editButton, { backgroundColor: "#04AA6D" }]} disabled={true}>
-                                            <Text style={[styles.editButtonText, { color: "#fff" }]}>Subscription Active</Text>
+                                        <TouchableOpacity disabled={true}>
+                                            <View style={styles.ActiveButton}>
+                                                <Text style={styles.ActiveButtonText}>Subscription Active</Text>
+                                            </View>
                                         </TouchableOpacity>
                                     )}
                                 </View>
@@ -396,7 +400,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                     </Text>
 
                                     <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('MatrimonyPage', { profileData })}>
-                                        <Text style={styles.editButtonText}>Edit Biodata</Text>
+                                        <Text style={[styles.editButtonText, { color: Colors.light }]}>Edit Biodata</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -848,7 +852,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                     <Rating
                                         type="star"
                                         ratingCount={5}
-                                        imageSize={15}
+                                        imageSize={18}
                                         startingValue={profileData?.averageRating}
                                         readonly
                                     />
@@ -865,7 +869,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                         style={styles.editButton}
                                         onPress={() => navigation.navigate('BuySubscription', { serviceType: profileType })}
                                     >
-                                        <Text style={styles.editButtonText}>Buy Subscription</Text>
+                                        <Text style={[styles.editButtonText, { color: Colors.light }]}>Buy Subscription</Text>
                                     </TouchableOpacity>
                                 ) : panditStatus === 'Pending' ? (
                                     <TouchableOpacity
@@ -875,16 +879,15 @@ const ProfileDetail = ({ route, navigation }) => {
                                         <Text style={[styles.editButtonText, { color: "red" }]}>Subscription Pending</Text>
                                     </TouchableOpacity>
                                 ) : (
-                                    <TouchableOpacity
-                                        style={[styles.editButton, { backgroundColor: '#04AA6D' }]}
-                                        disabled={true}
-                                    >
-                                        <Text style={[styles.editButtonText, { color: '#fff' }]}>Subscription Active</Text>
+                                    <TouchableOpacity disabled={true}>
+                                        <View style={styles.ActiveButton}>
+                                            <Text style={styles.ActiveButtonText}>Subscription Active</Text>
+                                        </View>
                                     </TouchableOpacity>
                                 )}
 
                                 <TouchableOpacity style={[styles.editButton]} onPress={() => navigation.navigate('UpdateProfileDetails', { profileData, profileType })}>
-                                    <Text style={styles.editButtonText}>Edit Profile</Text>
+                                    <Text style={[styles.editButtonText, { color: Colors.light }]}>Edit Profile</Text>
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.section}>
@@ -899,7 +902,7 @@ const ProfileDetail = ({ route, navigation }) => {
                             {profileData?.experience ? (
                                 <>
                                     <Text style={styles.sectionTitle}>Experience </Text>
-                                    <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} years of experience` : ''}</Text>
+                                    <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} + years of experience` : ''}</Text>
                                 </>
                             ) : null}
 
@@ -1054,7 +1057,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                         style={styles.editButton}
                                         onPress={() => navigation.navigate('BuySubscription', { serviceType: profileType })}
                                     >
-                                        <Text style={styles.editButtonText}>Buy Subscription</Text>
+                                        <Text style={[styles.editButtonText, { color: Colors.light }]}>Buy Subscription</Text>
                                     </TouchableOpacity>
                                 ) : KathavachakStatus === 'Pending' ? (
                                     <TouchableOpacity
@@ -1064,15 +1067,14 @@ const ProfileDetail = ({ route, navigation }) => {
                                         <Text style={[styles.editButtonText, { color: "red" }]}>Subscription Pending</Text>
                                     </TouchableOpacity>
                                 ) : (
-                                    <TouchableOpacity
-                                        style={[styles.editButton, { backgroundColor: '#04AA6D' }]}
-                                        disabled={true}
-                                    >
-                                        <Text style={[styles.editButtonText, { color: '#fff' }]}>Subscription Active</Text>
+                                    <TouchableOpacity disabled={true}>
+                                        <View style={styles.ActiveButton}>
+                                            <Text style={styles.ActiveButtonText}>Subscription Active</Text>
+                                        </View>
                                     </TouchableOpacity>
                                 )}
                                 <TouchableOpacity style={[styles.editButton]} onPress={() => navigation.navigate('UpdateProfileDetails', { profileData, profileType })}>
-                                    <Text style={styles.editButtonText}>Edit Profile</Text>
+                                    <Text style={[styles.editButtonText, { color: Colors.light }]}>Edit Profile</Text>
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.section}>
@@ -1087,7 +1089,7 @@ const ProfileDetail = ({ route, navigation }) => {
                             {profileData?.experience ? (
                                 <>
                                     <Text style={styles.sectionTitle}>Experience </Text>
-                                    <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} years of experience` : ''}</Text>
+                                      <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} + years of experience` : ''}</Text>
                                 </>
                             ) : null}
 
@@ -1240,7 +1242,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                         style={styles.editButton}
                                         onPress={() => navigation.navigate('BuySubscription', { serviceType: profileType })}
                                     >
-                                        <Text style={styles.editButtonText}>Buy Subscription</Text>
+                                        <Text style={[styles.editButtonText, { color: Colors.light }]}>Buy Subscription</Text>
                                     </TouchableOpacity>
                                 ) : JyotishStatus === 'Pending' ? (
                                     <TouchableOpacity
@@ -1250,15 +1252,14 @@ const ProfileDetail = ({ route, navigation }) => {
                                         <Text style={[styles.editButtonText, { color: "red" }]}>Subscription Pending</Text>
                                     </TouchableOpacity>
                                 ) : (
-                                    <TouchableOpacity
-                                        style={[styles.editButton, { backgroundColor: '#04AA6D' }]}
-                                        disabled={true}
-                                    >
-                                        <Text style={[styles.editButtonText, { color: '#fff' }]}>Subscription Active</Text>
+                                    <TouchableOpacity disabled={true}>
+                                        <View style={styles.ActiveButton}>
+                                            <Text style={styles.ActiveButtonText}>Subscription Active</Text>
+                                        </View>
                                     </TouchableOpacity>
                                 )}
                                 <TouchableOpacity style={[styles.editButton]} onPress={() => navigation.navigate('UpdateProfileDetails', { profileData, profileType })}>
-                                    <Text style={styles.editButtonText}>Edit Profile</Text>
+                                    <Text style={[styles.editButtonText, { color: Colors.light }]}>Edit Profile</Text>
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.section}>
@@ -1272,7 +1273,7 @@ const ProfileDetail = ({ route, navigation }) => {
                             {profileData?.experience ? (
                                 <>
                                     <Text style={styles.sectionTitle}>Experience </Text>
-                                    <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} years of experience` : ''}</Text>
+                                      <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} + years of experience` : ''}</Text>
                                 </>
                             ) : null}
 

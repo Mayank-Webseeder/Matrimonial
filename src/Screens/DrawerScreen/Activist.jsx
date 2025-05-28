@@ -1,4 +1,4 @@
-import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, Linking, SafeAreaView, StatusBar, ActivityIndicator, ScrollView, RefreshControl } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, Linking, SafeAreaView, StatusBar, BackHandler, ScrollView, RefreshControl } from 'react-native';
 import React, { useState, useCallback } from 'react';
 import { Image } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -19,6 +19,7 @@ import { useSelector } from 'react-redux';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { resetsetActivistdata, setActivistdata } from '../../ReduxStore/Slices/ActivistSlice';
 import { useDispatch } from 'react-redux';
+import { Dropdown } from 'react-native-element-dropdown';
 
 const Activist = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -44,6 +45,20 @@ const Activist = ({ navigation }) => {
     setSelectedImage(imageUri);
     setImageVisible(true);
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.openDrawer();
+        return true;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [navigation])
+  );
 
   useFocusEffect(
     React.useCallback(() => {
@@ -111,7 +126,7 @@ const Activist = ({ navigation }) => {
         });
       }
       if (error.response && error.response.status === 400) {
-       dispatch(resetsetActivistdata()); 
+        dispatch(resetsetActivistdata());
       }
     } finally {
       setIsLoading(false);
@@ -200,28 +215,20 @@ const Activist = ({ navigation }) => {
 
   const handleCloseFilter = () => {
     setModalVisible(false);
-    setLocality('');
-    setModalLocality('');
-    setSubcaste('');
     setActivistData([]);
     fetchActivistData("modal");
   };
 
-  const handleInputChange = (text) => {
-    setSubcaste(text);
-    if (text.trim() === '') {
-      setFilteredOptions([]);
-    } else {
-      const filtered = subCasteOptions.filter((option) =>
-        option.label.toLowerCase().includes(text.toLowerCase())
-      );
-      setFilteredOptions(filtered);
+  const resetFilter = () => {
+    setLocality('');
+    setModalLocality('');
+    setSubcaste('');
+    fetchActivistData("all");
+  }
+  const handleInputChange = (field, value) => {
+    if (field === "subCaste") {
+      setSubcaste(value);
     }
-  };
-
-  const handleOptionSelect = (value) => {
-    setSubcaste(value.label);
-    setFilteredOptions([]);
   };
 
   const renderSkeleton = () => (
@@ -244,36 +251,28 @@ const Activist = ({ navigation }) => {
   const renderItem = ({ item }) => {
     return (
       <View style={styles.card}>
-        <View style={styles.cardData}>
+        <View style={styles.cardLeft}>
           <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
             <Image
               source={item.profilePhoto ? { uri: item.profilePhoto } : require('../../Images/NoImage.png')}
               style={styles.image}
             />
           </TouchableOpacity>
-          {selectedImage && (
-            <ImageViewing
-              images={[{ uri: selectedImage }]}
-              imageIndex={0}
-              visible={isImageVisible}
-              onRequestClose={() => setImageVisible(false)}
-            />
-          )}
-          <View style={{ marginLeft: SW(10) }}>
-            <Text style={styles.text}>{item?.fullname}</Text>
-            <Text style={styles.smalltext}>{item?.subCaste}</Text>
-            <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-around" }}>
-              <Text style={styles.smalltext}>{item?.city}</Text>
-              <Text style={styles.IDText}>Id : {item?.activistId}</Text>
+          <View style={{ marginLeft: SW(10), flex: 1 }}>
+            {item?.fullname && <Text style={styles.text}>{item.fullname}</Text>}
+            {item?.subCaste && <Text style={styles.smalltext}>{item.subCaste}</Text>}
+
+            <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: 'center' }}>
+              {item?.city && <Text style={styles.smalltext}>{item.city}</Text>}
+              {item?.activistId && <Text style={styles.IDText}>Id: {item.activistId}</Text>}
             </View>
           </View>
         </View>
-        <View>
-          <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
-            <Text style={styles.buttonText}>Connect</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
+          <Text style={styles.buttonText}>Connect</Text>
+        </TouchableOpacity>
       </View>
+
     );
   };
 
@@ -316,33 +315,35 @@ const Activist = ({ navigation }) => {
           </TouchableOpacity>
         </View>
         <View>
-          <View style={styles.searchbar}>
-            <TextInput
-              placeholder='Search in Your City'
-              placeholderTextColor="gray"
-              value={locality}
-              onChangeText={(text) => {
-                setLocality(text);
-                fetchActivistData("search");
-              }}
-            />
-
-            {locality.length > 0 ? (
-              <AntDesign
-                name={'close'}
-                size={20}
-                color={'gray'}
-                onPress={() => {
-                  setLocality('');
-                  navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'Activist' }],
-                  });
+          <View style={styles.searchContainer}>
+            <View style={styles.searchbar}>
+              <TextInput
+                placeholder='Search in Your City'
+                placeholderTextColor="gray"
+                value={locality}
+                onChangeText={(text) => {
+                  setLocality(text);
+                  fetchActivistData("search");
                 }}
               />
-            ) : (
-              <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchActivistData("search")} />
-            )}
+
+              {locality.length > 0 ? (
+                <AntDesign
+                  name={'close'}
+                  size={20}
+                  color={'gray'}
+                  onPress={() => {
+                    setLocality('');
+                    navigation.reset({
+                      index: 0,
+                      routes: [{ name: 'Activist' }],
+                    });
+                  }}
+                />
+              ) : (
+                <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchActivistData("search")} />
+              )}
+            </View>
           </View>
 
           <View style={styles.ButtonContainer}>
@@ -361,7 +362,10 @@ const Activist = ({ navigation }) => {
           </View>
         </View>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
 
         {loading ? renderSkeleton() : (
           <FlatList
@@ -371,9 +375,6 @@ const Activist = ({ navigation }) => {
             scrollEnabled={false}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.ActivistDataList}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
                 <FontAwesome name="user" size={60} color="#ccc" style={{ marginBottom: 15 }} />
@@ -397,6 +398,9 @@ const Activist = ({ navigation }) => {
                   <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                   <Text style={Globalstyles.headerText}>Filter</Text>
                 </TouchableOpacity>
+                <TouchableOpacity onPress={resetFilter}>
+                  <Text style={Globalstyles.headerText}>Reset Filter</Text>
+                </TouchableOpacity>
               </View>
 
               <View style={Globalstyles.form}>
@@ -416,39 +420,24 @@ const Activist = ({ navigation }) => {
                 <View>
                   <Text style={Globalstyles.title}>Sub-Caste</Text>
                   <View>
-                    <TextInput
-                      value={subcaste}
-                      onChangeText={handleInputChange}
-                      placeholder="Type your caste"
-                      placeholderTextColor={Colors.gray}
-                      style={Globalstyles.input}
-                      autoComplete="off"
-                      textContentType="none"
-                    />
-                    {filteredOptions.length > 0 && (
-                      <FlatList
-                        data={filteredOptions.slice(0, 2)}
-                        scrollEnabled={false}
-                        keyExtractor={(item) => item?.value}
-                        style={[Globalstyles.suggestions, { marginBottom: 10 }]}
-                        renderItem={({ item }) => (
-                          <TouchableOpacity onPress={() => handleOptionSelect(item)}>
-                            <Text style={styles.label}>{item?.label}</Text>
-                          </TouchableOpacity>
-                        )}
-                        onLayout={(event) => {
-                          const height = event.nativeEvent.layout.height;
-                          setListHeight(height);
-                        }}
-                      />
-                    )}
+                     <Dropdown
+  style={[Globalstyles.input]}
+  data={subCasteOptions}
+  labelField="label"
+  valueField="value"
+  value={subcaste}
+  onChange={(text) => handleInputChange("subCaste", text.value)}
+  placeholder="Select Your subCaste"
+  placeholderStyle={{ color: '#E7E7E7' }}
+  autoScroll={false}
+  showsVerticalScrollIndicator={false}
+/>
                   </View>
                 </View>
 
                 <TouchableOpacity
                   style={styles.applyButton}
                   onPress={() => {
-                    fetchActivistData();
                     handleCloseFilter();
                   }}
                 >

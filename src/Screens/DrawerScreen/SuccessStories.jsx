@@ -121,9 +121,9 @@ const SuccessStories = ({ navigation }) => {
       <View style={styles.storyCard}>
         <View style={styles.collabHeader}>
           <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('MatrimonyPeopleProfile', { userId: groom?.userId })
-            }
+          // onPress={() =>
+          //   navigation.navigate('MatrimonyPeopleProfile', { userId: groom?.userId })
+          // }
           >
             <Image
               source={{ uri: groom?.profileImage || require('../../Images/NoImage.png') }}
@@ -133,9 +133,9 @@ const SuccessStories = ({ navigation }) => {
 
           <TouchableOpacity
             style={{ marginLeft: -SW(20) }}
-            onPress={() =>
-              navigation.navigate('MatrimonyPeopleProfile', { userId: bride?.userId })
-            }
+          // onPress={() =>
+          //   navigation.navigate('MatrimonyPeopleProfile', { userId: bride?.userId })
+          // }
           >
             <Image
               source={{ uri: bride?.profileImage || require('../../Images/NoImage.png') }}
@@ -146,31 +146,14 @@ const SuccessStories = ({ navigation }) => {
             </View>
           </TouchableOpacity>
 
-          <View style={{ marginLeft: SW(3) }}>
-            <View style={{ flexDirection: 'row' }}>
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate('MatrimonyPeopleProfile', { userId: groom?.userId })
-                }
-              >
-                <Text style={styles.nameText}>{groom?.name || NA}</Text>
-              </TouchableOpacity>
-
-              <Text style={styles.nameText}> & </Text>
-
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate('MatrimonyPeopleProfile', { userId: bride?.userId })
-                }
-              >
-                <Text style={styles.nameText}>{bride?.name || 'NA'}</Text>
-              </TouchableOpacity>
-            </View>
-
-            <Text style={{ fontSize: SF(10), color: '#888', marginLeft: SW(9) }}>
-              {groom?.bioDataId || 'NA'} · {bride?.bioDataId || 'NA'}
+          <View style={{ marginLeft: SW(10), flexDirection: 'row', flexWrap: 'wrap', maxWidth: '90%' }}>
+            <Text style={styles.nameText}>
+              <Text onPress={() => { }}>{groom?.name || 'NA'}</Text>
+              <Text> & </Text>
+              <Text onPress={() => { }}>{bride?.name || 'NA'}</Text>
             </Text>
           </View>
+
         </View>
 
         <TouchableOpacity

@@ -50,13 +50,6 @@ const Pandit = ({ navigation }) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      setLocality('');
-      setModalLocality('')
-      setRating(' ')
-      setExperience(' ')
-      setServices('')
-      setPanditData([]);
-      fetchPanditData("all");
       Top_Advertisement_window();
     }, [])
   );
@@ -91,6 +84,14 @@ const Pandit = ({ navigation }) => {
     setModalVisible(false);
     fetchPanditData("modal");
   };
+
+  const resetFilter = () => {
+    setModalLocality('')
+    setRating(' ')
+    setExperience(' ')
+    setServices('')
+    fetchPanditData()
+  }
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -169,6 +170,7 @@ const Pandit = ({ navigation }) => {
 
 
   useEffect(() => {
+    fetchPanditData("all");
     Top_Advertisement_window();
   }, []);
 
@@ -388,53 +390,57 @@ const Pandit = ({ navigation }) => {
           )}
 
           <View>
-            <Pressable style={styles.leftContainer}
-              onPress={() => {
-                if (isExpired) {
-                  showMessage({
-                    message: 'Subscription Required',
-                    description: "This Pandit's profile is currently unavailable. Please subscribe to access it.",
-                    type: 'info',
-                    icon: 'info',
-                    duration: 3000,
-                  });
-                  navigation.navigate('BuySubscription', { serviceType: 'Pandit' })
-                } else {
-                  navigation.navigate('PanditDetailPage', {
-                    pandit_id: item._id,
-                    isSaved: isSaved,
-                  });
-                }
-              }}>
-              <Text style={styles.name}>{item?.fullName}</Text>
-              <Text style={styles.text}>ID : {item?.panditId}</Text>
-              <View style={styles.rating}>
-                <Rating type="star" ratingCount={5} imageSize={15} startingValue={rating} readonly />
-                <Text style={[styles.text, { fontFamily: 'Poppins-Regular' }]}> {rating} Star Rating</Text>
-              </View>
-              <View style={styles.CityArea}>
-                <Text style={[styles.text, { fontFamily: "Poppins-Bold" }]}>{item?.city}</Text>
-                <Text style={styles.text}>    {item?.state}</Text>
-              </View>
-              <Text style={styles.text} numberOfLines={1}>{item?.residentialAddress}</Text>
-            </Pressable>
+            <View>
+              <Pressable style={styles.leftContainer}
+                onPress={() => {
+                  if (isExpired) {
+                    showMessage({
+                      message: 'Subscription Required',
+                      description: "This Pandit's profile is currently unavailable. Please subscribe to access it.",
+                      type: 'info',
+                      icon: 'info',
+                      duration: 3000,
+                    });
+                    navigation.navigate('BuySubscription', { serviceType: 'Pandit' })
+                  } else {
+                    navigation.navigate('PanditDetailPage', {
+                      pandit_id: item._id,
+                      isSaved: isSaved,
+                    });
+                  }
+                }}>
+                <Text style={styles.name}>{item?.fullName}</Text>
+                <Text style={styles.text}>ID: {item?.panditId}</Text>
+                <View style={styles.rating}>
+                  <Rating type="star" ratingCount={5} imageSize={15} startingValue={rating} readonly />
+                </View>
+                <View>
+                  <Text style={[styles.text, { fontFamily: "Poppins-Bold" }]}>
+                    {item?.city}
+                    <Text style={[styles.text, { fontFamily: "Poppins-Regular" }]}>
+                      {` , ${item?.state}`}
+                    </Text>
+                  </Text>
+                </View>
+                <Text style={styles.text} numberOfLines={1}>{item?.residentialAddress}</Text>
+              </Pressable>
+            </View>
             <View style={styles.sharecontainer}>
-              <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
-                <FontAwesome
-                  name={item.isSaved ? "bookmark" : "bookmark-o"}
-                  size={19}
-                  color={Colors.dark}
-                />
-              </TouchableOpacity>
-
-
-              <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
-                <Feather name="send" size={18} color={Colors.dark} />
-              </TouchableOpacity>
-
               <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
                 <MaterialIcons name="call" size={17} color={Colors.light} />
               </TouchableOpacity>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginRight: SW(10) }}>
+                <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
+                  <FontAwesome
+                    name={item.isSaved ? "bookmark" : "bookmark-o"}
+                    size={19}
+                    color={Colors.dark}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
+                  <Feather name="send" size={18} color={Colors.dark} />
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </View>
@@ -492,7 +498,7 @@ const Pandit = ({ navigation }) => {
 
         <View style={styles.searchbar}>
           <TextInput
-            placeholder="Search in Your city"
+            placeholder="Search in your city"
             value={locality}
             onChangeText={(text) => setLocality(text)}
             onSubmitEditing={() => fetchPanditData("search")}
@@ -502,14 +508,11 @@ const Pandit = ({ navigation }) => {
           {locality.length > 0 ? (
             <AntDesign
               name={'close'}
-              size={20}
+              size={15}
               color={'gray'}
               onPress={() => {
                 setLocality('');
-                navigation.reset({
-                  index: 0,
-                  routes: [{ name: 'Pandit' }],
-                });
+                fetchPanditData("all");
               }}
             />
           ) : (
@@ -585,6 +588,9 @@ const Pandit = ({ navigation }) => {
                 <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                 <Text style={Globalstyles.headerText}>Filter</Text>
               </TouchableOpacity>
+              <TouchableOpacity onPress={resetFilter}>
+                <Text style={Globalstyles.headerText}>Reset Filter</Text>
+              </TouchableOpacity>
             </View>
 
             <View style={Globalstyles.form}>
@@ -643,7 +649,17 @@ const Pandit = ({ navigation }) => {
               <TouchableOpacity style={styles.applyButton} onPress={handleCloseFilter}>
                 <Text style={styles.applyButtonText}>See results</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.crossButton}>
+              <TouchableOpacity
+                onPress={() => {
+                  setModalVisible(false);
+                  setLocality('');
+                  setModalLocality('');
+                  setRating('');
+                  setExperience('');
+                  setServices('');
+                  fetchPanditData("all");
+                }}
+                style={styles.crossButton}>
                 <View style={styles.circle}>
                   <Entypo name="cross" size={25} color={Colors.light} />
                 </View>

@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, FlatList, SafeAreaView, StatusBar, Image, ActivityIndicator, RefreshControl } from 'react-native';
+import { Text, View, TouchableOpacity, FlatList, SafeAreaView, StatusBar, Image, ActivityIndicator, RefreshControl, Alert } from 'react-native';
 import React, { useEffect, useState, useCallback } from 'react';
 import styles from '../StyleScreens/NotificationsStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -114,66 +114,92 @@ const Notification = ({ navigation }) => {
   };
 
   const VIEW_Notification = (notification) => {
-    console.log("📬 Received notification object:", JSON.stringify(notification, null, 2));
+    console.log("Received notification object:", JSON.stringify(notification, null, 2));
 
     const { notificationType, _id, userId } = notification;
     if (!_id) {
-      console.warn("❌ Notification ID is missing!", { _id });
+      console.warn("Notification ID is missing!", { _id });
       return;
     }
     if (!userId) {
-      console.warn("❌ User ID is missing!", { userId });
+      console.warn("User ID is missing!", { userId });
       return;
     }
-    console.log("✅ Notification Details - Type:", notificationType, "ID:", _id, "User ID:", userId);
+    console.log("Notification Details - Type:", notificationType, "ID:", _id, "User ID:", userId);
     switch (notificationType) {
       case 'comment':
       case 'like':
         const postId = notification?.relatedData?.postId;
         if (!postId) {
-          console.warn("❌ Post ID is missing in relatedData:", notification);
+          console.warn("Post ID is missing in relatedData:", notification);
           return;
         }
-        console.log("🚀 Navigating to EventNews with postId:", postId);
-        navigation.navigate('EventNews', { id: postId, userId });
+        console.log("Navigating to EventNews with postId:", postId);
+        navigation.navigate('LikeCommentEventPost', { id: postId, userId });
         break;
 
       case 'activistApproved':
-        console.log("🚀 Navigating to Activist with ID:", _id, "User ID:", userId);
+        console.log("Navigating to Activist with ID:", _id, "User ID:", userId);
+        navigation.navigate('Activist', { id: _id, userId });
+        break;
+
+      case 'activistRejected':
         navigation.navigate('Activist', { id: _id, userId });
         break;
 
       case 'connectionRequestResponse':
-        console.log("🚀 Navigating to MatrimonyPeopleProfile with ID:", notification._id, "User ID:", notification.relatedData.toUserId);
-        // navigation.navigate('MatrimonyPeopleProfile', {
-        //   id: notification._id,
-        //   userId: notification?.relatedData?.fromUserId,
-        // });
+        console.log("Navigating to MatrimonyPeopleProfile with ID:", notification._id, "User ID:", notification.relatedData.toUserId);
         navigation.navigate('MainApp', { screen: 'Interested Profile' });
         break;
 
       case 'connectionRequest':
-        console.log("📩 Navigating to IntrestReceivedProfilePage with ID:", notification._id, "User ID:", notification.relatedData.fromUserId);
-        // navigation.navigate('IntrestReceivedProfilePage', {
-        //   id: notification._id,
-        //   userId: notification?.relatedData?.fromUserId, // 👈 correct key
-        // });
+        console.log("Navigating to IntrestReceivedProfilePage with ID:", notification._id, "User ID:", notification.relatedData.fromUserId);
         navigation.navigate('MainApp', { screen: 'Interested Profile' });
         break;
 
       case 'kathavachakApproved':
-        console.log("🚀 Navigating to KathavachakDetailsPage with kathavachak_id:", notification?.relatedData?.kathavachakId, "User ID:", userId);
+        console.log("Navigating to KathavachakDetailsPage with kathavachak_id:", notification?.relatedData?.kathavachakId, "User ID:", userId);
         navigation.navigate('KathavachakDetailsPage', { kathavachak_id: notification?.relatedData?.kathavachakId, userId });
         break;
 
       case 'jyotishApproved':
-        console.log("🚀 Navigating to JyotishDetailsPage with jyotish_id:", notification?.relatedData?.jyotishId, "User ID:", userId);
+        console.log("Navigating to JyotishDetailsPage with jyotish_id:", notification?.relatedData?.jyotishId, "User ID:", userId);
         navigation.navigate('JyotishDetailsPage', { jyotish_id: notification?.relatedData?.jyotishId, userId });
         break;
 
       case 'panditApproved':
-        console.log("🚀 Navigating to PanditDetailPage with pandit_id:", notification?.relatedData?.panditId, "User ID:", userId);
+        console.log("Navigating to PanditDetailPage with pandit_id:", notification?.relatedData?.panditId, "User ID:", userId);
         navigation.navigate('PanditDetailPage', { pandit_id: notification?.relatedData?.panditId, userId });
+        break;
+
+      case 'kathavachakRejected':
+        console.log("Navigating to KathavachakDetailsPage with kathavachak_id:", notification?.relatedData?.kathavachakId, "User ID:", userId);
+        navigation.navigate("MainApp", {
+          screen: "Tabs",
+          params: {
+            screen: "MyProfile",
+          },
+        });
+        break;
+
+      case 'jyotishRejected':
+        console.log("Navigating to JyotishDetailsPage with jyotish_id:", notification?.relatedData?.jyotishId, "User ID:", userId);
+        navigation.navigate("MainApp", {
+          screen: "Tabs",
+          params: {
+            screen: "MyProfile",
+          },
+        });
+        break;
+
+      case 'panditRejected':
+        console.log("Navigating to PanditDetailPage with pandit_id:", notification?.relatedData?.panditId, "User ID:", userId);
+        navigation.navigate("MainApp", {
+          screen: "Tabs",
+          params: {
+            screen: "MyProfile",
+          },
+        });
         break;
 
       case 'successStoryApproved':
@@ -186,13 +212,27 @@ const Notification = ({ navigation }) => {
         });
         break;
 
+      case 'respondOnFeedBackByAdmin':
+        Alert.alert(
+          "Feedback Response",
+          notification?.message || "You have a new message from admin.",
+          [
+            {
+              text: "OK",
+              onPress: () => navigation.navigate('MainApp'),
+            },
+          ],
+          { cancelable: false }
+        );
+        break;
+
       default:
-        console.log('⚠️ Unknown notification type:', notificationType);
+        console.log('Unknown notification type:', notificationType);
     }
 
     setTimeout(async () => {
       try {
-        console.log("📤 Marking notification as seen for ID:", _id);
+        console.log("Marking notification as seen for ID:", _id);
 
         const token = await AsyncStorage.getItem("userToken");
         if (!token) throw new Error("No token found");
@@ -204,10 +244,10 @@ const Notification = ({ navigation }) => {
 
         const res = await axios.patch(`${VIEW_NOTIFICATION}/${_id}`, {}, { headers });
 
-        console.log("✅ Notification marked as seen:", res.data.data);
+        console.log("Notification marked as seen:", res.data.data);
       } catch (error) {
         const errorMsg = error.response?.data?.message || error.message;
-        console.error("❌ Error marking notification as seen:", errorMsg);
+        console.error("Error marking notification as seen:", errorMsg);
 
         const sessionExpiredMessages = [
           "User does not Exist....!Please login again",
@@ -236,19 +276,23 @@ const Notification = ({ navigation }) => {
       case 'like':
         const postId = notification?.relatedData?.postId;
         if (!postId) {
-          console.warn("❌ Post ID is missing in relatedData:", notification);
+          console.warn("Post ID is missing in relatedData:", notification);
           return;
         }
-        console.log("🚀 Navigating to EventNews with postId:", postId);
-        navigation.navigate('EventNews', { id: postId, userId });
+        console.log("Navigating to EventNews with postId:", postId);
+        navigation.navigate('LikeCommentEventPost', { id: postId, userId });
         break;
 
       case 'activistApproved':
         navigation.navigate('Activist', { id: _id, userId });
         break;
 
+      case 'activistRejected':
+        navigation.navigate('Activist', { id: _id, userId });
+        break;
+
       case 'connectionRequestResponse':
-        console.log("🚀 Navigating to MatrimonyPeopleProfile with ID:", notification._id, "User ID:", notification.relatedData.fromUserId);
+        console.log("Navigating to MatrimonyPeopleProfile with ID:", notification._id, "User ID:", notification.relatedData.fromUserId);
         // navigation.navigate('MatrimonyPeopleProfile', {
         //   id: notification._id,
         //   userId: notification?.relatedData?.fromUserId,
@@ -257,7 +301,7 @@ const Notification = ({ navigation }) => {
         break;
 
       case 'connectionRequest':
-        console.log("📩 Navigating to IntrestReceivedProfilePage with ID:", notification._id, "User ID:", notification.relatedData.fromUserId);
+        console.log("Navigating to IntrestReceivedProfilePage with ID:", notification._id, "User ID:", notification.relatedData.fromUserId);
         // navigation.navigate('IntrestReceivedProfilePage', {
         //   id: notification._id,
         //   userId: notification?.relatedData?.fromUserId,
@@ -266,18 +310,48 @@ const Notification = ({ navigation }) => {
         break;
 
       case 'kathavachakApproved':
-        console.log("🚀 Navigating to KathavachakDetailsPage with kathavachak_id:", notification?.relatedData?.kathavachakId, "User ID:", userId);
+        console.log("Navigating to KathavachakDetailsPage with kathavachak_id:", notification?.relatedData?.kathavachakId, "User ID:", userId);
         navigation.navigate('KathavachakDetailsPage', { kathavachak_id: notification?.relatedData?.kathavachakId, userId });
         break;
 
       case 'jyotishApproved':
-        console.log("🚀 Navigating to JyotishDetailsPage with jyotish_id:", notification?.relatedData?.jyotishId, "User ID:", userId);
+        console.log("Navigating to JyotishDetailsPage with jyotish_id:", notification?.relatedData?.jyotishId, "User ID:", userId);
         navigation.navigate('JyotishDetailsPage', { jyotish_id: notification?.relatedData?.jyotishId, userId });
         break;
 
       case 'panditApproved':
-        console.log("🚀 Navigating to PanditDetailPage with pandit_id:", notification?.relatedData?.panditId, "User ID:", userId);
+        console.log("Navigating to PanditDetailPage with pandit_id:", notification?.relatedData?.panditId, "User ID:", userId);
         navigation.navigate('PanditDetailPage', { pandit_id: notification?.relatedData?.panditId, userId });
+        break;
+
+      case 'KathavachakRejected':
+        console.log("Navigating to KathavachakDetailsPage with kathavachak_id:", notification?.relatedData?.kathavachakId, "User ID:", userId);
+        navigation.navigate("MainApp", {
+          screen: "Tabs",
+          params: {
+            screen: "MyProfile",
+          },
+        });
+        break;
+
+      case 'jyotishRejected':
+        console.log("Navigating to JyotishDetailsPage with jyotish_id:", notification?.relatedData?.jyotishId, "User ID:", userId);
+        navigation.navigate("MainApp", {
+          screen: "Tabs",
+          params: {
+            screen: "MyProfile",
+          },
+        });
+        break;
+
+      case 'panditRejected':
+        console.log("Navigating to PanditDetailPage with pandit_id:", notification?.relatedData?.panditId, "User ID:", userId);
+        navigation.navigate("MainApp", {
+          screen: "Tabs",
+          params: {
+            screen: "MyProfile",
+          },
+        });
         break;
 
       case 'successStoryApproved':
@@ -288,6 +362,20 @@ const Notification = ({ navigation }) => {
         navigation.navigate('MainApp', {
           screen: 'SuccessStories',
         });
+        break;
+
+      case 'respondOnFeedBackByAdmin':
+        Alert.alert(
+          "Feedback Response",
+          notification?.message || "You have a new message from admin.",
+          [
+            {
+              text: "OK",
+              onPress: () => navigation.navigate('MainApp'),
+            },
+          ],
+          { cancelable: false }
+        );
         break;
 
       default:

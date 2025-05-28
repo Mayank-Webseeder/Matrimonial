@@ -11,17 +11,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginTop: 15,
+    fontSize:SF(22),
+   fontFamily:"Poppins-Bold",
+    marginTop:SH(15),
     color: '#333',
   },
   message: {
-    fontSize: 16,
-    marginTop: 8,
+    fontSize:SF(16),
+    marginTop:SH(8),
     textAlign: 'center',
     color: '#666',
-    lineHeight: 22,
+    lineHeight:SH(22),
   },
   righticons: {
     flexDirection: 'row',
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
   },
   verifiedContainer: {
     position: "absolute",
-    top: SH(315),
+    top: SH(255),
     left: SW(228),
     flexDirection: "row",
     alignItems: "center",
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     paddingVertical: SW(2),
     borderRadius: 5,
     alignSelf: "flex-end",
-    width:SW(130)
+    width: SW(130)
   },
   verifiedBadge: {
     width: SW(20),
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
   },
-  familyDiv:{
+  familyDiv: {
     paddingHorizontal: SW(8),
     paddingVertical: SH(10),
     borderRadius: 10,
@@ -144,13 +144,15 @@ const styles = StyleSheet.create({
   HeadingText: {
     fontSize: SF(15),
     fontFamily: "Poppins-Bold",
-    textTransform: "capitalize"
+    textTransform: "capitalize",
+    lineHeight: SF(18),
+    paddingTop:SH(2)
   },
 
   text: {
-    fontfamily:"Poppins-Regular",
+    fontfamily: "Poppins-Regular",
     color: '#000',
-    fontSize:SF(15)
+    fontSize: SF(15)
   },
 
   flexContainer: {
@@ -163,16 +165,15 @@ const styles = StyleSheet.create({
     elevation: 4,
     borderRadius: 10,
     backgroundColor: "#fff",
-    marginTop: SH(10),
     width: "99%"
   },
   flex: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center"
-
+    alignItems: "center",
+    flexWrap: "wrap",
+    marginRight: SW(5)
   },
-
   toptext: {
     fontSize: SF(10),
     fontFamily: "Poppins-Regular",
@@ -181,6 +182,7 @@ const styles = StyleSheet.create({
   Idtext: {
     fontSize: SF(12),
     fontFamily: "Poppins-Bold",
+    color: Colors.dark
   },
   flexContainer2: {
     width: "100%",
@@ -195,6 +197,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: SW(3),
     paddingVertical: SH(3),
     backgroundColor: Colors.light,
+    marginTop:SH(5)
   },
   iconContainer: {
     alignItems: 'center',
@@ -327,16 +330,24 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     width: SW(150),
-    fontfamily:"Poppins-Regular",
+    fontfamily: "Poppins-Regular",
     color: '#000',
-    fontSize:SF(15)
+    fontSize: SF(15)
   },
   infoValue: {
     flex: 1,
     color: '#000',
     flexWrap: 'wrap',
   },
-
+   sliderContainer: {
+      marginBottom: SH(30),
+      height: SH(290),
+    },
+    sliderImage: {
+      width: "100%",
+      height: SH(290),
+      resizeMode: 'cover',
+    },
 });
 
 export default styles;

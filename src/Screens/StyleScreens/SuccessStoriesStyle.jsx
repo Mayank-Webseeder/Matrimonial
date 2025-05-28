@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: SW(12),
+    paddingLeft:SW(5)
   },
   avatar: {
     width: SW(42),
@@ -50,10 +51,11 @@ const styles = StyleSheet.create({
     padding: 2,
   },
   nameText: {
-    fontFamily: 'Poppins-Medium',
-    fontSize: SF(14),
-    color: '#000',
-    textTransform: "capitalize"
+   fontFamily: 'Poppins-Medium',
+  fontSize: SF(15),
+  color: '#000',
+  textTransform: 'capitalize',
+  lineHeight: SF(24),
   },
   thought: {
     fontFamily: 'Poppins-Regular',

@@ -117,6 +117,7 @@ const UPDATE_EVENT_NEWS = `${BASE_URL}/event/updateEventPost`;
 const LIKEPOST = `${BASE_URL}/event/like`;
 const COMMENTPOST = `${BASE_URL}/event/comment`;
 const DELETE_EVENT = `${BASE_URL}/event/delete-eventPost`;
+const VIEW_LIKE_COMMENT_EVENTNEWS = `${BASE_URL}/event/getEventPostById`
 
 // advertise with us
 const ADVERTISE_WITH_US = `${BASE_URL}/user/advertise-WithUs`;
@@ -313,5 +314,6 @@ export {
     TOP_DHARMSHALA_ADVERDISE_WINDOW,
     BOTTOM_DHARMSHALA_ADVERDISE_WINDOW,
     TOP_EVENT_NEWS_ADVERDISE_WINDOW,
-    BOTTOM_EVENT_NEWS_ADVERDISE_WINDOW
+    BOTTOM_EVENT_NEWS_ADVERDISE_WINDOW,
+    VIEW_LIKE_COMMENT_EVENTNEWS
 }

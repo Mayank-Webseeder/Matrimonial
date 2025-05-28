@@ -3,43 +3,43 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 import Colors from "../../utils/Colors";
 
 const styles = StyleSheet.create({
-   panditListData: {
-      marginVertical: SH(10),
-      marginBottom: SH(20),
-      marginTop: 0
-    },
-    emptyContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      paddingHorizontal: SW(20),
-      paddingVertical: SH(20),
-      marginTop: SH(50),
-    },
-    emptyText: {
-      fontSize: SF(20),
-      fontFamily: "Poppins-Bold",
-      color: '#555',
-      marginBottom: SH(8),
-    },
-    infoText: {
-      fontSize: SF(18),
-      color: '#888',
-      textAlign: 'center',
-    },
-    fixedHeader: {
-      marginVertical: SH(10),
-      paddingBottom:SH(20)
-    },
+  panditListData: {
+    marginVertical: SH(10),
+    marginBottom: SH(20),
+    marginTop: 0
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: SW(20),
+    paddingVertical: SH(20),
+    marginTop: SH(50),
+  },
+  emptyText: {
+    fontSize: SF(20),
+    fontFamily: "Poppins-Bold",
+    color: '#555',
+    marginBottom: SH(8),
+  },
+  infoText: {
+    fontSize: SF(18),
+    color: '#888',
+    textAlign: 'center',
+  },
+  fixedHeader: {
+    marginVertical: SH(10),
+    paddingBottom: SH(20)
+  },
   righticons: {
     flexDirection: 'row',
-    alignItems:"center"
+    alignItems: "center"
   },
   image: {
     width: SW(90),
     height: SH(90),
     resizeMode: "cover",
-    borderRadius:50,
+    borderRadius: 50,
   },
   searchbar: {
     display: "flex",
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     paddingHorizontal: SW(10),
     width: SW(350),
-    justifyContent:"space-between"
+    justifyContent: "space-between"
   },
   card: {
     backgroundColor: '#fff',
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     marginHorizontal: SW(10),
     marginVertical: SH(7),
     marginBottom: SH(3),
-    paddingVertical:SH(3)
+    paddingVertical: SH(3)
   },
   cardData: {
     flexDirection: 'row',
@@ -74,9 +74,9 @@ const styles = StyleSheet.create({
 
   CityArea: {
     flexDirection: 'row',
-    alignItems:"center",
-    justifyContent:"space-between",
-    marginRight:SW(5)
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginRight: SW(5)
   },
 
   sharecontainer: {
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: '#fff',
     marginHorizontal: SW(15),
-    marginTop:-SH(10)
+    marginTop: -SH(10)
   },
 
   iconContainer: {
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Bold",
     fontSize: SF(15)
   },
-  Nametext:{
+  Nametext: {
     fontFamily: "Poppins-Medium",
     fontSize: SF(13)
   },
@@ -144,8 +144,8 @@ const styles = StyleSheet.create({
     flex: 1,
     display: "flex",
     flexDirection: "row",
-    justifyContent:"space-between",
-    marginVertical:SH(15)
+    justifyContent: "space-between",
+    marginVertical: SH(15)
   },
   button: {
     width: SW(100),
@@ -196,8 +196,8 @@ const styles = StyleSheet.create({
     color: Colors.light,
     fontSize: SF(10),
     fontFamily: "Poppins-Regular",
-    paddingHorizontal:SW(2)
-},
+    paddingHorizontal: SW(2)
+  },
   buttonText: {
     color: Colors.light,
     fontFamily: "Poppins-Regular",
@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
     top: SH(300),
     left: SW(150)
   },
-  label:{
+  label: {
     fontSize: SF(13),
     marginBottom: SH(5),
     fontFamily: "Poppins-Medium"
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
   modalOverlay1: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.3)",
-},
+  },
   modalContent1: {
     position: "absolute",
     backgroundColor: "white",
@@ -285,25 +285,28 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: SW(150),
     elevation: 5,
-},
-modalOption1: {
+  },
+  modalOption1: {
     paddingHorizontal: SW(10),
     paddingVertical: SH(2),
-},
-optionText: {
+  },
+  optionText: {
     fontSize: SF(15),
     fontFamily: "Poppins-Regular"
-},
-  updateText:{
-    fontSize:SF(15),
-    fontFamily:"Poppins-Regular",
-    textAlign:"center"
   },
-  deleteText:{
-    fontSize:SF(15),
-    fontFamily:"Poppins-Regular",
-    textAlign:"center",
-    color:"red"
+  updateText: {
+    fontSize: SF(15),
+    fontFamily: "Poppins-Regular",
+    textAlign: "center"
+  },
+  deleteText: {
+    fontSize: SF(15),
+    fontFamily: "Poppins-Regular",
+    textAlign: "center",
+    color: "red"
+  },
+  Filterheader: {
+    display: "flex", flexDirection: "row", justifyContent: "space-between"
   }
 
 });

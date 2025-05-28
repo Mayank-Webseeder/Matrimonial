@@ -23,7 +23,7 @@ import { CommonActions } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/native';
 
 const EventNews = ({ navigation }) => {
-   const route = useRoute();
+  const route = useRoute();
   const { postId } = route.params || {};
   const sheetRef = useRef(null);
   const sliderRef = useRef(null);
@@ -140,6 +140,7 @@ const EventNews = ({ navigation }) => {
 
 
   useEffect(() => {
+    fetchPostData();
     Advertisement_window();
   }, []);
 
@@ -422,8 +423,8 @@ const EventNews = ({ navigation }) => {
       const response = await axios.get(VIEW_EVENT, { headers });
 
       if (response.status === 200 && response.data.status === true) {
-        const postData = response.data.data;
-        console.log("myeventpost", postData);
+        const postData = response.data.data.eventPosts;
+        console.log("myeventpost",JSON.stringify(postData));
         setMyeventpost(postData);
       }
     } catch (error) {
@@ -714,11 +715,11 @@ const EventNews = ({ navigation }) => {
                       disabled={deletingCommentId === item?._id}
                     >
                       {deletingCommentId === item?._id ? (
-                        <Text style={{ color: Colors.theme_color, fontSize: 12 }}>
+                        <Text style={{ color: Colors.theme_color, fontSize: SF(13), fontFamily: "Poppins-Regular" }}>
                           Deleting...
                         </Text>
                       ) : (
-                        <Entypo name={"cross"} color={Colors.theme_color} size={15} />
+                        <Entypo name={"cross"} color={Colors.theme_color} size={17} />
                       )}
                     </TouchableOpacity>
                   )}
@@ -834,17 +835,17 @@ const EventNews = ({ navigation }) => {
         style={styles.bottomContainer}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ flexGrow: 1 }}
-      >
-        <FlatList
-         data={postId ? eventdata : getPostsForPage()}
-          renderItem={renderItem}
-          keyExtractor={(item) => item._id}
-          scrollEnabled={false}
-          nestedScrollEnabled={true}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
+        refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
+      >
+        <FlatList
+          data={postId ? eventdata : getPostsForPage()}
+          renderItem={renderItem}
+          keyExtractor={(item) => item._id}
+          scrollEnabled={true}
+          nestedScrollEnabled={true}
+          showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Ionicons

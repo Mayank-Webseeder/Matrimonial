@@ -29,7 +29,7 @@ export const MotherOccupationData = [
   { label: 'Self Employed', value: 'Self Employed' },
   { label: 'Freelancer', value: 'Freelancer' },
   { label: 'Agriculture Professional', value: 'Agriculture Professional' },
-  { label: 'Business Owner / Entrepreneur', value: 'Business Owner / Entrepreneur' },
+  { label: 'Business / Entrepreneur', value: 'Business / Entrepreneur' },
   { label: 'Officer', value: 'Officer' },
   { label: 'Software Professional', value: 'Software Professional' },
   { label: 'Education Professional', value: 'Education Professional' },
@@ -553,22 +553,13 @@ export const PartnersubCasteOptions = [
 ];
 
 export const ExperienceData = [
-  { label: '1-3 Years', value: '1-3' },
-  { label: '3-5 Years', value: '3-5' },
-  { label: '5+ Years', value: '5+' },
-  { label: '10+ Years', value: '10+' },
-  { label: '20+ Years', value: '20+' },
-  { label: '30+ Years', value: '30+' },
+  { label: '1+ years', value: '1' },
+  { label: '3+ years', value: '3' },
+  { label: '5+ years', value: '5' },
+  { label: '10+ years', value: '10' },
+  { label: '20+ years', value: '20' },
+  { label: '30+ years', value: '30' },
 ];
-
-// export const ExperienceData = [
-//   { label: '1-3 Years', value: '3' },
-//   { label: '3-5 Years', value: '5' },
-//   { label: '5+ Years', value: '6' },
-//   { label: '10+ Years', value: '10' },
-//   { label: '20+ Years', value: '20' },
-//   { label: '30+ Years', value: '30' },
-// ];
 
 export const RatingData = [
   { label: '1 Stars', value: '1' },

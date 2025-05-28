@@ -1,4 +1,4 @@
-import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, RefreshControl,BackHandler } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, RefreshControl, BackHandler } from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 import { slider } from '../../DummyData/DummyData';
 import { Image } from 'react-native';
@@ -49,112 +49,6 @@ const Dharmshala = () => {
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
   const [slider, setSlider] = useState([]);
-
-
-
-  useFocusEffect(
-    React.useCallback(() => {
-      setLocality('');
-      setSubcaste('');
-      setDharamsalaData([]);
-      fetchDharamsalaData("all");
-      GetMyDharamsalaData();
-      Advertisement_window();
-    }, [])
-  );
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-      setLocality('');
-      setSubcaste('');
-      setDharamsalaData([]);
-      fetchDharamsalaData("all");
-      GetMyDharamsalaData();
-      Advertisement_window();
-    }, 2000);
-  }, []);
-
-
-    useFocusEffect(
-      React.useCallback(() => {
-        const onBackPress = () => {
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{ name: 'MainApp' }],
-            })
-          );
-          return true;
-        };
-  
-        BackHandler.addEventListener('hardwareBackPress', onBackPress);
-  
-        return () =>
-          BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-      }, [])
-    );
-
-  const openImageViewer = (imageUri) => {
-    setSelectedImage(imageUri);
-    setImageVisible(true);
-  };
-
-  const handleInputChange = (text) => {
-    setSubcaste(text);
-    if (text.trim() === '') {
-      setFilteredOptions([]);
-    } else {
-      const filtered = subCasteOptions.filter((option) =>
-        option.label.toLowerCase().includes(text.toLowerCase())
-      );
-      setFilteredOptions(filtered);
-    }
-  };
-
-  const handleOptionSelect = (value) => {
-    setSubcaste(value.label);
-    setFilteredOptions([]);
-  };
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (currentIndex < slider.length - 1) {
-        setCurrentIndex((prevIndex) => prevIndex + 1);
-        sliderRef.current?.goToSlide(currentIndex + 1);
-      } else {
-        setCurrentIndex(0);
-        sliderRef.current?.goToSlide(0);
-      }
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, [currentIndex]);
-
-
-  useEffect(() => {
-    Advertisement_window();
-  }, []);
-
-
-  useEffect(() => {
-    if (slider.length === 0) return;
-
-    const currentSlide = slider[currentIndex];
-    const durationInSeconds = currentSlide?.duration || 2;
-    const durationInMilliseconds = durationInSeconds * 1000;
-
-    const timeout = setTimeout(() => {
-      const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
-      setCurrentIndex(nextIndex);
-      sliderRef.current?.goToSlide(nextIndex);
-    }, durationInMilliseconds);
-
-    return () => clearTimeout(timeout);
-  }, [currentIndex, slider]);
-
-
 
   const fetchDharamsalaData = async (filterType = "search") => {
     try {
@@ -327,6 +221,99 @@ const Dharmshala = () => {
     }
   };
 
+  useFocusEffect(
+    React.useCallback(() => {
+      // setLocality('');
+      // setSubcaste('');
+      // setDharamsalaData([]);
+      // fetchDharamsalaData("all");
+      GetMyDharamsalaData();
+      Advertisement_window();
+    }, [])
+  );
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+      setLocality('');
+      setSubcaste('');
+      setDharamsalaData([]);
+      fetchDharamsalaData("all");
+      GetMyDharamsalaData();
+      Advertisement_window();
+    }, 2000);
+  }, []);
+
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: 'MainApp' }],
+          })
+        );
+        return true;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [])
+  );
+
+  const openImageViewer = (imageUri) => {
+    setSelectedImage(imageUri);
+    setImageVisible(true);
+  };
+
+
+  const handleInputChange = (field, value) => {
+    if (field === "subCaste") {
+      setSubcaste(value);
+    }
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (currentIndex < slider.length - 1) {
+        setCurrentIndex((prevIndex) => prevIndex + 1);
+        sliderRef.current?.goToSlide(currentIndex + 1);
+      } else {
+        setCurrentIndex(0);
+        sliderRef.current?.goToSlide(0);
+      }
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [currentIndex]);
+
+
+  useEffect(() => {
+    fetchDharamsalaData("all");
+    Advertisement_window();
+  }, []);
+
+
+  useEffect(() => {
+    if (slider.length === 0) return;
+
+    const currentSlide = slider[currentIndex];
+    const durationInSeconds = currentSlide?.duration || 2;
+    const durationInMilliseconds = durationInSeconds * 1000;
+
+    const timeout = setTimeout(() => {
+      const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
+      setCurrentIndex(nextIndex);
+      sliderRef.current?.goToSlide(nextIndex);
+    }, durationInMilliseconds);
+
+    return () => clearTimeout(timeout);
+  }, [currentIndex, slider]);
+
 
   const renderSkeleton = () => (
     <SkeletonPlaceholder>
@@ -469,11 +456,23 @@ const Dharmshala = () => {
             />
           )}
           <View style={styles.leftContainer}>
-            <Text style={styles.text}>{item?.dharmshalaName}</Text>
-            <Text style={[styles.smalltext, { fontFamily: 'Poppins-Medium' }]}>
-              {item?.subCaste}
-            </Text>
-            <Text style={styles.smalltext}>{item?.city}</Text>
+            {item?.dharmshalaName && (
+              <Text style={styles.text}>
+                {item.dharmshalaName.length > 25
+                  ? item.dharmshalaName.substring(0, 25) + '...'
+                  : item.dharmshalaName}
+              </Text>
+            )}
+
+            {item?.subCaste && (
+              <Text style={[styles.smalltext, { fontFamily: 'Poppins-Medium' }]}>
+                {item.subCaste}
+              </Text>
+            )}
+
+            {item?.city && (
+              <Text style={styles.smalltext}>{item.city}</Text>
+            )}
           </View>
         </Pressable>
         <View style={styles.sharecontainer}>
@@ -507,12 +506,16 @@ const Dharmshala = () => {
 
   const handleCloseFilter = () => {
     setModalVisible(false);
-    setLocality('');
-    setModalLocality('');
-    setSubcaste('');
     setDharamsalaData([]);
     fetchDharamsalaData("modal");
   };
+
+  const resetFilter = () => {
+    setLocality('');
+    setModalLocality('');
+    setSubcaste('');
+    fetchDharamsalaData("all");
+  }
 
 
   return (
@@ -584,13 +587,11 @@ const Dharmshala = () => {
               textContentType="none"
             />
             {locality.length > 0 ? (
-              <AntDesign name={'close'} size={20} color={'gray'} onPress={() => {
-                setLocality('');
-                navigation.reset({
-                  index: 0,
-                  routes: [{ name: 'Committee' }],
-                });
-              }} />
+              <AntDesign name={'close'} size={20} color={'gray'}
+                onPress={() => {
+                  setLocality('');
+                  fetchDharamsalaData("all");
+                }} />
             ) : (
               <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchDharamsalaData("search")} />
             )}
@@ -694,6 +695,9 @@ const Dharmshala = () => {
                 <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                 <Text style={Globalstyles.headerText}>Filter</Text>
               </TouchableOpacity>
+              <TouchableOpacity onPress={resetFilter}>
+                <Text style={Globalstyles.headerText}>Reset Filter</Text>
+              </TouchableOpacity>
             </View>
 
             <View style={Globalstyles.form}>
@@ -711,37 +715,24 @@ const Dharmshala = () => {
               <View>
                 <Text style={Globalstyles.title}>Sub-Caste</Text>
                 <View>
-                  <TextInput
+                  <Dropdown
+                    style={[Globalstyles.input]}
+                    data={subCasteOptions}
+                    labelField="label"
+                    valueField="value"
                     value={subcaste}
-                    onChangeText={handleInputChange}
-                    placeholder="Type your caste"
-                    placeholderTextColor={Colors.gray}
-                    style={Globalstyles.input}
+                    onChange={(text) => handleInputChange("subCaste", text.value)}
+                    placeholder="Select Your subCaste"
+                    placeholderStyle={{ color: '#E7E7E7' }}
+                    autoScroll={false}
+                    showsVerticalScrollIndicator={false}
                   />
-                  {filteredOptions.length > 0 && (
-                    <FlatList
-                      data={filteredOptions.slice(0, 2)}
-                      scrollEnabled={false}
-                      keyExtractor={(item) => item.value}
-                      style={[Globalstyles.suggestions, { marginBottom: 10 }]}
-                      renderItem={({ item }) => (
-                        <TouchableOpacity onPress={() => handleOptionSelect(item)}>
-                          <Text style={styles.label}>{item.label}</Text>
-                        </TouchableOpacity>
-                      )}
-                      onLayout={(event) => {
-                        const height = event.nativeEvent.layout.height;
-                        setListHeight(height);
-                      }}
-                    />
-                  )}
                 </View>
               </View>
 
               <TouchableOpacity
                 style={styles.applyButton}
                 onPress={() => {
-                  fetchDharamsalaData();
                   handleCloseFilter();
                 }}
               >

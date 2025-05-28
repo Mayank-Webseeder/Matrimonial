@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
   },
 
   leftContainer: {
-    marginHorizontal: SW(10),
+    marginHorizontal: SW(5),
     marginVertical: SH(15)
   },
   RequestText: {
@@ -251,6 +251,9 @@ const styles = StyleSheet.create({
     fontSize: SF(13),
     marginBottom: SH(5),
     fontFamily: "Poppins-Medium"
+  },
+  Filterheader:{
+    display:"flex",flexDirection:"row",justifyContent:"space-between"
   }
 
 });

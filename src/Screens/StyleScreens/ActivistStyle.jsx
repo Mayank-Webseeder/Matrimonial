@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   ActivistDataList: {
-    marginVertical: SH(10),
+    marginBottom: SH(10),
   },
   righticons: {
     flexDirection: 'row',
@@ -35,6 +35,14 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     borderRadius: 50
   },
+  searchContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between"
+  },
+  Filterheader: {
+    display: "flex", flexDirection: "row", justifyContent: "space-between"
+  }
+  ,
   searchbar: {
     display: "flex",
     flexDirection: "row",
@@ -50,23 +58,24 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light,
     borderRadius: 10,
     overflow: 'hidden',
-    marginHorizontal: SW(6),
-    marginVertical: SH(6),
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 }, // ✅ Required for iOS
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
-    width: '95%',
     marginHorizontal: SW(10),
+    marginVertical: SH(6),
     paddingHorizontal: SW(10),
     paddingVertical: SH(7),
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center"
+    alignItems: "center",
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
   },
-  cardData: {
-    flexDirection: "row"
+  cardLeft: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: SW(10),
   },
   text: {
     fontFamily: "Poppins-Bold",
@@ -76,11 +85,11 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Regular",
     fontSize: SF(12)
   },
-  IDText:{
+  IDText: {
     fontFamily: "Poppins-Bold",
     fontSize: SF(12),
-    alignSelf:"fleax-end",
-    paddingHorizontal:SW(5)
+    alignSelf: "fleax-end",
+    paddingHorizontal: SW(5)
   },
   ButtonContainer: {
     display: "flex",
@@ -97,12 +106,12 @@ const styles = StyleSheet.create({
     marginHorizontal: SW(6),
     backgroundColor: Colors.theme_color
   },
-
   Button: {
     backgroundColor: Colors.theme_color,
-    paddingHorizontal: SW(20),
+    paddingHorizontal: SW(15),
     paddingVertical: SH(5),
     borderRadius: 50,
+    flexShrink: 0,
   },
   buttonText: {
     color: Colors.light,

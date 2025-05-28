@@ -17,10 +17,9 @@ const styles = StyleSheet.create({
         height: SH(30)
     },
     image: {
-        width: SW(320),
+        width: SW(400),
         height: SH(300),
-        resizeMode: 'cover',
-        borderRadius: 10,
+        resizeMode: 'contain',
         alignSelf: "center"
     },
     cameraIcon: {

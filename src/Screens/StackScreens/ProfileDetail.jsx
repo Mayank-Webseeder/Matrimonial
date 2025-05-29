@@ -488,6 +488,13 @@ const ProfileDetail = ({ route, navigation }) => {
                                                     </View>
                                                 )}
 
+                                                 {personalDetails?.maritalStatus && (
+                                                    <View style={styles.infoRow}>
+                                                        <Text style={styles.infoLabel}>Marital Status :</Text>
+                                                        <Text style={styles.infoValue}>{personalDetails?.maritalStatus}</Text>
+                                                    </View>
+                                                )}
+
                                                 {personalDetails?.gotraMother && (
                                                     <View style={styles.infoRow}>
                                                         <Text style={styles.infoLabel}>Gotra (Mother) :</Text>
@@ -706,10 +713,10 @@ const ProfileDetail = ({ route, navigation }) => {
                                     <Text style={[styles.HeadingText, { marginLeft: 8 }]}>My Partner Preferences</Text>
                                 </View>
                                 <View>
-                                    {profileData.partnerPreferences.partnerBodyStructure && (
+                                    {profileData.partnerPreferences.partnerSubCaste && (
                                         <View style={styles.infoRow}>
-                                            <Text style={styles.infoLabel}>Body Structure:</Text>
-                                            <Text style={styles.infoValue}>{profileData.partnerPreferences.partnerBodyStructure}</Text>
+                                            <Text style={styles.infoLabel}>Sub Caste:</Text>
+                                            <Text style={styles.infoValue}>{profileData.partnerPreferences.partnerSubCaste}</Text>
                                         </View>
                                     )}
 
@@ -745,6 +752,13 @@ const ProfileDetail = ({ route, navigation }) => {
                                         <View style={styles.infoRow}>
                                             <Text style={styles.infoLabel}>Manglik Status:</Text>
                                             <Text style={styles.infoValue}>{profileData.partnerPreferences.partnerManglikStatus}</Text>
+                                        </View>
+                                    )}
+
+                                       {profileData.partnerPreferences.partnerMaritalStatus && (
+                                        <View style={styles.infoRow}>
+                                            <Text style={styles.infoLabel}>Marital Status:</Text>
+                                            <Text style={styles.infoValue}>{profileData.partnerPreferences.partnerMaritalStatus}</Text>
                                         </View>
                                     )}
 
@@ -902,7 +916,7 @@ const ProfileDetail = ({ route, navigation }) => {
                             {profileData?.experience ? (
                                 <>
                                     <Text style={styles.sectionTitle}>Experience </Text>
-                                    <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} + years of experience` : ''}</Text>
+                                    <Text style={styles.text}>{profileData?.experience ? `${profileData.experience}+ years of experience` : ''}</Text>
                                 </>
                             ) : null}
 
@@ -1089,7 +1103,7 @@ const ProfileDetail = ({ route, navigation }) => {
                             {profileData?.experience ? (
                                 <>
                                     <Text style={styles.sectionTitle}>Experience </Text>
-                                      <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} + years of experience` : ''}</Text>
+                                      <Text style={styles.text}>{profileData?.experience ? `${profileData.experience}+ years of experience` : ''}</Text>
                                 </>
                             ) : null}
 
@@ -1273,7 +1287,7 @@ const ProfileDetail = ({ route, navigation }) => {
                             {profileData?.experience ? (
                                 <>
                                     <Text style={styles.sectionTitle}>Experience </Text>
-                                      <Text style={styles.text}>{profileData?.experience ? `${profileData.experience} + years of experience` : ''}</Text>
+                                      <Text style={styles.text}>{profileData?.experience ? `${profileData.experience}+ years of experience` : ''}</Text>
                                 </>
                             ) : null}
 

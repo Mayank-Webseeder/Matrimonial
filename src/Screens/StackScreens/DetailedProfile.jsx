@@ -534,12 +534,12 @@ const DetailedProfile = ({ navigation, profileData }) => {
         console.log("🚀 Validation Errors:", errors);
 
         if (Object.keys(errors).length > 0) {
-          const errorMessages = Object.values(errors).join('\n');
           showMessage({
-            message: errorMessages,
+            message: "Please complete all mandatory sections before submitting.",
             type: "danger",
-            duration: 5000,
-            icon: "danger"
+            duration: 4000,
+            icon: "danger",
+            position: 'bottom'
           });
           console.log("❌ Validation failed. Errors:", errors);
           setErrors(errors);

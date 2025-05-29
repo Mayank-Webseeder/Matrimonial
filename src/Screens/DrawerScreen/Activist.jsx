@@ -20,6 +20,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { resetsetActivistdata, setActivistdata } from '../../ReduxStore/Slices/ActivistSlice';
 import { useDispatch } from 'react-redux';
 import { Dropdown } from 'react-native-element-dropdown';
+import { CommonActions } from '@react-navigation/native';
 
 const Activist = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -47,19 +48,24 @@ const Activist = ({ navigation }) => {
   };
 
   useFocusEffect(
-    React.useCallback(() => {
-      const onBackPress = () => {
-        navigation.openDrawer();
-        return true;
-      };
-
-      BackHandler.addEventListener('hardwareBackPress', onBackPress);
-
-      return () =>
-        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-    }, [navigation])
-  );
-
+     React.useCallback(() => {
+       const onBackPress = () => {
+         navigation.dispatch(
+           CommonActions.reset({
+             index: 0,
+             routes: [{ name: 'MainApp' }],
+           })
+         );
+         return true;
+       };
+ 
+       BackHandler.addEventListener('hardwareBackPress', onBackPress);
+ 
+       return () =>
+         BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+     }, [])
+   );
+ 
   useFocusEffect(
     React.useCallback(() => {
       console.log("MyActivistProfile", MyActivistProfile);

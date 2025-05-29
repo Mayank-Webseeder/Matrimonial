@@ -42,7 +42,8 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const [isSwitchOn, setIsSwitchOn] = useState(isVerified);
   const _id = userData?._id;
   const Biodata_id = userData?.bioDataId || null;
-
+const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
+  const notificationCount = notifications ? notifications.length : 0;
   const isActivist = MyActivistProfile?._id;
   const activistId = MyActivistProfile?._id;
   const isVerified = userData?.verified;
@@ -601,7 +602,32 @@ setStatus(null);
           <Text style={Globalstyles.headerText}>{personalDetails?.fullname}</Text>
         </View>
         <View style={styles.righticons}>
-          <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />
+           <TouchableOpacity style={{ position: 'relative' }} onPress={() => navigation.navigate('Notification')}>
+                      <AntDesign
+                        name="bells"
+                        size={25}
+                        color={Colors.theme_color}
+                      />
+                      {notificationCount > 0 && (
+                        <View
+                          style={{
+                            position: "absolute",
+                            right: -5,
+                            top: -5,
+                            width: SW(16),
+                            height: SW(16),
+                            borderRadius: SW(16) / 2,
+                            backgroundColor: "red",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Text style={{ color: 'white', fontSize: SF(9), fontFamily: "Poppins-Bold" }}>
+                            {notificationCount}
+                          </Text>
+                        </View>
+                      )}
+                    </TouchableOpacity>
         </View>
       </View>
 

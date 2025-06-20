@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Modal } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Modal, Share } from 'react-native';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -122,12 +122,23 @@ const CustomDrawer = (props) => {
 
 
   const handleShare = async () => {
-    showMessage({
-      message: 'Under development',
-      type: 'info',
-      icon: 'info',
-      duration: 3000,
-    });
+    try {
+      const result = await Share.share({
+        message: 'Install Brahmin Milan App from Play Store:\nhttps://play.google.com/store/apps/details?id=com.brahminmilanbyappwin.app&pcampaignid=web_share',
+      });
+
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          console.log('Shared with activity type:', result.activityType);
+        } else {
+          console.log('Shared successfully');
+        }
+      } else if (result.action === Share.dismissedAction) {
+        console.log('Share dismissed');
+      }
+    } catch (error) {
+      console.log('Error while sharing:', error.message);
+    }
   };
 
   return (

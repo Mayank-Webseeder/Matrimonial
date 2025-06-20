@@ -396,7 +396,7 @@ export default function ActivistForm({ navigation }) {
         </View>
 
       </View>
-      <ScrollView style={Globalstyles.form} showsVerticalScrollIndicator={false}>
+      <ScrollView style={Globalstyles.form} showsVerticalScrollIndicator={false} removeClippedSubviews={true}>
         <Text style={Globalstyles.title}>Full Name <Entypo name={'star'} color={'red'} size={12} /></Text>
         <TextInput style={[Globalstyles.input, errors.fullname && styles.errorInput]}
           placeholder="Enter your Full Name"

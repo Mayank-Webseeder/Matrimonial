@@ -863,7 +863,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
       />
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
 
-        <View style={Globalstyles.form} importantForAutofill="no">
+        <View style={Globalstyles.form} importantForAutofill="no" removeClippedSubviews={true}>
           <View style={styles.detail}>
             <Text style={styles.Formtitle}>Create Biodata</Text>
           </View>
@@ -937,6 +937,8 @@ const DetailedProfile = ({ navigation, profileData }) => {
               textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}
+              keyboardType="default"
+              contextMenuHidden={true}
             />
 
             {errors.fullname && <Text style={styles.errorText}>{errors.fullname}</Text>}
@@ -1182,6 +1184,8 @@ const DetailedProfile = ({ navigation, profileData }) => {
               textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}
+              keyboardType="default"
+              contextMenuHidden={true}
             />
           </View>
           <View>
@@ -1200,6 +1204,8 @@ const DetailedProfile = ({ navigation, profileData }) => {
               textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}
+              keyboardType="default"
+              contextMenuHidden={true}
             />
           </View>
           <View>
@@ -1218,6 +1224,8 @@ const DetailedProfile = ({ navigation, profileData }) => {
               textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}
+              keyboardType="default"
+              contextMenuHidden={true}
             />
           </View>
           <View>
@@ -1310,6 +1318,8 @@ const DetailedProfile = ({ navigation, profileData }) => {
               textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}
+              keyboardType="default"
+              contextMenuHidden={true}
             />
             {errors.currentCity && <Text style={styles.errorText}>{errors.currentCity}</Text>}
             {filteredCities.length > 0 && cityInput ? (
@@ -1342,6 +1352,8 @@ const DetailedProfile = ({ navigation, profileData }) => {
               textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}
+              keyboardType="default"
+              contextMenuHidden={true}
             />
           </View>
 
@@ -1382,6 +1394,8 @@ const DetailedProfile = ({ navigation, profileData }) => {
               textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}
+              keyboardType="default"
+              contextMenuHidden={true}
             />
             {errors.fatherName && <Text style={styles.errorText}>{errors.fatherName}</Text>}
           </View>
@@ -1401,6 +1415,8 @@ const DetailedProfile = ({ navigation, profileData }) => {
               textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}
+              keyboardType="default"
+              contextMenuHidden={true}
             />
             {errors.motherName && <Text style={styles.errorText}>{errors.motherName}</Text>}
           </View>
@@ -1539,6 +1555,8 @@ const DetailedProfile = ({ navigation, profileData }) => {
               textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}
+              keyboardType="default"
+              contextMenuHidden={true}
             />
           </View>
           <View>
@@ -1563,6 +1581,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               textContentType="telephoneNumber"
               importantForAutofill="no"
               autoCorrect={false}
+              contextMenuHidden={true}
             />
             {errors.contactNumber1 && <Text style={styles.errorText}>{errors.contactNumber1}</Text>}
           </View>
@@ -1584,6 +1603,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}
+              contextMenuHidden={true}
             />
             {errors.contactNumber2 && <Text style={styles.errorText}>{errors.contactNumber2}</Text>}
           </View>
@@ -1601,6 +1621,8 @@ const DetailedProfile = ({ navigation, profileData }) => {
               textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}
+              keyboardType="default"
+              contextMenuHidden={true}
             />
             {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
             {filteredStates.length > 0 ? (
@@ -1629,6 +1651,8 @@ const DetailedProfile = ({ navigation, profileData }) => {
               textContentType="none"
               importantForAutofill="no"
               autoCorrect={false}
+              keyboardType="default"
+              contextMenuHidden={true}
             />
             {errors.cityOrVillage && <Text style={styles.errorText}>{errors.cityOrVillage}</Text>}
             {filteredCitiesOrVillages.length > 0 && cityOrVillageInput ? (
@@ -1760,6 +1784,8 @@ const DetailedProfile = ({ navigation, profileData }) => {
               autoCorrect={false}
               autoScroll={false}
               showsVerticalScrollIndicator={false}
+              keyboardType="default"
+              contextMenuHidden={true}
             />
           </View>
           <View>

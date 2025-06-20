@@ -278,8 +278,8 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     <Text style={Globalstyles.headerText}>Dharmshala</Text>
                 </View>
 
-            </View>
-            <View style={Globalstyles.form}>
+            </View>a
+            <View style={Globalstyles.form} removeClippedSubviews={true}>
                 <Text style={styles.title}>Upload Your Dharamsala Details</Text>
 
                 <Text style={Globalstyles.title}>
@@ -365,16 +365,15 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                         Globalstyles.input,
                         errors.mobileNo && styles.errorInput,
                     ]}
-                    placeholder="Enter Person's Contact No."
+                    placeholder="Enter contact number"
                     keyboardType="phone-pad"
                     maxLength={10}
                     placeholderTextColor={Colors.gray}
-                    value={DharamsalaData?.mobileNo}
-                    onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
-                    autoComplete="off"
-                    textContentType="none"
-                    importantForAutofill="no"
+                    value={DharamsalaData?.mobileNo} onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
+                    autoComplete="off" importantForAutofill="no"
                     autoCorrect={false}
+                    textContentType="none"
+
                 />
                 {errors.mobileNo && (
                     <Text style={styles.errorText}>{errors.mobileNo}</Text>

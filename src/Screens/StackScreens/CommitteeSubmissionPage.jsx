@@ -247,7 +247,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     <Text style={Globalstyles.headerText}>Committee</Text>
                 </View>
             </View>
-            <ScrollView style={Globalstyles.form}>
+            <ScrollView style={Globalstyles.form} removeClippedSubviews={true}>
                 <Text style={styles.title}>Upload Committee Details</Text>
 
                 <Text style={Globalstyles.title}>Committee title <Entypo name={'star'} color={'red'} size={12} /></Text>

@@ -5,7 +5,9 @@ import { SH, SW, SF } from "../../utils/Dimensions";
 const styles = StyleSheet.create({
     container1: {
         flexGrow: 1,
-        marginVertical: SH(10)
+        marginVertical: SH(10),
+        marginTop:SH(5),
+        marginHorizontal:SW(5)
     },
     headerContainer: {
         flexDirection: "row",
@@ -17,10 +19,10 @@ const styles = StyleSheet.create({
         height: SH(30)
     },
     image: {
-        width: SW(400),
+        width:"100%",
         height: SH(300),
-        resizeMode: 'contain',
-        alignSelf: "center"
+        alignSelf: 'center',
+        borderRadius:10,
     },
     cameraIcon: {
         position: "absolute",

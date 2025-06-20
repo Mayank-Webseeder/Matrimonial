@@ -10,6 +10,8 @@ import Globalstyles from '../../utils/GlobalCss';
 import moment from 'moment';
 import { showMessage } from 'react-native-flash-message';
 import { useSelector } from 'react-redux';
+import { SH, SW } from '../../utils/Dimensions';
+import ImageViewing from 'react-native-image-viewing';
 
 const ViewPost = ({ navigation, route }) => {
   const { post } = route.params || {};
@@ -22,11 +24,19 @@ const ViewPost = ({ navigation, route }) => {
   const images = post?.images || [];
 
 
+  const [viewerVisible, setViewerVisible] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const openImageViewer = (index) => {
+    setCurrentIndex(index);
+    setViewerVisible(true);
+  };
+
+
   const formatDateTime = (createdAt) => {
     return moment(createdAt).format('MMM D [at] hh:mm A');
   };
 
-  const [imageAspectRatios, setImageAspectRatios] = useState([]);
 
   const handleShare = async () => {
     showMessage({
@@ -96,7 +106,7 @@ const ViewPost = ({ navigation, route }) => {
               </View>
               <View>
                 <Text style={styles.name}>
-                 <Text style={styles.hour}>{author?.activistId}</Text>
+                  <Text style={styles.hour}>{author?.activistId}</Text>
                 </Text>
                 <Text style={styles.date_time}>{formatDateTime(post.createdAt)}</Text>
               </View>
@@ -106,36 +116,28 @@ const ViewPost = ({ navigation, route }) => {
           <Text style={styles.postDescriptionText}>
             {post?.description}
           </Text>
+          {images.length > 0 &&
+            images.map((image, index) => (
+              <TouchableOpacity key={index} onPress={() => openImageViewer(index)}>
+                <Image
+                  source={{ uri: image }}
+                  style={{
+                    width: "100%",
+                    height: SH(400),
+                    borderRadius: 10,
+                    marginBottom: SH(10),
+                  }}
+                  resizeMode="cover"
+                />
+              </TouchableOpacity>
+            ))}
 
-          {images.length > 0 && (
-            <View>
-              {images.map((image, index) => (
-                <View key={index} >
-                  <View>
-                    <Image
-                      source={{ uri: image }}
-                      style={[styles.image, { aspectRatio: imageAspectRatios[index] || 1 }]}
-                      resizeMode="cover"
-                    />
-                  </View>
-                  {/* <View style={styles.likeShareComment}>
-                    <View style={styles.likeShare}>
-                      <AntDesign name={isLiked ? "heart" : "hearto"} size={20} color={isLiked ? "red" : Colors.dark} />
-                      <Text style={styles.shareText}>{post?.likes?.length} Likes</Text>
-                    </View>
-                    <View style={styles.likeShare}>
-                      <EvilIcons name="comment" size={20} color={Colors.dark} />
-                      <Text style={styles.shareText}>{post?.comments?.length} Comments</Text>
-                    </View>
-                    <TouchableOpacity style={styles.likeShare} onPress={handleShare}>
-                      <Feather name="send" size={20} color={Colors.dark} />
-                      <Text style={styles.shareText}>250 Shares</Text>
-                    </TouchableOpacity>
-                  </View> */}
-                </View>
-              ))}
-            </View>
-          )}
+          <ImageViewing
+            images={images.map((img) => ({ uri: img }))}
+            imageIndex={currentIndex}
+            visible={viewerVisible}
+            onRequestClose={() => setViewerVisible(false)}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>

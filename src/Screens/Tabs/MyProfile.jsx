@@ -262,8 +262,8 @@ const MyProfile = ({ navigation }) => {
 
     const handleImageUpload = async () => {
         ImageCropPicker.openPicker({
-            width: 300,
-            height: 300,
+            width: 1000,
+            height: 1000,
             cropping: true,
             includeBase64: true,
         })
@@ -397,16 +397,18 @@ const MyProfile = ({ navigation }) => {
             <View style={styles.container1}>
                 <View>
                     <TouchableOpacity onPress={() => setImageViewVisible(true)}>
-                        <Image
-                            source={
-                                selectedImage
-                                    ? { uri: selectedImage }
-                                    : image
-                                        ? { uri: image }
-                                        : require('../../Images/Profile.png')
-                            }
-                            style={styles.image}
-                        />
+                       <Image
+  source={
+    selectedImage
+      ? { uri: selectedImage }
+      : image
+        ? { uri: image }
+        : require('../../Images/Profile.png')
+  }
+  style={styles.image}
+  resizeMode="cover" 
+/>
+
                     </TouchableOpacity>
                     <ImageViewing
                         images={images}

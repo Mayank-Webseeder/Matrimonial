@@ -318,23 +318,24 @@ const Pandit = ({ navigation }) => {
 
 
 
-  const generateDeepLink = (type, id) => {
-    return `matrimonialapp://${type}/${id}`;
-  };
+const generateDeepLink = (type, id) => {
+  return `brahminmilan://${type}/${id}`;
+};
 
-  // Function to share profile link
-  const shareProfile = async (type, id) => {
-    const link = generateDeepLink(type, id);
-    console.log("Generated Deep Link:", link);
+const shareProfile = async (type, id) => {
+  const deepLink = generateDeepLink(type, id);
+  const fallback = "https://play.google.com/store/apps/details?id=com.brahminmilanbyappwin.app";
 
-    try {
-      await Share.share({
-        message: `Check this ${type} profile: ${link}`,
-      });
-    } catch (error) {
-      console.error("Error sharing:", error);
-    }
-  };
+  try {
+    await Share.share({
+      message: `Check this ${type} profile:\n${deepLink}\n\nInstall app if not opening:\n${fallback}`,
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+
   const renderSkeleton = () => (
     <SkeletonPlaceholder>
       <View style={{ margin: SH(20) }}>
@@ -352,14 +353,14 @@ const Pandit = ({ navigation }) => {
     </SkeletonPlaceholder>
   );
 
-  const handleShare = async () => {
-    showMessage({
-      message: "Under development",
-      type: "info",
-      duration: 3000,
-      icon: "info",
-    });
-  };
+  // const handleShare = async () => {
+  //   showMessage({
+  //     message: "Under development",
+  //     type: "info",
+  //     duration: 3000,
+  //     icon: "info",
+  //   });
+  // };
 
   const isExpired = profile_data.serviceSubscriptions?.some(
     sub => sub.serviceType === 'Pandit' && sub.status === 'Expired'
@@ -437,9 +438,12 @@ const Pandit = ({ navigation }) => {
                     color={Colors.dark}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
-                  <Feather name="send" size={18} color={Colors.dark} />
-                </TouchableOpacity>
+               <TouchableOpacity
+  style={styles.iconContainer}
+  onPress={() => shareProfile("pandit", item._id)}
+>
+  <Feather name="send" size={18} color={Colors.dark} />
+</TouchableOpacity>
               </View>
             </View>
           </View>

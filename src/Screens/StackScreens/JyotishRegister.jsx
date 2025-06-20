@@ -766,7 +766,7 @@ const JyotishRegister = ({ navigation }) => {
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false}>
-                <View style={Globalstyles.form} importantForAutofill="no">
+                <View style={Globalstyles.form} importantForAutofill="no" removeClippedSubviews={True}>
                     {/* <Text style={styles.editText}>Edit Details</Text> */}
                     <Text style={Globalstyles.title}>Name <Entypo name={'star'} color={'red'} size={12} /></Text>
                     <TextInput style={[Globalstyles.input, errors.fullName && styles.errorInput]}

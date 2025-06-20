@@ -48,24 +48,24 @@ const Activist = ({ navigation }) => {
   };
 
   useFocusEffect(
-     React.useCallback(() => {
-       const onBackPress = () => {
-         navigation.dispatch(
-           CommonActions.reset({
-             index: 0,
-             routes: [{ name: 'MainApp' }],
-           })
-         );
-         return true;
-       };
- 
-       BackHandler.addEventListener('hardwareBackPress', onBackPress);
- 
-       return () =>
-         BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-     }, [])
-   );
- 
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: 'MainApp' }],
+          })
+        );
+        return true;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [])
+  );
+
   useFocusEffect(
     React.useCallback(() => {
       console.log("MyActivistProfile", MyActivistProfile);
@@ -255,6 +255,10 @@ const Activist = ({ navigation }) => {
   );
 
   const renderItem = ({ item }) => {
+    const imageSource = item.profilePhoto
+      ? { uri: item.profilePhoto }
+      : require('../../Images/NoImage.png');
+
     return (
       <View style={styles.card}>
         <View style={styles.cardLeft}>
@@ -264,6 +268,15 @@ const Activist = ({ navigation }) => {
               style={styles.image}
             />
           </TouchableOpacity>
+
+          {selectedImage && (
+            <ImageViewing
+              images={[{ uri: selectedImage }]}
+              imageIndex={0}
+              visible={isImageVisible}
+              onRequestClose={() => setImageVisible(false)}
+            />
+          )}
           <View style={{ marginLeft: SW(10), flex: 1 }}>
             {item?.fullname && <Text style={styles.text}>{item.fullname}</Text>}
             {item?.subCaste && <Text style={styles.smalltext}>{item.subCaste}</Text>}
@@ -426,18 +439,18 @@ const Activist = ({ navigation }) => {
                 <View>
                   <Text style={Globalstyles.title}>Sub-Caste</Text>
                   <View>
-                     <Dropdown
-  style={[Globalstyles.input]}
-  data={subCasteOptions}
-  labelField="label"
-  valueField="value"
-  value={subcaste}
-  onChange={(text) => handleInputChange("subCaste", text.value)}
-  placeholder="Select Your subCaste"
-  placeholderStyle={{ color: '#E7E7E7' }}
-  autoScroll={false}
-  showsVerticalScrollIndicator={false}
-/>
+                    <Dropdown
+                      style={[Globalstyles.input]}
+                      data={subCasteOptions}
+                      labelField="label"
+                      valueField="value"
+                      value={subcaste}
+                      onChange={(text) => handleInputChange("subCaste", text.value)}
+                      placeholder="Select Your subCaste"
+                      placeholderStyle={{ color: '#E7E7E7' }}
+                      autoScroll={false}
+                      showsVerticalScrollIndicator={false}
+                    />
                   </View>
                 </View>
 

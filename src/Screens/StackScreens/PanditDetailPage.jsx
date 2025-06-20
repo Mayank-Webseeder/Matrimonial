@@ -1,4 +1,4 @@
-import { Text, View, Image, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Linking, ActivityIndicator } from 'react-native';
+import { Text, View, Image, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Linking, ActivityIndicator, Share } from 'react-native';
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import styles from '../StyleScreens/PanditDetailPageStyle';
@@ -20,6 +20,7 @@ import ImageViewing from 'react-native-image-viewing';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import { showMessage } from 'react-native-flash-message';
 import { useSelector } from 'react-redux';
+
 
 const PanditDetailPage = ({ navigation, item, route }) => {
     const sliderRef = useRef(null);
@@ -303,13 +304,46 @@ const PanditDetailPage = ({ navigation, item, route }) => {
     };
 
     const handleShare = async () => {
-        showMessage({
-            type: "info",
-            message: "Under development",
-            icon: "info",
-            duarion: 5000
-        })
+        const profileId = profileData?._id;
+
+        try {
+            if (!profileId) throw new Error("Missing profile ID");
+
+            const token = await AsyncStorage.getItem("userToken");
+            if (!token) throw new Error("No token found");
+
+            const response = await axios.get(
+                `https://api-matrimonial.webseeder.tech/api/v1/deeplink/pandit/${profileId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            const html = response.data;
+
+            // ✅ Extract app link and fallback from HTML using regex
+            const appLinkMatch = html.match(/window\.location\.href\s*=\s*"([^"]*brahminmilan:\/\/[^"]*)"/);
+            const playStoreLinkMatch = html.match(/window\.location\.href\s*=\s*"([^"]*play\.google\.com[^"]*)"/);
+
+            const appLink = appLinkMatch?.[1];
+            const fallbackLink = playStoreLinkMatch?.[1];
+
+            if (!appLink || !fallbackLink) {
+                throw new Error("Could not extract links from API response");
+            }
+
+            // ✅ Share both links in message
+            await Share.share({
+                message: `Check this Pandit profile:\n${appLink}\n\nIf not opening, install from Play Store:\n${fallbackLink}`,
+            });
+
+        } catch (error) {
+            console.error("Sharing failed:", error?.message || error);
+        }
     };
+
 
 
     if (Loading) {

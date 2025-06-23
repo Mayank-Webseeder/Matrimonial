@@ -12,7 +12,7 @@ const DeepLinkHandler = () => {
         handleDeepLink(url);
       }
     };
-  
+
     const handleDeepLink = (url) => {
       if (url.startsWith("https://brahmin-deeplink.netlify.app")) {
         const path = url.replace("https://brahmin-deeplink.netlify.app/", "");
@@ -33,13 +33,13 @@ const DeepLinkHandler = () => {
         }
       }
     };
-  
+
     const subscription = Linking.addEventListener("url", (event) => {
       handleDeepLink(event.url);
     });
-  
+
     handleInitialURL();
-  
+
     return () => {
       subscription.remove();
     };

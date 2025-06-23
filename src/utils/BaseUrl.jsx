@@ -149,7 +149,7 @@ const FREE_TRIAL = `${BASE_URL}/subscription/setTrial`;
 const PAYMENT_VERIFICATION = `${BASE_URL}/subscription/verifyPayment`;
 const PAID_URL = `${BASE_URL}/subscription/buy`;
 const SUBSCRIPTION_HISTORY = `${BASE_URL}/subscription/history`;
-
+const FREE_TRIAL_HISTORY=`${BASE_URL}/subscription/trialHistory`
 // Advertise Windows
 
 // Base types without sections
@@ -284,6 +284,7 @@ export {
     JYOISH_PLANS,
     KATHAVACHAK_PLANS,
     FETCH_PLANS,
+    FREE_TRIAL_HISTORY,
     PAID_URL,
     FREE_TRIAL,
     PAYMENT_VERIFICATION,

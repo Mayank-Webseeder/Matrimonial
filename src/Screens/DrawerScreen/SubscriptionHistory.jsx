@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
     },
     activeTabText: {
         color: '#fff',
-        fontFamily: "Poppins-Bold"
+        fontFamily: "Poppins-Medium"
     },
     emptyText: {
         textAlign: 'center',

@@ -428,7 +428,7 @@ const MyProfile = ({ navigation }) => {
                         <Text style={styles.editText} onPress={() => navigation.navigate('UpdateProfile')}>Update Profile</Text>
                     </View>
 
-                    <ScrollView style={{ paddingVertical: SH(5), paddingHorizontal: SW(10) }} showsVerticalScrollIndicator={false}>
+                    <ScrollView style={{ paddingVertical: SH(5), paddingHorizontal: SW(10)}} showsVerticalScrollIndicator={false}>
                         <View style={styles.userDeatil}>
                             <View style={styles.userData}>
                                 <Text style={styles.text}>User ID:  {profileData.userId || 'NA'}</Text>

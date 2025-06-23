@@ -27,6 +27,7 @@ const SavedProfile = ({ navigation }) => {
   const notificationCount = notifications ? notifications.length : 0;
   const [deletingId, setDeletingId] = useState(null);
   const isBiodataEmpty = !MyprofileData.Biodata || Object.keys(MyprofileData.Biodata).length === 0;
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchSavedProfiles();
@@ -182,6 +183,7 @@ const SavedProfile = ({ navigation }) => {
                     ? { uri: saveProfile?.personalDetails?.closeUpPhoto }
                     : require("../../Images/NoImage.png")
                 }
+                blurRadius={saveProfile?.isBlur ? 10 : 0}
                 style={styles.image}
               />
               <View style={styles.detailscontent}>

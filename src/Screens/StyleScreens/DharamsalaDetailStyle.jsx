@@ -75,13 +75,13 @@ const styles = StyleSheet.create({
     marginLeft: SW(4)
   },
   Button: {
-    backgroundColor: Colors.theme_color,
+    backgroundColor:'green',
     justifyContent:"center",
     paddingVertical: SH(5),
     borderRadius: 8,
     alignItems: "center",
     marginLeft: SW(10),
-    paddingHorizontal:SW(10),
+    paddingHorizontal:SW(15),
     flexDirection: "row",
   },
   buttonText: {

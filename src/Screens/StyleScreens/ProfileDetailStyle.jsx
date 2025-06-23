@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Bold",
     textTransform: "capitalize",
     lineHeight: SF(18),
-    paddingTop:SH(2)
+    paddingTop: SH(2)
   },
 
   text: {
@@ -216,27 +216,27 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end"
     //  marginVertical:SH(10)
   },
-   ActiveButton: {
-  backgroundColor: '#E6F9F0',          // Light green tint background
-  paddingHorizontal: SW(12),
-  paddingVertical: SH(6),
-  borderRadius: 20,                    // Pill-style rounded edges
-  borderColor: '#04AA6D',
-  borderWidth: 1,                      // Thicker border for visibility
-  alignSelf: 'flex-end',
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 1 },
-  shadowOpacity: 0.2,
-  shadowRadius: 2,
-  elevation: 2,                      
-},
-ActiveButtonText: {
-  color: '#04AA6D',
-  fontSize: SF(12),
-  fontFamily: 'Poppins-SemiBold',
-  textAlign: 'center',
-  textTransform: 'capitalize',
-},
+  ActiveButton: {
+    backgroundColor: '#E6F9F0',          // Light green tint background
+    paddingHorizontal: SW(12),
+    paddingVertical: SH(6),
+    borderRadius: 20,                    // Pill-style rounded edges
+    borderColor: '#04AA6D',
+    borderWidth: 1,                      // Thicker border for visibility
+    alignSelf: 'flex-end',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  ActiveButtonText: {
+    color: '#04AA6D',
+    fontSize: SF(12),
+    fontFamily: 'Poppins-SemiBold',
+    textAlign: 'center',
+    textTransform: 'capitalize',
+  },
   editButtonText: {
     colr: Colors.light,
     fontSize: SF(13),
@@ -536,14 +536,31 @@ ActiveButtonText: {
     marginVertical: SH(5),
   },
   sliderContainer: {
-      marginBottom: SH(30),
-      height: SH(290),
-    },
-    sliderImage: {
-      width: "100%",
-      height: SH(290),
-      resizeMode: 'cover',
-    },
+    marginBottom: SH(30),
+    height: SH(290),
+  },
+  sliderImage: {
+    width: "100%",
+    height: SH(290),
+    resizeMode: 'cover',
+  },
+ trialBox: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  backgroundColor: '#ffe5e5',
+  padding: 4,
+  borderRadius: 5,
+  borderLeftWidth: 3,
+  borderLeftColor: '#d9534f',
+  marginTop: SH(3),
+  width:"50%"
+},
+trialBoxText: {
+  fontSize: SF(10),
+  fontFamily: 'Poppins-Medium',
+  color: '#d9534f',
+  marginLeft: 3,
+},
 });
 
 export default styles;

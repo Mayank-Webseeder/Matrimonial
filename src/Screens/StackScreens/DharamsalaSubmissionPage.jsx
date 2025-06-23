@@ -278,8 +278,8 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     <Text style={Globalstyles.headerText}>Dharmshala</Text>
                 </View>
 
-            </View>a
-            <View style={Globalstyles.form} removeClippedSubviews={true}>
+            </View>
+            <View style={Globalstyles.form}>
                 <Text style={styles.title}>Upload Your Dharamsala Details</Text>
 
                 <Text style={Globalstyles.title}>

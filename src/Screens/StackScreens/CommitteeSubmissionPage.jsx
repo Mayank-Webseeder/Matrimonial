@@ -148,16 +148,9 @@ const CommitteeSubmissionPage = ({ navigation }) => {
         if (!CommitteeData?.city?.trim()) {
             newErrors.city = "City is required.";
         }
-        if (!CommitteeData?.area?.trim()) {
-            newErrors.area = "area is required.";
-        }
         if (!CommitteeData?.subCaste?.trim()) {
             newErrors.subCaste = "Sub caste is required.";
         }
-        if (!CommitteeData?.photoUrl) {
-            newErrors.photoUrl = "photoUrl is required.";
-        }
-
         setErrors(newErrors);
 
         return Object.keys(newErrors).length === 0;
@@ -247,7 +240,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     <Text style={Globalstyles.headerText}>Committee</Text>
                 </View>
             </View>
-            <ScrollView style={Globalstyles.form} removeClippedSubviews={true}>
+            <ScrollView style={Globalstyles.form}>
                 <Text style={styles.title}>Upload Committee Details</Text>
 
                 <Text style={Globalstyles.title}>Committee title <Entypo name={'star'} color={'red'} size={12} /></Text>
@@ -350,7 +343,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     />
                 ) : null}
 
-                <Text style={Globalstyles.title}>Area <Entypo name={'star'} color={'red'} size={12} /></Text>
+                <Text style={Globalstyles.title}>Area</Text>
                 <TextInput
                     style={[
                         Globalstyles.input,
@@ -369,7 +362,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                 )}
 
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginVertical: SH(10) }}>
-                    <Text style={Globalstyles.title}>Upload President Image <Entypo name={'star'} color={'red'} size={12} /></Text>
+                    <Text style={Globalstyles.title}>Upload President Image</Text>
                     <TouchableOpacity style={styles.uploadButton} onPress={handleImagePick}>
                         <Text style={styles.uploadButtonText}>{CommitteeData.photoUrl ? "Change Image" : "Upload Image"}</Text>
                     </TouchableOpacity>
@@ -395,7 +388,8 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     keyboardType="phone-pad"
                     maxLength={10}
                     placeholderTextColor={Colors.gray}
-                    value={CommitteeData?.mobileNo} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
+                    value={CommitteeData?.mobileNo} 
+                    onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
                     autoComplete="off" importantForAutofill="no"
                     autoCorrect={false}
                     textContentType="none"

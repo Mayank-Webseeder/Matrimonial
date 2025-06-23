@@ -309,40 +309,17 @@ const PanditDetailPage = ({ navigation, item, route }) => {
         try {
             if (!profileId) throw new Error("Missing profile ID");
 
-            const token = await AsyncStorage.getItem("userToken");
-            if (!token) throw new Error("No token found");
+            const deepLink = `https://brahmin-deeplink.netlify.app/pandit-profile/${profileId}`;
+            const fallbackLink = "https://play.google.com/store/apps/details?id=com.brahminmilanbyappwin.app";
 
-            const response = await axios.get(
-                `https://api-matrimonial.webseeder.tech/api/v1/deeplink/pandit/${profileId}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-
-            const html = response.data;
-
-            // ✅ Extract app link and fallback from HTML using regex
-            const appLinkMatch = html.match(/window\.location\.href\s*=\s*"([^"]*brahminmilan:\/\/[^"]*)"/);
-            const playStoreLinkMatch = html.match(/window\.location\.href\s*=\s*"([^"]*play\.google\.com[^"]*)"/);
-
-            const appLink = appLinkMatch?.[1];
-            const fallbackLink = playStoreLinkMatch?.[1];
-
-            if (!appLink || !fallbackLink) {
-                throw new Error("Could not extract links from API response");
-            }
-
-            // ✅ Share both links in message
             await Share.share({
-                message: `Check this Pandit profile:\n${appLink}\n\nIf not opening, install from Play Store:\n${fallbackLink}`,
+                message: `Check this Pandit profile:\n${deepLink}\n\nIf not opening, install from Play Store:\n${fallbackLink}`
             });
-
         } catch (error) {
             console.error("Sharing failed:", error?.message || error);
         }
     };
+
 
 
 

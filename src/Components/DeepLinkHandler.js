@@ -1,4 +1,3 @@
-// DeepLinkHandler.js
 import { useEffect } from 'react';
 import { Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -13,11 +12,11 @@ const DeepLinkHandler = () => {
         handleDeepLink(url);
       }
     };
-
+  
     const handleDeepLink = (url) => {
-      if (url.startsWith("brahminmilanbyappwin://")) {
-        const parts = url.replace("brahminmilanbyappwin://", "").split("/");
-        const [type, id] = parts;
+      if (url.startsWith("https://brahmin-deeplink.netlify.app")) {
+        const path = url.replace("https://brahmin-deeplink.netlify.app/", "");
+        const [type, id] = path.split("/");
 
         switch (type) {
           case "jyotish-profile":
@@ -34,13 +33,13 @@ const DeepLinkHandler = () => {
         }
       }
     };
-
+  
     const subscription = Linking.addEventListener("url", (event) => {
       handleDeepLink(event.url);
     });
-
+  
     handleInitialURL();
-
+  
     return () => {
       subscription.remove();
     };

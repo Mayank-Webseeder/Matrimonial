@@ -354,7 +354,7 @@ useEffect(() => {
 
           <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${DharamsalaData.mobileNo}`)}>
             <MaterialIcons name="call" size={18} color={Colors.light} />
-            <Text style={styles.RequestText}>Request for call</Text>
+            <Text style={styles.RequestText}>  call</Text>
           </TouchableOpacity>
         </View>
 

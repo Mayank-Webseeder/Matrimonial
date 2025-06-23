@@ -15,12 +15,13 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Globalstyles from '../../utils/GlobalCss';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import ImageViewing from 'react-native-image-viewing';
-import { PROFILE_TYPE, REPOST } from '../../utils/BaseUrl';
+import { PROFILE_TYPE, REPOST, FREE_TRIAL_HISTORY } from '../../utils/BaseUrl';
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
 import { showMessage } from 'react-native-flash-message';
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 import AppIntroSlider from 'react-native-app-intro-slider';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const ProfileDetail = ({ route, navigation }) => {
     const { profileType } = route.params || {};
@@ -33,6 +34,8 @@ const ProfileDetail = ({ route, navigation }) => {
     const [visible, setVisible] = useState(false);
     const [imageIndex, setImageIndex] = useState(0);
     const [modalVisible, setModalVisible] = useState(false);
+    const [trialData, setTrialData] = useState([]);
+    const [isTrialActive, setIsTrialActive] = useState(false);
     const hasOtherDetails = profileData?.personalDetails?.knowCooking || profileData?.personalDetails?.dietaryHabit || profileData?.personalDetails?.smokingHabit ||
         profileData?.personalDetails?.drinkingHabit || profileData?.personalDetails?.tobaccoHabits || profileData?.personalDetails?.hobbies;
     const personalDetails = profileData?.personalDetails;
@@ -51,6 +54,15 @@ const ProfileDetail = ({ route, navigation }) => {
 
         return () => clearTimeout(timeout);
     }, [currentIndex, formattedImages]);
+
+    useEffect(() => {
+        const loadData = async () => {
+            const { isTrialActive, trials } = await fetchTrialHistory();
+            setTrialData(trials);
+            setIsTrialActive(isTrialActive);
+        };
+        loadData();
+    }, []);
 
 
     const profilePhoto = profileData?.profilePhoto
@@ -132,6 +144,13 @@ const ProfileDetail = ({ route, navigation }) => {
         }
     }, [profileType, isBiodataExpired, panditStatus, JyotishStatus, KathavachakStatus]);
 
+    useFocusEffect(
+        useCallback(() => {
+            fetchData();
+            fetchTrialHistory();
+        }, [])
+    );
+
     const fetchData = async () => {
         try {
             const token = await AsyncStorage.getItem('userToken');
@@ -168,11 +187,46 @@ const ProfileDetail = ({ route, navigation }) => {
         setLoading(false);
     };
 
-    useFocusEffect(
-        useCallback(() => {
-            fetchData();
-        }, [])
-    );
+
+    const fetchTrialHistory = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userToken');
+            const response = await axios.get(
+                FREE_TRIAL_HISTORY, {
+                headers: { Authorization: `Bearer ${token}` },
+            }
+            );
+            const trials = response.data.trials;
+            console.log("trials", JSON.stringify(trials))
+
+            if (!trials || trials.length === 0) {
+                return {
+                    isTrialActive: false,
+                    trials: []
+                };
+            }
+
+            const currentDate = moment();
+            const updatedTrials = trials.map((trial) => {
+                const endDate = moment(trial.endDate);
+                return {
+                    ...trial,
+                    isActive: endDate.isAfter(currentDate),
+                };
+            });
+
+            return {
+                isTrialActive: updatedTrials.some(t => t.isActive),
+                trials: updatedTrials
+            };
+        } catch (error) {
+            console.error(error);
+            return {
+                isTrialActive: false,
+                trials: []
+            };
+        }
+    };
 
     if (loading) {
         return (
@@ -297,6 +351,22 @@ const ProfileDetail = ({ route, navigation }) => {
         }
     };
 
+
+    const getDatesForService = (trialData, serviceType) => {
+        const trial = trialData.find(t => t.serviceType.toLowerCase() === serviceType.toLowerCase());
+        if (!trial) return null;
+        return {
+            startDate: moment(trial.startDate).format("DD MMM YYYY"),
+            endDate: moment(trial.endDate).format("DD MMM YYYY"),
+        };
+    };
+
+    const panditDates = getDatesForService(trialData, 'Pandit');
+    const jyotishDates = getDatesForService(trialData, 'Jyotish');
+    const kathavachakDates = getDatesForService(trialData, 'Kathavachak');
+    const BiodataDates = getDatesForService(trialData, 'Biodata');
+
+
     return (
         <View style={Globalstyles.container}>
             <View style={Globalstyles.header}>
@@ -313,62 +383,62 @@ const ProfileDetail = ({ route, navigation }) => {
                 {profileType === 'Biodata' && (
                     <>
                         <View style={styles.sliderContainer}>
-          <AppIntroSlider
-            ref={topSliderRef}
-            data={formattedImages}
-            renderItem={SliderrenderItem}
-            showNextButton={false}
-            showDoneButton={false}
-            dotStyle={Globalstyles.dot}
-            activeDotStyle={Globalstyles.activeDot}
-            onSlideChange={(index) => setCurrentIndex(index)}
-          />
+                            <AppIntroSlider
+                                ref={topSliderRef}
+                                data={formattedImages}
+                                renderItem={SliderrenderItem}
+                                showNextButton={false}
+                                showDoneButton={false}
+                                dotStyle={Globalstyles.dot}
+                                activeDotStyle={Globalstyles.activeDot}
+                                onSlideChange={(index) => setCurrentIndex(index)}
+                            />
 
-          {/* Modal for Full Image View */}
-          <Modal visible={modalVisible} transparent={true} animationType="fade">
-            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.8)" }}>
-              <ScrollView
-                horizontal
-                pagingEnabled
-                showsHorizontalScrollIndicator={false}
-                contentOffset={{ x: imageIndex * SCREEN_W, y: 0 }}
-                onMomentumScrollEnd={(e) =>
-                  setImageIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W))
-                }
-              >
-                {formattedImages.map((img, idx) => (
-                  <View
-                    key={idx}
-                    style={{
-                      width: SCREEN_W,
-                      height: SCREEN_H,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      marginTop: SH(15)
-                    }}
-                  >
-                    <Image
-                      source={{ uri: img.uri }}
-                      resizeMode="contain"
-                      style={{ width: '100%', height: '100%' }}
-                    />
-                  </View>
-                ))}
-              </ScrollView>
+                            {/* Modal for Full Image View */}
+                            <Modal visible={modalVisible} transparent={true} animationType="fade">
+                                <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.8)" }}>
+                                    <ScrollView
+                                        horizontal
+                                        pagingEnabled
+                                        showsHorizontalScrollIndicator={false}
+                                        contentOffset={{ x: imageIndex * SCREEN_W, y: 0 }}
+                                        onMomentumScrollEnd={(e) =>
+                                            setImageIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W))
+                                        }
+                                    >
+                                        {formattedImages.map((img, idx) => (
+                                            <View
+                                                key={idx}
+                                                style={{
+                                                    width: SCREEN_W,
+                                                    height: SCREEN_H,
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                    marginTop: SH(15)
+                                                }}
+                                            >
+                                                <Image
+                                                    source={{ uri: img.uri }}
+                                                    resizeMode="contain"
+                                                    style={{ width: '100%', height: '100%' }}
+                                                />
+                                            </View>
+                                        ))}
+                                    </ScrollView>
 
-              <View style={{
-                position: "absolute", top: SH(30), alignSelf: "center", backgroundColor: "rgba(0,0,0,0.6)",
-                paddingHorizontal: SW(8), borderRadius: 5, paddingVertical: SH(8)
-              }}>
-                <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>{imageIndex + 1} / {formattedImages.length}</Text>
-              </View>
+                                    <View style={{
+                                        position: "absolute", top: SH(30), alignSelf: "center", backgroundColor: "rgba(0,0,0,0.6)",
+                                        paddingHorizontal: SW(8), borderRadius: 5, paddingVertical: SH(8)
+                                    }}>
+                                        <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>{imageIndex + 1} / {formattedImages.length}</Text>
+                                    </View>
 
-              <TouchableOpacity onPress={() => setModalVisible(false)} style={{ position: "absolute", top: SH(40), right: SW(20) }}>
-                <Text style={{ color: "white", fontSize: SF(13), fontFamily: "Poppins-Regular" }}>Close</Text>
-              </TouchableOpacity>
-            </View>
-          </Modal>
-        </View>
+                                    <TouchableOpacity onPress={() => setModalVisible(false)} style={{ position: "absolute", top: SH(40), right: SW(20) }}>
+                                        <Text style={{ color: "white", fontSize: SF(13), fontFamily: "Poppins-Regular" }}>Close</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </Modal>
+                        </View>
 
                         <View>
                             <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
@@ -403,6 +473,16 @@ const ProfileDetail = ({ route, navigation }) => {
                                         <Text style={[styles.editButtonText, { color: Colors.light }]}>Edit Biodata</Text>
                                     </TouchableOpacity>
                                 </View>
+                            </View>
+                            <View style={{ marginVertical: SH(5),marginHorizontal:SW(5) }}>
+                                {BiodataDates && (
+                                    <View style={styles.trialBox}>
+                                        <Ionicons name="alarm-outline" size={14} color="#d9534f" />
+                                        <Text style={styles.trialBoxText}>
+                                            Your trial ends on {BiodataDates.endDate}
+                                        </Text>
+                                    </View>
+                                )}
                             </View>
                             <View>
                                 <View style={styles.flexContainer1}>
@@ -488,7 +568,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                                     </View>
                                                 )}
 
-                                                 {personalDetails?.maritalStatus && (
+                                                {personalDetails?.maritalStatus && (
                                                     <View style={styles.infoRow}>
                                                         <Text style={styles.infoLabel}>Marital Status :</Text>
                                                         <Text style={styles.infoValue}>{personalDetails?.maritalStatus}</Text>
@@ -755,7 +835,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                         </View>
                                     )}
 
-                                       {profileData.partnerPreferences.partnerMaritalStatus && (
+                                    {profileData.partnerPreferences.partnerMaritalStatus && (
                                         <View style={styles.infoRow}>
                                             <Text style={styles.infoLabel}>Marital Status:</Text>
                                             <Text style={styles.infoValue}>{profileData.partnerPreferences.partnerMaritalStatus}</Text>
@@ -877,13 +957,15 @@ const ProfileDetail = ({ route, navigation }) => {
                             </View>
                         </View>
                         <View style={styles.contentContainer}>
-                            <View style={{ flex: 1, display: "flex", flexDirection: "row", justifyContent: "space-between", marginVertical: SH(5) }}>
+                            <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: SH(5) }}>
                                 {panditStatus === 'Expired' ? (
                                     <TouchableOpacity
                                         style={styles.editButton}
-                                        onPress={() => navigation.navigate('BuySubscription', { serviceType: profileType })}
+                                        onPress={() => navigation.navigate('BuySubscription', { serviceType: 'Pandit' })}
                                     >
-                                        <Text style={[styles.editButtonText, { color: Colors.light }]}>Buy Subscription</Text>
+                                        <Text style={[styles.editButtonText, { color: Colors.light }]}>
+                                            Buy Subscription
+                                        </Text>
                                     </TouchableOpacity>
                                 ) : panditStatus === 'Pending' ? (
                                     <TouchableOpacity
@@ -899,11 +981,20 @@ const ProfileDetail = ({ route, navigation }) => {
                                         </View>
                                     </TouchableOpacity>
                                 )}
-
-                                <TouchableOpacity style={[styles.editButton]} onPress={() => navigation.navigate('UpdateProfileDetails', { profileData, profileType })}>
+                                <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('UpdateProfileDetails', { profileData, profileType })}>
                                     <Text style={[styles.editButtonText, { color: Colors.light }]}>Edit Profile</Text>
                                 </TouchableOpacity>
                             </View>
+
+                            {panditDates && (
+                                <View style={styles.trialBox}>
+                                    <Ionicons name="alarm-outline" size={14} color="#d9534f" />
+                                    <Text style={styles.trialBoxText}>
+                                        Your trial ends on {panditDates.endDate}
+                                    </Text>
+                                </View>
+                            )}
+
                             <View style={styles.section}>
                                 {profileData?.description ? (
                                     <>
@@ -1065,11 +1156,11 @@ const ProfileDetail = ({ route, navigation }) => {
                             </View>
                         </View>
                         <View style={styles.contentContainer}>
-                            <View style={{ flex: 1, display: "flex", flexDirection: "row", justifyContent: "space-between", marginVertical: SH(5) }}>
+                            <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: SH(5) }}>
                                 {KathavachakStatus === 'Expired' ? (
                                     <TouchableOpacity
                                         style={styles.editButton}
-                                        onPress={() => navigation.navigate('BuySubscription', { serviceType: profileType })}
+                                        onPress={() => navigation.navigate('BuySubscription', { serviceType: 'Kathavachak' })}
                                     >
                                         <Text style={[styles.editButtonText, { color: Colors.light }]}>Buy Subscription</Text>
                                     </TouchableOpacity>
@@ -1087,11 +1178,23 @@ const ProfileDetail = ({ route, navigation }) => {
                                         </View>
                                     </TouchableOpacity>
                                 )}
-                                <TouchableOpacity style={[styles.editButton]} onPress={() => navigation.navigate('UpdateProfileDetails', { profileData, profileType })}>
+                                <TouchableOpacity
+                                    style={styles.editButton}
+                                    onPress={() => navigation.navigate('UpdateProfileDetails', { profileData, profileType })}
+                                >
                                     <Text style={[styles.editButtonText, { color: Colors.light }]}>Edit Profile</Text>
                                 </TouchableOpacity>
                             </View>
-                            <View style={styles.section}>
+
+
+                            {kathavachakDates && (
+                                <View style={styles.trialBox}>
+                                    <Ionicons name="alarm-outline" size={14} color="#d9534f" />
+                                    <Text style={styles.trialBoxText}>
+                                        Your trial ends on {kathavachakDates.endDate}
+                                    </Text>
+                                </View>
+                            )}                       <View style={styles.section}>
                                 {profileData?.description ? (
                                     <>
                                         <Text style={styles.sectionTitle}>Description</Text>
@@ -1103,7 +1206,7 @@ const ProfileDetail = ({ route, navigation }) => {
                             {profileData?.experience ? (
                                 <>
                                     <Text style={styles.sectionTitle}>Experience </Text>
-                                      <Text style={styles.text}>{profileData?.experience ? `${profileData.experience}+ years of experience` : ''}</Text>
+                                    <Text style={styles.text}>{profileData?.experience ? `${profileData.experience}+ years of experience` : ''}</Text>
                                 </>
                             ) : null}
 
@@ -1250,11 +1353,11 @@ const ProfileDetail = ({ route, navigation }) => {
                             </View>
                         </View>
                         <View style={styles.contentContainer}>
-                            <View style={{ flex: 1, display: "flex", flexDirection: "row", justifyContent: "space-between", marginVertical: SH(5) }}>
+                            <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: SH(5) }}>
                                 {JyotishStatus === 'Expired' ? (
                                     <TouchableOpacity
                                         style={styles.editButton}
-                                        onPress={() => navigation.navigate('BuySubscription', { serviceType: profileType })}
+                                        onPress={() => navigation.navigate('BuySubscription', { serviceType: 'Jyotish' })}
                                     >
                                         <Text style={[styles.editButtonText, { color: Colors.light }]}>Buy Subscription</Text>
                                     </TouchableOpacity>
@@ -1269,13 +1372,24 @@ const ProfileDetail = ({ route, navigation }) => {
                                     <TouchableOpacity disabled={true}>
                                         <View style={styles.ActiveButton}>
                                             <Text style={styles.ActiveButtonText}>Subscription Active</Text>
+
                                         </View>
                                     </TouchableOpacity>
                                 )}
-                                <TouchableOpacity style={[styles.editButton]} onPress={() => navigation.navigate('UpdateProfileDetails', { profileData, profileType })}>
+                                <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('UpdateProfileDetails', { profileData, profileType })}>
                                     <Text style={[styles.editButtonText, { color: Colors.light }]}>Edit Profile</Text>
                                 </TouchableOpacity>
                             </View>
+
+                            {jyotishDates && (
+                                <View style={styles.trialBox}>
+                                    <Ionicons name="alarm-outline" size={14} color="#d9534f" />
+                                    <Text style={styles.trialBoxText}>
+                                        Your trial ends on {jyotishDates.endDate}
+                                    </Text>
+                                </View>
+                            )}
+
                             <View style={styles.section}>
                                 {profileData?.description ? (
                                     <>
@@ -1287,7 +1401,7 @@ const ProfileDetail = ({ route, navigation }) => {
                             {profileData?.experience ? (
                                 <>
                                     <Text style={styles.sectionTitle}>Experience </Text>
-                                      <Text style={styles.text}>{profileData?.experience ? `${profileData.experience}+ years of experience` : ''}</Text>
+                                    <Text style={styles.text}>{profileData?.experience ? `${profileData.experience}+ years of experience` : ''}</Text>
                                 </>
                             ) : null}
 

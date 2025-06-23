@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Regular",
   },
   Button: {
-    backgroundColor: Colors.theme_color,
+    backgroundColor:'green',
     paddingHorizontal: SH(15),
     paddingVertical: SH(3),
     borderRadius: 8,

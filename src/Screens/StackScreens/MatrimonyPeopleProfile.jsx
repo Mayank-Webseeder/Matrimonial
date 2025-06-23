@@ -671,6 +671,7 @@ setStatus(null);
                       source={{ uri: img.uri }}
                       resizeMode="contain"
                       style={{ width: '100%', height: '100%' }}
+                      blurRadius={isBlurCondition ? 10 : 0}
                     />
                   </View>
                 ))}

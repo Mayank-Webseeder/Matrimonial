@@ -6,8 +6,8 @@ const styles = StyleSheet.create({
     container1: {
         flexGrow: 1,
         marginVertical: SH(10),
-        marginTop:SH(5),
-        marginHorizontal:SW(5)
+        marginTop: SH(5),
+        marginHorizontal: SW(5)
     },
     headerContainer: {
         flexDirection: "row",
@@ -19,10 +19,10 @@ const styles = StyleSheet.create({
         height: SH(30)
     },
     image: {
-        width:"100%",
+        width: "100%",
         height: SH(300),
         alignSelf: 'center',
-        borderRadius:10,
+        borderRadius: 10,
     },
     cameraIcon: {
         position: "absolute",
@@ -55,6 +55,7 @@ const styles = StyleSheet.create({
         marginVertical: SH(10),
         flexDirection: "row",
         justifyContent: "space-between",
+        marginTop: 0
     },
     // userData: {
     //     // flexDirection: "row",

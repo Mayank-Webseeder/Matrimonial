@@ -14,23 +14,36 @@ const DeepLinkHandler = () => {
     };
 
     const handleDeepLink = (url) => {
-      if (url.startsWith("https://brahmin-deeplink.netlify.app")) {
-        const path = url.replace("https://brahmin-deeplink.netlify.app/", "");
-        const [type, id] = path.split("/");
-
-        switch (type) {
-          case "jyotish-profile":
-            navigation.navigate("JyotishProfile", { id });
-            break;
-          case "pandit-profile":
-            navigation.navigate("PanditDetailPage", { id });
-            break;
-          case "kathavachak-profile":
-            navigation.navigate("KathavachakProfile", { id });
-            break;
-          default:
-            console.warn("Unknown deep link type:", type);
+      if (url.startsWith("https://play.google.com/store/apps/details")) {
+        const params = new URL(url).searchParams;
+        const profileType = params.get('profileType');
+        const profileId = params.get('profileId');
+        
+        if (profileType && profileId) {
+          navigateToProfile(profileType, profileId);
         }
+      }
+      // Handle direct app links (brahminmilan://profile)
+      else if (url.startsWith("brahminmilan://profile")) {
+        const path = url.replace("brahminmilan://profile/", "");
+        const [type, id] = path.split("/");
+        navigateToProfile(type, id);
+      }
+    };
+
+    const navigateToProfile = (type, id) => {
+      switch (type) {
+        case "jyotish":
+          navigation.navigate("JyotishDetailsPage", { id });
+          break;
+        case "pandit":
+          navigation.navigate("PanditDetailPage", { id });
+          break;
+        case "kathavachak":
+          navigation.navigate("KathavachakDetailsPage", { id });
+          break;
+        default:
+          console.warn("Unknown profile type:", type);
       }
     };
 

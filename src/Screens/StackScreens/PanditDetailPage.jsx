@@ -305,21 +305,20 @@ const PanditDetailPage = ({ navigation, item, route }) => {
 
     const handleShare = async () => {
         const profileId = profileData?._id;
+        const profileType = "pandit";
 
         try {
             if (!profileId) throw new Error("Missing profile ID");
-
-            const deepLink = `https://brahmin-deeplink.netlify.app/pandit-profile/${profileId}`;
-            const fallbackLink = "https://play.google.com/store/apps/details?id=com.brahminmilanbyappwin.app";
+            const playStoreLink = "https://play.google.com/store/apps/details?id=com.brahminmilanbyappwin.app";
+            const directLink = `brahminmilan://profile/${profileType}/${profileId}`;
 
             await Share.share({
-                message: `Check this Pandit profile:\n${deepLink}\n\nIf not opening, install from Play Store:\n${fallbackLink}`
+                message: `Check this profile in Brahmin Milan app:\n${directLink}\n\nIf you don't have the app, install it from Play Store:\n${playStoreLink}`
             });
         } catch (error) {
             console.error("Sharing failed:", error?.message || error);
         }
     };
-
 
 
 

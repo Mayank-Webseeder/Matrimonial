@@ -52,118 +52,118 @@ const DharamsalaDetail = ({ navigation, route }) => {
   }, [])
 
 
-   useFocusEffect(
-              React.useCallback(() => {
-                  const onBackPress = () => {
-                      navigation.dispatch(
-                          CommonActions.reset({
-                              index: 0,
-                              routes: [
-                                  {
-                                      name: 'MainApp',
-                                      state: {
-                                          index: 0,
-                                          routes: [{ name: 'Dharmshala' }],
-                                      },
-                                  },
-                              ],
-                          })
-                      );
-                      return true;
-                  };
-      
-                  BackHandler.addEventListener('hardwareBackPress', onBackPress);
-      
-                  return () =>
-                      BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-              }, [navigation])
-          );
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [
+              {
+                name: 'MainApp',
+                state: {
+                  index: 0,
+                  routes: [{ name: 'Dharmshala' }],
+                },
+              },
+            ],
+          })
+        );
+        return true;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [navigation])
+  );
 
   const fetchDharamsalaProfile = async () => {
-  setLoading(true);
+    setLoading(true);
 
-  const profileId = _id || id;
+    const profileId = _id || id;
 
-  if (!profileId) {
-    showMessage({
-      type: "danger",
-      message: "Dharamsala ID not found!",
-      icon: "danger",
-      duration: 5000
-    });
-    console.error("[fetchDharamsalaProfile] ❌ No valid ID provided. _id:", _id, " | id:", id);
-    setLoading(false);
-    return;
-  }
-
-  const token = await AsyncStorage.getItem('userToken');
-  if (!token) {
-    showMessage({
-      type: "danger",
-      message: "Authentication Error",
-      description: "No token found. Please log in again.",
-      duration: 5000
-    });
-    console.error("[fetchDharamsalaProfile] ❌ No token found.");
-    setLoading(false);
-    return;
-  }
-
-  const url = `${VIEW_DHARAMSALA}/${profileId}`;
-  console.log("[fetchDharamsalaProfile] ✅ Fetching data...");
-  console.log("🔗 URL:", url);
-  console.log("🔐 Token:", token.substring(0, 20) + "...");
-
-  try {
-    const response = await axios.get(url, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-
-    console.log("📦 Raw API Response:", JSON.stringify(response.data, null, 2));
-
-    if (response.data.status) {
-      console.log("✅ Profile Fetched:", response.data.data);
-      SetDharamsalaData(response.data.data);
-    } else {
+    if (!profileId) {
       showMessage({
         type: "danger",
-        message: "No Profile Found",
-        description: response.data.message || "Something went wrong!",
+        message: "Dharamsala ID not found!",
+        icon: "danger",
         duration: 5000
       });
-      console.warn("⚠️ API returned false status:", response.data.message);
+      console.error("[fetchDharamsalaProfile] ❌ No valid ID provided. _id:", _id, " | id:", id);
+      setLoading(false);
+      return;
     }
-  } catch (error) {
-    const errorMsg = error.response?.data?.message || error.message;
-    console.error("❌ Error fetching profile:", errorMsg);
 
-    showMessage({
-      type: "danger",
-      message: errorMsg,
-      description: "Failed to load profile data",
-      duration: 5000
-    });
-
-    const sessionExpiredMessages = [
-      "User does not Exist....!Please login again",
-      "Invalid token. Please login again",
-      "Token has expired. Please login again"
-    ];
-
-    if (sessionExpiredMessages.includes(errorMsg)) {
-      console.warn("⚠️ Session expired, clearing token...");
-      await AsyncStorage.removeItem("userToken");
-      navigation.reset({
-        index: 0,
-        routes: [{ name: "AuthStack" }],
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) {
+      showMessage({
+        type: "danger",
+        message: "Authentication Error",
+        description: "No token found. Please log in again.",
+        duration: 5000
       });
+      console.error("[fetchDharamsalaProfile] ❌ No token found.");
+      setLoading(false);
+      return;
     }
-  } finally {
-    setLoading(false);
-  }
-};
+
+    const url = `${VIEW_DHARAMSALA}/${profileId}`;
+    console.log("[fetchDharamsalaProfile] ✅ Fetching data...");
+    console.log("🔗 URL:", url);
+    console.log("🔐 Token:", token.substring(0, 20) + "...");
+
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      console.log("📦 Raw API Response:", JSON.stringify(response.data, null, 2));
+
+      if (response.data.status) {
+        console.log("✅ Profile Fetched:", response.data.data);
+        SetDharamsalaData(response.data.data);
+      } else {
+        showMessage({
+          type: "danger",
+          message: "No Profile Found",
+          description: response.data.message || "Something went wrong!",
+          duration: 5000
+        });
+        console.warn("⚠️ API returned false status:", response.data.message);
+      }
+    } catch (error) {
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("❌ Error fetching profile:", errorMsg);
+
+      showMessage({
+        type: "danger",
+        message: errorMsg,
+        description: "Failed to load profile data",
+        duration: 5000
+      });
+
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        console.warn("⚠️ Session expired, clearing token...");
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
 
@@ -268,9 +268,6 @@ const DharamsalaDetail = ({ navigation, route }) => {
   );
 
   const handleShare = async () => {
-    const profileId = DharamsalaData?._id || dharamsalaData._id;
-    console.log("profileId", profileId);
-
     try {
       if (!profileId) throw new Error("Missing profile ID");
 

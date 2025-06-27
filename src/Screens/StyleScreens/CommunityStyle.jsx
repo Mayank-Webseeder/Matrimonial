@@ -65,16 +65,16 @@ const styles = StyleSheet.create({
     marginBottom: SH(3),
     paddingVertical: SH(3)
   },
- highlightedCard: {
-  borderColor:Colors.gray,
-  borderWidth: 2,
-  backgroundColor:Colors.light,
-  shadowColor: '#ff9900',
-  shadowOpacity: 0.6,
-  shadowOffset: { width: 0, height: 3 },
-  shadowRadius: 5,
-  elevation: 8,
-},
+  highlightedCard: {
+    borderColor: Colors.gray,
+    borderWidth: 2,
+    backgroundColor: Colors.light,
+    shadowColor: '#ff9900',
+    shadowOpacity: 0.6,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 5,
+    elevation: 8,
+  },
   cardData: {
     flexDirection: 'row',
     alignItems: 'flex-start',

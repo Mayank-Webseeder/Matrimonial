@@ -104,6 +104,7 @@ const CREATE_DHARAMSALA = `${BASE_URL}/dharmshala/createDharmshala`;
 const UPDATE_DHARAMSALA = `${BASE_URL}/dharmshala/updateDharmshala`;
 const GET_DHARAMSALA = `${BASE_URL}/dharmshala/viewDharmshala`;
 const GET_ALL_DHARAMSALA = `${BASE_URL}/dharmshala/getAllDharmshala`;
+const VIEW_DHARAMSALA = `${BASE_URL}/dharmshala/getDharmshalaById`;
 const DELETE_DHARAMSALA = `${BASE_URL}/dharmshala/delete-Dharmshala`;
 
 // summary
@@ -149,7 +150,7 @@ const FREE_TRIAL = `${BASE_URL}/subscription/setTrial`;
 const PAYMENT_VERIFICATION = `${BASE_URL}/subscription/verifyPayment`;
 const PAID_URL = `${BASE_URL}/subscription/buy`;
 const SUBSCRIPTION_HISTORY = `${BASE_URL}/subscription/history`;
-const FREE_TRIAL_HISTORY=`${BASE_URL}/subscription/trialHistory`
+const FREE_TRIAL_HISTORY = `${BASE_URL}/subscription/trialHistory`
 // Advertise Windows
 
 // Base types without sections
@@ -247,6 +248,7 @@ export {
     UPDATE_JYOTISH,
     UPDATE_KATHAVACHAK,
     CREATE_DHARAMSALA,
+    VIEW_DHARAMSALA,
     UPDATE_DHARAMSALA,
     GET_DHARAMSALA,
     GET_ALL_DHARAMSALA,

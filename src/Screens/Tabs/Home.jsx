@@ -514,6 +514,9 @@ const Home = ({ navigation }) => {
   }, [currentIndexBottom, slider]);
 
 
+  const TAB_SCREENS = ["Home", "Pandit", "Matrimonial", "BioData", "EventNews", "MyProfile"];
+const DRAWER_SCREENS = ["MainPartnerPrefrence", "Interested Profile", "Saved Profile", "Pandit", "EventNews", "Dharmshala", "Committee", "Activist", "FeedBack", "Jyotish", "Kathavachak", "SuccessStories", "NotificationSettings", "ChangePassword", "PrivacySettings", "InActiveDelete", "AboutUs", "PrivacyPolicy", "TermsConditions", "SubscriptionPolicy", "MyProfile", "SubscriptionHistory", "MySuccessStory"];
+
   const renderSkeleton = () => (
     <SkeletonPlaceholder>
       <View style={{ marginVertical: SH(20) }}>
@@ -686,23 +689,37 @@ const Home = ({ navigation }) => {
             <View>
               <HeadingWithViewAll heading="PANDIT / JOYTISH / KATHAVACHAK" showViewAll={false} />
               <FlatList
-                data={Category}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    style={styles.CategoryContainer}
-                    onPress={() => {
-                      if (item.screen) navigation.navigate(item.screen);
-                      else console.warn("Screen not specified for this category.");
-                    }}
-                  >
-                    <Image source={item.image} style={styles.images} />
-                    <Text style={styles.text}>{item.text}</Text>
-                  </TouchableOpacity>
-                )}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-              />
+  data={Category}
+  keyExtractor={(item) => item.id}
+  renderItem={({ item }) => (
+    <TouchableOpacity
+      style={styles.CategoryContainer}
+      onPress={() => {
+        if (!item?.screen) {
+          console.warn("Screen not specified for this category.");
+          return;
+        }
+
+        if (TAB_SCREENS.includes(item.screen)) {
+          navigation.navigate("MainApp", {
+            screen: "Tabs",
+            params: { screen: item.screen },
+          });
+        } else if (DRAWER_SCREENS.includes(item.screen)) {
+          navigation.navigate(item.screen);
+        } else {
+          navigation.navigate(item.screen);
+        }
+      }}
+    >
+      <Image source={item.image} style={styles.images} />
+      <Text style={styles.text}>{item.text}</Text>
+    </TouchableOpacity>
+  )}
+  horizontal
+  showsHorizontalScrollIndicator={false}
+/>
+
             </View>
 
             {/* BRAHMIN COMMUNITY */}

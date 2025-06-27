@@ -1,4 +1,4 @@
-import { Text, View, Image, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Linking, ActivityIndicator, Share } from 'react-native';
+import { Text, View, Image, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Linking, ActivityIndicator, Share, BackHandler } from 'react-native';
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import styles from '../StyleScreens/PanditDetailPageStyle';
@@ -15,18 +15,18 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { PANDIT_DESCRIPTION, SAVED_PROFILES, PANDIT_ADVERDISE_WINDOW, BOTTOM_PANDIT_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
 import moment from "moment";
-import { useFocusEffect } from '@react-navigation/native';
+import { CommonActions, useFocusEffect } from '@react-navigation/native';
 import ImageViewing from 'react-native-image-viewing';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import { showMessage } from 'react-native-flash-message';
 import { useSelector } from 'react-redux';
 
-
 const PanditDetailPage = ({ navigation, item, route }) => {
     const sliderRef = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [slider, setSlider] = useState([]);
-    const { pandit_id, isSaved: initialSavedState } = route.params || {};
+    const { id, pandit_id, isSaved: initialSavedState } = route.params || {};
+    const finalId = pandit_id || id;
     const [Save, setIsSaved] = useState(initialSavedState || false);
     const [profileData, setProfileData] = useState(null);
     const images = profileData?.additionalPhotos || [];
@@ -45,15 +45,34 @@ const PanditDetailPage = ({ navigation, item, route }) => {
     const validSlides = slider.filter(item => !!item.image);
 
     useFocusEffect(
+        React.useCallback(() => {
+            const onBackPress = () => {
+                navigation.navigate("MainApp", {
+                    screen: "Tabs",
+                    params: {
+                        screen: "Pandit",
+                    },
+                });
+                return true;
+            };
+
+            BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+            return () =>
+                BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+        }, [navigation])
+    );
+
+    useFocusEffect(
         useCallback(() => {
             fetchPanditProfile();
-            console.log("my_id", JSON.stringify(my_id));
+            console.log("finalId", JSON.stringify(finalId));
         }, [])
     );
 
     const fetchPanditProfile = async () => {
         setLoading(true)
-        if (!pandit_id) {
+        if (!finalId) {
             showMessage({
                 type: "danger",
                 message: "Pandit ID not found!",
@@ -76,7 +95,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
 
         try {
             setLoading(true)
-            const response = await axios.get(`${PANDIT_DESCRIPTION}/${pandit_id}`, {
+            const response = await axios.get(`${PANDIT_DESCRIPTION}/${finalId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -187,7 +206,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
 
 
     const savedProfiles = async () => {
-        if (!pandit_id) {
+        if (!finalId) {
             showMessage({
                 type: "danger",
                 message: "Error",
@@ -208,9 +227,9 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 Authorization: `Bearer ${token}`,
             };
 
-            console.log("API Request:", `${SAVED_PROFILES}/${pandit_id}`);
+            console.log("API Request:", `${SAVED_PROFILES}/${finalId}`);
 
-            const response = await axios.post(`${SAVED_PROFILES}/${pandit_id}`, {}, { headers });
+            const response = await axios.post(`${SAVED_PROFILES}/${finalId}`, {}, { headers });
 
             console.log("Response Data:", response?.data);
 
@@ -305,21 +324,22 @@ const PanditDetailPage = ({ navigation, item, route }) => {
 
     const handleShare = async () => {
         const profileId = profileData?._id;
-        const profileType = "pandit";
+        const profileType = "pandit-detail";
+
+        console.log("profileId", profileId);
 
         try {
             if (!profileId) throw new Error("Missing profile ID");
-            const playStoreLink = "https://play.google.com/store/apps/details?id=com.brahminmilanbyappwin.app";
-            const directLink = `brahminmilan://profile/${profileType}/${profileId}`;
+
+            const directLink = `https://brahmin-milan.vercel.app/app/profile/${profileType}/${profileId}`;
 
             await Share.share({
-                message: `Check this profile in Brahmin Milan app:\n${directLink}\n\nIf you don't have the app, install it from Play Store:\n${playStoreLink}`
+                message: `Check this profile in Brahmin Milan app:\n${directLink}`
             });
         } catch (error) {
             console.error("Sharing failed:", error?.message || error);
         }
     };
-
 
 
     if (Loading) {
@@ -493,7 +513,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                                         <TouchableOpacity
                                             style={styles.postReviewButton}
                                             onPress={() => navigation.navigate('PostReview', {
-                                                pandit_id: pandit_id,
+                                                pandit_id: finalId,
                                                 entityType: profileType,
                                                 myReview: myRatings.length > 0 ? myRatings[0] : null
                                             })}

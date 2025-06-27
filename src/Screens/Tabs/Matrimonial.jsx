@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar, FlatList, Pressable, TextInput, Linking, ActivityIndicator } from 'react-native';
+import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar, FlatList, Pressable, TextInput, Linking, ActivityIndicator, Share } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -34,7 +34,6 @@ const Matrimonial = ({ navigation }) => {
   const [girlsProfiles, setgirlsProfiles] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [profiles, setProfiles] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [searchMode, setSearchMode] = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);
   const ProfileData = useSelector((state) => state.profile);
@@ -261,14 +260,23 @@ const Matrimonial = ({ navigation }) => {
     }
   };
 
-  const handleShare = async () => {
-    showMessage({
-      message: "Info",
-      description: "Under development",
-      type: "info",
-      duration: 3000,
-    });
-  };
+ const shareProfiles = async (profileId) => {
+     const profileType = "Matrimonial";
+ 
+     console.log("profileId", profileId);
+ 
+     try {
+       if (!profileId) throw new Error("Missing profile ID");
+ 
+       const directLink = `https://brahmin-milan.vercel.app/app/profile/${profileType}/${profileId}`;
+ 
+       await Share.share({
+         message: `Check this profile in Brahmin Milan app:\n${directLink}`
+       });
+     } catch (error) {
+       console.error("Sharing failed:", error?.message || error);
+     }
+   };
 
   const popop = async () => {
     const isBiodataExpired = profile_data?.serviceSubscriptions?.some(
@@ -448,7 +456,7 @@ const Matrimonial = ({ navigation }) => {
             <Text style={styles.iconText}>{item?.isSaved ? "Saved" : "Save"}</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
+          <TouchableOpacity style={styles.iconContainer} onPress={()=>shareProfiles(item?._id)}>
             <Feather name="send" size={19} color={Colors.dark} />
             <Text style={styles.iconText}>Share</Text>
           </TouchableOpacity>
@@ -464,7 +472,7 @@ const Matrimonial = ({ navigation }) => {
 
   const dataToDisplay = searchMode ? profiles : (activeButton === 1 ? girlsProfiles : activeButton === 2 ? boysProfiles : null);
 
-  if (profileLoading || loading) {
+  if (profileLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" color={Colors.theme_color} />

@@ -1,4 +1,4 @@
-import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, RefreshControl, BackHandler } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, RefreshControl, BackHandler, Share } from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 import { slider } from '../../DummyData/DummyData';
 import { Image } from 'react-native';
@@ -27,7 +27,8 @@ import { showMessage } from 'react-native-flash-message';
 import { useCallback } from 'react';
 import { CommonActions } from '@react-navigation/native';
 
-const Dharmshala = () => {
+const Dharmshala = ({ route }) => {
+  const { id } = route.params || {};
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [locality, setLocality] = useState('');
@@ -424,13 +425,23 @@ const Dharmshala = () => {
     }
   };
 
-  const handleShare = async () => {
-    showMessage({
-      message: 'Under development',
-      type: 'info',
-      icon: 'info',
-      duarion: 5000
-    });
+  const handleShare = async (profileId) => {
+    const profileType = "dharamsala-detial";
+
+    console.log("profileId", profileId);
+
+    try {
+      if (!profileId) throw new Error("Missing profile ID");
+
+      const directLink = `https://brahmin-milan.vercel.app/app/profile/${profileType}/${profileId}`;
+      console.log("directLink", directLink);
+
+      await Share.share({
+        message: `Check this profile in Brahmin Milan app:\n${directLink}`
+      });
+    } catch (error) {
+      console.error("Sharing failed:", error?.message || error);
+    }
   };
 
   const renderItem = ({ item }) => {
@@ -476,7 +487,7 @@ const Dharmshala = () => {
           </View>
         </Pressable>
         <View style={styles.sharecontainer}>
-          <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
+          <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id || id)}>
             <FontAwesome
               name={item.isSaved ? "bookmark" : "bookmark-o"}
               size={19}
@@ -485,7 +496,7 @@ const Dharmshala = () => {
             <Text style={styles.iconText}>{item.isSaved ? "Saved" : "Save"}</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
+          <TouchableOpacity style={styles.iconContainer} onPress={() => handleShare(item._id || id)}>
             <Feather name="send" size={18} color={Colors.dark} />
             <Text style={styles.iconText}>Shares</Text>
           </TouchableOpacity>

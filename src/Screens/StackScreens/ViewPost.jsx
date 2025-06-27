@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Image, ScrollView, Text, View, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
+import { Image, ScrollView, Text, View, TouchableOpacity, SafeAreaView, StatusBar, BackHandler } from 'react-native';
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styles from '../StyleScreens/ViewPostStyle';
@@ -10,20 +9,17 @@ import Globalstyles from '../../utils/GlobalCss';
 import moment from 'moment';
 import { showMessage } from 'react-native-flash-message';
 import { useSelector } from 'react-redux';
-import { SH, SW } from '../../utils/Dimensions';
+import { SH } from '../../utils/Dimensions';
 import ImageViewing from 'react-native-image-viewing';
+import { VIEW_LIKE_COMMENT_EVENTNEWS } from '../../utils/BaseUrl';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { CommonActions, useFocusEffect } from '@react-navigation/native';
 
 const ViewPost = ({ navigation, route }) => {
-  const { post } = route.params || {};
-  const MyActivistProfile = useSelector((state) => state.activist.activist_data);
-  const isLiked = post?.isLiked;
-  console.log("post", JSON.stringify(post));
-  const author = post?.activistDetails || {};
-
-  // ✅ Get images from API response correctly
-  const images = post?.images || [];
-
-
+  const { postId, id } = route.params;
+  const final_id = postId || id;
+  const [postData, setPostData] = useState(null);
   const [viewerVisible, setViewerVisible] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -32,39 +28,86 @@ const ViewPost = ({ navigation, route }) => {
     setViewerVisible(true);
   };
 
-
   const formatDateTime = (createdAt) => {
     return moment(createdAt).format('MMM D [at] hh:mm A');
   };
 
+  useEffect(() => {
+    getEventNewsData();
+    // console.log("post",post)
+  }, []);
 
-  const handleShare = async () => {
-    showMessage({
-      type: "info",
-      message: "Under development",
-      icon: "info",
-      duarion: 5000
-    });
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.navigate("MainApp", {
+          screen: "Tabs",
+          params: {
+            screen: "EventNews",
+          },
+        });
+        return true;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [navigation])
+  );
+
+
+
+
+  const getEventNewsData = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        showMessage({
+          message: 'Warning',
+          description: 'Authorization token is missing.',
+          type: 'warning',
+          icon: 'warning',
+          duration: 5000
+        });
+        return;
+      }
+
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
+
+      const response = await axios.get(`${VIEW_LIKE_COMMENT_EVENTNEWS}/${final_id}`, { headers });
+
+
+      if (response.status === 200 && response.data.status === true) {
+        console.log("✅ Fetched Event Data:", response.data.data);
+        setPostData(response.data.data);
+      }
+    } catch (error) {
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error("❌ Error fetching event post:", errorMsg);
+
+      const sessionExpiredMessages = [
+        "User does not Exist....!Please login again",
+        "Invalid token. Please login again",
+        "Token has expired. Please login again"
+      ];
+
+      if (sessionExpiredMessages.includes(errorMsg)) {
+        await AsyncStorage.removeItem("userToken");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+      }
+    }
   };
 
-  useEffect(() => {
-    const fetchAspectRatios = async () => {
-      const ratios = await Promise.all(
-        images.map((image) => {
-          return new Promise((resolve) => {
-            Image.getSize(image, (width, height) => {
-              resolve(width / height);
-            }, () => resolve(1)); // Handle errors gracefully
-          });
-        })
-      );
-      setImageAspectRatios(ratios);
-    };
+  if (!postData) return null;
 
-    if (images.length > 0) {
-      fetchAspectRatios();
-    }
-  }, [images]);
+  const images = postData?.images || [];
+  const author = postData?.activistDetails || {};
 
   return (
     <SafeAreaView style={Globalstyles.container}>
@@ -73,12 +116,13 @@ const ViewPost = ({ navigation, route }) => {
         backgroundColor="transparent"
         translucent
       />
+
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: "center" }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
-          <Text style={Globalstyles.headerText}>{post.activistName}'s Post</Text>
+          <Text style={Globalstyles.headerText}>{postData?.activistName}'s Post</Text>
         </View>
         <View style={styles.righticons}>
           <AntDesign
@@ -90,32 +134,23 @@ const ViewPost = ({ navigation, route }) => {
         </View>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} >
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.card}>
           <View style={styles.postHeader}>
-            <View style={{ display: "flex", flexDirection: 'row', alignItems: 'center' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Image
+                source={author.profilePhoto ? { uri: author.profilePhoto } : require('../../Images/NoImage.png')}
+                style={styles.EventheaderImage}
+              />
               <View>
-                <Image
-                  source={
-                    author.profilePhoto
-                      ? { uri: author.profilePhoto }
-                      : require('../../Images/NoImage.png')
-                  }
-                  style={styles.EventheaderImage}
-                />
-              </View>
-              <View>
-                <Text style={styles.name}>
-                  <Text style={styles.hour}>{author?.activistId}</Text>
-                </Text>
-                <Text style={styles.date_time}>{formatDateTime(post.createdAt)}</Text>
+                <Text style={styles.name}>{author?.activistId}</Text>
+                <Text style={styles.date_time}>{formatDateTime(postData?.createdAt)}</Text>
               </View>
             </View>
           </View>
 
-          <Text style={styles.postDescriptionText}>
-            {post?.description}
-          </Text>
+          <Text style={styles.postDescriptionText}>{postData?.description || "No description"}</Text>
+
           {images.length > 0 &&
             images.map((image, index) => (
               <TouchableOpacity key={index} onPress={() => openImageViewer(index)}>

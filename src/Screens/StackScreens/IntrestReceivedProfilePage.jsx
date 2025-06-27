@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator, Dimensions, Modal, Alert } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator, Dimensions, Modal, Alert, Share } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -25,17 +25,15 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const topSliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slider, setSlider] = useState([]);
-  const { userId } = route.params || {};
+  const { userId, id } = route.params || {};
   const [loading, setLoading] = useState(false);
   const [loadingAccept, setLoadingAccept] = useState(false);
   const [loadingDecline, setLoadingDecline] = useState(false);
   const [profileData, setProfileData] = useState([]);
   const [userData, setUserData] = useState({});
-  const [Save, setIsSaved] = useState(initialSavedState || false);
   const _id = userData?._id;
   const personalDetails = userData?.personalDetails || {};
   const partnerPreferences = userData?.partnerPreferences || {};
-  const initialSavedState = profileData?.isSaved;
   const status = profileData?.requestStatus;
   const hideContact = userData?.hideContact === true && status === 'accepted'
     ? false
@@ -44,7 +42,6 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const hideOptionalDetails = userData?.hideOptionalDetails === true && status === 'accepted'
     ? false
     : !!userData?.hideOptionalDetails;
-
   const requestId = profileData?.requestId;
   const isVisible = profileData?.isVisible;
   const isBlur = userData?.isBlur;
@@ -53,6 +50,15 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const [imageIndex, setImageIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const hasOtherDetails = personalDetails?.knowCooking || personalDetails?.dietaryHabit || personalDetails?.smokingHabit || personalDetails?.drinkingHabit || personalDetails?.tobaccoHabits || personalDetails?.hobbies;
+
+  const initialSavedState = profileData?.isSaved;
+  const [Save, setIsSaved] = useState(initialSavedState || false);
+
+  useEffect(() => {
+    if (profileData?.isSaved !== undefined) {
+      setIsSaved(profileData.isSaved);
+    }
+  }, [profileData?.isSaved]);
 
   const formattedImages = [
     personalDetails?.closeUpPhoto,
@@ -80,13 +86,14 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
 
   useFocusEffect(
     useCallback(() => {
+      console.log("initialSavedState", initialSavedState);
       if (userId) {
         fetchUserProfile(userId);
       }
 
       setLoadingAccept(false);
       setLoadingDecline(false);
-    }, [userId])
+    }, [userId || id, isBlur])
   );
 
 
@@ -440,15 +447,22 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
     }
   };
 
+  const shareProfiles = async () => {
+    const profileType = "interest-received-profile";
 
-  const handleShare = async () => {
-    showMessage({
-      type: "info",
-      message: "Info",
-      description: "Under development",
-      icon: "info",
-      duarion: 7000
-    });
+    console.log("userId", userId);
+
+    try {
+      if (!userId) throw new Error("Missing profile ID");
+
+      const directLink = `https://brahmin-milan.vercel.app/app/profile/${profileType}/${userId}`;
+
+      await Share.share({
+        message: `Check this profile in Brahmin Milan app:\n${directLink}`
+      });
+    } catch (error) {
+      console.error("Sharing failed:", error?.message || error);
+    }
   };
 
   // Map API comparisonResults to UI labels
@@ -584,7 +598,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
               />
               <Text style={styles.iconText}>{Save ? "Saved" : "Save"}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
+            <TouchableOpacity style={styles.iconContainer} onPress={shareProfiles}>
               <Feather name="send" size={19} color={Colors.theme_color} />
               <Text style={styles.iconText}>Shares</Text>
             </TouchableOpacity>

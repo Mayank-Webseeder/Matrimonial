@@ -26,7 +26,8 @@ import ImageViewing from 'react-native-image-viewing';
 import { showMessage } from "react-native-flash-message";
 import { useSelector } from 'react-redux';
 
-const Pandit = ({ navigation }) => {
+const Pandit = ({ navigation, route }) => {
+  const { id } = route.params || {};
   const sliderRef = useRef(null);
   const [activeButton, setActiveButton] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -318,22 +319,25 @@ const Pandit = ({ navigation }) => {
 
 
 
-const generateDeepLink = (type, id) => {
-  return `brahminmilan://${type}/${id}`;
-};
 
-const shareProfile = async (type, id) => {
-  const deepLink = generateDeepLink(type, id);
-  const fallback = "https://play.google.com/store/apps/details?id=com.brahminmilanbyappwin.app";
+  const shareProfile = async (profileId) => {
+    const profileType = "pandit-detail"; // fix
+    console.log("profileId:", profileId);
 
-  try {
-    await Share.share({
-      message: `Check this ${type} profile:\n${deepLink}\n\nInstall app if not opening:\n${fallback}`,
-    });
-  } catch (err) {
-    console.error(err);
-  }
-};
+    try {
+      if (!profileId) throw new Error("Missing profile ID");
+
+      const directLink = `https://brahmin-milan.vercel.app/app/profile/${profileType}/${profileId}`;
+
+      await Share.share({
+        message: `Check this profile in Brahmin Milan app:\n${directLink}`
+      });
+    } catch (error) {
+      console.error("Sharing failed:", error?.message || error);
+    }
+  };
+
+
 
 
   const renderSkeleton = () => (
@@ -405,7 +409,7 @@ const shareProfile = async (type, id) => {
                     navigation.navigate('BuySubscription', { serviceType: 'Pandit' })
                   } else {
                     navigation.navigate('PanditDetailPage', {
-                      pandit_id: item._id,
+                      pandit_id: item._id || id,
                       isSaved: isSaved,
                     });
                   }
@@ -431,19 +435,19 @@ const shareProfile = async (type, id) => {
                 <MaterialIcons name="call" size={17} color={Colors.light} />
               </TouchableOpacity>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginRight: SW(10) }}>
-                <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
+                <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id || id)}>
                   <FontAwesome
                     name={item.isSaved ? "bookmark" : "bookmark-o"}
                     size={19}
                     color={Colors.dark}
                   />
                 </TouchableOpacity>
-               <TouchableOpacity
-  style={styles.iconContainer}
-  onPress={() => shareProfile("pandit", item._id)}
->
-  <Feather name="send" size={18} color={Colors.dark} />
-</TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.iconContainer}
+                  onPress={() => shareProfile(item._id || id)}
+                >
+                  <Feather name="send" size={18} color={Colors.dark} />
+                </TouchableOpacity>
               </View>
             </View>
           </View>

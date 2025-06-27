@@ -11,17 +11,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   title: {
-    fontSize:SF(22),
-   fontFamily:"Poppins-Bold",
-    marginTop:SH(15),
+    fontSize: SF(22),
+    fontFamily: "Poppins-Bold",
+    marginTop: SH(15),
     color: '#333',
   },
   message: {
-    fontSize:SF(16),
-    marginTop:SH(8),
+    fontSize: SF(16),
+    marginTop: SH(8),
     textAlign: 'center',
     color: '#666',
-    lineHeight:SH(22),
+    lineHeight: SH(22),
   },
   righticons: {
     flexDirection: 'row',
@@ -40,9 +40,10 @@ const styles = StyleSheet.create({
     left: SW(228),
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     backgroundColor: "#e3e6e4",
     paddingHorizontal: SW(5),
-    paddingVertical: SW(2),
+    paddingVertical: SW(5),
     borderRadius: 5,
     alignSelf: "flex-end",
     width: SW(130)
@@ -58,7 +59,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: SF(13),
     paddingHorizontal: SW(2),
-    textTransform: "capitalize"
+    textTransform: "capitalize",
   },
   dot: {
     backgroundColor: Colors.light,
@@ -146,7 +147,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Bold",
     textTransform: "capitalize",
     lineHeight: SF(18),
-    paddingTop:SH(2)
+    paddingTop: SH(2)
   },
 
   text: {
@@ -197,7 +198,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: SW(3),
     paddingVertical: SH(3),
     backgroundColor: Colors.light,
-    marginTop:SH(5)
+    marginTop: SH(5)
   },
   iconContainer: {
     alignItems: 'center',
@@ -339,15 +340,15 @@ const styles = StyleSheet.create({
     color: '#000',
     flexWrap: 'wrap',
   },
-   sliderContainer: {
-      marginBottom: SH(30),
-      height: SH(290),
-    },
-    sliderImage: {
-      width: "100%",
-      height: SH(290),
-      resizeMode: 'cover',
-    },
+  sliderContainer: {
+    marginBottom: SH(30),
+    height: SH(290),
+  },
+  sliderImage: {
+    width: "100%",
+    height: SH(290),
+    resizeMode: 'cover',
+  },
 });
 
 export default styles;

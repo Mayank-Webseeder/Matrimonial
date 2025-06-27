@@ -31,7 +31,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                 message: 'User ID not found!',
                 type: 'danger',
                 icon: "danger",
-                duarion:5000
+                duarion: 5000
             });
             return;
         }
@@ -58,7 +58,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                     message: 'Success',
                     description: response.data.message,
                     type: "success",
-                    duarion:5000,
+                    duarion: 5000,
                     icon: "success"
                 });
 
@@ -71,7 +71,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                 showMessage({
                     message: 'Something went wrong!',
                     type: 'danger',
-                    duarion:5000,
+                    duarion: 5000,
                     icon: "danger"
                 });
             }
@@ -84,7 +84,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
             showMessage({
                 message: error.response?.data?.message || "Failed to save profile!",
                 type: 'danger',
-                duarion:5000
+                duarion: 5000
             });
         }
     };
@@ -94,9 +94,28 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
             type: "info",
             message: "Under development",
             icon: "info",
-            duarion:5000
+            duarion: 5000
         });
     };
+
+
+    // const shareProfiles = async (profileId) => {
+    //      const profileType = "short-matrimonial-profile";
+
+    //      console.log("profileId", profileId);
+
+    //      try {
+    //        if (!profileId) throw new Error("Missing profile ID");
+
+    //        const directLink = `https://brahmin-milan.vercel.app/app/profile/${profileType}/${profileId}`;
+
+    //        await Share.share({
+    //          message: `Check this profile in Brahmin Milan app:\n${directLink}`
+    //        });
+    //      } catch (error) {
+    //        console.error("Sharing failed:", error?.message || error);
+    //      }
+    //    };
 
     const popop = async () => {
         const isBiodataExpired = profile_data?.serviceSubscriptions?.some(
@@ -110,7 +129,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                 message: 'Biodata Missing',
                 description: 'Please create biodata to see full information of this profile.',
                 type: 'warning',
-                duarion:5000
+                duarion: 5000
             });
             navigation.navigate('MatrimonyPage')
         } else if (isBiodataExpired) {
@@ -118,7 +137,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                 message: 'Subscription Expired',
                 description: 'Please activate your subscription to see full information of this profile.',
                 type: 'warning',
-                duarion:5000,
+                duarion: 5000,
                 onPress: () => navigation.navigate('BuySubscription', { serviceType: 'Biodata' }),
             });
         } else {
@@ -185,6 +204,11 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                         />
                         <Text style={styles.iconText}>{Save ? "Saved" : "Save"}</Text>
                     </TouchableOpacity>
+
+                    {/* <TouchableOpacity style={styles.iconContainer} onPress={() => shareProfiles(item?._id)}>
+                        <Feather name="send" size={19} color={Colors.dark} />
+                        <Text style={styles.iconText}>Share</Text>
+                    </TouchableOpacity> */}
 
                     <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
                         <Feather name="send" size={19} color={Colors.dark} />

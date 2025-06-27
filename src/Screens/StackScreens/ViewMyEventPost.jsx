@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, Modal, TextInput, RefreshControl } from 'react-native';
+import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, Modal, TextInput, RefreshControl, Share } from 'react-native';
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import styles from '../StyleScreens/EventNewsStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -29,6 +29,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [myeventpost, setMyeventpost] = useState([]);
   const events = route?.params?.events || myeventpost;
+  const {id}=route?.params;
   const [commentData, setCommentData] = useState({});
   const [selectedPostId, setSelectedPostId] = useState(null)
   const [IsLoading, setIsLoading] = useState(false);
@@ -94,15 +95,22 @@ const ViewMyEventPost = ({ navigation, route }) => {
     }
   };
 
-  const handleShare = async () => {
-    showMessage({
-      type: "info",
-      message: "Info",
-      message: "Under development",
-      icon: "info",
-      duarion: 5000
-    });
-  };
+   const shareProfile = async (profileId) => {
+      const profileType = "event-news";
+      console.log("profileId:", profileId);
+  
+      try {
+        if (!profileId) throw new Error("Missing profile ID");
+  
+        const directLink = `https://brahmin-milan.vercel.app/app/profile/${profileType}/${profileId}`;
+  
+        await Share.share({
+          message: `Check this profile in Brahmin Milan app:\n${directLink}`
+        });
+      } catch (error) {
+        console.error("Sharing failed:", error?.message || error);
+      }
+    };
 
   const GetTimeAgo = (date) => {
     const eventTime = moment(date);
@@ -616,9 +624,9 @@ const ViewMyEventPost = ({ navigation, route }) => {
           </TouchableOpacity>
 
 
-          <TouchableOpacity style={styles.likeShare} onPress={handleShare}>
+          <TouchableOpacity style={styles.likeShare} onPress={() => shareProfile(item._id || id)}>
             <Feather name="send" size={20} color={Colors.dark} />
-            <Text style={styles.shareText}>250 Shares</Text>
+            <Text style={styles.shareText}>Share</Text>
           </TouchableOpacity>
         </View>
         <RBSheet

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Image, StyleSheet, Linking,Platform } from 'react-native';
+import { Image, StyleSheet, Linking, Platform } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -322,17 +322,14 @@ function MyDrawer() {
       }}
     >
       <Drawer.Screen name="Tabs" component={MyTabs} />
-      <Drawer.Screen name="MainPartnerPrefrence" component={MainPartnerPrefrence} />
       <Drawer.Screen name="Interested Profile" component={IntrestedProfile} />
       <Drawer.Screen name="Saved Profile" component={SavedProfile} />
-      <Drawer.Screen name="Pandit" component={Pandit} />
-      <Drawer.Screen name="EventNews" component={EventNews} />
-      <Drawer.Screen name="Dharmshala" component={Dharmshala} />
+      <Drawer.Screen name="Kathavachak" component={Kathavachak} />
+      <Drawer.Screen name="Jyotish" component={Jyotish} />
       <Drawer.Screen name="Committee" component={Committee} />
+      <Drawer.Screen name="Dharmshala" component={Dharmshala} />
       <Drawer.Screen name="Activist" component={Activist} />
       <Drawer.Screen name="FeedBack" component={FeedBack} />
-      <Drawer.Screen name="Jyotish" component={Jyotish} />
-      <Drawer.Screen name="Kathavachak" component={Kathavachak} />
       <Drawer.Screen name="SuccessStories" component={SuccessStories} />
       <Drawer.Screen name="NotificationSettings" component={NotificationSettings} />
       <Drawer.Screen name="ChangePassword" component={ChangePassword} />
@@ -342,7 +339,6 @@ function MyDrawer() {
       <Drawer.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
       <Drawer.Screen name="TermsConditions" component={TermsConditions} />
       <Drawer.Screen name="SubscriptionPolicy" component={SubscriptionPolicy} />
-      <Drawer.Screen name="MyProfile" component={MyProfile} />
       <Drawer.Screen name="SubscriptionHistory" component={SubscriptionHistory} />
       <Drawer.Screen name="MySuccessStory" component={MySuccessStory} />
     </Drawer.Navigator>
@@ -352,20 +348,15 @@ function MyDrawer() {
 export const AppStack = () => (
   <AppStackNavigator.Navigator screenOptions={{ headerShown: false }} initialRouteName="MainApp">
     <AppStackNavigator.Screen name="MainApp" component={MyDrawer} />
-    <AppStackNavigator.Screen name="Committee" component={Committee} />
-    <AppStackNavigator.Screen name="Dharmshala" component={Dharmshala} />
     <AppStackNavigator.Screen name="DharamsalaDetail" component={DharamsalaDetail} />
-    <AppStackNavigator.Screen name="IntrestedProfile" component={IntrestedProfile} />
     <AppStackNavigator.Screen name="Notification" component={Notification} />
     <AppStackNavigator.Screen name="RoleRegisterForm" component={RoleRegisterForm} />
     <AppStackNavigator.Screen name="PanditDetailPage" component={PanditDetailPage} />
     <AppStackNavigator.Screen name="KathavachakDetailsPage" component={KathavachakDetailsPage} />
     <AppStackNavigator.Screen name="JyotishDetailsPage" component={JyotishDetailsPage} />
     <AppStackNavigator.Screen name="CreatePost" component={CreatePost} />
-    <AppStackNavigator.Screen name="EventNews" component={EventNews} />
     <AppStackNavigator.Screen name="ViewMyEventPost" component={ViewMyEventPost} />
     <AppStackNavigator.Screen name="UpdateEventPost" component={UpdateEventPost} />
-    <AppStackNavigator.Screen name="MyProfile" component={MyProfile} />
     <AppStackNavigator.Screen name="ViewPost" component={ViewPost} />
     <AppStackNavigator.Screen name="PostReview" component={PostReview} />
     <AppStackNavigator.Screen name="ReportPage" component={ReportPage} />
@@ -389,9 +380,6 @@ export const AppStack = () => (
     <AppStackNavigator.Screen name="UpdateProfileDetails" component={UpdateProfileDetails} />
     <AppStackNavigator.Screen name="AdvertiseWithUs" component={AdvertiseWithUs} />
     <AppStackNavigator.Screen name="ShortMatrimonialProfile" component={ShortMatrimonialProfile} />
-    <AppStackNavigator.Screen name="Matrimonial" component={Matrimonial} />
-    <AppStackNavigator.Screen name="BioData" component={BioData} />
-    <AppStackNavigator.Screen name="Activist" component={Activist} />
     <AppStackNavigator.Screen name="MyuploadedDharamsala" component={MyuploadedDharamsala} />
     <AppStackNavigator.Screen name="UpdateDharamsala" component={UpdateDharamsala} />
     <AppStackNavigator.Screen name="BuySubscription" component={BuySubscription} />

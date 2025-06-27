@@ -28,7 +28,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slider, setSlider] = useState([]);
   const route = useRoute();
-  const { userId, isSaved } = route.params || {};
+  const { userId, isSaved, id } = route.params || {};
   const [loading, setLoading] = useState(false);
   const [loadingIntrest, setLoadingIntrest] = useState(false);
   const [intrestLoading, setIntrestLoading] = useState(false);
@@ -42,19 +42,19 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const [isSwitchOn, setIsSwitchOn] = useState(isVerified);
   const _id = userData?._id;
   const Biodata_id = userData?.bioDataId || null;
-const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
+  const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
   const isActivist = MyActivistProfile?._id;
   const activistId = MyActivistProfile?._id;
   const isVerified = userData?.verified;
   const verifiedBy = userData?.verifiedBy;
-  // console.log("_id", User_Id);
+  // console.log("_id", _id);
   const personalDetails = userData?.personalDetails || {};
   const partnerPreferences = userData?.partnerPreferences || {};
   const initialSavedState = profileData?.isSaved || isSaved;
   const [requestId, setRequestId] = useState(null);
   const [status, setStatus] = useState(null);
-   const hideContact = userData?.hideContact === true && status === 'accepted'
+  const hideContact = userData?.hideContact === true && status === 'accepted'
     ? false
     : !!userData?.hideContact;
 
@@ -285,10 +285,11 @@ const notifications = useSelector((state) => state.GetAllNotification.AllNotific
       // console.log("isBlur:", userData?.isBlur);
       // console.log("userId:", userData?.userId);
       // console.log("userData?.personalDetails", userData?.personalDetails);
-      if (userId) {
-        fetchUserProfile(userId);
+      if (userId || id) {
+        console.log("userId",userId);
+        fetchUserProfile(userId || id);
       }
-    }, [userId, isBlur])
+    }, [userId || id, isBlur])
   );
 
   const fetchUserProfile = async (id) => {
@@ -310,7 +311,7 @@ const notifications = useSelector((state) => state.GetAllNotification.AllNotific
         setUserData(response?.data?.targetUserBioData);
         setProfileData(response.data);
         setStatus(response.data?.requestStatus || null);
-        setRequestId(response.data?.requestId || null);  
+        setRequestId(response.data?.requestId || null);
       } else {
         setProfileData(null);
         setUserData(null);
@@ -383,8 +384,8 @@ const notifications = useSelector((state) => state.GetAllNotification.AllNotific
       if (response.status === 200 && response.data.status === true) {
         const newRequestId = response.data?.data?._id;
 
-       setRequestId(newRequestId);
-setStatus("pending");
+        setRequestId(newRequestId);
+        setStatus("pending");
 
         showMessage({
           type: "success",
@@ -433,8 +434,8 @@ setStatus("pending");
       const response = await axios.delete(`${DELETE_SEND_REQUEST}/${requestId}`, { headers });
 
       if (response.status === 200 && response.data.status === true) {
-       setRequestId(null);
-setStatus(null);
+        setRequestId(null);
+        setStatus(null);
 
         showMessage({
           type: "success",
@@ -541,12 +542,21 @@ setStatus(null);
   };
 
   const shareProfiles = async () => {
-    showMessage({
-      message: "Under development",
-      type: "info",
-      icon: "info",
-      duarion: 5000
-    });
+    const profileType = "Biodata";
+
+    console.log("userId", userId);
+
+    try {
+      if (!userId) throw new Error("Missing profile ID");
+
+      const directLink = `https://brahmin-milan.vercel.app/app/profile/${profileType}/${userId}`;
+
+      await Share.share({
+        message: `Check this profile in Brahmin Milan app:\n${directLink}`
+      });
+    } catch (error) {
+      console.error("Sharing failed:", error?.message || error);
+    }
   };
 
   // Map API comparisonResults to UI labels
@@ -602,32 +612,32 @@ setStatus(null);
           <Text style={Globalstyles.headerText}>{personalDetails?.fullname}</Text>
         </View>
         <View style={styles.righticons}>
-           <TouchableOpacity style={{ position: 'relative' }} onPress={() => navigation.navigate('Notification')}>
-                      <AntDesign
-                        name="bells"
-                        size={25}
-                        color={Colors.theme_color}
-                      />
-                      {notificationCount > 0 && (
-                        <View
-                          style={{
-                            position: "absolute",
-                            right: -5,
-                            top: -5,
-                            width: SW(16),
-                            height: SW(16),
-                            borderRadius: SW(16) / 2,
-                            backgroundColor: "red",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                        >
-                          <Text style={{ color: 'white', fontSize: SF(9), fontFamily: "Poppins-Bold" }}>
-                            {notificationCount}
-                          </Text>
-                        </View>
-                      )}
-                    </TouchableOpacity>
+          <TouchableOpacity style={{ position: 'relative' }} onPress={() => navigation.navigate('Notification')}>
+            <AntDesign
+              name="bells"
+              size={25}
+              color={Colors.theme_color}
+            />
+            {notificationCount > 0 && (
+              <View
+                style={{
+                  position: "absolute",
+                  right: -5,
+                  top: -5,
+                  width: SW(16),
+                  height: SW(16),
+                  borderRadius: SW(16) / 2,
+                  backgroundColor: "red",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: 'white', fontSize: SF(9), fontFamily: "Poppins-Bold" }}>
+                  {notificationCount}
+                </Text>
+              </View>
+            )}
+          </TouchableOpacity>
         </View>
       </View>
 

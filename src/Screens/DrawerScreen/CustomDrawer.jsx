@@ -109,13 +109,28 @@ const CustomDrawer = (props) => {
     setOpenDropdown((prev) => (prev === dropdown ? null : dropdown));
   };
 
+  const TAB_SCREENS = ["Home", "Pandit", "Matrimonial", "BioData", "EventNews", "MyProfile"];
+  const DRAWER_SCREENS = ["MainPartnerPrefrence", "Interested Profile", "Saved Profile", "Dharmshala", "Committee", "Activist", "AdvertiseWithUs", "SuccessStories", "FeedBack", "SubscriptionHistory", "AboutUs", "PrivacyPolicy", "TermsConditions", "SubscriptionPolicy"];
+
   const handleNavigation = (screen) => {
     setOpenDropdown(null);
 
-    if (screen) {
-      navigation.navigate(screen);
-    } else {
+    if (!screen) {
       console.log('Screen not available');
+      return;
+    }
+
+    if (TAB_SCREENS.includes(screen)) {
+      navigation.navigate("MainApp", {
+        screen: "Tabs",
+        params: { screen },
+      });
+    }
+    else if (DRAWER_SCREENS.includes(screen)) {
+      navigation.navigate(screen);
+    }
+    else {
+      navigation.navigate(screen);
     }
   };
 

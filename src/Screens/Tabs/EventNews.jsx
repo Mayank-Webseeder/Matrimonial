@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, TextInput, ActivityIndicator, RefreshControl, Linking, BackHandler } from 'react-native';
+import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, TextInput, ActivityIndicator, RefreshControl, Linking, BackHandler, Share } from 'react-native';
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import styles from '../StyleScreens/EventNewsStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -97,12 +97,21 @@ const EventNews = ({ navigation }) => {
     }
   };
 
-  const handleShare = async () => {
-    showMessage({
-      type: "info",
-      message: "Under development",
-      icon: "info"
-    });
+  const shareProfile = async (profileId) => {
+    const profileType = "event-news";
+    console.log("profileId:", profileId);
+
+    try {
+      if (!profileId) throw new Error("Missing profile ID");
+
+      const directLink = `https://brahmin-milan.vercel.app/app/profile/${profileType}/${profileId}`;
+
+      await Share.share({
+        message: `Check this profile in Brahmin Milan app:\n${directLink}`
+      });
+    } catch (error) {
+      console.error("Sharing failed:", error?.message || error);
+    }
   };
 
   const GetTimeAgo = (date) => {
@@ -424,7 +433,7 @@ const EventNews = ({ navigation }) => {
 
       if (response.status === 200 && response.data.status === true) {
         const postData = response.data.data.eventPosts;
-        console.log("myeventpost",JSON.stringify(postData));
+        console.log("myeventpost", JSON.stringify(postData));
         setMyeventpost(postData);
       }
     } catch (error) {
@@ -548,7 +557,7 @@ const EventNews = ({ navigation }) => {
     if (images.length === 1) {
       return (
         <TouchableOpacity
-          onPress={() => navigation.navigate('ViewPost', { image: images[0], post: item })}
+          onPress={() => navigation.navigate('ViewPost', { image: images[0], postId : item._id})}
         >
           <Image source={{ uri: images[0] }} style={[styles.image1, { width: '100%', height: SH(250) }]} />
         </TouchableOpacity>
@@ -559,7 +568,7 @@ const EventNews = ({ navigation }) => {
       return (
         <View style={{ flexDirection: 'row' }}>
           {images.map((image, index) => (
-            <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, post: item })}>
+            <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, postId : item._id })}>
               <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(2) }]} />
             </TouchableOpacity>
           ))}
@@ -571,13 +580,13 @@ const EventNews = ({ navigation }) => {
       return (
         <View>
           <View style={{ flexDirection: 'row' }}>
-            <TouchableOpacity onPress={() => navigation.navigate('ViewPost', { image: images[0], post: item })}>
+            <TouchableOpacity onPress={() => navigation.navigate('ViewPost', { image: images[0], postId : item._id })}>
               <Image source={{ uri: images[0] }} style={[styles.image2, { flex: 1, margin: SW(2) }]} />
             </TouchableOpacity>
           </View>
           <View style={{ flexDirection: 'row' }}>
             {images.slice(1).map((image, index) => (
-              <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, post: item })}>
+              <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, postId : item._id })}>
                 <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(2) }]} />
               </TouchableOpacity>
             ))}
@@ -591,14 +600,14 @@ const EventNews = ({ navigation }) => {
         <View>
           <View style={{ flexDirection: 'row' }}>
             {images.slice(0, 2).map((image, index) => (
-              <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, post: item })}>
+              <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, postId : item._id })}>
                 <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(1) }]} />
               </TouchableOpacity>
             ))}
           </View>
           <View style={{ flexDirection: 'row' }}>
             {images.slice(2, 4).map((image, index) => (
-              <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, post: item })}>
+              <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, postId : item._id })}>
                 <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(1) }]} />
               </TouchableOpacity>
             ))}
@@ -656,11 +665,10 @@ const EventNews = ({ navigation }) => {
             <FontAwesome5 name="comment" size={20} color="black" />
             <Text style={styles.shareText}>{item.comments.length} Comments</Text>
           </TouchableOpacity>
-
-
-          <TouchableOpacity style={styles.likeShare} onPress={handleShare}>
+          
+          <TouchableOpacity style={styles.likeShare} onPress={() => shareProfile(item._id)}>
             <Feather name="send" size={20} color={Colors.dark} />
-            <Text style={styles.shareText}>250 Shares</Text>
+            <Text style={styles.shareText}>Share</Text>
           </TouchableOpacity>
         </View>
         <RBSheet
@@ -836,8 +844,8 @@ const EventNews = ({ navigation }) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ flexGrow: 1 }}
         refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
         <FlatList
           data={postId ? eventdata : getPostsForPage()}

@@ -1,4 +1,4 @@
-import { Text, View, Image, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Linking, ActivityIndicator } from 'react-native';
+import { Text, View, Image, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Linking, ActivityIndicator, Share, BackHandler } from 'react-native';
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import styles from '../StyleScreens/PanditDetailPageStyle';
@@ -16,7 +16,7 @@ import axios from 'axios';
 import { BOTTOM_KATHAVACHAK_ADVERDISE_WINDOW, KATHAVACHAK_DESCRIPTION, SAVED_PROFILES } from '../../utils/BaseUrl';
 import moment from "moment";
 import { useSelector } from 'react-redux';
-import { useFocusEffect } from '@react-navigation/native';
+import { CommonActions, useFocusEffect } from '@react-navigation/native';
 import ImageViewing from 'react-native-image-viewing';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import { showMessage } from 'react-native-flash-message';
@@ -26,7 +26,8 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
     const sliderRef = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [slider, setSlider] = useState([]);
-    const { kathavachak_id, isSaved: initialSavedState } = route.params || {};
+    const { id, kathavachak_id, isSaved: initialSavedState } = route.params || {};
+    const finalId = kathavachak_id || id;
     const [Save, setIsSaved] = useState(initialSavedState || false);
     const [profileData, setProfileData] = useState(null);
     const images = profileData?.additionalPhotos || [];
@@ -47,6 +48,34 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
 
     const validSlides = slider.filter(item => !!item.image);
 
+
+      useFocusEffect(
+                React.useCallback(() => {
+                    const onBackPress = () => {
+                        navigation.dispatch(
+                            CommonActions.reset({
+                                index: 0,
+                                routes: [
+                                    {
+                                        name: 'MainApp',
+                                        state: {
+                                            index: 0,
+                                            routes: [{ name: 'Kathavachak' }],
+                                        },
+                                    },
+                                ],
+                            })
+                        );
+                        return true;
+                    };
+        
+                    BackHandler.addEventListener('hardwareBackPress', onBackPress);
+        
+                    return () =>
+                        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+                }, [navigation])
+            );
+
     useFocusEffect(
         useCallback(() => {
             fetchkathavachakProfile();
@@ -56,7 +85,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
 
     const fetchkathavachakProfile = async () => {
         setLoading(true)
-        if (!kathavachak_id) {
+        if (!finalId) {
             showMessage({
                 type: "danger",
                 message: "Kathavachak ID not found!",
@@ -79,7 +108,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
 
         try {
             setLoading(true)
-            const response = await axios.get(`${KATHAVACHAK_DESCRIPTION}/${kathavachak_id}`, {
+            const response = await axios.get(`${KATHAVACHAK_DESCRIPTION}/${finalId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -205,7 +234,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
 
 
     const savedProfiles = async () => {
-        if (!kathavachak_id) {
+        if (!finalId) {
             showMessage({
                 type: "danger",
                 message: "User ID not found!",
@@ -226,9 +255,9 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                 Authorization: `Bearer ${token}`,
             };
 
-            console.log("API Request:", `${SAVED_PROFILES}/${kathavachak_id}`);
+            console.log("API Request:", `${SAVED_PROFILES}/${finalId}`);
 
-            const response = await axios.post(`${SAVED_PROFILES}/${kathavachak_id}`, {}, { headers });
+            const response = await axios.post(`${SAVED_PROFILES}/${finalId}`, {}, { headers });
 
             console.log("Response Data:", response?.data);
 
@@ -328,13 +357,25 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
     };
 
     const handleShare = async () => {
-        showMessage({
-            type: "info",
-            message: "Info",
-            description: "Under development",
-            duarion: 5000
-        });
+        const profileId = profileData?._id;
+        const profileType = "kathavachak-detail";
+
+        console.log("profileId", profileId);
+
+        try {
+            if (!profileId) throw new Error("Missing profile ID");
+
+            const directLink = `https://brahmin-milan.vercel.app/app/profile/${profileType}/${profileId}`;
+            console.log("directLink",directLink);
+
+            await Share.share({
+                message: `Check this profile in Brahmin Milan app:\n${directLink}`
+            });
+        } catch (error) {
+            console.error("Sharing failed:", error?.message || error);
+        }
     };
+
 
     if (Loading) {
         return (
@@ -514,7 +555,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                                     <TouchableOpacity
                                         style={styles.postReviewButton}
                                         onPress={() => navigation.navigate('PostReview', {
-                                            kathavachak_id: kathavachak_id,
+                                            kathavachak_id: finalId,
                                             entityType: profileType,
                                             myReview: myRatings.length > 0 ? myRatings[0] : null
                                         })}

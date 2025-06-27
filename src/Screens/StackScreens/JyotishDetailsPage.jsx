@@ -1,4 +1,4 @@
-import { Text, View, Image, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Linking, ToastAndroid, ActivityIndicator } from 'react-native';
+import { Text, View, Image, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Linking, ToastAndroid, ActivityIndicator, Share, BackHandler } from 'react-native';
 import styles from '../StyleScreens/PanditDetailPageStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
@@ -16,7 +16,7 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import moment from "moment";
 import { useSelector } from 'react-redux';
-import { useFocusEffect } from '@react-navigation/native';
+import { CommonActions, useFocusEffect } from '@react-navigation/native';
 import ImageViewing from 'react-native-image-viewing';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import { showMessage } from 'react-native-flash-message';
@@ -25,7 +25,8 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
     const sliderRef = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [slider, setSlider] = useState([]);
-    const { jyotish_id, isSaved: initialSavedState } = route.params || {};
+    const { id, jyotish_id, isSaved: initialSavedState } = route.params || {};
+    const finalId = jyotish_id || id;
     const [Save, setIsSaved] = useState(initialSavedState || false);
     const [profileData, setProfileData] = useState(null);
     const images = profileData?.additionalPhotos || [];
@@ -45,6 +46,32 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
         : require('../../Images/NoImage.png');
     const validSlides = slider.filter(item => !!item.image);
 
+    useFocusEffect(
+        React.useCallback(() => {
+            const onBackPress = () => {
+                navigation.dispatch(
+                    CommonActions.reset({
+                        index: 0,
+                        routes: [
+                            {
+                                name: 'MainApp',
+                                state: {
+                                    index: 0,
+                                    routes: [{ name: 'Jyotish' }],
+                                },
+                            },
+                        ],
+                    })
+                );
+                return true;
+            };
+
+            BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+            return () =>
+                BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+        }, [navigation])
+    );
 
     useFocusEffect(
         useCallback(() => {
@@ -54,9 +81,10 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
         }, [])
     );
 
+
     const fetchJyotishProfile = async () => {
         setLoading(true)
-        if (!jyotish_id) {
+        if (!finalId) {
             showMessage({
                 type: "error",
                 message: "Jyotish ID not found!",
@@ -78,7 +106,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
 
         try {
             setLoading(true)
-            const response = await axios.get(`${JYOTISH_DESCRIPTION}/${jyotish_id}`, {
+            const response = await axios.get(`${JYOTISH_DESCRIPTION}/${finalId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -188,7 +216,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
     };
 
     const savedProfiles = async () => {
-        if (!jyotish_id) {
+        if (!finalId) {
             showMessage({
                 type: "danger",
                 message: "User ID not found!",
@@ -209,9 +237,9 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                 Authorization: `Bearer ${token}`,
             };
 
-            console.log("API Request:", `${SAVED_PROFILES}/${jyotish_id}`);
+            console.log("API Request:", `${SAVED_PROFILES}/${finalId}`);
 
-            const response = await axios.post(`${SAVED_PROFILES}/${jyotish_id}`, {}, { headers });
+            const response = await axios.post(`${SAVED_PROFILES}/${finalId}`, {}, { headers });
 
             console.log("Response Data:", response?.data);
 
@@ -304,12 +332,22 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
     };
 
     const handleShare = async () => {
-        showMessage({
-            type: "info",
-            message: "Under development",
-            icon: "info",
-            duarion: 7000
-        });
+        const profileId = profileData?._id;
+        const profileType = "jyotish-detail";
+
+        console.log("profileId", profileId);
+
+        try {
+            if (!profileId) throw new Error("Missing profile ID");
+
+            const directLink = `https://brahmin-milan.vercel.app/app/profile/${profileType}/${profileId}`;
+
+            await Share.share({
+                message: `Check this profile in Brahmin Milan app:\n${directLink}`
+            });
+        } catch (error) {
+            console.error("Sharing failed:", error?.message || error);
+        }
     };
 
     if (Loading) {
@@ -491,7 +529,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                                     <TouchableOpacity
                                         style={styles.postReviewButton}
                                         onPress={() => navigation.navigate('PostReview', {
-                                            jyotish_id: jyotish_id,
+                                            jyotish_id: finalId,
                                             entityType: profileType,
                                             myReview: myRatings.length > 0 ? myRatings[0] : null
                                         })}
@@ -647,7 +685,8 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                                     </TouchableOpacity>
                                 );
                             }}
-                            showNextButton={false}
+                            showNextButton=
+                            {false}
                             showDoneButton={false}
                             dotStyle={Globalstyles.dot}
                             activeDotStyle={Globalstyles.activeDot}

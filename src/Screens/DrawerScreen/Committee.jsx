@@ -1,7 +1,6 @@
 
-import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, RefreshControl, BackHandler } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, RefreshControl, BackHandler, Share } from 'react-native';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { slider } from '../../DummyData/DummyData';
 import { Image } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -15,7 +14,7 @@ import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { SH, SF } from '../../utils/Dimensions';
 import { useSelector } from 'react-redux';
-import { COMMITTEE_ADVERDISE_WINDOW, GET_ALL_COMITTEE, GET_COMMIITEE, SAVED_PROFILES, TOP_COMMITTEE_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
+import { GET_ALL_COMITTEE, GET_COMMIITEE, SAVED_PROFILES, TOP_COMMITTEE_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
 import axios from 'axios';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -27,7 +26,9 @@ import { showMessage } from 'react-native-flash-message';
 import { CommonActions } from '@react-navigation/native';
 import { Dropdown } from 'react-native-element-dropdown';
 
-const Committee = ({ navigation }) => {
+const Committee = ({ navigation, route }) => {
+  const { id } = route.params || {};
+  const flatListRef = useRef(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [locality, setLocality] = useState('');
   const [activeButton, setActiveButton] = useState(null);
@@ -50,6 +51,15 @@ const Committee = ({ navigation }) => {
   const notificationCount = notifications ? notifications.length : 0;
   const [slider, setSlider] = useState([]);
 
+
+  useEffect(() => {
+    if (id && committeeData?.length) {
+      const index = committeeData.findIndex((item) => item._id === id);
+      if (index !== -1 && flatListRef.current) {
+        flatListRef.current.scrollToIndex({ index, animated: true });
+      }
+    }
+  }, [id, committeeData]);
 
   const fetchMyCommitteeData = async () => {
     try {
@@ -394,20 +404,30 @@ const Committee = ({ navigation }) => {
     }
   };
 
-  const handleShare = async () => {
-    showMessage({
-      message: 'Under development',
-      type: 'info',
-      icon: 'info',
-      duarion: 5000
-    });
+  const handleShare = async (profileId) => {
+    const profileType = "committee";
+
+    console.log("profileId:", profileId);
+
+    try {
+      if (!profileId) throw new Error("Missing profile ID");
+
+      const directLink = `https://brahmin-milan.vercel.app/app/profile/${profileType}/${profileId}`;
+
+      await Share.share({
+        message: `Check this profile in Brahmin Milan app:\n${directLink}`
+      });
+    } catch (error) {
+      console.error("Sharing failed:", error?.message || error);
+    }
   };
 
+
   const renderItem = ({ item }) => {
-    const isSaved = item.isSaved || false;
+    const isHighlighted = item._id === id;
 
     return (
-      <View style={styles.card}>
+      <View style={[styles.card, isHighlighted && styles.highlightedCard]}>
         <Pressable style={styles.cardData}>
           <TouchableOpacity onPress={() => openImageViewer(item.photoUrl)}>
             <Image
@@ -437,7 +457,7 @@ const Committee = ({ navigation }) => {
 
         <View style={styles.sharecontainer}>
           {/* Bookmark Button */}
-          <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
+          <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id || id)}>
             <FontAwesome
               name={item?.isSaved ? "bookmark" : "bookmark-o"}
               size={19}
@@ -448,7 +468,10 @@ const Committee = ({ navigation }) => {
 
 
           {/* Share Button */}
-          <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
+          <TouchableOpacity
+            style={styles.iconContainer}
+            onPress={() => handleShare(item._id || id)}
+          >
             <Feather name="send" size={18} color={Colors.dark} />
             <Text style={styles.iconText}>Share</Text>
           </TouchableOpacity>
@@ -617,12 +640,21 @@ const Committee = ({ navigation }) => {
         </View>
         {isLoading ? renderSkeleton() : (
           <FlatList
+            ref={flatListRef}
             data={committeeData}
             renderItem={renderItem}
             keyExtractor={(item) => item._id}
             scrollEnabled={false}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.panditListData}
+            onScrollToIndexFailed={(info) => {
+              setTimeout(() => {
+                flatListRef.current?.scrollToIndex({
+                  index: info.index,
+                  animated: true,
+                });
+              }, 500);
+            }}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
                 <FontAwesome name="users" size={60} color="#ccc" style={{ marginBottom: 15 }} />

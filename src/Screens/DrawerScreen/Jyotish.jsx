@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, RefreshControl } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, RefreshControl, Share } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -23,7 +23,8 @@ import ImageViewing from 'react-native-image-viewing';
 import { showMessage } from 'react-native-flash-message';
 import { useSelector } from 'react-redux';
 
-const Jyotish = ({ navigation }) => {
+const Jyotish = ({ navigation, route }) => {
+  const { id } = route.params || {};
   const sliderRef = useRef(null);
   const [activeButton, setActiveButton] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -312,14 +313,22 @@ const Jyotish = ({ navigation }) => {
     </SkeletonPlaceholder>
   );
 
-  const handleShare = async () => {
-    showMessage({
-      message: "Under development",
-      type: "info",
-      duration: 5000,
-      icon: "info",
-    });
-  };
+   const shareProfile = async (profileId) => {
+     const profileType = "jyotish-detail"; 
+     console.log("profileId:", profileId);
+ 
+     try {
+       if (!profileId) throw new Error("Missing profile ID");
+ 
+       const directLink = `https://brahmin-milan.vercel.app/app/profile/${profileType}/${profileId}`;
+ 
+       await Share.share({
+         message: `Check this profile in Brahmin Milan app:\n${directLink}`
+       });
+     } catch (error) {
+       console.error("Sharing failed:", error?.message || error);
+     }
+   };
 
   const isExpired = profile_data.serviceSubscriptions?.some(
     sub => sub.serviceType === 'Jyotish' && sub.status === 'Expired'
@@ -362,7 +371,7 @@ const Jyotish = ({ navigation }) => {
                   navigation.navigate('BuySubscription', { serviceType: 'Jyotish' })
                 } else {
                   navigation.navigate('JyotishDetailsPage', {
-                    jyotish_id: item._id, isSaved: isSaved
+                    jyotish_id: item._id || id, isSaved: isSaved
                   });
                 }
               }}>
@@ -401,14 +410,17 @@ const Jyotish = ({ navigation }) => {
                 <MaterialIcons name="call" size={17} color={Colors.light} />
               </TouchableOpacity>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginRight: SW(10) }}>
-                <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
+                <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id || id)}>
                   <FontAwesome
                     name={item.isSaved ? "bookmark" : "bookmark-o"}
                     size={19}
                     color={Colors.dark}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
+                <TouchableOpacity
+                  style={styles.iconContainer}
+                  onPress={() => shareProfile(item._id || id)}
+                >
                   <Feather name="send" size={18} color={Colors.dark} />
                 </TouchableOpacity>
               </View>

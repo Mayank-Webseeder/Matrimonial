@@ -57,7 +57,9 @@ const MyUploadedCommittees = ({ navigation, route }) => {
 
                 // ✅ Ensure navigation is available before using it
                 if (navigation && navigation.navigate) {
-                    navigation.reset({ index: 0, routes: [{ name: "Committee" }] });
+                     navigation.navigate('MainApp', {
+  screen: 'Committee',
+});
                 } else {
                     console.warn("⚠️ Navigation is not available");
                 }

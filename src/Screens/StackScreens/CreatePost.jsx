@@ -102,12 +102,10 @@ const CreatePost = ({ navigation, route }) => {
                     description: response.data.message || 'Your event has been created successfully!',
                     duarion: 7000
                 });
-                navigation.dispatch(
-                    CommonActions.reset({
-                        index: 0,
-                        routes: [{ name: 'EventNews' }],
-                    })
-                );
+                navigation.navigate("MainApp", {
+                    screen: "Tabs",
+                    params: { screen: "EventNews" } 
+                });
             } else {
                 throw new Error(response.data.message || "Unexpected response from server");
             }

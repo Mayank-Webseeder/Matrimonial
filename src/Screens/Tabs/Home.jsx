@@ -424,7 +424,8 @@ const Home = ({ navigation }) => {
     if (!isBiodataMissing || isBiodataExpired) {
       console.log("Navigating to ShortMatrimonialProfile because Biodata is missing or expired");
       navigation.navigate("ShortMatrimonialProfile", {
-        userDetails: item,
+        userDetails:item,
+        userId: item.userId,
       });
     }
     else {

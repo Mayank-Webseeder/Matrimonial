@@ -403,7 +403,7 @@ const PanditRegister = ({ navigation }) => {
                     type: "danger",
                     duration: 4000,
                     icon: "danger",
-                    position:'bottom'
+                    position: 'bottom'
                 });
                 setIsLoading(false);
                 return;
@@ -592,11 +592,11 @@ const PanditRegister = ({ navigation }) => {
 
             const options = {
                 description: `Subscription for ${plan.profileType}`,
-                image: 'https://yourapp.com/logo.png',
+                image: require('../../Images/AppLogo.jpg'),
                 currency,
                 key: razorpayKey,
                 amount,
-                name: 'Matrimonial',
+                name: 'Brahmin Milan',
                 order_id: orderId,
                 theme: { color: '#3399cc' },
             };
@@ -1108,30 +1108,56 @@ const PanditRegister = ({ navigation }) => {
                                     <View style={styles.cardContainer}>
                                         {plans.map((plan) => (
                                             <View key={plan._id} style={styles.card}>
-                                                <Text style={styles.title}>{plan.profileType}</Text>
-                                                <Text style={styles.Text}>Trial Period: {plan.trialPeriod} days</Text>
-                                                <Text style={styles.Text}>Duration: {plan.duration} months</Text>
-                                                <Text style={styles.Text}>Amount: ₹{plan.amount}</Text>
-                                                <View style={{ flex: 1, justifyContent: 'space-between' }}>
-                                                    <Text style={styles.description}>{plan.description}</Text>
+                                                {plan.photoUrl ? (
+                                                    <Image
+                                                        source={{ uri: plan.photoUrl }}
+                                                        style={styles.planImage}
+                                                        resizeMode="cover"
+                                                        onError={(e) => console.log("Image load error:", e.nativeEvent.error)}
+                                                    />
+                                                ) : null}
+                                                <View style={styles.cardContent}>
+                                                    {plan.trialPeriod ? (
+                                                        <Text style={styles.Text}>
+                                                            <Text style={styles.boldLabel}>Trial Period: </Text>
+                                                            {plan.trialPeriod} days
+                                                        </Text>
+                                                    ) : null}
 
-                                                    <View style={styles.buttonRowAligned}>
-                                                        {!hasTrial && (
-                                                            <TouchableOpacity style={styles.trialButton} onPress={() => handleFreeTrial(plan)}>
-                                                                <Text style={styles.trialText}>
-                                                                    {TrialPlanId === plan._id ? 'Starting...' : 'Start Free Trial'}
+                                                    {plan.duration ? (
+                                                        <Text style={styles.Text}>
+                                                            <Text style={styles.boldLabel}>Duration: </Text>
+                                                            {plan.duration} months
+                                                        </Text>
+                                                    ) : null}
+
+                                                    {plan.amount ? (
+                                                        <Text style={styles.Text}>
+                                                            <Text style={styles.boldLabel}>Amount: </Text>
+                                                            ₹{plan.amount}
+                                                        </Text>
+                                                    ) : null}
+
+                                                    <View style={{ flex: 1, justifyContent: 'space-between' }}>
+                                                        {plan.description ? (
+                                                            <Text style={styles.description}>{plan.description}</Text>
+                                                        ) : null}
+                                                        <View style={styles.buttonRowAligned}>
+                                                            {!hasTrial && (
+                                                                <TouchableOpacity style={styles.trialButton} onPress={() => handleFreeTrial(plan)}>
+                                                                    <Text style={styles.trialText}>
+                                                                        {TrialPlanId === plan._id ? 'Starting...' : 'Start Free Trial'}
+                                                                    </Text>
+                                                                </TouchableOpacity>
+                                                            )}
+                                                            <TouchableOpacity style={styles.buyButton} onPress={() => handleBuyNow(plan)}>
+                                                                <Text style={styles.buyButtonText}>
+                                                                    {buyingPlanId === plan._id ? 'Buying...' : 'Buy Now'}
                                                                 </Text>
                                                             </TouchableOpacity>
-                                                        )}
-
-                                                        <TouchableOpacity style={styles.buyButton} onPress={() => handleBuyNow(plan)}>
-                                                            <Text style={styles.buyButtonText}>
-                                                                {buyingPlanId === plan._id ? 'Buying...' : 'Buy Now'}
-                                                            </Text>
-                                                        </TouchableOpacity>
+                                                        </View>
                                                     </View>
                                                 </View>
-
                                             </View>
                                         ))}
                                     </View>

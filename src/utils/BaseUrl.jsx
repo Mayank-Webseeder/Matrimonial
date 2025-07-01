@@ -32,6 +32,7 @@ const GET_BIODATA = `${BASE_URL}/biodata/getBiodata`;
 const GET_ALL_BIODATA_PROFILES = `${BASE_URL}/user/feed`;
 const REPOST = `${BASE_URL}/biodata/repostBiodata`;
 const DELETE_BIODATA = `${BASE_URL}/biodata/deleteBioData`;
+const GET_BIODATA_BY_ID = `${BASE_URL}/biodata/getBiodataByUserId`;
 
 // send & received profiles APIs
 const MATCHED_PROFILE = `${BASE_URL}/user/profile`;
@@ -202,6 +203,7 @@ export {
     CREATE_PERSONAL_DETAILS,
     UPDATE_PERSONAL_DETAILS,
     GET_BIODATA,
+    GET_BIODATA_BY_ID,
     CREATE_PARTNER_PERFRENCES,
     UPDATE_PARTNER_PERFRENCES,
     CREATE_PANDIT,

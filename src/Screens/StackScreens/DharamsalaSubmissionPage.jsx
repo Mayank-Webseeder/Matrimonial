@@ -233,7 +233,9 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                     response.data.message || "Your changes have been saved!",
                     "success"
                 );
-                navigation.navigate("Dharmshala");
+                navigation.navigate('MainApp', {
+                    screen: 'Dharmshala',
+                });
             } else {
                 throw new Error(response.data.message || "Something went wrong");
             }
@@ -279,7 +281,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                 </View>
 
             </View>
-            <View style={Globalstyles.form}>
+            <ScrollView style={Globalstyles.form} showsVerticalScrollIndicator={false}>
                 <Text style={styles.title}>Upload Your Dharamsala Details</Text>
 
                 <Text style={Globalstyles.title}>
@@ -429,7 +431,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                         <Text style={styles.submitButtonText}>Submit</Text>
                     )}
                 </TouchableOpacity>
-            </View>
+            </ScrollView>
         </SafeAreaView>
     );
 };

@@ -188,7 +188,9 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     duarion: 7000,
                     icon: "success",
                 });
-                navigation.navigate("Committee");
+                navigation.navigate('MainApp', {
+  screen: 'Committee',
+});
             } else {
                 showMessage({
                     type: "danger",

@@ -50,13 +50,15 @@ const MyuploadedDharamsala = ({ navigation, route }) => {
           type: "success",
           message: "dharamsala deleted successfully!",
           icon: "success",
-          duarion:5000
+          duarion: 5000
         });
 
         setModalVisible(false);
         setSelectedItem(null);
         if (navigation && navigation.navigate) {
-          navigation.reset({ index: 0, routes: [{ name: "Dharmshala" }] });
+          navigation.navigate('MainApp', {
+            screen: 'Dharmshala',
+          });
         } else {
           console.warn("⚠️ Navigation is not available");
         }
@@ -70,16 +72,16 @@ const MyuploadedDharamsala = ({ navigation, route }) => {
       console.error("Error fetching biodata:", errorMsg);
       showMessage({
         type: "danger",
-        message:errorMsg,
+        message: errorMsg,
         icon: "danger",
-        duarion:5000
+        duarion: 5000
       });
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({

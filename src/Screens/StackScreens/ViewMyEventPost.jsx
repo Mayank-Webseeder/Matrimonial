@@ -29,7 +29,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [myeventpost, setMyeventpost] = useState([]);
   const events = route?.params?.events || myeventpost;
-  const {id}=route?.params;
+  const { id = null } = route?.params || {};
   const [commentData, setCommentData] = useState({});
   const [selectedPostId, setSelectedPostId] = useState(null)
   const [IsLoading, setIsLoading] = useState(false);
@@ -71,7 +71,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
       const response = await axios.get(VIEW_EVENT, { headers });
 
       if (response.status === 200 && response.data.status === true) {
-         const postData = response.data.data.eventPosts;
+        const postData = response.data.data.eventPosts;
         console.log("myeventpost", postData);
         setMyeventpost(postData);
       }
@@ -95,22 +95,22 @@ const ViewMyEventPost = ({ navigation, route }) => {
     }
   };
 
-   const shareProfile = async (profileId) => {
-      const profileType = "event-news";
-      console.log("profileId:", profileId);
-  
-      try {
-        if (!profileId) throw new Error("Missing profile ID");
-  
-        const directLink = `https://brahmin-milan.vercel.app/app/profile/${profileType}/${profileId}`;
-  
-        await Share.share({
-          message: `Check this profile in Brahmin Milan app:\n${directLink}`
-        });
-      } catch (error) {
-        console.error("Sharing failed:", error?.message || error);
-      }
-    };
+  const shareProfile = async (profileId) => {
+    const profileType = "event-news";
+    console.log("profileId:", profileId);
+
+    try {
+      if (!profileId) throw new Error("Missing profile ID");
+
+      const directLink = `https://brahmin-milan.vercel.app/app/profile/${profileType}/${profileId}`;
+
+      await Share.share({
+        message: `Check this profile in Brahmin Milan app:\n${directLink}`
+      });
+    } catch (error) {
+      console.error("Sharing failed:", error?.message || error);
+    }
+  };
 
   const GetTimeAgo = (date) => {
     const eventTime = moment(date);
@@ -250,9 +250,9 @@ const ViewMyEventPost = ({ navigation, route }) => {
           message: fetchedData.message || "Comment added successfully!",
           duarion: 5000,
           onHide: () => {
-            navigation.reset({
-              index: 0,
-              routes: [{ name: "EventNews" }],
+            navigation.navigate("MainApp", {
+              screen: "Tabs",
+              params: { screen: "EventNews" }
             });
           }
         });
@@ -437,9 +437,9 @@ const ViewMyEventPost = ({ navigation, route }) => {
     if (sheetRef.current) {
       sheetRef.current.close();
     }
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "EventNews" }],
+    navigation.navigate("MainApp", {
+      screen: "Tabs",
+      params: { screen: "EventNews" }
     });
   }
 

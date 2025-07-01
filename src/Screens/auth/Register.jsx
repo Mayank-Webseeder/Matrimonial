@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Text, View, ImageBackground, TouchableOpacity, TextInput, ScrollView, SafeAreaView, ActivityIndicator, FlatList, Pressable, Alert } from "react-native";
 import styles from "../StyleScreens/RegisterStyle";
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -38,6 +38,19 @@ const Register = ({ navigation }) => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [otpSent, setOtpSent] = useState(false);
     const [isOtpLoading, setIsOtpLoading] = useState(false);
+    const [otpTimer, setOtpTimer] = useState(0);
+    const timerRef = useRef(null);
+
+    useEffect(() => {
+        return () => {
+            if (timerRef.current) {
+                clearInterval(timerRef.current);
+            }
+        };
+    }, []);
+
+
+
 
     const handleImageUpload = () => {
         ImageCropPicker.openPicker({
@@ -149,7 +162,12 @@ const Register = ({ navigation }) => {
 
     const handleSendOtp = async () => {
         if (!/^\d{10}$/.test(mobileNumber)) {
-            showMessage({ type: "danger", message: "Invalid Number", description: "Enter a valid 10-digit mobile number", duration: 5000 });
+            showMessage({
+                type: "danger",
+                message: "Invalid Number",
+                description: "Enter a valid 10-digit mobile number",
+                duration: 5000,
+            });
             return;
         }
 
@@ -160,23 +178,45 @@ const Register = ({ navigation }) => {
             console.log("OTP Response:", response.data);
 
             if (response.status === 200 || response.data.status === true) {
-                setOtpSent(true);  // Mark OTP as sent
-                showMessage({ type: "success", message: "OTP Sent", description: "Check your SMS for the OTP", icon: "success", duration: 5000 });
+                setOtpSent(true);
+                showMessage({
+                    type: "success",
+                    message: "OTP Sent",
+                    description: "Check your SMS for the OTP",
+                    icon: "success",
+                    duration: 5000,
+                });
+
+                setOtpTimer(300); // 5 minutes
+                if (timerRef.current) clearInterval(timerRef.current); // clear if already running
+                timerRef.current = setInterval(() => {
+                    setOtpTimer(prev => {
+                        if (prev <= 1) {
+                            clearInterval(timerRef.current);
+                            return 0;
+                        }
+                        return prev - 1;
+                    });
+                }, 1000);
             } else {
                 throw new Error(response.data.message || "OTP request failed");
             }
         } catch (error) {
             console.error("OTP Error:", error);
-
-            if (error.response?.status === 400) {
-                showMessage({ type: "danger", message: "Invalid Request", description: error.response.data.message || "Mobile number is required", icon: "danger", duration: 5000 });
-            } else {
-                showMessage({ type: "danger", message: "OTP Failed", description: error.message || "Failed to send OTP. Try again.", icon: "danger", duration: 5000 });
-            }
+            const message =
+                error.response?.data?.message || error.message || "Failed to send OTP";
+            showMessage({
+                type: "danger",
+                message: "OTP Failed",
+                description: message,
+                icon: "danger",
+                duration: 5000,
+            });
         } finally {
             setIsOtpLoading(false);
         }
     };
+
 
     const handleSignup = async () => {
 
@@ -329,7 +369,7 @@ const Register = ({ navigation }) => {
                             }}
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
-                             textContentType="none"
+                            textContentType="none"
                             importantForAutofill="no"
                             autoCorrect={false}
                         />
@@ -526,9 +566,31 @@ const Register = ({ navigation }) => {
                                 importantForAutofill="no"
                                 autoCorrect={false}
                             />
-                            <TouchableOpacity style={styles.otpButton} onPress={handleSendOtp} disabled={isOtpLoading}>
-                                {isOtpLoading ? <ActivityIndicator size="small" color={Colors.theme_color} /> : <Text style={styles.otpButtonText}>Send OTP</Text>}
+                            <TouchableOpacity
+                                style={styles.otpButton}
+                                onPress={handleSendOtp}
+                                disabled={isOtpLoading || otpTimer > 0}
+                            >
+                                {isOtpLoading ? (
+                                    <ActivityIndicator size="small" color={Colors.theme_color} />
+                                ) : (
+                                    <Text
+                                        style={[
+                                            styles.otpButtonText,
+                                            otpTimer > 0 && { color: 'red', fontFamily: "Poppins-Medium" }
+                                        ]}
+                                    >
+                                        {otpTimer > 0
+                                            ? `Resend OTP  ${Math.floor(otpTimer / 60)}:${(otpTimer % 60)
+                                                .toString()
+                                                .padStart(2, "0")}`
+                                            : "Send OTP"}
+                                    </Text>
+                                )}
                             </TouchableOpacity>
+
+
+
 
                         </View>
                         {errors.mobileNumber && (

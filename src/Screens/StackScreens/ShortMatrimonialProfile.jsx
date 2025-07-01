@@ -9,21 +9,113 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from '../StyleScreens/ExploreStyle';
 import Colors from '../../utils/Colors';
 import Globalstyles from '../../utils/GlobalCss';
-import { SAVED_PROFILES } from '../../utils/BaseUrl';
+import { SAVED_PROFILES, GET_BIODATA_BY_ID } from '../../utils/BaseUrl';
 import { SW } from '../../utils/Dimensions';
 import { useSelector } from 'react-redux';
 import { showMessage } from 'react-native-flash-message';
 
 const ShortMatrimonialProfile = ({ navigation, route }) => {
-    const { userDetails, isSaved: initialSavedState } = route.params;
+    const {userId, isSaved: initialSavedState, id } = route.params;
+    const profileId=userId || id || null;
     const [Save, setIsSaved] = useState(initialSavedState || false);
     const ProfileData = useSelector((state) => state.profile);
     const profile_data = ProfileData?.profiledata || {};
     const MyprofileData = useSelector((state) => state.getBiodata);
+    const [Loading,setLoading]=useState(false);
+    const [Biodata,SetBiodataData]=useState(false);
+
 
     useEffect(() => {
-        console.log("userDetails", userDetails);
-    }, [])
+        fetchBiodataProfile();
+        console.log("Biodata",Biodata);
+    }, [userId, id])
+
+    const fetchBiodataProfile = async () => {
+        setLoading(true);
+
+        const profileId = userId || id;
+        console.log("profileId",profileId);
+
+        if (!profileId) {
+            showMessage({
+                type: "danger",
+                message: "Biodata ID not found!",
+                icon: "danger",
+                duration: 5000
+            });
+            console.error("[fetchBiodataProfile] ❌ No valid ID provided. _id:", userId, " | id:", id);
+            setLoading(false);
+            return;
+        }
+
+        const token = await AsyncStorage.getItem('userToken');
+        if (!token) {
+            showMessage({
+                type: "danger",
+                message: "Authentication Error",
+                description: "No token found. Please log in again.",
+                duration: 5000
+            });
+            console.error("[fetchBiodataProfile] ❌ No token found.");
+            setLoading(false);
+            return;
+        }
+
+        const url = `${GET_BIODATA_BY_ID}/${profileId}`;
+        console.log("[fetchBiodataProfile] ✅ Fetching data...");
+        console.log("🔗 URL:", url);
+        console.log("🔐 Token:", token.substring(0, 20) + "...");
+
+        try {
+            const response = await axios.get(url, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            console.log("📦 Raw API Response:", JSON.stringify(response.data, null, 2));
+
+            if (response.data.status) {
+                console.log("✅ Biodata Profile Fetched:", response.data.data);
+                SetBiodataData(response.data.data.biodata); // <- update your state setter accordingly
+            } else {
+                showMessage({
+                    type: "danger",
+                    message: "No Biodata Found",
+                    description: response.data.message || "Something went wrong!",
+                    duration: 5000
+                });
+                console.warn("⚠️ API returned false status:", response.data.message);
+            }
+        } catch (error) {
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error("❌ Error fetching biodata profile:", errorMsg);
+
+            showMessage({
+                type: "danger",
+                message: errorMsg,
+                description: "Failed to load biodata profile",
+                duration: 5000
+            });
+
+            const sessionExpiredMessages = [
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
+            ];
+
+            if (sessionExpiredMessages.includes(errorMsg)) {
+                console.warn("⚠️ Session expired, clearing token...");
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const savedProfiles = async (_id) => {
         if (!_id) {
@@ -89,33 +181,24 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
         }
     };
 
-    const handleShare = async () => {
-        showMessage({
-            type: "info",
-            message: "Under development",
-            icon: "info",
-            duarion: 5000
-        });
-    };
 
+    const shareProfiles = async (profileId) => {
+         const profileType = "short-matrimonial-profile";
 
-    // const shareProfiles = async (profileId) => {
-    //      const profileType = "short-matrimonial-profile";
+         console.log("profileId", profileId);
 
-    //      console.log("profileId", profileId);
+         try {
+           if (!profileId) throw new Error("Missing profile ID");
 
-    //      try {
-    //        if (!profileId) throw new Error("Missing profile ID");
+           const directLink = `https://brahmin-milan.vercel.app/app/profile/${profileType}/${profileId}`;
 
-    //        const directLink = `https://brahmin-milan.vercel.app/app/profile/${profileType}/${profileId}`;
-
-    //        await Share.share({
-    //          message: `Check this profile in Brahmin Milan app:\n${directLink}`
-    //        });
-    //      } catch (error) {
-    //        console.error("Sharing failed:", error?.message || error);
-    //      }
-    //    };
+           await Share.share({
+             message: `Check this profile in Brahmin Milan app:\n${directLink}`
+           });
+         } catch (error) {
+           console.error("Sharing failed:", error?.message || error);
+         }
+       };
 
     const popop = async () => {
         const isBiodataExpired = profile_data?.serviceSubscriptions?.some(
@@ -154,7 +237,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
             <View style={styles.card}>
                 <Pressable onPress={popop}>
                     <Image
-                        source={item.personalDetails.closeUpPhoto ? { uri: item.personalDetails.closeUpPhoto } : require('../../Images/NoImage.png')}
+                        source={item?.personalDetails?.closeUpPhoto ? { uri: item?.personalDetails?.closeUpPhoto } : require('../../Images/NoImage.png')}
                         style={styles.ProfileImage}
                         blurRadius={item?.isBlur ? 5 : 0}
                     />
@@ -210,7 +293,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                         <Text style={styles.iconText}>Share</Text>
                     </TouchableOpacity> */}
 
-                    <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
+                    <TouchableOpacity style={styles.iconContainer} onPress={shareProfiles}>
                         <Feather name="send" size={19} color={Colors.dark} />
                         <Text style={styles.iconText}>Share</Text>
                     </TouchableOpacity>
@@ -237,7 +320,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
 
             <ScrollView showsVerticalScrollIndicator={false}>
                 <FlatList
-                    data={Array.isArray(userDetails) ? userDetails : [userDetails]}
+                    data={Array.isArray(Biodata) ? Biodata : [Biodata]}
                     renderItem={renderProfileCard}
                     keyExtractor={(item) => item._id || Math.random().toString()}
                     scrollEnabled={false}

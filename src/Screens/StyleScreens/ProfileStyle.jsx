@@ -297,42 +297,42 @@ const styles = StyleSheet.create({
         paddingBottom: SH(20),
     },
     card: {
-        marginHorizontal: SW(10),
-        backgroundColor: '#e8dae8',
-        borderRadius: SW(12),
-        overflow: 'hidden',
-        marginVertical: SH(10),
-        paddingHorizontal: SW(10),
-        paddingVertical: SH(15),
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 6,
-        elevation: 5,
-        borderWidth: 0.5,
-        borderColor: '#e0e0e0',
-    },
-    title: {
-        fontSize: SF(18),
-        fontFamily: "Poppins-Bold",
-        marginBottom: SH(5),
-        color: Colors.theme_color,
-        textAlign: "center"
-    },
-    Text: {
-        fontSize: SF(12),
-        color: Colors.light,
-        marginTop: SH(5),
-        fontFamily: "Poppins-Regular",
-        color: Colors.dark,
-    },
-    description: {
-        fontSize: SF(12),
-        color: Colors.light,
-        marginTop: SH(10),
-        fontFamily: "Poppins-Regular",
-        color: Colors.dark,
-    },
+    width: "95%",
+    backgroundColor:Colors.light,
+    borderRadius: 12,
+    margin: SW(10),
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  planImage: {
+    width: "100%",
+    height: SH(200)
+  },
+  cardContent: {
+    paddingHorizontal: SW(12),
+    paddingVertical:SH(5),
+  },
+  title: {
+    fontSize: SF(16),
+    fontFamily: "Inter-Bold",
+    color: Colors.theme_color,
+    marginBottom: SH(4),
+  },
+  Text: {
+    fontSize: SF(13),
+    color: "#000",
+    fontFamily: "Poppins-Regular"
+  },
+  description: {
+    fontSize: SF(12),
+    marginTop: SH(6),
+    color: "#666",
+    fontFamily: "Poppins-Regular"
+  },
     closeButton: {
         // backgroundColor:Colors.theme_color,
         borderRadius: 5,

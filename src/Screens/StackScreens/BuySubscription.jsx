@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Alert, ActivityIndicator, Image } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Globalstyles from '../../utils/GlobalCss';
@@ -8,7 +8,7 @@ import RazorpayCheckout from 'react-native-razorpay';
 import { SW, SH, SF } from '../../utils/Dimensions';
 import Colors from '../../utils/Colors';
 import axios from 'axios';
-import { FETCH_PLANS, PAID_URL, PAYMENT_VERIFICATION, RAZORPAY } from '../../utils/BaseUrl';
+import { FETCH_PLANS, PAID_URL, PAYMENT_VERIFICATION, PHOTO_URL, RAZORPAY } from '../../utils/BaseUrl';
 
 const BuySubscription = ({ navigation, route }) => {
   const { serviceType } = route.params || {};
@@ -38,6 +38,7 @@ const BuySubscription = ({ navigation, route }) => {
 
       const response = await axios.get(`${FETCH_PLANS}/${serviceType}`, { headers });
       if (response.data?.status) {
+        console.log("plans", JSON.stringify(response.data.plans));
         setPlans(response.data.plans);
       }
     } catch (error) {
@@ -122,11 +123,10 @@ const BuySubscription = ({ navigation, route }) => {
 
       const options = {
         description: `Subscription for ${plan.profileType}`,
-        image: 'https://yourapp.com/logo.png',
         currency,
         key: razorpayKey,
         amount,
-        name: 'Matrimonial',
+        name: 'Brahmin Milan',
         order_id: orderId,
         theme: { color: '#3399cc' },
       };
@@ -248,13 +248,42 @@ const BuySubscription = ({ navigation, route }) => {
           ) : (
             plans.map((plan) => (
               <View key={plan._id} style={styles.card}>
-                <Text style={styles.title}>{plan.profileType}</Text>
-                <Text style={styles.Text}>Trial Period: {plan.trialPeriod} days</Text>
-                <Text style={styles.Text}>Duration: {plan.duration} months</Text>
-                <Text style={styles.Text}>Amount: ₹{plan.amount}</Text>
+                {plan.photoUrl ? (
+                  <Image
+                    source={{ uri: plan.photoUrl }}
+                    style={styles.planImage}
+                    resizeMode="cover"
+                    onError={(e) => console.log("Image load error:", e.nativeEvent.error)}
+                  />
+                ) : null}
 
-                <View style={{ flex: 1, justifyContent: 'space-between' }}>
-                  <Text style={styles.description}>{plan.description}</Text>
+                {/* Title and Description */}
+                <View style={styles.cardContent}>
+                  {plan.trialPeriod ? (
+                    <Text style={styles.Text}>
+                      <Text style={styles.boldLabel}>Trial Period: </Text>
+                      {plan.trialPeriod} days
+                    </Text>
+                  ) : null}
+
+                  {plan.duration ? (
+                    <Text style={styles.Text}>
+                      <Text style={styles.boldLabel}>Duration: </Text>
+                      {plan.duration} months
+                    </Text>
+                  ) : null}
+
+                  {plan.amount ? (
+                    <Text style={styles.Text}>
+                      <Text style={styles.boldLabel}>Amount: </Text>
+                      ₹{plan.amount}
+                    </Text>
+                  ) : null}
+
+                  {plan.description ? (
+                    <Text style={styles.description}>{plan.description}</Text>
+                  ) : null}
+
                   <TouchableOpacity
                     style={styles.buyButton}
                     onPress={() => handleBuyNow(plan)}
@@ -267,6 +296,7 @@ const BuySubscription = ({ navigation, route }) => {
               </View>
             ))
           )}
+
         </View>
       </ScrollView>
     </View>
@@ -284,41 +314,53 @@ const styles = StyleSheet.create({
     paddingBottom: SH(20),
   },
   card: {
-    marginHorizontal: SW(10),
-    backgroundColor: '#e8dae8',
-    borderRadius: SW(12),
-    overflow: 'hidden',
-    marginVertical: SH(10),
-    paddingHorizontal: SW(10),
-    paddingVertical: SH(15),
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    width: "95%",
+    backgroundColor: Colors.light,
+    borderRadius: 12,
+    margin: SW(10),
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 5,
-    borderWidth: 0.5,
-    borderColor: '#e0e0e0',
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  planImage: {
+    width: "100%",
+    height: SH(200)
+  },
+  cardContent: {
+    paddingHorizontal: SW(12),
+    paddingVertical: SH(5),
   },
   title: {
-    fontSize: SF(18),
-    fontFamily: "Poppins-Bold",
-    marginBottom: SH(5),
+    fontSize: SF(16),
+    fontFamily: "Inter-Bold",
     color: Colors.theme_color,
-    textAlign: "center"
+    marginBottom: SH(4),
   },
   Text: {
-    fontSize: SF(12),
-    color: Colors.light,
-    marginTop: SH(5),
-    fontFamily: "Poppins-Regular",
-    color: Colors.dark,
+    fontSize: SF(13),
+    color: "#000",
+    fontFamily: "Poppins-Regular"
   },
   description: {
     fontSize: SF(12),
-    color: Colors.light,
+    marginTop: SH(6),
+    color: "#666",
+    fontFamily: "Poppins-Regular"
+  },
+  buyButton: {
+    backgroundColor: Colors.theme_color,
+    paddingVertical: SH(8),
     marginTop: SH(10),
-    fontFamily: "Poppins-Regular",
-    color: Colors.dark,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  buyButtonText: {
+    color: "#fff",
+    fontSize: SF(14),
+    fontWeight: "600",
   },
   closeButton: {
     // backgroundColor:Colors.theme_color,

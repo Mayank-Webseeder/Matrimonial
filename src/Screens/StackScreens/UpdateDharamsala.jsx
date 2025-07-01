@@ -234,7 +234,9 @@ const UpdateDharamsala = ({ navigation, route }) => {
             });
 
             setTimeout(() => {
-                navigation.navigate("Dharmshala");
+                navigation.navigate('MainApp', {
+                    screen: 'Dharmshala',
+                });
             }, 1000);
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;

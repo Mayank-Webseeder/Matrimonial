@@ -20,6 +20,7 @@ import { showMessage } from 'react-native-flash-message';
 import { CommonActions } from '@react-navigation/native';
 import { VIEW_EVENT } from '../../utils/BaseUrl';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { BackHandler } from 'react-native';
 
 const ViewMyEventPost = ({ navigation, route }) => {
   const sheetRef = useRef(null);
@@ -42,6 +43,26 @@ const ViewMyEventPost = ({ navigation, route }) => {
   const ProfileData = useSelector((state) => state.profile);
   const profileData = ProfileData?.profiledata || {};
   const myprofile_id = profileData?._id || null;
+
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.navigate("MainApp", {
+          screen: "Tabs",
+          params: { screen: "EventNews" },
+        });
+        return true;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => {
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+      };
+    }, [navigation])
+  );
+
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -249,12 +270,12 @@ const ViewMyEventPost = ({ navigation, route }) => {
           message: "Success",
           message: fetchedData.message || "Comment added successfully!",
           duarion: 5000,
-          onHide: () => {
-            navigation.navigate("MainApp", {
-              screen: "Tabs",
-              params: { screen: "EventNews" }
-            });
-          }
+          // onHide: () => {
+          //   navigation.navigate("MainApp", {
+          //     screen: "Tabs",
+          //     params: { screen: "EventNews" }
+          //   });
+          // }
         });
 
       } else if (response.status === 400) {
@@ -319,7 +340,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
           type: "success",
           message: "Success",
           message: "Comment deleted successfully!",
-          position: "top",
+          position: "Bottom",
           duarion: 5000
         });
       }

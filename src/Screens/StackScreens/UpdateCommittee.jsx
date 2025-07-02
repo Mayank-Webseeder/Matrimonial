@@ -274,7 +274,7 @@ const UpdateCommittee = ({ navigation, route }) => {
                     />
                 ) : null}
 
-                <Text style={Globalstyles.title}>Area <Entypo name={'star'} color={'red'} size={12} /></Text>
+                <Text style={Globalstyles.title}>Area</Text>
                 <TextInput
                     style={Globalstyles.input}
                     placeholder="Enter Your Area"

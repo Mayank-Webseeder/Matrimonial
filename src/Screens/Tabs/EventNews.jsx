@@ -543,9 +543,9 @@ const EventNews = ({ navigation }) => {
     if (sheetRef.current) {
       sheetRef.current.close();
     }
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "EventNews" }],
+    navigation.navigate("MainApp", {
+      screen: "Tabs",
+      params: { screen: "EventNews" },
     });
 
   }
@@ -557,7 +557,7 @@ const EventNews = ({ navigation }) => {
     if (images.length === 1) {
       return (
         <TouchableOpacity
-          onPress={() => navigation.navigate('ViewPost', { image: images[0], postId : item._id})}
+          onPress={() => navigation.navigate('ViewPost', { image: images[0], postId: item._id })}
         >
           <Image source={{ uri: images[0] }} style={[styles.image1, { width: '100%', height: SH(250) }]} />
         </TouchableOpacity>
@@ -568,7 +568,7 @@ const EventNews = ({ navigation }) => {
       return (
         <View style={{ flexDirection: 'row' }}>
           {images.map((image, index) => (
-            <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, postId : item._id })}>
+            <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, postId: item._id })}>
               <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(2) }]} />
             </TouchableOpacity>
           ))}
@@ -580,13 +580,13 @@ const EventNews = ({ navigation }) => {
       return (
         <View>
           <View style={{ flexDirection: 'row' }}>
-            <TouchableOpacity onPress={() => navigation.navigate('ViewPost', { image: images[0], postId : item._id })}>
+            <TouchableOpacity onPress={() => navigation.navigate('ViewPost', { image: images[0], postId: item._id })}>
               <Image source={{ uri: images[0] }} style={[styles.image2, { flex: 1, margin: SW(2) }]} />
             </TouchableOpacity>
           </View>
           <View style={{ flexDirection: 'row' }}>
             {images.slice(1).map((image, index) => (
-              <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, postId : item._id })}>
+              <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, postId: item._id })}>
                 <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(2) }]} />
               </TouchableOpacity>
             ))}
@@ -600,14 +600,14 @@ const EventNews = ({ navigation }) => {
         <View>
           <View style={{ flexDirection: 'row' }}>
             {images.slice(0, 2).map((image, index) => (
-              <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, postId : item._id })}>
+              <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, postId: item._id })}>
                 <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(1) }]} />
               </TouchableOpacity>
             ))}
           </View>
           <View style={{ flexDirection: 'row' }}>
             {images.slice(2, 4).map((image, index) => (
-              <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, postId : item._id })}>
+              <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, postId: item._id })}>
                 <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(1) }]} />
               </TouchableOpacity>
             ))}
@@ -665,7 +665,7 @@ const EventNews = ({ navigation }) => {
             <FontAwesome5 name="comment" size={20} color="black" />
             <Text style={styles.shareText}>{item.comments.length} Comments</Text>
           </TouchableOpacity>
-          
+
           <TouchableOpacity style={styles.likeShare} onPress={() => shareProfile(item._id)}>
             <Feather name="send" size={20} color={Colors.dark} />
             <Text style={styles.shareText}>Share</Text>

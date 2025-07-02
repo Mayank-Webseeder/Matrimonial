@@ -42,13 +42,27 @@ const Register = ({ navigation }) => {
     const timerRef = useRef(null);
 
     useEffect(() => {
-        return () => {
-            if (timerRef.current) {
-                clearInterval(timerRef.current);
+        const checkOtpTime = async () => {
+            const storedTime = await AsyncStorage.getItem("otpSentAt");
+            if (storedTime) {
+                const elapsed = Math.floor((Date.now() - parseInt(storedTime)) / 1000);
+                const remaining = otpValidityDuration - elapsed;
+                if (remaining > 0) {
+                    setOtpTimer(remaining);
+                    startOtpCountdown(remaining);
+                } else {
+                    await AsyncStorage.removeItem("otpSentAt");
+                    setOtpTimer(0);
+                }
             }
         };
-    }, []);
 
+        checkOtpTime();
+
+        return () => {
+            if (timerRef.current) clearInterval(timerRef.current);
+        };
+    }, []);
 
 
 
@@ -160,6 +174,23 @@ const Register = ({ navigation }) => {
         : null;
 
 
+    const otpValidityDuration = 60;
+
+    const startOtpCountdown = (duration) => {
+        if (timerRef.current) clearInterval(timerRef.current);
+
+        timerRef.current = setInterval(() => {
+            setOtpTimer(prev => {
+                if (prev <= 1) {
+                    clearInterval(timerRef.current);
+                    AsyncStorage.removeItem("otpSentAt");
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+    };
+
     const handleSendOtp = async () => {
         if (!/^\d{10}$/.test(mobileNumber)) {
             showMessage({
@@ -187,24 +218,18 @@ const Register = ({ navigation }) => {
                     duration: 5000,
                 });
 
-                setOtpTimer(300); // 5 minutes
-                if (timerRef.current) clearInterval(timerRef.current); // clear if already running
-                timerRef.current = setInterval(() => {
-                    setOtpTimer(prev => {
-                        if (prev <= 1) {
-                            clearInterval(timerRef.current);
-                            return 0;
-                        }
-                        return prev - 1;
-                    });
-                }, 1000);
+                // Save timestamp to AsyncStorage
+                const currentTimestamp = Date.now();
+                await AsyncStorage.setItem("otpSentAt", currentTimestamp.toString());
+
+                setOtpTimer(otpValidityDuration);
+                startOtpCountdown(otpValidityDuration); // start countdown
             } else {
                 throw new Error(response.data.message || "OTP request failed");
             }
         } catch (error) {
             console.error("OTP Error:", error);
-            const message =
-                error.response?.data?.message || error.message || "Failed to send OTP";
+            const message = error.response?.data?.message || error.message || "Failed to send OTP";
             showMessage({
                 type: "danger",
                 message: "OTP Failed",

@@ -49,7 +49,7 @@ const MyUploadedCommittees = ({ navigation, route }) => {
                     type: "success",
                     message: "Committee deleted successfully!",
                     icon: "success",
-                    duarion:7000
+                    duarion: 7000
                 });
 
                 setModalVisible(false);  // Close modal
@@ -57,9 +57,9 @@ const MyUploadedCommittees = ({ navigation, route }) => {
 
                 // ✅ Ensure navigation is available before using it
                 if (navigation && navigation.navigate) {
-                     navigation.navigate('MainApp', {
-  screen: 'Committee',
-});
+                    navigation.navigate('MainApp', {
+                        screen: 'Committee',
+                    });
                 } else {
                     console.warn("⚠️ Navigation is not available");
                 }
@@ -73,22 +73,22 @@ const MyUploadedCommittees = ({ navigation, route }) => {
             console.error("Error fetching biodata:", errorMsg);
             showMessage({
                 type: "danger",
-                message:errorMsg,
+                message: errorMsg,
                 icon: "danger",
-                duarion:7000
+                duarion: 7000
             });
             const sessionExpiredMessages = [
-              "User does not Exist....!Please login again",
-              "Invalid token. Please login again",
-              "Token has expired. Please login again"
+                "User does not Exist....!Please login again",
+                "Invalid token. Please login again",
+                "Token has expired. Please login again"
             ];
-        
+
             if (sessionExpiredMessages.includes(errorMsg)) {
-              await AsyncStorage.removeItem("userToken");
-              navigation.reset({
-                index: 0,
-                routes: [{ name: "AuthStack" }],
-              });
+                await AsyncStorage.removeItem("userToken");
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "AuthStack" }],
+                });
             }
         } finally {
             setIsLoading(false);  // Hide loading indicator

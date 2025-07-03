@@ -9,19 +9,31 @@ const styles = StyleSheet.create({
     },
     background: {
         width: "100%",
-        height: SH(230)
+        height: SH(400)
+    },
+    contactCard1: {
+        paddingVertical: SH(5),
+        paddingHorizontal: SW(20),
+        marginVertical: SH(20),
+        marginHorizontal: SW(10),
+        marginRight: SW(150),
+        borderRadius: 12,
+        alignItems: "center",
+        marginTop: SH(230)
     },
     contactCard: {
         paddingVertical: SH(5),
         paddingHorizontal: SW(20),
         marginVertical: SH(20),
         marginHorizontal: SW(10),
+        marginRight: SW(115),
         borderRadius: 12,
         alignItems: "center",
+        marginTop: SH(5)
     },
     title: {
         fontSize: SF(18),
-        fontWeight: "bold",
+        fontFamily: "Poppins-Bold",
         color: Colors.light,
         marginBottom: SH(5),
     },
@@ -33,13 +45,14 @@ const styles = StyleSheet.create({
     iconContainer: {
         flexDirection: "row",
         alignItems: "center",
-        marginVertical: SH(5),
-        marginHorizontal: SW(5)
+        marginHorizontal: SW(2)
     },
     contactText: {
         color: Colors.light,
-        fontSize: SF(14),
+        fontSize: SF(9),
         marginLeft: SW(3),
+        marginVertical: SH(2),
+        fontFamily:'Poppins-Medium'
     },
     socialContainer: {
         flexDirection: "row",

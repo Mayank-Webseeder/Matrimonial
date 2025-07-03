@@ -14,13 +14,14 @@ import Globalstyles from '../../utils/GlobalCss';
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import moment from "moment";
 import axios from 'axios';
-import { BOTTOM_BIODATA_ADVERTISE_WINDOW, DELETE_SEND_REQUEST, MATCHED_PROFILE, SAVED_PROFILES, SEND_REQUEST, VERIFY_PROFILE } from '../../utils/BaseUrl';
+import { BOTTOM_BIODATA_ADVERTISE_WINDOW, DeepLink, DELETE_SEND_REQUEST, MATCHED_PROFILE, SAVED_PROFILES, SEND_REQUEST, VERIFY_PROFILE } from '../../utils/BaseUrl';
 import { useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SF, SH, SW } from '../../utils/Dimensions';
 import { showMessage } from 'react-native-flash-message';
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 import AppIntroSlider from 'react-native-app-intro-slider';
+import ImageViewing from 'react-native-image-viewing';
 
 const MatrimonyPeopleProfile = ({ navigation }) => {
   const sliderRef = useRef(null);
@@ -39,6 +40,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const [isImageVisible, setImageVisible] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
+   const [imageIndex1, setImageIndex1] = useState(0);
   const [isSwitchOn, setIsSwitchOn] = useState(isVerified);
   const _id = userData?._id;
   const Biodata_id = userData?.bioDataId || null;
@@ -48,6 +50,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const activistId = MyActivistProfile?._id;
   const isVerified = userData?.verified;
   const verifiedBy = userData?.verifiedBy;
+   const [FullImageVisible, setFullImageVisible] = useState(false);
   // console.log("_id", _id);
   const personalDetails = userData?.personalDetails || {};
   const partnerPreferences = userData?.partnerPreferences || {};
@@ -66,6 +69,12 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const isBlurCondition = status === "accepted" ? !isVisible : isBlur;
   const [Save, setIsSaved] = useState(initialSavedState || false);
   const hasOtherDetails = personalDetails?.knowCooking || personalDetails?.dietaryHabit || personalDetails?.smokingHabit || personalDetails?.drinkingHabit || personalDetails?.tobaccoHabits || personalDetails?.hobbies;
+
+  
+  const openImageViewer1 = (index) => {
+    setImageIndex1(index);
+    setFullImageVisible(true);
+  };
 
   const formattedImages = [
     personalDetails?.closeUpPhoto,
@@ -549,7 +558,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
     try {
       if (!userId) throw new Error("Missing profile ID");
 
-      const directLink = `https://brahmin-milan.vercel.app/app/profile/${profileType}/${userId}`;
+      const directLink = `${DeepLink}/${profileType}/${userId}`;
 
       await Share.share({
         message: `Check this profile in Brahmin Milan app:\n${directLink}`
@@ -666,7 +675,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                   setImageIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W))
                 }
               >
-                {formattedImages.map((img, idx) => (
+              {formattedImages.map((img, idx) => (
                   <View
                     key={idx}
                     style={{
@@ -674,17 +683,31 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                       height: SCREEN_H,
                       justifyContent: 'center',
                       alignItems: 'center',
-                      marginTop: SH(15)
+                      marginTop: SH(15),
+                      overflow: 'hidden',
                     }}
                   >
-                    <Image
-                      source={{ uri: img.uri }}
-                      resizeMode="contain"
+                    <TouchableOpacity
+                      activeOpacity={0.9}
+                      onPress={() => openImageViewer1(idx)}
                       style={{ width: '100%', height: '100%' }}
-                      blurRadius={isBlurCondition ? 10 : 0}
-                    />
+                    >
+                      <Image
+                        source={{ uri: img.uri }}
+                        resizeMode="contain"
+                        style={{ width: '100%', height: '100%' }}
+                      />
+                    </TouchableOpacity>
                   </View>
+
                 ))}
+                <ImageViewing
+                  images={formattedImages}
+                  imageIndex={imageIndex1}
+                  visible={FullImageVisible}
+                  onRequestClose={() => setFullImageVisible(false)}
+                  onImageIndexChange={(index) => setImageIndex1(index)}
+                />
               </ScrollView>
 
               <View style={{

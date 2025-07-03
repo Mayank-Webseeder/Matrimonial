@@ -10,7 +10,7 @@ import UpdateCheck from './src/Components/AppUpdateChecker ';
 const App = () => {
 
   const linking = {
-    prefixes: ["https://brahmin-milan.vercel.app/app"],
+    prefixes: ["https://profile.brahminmilan.in/app"],
     config: {
       screens: {
         AuthStack: {

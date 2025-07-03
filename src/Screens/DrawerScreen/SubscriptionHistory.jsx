@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, FlatList, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, FlatList, ScrollView,Image } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { DrawerActions, useFocusEffect } from '@react-navigation/native';
 import Globalstyles from '../../utils/GlobalCss';
@@ -152,7 +152,7 @@ const SubscriptionHistory = ({ navigation }) => {
             <View style={Globalstyles.header}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
-                        <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
+                          <Image source={require('../../Images/menu.png')} style={{width: SW(30),height: SH(30)}} />
                     </TouchableOpacity>
                     <Text style={Globalstyles.headerText}>Subscription History</Text>
                 </View>

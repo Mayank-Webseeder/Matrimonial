@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from '../StyleScreens/ExploreStyle';
 import Colors from '../../utils/Colors';
 import Globalstyles from '../../utils/GlobalCss';
-import { FEMALE_FILTER_API, GET_ALL_BIODATA_PROFILES, MALE_FILTER_API, SAVED_PROFILES, TOP_BIODATA_ADVERTISE_WINDOW } from '../../utils/BaseUrl';
+import { DeepLink, FEMALE_FILTER_API, GET_ALL_BIODATA_PROFILES, MALE_FILTER_API, SAVED_PROFILES, TOP_BIODATA_ADVERTISE_WINDOW } from '../../utils/BaseUrl';
 import { slider } from '../../DummyData/DummyData';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import { useFocusEffect } from '@react-navigation/native';
@@ -268,7 +268,7 @@ const Matrimonial = ({ navigation }) => {
      try {
        if (!profileId) throw new Error("Missing profile ID");
  
-       const directLink = `https://brahmin-milan.vercel.app/app/profile/${profileType}/${profileId}`;
+       const directLink = `${DeepLink}/${profileType}/${profileId}`;
  
        await Share.share({
          message: `Check this profile in Brahmin Milan app:\n${directLink}`

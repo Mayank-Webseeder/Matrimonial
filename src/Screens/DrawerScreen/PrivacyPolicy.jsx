@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity,Image } from 'react-native';
 import React from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Globalstyles from '../../utils/GlobalCss';
@@ -13,7 +13,7 @@ const PrivacyPolicy = ({ navigation }) => {
             <View style={Globalstyles.header}>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
-                        <MaterialIcons name={"arrow-back-ios-new"} size={25} color={Colors.theme_color} />
+                         <Image source={require('../../Images/menu.png')} style={{width: SW(30),height: SH(30)}} />
                     </TouchableOpacity>
                     <Text style={Globalstyles.headerText}>Privacy Policy</Text>
                 </View>

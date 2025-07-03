@@ -53,13 +53,10 @@ const Login = ({ navigation }) => {
             const response = await axios.post(LOGIN_ENDPOINT, payload);
             const LoginData = response.data;
             console.log("🔑 LoginData:", LoginData);
-
-            // ✅ Debugging Response Status
             console.log("🟢 Response Status:", response.status);
             console.log("🟢 Response Data Success:", response.data.success);
 
             if (response.status === 200 && response.data.status === true) {
-                // ✅ Extract and store token & userId
                 const token = LoginData?.user?.token;
                 const userId = LoginData?.user?.user?.id;
 
@@ -131,6 +128,7 @@ const Login = ({ navigation }) => {
             setLoading(false);
         }
     };
+    
 
     return (
         <SafeAreaView style={styles.container}>

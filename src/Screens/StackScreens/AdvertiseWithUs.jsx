@@ -10,6 +10,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { ADVERTISE_WITH_US } from "../../utils/BaseUrl";
 import { showMessage } from "react-native-flash-message";
+import { SF, SH, SW } from "../../utils/Dimensions";
 
 const AdvertiseWithUs = ({ navigation }) => {
     const [fullName, setFullname] = useState("");
@@ -118,53 +119,44 @@ const AdvertiseWithUs = ({ navigation }) => {
             <View style={Globalstyles.header}>
                 <View style={styles.headerContainer}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
+                        <Image source={require('../../Images/menu.png')} style={{ width: SW(30), height: SH(30) }} />
                     </TouchableOpacity>
                     <Text style={Globalstyles.headerText}>Advertise with Us</Text>
                 </View>
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false}>
-                <ImageBackground source={require('../../Images/advertiseBackground.png')} style={styles.background}>
+                <ImageBackground
+                    source={require('../../Images/Advertisement.jpeg')}
+                    style={styles.background}
+                    resizeMode="cover"
+                >
 
                     {/* Contact Info Section */}
                     <View style={styles.overlay}>
+                        <View style={styles.contactCard1}>
+                              <View style={styles.iconContainer}>
+                                    <MaterialIcons name="phone" size={11} color={Colors.dark} />
+                                    <Text
+                                        style={[styles.contactText,{color:Colors.dark,fontSize:SF(14),fontFamily:"Poppins-Bold"}]}
+                                        onPress={() => Linking.openURL("tel:8871186630")}
+                                    >
+                                       8871186630 🤙 
+                                    </Text>
+                                </View>
+                                <View style={styles.iconContainer}>
+                                    <MaterialIcons name="phone" size={11} color={Colors.dark} />
+                                    <Text
+                                      style={[styles.contactText,{color:Colors.dark,fontSize:SF(14),fontFamily:"Poppins-Bold"}]}
+                                        onPress={() => Linking.openURL("tel:8602210689")}
+                                    >
+                                       8602210689 🤙 
+                                    </Text>
+                                </View>
+                        </View>
                         <View style={styles.contactCard}>
-                            <Text style={styles.title}>Contact Information</Text>
-                            <Text style={styles.subtitle}>Say something to start a live chat!</Text>
                             <View style={styles.iconContainer}>
-                                <View style={styles.iconContainer}>
-                                    <MaterialIcons name="phone" size={22} color={Colors.light} />
-                                    <Text
-                                        style={styles.contactText}
-                                        onPress={() => Linking.openURL("tel:8871186630")}
-                                    >
-                                        8871186630
-                                    </Text>
-                                </View>
-                                <View style={styles.iconContainer}>
-                                    <MaterialIcons name="phone" size={22} color={Colors.light} />
-                                    <Text
-                                        style={styles.contactText}
-                                        onPress={() => Linking.openURL("tel:8871186630")}
-                                    >
-                                        8966930727
-                                    </Text>
-                                </View>
-                            </View>
-
-                            {/* <View style={styles.iconContainer}>
-                                <MaterialIcons name="phone" size={22} color={Colors.light} />
-                                <Text
-                                    style={styles.contactText}
-                                    onPress={() => Linking.openURL("tel:YOUR_SECOND_NUMBER")}
-                                >
-                                    YOUR_SECOND_NUMBER
-                                </Text>
-                            </View> */}
-
-                            <View style={styles.iconContainer}>
-                                <MaterialIcons name="email" size={22} color={Colors.light} />
+                                <MaterialIcons name="email" size={11} color={Colors.light} />
                                 <Text
                                     style={styles.contactText}
                                     onPress={() => Linking.openURL("mailto:brahminmilan.in@gmail.com")}
@@ -174,7 +166,7 @@ const AdvertiseWithUs = ({ navigation }) => {
                             </View>
 
                             <View style={styles.iconContainer}>
-                                <MaterialIcons name="email" size={22} color={Colors.light} />
+                                <MaterialIcons name="email" size={11} color={Colors.light} />
                                 <Text
                                     style={styles.contactText}
                                     onPress={() => Linking.openURL("mailto:appwin.in@gmail.com")}
@@ -186,6 +178,7 @@ const AdvertiseWithUs = ({ navigation }) => {
                     </View>
 
                 </ImageBackground>
+
                 <View style={Globalstyles.form}>
                     <Text style={Globalstyles.title}>Full Name</Text>
                     <TextInput style={[Globalstyles.input, errors.fullName && styles.errorInput]} placeholder="Enter Full Name"

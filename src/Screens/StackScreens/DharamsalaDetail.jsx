@@ -8,7 +8,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import Globalstyles from '../../utils/GlobalCss';
-import { BOTTOM_DHARMSHALA_ADVERDISE_WINDOW, SAVED_PROFILES, VIEW_DHARAMSALA } from '../../utils/BaseUrl';
+import { BOTTOM_DHARMSHALA_ADVERDISE_WINDOW, DeepLink, SAVED_PROFILES, VIEW_DHARAMSALA } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SF, SH, SW } from '../../utils/Dimensions';
@@ -17,6 +17,7 @@ import { showMessage } from 'react-native-flash-message';
 const { width, height } = Dimensions.get("window");
 import { useSelector } from 'react-redux';
 import { CommonActions, useFocusEffect } from '@react-navigation/native';
+import ImageViewing from 'react-native-image-viewing';
 
 const DharamsalaDetail = ({ navigation, route }) => {
   const { _id, isSaved: initialSavedState, id } = route.params;
@@ -31,6 +32,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
   const truncatedDescription = description.slice(0, 300) + "...";
   const [modalVisible, setModalVisible] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
+  const [imageIndex1, setImageIndex1] = useState(0);
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
   const formattedImages =
@@ -40,6 +42,13 @@ const DharamsalaDetail = ({ navigation, route }) => {
   const dharmshalaName = dharamsalaData?.dharmshalaName ?? "Unnamed";
   const subCaste = dharamsalaData?.subCaste ?? "Not specified";
   const city = dharamsalaData?.city ?? "Unknown";
+  const [FullImageVisible, setFullImageVisible] = useState(false);
+
+  const openImageViewer1 = (index) => {
+    setImageIndex1(index);
+    setFullImageVisible(true);
+  };
+
   const openImageViewer = (index) => {
     setImageIndex(index);
     setModalVisible(true);
@@ -271,7 +280,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
     try {
       if (!profileId) throw new Error("Missing profile ID");
 
-      const directLink = `https://brahmin-milan.vercel.app/app/profile/dharamsala-detial/${profileId}`;
+      const directLink = `${DeepLink}/dharamsala-detial/${profileId}`;
 
       await Share.share({
         message: `Check this profile in Brahmin Milan app:\n${directLink}`
@@ -397,8 +406,6 @@ const DharamsalaDetail = ({ navigation, route }) => {
             activeDotStyle={styles.activeDot}
             onSlideChange={(index) => setCurrentIndex(index)}
           />
-
-          {/* Modal for Full Image View */}
           <Modal visible={modalVisible} transparent={true} animationType="fade">
             <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.8)" }}>
               <ScrollView
@@ -418,16 +425,31 @@ const DharamsalaDetail = ({ navigation, route }) => {
                       height: SCREEN_H,
                       justifyContent: 'center',
                       alignItems: 'center',
-                      marginTop: SH(15)
+                      marginTop: SH(15),
+                      overflow: 'hidden',
                     }}
                   >
-                    <Image
-                      source={{ uri: img.uri }}
-                      resizeMode="contain"
+                    <TouchableOpacity
+                      activeOpacity={0.9}
+                      onPress={() => openImageViewer1(idx)}
                       style={{ width: '100%', height: '100%' }}
-                    />
+                    >
+                      <Image
+                        source={{ uri: img.uri }}
+                        resizeMode="contain"
+                        style={{ width: '100%', height: '100%' }}
+                      />
+                    </TouchableOpacity>
                   </View>
+
                 ))}
+                <ImageViewing
+                  images={formattedImages}
+                  imageIndex={imageIndex1}
+                  visible={FullImageVisible}
+                  onRequestClose={() => setFullImageVisible(false)}
+                  onImageIndexChange={(index) => setImageIndex1(index)}
+                />
               </ScrollView>
 
               <View style={{

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, TouchableOpacity, Modal, SafeAreaView, StatusBar, Linking } from 'react-native';
+import { Text, View, TouchableOpacity, Modal, SafeAreaView, StatusBar, Linking ,Image } from 'react-native';
 import Colors from '../../utils/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styles from '../StyleScreens/InactiveDeleteStyle';
@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { DrawerActions } from '@react-navigation/native';
 import { resetBioData } from '../../ReduxStore/Slices/BiodataSlice';
 import { showMessage } from 'react-native-flash-message';
+import { SH,SW } from '../../utils/Dimensions';
 
 const InActiveDelete = ({ navigation }) => {
      const dispatch = useDispatch();
@@ -111,7 +112,7 @@ const InActiveDelete = ({ navigation }) => {
             <View style={Globalstyles.header}>
                 <View style={{ flexDirection: 'row', alignItems: "center" }}>
                     <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
-                        <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
+                       <Image source={require('../../Images/menu.png')} style={{width: SW(30),height: SH(30)}} />
                     </TouchableOpacity>
                     <Text style={Globalstyles.headerText}>Account Settings</Text>
                 </View>

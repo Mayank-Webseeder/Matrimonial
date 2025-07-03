@@ -8,7 +8,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
+menuIcon: {
+    width: SW(30),
+    height: SH(30)
+  },
   headerContainer: {
     flexDirection: "row",
     alignItems: "center",

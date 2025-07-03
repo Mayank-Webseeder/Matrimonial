@@ -86,13 +86,13 @@ const styles = StyleSheet.create({
         marginBottom: SH(10),
     },
     heading: {
-        fontSize: SF(16),
+        fontSize: SF(14),
         fontFamily: 'Poppins-Bold',
         marginBottom: SH(10),
         color: Colors.theme_color,
     },
     text: {
-        fontSize: SF(15),
+        fontSize: SF(12),
         marginBottom: SH(10),
         fontFamily: 'Poppins-Regular',
     },

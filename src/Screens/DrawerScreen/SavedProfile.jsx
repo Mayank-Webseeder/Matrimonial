@@ -291,7 +291,7 @@ const SavedProfile = ({ navigation }) => {
         <View style={Globalstyles.header}>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
-              <MaterialIcons name={"arrow-back-ios-new"} size={25} color={Colors.theme_color} />
+              <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
             </TouchableOpacity>
             <Text style={Globalstyles.headerText}>Saved</Text>
           </View>

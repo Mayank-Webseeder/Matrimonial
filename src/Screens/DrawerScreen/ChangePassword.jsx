@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Text, View, TouchableOpacity, Modal, TextInput, SafeAreaView, StatusBar } from 'react-native';
+import { Text, View, TouchableOpacity, Modal, TextInput, SafeAreaView, StatusBar ,Image } from 'react-native';
 import Colors from '../../utils/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styles from '../StyleScreens/ChangePasswordStyle';
@@ -10,6 +10,7 @@ import axios from 'axios';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { DrawerActions, useFocusEffect } from '@react-navigation/native';
 import { showMessage } from 'react-native-flash-message';
+import { SH,SW } from '../../utils/Dimensions';
 
 const ChangePassword = ({ navigation }) => {
   const [oldPassword, setOldPassword] = useState('');
@@ -117,7 +118,7 @@ const ChangePassword = ({ navigation }) => {
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: "center" }}>
           <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
-            <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
+            <Image source={require('../../Images/menu.png')} style={{width: SW(30),height: SH(30)}} />
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>Change Password</Text>
         </View>

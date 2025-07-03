@@ -14,7 +14,7 @@ import { subCasteOptions } from '../../DummyData/DropdownData';
 import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { SH, SF, SW } from '../../utils/Dimensions';
-import { GET_ALL_DHARAMSALA, GET_DHARAMSALA, SAVED_PROFILES, TOP_DHARMSHALA_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
+import { DeepLink, GET_ALL_DHARAMSALA, GET_DHARAMSALA, SAVED_PROFILES, TOP_DHARMSHALA_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
@@ -433,7 +433,7 @@ const Dharmshala = ({ route }) => {
     try {
       if (!profileId) throw new Error("Missing profile ID");
 
-      const directLink = `https://brahmin-milan.vercel.app/app/profile/${profileType}/${profileId}`;
+      const directLink = `${DeepLink}/${profileType}/${profileId}`;
       console.log("directLink", directLink);
 
       await Share.share({

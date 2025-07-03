@@ -1,3 +1,6 @@
+// deeplinking url for sharing app is 
+export const DeepLink="https://profile.brahminmilan.in/app/profile";
+
 // for show the image 
 const PHOTO_URL = "https://api-matrimonial.webseeder.tech"
 

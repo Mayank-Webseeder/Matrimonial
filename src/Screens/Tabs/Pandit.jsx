@@ -17,7 +17,7 @@ import { ExperienceData, RatingData, panditServices } from '../../DummyData/Drop
 import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import axios from 'axios';
-import { GET_ALL_PANDIT_DATA, TOP_PANDIT_ADVERDISE_WINDOW, SAVED_PROFILES } from '../../utils/BaseUrl';
+import { GET_ALL_PANDIT_DATA, TOP_PANDIT_ADVERDISE_WINDOW, SAVED_PROFILES, DeepLink } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { SF, SH, SW } from '../../utils/Dimensions';
@@ -321,13 +321,13 @@ const Pandit = ({ navigation, route }) => {
 
 
   const shareProfile = async (profileId) => {
-    const profileType = "pandit-detail"; // fix
+    const profileType = "pandit-detail"; 
     console.log("profileId:", profileId);
 
     try {
       if (!profileId) throw new Error("Missing profile ID");
 
-      const directLink = `https://brahmin-milan.vercel.app/app/profile/${profileType}/${profileId}`;
+      const directLink = `${DeepLink}/${profileType}/${profileId}`;
 
       await Share.share({
         message: `Check this profile in Brahmin Milan app:\n${directLink}`

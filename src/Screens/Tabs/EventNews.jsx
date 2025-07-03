@@ -9,7 +9,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { useFocusEffect } from '@react-navigation/native';
 import { SW, SH, SF } from '../../utils/Dimensions';
 import Globalstyles from '../../utils/GlobalCss';
-import { GET_ALL_EVENT_NEWS, LIKEPOST, COMMENTPOST, VIEW_EVENT, BASE_URL, BOTTOM_EVENT_NEWS_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
+import { GET_ALL_EVENT_NEWS, LIKEPOST, COMMENTPOST, VIEW_EVENT, BASE_URL, BOTTOM_EVENT_NEWS_ADVERDISE_WINDOW, DeepLink } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import moment from 'moment';
@@ -104,7 +104,7 @@ const EventNews = ({ navigation }) => {
     try {
       if (!profileId) throw new Error("Missing profile ID");
 
-      const directLink = `https://brahmin-milan.vercel.app/app/profile/${profileType}/${profileId}`;
+      const directLink = `${DeepLink}/${profileType}/${profileId}`;
 
       await Share.share({
         message: `Check this profile in Brahmin Milan app:\n${directLink}`

@@ -13,12 +13,13 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { MATCHED_PROFILE, ACCEPTED_API, REJECTED_API, SAVED_PROFILES, BOTTOM_BIODATA_ADVERTISE_WINDOW } from '../../utils/BaseUrl';
+import { MATCHED_PROFILE, ACCEPTED_API, REJECTED_API, SAVED_PROFILES, BOTTOM_BIODATA_ADVERTISE_WINDOW, DeepLink } from '../../utils/BaseUrl';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import moment from 'moment';
 import { useFocusEffect } from '@react-navigation/native';
 import { showMessage } from 'react-native-flash-message';
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
+import ImageViewing from 'react-native-image-viewing';
 
 const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const sliderRef = useRef(null);
@@ -27,6 +28,8 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const [slider, setSlider] = useState([]);
   const { userId, id } = route.params || {};
   const [loading, setLoading] = useState(false);
+  const [imageIndex1, setImageIndex1] = useState(0);
+  const [FullImageVisible, setFullImageVisible] = useState(false);
   const [loadingAccept, setLoadingAccept] = useState(false);
   const [loadingDecline, setLoadingDecline] = useState(false);
   const [profileData, setProfileData] = useState([]);
@@ -71,6 +74,11 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const openImageViewer = (index) => {
     setImageIndex(index);
     setModalVisible(true);
+  };
+
+  const openImageViewer1 = (index) => {
+    setImageIndex1(index);
+    setFullImageVisible(true);
   };
 
   const SliderrenderItem = ({ item, index }) => (
@@ -455,7 +463,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
     try {
       if (!userId) throw new Error("Missing profile ID");
 
-      const directLink = `https://brahmin-milan.vercel.app/app/profile/${profileType}/${userId}`;
+      const directLink = `${DeepLink}/${profileType}/${userId}`;
 
       await Share.share({
         message: `Check this profile in Brahmin Milan app:\n${directLink}`
@@ -543,17 +551,31 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
                       height: SCREEN_H,
                       justifyContent: 'center',
                       alignItems: 'center',
-                      marginTop: SH(15)
+                      marginTop: SH(15),
+                      overflow: 'hidden',
                     }}
                   >
-                    <Image
-                      source={{ uri: img.uri }}
-                      resizeMode="contain"
+                    <TouchableOpacity
+                      activeOpacity={0.9}
+                      onPress={() => openImageViewer1(idx)}
                       style={{ width: '100%', height: '100%' }}
-                      blurRadius={isBlurCondition ? 10 : 0}
-                    />
+                    >
+                      <Image
+                        source={{ uri: img.uri }}
+                        resizeMode="contain"
+                        style={{ width: '100%', height: '100%' }}
+                      />
+                    </TouchableOpacity>
                   </View>
+
                 ))}
+                <ImageViewing
+                  images={formattedImages}
+                  imageIndex={imageIndex1}
+                  visible={FullImageVisible}
+                  onRequestClose={() => setFullImageVisible(false)}
+                  onImageIndexChange={(index) => setImageIndex1(index)}
+                />
               </ScrollView>
 
               <View style={{

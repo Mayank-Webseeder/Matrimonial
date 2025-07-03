@@ -13,7 +13,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Globalstyles from '../../utils/GlobalCss';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { BOTTOM_KATHAVACHAK_ADVERDISE_WINDOW, KATHAVACHAK_DESCRIPTION, SAVED_PROFILES } from '../../utils/BaseUrl';
+import { BOTTOM_KATHAVACHAK_ADVERDISE_WINDOW, DeepLink, KATHAVACHAK_DESCRIPTION, SAVED_PROFILES } from '../../utils/BaseUrl';
 import moment from "moment";
 import { useSelector } from 'react-redux';
 import { CommonActions, useFocusEffect } from '@react-navigation/native';
@@ -365,7 +365,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
         try {
             if (!profileId) throw new Error("Missing profile ID");
 
-            const directLink = `https://brahmin-milan.vercel.app/app/profile/${profileType}/${profileId}`;
+            const directLink = `${DeepLink}/${profileType}/${profileId}`;
             console.log("directLink",directLink);
 
             await Share.share({

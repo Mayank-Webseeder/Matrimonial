@@ -14,7 +14,7 @@ import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { SH, SF } from '../../utils/Dimensions';
 import { useSelector } from 'react-redux';
-import { GET_ALL_COMITTEE, GET_COMMIITEE, SAVED_PROFILES, TOP_COMMITTEE_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
+import { DeepLink, GET_ALL_COMITTEE, GET_COMMIITEE, SAVED_PROFILES, TOP_COMMITTEE_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
 import axios from 'axios';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -412,7 +412,7 @@ const Committee = ({ navigation, route }) => {
     try {
       if (!profileId) throw new Error("Missing profile ID");
 
-      const directLink = `https://brahmin-milan.vercel.app/app/profile/${profileType}/${profileId}`;
+      const directLink = `${DeepLink}/${profileType}/${profileId}`;
 
       await Share.share({
         message: `Check this profile in Brahmin Milan app:\n${directLink}`

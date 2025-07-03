@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, Switch, TouchableOpacity, SafeAreaView, StatusBar, ToastAndroid } from "react-native";
+import { Text, View, Switch, TouchableOpacity, SafeAreaView, StatusBar, ToastAndroid,Image } from "react-native";
 import Colors from "../../utils/Colors";
 import styles from "../StyleScreens/NotificationSettingStyle";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -10,6 +10,7 @@ import { EVENT_NEWS_NOTIFICATION_HANDLE_API, CONNECTION_REQUEST_HANDLE_API } fro
 import { useSelector } from "react-redux";
 import { DrawerActions } from "@react-navigation/native";
 import { showMessage } from "react-native-flash-message";
+import { SH,SW } from "../../utils/Dimensions";
 
 const NotificationSettings = ({ navigation }) => {
   const ProfileData = useSelector((state) => state.profile);
@@ -138,7 +139,7 @@ const NotificationSettings = ({ navigation }) => {
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
-            <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
+            <Image source={require('../../Images/menu.png')} style={{width: SW(30),height: SH(30)}} />
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>Notification Settings</Text>
         </View>

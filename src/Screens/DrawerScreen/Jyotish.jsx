@@ -14,7 +14,7 @@ import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import axios from 'axios';
 import { slider } from '../../DummyData/DummyData';
-import { GET_ALL_JYOTISH, JYOTISH_ADVERDISE_WINDOW, SAVED_PROFILES, TOP_JYOTISH_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
+import { DeepLink, GET_ALL_JYOTISH, JYOTISH_ADVERDISE_WINDOW, SAVED_PROFILES, TOP_JYOTISH_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { SH, SW, SF } from '../../utils/Dimensions';
@@ -320,7 +320,7 @@ const Jyotish = ({ navigation, route }) => {
      try {
        if (!profileId) throw new Error("Missing profile ID");
  
-       const directLink = `https://brahmin-milan.vercel.app/app/profile/${profileType}/${profileId}`;
+       const directLink = `${DeepLink}/${profileType}/${profileId}`;
  
        await Share.share({
          message: `Check this profile in Brahmin Milan app:\n${directLink}`

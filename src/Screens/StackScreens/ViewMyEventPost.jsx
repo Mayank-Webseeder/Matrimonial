@@ -11,7 +11,7 @@ import { SW, SH, SF } from '../../utils/Dimensions';
 import Globalstyles from '../../utils/GlobalCss';
 import moment from 'moment';
 import RBSheet from "react-native-raw-bottom-sheet";
-import { DELETE_EVENT, COMMENTPOST, LIKEPOST, BASE_URL } from '../../utils/BaseUrl';
+import { DELETE_EVENT, COMMENTPOST, LIKEPOST, BASE_URL, DeepLink } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector } from 'react-redux';
@@ -123,7 +123,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
     try {
       if (!profileId) throw new Error("Missing profile ID");
 
-      const directLink = `https://brahmin-milan.vercel.app/app/profile/${profileType}/${profileId}`;
+      const directLink = `${DeepLink}/${profileType}/${profileId}`;
 
       await Share.share({
         message: `Check this profile in Brahmin Milan app:\n${directLink}`

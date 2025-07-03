@@ -204,7 +204,7 @@ const SuccessStories = ({ navigation }) => {
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
-            <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
+           <Image source={require('../../Images/menu.png')} style={{width: SW(30),height: SH(30)}} />
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>Success Stories</Text>
         </View>

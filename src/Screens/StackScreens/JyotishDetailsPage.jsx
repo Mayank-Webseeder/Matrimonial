@@ -1,4 +1,4 @@
-import { Text, View, Image, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Linking, ToastAndroid, ActivityIndicator, Share, BackHandler } from 'react-native';
+import { Text, View, Image, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Linking, ToastAndroid, ActivityIndicator, Share, BackHandler, Modal } from 'react-native';
 import styles from '../StyleScreens/PanditDetailPageStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
@@ -11,15 +11,15 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Globalstyles from '../../utils/GlobalCss';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { JYOTISH_DESCRIPTION, SAVED_PROFILES, JYOTISH_ADVERDISE_WINDOW, BOTTOM_JYOTISH_ADVERDISE_WINDOW, DeepLink } from '../../utils/BaseUrl';
+import { JYOTISH_DESCRIPTION, SAVED_PROFILES, BOTTOM_JYOTISH_ADVERDISE_WINDOW, DeepLink } from '../../utils/BaseUrl';
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import moment from "moment";
 import { useSelector } from 'react-redux';
 import { CommonActions, useFocusEffect } from '@react-navigation/native';
-import ImageViewing from 'react-native-image-viewing';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import { showMessage } from 'react-native-flash-message';
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 const jyotishDetailsPage = ({ navigation, item, route }) => {
     const sliderRef = useRef(null);
@@ -407,12 +407,29 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                         <Image source={profilePhoto} style={styles.profileImage} />
                     </TouchableOpacity>
 
-                    <ImageViewing
-                        images={[profileData?.profilePhoto ? { uri: profileData.profilePhoto } : require('../../Images/NoImage.png')]}
-                        imageIndex={0}
-                        visible={visible}
-                        onRequestClose={() => setVisible(false)}
-                    />
+                    {visible && (
+                        <Modal
+                            visible={visible}
+                            transparent={true}
+                            onRequestClose={() => setVisible(false)}
+                        >
+                            <ImageViewer
+                                imageUrls={[
+                                    profileData?.profilePhoto
+                                        ? { url: profileData.profilePhoto }
+                                        : { url: Image.resolveAssetSource(require('../../Images/NoImage.png')).uri }
+                                ]}
+                                index={0}
+                                onSwipeDown={() => setVisible(false)}
+                                onCancel={() => setVisible(false)}
+                                enableSwipeDown={true}
+                                enablePreload={true}
+                                saveToLocalByLongPress={false}
+                                renderIndicator={() => null}
+                            />
+                        </Modal>
+                    )}
+
                     <View style={{ flex: 1 }}>
                         <Text style={styles.name} numberOfLines={2}>{profileData?.fullName}</Text>
 

@@ -18,13 +18,13 @@ import { DeepLink, GET_ALL_COMITTEE, GET_COMMIITEE, SAVED_PROFILES, TOP_COMMITTE
 import axios from 'axios';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import ImageViewing from 'react-native-image-viewing';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { SW } from '../../utils/Dimensions';
 import _ from "lodash";
 import { showMessage } from 'react-native-flash-message';
 import { CommonActions } from '@react-navigation/native';
 import { Dropdown } from 'react-native-element-dropdown';
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 const Committee = ({ navigation, route }) => {
   const { id } = route.params || {};
@@ -44,7 +44,7 @@ const Committee = ({ navigation, route }) => {
   const [modalLocality, setModalLocality] = useState('');
   const [error, setError] = useState(null);
   const [isImageVisible, setImageVisible] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState([]);
   const [IsLoading, setIsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
@@ -279,8 +279,10 @@ const Committee = ({ navigation, route }) => {
   }, []);
 
   const openImageViewer = (imageUri) => {
-    setSelectedImage(imageUri);
-    setImageVisible(true);
+    if (imageUri) {
+      setSelectedImage([{ url: imageUri }]); // Important: `url` key is used by ImageViewer
+      setImageVisible(true);
+    }
   };
 
   const handleInputChange = (field, value) => {
@@ -431,18 +433,25 @@ const Committee = ({ navigation, route }) => {
         <Pressable style={styles.cardData}>
           <TouchableOpacity onPress={() => openImageViewer(item.photoUrl)}>
             <Image
-              source={item?.photoUrl ? { uri: item?.photoUrl } : require('../../Images/NoImage.png')}
+              source={item.photoUrl ? { uri: item.photoUrl } : require('../../Images/NoImage.png')}
               style={styles.image}
             />
           </TouchableOpacity>
-          {selectedImage === item?.photoUrl && (
-            <ImageViewing
-              images={[{ uri: selectedImage }]}
-              imageIndex={0}
-              visible={isImageVisible}
-              onRequestClose={() => setImageVisible(false)}
-            />
+
+          {selectedImage && (
+            <Modal visible={isImageVisible} transparent={true} onRequestClose={() => setImageVisible(false)}>
+              <ImageViewer
+                imageUrls={selectedImage}
+                enableSwipeDown={true}
+                onSwipeDown={() => setImageVisible(false)}
+                onCancel={() => setImageVisible(false)}
+                enablePreload={true}
+                saveToLocalByLongPress={false}
+                renderIndicator={() => null}
+              />
+            </Modal>
           )}
+
 
           <View style={styles.leftContainer}>
             <Text style={styles.title}>{item?.committeeTitle}</Text>

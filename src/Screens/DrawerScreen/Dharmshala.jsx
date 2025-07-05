@@ -20,13 +20,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { useNavigation } from "@react-navigation/native";
-import ImageViewing from 'react-native-image-viewing';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import _ from "lodash";
 import { showMessage } from 'react-native-flash-message';
 import { useCallback } from 'react';
 import { CommonActions } from '@react-navigation/native';
-
+import ImageViewer from 'react-native-image-zoom-viewer';
 const Dharmshala = ({ route }) => {
   const { id } = route.params || {};
   const navigation = useNavigation();
@@ -45,7 +44,7 @@ const Dharmshala = ({ route }) => {
   const [error, setError] = useState(null);
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
   const [isImageVisible, setImageVisible] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
@@ -266,11 +265,13 @@ const Dharmshala = ({ route }) => {
     }, [])
   );
 
-  const openImageViewer = (imageUri) => {
-    setSelectedImage(imageUri);
-    setImageVisible(true);
-  };
 
+  const openImageViewer = (imageUri) => {
+    if (imageUri) {
+      setSelectedImage([{ url: imageUri }]); // Important: `url` key is used by ImageViewer
+      setImageVisible(true);
+    }
+  };
 
   const handleInputChange = (field, value) => {
     if (field === "subCaste") {
@@ -457,14 +458,18 @@ const Dharmshala = ({ route }) => {
             />
           </TouchableOpacity>
 
-          {/* Image Viewer Modal */}
           {selectedImage && (
-            <ImageViewing
-              images={[{ uri: selectedImage }]} // Now, it correctly updates per click
-              imageIndex={0}
-              visible={isImageVisible}
-              onRequestClose={() => setImageVisible(false)}
-            />
+            <Modal visible={isImageVisible} transparent={true} onRequestClose={() => setImageVisible(false)}>
+              <ImageViewer
+                imageUrls={selectedImage}
+                enableSwipeDown={true}
+                onSwipeDown={() => setImageVisible(false)}
+                onCancel={() => setImageVisible(false)}
+                enablePreload={true}
+                saveToLocalByLongPress={false}
+                renderIndicator={() => null}
+              />
+            </Modal>
           )}
           <View style={styles.leftContainer}>
             {item?.dharmshalaName && (

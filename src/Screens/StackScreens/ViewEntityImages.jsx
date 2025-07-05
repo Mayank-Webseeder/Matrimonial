@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Image, ScrollView, Text, View, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
+import { Image, ScrollView, Text, View, TouchableOpacity, SafeAreaView, StatusBar, Modal } from 'react-native';
 import Colors from '../../utils/Colors';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import EvilIcons from 'react-native-vector-icons/EvilIcons';
-import Feather from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styles from '../StyleScreens/ViewPostStyle';
 import Globalstyles from '../../utils/GlobalCss';
 import { SH, SW } from '../../utils/Dimensions';
-import ImageViewing from 'react-native-image-viewing';
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 const ViewEntityImages = ({ navigation, route }) => {
     const { post, images, panditDetails, jyotishDetails, kathavachakDetails } = route.params;
@@ -17,9 +14,15 @@ const ViewEntityImages = ({ navigation, route }) => {
     const entityDetails = panditDetails || jyotishDetails || kathavachakDetails;
     const entityType = panditDetails ? "Pandit" : jyotishDetails ? "Jyotish" : "Kathavachak";
 
-    const [visible, setVisible] = useState(false);
-    const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-    const formattedImages = images.map((img) => ({ uri: img }));
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [isImageVisible, setImageVisible] = useState(false);
+
+    const openImageViewer = (imageUri) => {
+        if (imageUri) {
+            setSelectedImage([{ url: imageUri }]);
+            setImageVisible(true);
+        }
+    };
 
     console.log("Entity Details:", entityDetails);
 
@@ -77,40 +80,39 @@ const ViewEntityImages = ({ navigation, route }) => {
                         <Text style={styles.Text}>{entityType}</Text>
                     </View>
                 </View>
-
-                {/* Images */}
                 <View style={{ marginVertical: SH(10) }}>
                     {images.map((image, index) => (
-                        <TouchableOpacity key={index}  onPress={() => { setSelectedImageIndex(index); setVisible(true); }}>
+                        <TouchableOpacity key={index} onPress={() => openImageViewer(image)}>
                             <Image
                                 source={typeof image === 'string' ? { uri: image } : image}
-                                style={[styles.image, { aspectRatio: imageAspectRatios[index] || 1 }]}
+                                style={[
+                                    styles.image,
+                                    { aspectRatio: imageAspectRatios[index] || 1 }
+                                ]}
                                 resizeMode="cover"
                             />
-                            {/* Like, Comment, Share */}
-                            {/* <View style={styles.likeShareComment}>
-                                <View style={styles.likeShare}>
-                                    <AntDesign name="hearto" size={20} color={Colors.dark} />
-                                    <Text style={styles.shareText}>25k Likes</Text>
-                                </View>
-                                <View style={styles.likeShare}>
-                                    <EvilIcons name="comment" size={20} color={Colors.dark} />
-                                    <Text style={styles.shareText}>90 Comments</Text>
-                                </View>
-                                <View style={styles.likeShare}>
-                                    <Feather name="send" size={20} color={Colors.dark} />
-                                    <Text style={styles.shareText}>250 Shares</Text>
-                                </View>
-                            </View> */}
                         </TouchableOpacity>
                     ))}
                 </View>
-                <ImageViewing
-                    images={formattedImages}
-                    imageIndex={selectedImageIndex}
-                    visible={visible}
-                    onRequestClose={() => setVisible(false)}
-                />
+
+                {selectedImage && (
+                    <Modal
+                        visible={isImageVisible}
+                        transparent={true}
+                        onRequestClose={() => setImageVisible(false)}
+                    >
+                        <ImageViewer
+                            imageUrls={selectedImage}
+                            enableSwipeDown={true}
+                            onSwipeDown={() => setImageVisible(false)}
+                            onCancel={() => setImageVisible(false)}
+                            enablePreload={true}
+                            saveToLocalByLongPress={false}
+                            renderIndicator={() => null}
+                        />
+                    </Modal>
+                )}
+
             </ScrollView>
         </SafeAreaView>
     );

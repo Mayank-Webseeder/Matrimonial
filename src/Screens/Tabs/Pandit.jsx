@@ -22,9 +22,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { SF, SH, SW } from '../../utils/Dimensions';
 import { useFocusEffect } from '@react-navigation/native';
-import ImageViewing from 'react-native-image-viewing';
 import { showMessage } from "react-native-flash-message";
 import { useSelector } from 'react-redux';
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 const Pandit = ({ navigation, route }) => {
   const { id } = route.params || {};
@@ -40,7 +40,7 @@ const Pandit = ({ navigation, route }) => {
   const [isLoading, setLoading] = useState(false);
   const [modalLocality, setModalLocality] = useState('');
   const [isImageVisible, setImageVisible] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState([]);
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
   const ProfileData = useSelector((state) => state.profile);
@@ -72,8 +72,10 @@ const Pandit = ({ navigation, route }) => {
 
 
   const openImageViewer = (imageUri) => {
-    setSelectedImage(imageUri);
-    setImageVisible(true);
+    if (imageUri) {
+      setSelectedImage([{ url: imageUri }]); // Important: `url` key is used by ImageViewer
+      setImageVisible(true);
+    }
   };
 
   const handleOpenFilter = () => {
@@ -321,7 +323,7 @@ const Pandit = ({ navigation, route }) => {
 
 
   const shareProfile = async (profileId) => {
-    const profileType = "pandit-detail"; 
+    const profileType = "pandit-detail";
     console.log("profileId:", profileId);
 
     try {
@@ -378,21 +380,31 @@ const Pandit = ({ navigation, route }) => {
     return (
       <View style={styles.card}>
         <View style={styles.cardData}>
-          <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
-            <Image
-              source={item.profilePhoto ? { uri: item.profilePhoto } : require('../../Images/NoImage.png')}
-              style={styles.image}
-            />
-          </TouchableOpacity>
+         {item.profilePhoto ? (
+        <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
+          <Image
+            source={{ uri: item.profilePhoto }}
+            style={styles.image}
+          />
+        </TouchableOpacity>
+      ) : (
+        <Image
+          source={require('../../Images/NoImage.png')}
+          style={styles.image}
+        />
+      )}
 
-          {selectedImage && (
-            <ImageViewing
-              images={[{ uri: selectedImage }]}
-              imageIndex={0}
-              visible={isImageVisible}
-              onRequestClose={() => setImageVisible(false)}
-            />
-          )}
+      <Modal visible={isImageVisible} transparent={true} onRequestClose={() => setImageVisible(false)}>
+        <ImageViewer
+          imageUrls={selectedImage}
+          enableSwipeDown={true}
+          onSwipeDown={() => setImageVisible(false)}
+          onCancel={() => setImageVisible(false)}
+          enablePreload={true}
+          saveToLocalByLongPress={false}
+          renderIndicator={() => null}
+        />
+      </Modal>
 
           <View>
             <View>

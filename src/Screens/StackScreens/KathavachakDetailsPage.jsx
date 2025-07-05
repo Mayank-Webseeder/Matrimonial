@@ -1,4 +1,4 @@
-import { Text, View, Image, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Linking, ActivityIndicator, Share, BackHandler } from 'react-native';
+import { Text, View, Image, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Linking, ActivityIndicator, Share, BackHandler,Modal } from 'react-native';
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import styles from '../StyleScreens/PanditDetailPageStyle';
@@ -17,7 +17,7 @@ import { BOTTOM_KATHAVACHAK_ADVERDISE_WINDOW, DeepLink, KATHAVACHAK_DESCRIPTION,
 import moment from "moment";
 import { useSelector } from 'react-redux';
 import { CommonActions, useFocusEffect } from '@react-navigation/native';
-import ImageViewing from 'react-native-image-viewing';
+import ImageViewer from 'react-native-image-zoom-viewer';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import { showMessage } from 'react-native-flash-message';
 
@@ -49,32 +49,32 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
     const validSlides = slider.filter(item => !!item.image);
 
 
-      useFocusEffect(
-                React.useCallback(() => {
-                    const onBackPress = () => {
-                        navigation.dispatch(
-                            CommonActions.reset({
-                                index: 0,
-                                routes: [
-                                    {
-                                        name: 'MainApp',
-                                        state: {
-                                            index: 0,
-                                            routes: [{ name: 'Kathavachak' }],
-                                        },
-                                    },
-                                ],
-                            })
-                        );
-                        return true;
-                    };
-        
-                    BackHandler.addEventListener('hardwareBackPress', onBackPress);
-        
-                    return () =>
-                        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-                }, [navigation])
-            );
+    useFocusEffect(
+        React.useCallback(() => {
+            const onBackPress = () => {
+                navigation.dispatch(
+                    CommonActions.reset({
+                        index: 0,
+                        routes: [
+                            {
+                                name: 'MainApp',
+                                state: {
+                                    index: 0,
+                                    routes: [{ name: 'Kathavachak' }],
+                                },
+                            },
+                        ],
+                    })
+                );
+                return true;
+            };
+
+            BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+            return () =>
+                BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+        }, [navigation])
+    );
 
     useFocusEffect(
         useCallback(() => {
@@ -366,7 +366,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
             if (!profileId) throw new Error("Missing profile ID");
 
             const directLink = `${DeepLink}/${profileType}/${profileId}`;
-            console.log("directLink",directLink);
+            console.log("directLink", directLink);
 
             await Share.share({
                 message: `Check this profile in Brahmin Milan app:\n${directLink}`
@@ -430,16 +430,33 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.profileSection}>
-                    <TouchableOpacity onPress={() => setVisible(true)}>
+                       <TouchableOpacity onPress={() => setVisible(true)}>
                         <Image source={profilePhoto} style={styles.profileImage} />
                     </TouchableOpacity>
 
-                    <ImageViewing
-                        images={[profileData?.profilePhoto ? { uri: profileData.profilePhoto } : require('../../Images/NoImage.png')]}
-                        imageIndex={0}
-                        visible={visible}
-                        onRequestClose={() => setVisible(false)}
-                    />
+                    {visible && (
+                        <Modal
+                            visible={visible}
+                            transparent={true}
+                            onRequestClose={() => setVisible(false)}
+                        >
+                            <ImageViewer
+                                imageUrls={[
+                                    profileData?.profilePhoto
+                                        ? { url: profileData.profilePhoto }
+                                        : { url: Image.resolveAssetSource(require('../../Images/NoImage.png')).uri }
+                                ]}
+                                index={0}
+                                onSwipeDown={() => setVisible(false)}
+                                onCancel={() => setVisible(false)}
+                                enableSwipeDown={true}
+                                enablePreload={true}
+                                saveToLocalByLongPress={false}
+                                renderIndicator={() => null}
+                            />
+                        </Modal>
+                    )}
+
                     <View style={{ flex: 1 }}>
                         <Text style={styles.name} numberOfLines={2}>{profileData?.fullName}</Text>
 

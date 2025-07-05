@@ -13,7 +13,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { GET_ACTIVIST, GET_ACTIVIST_PROFILES } from '../../utils/BaseUrl';
 import { DrawerActions, useFocusEffect } from '@react-navigation/native';
-import ImageViewing from 'react-native-image-viewing';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { useSelector } from 'react-redux';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -21,6 +20,7 @@ import { resetsetActivistdata, setActivistdata } from '../../ReduxStore/Slices/A
 import { useDispatch } from 'react-redux';
 import { Dropdown } from 'react-native-element-dropdown';
 import { CommonActions } from '@react-navigation/native';
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 const Activist = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -34,17 +34,19 @@ const Activist = ({ navigation }) => {
   const [listHeight, setListHeight] = useState(0);
   const [modalLocality, setModalLocality] = useState('');
   const [isImageVisible, setImageVisible] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState([]);
   const MyActivistProfile = useSelector((state) => state.activist.activist_data) || {};
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [activitData, setActivitData] = useState({});
-
+  
   const openImageViewer = (imageUri) => {
-    setSelectedImage(imageUri);
-    setImageVisible(true);
+    if (imageUri) {
+      setSelectedImage([{ url: imageUri }]); // Important: `url` key is used by ImageViewer
+      setImageVisible(true);
+    }
   };
 
   useFocusEffect(
@@ -270,12 +272,17 @@ const Activist = ({ navigation }) => {
           </TouchableOpacity>
 
           {selectedImage && (
-            <ImageViewing
-              images={[{ uri: selectedImage }]}
-              imageIndex={0}
-              visible={isImageVisible}
-              onRequestClose={() => setImageVisible(false)}
-            />
+            <Modal visible={isImageVisible} transparent={true} onRequestClose={() => setImageVisible(false)}>
+                   <ImageViewer
+                     imageUrls={selectedImage}
+                     enableSwipeDown={true}
+                     onSwipeDown={() => setImageVisible(false)}
+                     onCancel={() => setImageVisible(false)}
+                     enablePreload={true}
+                     saveToLocalByLongPress={false}
+                     renderIndicator={() => null}
+                   />
+                 </Modal>
           )}
           <View style={{ marginLeft: SW(10), flex: 1 }}>
             {item?.fullname && <Text style={styles.text}>{item.fullname}</Text>}

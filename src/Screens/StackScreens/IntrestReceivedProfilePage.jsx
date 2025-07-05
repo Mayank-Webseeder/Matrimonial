@@ -19,7 +19,7 @@ import moment from 'moment';
 import { useFocusEffect } from '@react-navigation/native';
 import { showMessage } from 'react-native-flash-message';
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
-import ImageViewing from 'react-native-image-viewing';
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const sliderRef = useRef(null);
@@ -557,25 +557,44 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
                   >
                     <TouchableOpacity
                       activeOpacity={0.9}
-                      onPress={() => openImageViewer1(idx)}
+                      onPress={() => {
+                        if (!isBlurCondition) {
+                          openImageViewer1(idx);
+                        }
+                      }}
                       style={{ width: '100%', height: '100%' }}
                     >
                       <Image
                         source={{ uri: img.uri }}
                         resizeMode="contain"
                         style={{ width: '100%', height: '100%' }}
+                        blurRadius={isBlurCondition ? 10 : 0}
                       />
                     </TouchableOpacity>
                   </View>
-
                 ))}
-                <ImageViewing
-                  images={formattedImages}
-                  imageIndex={imageIndex1}
-                  visible={FullImageVisible}
-                  onRequestClose={() => setFullImageVisible(false)}
-                  onImageIndexChange={(index) => setImageIndex1(index)}
-                />
+
+                {!isBlurCondition && FullImageVisible && (
+                  <Modal
+                    visible={FullImageVisible}
+                    transparent={true}
+                    onRequestClose={() => setFullImageVisible(false)}
+                  >
+                    <ImageViewer
+                      imageUrls={formattedImages.map(img => ({ url: img.uri }))}
+                      index={imageIndex1}
+                      onSwipeDown={() => setFullImageVisible(false)}
+                      onCancel={() => setFullImageVisible(false)}
+                      enableSwipeDown={true}
+                      enablePreload={true}
+                      saveToLocalByLongPress={false}
+                      renderIndicator={() => null}
+                      backgroundColor="rgba(0,0,0,0.95)"
+                    />
+                  </Modal>
+                )}
+
+
               </ScrollView>
 
               <View style={{

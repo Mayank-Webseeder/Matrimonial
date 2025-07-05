@@ -14,7 +14,6 @@ import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Globalstyles from '../../utils/GlobalCss';
 import { SH, SW, SF } from '../../utils/Dimensions';
-import ImageViewing from 'react-native-image-viewing';
 import { PROFILE_TYPE, REPOST, FREE_TRIAL_HISTORY } from '../../utils/BaseUrl';
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
@@ -22,6 +21,7 @@ import { showMessage } from 'react-native-flash-message';
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 import AppIntroSlider from 'react-native-app-intro-slider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 const ProfileDetail = ({ route, navigation }) => {
     const { profileType } = route.params || {};
@@ -474,7 +474,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                     </TouchableOpacity>
                                 </View>
                             </View>
-                            <View style={{ marginVertical: SH(5),marginHorizontal:SW(5) }}>
+                            <View style={{ marginVertical: SH(5), marginHorizontal: SW(5) }}>
                                 {BiodataDates && (
                                     <View style={styles.trialBox}>
                                         <Ionicons name="alarm-outline" size={14} color="#d9534f" />
@@ -922,12 +922,24 @@ const ProfileDetail = ({ route, navigation }) => {
                                 <Image source={profilePhoto} style={styles.profileImage} />
                             </TouchableOpacity>
 
-                            <ImageViewing
-                                images={[profileData?.profilePhoto ? { uri: profileData?.profilePhoto } : require('../../Images/NoImage.png')]}
-                                imageIndex={0}
-                                visible={visible}
-                                onRequestClose={() => setVisible(false)}
-                            />
+                            {visible && (
+                                <Modal visible={true} transparent={true} onRequestClose={() => setVisible(false)}>
+                                    <ImageViewer
+                                        imageUrls={
+                                            profileData?.profilePhoto
+                                                ? [{ url: profileData.profilePhoto }]
+                                                : [{ url: '' }]
+                                        }
+                                        index={0}
+                                        enableSwipeDown
+                                        onSwipeDown={() => setVisible(false)}
+                                        onCancel={() => setVisible(false)}
+                                        saveToLocalByLongPress={false}
+                                        renderIndicator={() => null}
+                                        backgroundColor="rgba(0,0,0,0.95)"
+                                    />
+                                </Modal>
+                            )}
                             <View style={{ flex: 1 }}>
                                 <Text style={styles.name} numberOfLines={2}>{profileData?.fullName}</Text>
 
@@ -1126,12 +1138,24 @@ const ProfileDetail = ({ route, navigation }) => {
                                 <Image source={profilePhoto} style={styles.profileImage} />
                             </TouchableOpacity>
 
-                            <ImageViewing
-                                images={[profileData?.profilePhoto ? { uri: profileData?.profilePhoto } : require('../../Images/NoImage.png')]}
-                                imageIndex={0}
-                                visible={visible}
-                                onRequestClose={() => setVisible(false)}
-                            />
+                            {visible && (
+                                <Modal visible={true} transparent={true} onRequestClose={() => setVisible(false)}>
+                                    <ImageViewer
+                                        imageUrls={
+                                            profileData?.profilePhoto
+                                                ? [{ url: profileData.profilePhoto }]
+                                                : [{ url: '' }]
+                                        }
+                                        index={0}
+                                        enableSwipeDown
+                                        onSwipeDown={() => setVisible(false)}
+                                        onCancel={() => setVisible(false)}
+                                        saveToLocalByLongPress={false}
+                                        renderIndicator={() => null}
+                                        backgroundColor="rgba(0,0,0,0.95)"
+                                    />
+                                </Modal>
+                            )}
                             <View style={{ flex: 1 }}>
                                 <Text style={styles.name} numberOfLines={2}>{profileData?.fullName}</Text>
 
@@ -1323,12 +1347,24 @@ const ProfileDetail = ({ route, navigation }) => {
                                 <Image source={profilePhoto} style={styles.profileImage} />
                             </TouchableOpacity>
 
-                            <ImageViewing
-                                images={[profileData?.profilePhoto ? { uri: profileData?.profilePhoto } : require('../../Images/NoImage.png')]}
-                                imageIndex={0}
-                                visible={visible}
-                                onRequestClose={() => setVisible(false)}
-                            />
+                            {visible && (
+                                <Modal visible={true} transparent={true} onRequestClose={() => setVisible(false)}>
+                                    <ImageViewer
+                                        imageUrls={
+                                            profileData?.profilePhoto
+                                                ? [{ url: profileData.profilePhoto }]
+                                                : [{ url: '' }]
+                                        }
+                                        index={0}
+                                        enableSwipeDown
+                                        onSwipeDown={() => setVisible(false)}
+                                        onCancel={() => setVisible(false)}
+                                        saveToLocalByLongPress={false}
+                                        renderIndicator={() => null}
+                                        backgroundColor="rgba(0,0,0,0.95)"
+                                    />
+                                </Modal>
+                            )}
                             <View style={{ flex: 1 }}>
                                 <Text style={styles.name} numberOfLines={2}>{profileData?.fullName}</Text>
 

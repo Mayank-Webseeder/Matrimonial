@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Image, ScrollView, Text, View, TouchableOpacity, SafeAreaView, StatusBar, BackHandler } from 'react-native';
+import { Image, ScrollView, Text, View, TouchableOpacity, SafeAreaView, StatusBar, BackHandler,Modal } from 'react-native';
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
@@ -10,11 +10,11 @@ import moment from 'moment';
 import { showMessage } from 'react-native-flash-message';
 import { useSelector } from 'react-redux';
 import { SH } from '../../utils/Dimensions';
-import ImageViewing from 'react-native-image-viewing';
 import { VIEW_LIKE_COMMENT_EVENTNEWS } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { CommonActions, useFocusEffect } from '@react-navigation/native';
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 const ViewPost = ({ navigation, route }) => {
   const { postId, id } = route.params;
@@ -167,12 +167,25 @@ const ViewPost = ({ navigation, route }) => {
               </TouchableOpacity>
             ))}
 
-          <ImageViewing
-            images={images.map((img) => ({ uri: img }))}
-            imageIndex={currentIndex}
-            visible={viewerVisible}
-            onRequestClose={() => setViewerVisible(false)}
-          />
+         {images.length > 0 && viewerVisible && (
+  <Modal
+    visible={viewerVisible}
+    transparent={true}
+    onRequestClose={() => setViewerVisible(false)}
+  >
+    <ImageViewer
+      imageUrls={images.map((img) => ({ url: img }))}
+      index={currentIndex}
+      onSwipeDown={() => setViewerVisible(false)}
+      onCancel={() => setViewerVisible(false)}
+      enableSwipeDown={true}
+      enablePreload={true}
+      saveToLocalByLongPress={false}
+      renderIndicator={() => null}
+    />
+  </Modal>
+)}
+
         </View>
       </ScrollView>
     </SafeAreaView>

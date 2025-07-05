@@ -15,11 +15,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UPLOAD_PROFILE_PHOTO, DELETE_PROFILE_PHOTO, PROFILE_ENDPOINT, PROFILE_TYPE } from '../../utils/BaseUrl';
 import axios from 'axios';
 import { DrawerActions, useFocusEffect } from '@react-navigation/native';
-import ImageViewing from 'react-native-image-viewing';
 import { setProfiledata } from '../../ReduxStore/Slices/ProfileSlice';
 import { useDispatch } from 'react-redux';
 import { showMessage } from 'react-native-flash-message';
 import { SH, SW } from '../../utils/Dimensions';
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 const MyProfile = ({ navigation }) => {
     const dispatch = useDispatch();
@@ -396,26 +396,37 @@ const MyProfile = ({ navigation }) => {
 
             <View style={styles.container1}>
                 <View>
-                    <TouchableOpacity onPress={() => setImageViewVisible(true)}>
-                       <Image
-  source={
-    selectedImage
-      ? { uri: selectedImage }
-      : image
-        ? { uri: image }
-        : require('../../Images/Profile.png')
-  }
-  style={styles.image}
-  resizeMode="cover" 
-/>
+                   <TouchableOpacity onPress={() => setImageViewVisible(true)}>
+  <Image
+    source={
+      selectedImage
+        ? { uri: selectedImage }
+        : image
+          ? { uri: image }
+          : require('../../Images/Profile.png')
+    }
+    style={styles.image}
+    resizeMode="cover"
+  />
+</TouchableOpacity>
 
-                    </TouchableOpacity>
-                    <ImageViewing
-                        images={images}
-                        imageIndex={0}
-                        visible={isImageViewVisible}
-                        onRequestClose={() => setImageViewVisible(false)}
-                    />
+{isImageViewVisible && (
+  <Modal visible={true} transparent={true} onRequestClose={() => setImageViewVisible(false)}>
+    <ImageViewer
+      imageUrls={
+        (selectedImage || image)
+          ? [{ url: selectedImage || image }]
+          : [{ url: '' }]
+      }
+      enableSwipeDown
+      onSwipeDown={() => setImageViewVisible(false)}
+      onCancel={() => setImageViewVisible(false)}
+      saveToLocalByLongPress={false}
+      renderIndicator={() => null}
+      backgroundColor="rgba(0,0,0,0.95)"
+    />
+  </Modal>
+)}
                     <View style={styles.profileButtons}>
                         <View style={{ flexDirection: "row", alignItems: "center" }}>
                             <Text

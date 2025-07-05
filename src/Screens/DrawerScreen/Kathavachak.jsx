@@ -22,6 +22,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import ImageViewing from 'react-native-image-viewing';
 import { showMessage } from 'react-native-flash-message';
 import { useSelector } from 'react-redux';
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 const Kathavachak = ({ navigation, route }) => {
   const { id } = route.params || {};
@@ -37,7 +38,7 @@ const Kathavachak = ({ navigation, route }) => {
   const [isLoading, setLoading] = useState(false);
   const [modalLocality, setModalLocality] = useState('');
   const [isImageVisible, setImageVisible] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
@@ -46,9 +47,12 @@ const Kathavachak = ({ navigation, route }) => {
   const [slider, setSlider] = useState([]);
 
   const openImageViewer = (imageUri) => {
-    setSelectedImage(imageUri);
-    setImageVisible(true);
+    if (imageUri) {
+      setSelectedImage([{ url: imageUri }]); 
+      setImageVisible(true);
+    }
   };
+
   const handleOpenFilter = () => {
     setModalVisible(true);
     setActiveButton(1);
@@ -333,20 +337,31 @@ const Kathavachak = ({ navigation, route }) => {
     return (
       <View style={styles.card}>
         <View style={styles.cardData}>
-          <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
-            <Image
-              source={item.profilePhoto ? { uri: item.profilePhoto } : require('../../Images/NoImage.png')}
-              style={styles.image}
-            />
-          </TouchableOpacity>
-          {selectedImage && (
-            <ImageViewing
-              images={[{ uri: selectedImage }]}
-              imageIndex={0}
-              visible={isImageVisible}
-              onRequestClose={() => setImageVisible(false)}
-            />
-          )}
+           {item.profilePhoto ? (
+        <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
+          <Image
+            source={{ uri: item.profilePhoto }}
+            style={styles.image}
+          />
+        </TouchableOpacity>
+      ) : (
+        <Image
+          source={require('../../Images/NoImage.png')}
+          style={styles.image}
+        />
+      )}
+
+      <Modal visible={isImageVisible} transparent={true} onRequestClose={() => setImageVisible(false)}>
+        <ImageViewer
+          imageUrls={selectedImage}
+          enableSwipeDown={true}
+          onSwipeDown={() => setImageVisible(false)}
+          onCancel={() => setImageVisible(false)}
+          enablePreload={true}
+          saveToLocalByLongPress={false}
+          renderIndicator={() => null}
+        />
+      </Modal>
           <View>
             <Pressable style={styles.leftContainer}
               onPress={() => {

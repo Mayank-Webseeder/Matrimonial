@@ -10,18 +10,22 @@ import ImageViewing from 'react-native-image-viewing';
 import { DELETE_COMMITTEE } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showMessage } from 'react-native-flash-message';
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 const MyUploadedCommittees = ({ navigation, route }) => {
     const { committeeData } = route.params;
     const [isImageVisible, setImageVisible] = useState(false);
-    const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedImage, setSelectedImage] = useState([]);
     const [modalVisible, setModalVisible] = useState(null);
     const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
     const [selectedItem, setSelectedItem] = useState(null);
     const [IsLoading, setIsLoading] = useState(false);
+
     const openImageViewer = (imageUri) => {
-        setSelectedImage(imageUri);
-        setImageVisible(true);
+        if (imageUri) {
+            setSelectedImage([{ url: imageUri }]); // Important: `url` key is used by ImageViewer
+            setImageVisible(true);
+        }
     };
 
     const handleDelete = async (id) => {
@@ -119,13 +123,18 @@ const MyUploadedCommittees = ({ navigation, route }) => {
                         />
                     </TouchableOpacity>
 
-                    {selectedImage === item.photoUrl && (
-                        <ImageViewing
-                            images={[{ uri: selectedImage }]}
-                            imageIndex={0}
-                            visible={isImageVisible}
-                            onRequestClose={() => setImageVisible(false)}
-                        />
+                    {selectedImage && (
+                        <Modal visible={isImageVisible} transparent={true} onRequestClose={() => setImageVisible(false)}>
+                            <ImageViewer
+                                imageUrls={selectedImage}
+                                enableSwipeDown={true}
+                                onSwipeDown={() => setImageVisible(false)}
+                                onCancel={() => setImageVisible(false)}
+                                enablePreload={true}
+                                saveToLocalByLongPress={false}
+                                renderIndicator={() => null}
+                            />
+                        </Modal>
                     )}
 
                     <View style={styles.leftContainer}>

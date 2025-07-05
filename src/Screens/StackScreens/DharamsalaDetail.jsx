@@ -17,7 +17,7 @@ import { showMessage } from 'react-native-flash-message';
 const { width, height } = Dimensions.get("window");
 import { useSelector } from 'react-redux';
 import { CommonActions, useFocusEffect } from '@react-navigation/native';
-import ImageViewing from 'react-native-image-viewing';
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 const DharamsalaDetail = ({ navigation, route }) => {
   const { _id, isSaved: initialSavedState, id } = route.params;
@@ -441,16 +441,27 @@ const DharamsalaDetail = ({ navigation, route }) => {
                       />
                     </TouchableOpacity>
                   </View>
-
                 ))}
-                <ImageViewing
-                  images={formattedImages}
-                  imageIndex={imageIndex1}
-                  visible={FullImageVisible}
-                  onRequestClose={() => setFullImageVisible(false)}
-                  onImageIndexChange={(index) => setImageIndex1(index)}
-                />
               </ScrollView>
+              {FullImageVisible && (
+                <Modal
+                  visible={FullImageVisible}
+                  transparent={true}
+                  onRequestClose={() => setFullImageVisible(false)}
+                >
+                  <ImageViewer
+                    imageUrls={formattedImages.map((img) => ({ url: img.uri }))}
+                    index={imageIndex1}
+                    onSwipeDown={() => setFullImageVisible(false)}
+                    onCancel={() => setFullImageVisible(false)}
+                    enableSwipeDown={true}
+                    enablePreload={true}
+                    saveToLocalByLongPress={false}
+                    renderIndicator={() => null}
+                  />
+                </Modal>
+              )}
+
 
               <View style={{
                 position: "absolute", top: SH(30), alignSelf: "center", backgroundColor: "rgba(0,0,0,0.6)",

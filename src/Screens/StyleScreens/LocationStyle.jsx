@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
   text: {
     fontfamily: "Poppins-Regular",
     color: '#000',
-    fontSize: SF(15)
+    fontSize: SF(14)
   },
 
   flexContainer: {

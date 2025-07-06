@@ -284,7 +284,7 @@ const Home = ({ navigation }) => {
             title: item.title,
             description: item.description,
             image: `${PHOTO_URL}/${mediaItem.mediaUrl}`,
-            resolution: mediaItem.resolution, 
+            resolution: mediaItem.resolution,
             mediaType: mediaItem.mediaUrl.includes('.mp4') ? 'video' : 'image',
             hyperlink: mediaItem.hyperlink,
           }))
@@ -418,26 +418,31 @@ const Home = ({ navigation }) => {
   };
 
   const handleNavigateToProfile = (item) => {
-    // console.log("item", item);
+    console.log("item?.connectionStatus", item?.connectionStatus);
     if (!navigation.isFocused()) return;
 
     if (!isBiodataMissing || isBiodataExpired) {
       console.log("Navigating to ShortMatrimonialProfile because Biodata is missing or expired");
       navigation.navigate("ShortMatrimonialProfile", {
-        userDetails:item,
+        userDetails: item,
         userId: item.userId,
       });
-    }
-    else {
-      // console.log("Navigating to MatrimonyPeopleProfile");
-      navigation.navigate("MatrimonyPeopleProfile", {
-        // userDetails: item,
+    } else if (item?.connectionStatus === 'received') {
+      console.log("Navigating to IntrestReceivedProfilePage");
+      navigation.navigate("IntrestReceivedProfilePage", {
         userId: item?.userId,
         isSaved: item?.isSaved,
-        // isBlur: item?.isBlur
+      });
+    } else {
+      console.log("Navigating to MatrimonyPeopleProfile");
+      navigation.navigate("MatrimonyPeopleProfile", {
+        userDetails: item,
+        userId: item?.userId,
+        isSaved: item?.isSaved,
       });
     }
   };
+
 
   const GetAll_Biodata = async () => {
     try {
@@ -516,7 +521,7 @@ const Home = ({ navigation }) => {
 
 
   const TAB_SCREENS = ["Home", "Pandit", "Matrimonial", "BioData", "EventNews", "MyProfile"];
-const DRAWER_SCREENS = ["MainPartnerPrefrence", "Interested Profile", "Saved Profile", "Pandit", "EventNews", "Dharmshala", "Committee", "Activist", "FeedBack", "Jyotish", "Kathavachak", "SuccessStories", "NotificationSettings", "ChangePassword", "PrivacySettings", "InActiveDelete", "AboutUs", "PrivacyPolicy", "TermsConditions", "SubscriptionPolicy", "MyProfile", "SubscriptionHistory", "MySuccessStory"];
+  const DRAWER_SCREENS = ["MainPartnerPrefrence", "Interested Profile", "Saved Profile", "Pandit", "EventNews", "Dharmshala", "Committee", "Activist", "FeedBack", "Jyotish", "Kathavachak", "SuccessStories", "NotificationSettings", "ChangePassword", "PrivacySettings", "InActiveDelete", "AboutUs", "PrivacyPolicy", "TermsConditions", "SubscriptionPolicy", "MyProfile", "SubscriptionHistory", "MySuccessStory"];
 
   const renderSkeleton = () => (
     <SkeletonPlaceholder>
@@ -690,36 +695,36 @@ const DRAWER_SCREENS = ["MainPartnerPrefrence", "Interested Profile", "Saved Pro
             <View>
               <HeadingWithViewAll heading="PANDIT / JOYTISH / KATHAVACHAK" showViewAll={false} />
               <FlatList
-  data={Category}
-  keyExtractor={(item) => item.id}
-  renderItem={({ item }) => (
-    <TouchableOpacity
-      style={styles.CategoryContainer}
-      onPress={() => {
-        if (!item?.screen) {
-          console.warn("Screen not specified for this category.");
-          return;
-        }
+                data={Category}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={styles.CategoryContainer}
+                    onPress={() => {
+                      if (!item?.screen) {
+                        console.warn("Screen not specified for this category.");
+                        return;
+                      }
 
-        if (TAB_SCREENS.includes(item.screen)) {
-          navigation.navigate("MainApp", {
-            screen: "Tabs",
-            params: { screen: item.screen },
-          });
-        } else if (DRAWER_SCREENS.includes(item.screen)) {
-          navigation.navigate(item.screen);
-        } else {
-          navigation.navigate(item.screen);
-        }
-      }}
-    >
-      <Image source={item.image} style={styles.images} />
-      <Text style={styles.text}>{item.text}</Text>
-    </TouchableOpacity>
-  )}
-  horizontal
-  showsHorizontalScrollIndicator={false}
-/>
+                      if (TAB_SCREENS.includes(item.screen)) {
+                        navigation.navigate("MainApp", {
+                          screen: "Tabs",
+                          params: { screen: item.screen },
+                        });
+                      } else if (DRAWER_SCREENS.includes(item.screen)) {
+                        navigation.navigate(item.screen);
+                      } else {
+                        navigation.navigate(item.screen);
+                      }
+                    }}
+                  >
+                    <Image source={item.image} style={styles.images} />
+                    <Text style={styles.text}>{item.text}</Text>
+                  </TouchableOpacity>
+                )}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+              />
 
             </View>
 

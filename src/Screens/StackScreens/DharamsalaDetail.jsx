@@ -32,7 +32,6 @@ const DharamsalaDetail = ({ navigation, route }) => {
   const truncatedDescription = description.slice(0, 300) + "...";
   const [modalVisible, setModalVisible] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
-  const [imageIndex1, setImageIndex1] = useState(0);
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
   const formattedImages =
@@ -42,12 +41,6 @@ const DharamsalaDetail = ({ navigation, route }) => {
   const dharmshalaName = dharamsalaData?.dharmshalaName ?? "Unnamed";
   const subCaste = dharamsalaData?.subCaste ?? "Not specified";
   const city = dharamsalaData?.city ?? "Unknown";
-  const [FullImageVisible, setFullImageVisible] = useState(false);
-
-  const openImageViewer1 = (index) => {
-    setImageIndex1(index);
-    setFullImageVisible(true);
-  };
 
   const openImageViewer = (index) => {
     setImageIndex(index);
@@ -406,75 +399,42 @@ const DharamsalaDetail = ({ navigation, route }) => {
             activeDotStyle={styles.activeDot}
             onSlideChange={(index) => setCurrentIndex(index)}
           />
-          <Modal visible={modalVisible} transparent={true} animationType="fade">
-            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.8)" }}>
-              <ScrollView
-                horizontal
-                pagingEnabled
-                showsHorizontalScrollIndicator={false}
-                contentOffset={{ x: imageIndex * SCREEN_W, y: 0 }}
-                onMomentumScrollEnd={(e) =>
-                  setImageIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W))
-                }
-              >
-                {formattedImages.map((img, idx) => (
-                  <View
-                    key={idx}
-                    style={{
-                      width: SCREEN_W,
-                      height: SCREEN_H,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      marginTop: SH(15),
-                      overflow: 'hidden',
-                    }}
-                  >
-                    <TouchableOpacity
-                      activeOpacity={0.9}
-                      onPress={() => openImageViewer1(idx)}
-                      style={{ width: '100%', height: '100%' }}
-                    >
-                      <Image
-                        source={{ uri: img.uri }}
-                        resizeMode="contain"
-                        style={{ width: '100%', height: '100%' }}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                ))}
-              </ScrollView>
-              {FullImageVisible && (
-                <Modal
-                  visible={FullImageVisible}
-                  transparent={true}
-                  onRequestClose={() => setFullImageVisible(false)}
-                >
-                  <ImageViewer
-                    imageUrls={formattedImages.map((img) => ({ url: img.uri }))}
-                    index={imageIndex1}
-                    onSwipeDown={() => setFullImageVisible(false)}
-                    onCancel={() => setFullImageVisible(false)}
-                    enableSwipeDown={true}
-                    enablePreload={true}
-                    saveToLocalByLongPress={false}
-                    renderIndicator={() => null}
-                  />
-                </Modal>
+          <Modal visible={modalVisible} transparent={true} animationType="fade" onRequestClose={() => setModalVisible(false)}>
+            <ImageViewer
+              imageUrls={formattedImages.map(img => ({ url: img.uri }))}
+              index={imageIndex}
+              onSwipeDown={() => setModalVisible(false)}
+              onCancel={() => setModalVisible(false)}
+              enableSwipeDown={true}
+              enablePreload={true}
+              saveToLocalByLongPress={false}
+              renderIndicator={(currentIndex, allSize) => (
+                <View style={{
+                  position: "absolute",
+                  top: SH(30),
+                  alignSelf: "center",
+                  backgroundColor: "rgba(0,0,0,0.6)",
+                  paddingHorizontal: SW(8),
+                  borderRadius: 5,
+                  paddingVertical: SH(8),
+                  zIndex: 999
+                }}>
+                  <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>
+                    {currentIndex} / {allSize}
+                  </Text>
+                </View>
               )}
-
-
-              <View style={{
-                position: "absolute", top: SH(30), alignSelf: "center", backgroundColor: "rgba(0,0,0,0.6)",
-                paddingHorizontal: SW(8), borderRadius: 5, paddingVertical: SH(8)
-              }}>
-                <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>{imageIndex + 1} / {formattedImages.length}</Text>
-              </View>
-
-              <TouchableOpacity onPress={() => setModalVisible(false)} style={{ position: "absolute", top: SH(40), right: SW(20) }}>
-                <Text style={{ color: "white", fontSize: SF(13), fontFamily: "Poppins-Regular" }}>Close</Text>
-              </TouchableOpacity>
-            </View>
+              renderImage={(props) => (
+                <Image
+                  {...props}
+                  resizeMode="contain"
+                  style={{ width: '100%', height: '100%' }}
+                />
+              )}
+              backgroundColor="rgba(0,0,0,0.95)"
+            />
           </Modal>
+
         </View>
 
         {/* Dharamsala Details */}

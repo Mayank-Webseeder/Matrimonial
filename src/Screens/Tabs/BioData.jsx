@@ -263,7 +263,7 @@ const BioData = ({ navigation }) => {
   };
 
   const handleNavigateToProfile = (item) => {
-    if (item?.status === 'interested') {
+    if (item?.connectionStatus === 'received') {
       navigation.navigate('IntrestReceivedProfilePage', {
         userId: item?.userId,
         isSaved: item?.isSaved,

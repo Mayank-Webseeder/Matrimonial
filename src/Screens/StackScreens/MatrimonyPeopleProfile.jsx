@@ -37,10 +37,8 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const [profileData, setProfileData] = useState([]);
   const [userData, setUserData] = useState({});
   const MyprofileData = useSelector((state) => state.getBiodata);
-  const [isImageVisible, setImageVisible] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
-  const [imageIndex1, setImageIndex1] = useState(0);
   const [isSwitchOn, setIsSwitchOn] = useState(isVerified);
   const _id = userData?._id;
   const Biodata_id = userData?.bioDataId || null;
@@ -50,7 +48,6 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const activistId = MyActivistProfile?._id;
   const isVerified = userData?.verified;
   const verifiedBy = userData?.verifiedBy;
-  const [FullImageVisible, setFullImageVisible] = useState(false);
   // console.log("_id", _id);
   const personalDetails = userData?.personalDetails || {};
   const partnerPreferences = userData?.partnerPreferences || {};
@@ -69,12 +66,6 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const isBlurCondition = status === "accepted" ? !isVisible : isBlur;
   const [Save, setIsSaved] = useState(initialSavedState || false);
   const hasOtherDetails = personalDetails?.knowCooking || personalDetails?.dietaryHabit || personalDetails?.smokingHabit || personalDetails?.drinkingHabit || personalDetails?.tobaccoHabits || personalDetails?.hobbies;
-
-
-  const openImageViewer1 = (index) => {
-    setImageIndex1(index);
-    setFullImageVisible(true);
-  };
 
   const formattedImages = [
     personalDetails?.closeUpPhoto,
@@ -316,10 +307,9 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       console.log("response", JSON.stringify(response.data));
 
       if (response.data.status) {
-        setStatus(profileData?.requestStatus);
         setUserData(response?.data?.targetUserBioData);
         setProfileData(response.data);
-        setStatus(response.data?.requestStatus || null);
+        setStatus(profileData?.requestStatus || null);
         setRequestId(response.data?.requestId || null);
       } else {
         setProfileData(null);
@@ -664,83 +654,43 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           />
 
           {/* Modal for Full Image View */}
-          <Modal visible={modalVisible} transparent={true} animationType="fade">
-            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.8)" }}>
-              <ScrollView
-                horizontal
-                pagingEnabled
-                showsHorizontalScrollIndicator={false}
-                contentOffset={{ x: imageIndex * SCREEN_W, y: 0 }}
-                onMomentumScrollEnd={(e) =>
-                  setImageIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W))
-                }
-              >
-                {formattedImages.map((img, idx) => (
-                  <View
-                    key={idx}
-                    style={{
-                      width: SCREEN_W,
-                      height: SCREEN_H,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      marginTop: SH(15),
-                      overflow: 'hidden',
-                    }}
-                  >
-                    <TouchableOpacity
-                      activeOpacity={0.9}
-                      onPress={() => {
-                        if (!isBlurCondition) {
-                          openImageViewer1(idx);
-                        }
-                      }}
-                      style={{ width: '100%', height: '100%' }}
-                    >
-                      <Image
-                        source={{ uri: img.uri }}
-                        resizeMode="contain"
-                        style={{ width: '100%', height: '100%' }}
-                        blurRadius={isBlurCondition ? 10 : 0}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                ))}
-
-                {!isBlurCondition && FullImageVisible && (
-                  <Modal
-                    visible={FullImageVisible}
-                    transparent={true}
-                    onRequestClose={() => setFullImageVisible(false)}
-                  >
-                    <ImageViewer
-                      imageUrls={formattedImages.map(img => ({ url: img.uri }))}
-                      index={imageIndex1}
-                      onSwipeDown={() => setFullImageVisible(false)}
-                      onCancel={() => setFullImageVisible(false)}
-                      enableSwipeDown={true}
-                      enablePreload={true}
-                      saveToLocalByLongPress={false}
-                      renderIndicator={() => null}
-                      backgroundColor="rgba(0,0,0,0.95)"
-                    />
-                  </Modal>
-                )}
-
-
-              </ScrollView>
-
-              <View style={{
-                position: "absolute", top: SH(30), alignSelf: "center", backgroundColor: "rgba(0,0,0,0.6)",
-                paddingHorizontal: SW(8), borderRadius: 5, paddingVertical: SH(8)
-              }}>
-                <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>{imageIndex + 1} / {formattedImages.length}</Text>
-              </View>
-
-              <TouchableOpacity onPress={() => setModalVisible(false)} style={{ position: "absolute", top: SH(40), right: SW(20) }}>
-                <Text style={{ color: "white", fontSize: SF(13), fontFamily: "Poppins-Regular" }}>Close</Text>
-              </TouchableOpacity>
-            </View>
+          <Modal visible={modalVisible} transparent={true} animationType="fade" onRequestClose={() => setModalVisible(false)}>
+            <ImageViewer
+              imageUrls={formattedImages.map(img => ({ url: img.uri }))}
+              index={imageIndex}
+              onSwipeDown={() => setModalVisible(false)}
+              onCancel={() => setModalVisible(false)}
+              enableSwipeDown={true}
+              enablePreload={true}
+              saveToLocalByLongPress={false}
+              renderIndicator={(currentIndex, allSize) => (
+                <View style={{
+                  position: "absolute",
+                  top: SH(30),
+                  alignSelf: "center",
+                  backgroundColor: "rgba(0,0,0,0.6)",
+                  paddingHorizontal: SW(8),
+                  borderRadius: 5,
+                  paddingVertical: SH(8),
+                  zIndex: 999
+                }}>
+                  <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>
+                    {currentIndex} / {allSize}
+                  </Text>
+                </View>
+              )}
+              renderImage={(props) => (
+                <Image
+                  {...props}
+                  resizeMode="contain"
+                  style={{ width: '100%', height: '100%' }}
+                  blurRadius={isBlurCondition ? 10 : 0} // 👈 Add blur here conditionally
+                />
+              )}
+              backgroundColor="rgba(0,0,0,0.95)"
+            />
           </Modal>
+
         </View>
 
 

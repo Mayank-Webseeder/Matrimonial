@@ -17,8 +17,8 @@ import { CommonActions, useFocusEffect } from '@react-navigation/native';
 import ImageViewer from 'react-native-image-zoom-viewer';
 
 const ViewPost = ({ navigation, route }) => {
-  const { postId, id } = route.params;
-  const final_id = postId || id;
+const { postId, id } = route.params || {};
+const final_id = postId || id;
   const [postData, setPostData] = useState(null);
   const [viewerVisible, setViewerVisible] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);

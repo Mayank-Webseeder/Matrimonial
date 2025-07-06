@@ -28,8 +28,6 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const [slider, setSlider] = useState([]);
   const { userId, id } = route.params || {};
   const [loading, setLoading] = useState(false);
-  const [imageIndex1, setImageIndex1] = useState(0);
-  const [FullImageVisible, setFullImageVisible] = useState(false);
   const [loadingAccept, setLoadingAccept] = useState(false);
   const [loadingDecline, setLoadingDecline] = useState(false);
   const [profileData, setProfileData] = useState([]);
@@ -37,18 +35,19 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const _id = userData?._id;
   const personalDetails = userData?.personalDetails || {};
   const partnerPreferences = userData?.partnerPreferences || {};
-  const status = profileData?.requestStatus;
-  const hideContact = userData?.hideContact === true && status === 'accepted'
+  const [currentStatus, setCurrentStatus] = useState(profileData?.requestStatus);
+  const hideContact = userData?.hideContact === true && currentStatus === 'accepted'
     ? false
     : !!userData?.hideContact;
 
-  const hideOptionalDetails = userData?.hideOptionalDetails === true && status === 'accepted'
+  const hideOptionalDetails = userData?.hideOptionalDetails === true && currentStatus === 'accepted'
     ? false
     : !!userData?.hideOptionalDetails;
+  console.log("hideOptionalDetails", hideOptionalDetails);
   const requestId = profileData?.requestId;
   const isVisible = profileData?.isVisible;
   const isBlur = userData?.isBlur;
-  const isBlurCondition = status === "accepted" ? !isVisible : isBlur;
+  const isBlurCondition = currentStatus === "accepted" ? !isVisible : isBlur;
   const MyprofileData = useSelector((state) => state.getBiodata);
   const [imageIndex, setImageIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
@@ -58,10 +57,22 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const [Save, setIsSaved] = useState(initialSavedState || false);
 
   useEffect(() => {
-    if (profileData?.isSaved !== undefined) {
-      setIsSaved(profileData.isSaved);
-    }
-  }, [profileData?.isSaved]);
+    setIsSaved(profileData?.isSaved || false);
+    setCurrentStatus(profileData?.requestStatus || null);
+  }, [profileData?.isSaved, profileData?.requestStatus]);
+
+
+  // useEffect(() => {
+  //   if (profileData?.isSaved !== undefined) {
+  //     setIsSaved(profileData.isSaved);
+  //   }
+  // }, [profileData?.isSaved]);
+
+  // useEffect(() => {
+  //   if (profileData?.requestStatus) {
+  //     setCurrentStatus(profileData.requestStatus);
+  //   }
+  // }, [profileData]);
 
   const formattedImages = [
     personalDetails?.closeUpPhoto,
@@ -74,11 +85,6 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const openImageViewer = (index) => {
     setImageIndex(index);
     setModalVisible(true);
-  };
-
-  const openImageViewer1 = (index) => {
-    setImageIndex1(index);
-    setFullImageVisible(true);
   };
 
   const SliderrenderItem = ({ item, index }) => (
@@ -257,12 +263,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
 
   const savedProfiles = async () => {
     if (!_id) {
-      showMessage({
-        type: "danger",
-        message: "User ID not found!",
-        icon: "danger",
-        duarion: 7000
-      });
+      showMessage({ type: "danger", message: "User ID not found!", icon: "danger" });
       return;
     }
 
@@ -276,7 +277,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
       };
 
       const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
-      console.log("Response Data:", JSON.stringify(response?.data));
+      console.log("Response Data:", response?.data);
 
       if (response.status === 200 && response.data.status === true) {
         showMessage({
@@ -284,10 +285,10 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           message: "Success",
           description: response.data.message || "Profile saved successfully!",
           icon: "success",
-          duarion: 7000
         });
 
-        setIsSaved(response.data.message.includes("saved successfully"));
+        const isNowSaved = response.data.message.includes("saved successfully");
+        setIsSaved(isNowSaved);
       } else {
         throw new Error(response.data.message || "Something went wrong");
       }
@@ -299,20 +300,15 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         message: "Error",
         description: errorMsg,
         icon: "danger",
-        duarion: 7000
       });
-      const sessionExpiredMessages = [
+
+      if ([
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
-      ];
-
-      if (sessionExpiredMessages.includes(errorMsg)) {
+      ].includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "AuthStack" }],
-        });
+        navigation.reset({ index: 0, routes: [{ name: "AuthStack" }] });
       }
     }
   };
@@ -349,9 +345,11 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           icon: "success",
           duarion: 7000
         });
-        setTimeout(() => {
-          navigation.goBack();
-        }, 500);
+        setCurrentStatus("accepted");
+        setProfileData(prev => ({
+          ...prev,
+          isVisible: true,
+        }));
       } else {
         throw new Error(response.data.message || "Something went wrong");
       }
@@ -419,9 +417,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           icon: "success",
           duarion: 7000
         });
-        setTimeout(() => {
-          navigation.goBack();
-        }, 7000);
+        setCurrentStatus("rejected");
       } else {
         throw new Error(response.data.message || "Something went wrong");
       }
@@ -532,82 +528,41 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           />
 
           {/* Modal for Full Image View */}
-          <Modal visible={modalVisible} transparent={true} animationType="fade">
-            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.8)" }}>
-              <ScrollView
-                horizontal
-                pagingEnabled
-                showsHorizontalScrollIndicator={false}
-                contentOffset={{ x: imageIndex * SCREEN_W, y: 0 }}
-                onMomentumScrollEnd={(e) =>
-                  setImageIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W))
-                }
-              >
-                {formattedImages.map((img, idx) => (
-                  <View
-                    key={idx}
-                    style={{
-                      width: SCREEN_W,
-                      height: SCREEN_H,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      marginTop: SH(15),
-                      overflow: 'hidden',
-                    }}
-                  >
-                    <TouchableOpacity
-                      activeOpacity={0.9}
-                      onPress={() => {
-                        if (!isBlurCondition) {
-                          openImageViewer1(idx);
-                        }
-                      }}
-                      style={{ width: '100%', height: '100%' }}
-                    >
-                      <Image
-                        source={{ uri: img.uri }}
-                        resizeMode="contain"
-                        style={{ width: '100%', height: '100%' }}
-                        blurRadius={isBlurCondition ? 10 : 0}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                ))}
-
-                {!isBlurCondition && FullImageVisible && (
-                  <Modal
-                    visible={FullImageVisible}
-                    transparent={true}
-                    onRequestClose={() => setFullImageVisible(false)}
-                  >
-                    <ImageViewer
-                      imageUrls={formattedImages.map(img => ({ url: img.uri }))}
-                      index={imageIndex1}
-                      onSwipeDown={() => setFullImageVisible(false)}
-                      onCancel={() => setFullImageVisible(false)}
-                      enableSwipeDown={true}
-                      enablePreload={true}
-                      saveToLocalByLongPress={false}
-                      renderIndicator={() => null}
-                      backgroundColor="rgba(0,0,0,0.95)"
-                    />
-                  </Modal>
-                )}
-
-
-              </ScrollView>
-
-              <View style={{
-                position: "absolute", top: SH(30), alignSelf: "center", backgroundColor: "rgba(0,0,0,0.6)",
-                paddingHorizontal: SW(8), borderRadius: 5, paddingVertical: SH(8)
-              }}>
-                <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>{imageIndex + 1} / {formattedImages.length}</Text>
-              </View>
-
-              <TouchableOpacity onPress={() => setModalVisible(false)} style={{ position: "absolute", top: SH(40), right: SW(20) }}>
-                <Text style={{ color: "white", fontSize: SF(13), fontFamily: "Poppins-Regular" }}>Close</Text>
-              </TouchableOpacity>
-            </View>
+          <Modal visible={modalVisible} transparent={true} animationType="fade" onRequestClose={() => setModalVisible(false)}>
+            <ImageViewer
+              imageUrls={formattedImages.map(img => ({ url: img.uri }))}
+              index={imageIndex}
+              onSwipeDown={() => setModalVisible(false)}
+              onCancel={() => setModalVisible(false)}
+              enableSwipeDown={true}
+              enablePreload={true}
+              saveToLocalByLongPress={false}
+              renderIndicator={(currentIndex, allSize) => (
+                <View style={{
+                  position: "absolute",
+                  top: SH(30),
+                  alignSelf: "center",
+                  backgroundColor: "rgba(0,0,0,0.6)",
+                  paddingHorizontal: SW(8),
+                  borderRadius: 5,
+                  paddingVertical: SH(8),
+                  zIndex: 999
+                }}>
+                  <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>
+                    {currentIndex} / {allSize}
+                  </Text>
+                </View>
+              )}
+              renderImage={(props) => (
+                <Image
+                  {...props}
+                  resizeMode="contain"
+                  style={{ width: '100%', height: '100%' }}
+                  blurRadius={isBlurCondition ? 10 : 0} // 👈 Add blur here conditionally
+                />
+              )}
+              backgroundColor="rgba(0,0,0,0.95)"
+            />
           </Modal>
         </View>
         {(userData?.verified) && (
@@ -631,7 +586,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
             </Text>
           </View>
           <View style={styles.sharecontainer}>
-            <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles()}>
+            <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
               <FontAwesome
                 name={Save ? "bookmark" : "bookmark-o"}
                 size={19}
@@ -739,47 +694,49 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           </View>
         )}
 
-        <View style={styles.familyDiv}>
-          <View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
-              <MaterialCommunityIcons name="account-box-outline" size={25} color={Colors.theme_color} />
-              <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>About Me</Text>
-            </View>
-
-            {personalDetails?.aboutMe?.trim() !== "" && (
-              <Text style={styles.text}>{personalDetails?.aboutMe}</Text>
-            )}
-
-            <View style={{ marginVertical: SH(4) }}>
-              <View style={styles.infoRow}>
-                {personalDetails?.complexion && (
-                  <>
-                    <Text style={styles.infoLabel}>Complexion :</Text>
-                    <Text style={styles.infoValue}>{personalDetails.complexion}</Text>
-                  </>
-                )}
+        {!hideOptionalDetails && (
+          <View style={styles.familyDiv}>
+            <View>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
+                <MaterialCommunityIcons name="account-box-outline" size={25} color={Colors.theme_color} />
+                <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>About Me</Text>
               </View>
 
-              <View style={styles.infoRow}>
-                {personalDetails?.weight && (
-                  <>
-                    <Text style={styles.infoLabel}>Weight :</Text>
-                    <Text style={styles.infoValue}>{personalDetails.weight} kg</Text>
-                  </>
-                )}
-              </View>
+              {personalDetails?.aboutMe?.trim() !== "" && (
+                <Text style={styles.text}>{personalDetails?.aboutMe}</Text>
+              )}
 
-              <View style={styles.infoRow}>
-                {personalDetails?.livingStatus && (
-                  <>
-                    <Text style={styles.infoLabel}>Living with family :</Text>
-                    <Text style={styles.infoValue}>{personalDetails.livingStatus}</Text>
-                  </>
-                )}
+              <View style={{ marginVertical: SH(4) }}>
+                <View style={styles.infoRow}>
+                  {personalDetails?.complexion && (
+                    <>
+                      <Text style={styles.infoLabel}>Complexion :</Text>
+                      <Text style={styles.infoValue}>{personalDetails.complexion}</Text>
+                    </>
+                  )}
+                </View>
+
+                <View style={styles.infoRow}>
+                  {personalDetails?.weight && (
+                    <>
+                      <Text style={styles.infoLabel}>Weight :</Text>
+                      <Text style={styles.infoValue}>{personalDetails.weight} kg</Text>
+                    </>
+                  )}
+                </View>
+
+                <View style={styles.infoRow}>
+                  {personalDetails?.livingStatus && (
+                    <>
+                      <Text style={styles.infoLabel}>Living with family :</Text>
+                      <Text style={styles.infoValue}>{personalDetails.livingStatus}</Text>
+                    </>
+                  )}
+                </View>
               </View>
             </View>
           </View>
-        </View>
+        )}
 
         <View style={[styles.familyDiv]}>
           <View>
@@ -1007,15 +964,15 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         </View>
       </ScrollView>
 
-      {status !== "accepted" && status !== "rejected" && (
+      {currentStatus !== "accepted" && currentStatus !== "rejected" && (
         <View style={styles.bottomContainer}>
           <TouchableOpacity
             style={[
               styles.declineButton,
-              (status === "rejected" || status === "accepted") && { backgroundColor: "#dbcccf" }
+              (currentStatus === "rejected" || currentStatus === "accepted") && { backgroundColor: "#dbcccf" }
             ]}
             onPress={() => rejectConnectionRequest(requestId)}
-            disabled={loadingDecline || status === "rejected" || status === "accepted"}
+            disabled={loadingDecline || currentStatus === "rejected" || currentStatus === "accepted"}
           >
             {loadingDecline ? (
               <ActivityIndicator size="small" color="#fff" />
@@ -1030,10 +987,10 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           <TouchableOpacity
             style={[
               styles.acceptButton,
-              (status === "accepted" || status === "rejected") && { backgroundColor: "#dbcccf" }
+              (currentStatus === "accepted" || currentStatus === "rejected") && { backgroundColor: "#dbcccf" }
             ]}
             onPress={() => acceptConnectionRequest(requestId)}
-            disabled={loadingAccept || status === "accepted" || status === "rejected"}
+            disabled={loadingAccept || currentStatus === "accepted" || currentStatus === "rejected"}
           >
             {loadingAccept ? (
               <ActivityIndicator size="small" color="#fff" />

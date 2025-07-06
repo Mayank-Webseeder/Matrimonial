@@ -14,7 +14,7 @@ const ViewEntityImages = ({ navigation, route }) => {
     const entityDetails = panditDetails || jyotishDetails || kathavachakDetails;
     const entityType = panditDetails ? "Pandit" : jyotishDetails ? "Jyotish" : "Kathavachak";
 
-    const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedImage, setSelectedImage] = useState([]);
     const [isImageVisible, setImageVisible] = useState(false);
 
     const openImageViewer = (imageUri) => {

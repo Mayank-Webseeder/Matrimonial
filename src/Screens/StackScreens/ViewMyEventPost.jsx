@@ -43,7 +43,8 @@ const ViewMyEventPost = ({ navigation, route }) => {
   const ProfileData = useSelector((state) => state.profile);
   const profileData = ProfileData?.profiledata || {};
   const myprofile_id = profileData?._id || null;
-
+  const [eventList, setEventList] = useState([]);
+   const [deletingCommentId, setDeletingCommentId] = useState(null);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -241,7 +242,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
     }
   };
 
-  const COMMENT = async (postId) => {
+ const COMMENT = async (postId) => {
     try {
       setCommentLoading(true);
       const token = await AsyncStorage.getItem("userToken");
@@ -261,23 +262,26 @@ const ViewMyEventPost = ({ navigation, route }) => {
 
       if (response.status === 200 && response.data.status === true) {
         const fetchedData = response.data;
-        console.log("Updated comments:", JSON.stringify(fetchedData.comments));
+        console.log("Updated comments:", JSON.stringify(fetchedData.event.comments));
 
-        setMyComment("");
+        // Set the comments data to state after successful comment addition
+        const fetchedComments = response.data.event.comments;
+        setCommentData(fetchedComments);
+        setMyComment(""); // Clear the comment input field
 
+        setEventList((prevList) =>
+          prevList.map((post) =>
+            post._id === postId
+              ? { ...post, comments: fetchedComments } // replace with updated comments array
+              : post
+          )
+        );
         showMessage({
           type: "success",
           message: "Success",
-          message: fetchedData.message || "Comment added successfully!",
-          duarion: 5000,
-          // onHide: () => {
-          //   navigation.navigate("MainApp", {
-          //     screen: "Tabs",
-          //     params: { screen: "EventNews" }
-          //   });
-          // }
+          description: fetchedData.message || "Comment added successfully!",
+          duration: 3000
         });
-
       } else if (response.status === 400) {
         throw new Error(response.data.message || "Invalid request.");
       }
@@ -285,12 +289,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error adding comment:", errorMsg);
-      showMessage({
-        type: "danger",
-        message: errorMsg || "Failed to add comment. Please try again!",
-        icon: "danger",
-        duarion: 5000
-      });
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
@@ -304,6 +303,11 @@ const ViewMyEventPost = ({ navigation, route }) => {
           routes: [{ name: "AuthStack" }],
         });
       }
+      showMessage({
+        type: "error",
+        message: "Error",
+        description: errorMsg || "Failed to add comment. Please try again!",
+      });
     } finally {
       setCommentLoading(false);
     }
@@ -312,9 +316,9 @@ const ViewMyEventPost = ({ navigation, route }) => {
   const DELETE_COMMENT = async (postId, commentId) => {
     console.log("postId", postId, "commentId", commentId);
     try {
-      setdeletecommentLoading(true);
-      const token = await AsyncStorage.getItem("userToken");
+      setDeletingCommentId(commentId);
 
+      const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
 
       const headers = {
@@ -322,38 +326,44 @@ const ViewMyEventPost = ({ navigation, route }) => {
         Authorization: `Bearer ${token}`,
       };
 
-      console.log("headers", headers);
-
       const response = await axios.delete(
         `${BASE_URL}/event/${postId}/delete-comment/${commentId}`,
         { headers }
       );
 
       if (response.data) {
-        console.log("Updated comments:", JSON.stringify(response.data.comments));
-
         setCommentData((prevComments) =>
           prevComments.filter((comment) => comment._id !== commentId)
+        );
+
+        setEventList((prevList) =>
+          prevList.map((post) =>
+            post._id === postId
+              ? { ...post, comments: post.comments.filter((comment) => comment._id !== commentId) }
+              : post
+          )
         );
 
         showMessage({
           type: "success",
           message: "Success",
-          message: "Comment deleted successfully!",
-          position: "Bottom",
-          duarion: 5000
+          description: "Comment deleted successfully!",
+          icon: "success",
         });
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error deleting comment :", errorMsg);
+      console.error("Error deleting comment::", errorMsg);
+
       showMessage({
         type: "danger",
         message: "Error",
-        message: errorMsg || "Failed to delete comment. Please try again!",
+        description:
+          error?.response?.data?.message ||
+          "Failed to delete comment. Please try again!",
         icon: "danger",
-        duarion: 5000
       });
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
@@ -368,10 +378,9 @@ const ViewMyEventPost = ({ navigation, route }) => {
         });
       }
     } finally {
-      setdeletecommentLoading(false);
+      setDeletingCommentId(null);
     }
   };
-
 
   const DELETE_EVENT_POST = async (postId) => {
     console.log("🗑️ Deleting Post ID:", postId);
@@ -481,7 +490,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
     if (images.length === 1) {
       return (
         <TouchableOpacity
-          onPress={() => navigation.navigate('ViewPost', { image: images[0], post: item })}
+          onPress={() => navigation.navigate('ViewPost', { image: images[0], postId: item._id })}
         >
           <Image source={{ uri: images[0] }} style={[styles.image1, { width: '100%', height: SH(250) }]} />
         </TouchableOpacity>
@@ -492,7 +501,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
       return (
         <View style={{ flexDirection: 'row' }}>
           {images.map((image, index) => (
-            <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, post: item })}>
+            <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, postId: item._id})}>
               <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(2) }]} />
             </TouchableOpacity>
           ))}
@@ -504,13 +513,13 @@ const ViewMyEventPost = ({ navigation, route }) => {
       return (
         <View>
           <View style={{ flexDirection: 'row' }}>
-            <TouchableOpacity onPress={() => navigation.navigate('ViewPost', { image: images[0], post: item })}>
+            <TouchableOpacity onPress={() => navigation.navigate('ViewPost', { image: images[0], postId: item._id})}>
               <Image source={{ uri: images[0] }} style={[styles.image2, { flex: 1, margin: SW(2) }]} />
             </TouchableOpacity>
           </View>
           <View style={{ flexDirection: 'row' }}>
             {images.slice(1).map((image, index) => (
-              <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, post: item })}>
+              <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, postId: item._id})}>
                 <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(2) }]} />
               </TouchableOpacity>
             ))}
@@ -524,14 +533,14 @@ const ViewMyEventPost = ({ navigation, route }) => {
         <View>
           <View style={{ flexDirection: 'row' }}>
             {images.slice(0, 2).map((image, index) => (
-              <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, post: item })}>
+              <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, postId: item._id })}>
                 <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(1) }]} />
               </TouchableOpacity>
             ))}
           </View>
           <View style={{ flexDirection: 'row' }}>
             {images.slice(2, 4).map((image, index) => (
-              <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, post: item })}>
+              <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, postId: item._id })}>
                 <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(1) }]} />
               </TouchableOpacity>
             ))}
@@ -720,7 +729,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
                 onChangeText={setMyComment}
                 placeholderTextColor={Colors.gray}
               />
-              <TouchableOpacity
+               <TouchableOpacity
                 style={styles.postButton}
                 onPress={() => COMMENT(selectedPostId)}
                 disabled={commentLoading || !Boolean(myComment.trim())}

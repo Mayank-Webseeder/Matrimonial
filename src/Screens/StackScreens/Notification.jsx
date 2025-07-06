@@ -140,11 +140,17 @@ const Notification = ({ navigation }) => {
 
       case 'activistApproved':
         console.log("Navigating to Activist with ID:", _id, "User ID:", userId);
-        navigation.navigate('Activist', { id: _id, userId });
+        navigation.navigate("MainApp", {
+          screen: "Activist",
+          params: { _id, userId }
+        });
         break;
 
       case 'activistRejected':
-        navigation.navigate('Activist', { id: _id, userId });
+        navigation.navigate("MainApp", {
+          screen: "Activist",
+          params: { _id, userId }
+        });
         break;
 
       case 'connectionRequestResponse':
@@ -284,12 +290,18 @@ const Notification = ({ navigation }) => {
         break;
 
       case 'activistApproved':
-        navigation.navigate('Activist', { id: _id, userId });
+        console.log("Navigating to Activist with ID:", _id, "User ID:", userId);
+        navigation.navigate("MainApp", {
+          screen: "Activist",
+          params: { _id, userId }
+        });
         break;
 
       case 'activistRejected':
-        navigation.navigate('Activist', { id: _id, userId });
-        break;
+        navigation.navigate("MainApp", {
+          screen: "Activist",
+          params: { _id, userId }
+        });
 
       case 'connectionRequestResponse':
         console.log("Navigating to MatrimonyPeopleProfile with ID:", notification._id, "User ID:", notification.relatedData.fromUserId);

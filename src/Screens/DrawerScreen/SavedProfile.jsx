@@ -141,7 +141,8 @@ const SavedProfile = ({ navigation }) => {
   };
 
   const renderItem = ({ item }) => {
-    const { saveProfile, profileType } = item;
+    const profileType = item?.profileType;
+    const saveProfile = item?.saveProfile || item;
 
     return (
       <View style={styles.card}>
@@ -152,16 +153,21 @@ const SavedProfile = ({ navigation }) => {
               return;
             }
             if (profileType === "Biodata") {
-              if (!partnerPreferences) {
+              if (saveProfile?.connectionStatus === "received") {
+                navigation.navigate("IntrestReceivedProfilePage", {
+                  userId: saveProfile?.userId,
+                  isSaved: true,
+                });
+              } else if (!partnerPreferences) {
                 navigation.navigate("ShortMatrimonialProfile", {
                   userDetails: saveProfile,
-                  isSaved: true
+                  isSaved: true,
                 });
               } else {
                 navigation.navigate("MatrimonyPeopleProfile", {
                   userDetails: saveProfile,
                   userId: saveProfile?.userId,
-                  isSaved: true
+                  isSaved: true,
                 });
               }
             }
@@ -183,7 +189,13 @@ const SavedProfile = ({ navigation }) => {
                     ? { uri: saveProfile?.personalDetails?.closeUpPhoto }
                     : require("../../Images/NoImage.png")
                 }
-                blurRadius={saveProfile?.isBlur ? 10 : 0}
+                blurRadius={
+                  saveProfile?.requestStatus === "accepted"
+                    ? 0
+                    : saveProfile?.isBlur
+                      ? 10
+                      : 0
+                }
                 style={styles.image}
               />
               <View style={styles.detailscontent}>
@@ -238,7 +250,11 @@ const SavedProfile = ({ navigation }) => {
           {profileType === "Dharmshala" && (
             <>
               <Image
-                source={{ uri: saveProfile?.images?.[0] || "https://via.placeholder.com/150" }}
+                source={
+                  saveProfile?.images?.[0] && saveProfile.images[0].startsWith("http")
+                    ? { uri: saveProfile.images[0] }
+                    : require("../../Images/NoImage.png")
+                }
                 style={styles.image}
               />
               <View style={styles.detailscontent}>
@@ -252,7 +268,11 @@ const SavedProfile = ({ navigation }) => {
           {profileType === "Committee" && (
             <>
               <Image
-                source={{ uri: saveProfile?.photoUrl || "https://via.placeholder.com/150" }}
+                source={
+                  saveProfile?.photoUrl && saveProfile.photoUrl.startsWith("http")
+                    ? { uri: saveProfile.photoUrl }
+                    : require("../../Images/NoImage.png")
+                }
                 style={styles.image}
               />
               <View style={styles.detailscontent}>

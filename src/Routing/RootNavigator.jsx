@@ -123,7 +123,6 @@ function MyTabs({ route }) {
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) throw new Error("No token found");
-
       const headers = {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,

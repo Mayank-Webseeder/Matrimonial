@@ -48,7 +48,7 @@ const Kathavachak = ({ navigation, route }) => {
 
   const openImageViewer = (imageUri) => {
     if (imageUri) {
-      setSelectedImage([{ url: imageUri }]); 
+      setSelectedImage([{ url: imageUri }]);
       setImageVisible(true);
     }
   };
@@ -337,31 +337,31 @@ const Kathavachak = ({ navigation, route }) => {
     return (
       <View style={styles.card}>
         <View style={styles.cardData}>
-           {item.profilePhoto ? (
-        <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
-          <Image
-            source={{ uri: item.profilePhoto }}
-            style={styles.image}
-          />
-        </TouchableOpacity>
-      ) : (
-        <Image
-          source={require('../../Images/NoImage.png')}
-          style={styles.image}
-        />
-      )}
+          {item.profilePhoto ? (
+            <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
+              <Image
+                source={{ uri: item.profilePhoto }}
+                style={styles.image}
+              />
+            </TouchableOpacity>
+          ) : (
+            <Image
+              source={require('../../Images/NoImage.png')}
+              style={styles.image}
+            />
+          )}
 
-      <Modal visible={isImageVisible} transparent={true} onRequestClose={() => setImageVisible(false)}>
-        <ImageViewer
-          imageUrls={selectedImage}
-          enableSwipeDown={true}
-          onSwipeDown={() => setImageVisible(false)}
-          onCancel={() => setImageVisible(false)}
-          enablePreload={true}
-          saveToLocalByLongPress={false}
-          renderIndicator={() => null}
-        />
-      </Modal>
+          <Modal visible={isImageVisible} transparent={true} onRequestClose={() => setImageVisible(false)}>
+            <ImageViewer
+              imageUrls={selectedImage}
+              enableSwipeDown={true}
+              onSwipeDown={() => setImageVisible(false)}
+              onCancel={() => setImageVisible(false)}
+              enablePreload={true}
+              saveToLocalByLongPress={false}
+              renderIndicator={() => null}
+            />
+          </Modal>
           <View>
             <Pressable style={styles.leftContainer}
               onPress={() => {
@@ -446,7 +446,10 @@ const Kathavachak = ({ navigation, route }) => {
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
         <View style={styles.headerContainer}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity onPress={() => navigation.reset({
+            index: 0,
+            routes: [{ name: "MainApp" }],
+          })}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>Kathavachak</Text>
@@ -529,7 +532,7 @@ const Kathavachak = ({ navigation, route }) => {
                 <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                   <Image
                     source={{ uri: item.image }}
-                    style={{ width, height, resizeMode: 'contain' }}
+                      style={{ width:"100%", height:SH(180) , resizeMode: 'contain' }}
                   />
                 </TouchableOpacity>
               );

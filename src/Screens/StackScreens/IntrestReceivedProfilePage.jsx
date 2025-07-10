@@ -20,6 +20,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { showMessage } from 'react-native-flash-message';
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 import ImageViewer from 'react-native-image-zoom-viewer';
+import { CommonActions } from '@react-navigation/native';
 
 const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const sliderRef = useRef(null);
@@ -27,6 +28,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slider, setSlider] = useState([]);
   const { userId, id } = route.params || {};
+  const profile_id= userId||id || null ;
   const [loading, setLoading] = useState(false);
   const [loadingAccept, setLoadingAccept] = useState(false);
   const [loadingDecline, setLoadingDecline] = useState(false);
@@ -101,22 +103,22 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   useFocusEffect(
     useCallback(() => {
       console.log("initialSavedState", initialSavedState);
-      if (userId) {
-        fetchUserProfile(userId);
+      if (profile_id) {
+        fetchUserProfile(profile_id);
       }
 
       setLoadingAccept(false);
       setLoadingDecline(false);
-    }, [userId || id, isBlur])
+    }, [profile_id, isBlur])
   );
 
 
   useEffect(() => {
     Advertisement_window();
-    if (userId) {
-      fetchUserProfile(userId);
+    if (profile_id) {
+      fetchUserProfile(profile_id);
     }
-  }, [userId]);
+  }, [profile_id]);
 
   useEffect(() => {
     if (!formattedImages || formattedImages.length === 0) return;
@@ -505,9 +507,27 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: "center" }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [
+                    {
+                      name: 'MainApp',
+                      state: {
+                        index: 0,
+                        routes: [{ name: 'Interested Profile' }],
+                      },
+                    },
+                  ],
+                })
+              )
+            }
+          >
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
+
           <Text style={Globalstyles.headerText}>{personalDetails?.fullname || 'Raj Sharma'}</Text>
         </View>
         <View style={styles.righticons}>

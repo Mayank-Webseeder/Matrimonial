@@ -612,7 +612,7 @@ const Home = ({ navigation }) => {
                         {item.mediaType === 'video' ? (
                           <Video
                             source={{ uri: item.image }}
-                            style={{ width, height }}
+                               style={{ width:"100%", height:SH(180) , resizeMode: 'contain' }}
                             resizeMode="cover"
                             repeat
                             muted={false}
@@ -622,7 +622,7 @@ const Home = ({ navigation }) => {
                         ) : (
                           <Image
                             source={{ uri: item.image }}
-                            style={{ width, height }}
+                             style={{ width:"100%", height:SH(180) , resizeMode: 'contain' }}
                             resizeMode="cover"
                           />
                         )}

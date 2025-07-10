@@ -61,7 +61,7 @@ const SavedProfile = ({ navigation }) => {
         flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
       }, 100);
     } catch (error) {
-      console.error("❌ Error fetching saved profiles:", error?.response?.data || error);
+      console.error("Error fetching saved profiles:", error?.response?.data || error);
     } finally {
       setLoading(false);
     }

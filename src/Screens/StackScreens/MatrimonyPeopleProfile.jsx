@@ -30,6 +30,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const [slider, setSlider] = useState([]);
   const route = useRoute();
   const { userId, isSaved, id } = route.params || {};
+  const profile_id= userId || id || null;
   const [loading, setLoading] = useState(false);
   const [loadingIntrest, setLoadingIntrest] = useState(false);
   const [intrestLoading, setIntrestLoading] = useState(false);
@@ -285,11 +286,11 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       // console.log("isBlur:", userData?.isBlur);
       // console.log("userId:", userData?.userId);
       // console.log("userData?.personalDetails", userData?.personalDetails);
-      if (userId || id) {
-        console.log("userId", userId);
-        fetchUserProfile(userId || id);
+      if (profile_id) {
+        console.log("profile_id", profile_id);
+        fetchUserProfile(profile_id);
       }
-    }, [userId || id, isBlur])
+    }, [profile_id, isBlur])
   );
 
   const fetchUserProfile = async (id) => {
@@ -602,10 +603,10 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: "center" }}>
-          <TouchableOpacity
-            // onPress={() => navigation.goBack()}
-            onPress={() => navigation.pop()}
-          >
+          <TouchableOpacity onPress={() => navigation.reset({
+            index: 0,
+            routes: [{ name: "MainApp" }],
+          })}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>{personalDetails?.fullname}</Text>
@@ -1157,7 +1158,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                 <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                   <Image
                     source={{ uri: item.image }}
-                    style={{ width, height, resizeMode: 'cover' }}
+                    style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
                   />
                 </TouchableOpacity>
               );

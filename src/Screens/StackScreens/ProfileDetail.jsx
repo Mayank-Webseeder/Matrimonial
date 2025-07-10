@@ -395,48 +395,41 @@ const ProfileDetail = ({ route, navigation }) => {
                             />
 
                             {/* Modal for Full Image View */}
-                            <Modal visible={modalVisible} transparent={true} animationType="fade">
-                                <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.8)" }}>
-                                    <ScrollView
-                                        horizontal
-                                        pagingEnabled
-                                        showsHorizontalScrollIndicator={false}
-                                        contentOffset={{ x: imageIndex * SCREEN_W, y: 0 }}
-                                        onMomentumScrollEnd={(e) =>
-                                            setImageIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W))
-                                        }
-                                    >
-                                        {formattedImages.map((img, idx) => (
-                                            <View
-                                                key={idx}
-                                                style={{
-                                                    width: SCREEN_W,
-                                                    height: SCREEN_H,
-                                                    justifyContent: 'center',
-                                                    alignItems: 'center',
-                                                    marginTop: SH(15)
-                                                }}
-                                            >
-                                                <Image
-                                                    source={{ uri: img.uri }}
-                                                    resizeMode="contain"
-                                                    style={{ width: '100%', height: '100%' }}
-                                                />
-                                            </View>
-                                        ))}
-                                    </ScrollView>
+                            <Modal visible={modalVisible} transparent={true} animationType="fade" onRequestClose={() => setModalVisible(false)}>
+                                <ImageViewer
+                                    imageUrls={formattedImages.map(img => ({ url: img.uri }))}
+                                    index={imageIndex}
+                                    onSwipeDown={() => setModalVisible(false)}
+                                    onCancel={() => setModalVisible(false)}
+                                    enableSwipeDown={true}
+                                    enablePreload={true}
+                                    saveToLocalByLongPress={false}
+                                    renderIndicator={(currentIndex, allSize) => (
+                                        <View style={{
+                                            position: "absolute",
+                                            top: SH(30),
+                                            alignSelf: "center",
+                                            backgroundColor: "rgba(0,0,0,0.6)",
+                                            paddingHorizontal: SW(8),
+                                            borderRadius: 5,
+                                            paddingVertical: SH(8),
+                                            zIndex: 999
+                                        }}>
+                                            <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>
+                                                {currentIndex} / {allSize}
+                                            </Text>
+                                        </View>
+                                    )}
+                                    renderImage={(props) => (
+                                        <Image
+                                            {...props}
+                                            resizeMode="contain"
+                                            style={{ width: '100%', height: '100%' }}
 
-                                    <View style={{
-                                        position: "absolute", top: SH(30), alignSelf: "center", backgroundColor: "rgba(0,0,0,0.6)",
-                                        paddingHorizontal: SW(8), borderRadius: 5, paddingVertical: SH(8)
-                                    }}>
-                                        <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>{imageIndex + 1} / {formattedImages.length}</Text>
-                                    </View>
-
-                                    <TouchableOpacity onPress={() => setModalVisible(false)} style={{ position: "absolute", top: SH(40), right: SW(20) }}>
-                                        <Text style={{ color: "white", fontSize: SF(13), fontFamily: "Poppins-Regular" }}>Close</Text>
-                                    </TouchableOpacity>
-                                </View>
+                                        />
+                                    )}
+                                    backgroundColor="rgba(0,0,0,0.95)"
+                                />
                             </Modal>
                         </View>
 

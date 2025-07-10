@@ -351,7 +351,23 @@ const DharamsalaDetail = ({ navigation, route }) => {
       {/* Header */}
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: "center" }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity onPress={() =>
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: 'MainApp',
+                    state: {
+                      index: 0,
+                      routes: [{ name: 'Dharmshala' }],
+                    },
+                  },
+                ],
+              })
+            )
+          }
+          >
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>{dharmshalaName}</Text>
@@ -502,7 +518,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
                 <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                   <Image
                     source={{ uri: item.image }}
-                    style={{ width, height, resizeMode: 'cover' }}
+                      style={{ width:"100%", height:SH(180) , resizeMode: 'contain' }}
                   />
                 </TouchableOpacity>
               );

@@ -28,7 +28,7 @@ const App = () => {
                 Tabs: {
                   screens: {
                     // Home: "home",
-                    // Pandit: "profile/pandit/:id",
+                    Pandit: "profile/pandit/:id",
                     Matrimonial: "profile/Matrimonial/:id",
                     // BioData: "bio-data",
                     // EventNews:"EventNews",

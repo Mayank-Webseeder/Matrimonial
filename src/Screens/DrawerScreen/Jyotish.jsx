@@ -507,7 +507,10 @@ const Jyotish = ({ navigation, route }) => {
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
         <View style={styles.headerContainer}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity onPress={() =>navigation.reset({
+  index: 0,
+  routes: [{ name: "MainApp" }],
+})}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>Jyotish</Text>
@@ -590,7 +593,7 @@ const Jyotish = ({ navigation, route }) => {
                 <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                   <Image
                     source={{ uri: item.image }}
-                    style={{ width, height, resizeMode: 'contain' }}
+                     style={{ width:"100%", height:SH(180) , resizeMode: 'contain' }}
                   />
                 </TouchableOpacity>
               );

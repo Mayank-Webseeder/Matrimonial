@@ -121,14 +121,14 @@ const InActiveDelete = ({ navigation }) => {
             <Text style={styles.Text}>Do you really want to Inactivate or Delete your Profile?</Text>
 
             <View style={styles.optionsContainer}>
-                {Profiledata?.isMatrimonial && (
+                {/* {Profiledata?.isMatrimonial && (
                     <TouchableOpacity
                         style={styles.optionButton}
                         onPress={() => handleAction('inactivate')}
                     >
                         <Text style={styles.optionText}>Inactivate My Biodata</Text>
                     </TouchableOpacity>
-                )}
+                )} */}
 
                 {Profiledata?.isMatrimonial && (
                     <TouchableOpacity

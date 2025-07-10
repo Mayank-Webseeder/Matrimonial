@@ -359,7 +359,14 @@ const PanditDetailPage = ({ navigation, item, route }) => {
             />
             <View style={Globalstyles.header}>
                 <View style={{ flexDirection: 'row' }}>
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <TouchableOpacity
+                        onPress={() =>
+                            navigation.navigate("MainApp", {
+                                screen: "Tabs",
+                                params: { screen: "Pandit" },
+                            })
+                        }
+                    >
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
                     <Text style={Globalstyles.headerText}>{profileData?.fullName}</Text>
@@ -592,7 +599,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                                                     ? { uri: review.userId.photoUrl[0] }
                                                     : require("../../Images/NoImage.png")
                                                 }
-                                                style={{ width: SW(50), height: SH(50), borderRadius: 50 }}
+                                                  style={{ width:"100%", height:SH(180) , resizeMode: 'contain' }}
                                                 resizeMode="cover"
                                             />
                                         </View>

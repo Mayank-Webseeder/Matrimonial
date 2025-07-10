@@ -359,15 +359,6 @@ const Pandit = ({ navigation, route }) => {
     </SkeletonPlaceholder>
   );
 
-  // const handleShare = async () => {
-  //   showMessage({
-  //     message: "Under development",
-  //     type: "info",
-  //     duration: 3000,
-  //     icon: "info",
-  //   });
-  // };
-
   const isExpired = profile_data.serviceSubscriptions?.some(
     sub => sub.serviceType === 'Pandit' && sub.status === 'Expired'
   );
@@ -380,31 +371,31 @@ const Pandit = ({ navigation, route }) => {
     return (
       <View style={styles.card}>
         <View style={styles.cardData}>
-         {item.profilePhoto ? (
-        <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
-          <Image
-            source={{ uri: item.profilePhoto }}
-            style={styles.image}
-          />
-        </TouchableOpacity>
-      ) : (
-        <Image
-          source={require('../../Images/NoImage.png')}
-          style={styles.image}
-        />
-      )}
+          {item.profilePhoto ? (
+            <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
+              <Image
+                source={{ uri: item.profilePhoto }}
+                style={styles.image}
+              />
+            </TouchableOpacity>
+          ) : (
+            <Image
+              source={require('../../Images/NoImage.png')}
+              style={styles.image}
+            />
+          )}
 
-      <Modal visible={isImageVisible} transparent={true} onRequestClose={() => setImageVisible(false)}>
-        <ImageViewer
-          imageUrls={selectedImage}
-          enableSwipeDown={true}
-          onSwipeDown={() => setImageVisible(false)}
-          onCancel={() => setImageVisible(false)}
-          enablePreload={true}
-          saveToLocalByLongPress={false}
-          renderIndicator={() => null}
-        />
-      </Modal>
+          <Modal visible={isImageVisible} transparent={true} onRequestClose={() => setImageVisible(false)}>
+            <ImageViewer
+              imageUrls={selectedImage}
+              enableSwipeDown={true}
+              onSwipeDown={() => setImageVisible(false)}
+              onCancel={() => setImageVisible(false)}
+              enablePreload={true}
+              saveToLocalByLongPress={false}
+              renderIndicator={() => null}
+            />
+          </Modal>
 
           <View>
             <View>
@@ -474,7 +465,10 @@ const Pandit = ({ navigation, route }) => {
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
         <View style={styles.headerContainer}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity onPress={() => navigation.reset({
+            index: 0,
+            routes: [{ name: "MainApp" }],
+          })}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>Pandit</Text>
@@ -564,7 +558,7 @@ const Pandit = ({ navigation, route }) => {
                 <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                   <Image
                     source={{ uri: item.image }}
-                    style={{ width, height, resizeMode: 'contain' }}
+                    style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
                   />
                 </TouchableOpacity>
               );

@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar, FlatList, Pressable, TextInput, Linking } from 'react-native';
+import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar, FlatList, Pressable, TextInput, Linking, Share } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -15,26 +15,26 @@ import { useSelector } from 'react-redux';
 import { showMessage } from 'react-native-flash-message';
 
 const ShortMatrimonialProfile = ({ navigation, route }) => {
-    const {userId, isSaved: initialSavedState, id } = route.params;
-    const profileId=userId || id || null;
+    const { userId, isSaved: initialSavedState, id } = route.params;
+    const profileId = userId || id || null;
     const [Save, setIsSaved] = useState(initialSavedState || false);
     const ProfileData = useSelector((state) => state.profile);
     const profile_data = ProfileData?.profiledata || {};
     const MyprofileData = useSelector((state) => state.getBiodata);
-    const [Loading,setLoading]=useState(false);
-    const [Biodata,SetBiodataData]=useState(false);
+    const [Loading, setLoading] = useState(false);
+    const [Biodata, SetBiodataData] = useState(false);
 
 
     useEffect(() => {
         fetchBiodataProfile();
-        console.log("Biodata",Biodata);
+        console.log("Biodata", Biodata);
     }, [userId, id])
 
     const fetchBiodataProfile = async () => {
         setLoading(true);
 
         const profileId = userId || id;
-        console.log("profileId",profileId);
+        console.log("profileId", profileId);
 
         if (!profileId) {
             showMessage({
@@ -43,7 +43,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                 icon: "danger",
                 duration: 5000
             });
-            console.error("[fetchBiodataProfile] ❌ No valid ID provided. _id:", userId, " | id:", id);
+            console.error("[fetchBiodataProfile] ❌ No valid ID provided. _id:", profileId, " | id:", id);
             setLoading(false);
             return;
         }
@@ -183,22 +183,22 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
 
 
     const shareProfiles = async (profileId) => {
-         const profileType = "short-matrimonial-profile";
+        const profileType = "short-matrimonial-profile";
 
-         console.log("profileId", profileId);
+        console.log("profileId", profileId);
 
-         try {
-           if (!profileId) throw new Error("Missing profile ID");
+        try {
+            if (!profileId) throw new Error("Missing profile ID");
 
-           const directLink = `${DeepLink}/${profileType}/${profileId}`;
+            const directLink = `${DeepLink}/${profileType}/${profileId}`;
 
-           await Share.share({
-             message: `Check this profile in Brahmin Milan app:\n${directLink}`
-           });
-         } catch (error) {
-           console.error("Sharing failed:", error?.message || error);
-         }
-       };
+            await Share.share({
+                message: `Check this profile in Brahmin Milan app:\n${directLink}`
+            });
+        } catch (error) {
+            console.error("Sharing failed:", error?.message || error);
+        }
+    };
 
     const popop = async () => {
         const isBiodataExpired = profile_data?.serviceSubscriptions?.some(
@@ -293,7 +293,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                         <Text style={styles.iconText}>Share</Text>
                     </TouchableOpacity> */}
 
-                    <TouchableOpacity style={styles.iconContainer} onPress={shareProfiles}>
+                    <TouchableOpacity style={styles.iconContainer} onPress={() => shareProfiles(item?.userId)}>
                         <Feather name="send" size={19} color={Colors.dark} />
                         <Text style={styles.iconText}>Share</Text>
                     </TouchableOpacity>
@@ -311,8 +311,11 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
             <View style={Globalstyles.header}>
                 <View style={styles.headerContainer}>
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
+                    <TouchableOpacity onPress={() => navigation.reset({
+                        index: 0,
+                        routes: [{ name: "MainApp" }],
+                    })}>
+                        <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
                     <Text style={Globalstyles.headerText}>Matrimony</Text>
                 </View>

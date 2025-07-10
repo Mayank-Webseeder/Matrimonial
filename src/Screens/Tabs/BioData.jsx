@@ -256,7 +256,7 @@ const BioData = ({ navigation }) => {
       <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
         <Image
           source={{ uri: item.image }}
-          style={{ width, height, resizeMode: 'cover' }}
+            style={{ width:"100%", height:SH(180) , resizeMode: 'contain' }}
         />
       </TouchableOpacity>
     );

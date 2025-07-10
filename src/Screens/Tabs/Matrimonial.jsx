@@ -110,7 +110,7 @@ const Matrimonial = ({ navigation }) => {
             description: item.description,
             image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution,
-            hyperlink: mediaItem.hyperlink, 
+            hyperlink: mediaItem.hyperlink,
           }))
         );
 
@@ -122,20 +122,20 @@ const Matrimonial = ({ navigation }) => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching advertisement:", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
         });
-      } 
+      }
     }
   };
 
@@ -205,20 +205,20 @@ const Matrimonial = ({ navigation }) => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error("Error fetching profiles:", errorMsg);
-  
+
       const sessionExpiredMessages = [
         "User does not Exist....!Please login again",
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
         });
-      } 
+      }
       setProfileLoading(false)
     }
     finally {
@@ -245,14 +245,14 @@ const Matrimonial = ({ navigation }) => {
         "Invalid token. Please login again",
         "Token has expired. Please login again"
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
         await AsyncStorage.removeItem("userToken");
         navigation.reset({
           index: 0,
           routes: [{ name: "AuthStack" }],
         });
-      } 
+      }
       setProfileLoading(false)
     }
     finally {
@@ -260,23 +260,23 @@ const Matrimonial = ({ navigation }) => {
     }
   };
 
- const shareProfiles = async (profileId) => {
-     const profileType = "Matrimonial";
- 
-     console.log("profileId", profileId);
- 
-     try {
-       if (!profileId) throw new Error("Missing profile ID");
- 
-       const directLink = `${DeepLink}/${profileType}/${profileId}`;
- 
-       await Share.share({
-         message: `Check this profile in Brahmin Milan app:\n${directLink}`
-       });
-     } catch (error) {
-       console.error("Sharing failed:", error?.message || error);
-     }
-   };
+  const shareProfiles = async (profileId) => {
+    const profileType = "short-matrimonial-profile";
+
+    console.log("profileId", profileId);
+
+    try {
+      if (!profileId) throw new Error("Missing profile ID");
+
+      const directLink = `${DeepLink}/${profileType}/${profileId}`;
+
+      await Share.share({
+        message: `Check this profile in Brahmin Milan app:\n${directLink}`
+      });
+    } catch (error) {
+      console.error("Sharing failed:", error?.message || error);
+    }
+  };
 
   const popop = async () => {
     const isBiodataExpired = profile_data?.serviceSubscriptions?.some(
@@ -456,7 +456,7 @@ const Matrimonial = ({ navigation }) => {
             <Text style={styles.iconText}>{item?.isSaved ? "Saved" : "Save"}</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.iconContainer} onPress={()=>shareProfiles(item?._id)}>
+          <TouchableOpacity style={styles.iconContainer} onPress={() => shareProfiles(item?._id)}>
             <Feather name="send" size={19} color={Colors.dark} />
             <Text style={styles.iconText}>Share</Text>
           </TouchableOpacity>
@@ -592,7 +592,7 @@ const Matrimonial = ({ navigation }) => {
       {searchMode && (
         <View style={Globalstyles.inputContainer}>
           <TextInput
-            style={{ color: "#000",flex:1 }}
+            style={{ color: "#000", flex: 1 }}
             placeholder="Search by Name, ID, Occupation, City"
             value={searchQuery}
             onChangeText={(text) => {
@@ -625,7 +625,7 @@ const Matrimonial = ({ navigation }) => {
                 data={slider}
                 renderItem={({ item }) => {
                   const { width, height } = item.resolution;
-                
+
                   const handlePress = () => {
                     if (item.hyperlink) {
                       Linking.openURL(item.hyperlink).catch(err =>
@@ -633,16 +633,16 @@ const Matrimonial = ({ navigation }) => {
                       );
                     }
                   };
-                
+
                   return (
                     <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                       <Image
                         source={{ uri: item.image }}
-                        style={{ width, height, resizeMode: 'cover' }}
+                          style={{ width:"100%", height:SH(180) , resizeMode: 'contain' }}
                       />
                     </TouchableOpacity>
                   );
-                }}                
+                }}
                 showNextButton={false}
                 showDoneButton={false}
                 dotStyle={Globalstyles.dot}

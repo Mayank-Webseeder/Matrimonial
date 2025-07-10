@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar, FlatList, Pressable, TextInput, Linking, ActivityIndicator, Share } from 'react-native';
+import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar, FlatList, Pressable,BackHandler, TextInput, Linking, ActivityIndicator, Share } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -12,11 +12,10 @@ import Globalstyles from '../../utils/GlobalCss';
 import { DeepLink, FEMALE_FILTER_API, GET_ALL_BIODATA_PROFILES, MALE_FILTER_API, SAVED_PROFILES, TOP_BIODATA_ADVERTISE_WINDOW } from '../../utils/BaseUrl';
 import { slider } from '../../DummyData/DummyData';
 import AppIntroSlider from 'react-native-app-intro-slider';
-import { useFocusEffect } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { SW, SF, SH } from '../../utils/Dimensions';
 import { showMessage } from 'react-native-flash-message';
-
+import { useFocusEffect ,CommonActions } from '@react-navigation/native';
 const Matrimonial = ({ navigation }) => {
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -64,6 +63,19 @@ const Matrimonial = ({ navigation }) => {
     }, [])
   );
 
+
+  useFocusEffect(
+  useCallback(() => {
+    const onBackPress = () => {
+      navigation.openDrawer(); 
+      return true; 
+    };
+
+    BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+    return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+  }, [navigation])
+);
 
   useEffect(() => {
     Advertisement_window();
@@ -261,7 +273,7 @@ const Matrimonial = ({ navigation }) => {
   };
 
   const shareProfiles = async (profileId) => {
-    const profileType = "short-matrimonial-profile";
+    const profileType = "Matrimonial";
 
     console.log("profileId", profileId);
 

@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar, FlatList, Pressable, TextInput, Linking, Share } from 'react-native';
+import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar, FlatList, Pressable, TextInput, Linking, Share, BackHandler } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -13,6 +13,7 @@ import { SAVED_PROFILES, GET_BIODATA_BY_ID, DeepLink } from '../../utils/BaseUrl
 import { SW } from '../../utils/Dimensions';
 import { useSelector } from 'react-redux';
 import { showMessage } from 'react-native-flash-message';
+import { CommonActions , useFocusEffect  } from '@react-navigation/native';
 
 const ShortMatrimonialProfile = ({ navigation, route }) => {
     const { userId, isSaved: initialSavedState, id } = route.params;
@@ -24,6 +25,24 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
     const [Loading, setLoading] = useState(false);
     const [Biodata, SetBiodataData] = useState(false);
 
+      useFocusEffect(
+        React.useCallback(() => {
+          const onBackPress = () => {
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{ name: 'MainApp' }],
+              })
+            );
+            return true;
+          };
+    
+          BackHandler.addEventListener('hardwareBackPress', onBackPress);
+    
+          return () =>
+            BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+        }, [])
+      );
 
     useEffect(() => {
         fetchBiodataProfile();

@@ -1,4 +1,4 @@
-import { Text, View, Image, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Linking, ActivityIndicator, Share, BackHandler,Modal } from 'react-native';
+import { Text, View, Image, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Linking, ActivityIndicator, Share, BackHandler, Modal } from 'react-native';
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import styles from '../StyleScreens/PanditDetailPageStyle';
@@ -41,6 +41,8 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
     const [visible, setVisible] = useState(false);
     const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
     const notificationCount = notifications ? notifications.length : 0;
+    const fromScreen = route.params?.fromScreen;
+
 
     const profilePhoto = profileData?.profilePhoto
         ? { uri: profileData.profilePhoto }
@@ -48,33 +50,38 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
 
     const validSlides = slider.filter(item => !!item.image);
 
-
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
-                navigation.dispatch(
-                    CommonActions.reset({
-                        index: 0,
-                        routes: [
-                            {
-                                name: 'MainApp',
-                                state: {
-                                    index: 0,
-                                    routes: [{ name: 'Kathavachak' }],
+                if (fromScreen === "Kathavachak") {
+                    navigation.goBack();
+                } else {
+                    navigation.dispatch(
+                        CommonActions.reset({
+                            index: 0,
+                            routes: [
+                                {
+                                    name: 'MainApp',
+                                    state: {
+                                        index: 0,
+                                        routes: [{ name: 'Kathavachak' }],
+                                    },
                                 },
-                            },
-                        ],
-                    })
-                );
+                            ],
+                        })
+                    );
+                }
                 return true;
             };
 
             BackHandler.addEventListener('hardwareBackPress', onBackPress);
 
-            return () =>
+            return () => {
                 BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-        }, [navigation])
+            };
+        }, [navigation, fromScreen])
     );
+
 
     useFocusEffect(
         useCallback(() => {
@@ -101,7 +108,12 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                 type: "danger",
                 message: "Authentication Error",
                 description: "No token found. Please log in again.",
-                duarion: 5000
+                duration: 5000
+            });
+
+            navigation.reset({
+                index: 0,
+                routes: [{ name: "AuthStack" }],
             });
             return;
         }
@@ -394,9 +406,31 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
             />
             <View style={Globalstyles.header}>
                 <View style={{ flexDirection: 'row' }}>
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <TouchableOpacity
+                        onPress={() => {
+                            if (fromScreen === "Kathavachak") {
+                                navigation.goBack();
+                            } else {
+                                navigation.dispatch(
+                                    CommonActions.reset({
+                                        index: 0,
+                                        routes: [
+                                            {
+                                                name: 'MainApp',
+                                                state: {
+                                                    index: 0,
+                                                    routes: [{ name: 'Kathavachak' }],
+                                                },
+                                            },
+                                        ],
+                                    })
+                                );
+                            }
+                        }}
+                    >
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
+
                     <Text style={Globalstyles.headerText}>{profileData?.fullName}</Text>
                 </View>
                 <View style={styles.righticons}>
@@ -430,7 +464,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.profileSection}>
-                       <TouchableOpacity onPress={() => setVisible(true)}>
+                    <TouchableOpacity onPress={() => setVisible(true)}>
                         <Image source={profilePhoto} style={styles.profileImage} />
                     </TouchableOpacity>
 
@@ -514,29 +548,26 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                             <Text style={styles.iconText}>Shares</Text>
                         </TouchableOpacity>
 
-                        {/* ✅ Call Button (Disabled for self profile) */}
                         <TouchableOpacity
                             style={[styles.Button, my_id === profileData?.userId && styles.disabledButton]}
                             onPress={() => Linking.openURL(`tel:${profileData?.mobileNo}`)}
-                            disabled={my_id === profileData?.userId} // ✅ Disable button
+                            disabled={my_id === profileData?.userId}
                         >
                             <MaterialIcons
                                 name="call"
                                 size={20}
-                                color={my_id === profileData?.userId ? Colors.gray : Colors.light} // ✅ Gray if disabled
+                                color={my_id === profileData?.userId ? Colors.gray : Colors.light}
                             />
                         </TouchableOpacity>
-
-                        {/* ✅ Report Button (Disabled for self profile) */}
                         <TouchableOpacity
                             style={[styles.iconContainer, my_id === profileData?.userId]}
                             onPress={() => navigation.navigate('ReportPage', { profileId: profileData?._id })}
-                            disabled={my_id === profileData?.userId} // ✅ Disable button
+                            disabled={my_id === profileData?.userId}
                         >
                             <MaterialIcons
                                 name="error-outline"
                                 size={20}
-                                color={my_id === profileData?.userId ? Colors.gray : Colors.dark} // ✅ Gray if disabled
+                                color={my_id === profileData?.userId ? Colors.gray : Colors.dark}
                             />
                             <Text style={[styles.iconText, my_id === profileData?.userId && styles.disabledText]}>
                                 Report
@@ -629,7 +660,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                                             <Image
                                                 source={review?.userId?.photoUrl[0]
                                                     ? { uri: review.userId.photoUrl[0] }
-                                                    : require("../../Images/NoImage.png") // Fallback image
+                                                    : require("../../Images/NoImage.png")
                                                 }
                                                 style={{ width: SW(50), height: SH(50), borderRadius: 50 }}
                                                 resizeMode="cover"
@@ -723,7 +754,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                                     <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                                         <Image
                                             source={{ uri: item.image }}
-                                            style={{ width:"100%", height:SH(180) , resizeMode: 'contain' }}
+                                            style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
                                         />
                                     </TouchableOpacity>
                                 );

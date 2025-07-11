@@ -13,7 +13,7 @@ import { SAVED_PROFILES, GET_BIODATA_BY_ID, DeepLink } from '../../utils/BaseUrl
 import { SW } from '../../utils/Dimensions';
 import { useSelector } from 'react-redux';
 import { showMessage } from 'react-native-flash-message';
-import { CommonActions , useFocusEffect  } from '@react-navigation/native';
+import { CommonActions, useFocusEffect } from '@react-navigation/native';
 
 const ShortMatrimonialProfile = ({ navigation, route }) => {
     const { userId, isSaved: initialSavedState, id } = route.params;
@@ -25,24 +25,24 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
     const [Loading, setLoading] = useState(false);
     const [Biodata, SetBiodataData] = useState(false);
 
-      useFocusEffect(
+    useFocusEffect(
         React.useCallback(() => {
-          const onBackPress = () => {
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{ name: 'MainApp' }],
-              })
-            );
-            return true;
-          };
-    
-          BackHandler.addEventListener('hardwareBackPress', onBackPress);
-    
-          return () =>
-            BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+            const onBackPress = () => {
+                navigation.dispatch(
+                    CommonActions.reset({
+                        index: 0,
+                        routes: [{ name: 'MainApp' }],
+                    })
+                );
+                return true;
+            };
+
+            BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+            return () =>
+                BackHandler.removeEventListener('hardwareBackPress', onBackPress);
         }, [])
-      );
+    );
 
     useEffect(() => {
         fetchBiodataProfile();
@@ -75,11 +75,13 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                 description: "No token found. Please log in again.",
                 duration: 5000
             });
-            console.error("[fetchBiodataProfile] ❌ No token found.");
-            setLoading(false);
+
+            navigation.reset({
+                index: 0,
+                routes: [{ name: "AuthStack" }],
+            });
             return;
         }
-
         const url = `${GET_BIODATA_BY_ID}/${profileId}`;
         console.log("[fetchBiodataProfile] ✅ Fetching data...");
         console.log("🔗 URL:", url);

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, RefreshControl, Share } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, RefreshControl, Share, BackHandler } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -115,6 +115,24 @@ const Kathavachak = ({ navigation, route }) => {
     return () => clearTimeout(timeout);
   }, [currentIndex, slider]);
 
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "MainApp" }],
+        });
+        return true; 
+      };
+  
+      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+  
+      return () => {
+        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+      };
+    }, [navigation])
+  );
 
   const Advertisement_window = async () => {
     try {
@@ -376,7 +394,7 @@ const Kathavachak = ({ navigation, route }) => {
                   navigation.navigate('BuySubscription', { serviceType: 'Kathavachak' })
                 } else {
                   navigation.navigate('KathavachakDetailsPage', {
-                    kathavachak_id: item._id || id, isSaved: isSaved
+                    kathavachak_id: item._id || id, isSaved: isSaved, fromScreen: "Kathavachak",
                   });
                 }
               }}
@@ -532,7 +550,7 @@ const Kathavachak = ({ navigation, route }) => {
                 <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                   <Image
                     source={{ uri: item.image }}
-                      style={{ width:"100%", height:SH(180) , resizeMode: 'contain' }}
+                    style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
                   />
                 </TouchableOpacity>
               );

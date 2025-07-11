@@ -43,41 +43,59 @@ const PanditDetailPage = ({ navigation, item, route }) => {
         ? { uri: profileData.profilePhoto }
         : require('../../Images/NoImage.png');
     const validSlides = slider.filter(item => !!item.image);
+    const fromScreen = route.params?.fromScreen;
 
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
-                navigation.navigate("MainApp", {
-                    screen: "Tabs",
-                    params: {
-                        screen: "Pandit",
-                    },
-                });
+                if (fromScreen === "Pandit") {
+                    navigation.goBack();
+                } else {
+                    navigation.reset({
+                        index: 0,
+                        routes: [
+                            {
+                                name: "MainApp",
+                                state: {
+                                    routes: [
+                                        {
+                                            name: "Tabs",
+                                            state: {
+                                                routes: [{ name: "Pandit" }],
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                    });
+                }
                 return true;
             };
 
-            BackHandler.addEventListener('hardwareBackPress', onBackPress);
+            BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
-            return () =>
-                BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-        }, [navigation])
+            return () => {
+                BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+            };
+        }, [navigation, fromScreen])
     );
 
     useFocusEffect(
         useCallback(() => {
             fetchPanditProfile();
-            console.log("finalId", JSON.stringify(finalId));
         }, [])
     );
 
     const fetchPanditProfile = async () => {
-        setLoading(true)
+        setLoading(true);
+
         if (!finalId) {
             showMessage({
                 type: "danger",
                 message: "Pandit ID not found!",
                 icon: "danger",
-                duarion: 5000
+                duration: 5000
             });
             return;
         }
@@ -88,13 +106,17 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 type: "danger",
                 message: "Authentication Error",
                 description: "No token found. Please log in again.",
-                duarion: 5000
+                duration: 5000
+            });
+
+            navigation.reset({
+                index: 0,
+                routes: [{ name: "AuthStack" }],
             });
             return;
         }
 
         try {
-            setLoading(true)
             const response = await axios.get(`${PANDIT_DESCRIPTION}/${finalId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -102,7 +124,6 @@ const PanditDetailPage = ({ navigation, item, route }) => {
             });
 
             if (response.data.status) {
-                console.log("response.data.data", JSON.stringify(response.data.data));
                 setProfileData(response.data.data);
                 setMyRatings(response.data.data.ratings.filter(rating => rating.userId._id === my_id));
                 setOtherRatings(response.data.data.ratings.filter(rating => rating.userId._id !== my_id));
@@ -111,19 +132,20 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                     type: "danger",
                     message: "No Profile Found",
                     description: response.data.message || "Something went wrong!",
-                    duarion: 5000
+                    duration: 5000
                 });
             }
         } catch (error) {
-            setLoading(false)
             const errorMsg = error.response?.data?.message || error.message;
             console.error("Error fetching pandit data:", errorMsg);
+
             showMessage({
                 type: "danger",
                 message: errorMsg,
                 description: "Failed to load profile data",
-                duarion: 5000
+                duration: 5000
             });
+
             const sessionExpiredMessages = [
                 "User does not Exist....!Please login again",
                 "Invalid token. Please login again",
@@ -141,6 +163,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
             setLoading(false);
         }
     };
+
 
 
     useEffect(() => {
@@ -360,15 +383,34 @@ const PanditDetailPage = ({ navigation, item, route }) => {
             <View style={Globalstyles.header}>
                 <View style={{ flexDirection: 'row' }}>
                     <TouchableOpacity
-                        onPress={() =>
-                            navigation.navigate("MainApp", {
-                                screen: "Tabs",
-                                params: { screen: "Pandit" },
-                            })
-                        }
+                        onPress={() => {
+                            if (fromScreen === "Pandit") {
+                                navigation.goBack();
+                            } else {
+                                navigation.reset({
+                                    index: 0,
+                                    routes: [
+                                        {
+                                            name: "MainApp",
+                                            state: {
+                                                routes: [
+                                                    {
+                                                        name: "Tabs",
+                                                        state: {
+                                                            routes: [{ name: "Pandit" }],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                });
+                            }
+                        }}
                     >
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
+
                     <Text style={Globalstyles.headerText}>{profileData?.fullName}</Text>
                 </View>
                 <View style={styles.righticons}>
@@ -599,7 +641,12 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                                                     ? { uri: review.userId.photoUrl[0] }
                                                     : require("../../Images/NoImage.png")
                                                 }
-                                                  style={{ width:"100%", height:SH(180) , resizeMode: 'contain' }}
+                                                style={{
+                                                    width: SW(50),
+                                                    height: SW(50),
+                                                    borderRadius: SW(25),
+                                                    marginRight: SW(10)
+                                                }}
                                                 resizeMode="cover"
                                             />
                                         </View>

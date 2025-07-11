@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, SafeAreaView, StatusBar, Linking, Pressable,
-  ScrollView, Share, RefreshControl
+  ScrollView, Share, RefreshControl,
+  BackHandler
 } from 'react-native';
 import { slider } from '../../DummyData/DummyData';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -47,8 +48,7 @@ const Pandit = ({ navigation, route }) => {
   const profile_data = ProfileData?.profiledata || {};
   const [refreshing, setRefreshing] = useState(false);
   const [slider, setSlider] = useState([]);
-
-
+  
   useFocusEffect(
     React.useCallback(() => {
       Top_Advertisement_window();
@@ -70,10 +70,9 @@ const Pandit = ({ navigation, route }) => {
     }, 2000);
   }, []);
 
-
   const openImageViewer = (imageUri) => {
     if (imageUri) {
-      setSelectedImage([{ url: imageUri }]); // Important: `url` key is used by ImageViewer
+      setSelectedImage([{ url: imageUri }]);
       setImageVisible(true);
     }
   };
@@ -109,6 +108,25 @@ const Pandit = ({ navigation, route }) => {
 
     return () => clearInterval(interval);
   }, [currentIndex]);
+
+
+  useFocusEffect(
+  React.useCallback(() => {
+    const onBackPress = () => {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "MainApp" }],
+      });
+      return true; 
+    };
+
+    BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+    return () => {
+      BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    };
+  }, [navigation])
+);
 
   const fetchPanditData = async (filterType = "search") => {
     try {
@@ -165,7 +183,7 @@ const Pandit = ({ navigation, route }) => {
           routes: [{ name: "AuthStack" }],
         });
       }
-      setPanditData([]); // Clear data on error
+      setPanditData([]); 
     } finally {
       setLoading(false);
     }
@@ -414,6 +432,7 @@ const Pandit = ({ navigation, route }) => {
                     navigation.navigate('PanditDetailPage', {
                       pandit_id: item._id || id,
                       isSaved: isSaved,
+                      fromScreen: "Pandit",
                     });
                   }
                 }}>

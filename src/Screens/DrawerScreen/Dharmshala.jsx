@@ -236,8 +236,8 @@ const Dharmshala = ({ route }) => {
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
-      setLocality('');
-      setSubcaste('');
+      // setLocality('');
+      // setSubcaste('');
       setDharamsalaData([]);
       fetchDharamsalaData("all");
       GetMyDharamsalaData();
@@ -450,7 +450,7 @@ const Dharmshala = ({ route }) => {
     return (
       <View style={styles.card}
       >
-        <Pressable style={styles.cardData} onPress={() => navigation.navigate("DharamsalaDetail", { DharamsalaData: item, isSaved: isSaved, _id: item?._id })} >
+        <Pressable style={styles.cardData} onPress={() => navigation.navigate("DharamsalaDetail", { DharamsalaData: item, isSaved: isSaved, _id: item?._id ,fromScreen: "Dharmshala" })} >
           <TouchableOpacity onPress={() => openImageViewer(item?.images?.[0])}>
             <Image
               source={item?.images?.[0] ? { uri: item?.images?.[0] } : require('../../Images/NoImage.png')}

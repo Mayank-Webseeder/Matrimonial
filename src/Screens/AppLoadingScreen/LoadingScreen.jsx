@@ -13,6 +13,11 @@ const LoadingScreen = () => {
         muted
         paused={false}
         controls={false}
+        fullscreen={false}
+        disableFocus={true}
+        playInBackground={false}
+        playWhenInactive={false}
+        ignoreSilentSwitch="ignore"
       />
     </View>
   );

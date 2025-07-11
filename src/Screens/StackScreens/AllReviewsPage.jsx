@@ -9,11 +9,11 @@ import { SH, SW } from '../../utils/Dimensions';
 import moment from 'moment';
 const AllReviewsPage = ({ route, navigation }) => {
     const { reviews } = route.params || {};
-   
+
     useEffect(() => {
         console.log("reviews", reviews);
     }, [])
-    
+
     return (
         <SafeAreaView style={Globalstyles.container}>
             <StatusBar
@@ -37,9 +37,14 @@ const AllReviewsPage = ({ route, navigation }) => {
                                 <Image
                                     source={review?.userId?.photoUrl[0]
                                         ? { uri: review.userId.photoUrl[0] }
-                                        : require("../../Images/NoImage.png") // Fallback image
+                                        : require("../../Images/NoImage.png") 
                                     }
-                                    style={{ width: SW(50), height: SH(50), borderRadius: 50 }}
+                                    style={{
+                                        width: SW(50),
+                                        height: SW(50),
+                                        borderRadius: SW(25),
+                                        marginRight: SW(10)
+                                    }}
                                     resizeMode="cover"
                                 />
                             </View>

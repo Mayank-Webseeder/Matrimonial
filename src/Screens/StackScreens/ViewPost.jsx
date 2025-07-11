@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Image, ScrollView, Text, View, TouchableOpacity, SafeAreaView, StatusBar, BackHandler,Modal } from 'react-native';
+import { Image, ScrollView, Text, View, TouchableOpacity, SafeAreaView, StatusBar, BackHandler, Modal } from 'react-native';
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
@@ -17,8 +17,8 @@ import { CommonActions, useFocusEffect } from '@react-navigation/native';
 import ImageViewer from 'react-native-image-zoom-viewer';
 
 const ViewPost = ({ navigation, route }) => {
-const { postId, id } = route.params || {};
-const final_id = postId || id;
+  const { postId, id } = route.params || {};
+  const final_id = postId || id;
   const [postData, setPostData] = useState(null);
   const [viewerVisible, setViewerVisible] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -64,11 +64,15 @@ const final_id = postId || id;
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         showMessage({
-          message: 'Warning',
-          description: 'Authorization token is missing.',
-          type: 'warning',
-          icon: 'warning',
+          type: "danger",
+          message: "Authentication Error",
+          description: "No token found. Please log in again.",
           duration: 5000
+        });
+
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
         });
         return;
       }
@@ -119,7 +123,12 @@ const final_id = postId || id;
 
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: "center" }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity onPress={() => navigation.navigate("MainApp", {
+            screen: "Tabs",
+            params: {
+              screen: "EventNews",
+            },
+          })}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>{postData?.activistName}'s Post</Text>
@@ -167,24 +176,24 @@ const final_id = postId || id;
               </TouchableOpacity>
             ))}
 
-         {images.length > 0 && viewerVisible && (
-  <Modal
-    visible={viewerVisible}
-    transparent={true}
-    onRequestClose={() => setViewerVisible(false)}
-  >
-    <ImageViewer
-      imageUrls={images.map((img) => ({ url: img }))}
-      index={currentIndex}
-      onSwipeDown={() => setViewerVisible(false)}
-      onCancel={() => setViewerVisible(false)}
-      enableSwipeDown={true}
-      enablePreload={true}
-      saveToLocalByLongPress={false}
-      renderIndicator={() => null}
-    />
-  </Modal>
-)}
+          {images.length > 0 && viewerVisible && (
+            <Modal
+              visible={viewerVisible}
+              transparent={true}
+              onRequestClose={() => setViewerVisible(false)}
+            >
+              <ImageViewer
+                imageUrls={images.map((img) => ({ url: img }))}
+                index={currentIndex}
+                onSwipeDown={() => setViewerVisible(false)}
+                onCancel={() => setViewerVisible(false)}
+                enableSwipeDown={true}
+                enablePreload={true}
+                saveToLocalByLongPress={false}
+                renderIndicator={() => null}
+              />
+            </Modal>
+          )}
 
         </View>
       </ScrollView>

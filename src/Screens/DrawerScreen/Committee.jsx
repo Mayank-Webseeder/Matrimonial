@@ -66,8 +66,20 @@ const Committee = ({ navigation, route }) => {
       setIsLoading(true);
       const token = await AsyncStorage.getItem("userToken");
 
-      if (!token) throw new Error("Authorization token is missing");
+      if (!token) {
+        showMessage({
+          type: "danger",
+          message: "Authentication Error",
+          description: "No token found. Please log in again.",
+          duration: 5000
+        });
 
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+        return;
+      }
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -636,7 +648,7 @@ const Committee = ({ navigation, route }) => {
                 <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                   <Image
                     source={{ uri: item?.image }}
-                       style={{ width:"100%", height:SH(180) , resizeMode: 'contain' }}
+                    style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
                   />
                 </TouchableOpacity>
               );

@@ -41,6 +41,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
   const dharmshalaName = dharamsalaData?.dharmshalaName ?? "Unnamed";
   const subCaste = dharamsalaData?.subCaste ?? "Not specified";
   const city = dharamsalaData?.city ?? "Unknown";
+  const fromScreen = route.params?.fromScreen;
 
   const openImageViewer = (index) => {
     setImageIndex(index);
@@ -57,29 +58,32 @@ const DharamsalaDetail = ({ navigation, route }) => {
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [
-              {
-                name: 'MainApp',
-                state: {
-                  index: 0,
-                  routes: [{ name: 'Dharmshala' }],
+        if (fromScreen === "Dharmshala") {
+          navigation.goBack();
+        } else {
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [
+                {
+                  name: 'MainApp',
+                  state: {
+                    index: 0,
+                    routes: [{ name: 'Dharmshala' }],
+                  },
                 },
-              },
-            ],
-          })
-        );
+              ],
+            })
+          );
+        }
         return true;
       };
 
       BackHandler.addEventListener('hardwareBackPress', onBackPress);
-
-      return () =>
-        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-    }, [navigation])
+      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [navigation, fromScreen])
   );
+
 
   const fetchDharamsalaProfile = async () => {
     setLoading(true);
@@ -106,8 +110,11 @@ const DharamsalaDetail = ({ navigation, route }) => {
         description: "No token found. Please log in again.",
         duration: 5000
       });
-      console.error("[fetchDharamsalaProfile] ❌ No token found.");
-      setLoading(false);
+
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "AuthStack" }],
+      });
       return;
     }
 
@@ -351,25 +358,32 @@ const DharamsalaDetail = ({ navigation, route }) => {
       {/* Header */}
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: "center" }}>
-          <TouchableOpacity onPress={() =>
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [
-                  {
-                    name: 'MainApp',
-                    state: {
-                      index: 0,
-                      routes: [{ name: 'Dharmshala' }],
-                    },
-                  },
-                ],
-              })
-            )
-          }
+          <TouchableOpacity
+            onPress={() => {
+              if (fromScreen === "Dharmshala") {
+                navigation.goBack();
+              } else {
+                navigation.dispatch(
+                  CommonActions.reset({
+                    index: 0,
+                    routes: [
+                      {
+                        name: 'MainApp',
+                        state: {
+                          index: 0,
+                          routes: [{ name: 'Dharmshala' }],
+                        },
+                      },
+                    ],
+                  })
+                );
+              }
+            }}
           >
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
+
+
           <Text style={Globalstyles.headerText}>{dharmshalaName}</Text>
         </View>
         <View style={styles.righticons}>
@@ -518,7 +532,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
                 <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                   <Image
                     source={{ uri: item.image }}
-                      style={{ width:"100%", height:SH(180) , resizeMode: 'contain' }}
+                    style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
                   />
                 </TouchableOpacity>
               );

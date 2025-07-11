@@ -28,7 +28,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slider, setSlider] = useState([]);
   const { userId, id } = route.params || {};
-  const profile_id= userId||id || null ;
+  const profile_id = userId || id || null;
   const [loading, setLoading] = useState(false);
   const [loadingAccept, setLoadingAccept] = useState(false);
   const [loadingDecline, setLoadingDecline] = useState(false);
@@ -155,8 +155,20 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const Advertisement_window = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) throw new Error('No token found');
+      if (!token) {
+        showMessage({
+          type: "danger",
+          message: "Authentication Error",
+          description: "No token found. Please log in again.",
+          duration: 5000
+        });
 
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+        return;
+      }
       const headers = {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,

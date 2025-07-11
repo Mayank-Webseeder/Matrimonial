@@ -30,7 +30,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const [slider, setSlider] = useState([]);
   const route = useRoute();
   const { userId, isSaved, id } = route.params || {};
-  const profile_id= userId || id || null;
+  const profile_id = userId || id || null;
   const [loading, setLoading] = useState(false);
   const [loadingIntrest, setLoadingIntrest] = useState(false);
   const [intrestLoading, setIntrestLoading] = useState(false);
@@ -132,7 +132,20 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const Advertisement_window = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) throw new Error('No token found');
+      if (!token) {
+        showMessage({
+          type: "danger",
+          message: "Authentication Error",
+          description: "No token found. Please log in again.",
+          duration: 5000
+        });
+
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+        return;
+      }
 
       const headers = {
         'Content-Type': 'application/json',

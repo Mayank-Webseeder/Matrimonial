@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar, FlatList, Pressable,BackHandler, TextInput, Linking, ActivityIndicator, Share } from 'react-native';
+import { View, TouchableOpacity, Image, Text, ScrollView, SafeAreaView, StatusBar, FlatList, Pressable, BackHandler, TextInput, Linking, ActivityIndicator, Share } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -15,7 +15,7 @@ import AppIntroSlider from 'react-native-app-intro-slider';
 import { useSelector } from 'react-redux';
 import { SW, SF, SH } from '../../utils/Dimensions';
 import { showMessage } from 'react-native-flash-message';
-import { useFocusEffect ,CommonActions } from '@react-navigation/native';
+import { useFocusEffect, CommonActions } from '@react-navigation/native';
 const Matrimonial = ({ navigation }) => {
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -65,17 +65,17 @@ const Matrimonial = ({ navigation }) => {
 
 
   useFocusEffect(
-  useCallback(() => {
-    const onBackPress = () => {
-      navigation.openDrawer(); 
-      return true; 
-    };
+    useCallback(() => {
+      const onBackPress = () => {
+        navigation.openDrawer();
+        return true;
+      };
 
-    BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
 
-    return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-  }, [navigation])
-);
+      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [navigation])
+  );
 
   useEffect(() => {
     Advertisement_window();
@@ -160,7 +160,17 @@ const Matrimonial = ({ navigation }) => {
   const fetchProfiles = async (query = "") => {
     const token = await AsyncStorage.getItem('userToken');
     if (!token) {
-      showMessage({ type: 'error', message: 'No token found!' });
+      showMessage({
+        type: "danger",
+        message: "Authentication Error",
+        description: "No token found. Please log in again.",
+        duration: 5000
+      });
+
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "AuthStack" }],
+      });
       return;
     }
     setProfiles([])
@@ -650,7 +660,7 @@ const Matrimonial = ({ navigation }) => {
                     <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                       <Image
                         source={{ uri: item.image }}
-                          style={{ width:"100%", height:SH(180) , resizeMode: 'contain' }}
+                        style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
                       />
                     </TouchableOpacity>
                   );

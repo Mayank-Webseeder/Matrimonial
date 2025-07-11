@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, RefreshControl, Share } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, RefreshControl, Share, BackHandler } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -95,6 +95,24 @@ const Jyotish = ({ navigation, route }) => {
     Advertisement_window();
   }, []);
 
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "MainApp" }],
+        });
+        return true; 
+      };
+  
+      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+  
+      return () => {
+        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+      };
+    }, [navigation])
+  );
 
   useEffect(() => {
     if (slider.length === 0) return;
@@ -386,6 +404,7 @@ const Jyotish = ({ navigation, route }) => {
                     navigation.navigate('JyotishDetailsPage', {
                       jyotish_id: item._id || id,
                       isSaved: isSaved,
+                      fromScreen: "Jyotish",
                     });
                   }
                 }}>

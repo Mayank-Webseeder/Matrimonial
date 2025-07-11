@@ -40,6 +40,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
     const [visible, setVisible] = useState(false);
     const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
     const notificationCount = notifications ? notifications.length : 0;
+    const fromScreen = route.params?.fromScreen;
 
     const profilePhoto = profileData?.profilePhoto
         ? { uri: profileData.profilePhoto }
@@ -49,29 +50,35 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
-                navigation.dispatch(
-                    CommonActions.reset({
-                        index: 0,
-                        routes: [
-                            {
-                                name: 'MainApp',
-                                state: {
-                                    index: 0,
-                                    routes: [{ name: 'Jyotish' }],
+                if (fromScreen === "Jyotish") {
+                    navigation.goBack();
+                } else {
+                    navigation.dispatch(
+                        CommonActions.reset({
+                            index: 0,
+                            routes: [
+                                {
+                                    name: 'MainApp',
+                                    state: {
+                                        index: 0,
+                                        routes: [{ name: 'Jyotish' }],
+                                    },
                                 },
-                            },
-                        ],
-                    })
-                );
+                            ],
+                        })
+                    );
+                }
                 return true;
             };
 
             BackHandler.addEventListener('hardwareBackPress', onBackPress);
 
-            return () =>
+            return () => {
                 BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-        }, [navigation])
+            };
+        }, [navigation, fromScreen])
     );
+
 
     useFocusEffect(
         useCallback(() => {
@@ -97,9 +104,14 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
         if (!token) {
             showMessage({
                 type: "danger",
-                message: "No token found. Please log in again.",
-                icon: "danger",
-                duarion: 5000
+                message: "Authentication Error",
+                description: "No token found. Please log in again.",
+                duration: 5000
+            });
+
+            navigation.reset({
+                index: 0,
+                routes: [{ name: "AuthStack" }],
             });
             return;
         }
@@ -369,24 +381,29 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                 <View style={{ flexDirection: 'row' }}>
                     <TouchableOpacity
                         onPress={() => {
-                            navigation.dispatch(
-                                CommonActions.reset({
-                                    index: 0,
-                                    routes: [
-                                        {
-                                            name: 'MainApp',
-                                            state: {
-                                                index: 0,
-                                                routes: [{ name: 'Jyotish' }],
+                            if (fromScreen === "Jyotish") {
+                                navigation.goBack();
+                            } else {
+                                navigation.dispatch(
+                                    CommonActions.reset({
+                                        index: 0,
+                                        routes: [
+                                            {
+                                                name: 'MainApp',
+                                                state: {
+                                                    index: 0,
+                                                    routes: [{ name: 'Jyotish' }],
+                                                },
                                             },
-                                        },
-                                    ],
-                                })
-                            );
+                                        ],
+                                    })
+                                );
+                            }
                         }}
                     >
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
+
 
                     <Text style={Globalstyles.headerText}>{profileData?.fullName}</Text>
                 </View>
@@ -620,9 +637,14 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                                             <Image
                                                 source={review?.userId?.photoUrl[0]
                                                     ? { uri: review.userId.photoUrl[0] }
-                                                    : require("../../Images/NoImage.png") // Fallback image
+                                                    : require("../../Images/NoImage.png")
                                                 }
-                                                style={{ width: SW(50), height: SH(50), borderRadius: 50 }}
+                                                style={{
+                                                    width: SW(50),
+                                                    height: SW(50),
+                                                    borderRadius: SW(25),
+                                                    marginRight: SW(10)
+                                                }}
                                                 resizeMode="cover"
                                             />
                                         </View>
@@ -715,7 +737,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                                     <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                                         <Image
                                             source={{ uri: item.image }}
-                                             style={{ width:"100%", height:SH(180) , resizeMode: 'contain' }}
+                                            style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
                                         />
                                     </TouchableOpacity>
                                 );

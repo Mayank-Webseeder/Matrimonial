@@ -13,13 +13,11 @@ import { ExperienceData, RatingData, kathavachakServices } from '../../DummyData
 import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import axios from 'axios';
-import { slider } from '../../DummyData/DummyData';
 import { DeepLink, GET_ALL_KATHAVACHAK, SAVED_PROFILES, TOP_KATHAVACHAK_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { SH, SW, SF } from '../../utils/Dimensions';
 import { useFocusEffect } from '@react-navigation/native';
-import ImageViewing from 'react-native-image-viewing';
 import { showMessage } from 'react-native-flash-message';
 import { useSelector } from 'react-redux';
 import ImageViewer from 'react-native-image-zoom-viewer';

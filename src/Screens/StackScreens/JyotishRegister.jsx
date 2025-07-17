@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, SafeAreaView, StatusBar, FlatList, ActivityIndicator, Modal, Alert } from 'react-native';
+import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, StatusBar, FlatList, ActivityIndicator, Modal, Alert } from 'react-native';
 import styles from '../StyleScreens/RoleRegisterStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux';
 import RazorpayCheckout from 'react-native-razorpay';
 import { showMessage } from 'react-native-flash-message';
 import { launchImageLibrary } from 'react-native-image-picker';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 const JyotishRegister = ({ navigation }) => {

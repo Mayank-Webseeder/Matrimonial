@@ -98,20 +98,22 @@ const Kathavachak = ({ navigation, route }) => {
 
 
   useEffect(() => {
-    if (slider.length === 0) return;
-
-    const currentSlide = slider[currentIndex];
-    const durationInSeconds = currentSlide?.duration || 2;
-    const durationInMilliseconds = durationInSeconds * 1000;
-
-    const timeout = setTimeout(() => {
-      const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
-      setCurrentIndex(nextIndex);
-      sliderRef.current?.goToSlide(nextIndex);
-    }, durationInMilliseconds);
-
-    return () => clearTimeout(timeout);
-  }, [currentIndex, slider]);
+     if (slider.length === 0) return;
+   
+     const currentSlide = slider[currentIndex];
+     const durationInSeconds = Number(currentSlide?.duration) || 4;
+    const bufferMs = 800;
+    const durationInMilliseconds = durationInSeconds * 1000 + bufferMs;
+      console.log("durationInSeconds",durationInSeconds);
+     const timeout = setTimeout(() => {
+       const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
+       setCurrentIndex(nextIndex);
+       sliderRef.current?.goToSlide(nextIndex);
+     }, durationInMilliseconds);
+   
+     return () => clearTimeout(timeout);
+   }, [currentIndex, slider]);
+   
 
 
   useFocusEffect(
@@ -156,6 +158,7 @@ const Kathavachak = ({ navigation, route }) => {
             image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution,
             hyperlink: mediaItem.hyperlink,
+            duration: mediaItem.duration || 4,
           }))
         );
 

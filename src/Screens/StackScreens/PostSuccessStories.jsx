@@ -1,4 +1,4 @@
-import { Text, View, TextInput, TouchableOpacity, Image, SafeAreaView, StatusBar, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { Text, View, TextInput, TouchableOpacity, Image, StatusBar, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import React, { useState } from 'react';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -12,6 +12,7 @@ import { showMessage } from 'react-native-flash-message';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { POST_SUCESS_sTORY } from '../../utils/BaseUrl';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const PostSuccessStories = ({ navigation }) => {
     const [rating, setRating] = useState(0);

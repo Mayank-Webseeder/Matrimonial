@@ -62,7 +62,6 @@ import axios from 'axios';
 import IntrestReceivedProfilePage from '../Screens/StackScreens/IntrestReceivedProfilePage';
 import ViewEntityImages from '../Screens/StackScreens/ViewEntityImages';
 import ForgotScreen from '../Screens/auth/ForgotScreen';
-import ProfileDetail from '../Screens/StackScreens/ProfileDetail';
 import UpdateProfileDetails from '../Screens/StackScreens/UpdateProfileDetails';
 import { useSelector } from 'react-redux';
 import BioData from '../Screens/Tabs/BioData';
@@ -89,6 +88,7 @@ import PrivacyPolicy from '../Screens/DrawerScreen/PrivacyPolicy';
 import TermsConditions from '../Screens/DrawerScreen/TermsConditions';
 import SubscriptionPolicy from '../Screens/DrawerScreen/SubscriptionPolicy';
 import LikeCommentEventPost from '../Screens/StackScreens/LikeCommentEventPost';
+import ProfileDetail from '../Screens/StackScreens/ProfileDetail';
 
 const Stack = createNativeStackNavigator();
 const AppStackNavigator = createNativeStackNavigator();

@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, Image, TextInput, SafeAreaView, StatusBar, ScrollView, ActivityIndicator } from 'react-native'
+import { Text, View, TouchableOpacity, Image, TextInput, StatusBar, ScrollView, ActivityIndicator } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -11,6 +11,8 @@ import { UPDATE_EVENT_NEWS } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { showMessage } from 'react-native-flash-message';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 const UpdateEventPost = ({ navigation, route }) => {
     const { eventData: initialEventData } = route.params || {};
@@ -18,35 +20,41 @@ const UpdateEventPost = ({ navigation, route }) => {
     const MyActivistProfile = useSelector((state) => state.activist.activist_data);
     const [eventData, setEventData] = useState(initialEventData || { title: '', description: '', images: [] });
     const [photos, setPhotos] = useState([]);
-    const MAX_PHOTOS = 5;
 
-    // useEffect(() => {
-    //     console.log("eventData", eventData);
-    // }, [eventData]);
+    const MAX_PHOTOS = 4;
+
+    const pickerOptions = {
+        selectionLimit: MAX_PHOTOS,
+        mediaType: 'photo',
+        includeBase64: true,
+        maxWidth: 1000,
+        maxHeight: 1000,
+        quality: 1,
+    };
 
     const handleImageUpload = () => {
-        ImageCropPicker.openPicker({
-            multiple: true,
-            cropping: true,
-            width: 400,
-            height: 400,
-            includeBase64: true,
-            compressImageQuality: 1,
-        })
-            .then((images) => {
-                const newPhotos = images.map(
-                    (img) => `data:image/jpeg;base64,${img.data}` // keep data‑URI prefix
-                );
+        launchImageLibrary(pickerOptions, (response) => {
+            if (response.didCancel) return;
 
-                if (newPhotos.length > MAX_PHOTOS) {
-                    alert(`You can only upload up to ${MAX_PHOTOS} photos.`);
-                    return;
-                }
+            if (response.errorCode) {
+                console.log('ImagePicker Error:', response.errorMessage);
+                return;
+            }
 
-                setPhotos(newPhotos);
-                setEventData((prev) => ({ ...prev, images: [] }));
-            })
-            .catch((err) => console.log('Crop Picker Error:', err));
+            const assets = response.assets || [];
+
+            if (assets.length > MAX_PHOTOS) {
+                alert(`You can only upload up to ${MAX_PHOTOS} photos.`);
+                return;
+            }
+
+            const newPhotos = assets.map(
+                (asset) => `data:image/jpeg;base64,${asset.base64}`
+            );
+
+            setPhotos(newPhotos);
+            setEventData((prev) => ({ ...prev, images: [] }));
+        });
     };
 
     const convertToBase64 = async (imageUri) => {
@@ -128,9 +136,9 @@ const UpdateEventPost = ({ navigation, route }) => {
 
                 if (navigation && navigation.replace) {
                     navigation.replace("ViewMyEventPost");
-                  } else {
+                } else {
                     console.warn("⚠️ Navigation is not available");
-                  }
+                }
 
                 // setTimeout(() => navigation.navigate("EventNews"), 2000);
                 return;
@@ -192,13 +200,13 @@ const UpdateEventPost = ({ navigation, route }) => {
             </View>
 
             <View style={styles.textContainer}>
-                <TextInput
+                {/* <TextInput
                     style={Globalstyles.input}
                     placeholder='Title'
                     placeholderTextColor={Colors.gray}
                     value={eventData?.title}
                     onChangeText={(text) => setEventData((prev) => ({ ...prev, title: text }))}
-                />
+                /> */}
                 <TextInput
                     style={Globalstyles.textInput}
                     placeholder='What’s on your mind?'
@@ -212,7 +220,7 @@ const UpdateEventPost = ({ navigation, route }) => {
 
             <View style={styles.addPhoto}>
                 <View>
-                    <Text style={styles.Text}>Add Image (Max Limit 5)</Text>
+                    <Text style={styles.Text}>Add Image (Max Limit 4)</Text>
                 </View>
                 <View style={styles.righticons}>
                     <TouchableOpacity onPress={handleImageUpload}>

@@ -80,30 +80,35 @@ const CustomDrawer = (props) => {
   ];
 
   const handleLogout = async () => {
-    console.log('logout function')
-    try {
-      await AsyncStorage.removeItem("userToken");
-      await AsyncStorage.removeItem("userId");
-      await AsyncStorage.removeItem("profileInterest");
-      await AsyncStorage.removeItem("newsEvents");
+    console.log('🔒 Logging out...');
 
+    try {
+
+      await AsyncStorage.multiRemove([
+        "userToken",
+        "userId",
+        "profileInterest",
+        "newsEvents",
+      ]);
+
+      dispatch(resetProfiledata());
       dispatch(resetBioData());
       dispatch(resetsetActivistdata());
       dispatch(resetAllBiodata());
       dispatch(reseAllNotification());
-      dispatch(resetProfiledata());
 
-      navigation.reset({
-        index: 0,
-        routes: [{ name: "AuthStack" }],
-      });
+      setTimeout(() => {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AuthStack" }],
+        });
+        console.log("✅ Logged out successfully");
+      }, 100);
 
-      console.log("✅ Logged out successfully");
     } catch (error) {
-      console.error("❌ Error logging out:", error);
+      console.error("❌ Error during logout:", error);
     }
   };
-
 
   const handleDropdownToggle = (dropdown) => {
     setOpenDropdown((prev) => (prev === dropdown ? null : dropdown));

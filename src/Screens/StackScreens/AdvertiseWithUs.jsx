@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SafeAreaView, View, Text, TextInput, TouchableOpacity, ScrollView, Image, Linking, ActivityIndicator } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, Linking, ActivityIndicator } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Globalstyles from "../../utils/GlobalCss";
@@ -11,6 +11,7 @@ import axios from "axios";
 import { ADVERTISE_WITH_US } from "../../utils/BaseUrl";
 import { showMessage } from "react-native-flash-message";
 import { SF, SH, SW } from "../../utils/Dimensions";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const AdvertiseWithUs = ({ navigation }) => {
     const [fullName, setFullname] = useState("");
@@ -112,6 +113,15 @@ const AdvertiseWithUs = ({ navigation }) => {
         }
     };
 
+    const handleTextChange = (text) => {
+        const wordArray = text.trim().split(/\s+/); // splits by whitespace
+        if (wordArray.length <= 300) {
+            setMessage(text);
+        } else {
+            const trimmedText = wordArray.slice(0, 300).join(' ');
+            setMessage(trimmedText);
+        }
+    };
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: Colors.light }}>
@@ -135,24 +145,24 @@ const AdvertiseWithUs = ({ navigation }) => {
                     {/* Contact Info Section */}
                     <View style={styles.overlay}>
                         <View style={styles.contactCard1}>
-                              <View style={styles.iconContainer}>
-                                    <MaterialIcons name="phone" size={11} color={Colors.dark} />
-                                    <Text
-                                        style={[styles.contactText,{color:Colors.dark,fontSize:SF(14),fontFamily:"Poppins-Bold"}]}
-                                        onPress={() => Linking.openURL("tel:8871186630")}
-                                    >
-                                       8871186630 🤙 
-                                    </Text>
-                                </View>
-                                <View style={styles.iconContainer}>
-                                    <MaterialIcons name="phone" size={11} color={Colors.dark} />
-                                    <Text
-                                      style={[styles.contactText,{color:Colors.dark,fontSize:SF(14),fontFamily:"Poppins-Bold"}]}
-                                        onPress={() => Linking.openURL("tel:8602210689")}
-                                    >
-                                       8602210689 🤙 
-                                    </Text>
-                                </View>
+                            <View style={styles.iconContainer}>
+                                <MaterialIcons name="phone" size={11} color={Colors.dark} />
+                                <Text
+                                    style={[styles.contactText, { color: Colors.dark, fontSize: SF(14), fontFamily: "Poppins-Bold" }]}
+                                    onPress={() => Linking.openURL("tel:8871186630")}
+                                >
+                                    8871186630 🤙
+                                </Text>
+                            </View>
+                            <View style={styles.iconContainer}>
+                                <MaterialIcons name="phone" size={11} color={Colors.dark} />
+                                <Text
+                                    style={[styles.contactText, { color: Colors.dark, fontSize: SF(14), fontFamily: "Poppins-Bold" }]}
+                                    onPress={() => Linking.openURL("tel:8602210689")}
+                                >
+                                    8602210689 🤙
+                                </Text>
+                            </View>
                         </View>
                         <View style={styles.contactCard}>
                             <View style={styles.iconContainer}>
@@ -225,14 +235,19 @@ const AdvertiseWithUs = ({ navigation }) => {
                     )}
 
                     <Text style={Globalstyles.title}>Message</Text>
-                    <TextInput style={[Globalstyles.textInput]} placeholder="Write your message..." value={message}
+                    <TextInput
+                        style={[Globalstyles.textInput]}
+                        placeholder="Write your message..."
+                        value={message}
                         textAlignVertical='top'
                         placeholderTextColor={Colors.gray}
-                        onChangeText={setMessage} multiline
+                        onChangeText={handleTextChange}
+                        multiline
                         autoComplete="off"
                         textContentType="none"
                         importantForAutofill="no"
-                        autoCorrect={false} />
+                        autoCorrect={false}
+                    />
                     <TouchableOpacity
                         style={styles.button}
                         onPress={handleSubmit}

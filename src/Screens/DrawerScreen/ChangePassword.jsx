@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Text, View, TouchableOpacity, Modal, TextInput, SafeAreaView, StatusBar ,Image } from 'react-native';
+import { Text, View, TouchableOpacity, Modal, TextInput, StatusBar ,Image } from 'react-native';
 import Colors from '../../utils/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styles from '../StyleScreens/ChangePasswordStyle';
@@ -11,6 +11,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import { DrawerActions, useFocusEffect } from '@react-navigation/native';
 import { showMessage } from 'react-native-flash-message';
 import { SH,SW } from '../../utils/Dimensions';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const ChangePassword = ({ navigation }) => {
   const [oldPassword, setOldPassword] = useState('');

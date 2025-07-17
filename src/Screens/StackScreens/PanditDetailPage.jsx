@@ -45,6 +45,19 @@ const PanditDetailPage = ({ navigation, item, route }) => {
     const validSlides = slider.filter(item => !!item.image);
     const fromScreen = route.params?.fromScreen;
 
+
+    const [modalVisible, setModalVisible] = useState(false);
+    const [formattedImages, setFormattedImages] = useState([]);
+    const [imageIndex, setImageIndex] = useState(0);
+
+
+    const openImageViewer = (index) => {
+        const imageObjects = images.map(uri => ({ url: uri }));
+        setFormattedImages(imageObjects);
+        setImageIndex(index);
+        setModalVisible(true);
+    };
+
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
@@ -171,21 +184,21 @@ const PanditDetailPage = ({ navigation, item, route }) => {
     }, []);
 
 
-    useEffect(() => {
-        if (slider.length === 0) return;
-
-        const currentSlide = slider[currentIndex];
-        const durationInSeconds = currentSlide?.duration || 2;
-        const durationInMilliseconds = durationInSeconds * 1000;
-
-        const timeout = setTimeout(() => {
-            const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
-            setCurrentIndex(nextIndex);
-            sliderRef.current?.goToSlide(nextIndex);
-        }, durationInMilliseconds);
-
-        return () => clearTimeout(timeout);
-    }, [currentIndex, slider]);
+  useEffect(() => {
+    if (slider.length === 0) return;
+  
+    const currentSlide = slider[currentIndex];
+    const durationInSeconds = Number(currentSlide?.duration) || 4; 
+    const durationInMilliseconds = durationInSeconds * 1000;
+    console.log("durationInSeconds",durationInSeconds);
+    const timeout = setTimeout(() => {
+      const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
+      setCurrentIndex(nextIndex);
+      sliderRef.current?.goToSlide(nextIndex);
+    }, durationInMilliseconds);
+  
+    return () => clearTimeout(timeout);
+  }, [currentIndex, slider]);
 
 
     const Advertisement_window = async () => {
@@ -212,6 +225,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                         image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
                         resolution: mediaItem.resolution,
                         hyperlink: mediaItem.hyperlink,
+                        duration: mediaItem.duration || 4, 
                     }))
                 );
 
@@ -309,41 +323,35 @@ const PanditDetailPage = ({ navigation, item, route }) => {
         });
     };
 
-    const renderImages = (images) => {
-        if (!images || images.length === 0) {
-            return (
-                <View style={styles.noImagesContainer}>
-                    <MaterialIcons name="hide-image" size={40} color={Colors.gray} style={styles.icon} />
-                    <Text style={styles.noImagesText}>No additional photos available for this post</Text>
-                </View>
-            );
-        }
+ const renderImages = (images) => {
+  if (!images || images.length === 0) {
+    return (
+      <View style={styles.noImagesContainer}>
+        <MaterialIcons name="hide-image" size={40} color={Colors.gray} style={styles.icon} />
+        <Text style={styles.noImagesText}>No additional photos available for this post</Text>
+      </View>
+    );
+  }
 
-        const rows = [];
-        for (let i = 0; i < images.length; i += 2) {
-            rows.push(
-                <TouchableOpacity
-                    style={styles.imageRow}
-                    key={i}
-                    onPress={() =>
-                        navigation.navigate('ViewEntityImages', {
-                            post: profileData, // Pass pandit details
-                            images: images.filter(Boolean), // Ensure this is a valid array of images
-                            panditDetails: profileData,
-                        })
-                    }
-                >
-                    {/* Ensure the image has a valid source format */}
-                    <Image source={{ uri: images[i] }} style={styles.image} />
+  const rows = [];
+  for (let i = 0; i < images.length; i += 2) {
+    rows.push(
+      <View style={styles.imageRow} key={i}>
+        <TouchableOpacity onPress={() => openImageViewer(i)} style={styles.image}>
+          <Image source={{ uri: images[i] }} style={styles.image} />
+        </TouchableOpacity>
 
-                    {/* If there's an image next to it, show it */}
-                    {images[i + 1] && <Image source={{ uri: images[i + 1] }} style={styles.image} />}
-                </TouchableOpacity>
-            );
-        }
+        {images[i + 1] && (
+          <TouchableOpacity onPress={() => openImageViewer(i + 1)} style={styles.image}>
+            <Image source={{ uri: images[i + 1] }} style={styles.image} />
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+  }
 
-        return <View style={styles.imageContainer}>{rows}</View>;
-    };
+  return <View style={styles.imageContainer}>{rows}</View>;
+};
 
     const handleShare = async () => {
         const profileId = profileData?._id;
@@ -753,6 +761,40 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 )}
 
             </ScrollView>
+            <Modal visible={modalVisible} transparent={true} onRequestClose={() => setModalVisible(false)}>
+                <ImageViewer
+                    imageUrls={formattedImages}
+                    index={imageIndex}
+                    onSwipeDown={() => setModalVisible(false)}
+                    onCancel={() => setModalVisible(false)}
+                    enableSwipeDown={true}
+                    enablePreload={true}
+                    saveToLocalByLongPress={false}
+                    backgroundColor="rgba(0,0,0,0.95)"
+                    renderIndicator={(currentIndex, allSize) => (
+                        <View style={{
+                            position: 'absolute',
+                            top: 30,
+                            alignSelf: 'center',
+                            backgroundColor: 'rgba(0,0,0,0.5)',
+                            paddingHorizontal: 10,
+                            paddingVertical: 6,
+                            borderRadius: 5,
+                            zIndex: 999,
+                        }}>
+                            <Text style={{ color: '#fff' }}>{currentIndex} / {allSize}</Text>
+                        </View>
+                    )}
+                    renderImage={(props) => (
+                        <Image
+                            {...props}
+                            resizeMode="contain"
+                            style={{ width: '100%', height: '100%' }}
+                        />
+                    )}
+                />
+            </Modal>
+
         </SafeAreaView>
     );
 };

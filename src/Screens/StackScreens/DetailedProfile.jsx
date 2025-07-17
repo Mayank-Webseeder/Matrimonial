@@ -1,6 +1,6 @@
 
 import {
-  Text, View, Image, ImageBackground, TextInput, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, FlatList,
+  Text, View, Image, ImageBackground, TextInput, ScrollView, StatusBar, ActivityIndicator, FlatList,
   Modal, Alert
 } from 'react-native'
 import React, { useEffect, useState, useCallback } from 'react'
@@ -27,6 +27,7 @@ import RazorpayCheckout from 'react-native-razorpay';
 import { setBioData } from '../../ReduxStore/Slices/BiodataSlice';
 import { useDispatch } from 'react-redux';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import {
   OccupationData, QualificationData, maritalStatusData, ManglikStatusData, LivingData, ProfileCreatedData, CityData, Income,

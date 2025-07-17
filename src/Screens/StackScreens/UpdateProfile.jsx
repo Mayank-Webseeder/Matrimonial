@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, FlatList } from "react-native";
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, StatusBar, FlatList } from "react-native";
 import React, { useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
@@ -12,6 +12,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSelector } from "react-redux";
 import { showMessage } from "react-native-flash-message";
 import { CityData } from "../../DummyData/DropdownData";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const UpdateProfile = ({ navigation }) => {
   const ProfileData = useSelector((state) => state.profile);

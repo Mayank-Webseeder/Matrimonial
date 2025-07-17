@@ -143,7 +143,15 @@ menuIcon: {
   },
   bottomSlider:{
     paddingBottom:SH(10)
-  }
+  },
+  volumeIcon: {
+  position: 'absolute',
+  bottom: 10,
+  right: 10,
+  backgroundColor: 'rgba(0,0,0,0.5)',
+  borderRadius: 20,
+  padding: 8,
+}
 });
 
 export default styles;

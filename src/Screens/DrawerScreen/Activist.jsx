@@ -41,12 +41,26 @@ const Activist = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [activitData, setActivitData] = useState({});
-  
+
   const openImageViewer = (imageUri) => {
     if (imageUri) {
-      setSelectedImage([{ url: imageUri }]); // Important: `url` key is used by ImageViewer
+      setSelectedImage([{ url: imageUri }]); // ✅ no props
       setImageVisible(true);
+      console.log("selectedImage", JSON.stringify([{ url: imageUri }]));
     }
+  };
+
+  const renderImage = (props) => {
+    return (
+      <Image
+        {...props}
+        style={{
+          width: '100%',
+          height: '100%',
+          resizeMode: 'contain',
+        }}
+      />
+    );
   };
 
   useFocusEffect(
@@ -257,10 +271,6 @@ const Activist = ({ navigation }) => {
   );
 
   const renderItem = ({ item }) => {
-    const imageSource = item.profilePhoto
-      ? { uri: item.profilePhoto }
-      : require('../../Images/NoImage.png');
-
     return (
       <View style={styles.card}>
         <View style={styles.cardLeft}>
@@ -272,18 +282,26 @@ const Activist = ({ navigation }) => {
           </TouchableOpacity>
 
           {selectedImage && (
-            <Modal visible={isImageVisible} transparent={true} onRequestClose={() => setImageVisible(false)}>
-                   <ImageViewer
-                     imageUrls={selectedImage}
-                     enableSwipeDown={true}
-                     onSwipeDown={() => setImageVisible(false)}
-                     onCancel={() => setImageVisible(false)}
-                     enablePreload={true}
-                     saveToLocalByLongPress={false}
-                     renderIndicator={() => null}
-                   />
-                 </Modal>
+            <Modal
+              visible={isImageVisible}
+              transparent={true}
+              onRequestClose={() => setImageVisible(false)}
+            >
+              <View style={{ flex: 1, backgroundColor: 'black' }}>
+                <ImageViewer
+                  imageUrls={selectedImage}
+                  renderImage={renderImage}
+                  enableSwipeDown
+                  onSwipeDown={() => setImageVisible(false)}
+                  onCancel={() => setImageVisible(false)}
+                  enablePreload
+                  saveToLocalByLongPress={false}
+                  renderIndicator={() => null}
+                />
+              </View>
+            </Modal>
           )}
+
           <View style={{ marginLeft: SW(10), flex: 1 }}>
             {item?.fullname && <Text style={styles.text}>{item.fullname}</Text>}
             {item?.subCaste && <Text style={styles.smalltext}>{item.subCaste}</Text>}
@@ -309,7 +327,7 @@ const Activist = ({ navigation }) => {
         <View style={Globalstyles.header}>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
-               <Image source={require('../../Images/menu.png')} style={{width: SW(30),height: SH(30)}} />
+              <Image source={require('../../Images/menu.png')} style={{ width: SW(30), height: SH(30) }} />
             </TouchableOpacity>
             <Text style={Globalstyles.headerText}>Activist</Text>
           </View>
@@ -392,98 +410,100 @@ const Activist = ({ navigation }) => {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
+        <View>
 
-        {loading ? renderSkeleton() : (
-          <FlatList
-            data={activistData}
-            renderItem={renderItem}
-            keyExtractor={(item) => item._id}
-            scrollEnabled={false}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.ActivistDataList}
-            ListEmptyComponent={
-              <View style={styles.emptyContainer}>
-                <FontAwesome name="user" size={60} color="#ccc" style={{ marginBottom: 15 }} />
-                <Text style={styles.emptyText}>No Activist Data Available</Text>
-                <Text style={styles.infoText}>Activist profiles will appear here once available.</Text>
-              </View>
-            }
-          />
-        )}
-
-        <Modal
-          visible={modalVisible}
-          transparent={true}
-          animationType="slide"
-          onRequestClose={handleCloseFilter}
-        >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-              <View style={styles.Filterheader}>
-                <TouchableOpacity onPress={handleCloseFilter} style={{ flexDirection: 'row' }}>
-                  <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
-                  <Text style={Globalstyles.headerText}>Filter</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={resetFilter}>
-                  <Text style={Globalstyles.headerText}>Reset Filter</Text>
-                </TouchableOpacity>
-              </View>
-
-              <View style={Globalstyles.form}>
-                <Text style={Globalstyles.title}>Locality</Text>
-                <View>
-                  <TextInput
-                    style={Globalstyles.input}
-                    value={modalLocality}
-                    onChangeText={(text) => setModalLocality(text)}
-                    placeholder="Enter Locality"
-                    placeholderTextColor={Colors.gray}
-                    autoComplete="off"
-                    textContentType="none"
-                  />
-
+          {loading ? renderSkeleton() : (
+            <FlatList
+              data={activistData}
+              renderItem={renderItem}
+              keyExtractor={(item) => item._id}
+              scrollEnabled={false}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.ActivistDataList}
+              ListEmptyComponent={
+                <View style={styles.emptyContainer}>
+                  <FontAwesome name="user" size={60} color="#ccc" style={{ marginBottom: 15 }} />
+                  <Text style={styles.emptyText}>No Activist Data Available</Text>
+                  <Text style={styles.infoText}>Activist profiles will appear here once available.</Text>
                 </View>
-                <View>
-                  <Text style={Globalstyles.title}>Sub-Caste</Text>
+              }
+            />
+          )}
+
+          <Modal
+            visible={modalVisible}
+            transparent={true}
+            animationType="slide"
+            onRequestClose={handleCloseFilter}
+          >
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalContent}>
+                <View style={styles.Filterheader}>
+                  <TouchableOpacity onPress={handleCloseFilter} style={{ flexDirection: 'row' }}>
+                    <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
+                    <Text style={Globalstyles.headerText}>Filter</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={resetFilter}>
+                    <Text style={Globalstyles.headerText}>Reset Filter</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <View style={Globalstyles.form}>
+                  <Text style={Globalstyles.title}>Locality</Text>
                   <View>
-                    <Dropdown
-                      style={[Globalstyles.input]}
-                      data={subCasteOptions}
-                      labelField="label"
-                      valueField="value"
-                      value={subcaste}
-                      onChange={(text) => handleInputChange("subCaste", text.value)}
-                      placeholder="Select Your subCaste"
-                      placeholderStyle={{ color: '#E7E7E7' }}
-                      autoScroll={false}
-                      showsVerticalScrollIndicator={false}
+                    <TextInput
+                      style={Globalstyles.input}
+                      value={modalLocality}
+                      onChangeText={(text) => setModalLocality(text)}
+                      placeholder="Enter Locality"
+                      placeholderTextColor={Colors.gray}
+                      autoComplete="off"
+                      textContentType="none"
                     />
-                  </View>
-                </View>
 
-                <TouchableOpacity
-                  style={styles.applyButton}
-                  onPress={() => {
-                    handleCloseFilter();
-                  }}
-                >
-                  <Text style={styles.applyButtonText}>See Results</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => setModalVisible(false)}
-                  style={[
-                    styles.crossButton,
-                    { top: SH(200) + listHeight + 100 },
-                  ]}
-                >
-                  <View style={styles.circle}>
-                    <Entypo name="cross" size={25} color={Colors.light} />
                   </View>
-                </TouchableOpacity>
+                  <View>
+                    <Text style={Globalstyles.title}>Sub-Caste</Text>
+                    <View>
+                      <Dropdown
+                        style={[Globalstyles.input]}
+                        data={subCasteOptions}
+                        labelField="label"
+                        valueField="value"
+                        value={subcaste}
+                        onChange={(text) => handleInputChange("subCaste", text.value)}
+                        placeholder="Select Your subCaste"
+                        placeholderStyle={{ color: '#E7E7E7' }}
+                        autoScroll={false}
+                        showsVerticalScrollIndicator={false}
+                      />
+                    </View>
+                  </View>
+
+                  <TouchableOpacity
+                    style={styles.applyButton}
+                    onPress={() => {
+                      handleCloseFilter();
+                    }}
+                  >
+                    <Text style={styles.applyButtonText}>See Results</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => setModalVisible(false)}
+                    style={[
+                      styles.crossButton,
+                      { top: SH(200) + listHeight + 100 },
+                    ]}
+                  >
+                    <View style={styles.circle}>
+                      <Entypo name="cross" size={25} color={Colors.light} />
+                    </View>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-          </View>
-        </Modal>
+          </Modal>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

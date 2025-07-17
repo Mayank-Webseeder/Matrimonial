@@ -18,8 +18,8 @@ import { useFocusEffect } from '@react-navigation/native';
 import { PHOTO_URL } from '../../utils/BaseUrl';
 import { useSelector } from 'react-redux';
 const BioData = ({ navigation }) => {
-  const [currentIndexTop, setCurrentIndexTop] = useState(0); // For Top Slider
-  const [currentIndexBottom, setCurrentIndexBottom] = useState(1); // For Bottom Slider (starts from index 1)
+  const [currentIndexTop, setCurrentIndexTop] = useState(0);
+  const [currentIndexBottom, setCurrentIndexBottom] = useState(1);
   const sliderRefTop = useRef(null);
   const sliderRefBottom = useRef(null);
   const [Topslider, TopsetSlider] = useState([]);
@@ -102,38 +102,42 @@ const BioData = ({ navigation }) => {
       setIsLoading(false)
     }
   };
-
   useEffect(() => {
-    if (slider.length === 0) return;
+    if (Topslider.length === 0) return;
 
-    const currentSlideTop = slider[currentIndexTop];
-    const durationInSecondsTop = currentSlideTop?.duration || 2;
-    const durationInMillisecondsTop = durationInSecondsTop * 1000;
+    const currentSlideTop = Topslider[currentIndexTop];
+    const durationInSecondsTop = Number(currentSlideTop?.duration) || 4;
+    const bufferMs = 800;
+    const durationInMillisecondsTop = durationInSecondsTop * 1000 + bufferMs;
+    console.log("⏱️ Top Duration (sec):", durationInSecondsTop);
 
     const timeoutTop = setTimeout(() => {
-      const nextIndexTop = currentIndexTop < slider.length - 1 ? currentIndexTop + 1 : 0;
-      setCurrentIndexTop(nextIndexTop);  // Move top slider
+      const nextIndexTop = currentIndexTop < Topslider.length - 1 ? currentIndexTop + 1 : 0;
+      setCurrentIndexTop(nextIndexTop);
       sliderRefTop.current?.goToSlide(nextIndexTop);
     }, durationInMillisecondsTop);
 
     return () => clearTimeout(timeoutTop);
-  }, [currentIndexTop, slider]);
+  }, [currentIndexTop, Topslider]);
+
 
   useEffect(() => {
-    if (slider.length === 0) return;
+    if (Bottomslider.length === 0) return;
 
-    const currentSlideBottom = slider[currentIndexBottom];
-    const durationInSecondsBottom = currentSlideBottom?.duration || 2;
+    const currentSlideBottom = Bottomslider[currentIndexBottom];
+    const durationInSecondsBottom = Number(currentSlideBottom?.duration) || 4;
     const durationInMillisecondsBottom = durationInSecondsBottom * 1000;
 
+    console.log("⏱️ Bottom Duration (sec):", durationInSecondsBottom);
+
     const timeoutBottom = setTimeout(() => {
-      const nextIndexBottom = currentIndexBottom < slider.length - 1 ? currentIndexBottom + 1 : 0;
+      const nextIndexBottom = currentIndexBottom < Bottomslider.length - 1 ? currentIndexBottom + 1 : 0;
       setCurrentIndexBottom(nextIndexBottom);
       sliderRefBottom.current?.goToSlide(nextIndexBottom);
     }, durationInMillisecondsBottom);
 
     return () => clearTimeout(timeoutBottom);
-  }, [currentIndexBottom, slider]);
+  }, [currentIndexBottom, Bottomslider]);
 
   const Top_Advertisement_window = async () => {
     try {
@@ -149,7 +153,7 @@ const BioData = ({ navigation }) => {
 
       if (response.data) {
         const fetchedData = response.data.data;
-        console.log("fetchedData", JSON.stringify(fetchedData));
+        console.log("Top fetchedData", JSON.stringify(fetchedData));
 
         const fullSliderData = fetchedData.flatMap((item) =>
           item.media.map((mediaItem) => ({
@@ -160,6 +164,7 @@ const BioData = ({ navigation }) => {
             resolution: mediaItem.resolution, // 👈 yeh add kiya
             mediaType: mediaItem.mediaUrl.includes('.mp4') ? 'video' : 'image', // Determine media type
             hyperlink: mediaItem.hyperlink,
+            duration: mediaItem.duration || 4,
           }))
         );
 
@@ -202,7 +207,7 @@ const BioData = ({ navigation }) => {
 
       if (response.data) {
         const fetchedData = response.data.data;
-        console.log("fetchedData", JSON.stringify(fetchedData));
+        console.log("Bottom fetchedData", JSON.stringify(fetchedData));
 
         const fullSliderData = fetchedData.flatMap((item) =>
           item.media.map((mediaItem) => ({
@@ -213,6 +218,7 @@ const BioData = ({ navigation }) => {
             resolution: mediaItem.resolution, // 👈 yeh add kiya
             mediaType: mediaItem.mediaUrl.includes('.mp4') ? 'video' : 'image', // Determine media type
             hyperlink: mediaItem.hyperlink,
+            duration: mediaItem.duration || 4,
           }))
         );
 
@@ -256,7 +262,7 @@ const BioData = ({ navigation }) => {
       <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
         <Image
           source={{ uri: item.image }}
-            style={{ width:"100%", height:SH(180) , resizeMode: 'contain' }}
+          style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
         />
       </TouchableOpacity>
     );

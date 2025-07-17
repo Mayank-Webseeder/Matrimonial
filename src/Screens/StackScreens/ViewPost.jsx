@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Image, ScrollView, Text, View, TouchableOpacity, SafeAreaView, StatusBar, BackHandler, Modal } from 'react-native';
+import { Image, ScrollView, Text, View, TouchableOpacity, SafeAreaView, StatusBar, BackHandler, Modal ,Dimensions } from 'react-native';
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
@@ -15,6 +15,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { CommonActions, useFocusEffect } from '@react-navigation/native';
 import ImageViewer from 'react-native-image-zoom-viewer';
+
+const { width: screenWidth } = Dimensions.get('window');
+const imageHeight = SH(400);
 
 const ViewPost = ({ navigation, route }) => {
   const { postId, id } = route.params || {};
@@ -144,7 +147,7 @@ const ViewPost = ({ navigation, route }) => {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.card}>
+        <View>
           <View style={styles.postHeader}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Image
@@ -159,41 +162,44 @@ const ViewPost = ({ navigation, route }) => {
           </View>
 
           <Text style={styles.postDescriptionText}>{postData?.description || "No description"}</Text>
-
-          {images.length > 0 &&
-            images.map((image, index) => (
-              <TouchableOpacity key={index} onPress={() => openImageViewer(index)}>
-                <Image
-                  source={{ uri: image }}
-                  style={{
-                    width: "100%",
-                    height: SH(400),
-                    borderRadius: 10,
-                    marginBottom: SH(10),
-                  }}
-                  resizeMode="cover"
-                />
-              </TouchableOpacity>
-            ))}
-
-          {images.length > 0 && viewerVisible && (
-            <Modal
-              visible={viewerVisible}
-              transparent={true}
-              onRequestClose={() => setViewerVisible(false)}
-            >
-              <ImageViewer
-                imageUrls={images.map((img) => ({ url: img }))}
-                index={currentIndex}
-                onSwipeDown={() => setViewerVisible(false)}
-                onCancel={() => setViewerVisible(false)}
-                enableSwipeDown={true}
-                enablePreload={true}
-                saveToLocalByLongPress={false}
-                renderIndicator={() => null}
+<View style={{ flex: 1 }}>
+  {images.length > 0 && (
+    <ScrollView
+      pagingEnabled
+      showsVerticalScrollIndicator={false}
+    >
+      {images.map((img, index) => (
+        <View
+          key={index}
+          style={{
+            width: screenWidth,
+            height: imageHeight,
+            backgroundColor: 'white',
+          }}
+        >
+          <ImageViewer
+            imageUrls={[{ url: img }]}
+            backgroundColor="transparent"
+            enableSwipeDown={false}
+            saveToLocalByLongPress={false}
+            renderIndicator={() => null}
+            enablePreload={true}
+            renderImage={(props) => (
+              <Image
+                {...props}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  resizeMode: 'contain',
+                }}
               />
-            </Modal>
-          )}
+            )}
+          />
+        </View>
+      ))}
+    </ScrollView>
+  )}
+</View>
 
         </View>
       </ScrollView>

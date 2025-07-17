@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, TextInput, TouchableOpacity, SafeAreaView, ScrollView, FlatList, Image, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, FlatList, Image, ActivityIndicator, Alert } from 'react-native';
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/ActivistFormStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux';
 import { showMessage } from 'react-native-flash-message';
 import { Dropdown } from 'react-native-element-dropdown';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ActivistForm({ navigation }) {
   const [stateInput, setStateInput] = useState('');
@@ -67,8 +68,8 @@ export default function ActivistForm({ navigation }) {
   const handleImagePick = async () => {
     try {
       const image = await ImageCropPicker.openPicker({
-        width: 300,
-        height: 300,
+        width: 1000,
+        height: 1000,
         cropping: true,
         includeBase64: true,
         mediaType: "any",

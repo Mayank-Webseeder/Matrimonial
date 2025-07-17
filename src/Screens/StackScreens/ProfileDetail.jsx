@@ -40,6 +40,23 @@ const ProfileDetail = ({ route, navigation }) => {
         profileData?.personalDetails?.drinkingHabit || profileData?.personalDetails?.tobaccoHabits || profileData?.personalDetails?.hobbies;
     const personalDetails = profileData?.personalDetails;
 
+    const [modalVisible1, setModalVisible1] = useState(false);
+    const [formattedImages1, setFormattedImages1] = useState([]);
+    const [imageIndex1, setImageIndex1] = useState(0);
+
+    const openImageViewer1 = (index) => {
+        const imageObjects = images.map(uri => ({ url: uri }));
+        setFormattedImages1(imageObjects);
+        setImageIndex1(index);
+        setModalVisible1(true);
+    };
+
+    const openImageViewer = (index) => {
+        setImageIndex(index);
+        setModalVisible(true);
+    };
+
+
     useEffect(() => {
         if (!formattedImages || formattedImages.length === 0) return;
 
@@ -95,11 +112,6 @@ const ProfileDetail = ({ route, navigation }) => {
     ]
         .filter(Boolean)
         .map((url) => ({ uri: url }));
-
-    const openImageViewer = (index) => {
-        setImageIndex(index);
-        setModalVisible(true);
-    };
 
     const SliderrenderItem = ({ item, index }) => (
         <TouchableOpacity onPress={() => openImageViewer(index)}>
@@ -275,29 +287,26 @@ const ProfileDetail = ({ route, navigation }) => {
             );
         }
 
-
         const rows = [];
         for (let i = 0; i < images.length; i += 2) {
             rows.push(
-                <TouchableOpacity
-                    style={styles.imageRow}
-                    key={i}
-                    onPress={() =>
-                        navigation.navigate('ViewEntityImages', {
-                            post: profileData,
-                            images: images.filter(Boolean),
-                            panditDetails: profileData,
-                        })
-                    }
-                >
-                    <Image source={{ uri: images[i] }} style={styles.image} />
-                    {images[i + 1] && <Image source={{ uri: images[i + 1] }} style={styles.image} />}
-                </TouchableOpacity>
+                <View key={`row-${i}`} style={{ flexDirection: 'row' }}>
+                    <TouchableOpacity style={styles.imageRow} onPress={() => openImageViewer1(i)}>
+                        <Image source={{ uri: images[i] }} style={styles.image} />
+                    </TouchableOpacity>
+
+                    {images[i + 1] && (
+                        <TouchableOpacity style={styles.imageRow} onPress={() => openImageViewer1(i + 1)}>
+                            <Image source={{ uri: images[i + 1] }} style={styles.image} />
+                        </TouchableOpacity>
+                    )}
+                </View>
             );
         }
 
         return <View style={styles.imageContainer}>{rows}</View>;
     };
+
 
     const formattedHeight = profileData?.personalDetails?.heightFeet
         ?.replace(/\s*-\s*/, "")
@@ -1120,6 +1129,39 @@ const ProfileDetail = ({ route, navigation }) => {
                                 <FontAwesome5 name="instagram" size={30} color="#E4405F" />
                             </TouchableOpacity>
                         </View>
+                        <Modal visible={modalVisible1} transparent={true} onRequestClose={() => setModalVisible1(false)}>
+                            <ImageViewer
+                                imageUrls={formattedImages1}
+                                index={imageIndex1}
+                                onSwipeDown={() => setModalVisible1(false)}
+                                onCancel={() => setModalVisible1(false)}
+                                enableSwipeDown={true}
+                                enablePreload={true}
+                                saveToLocalByLongPress={false}
+                                backgroundColor="rgba(0,0,0,0.95)"
+                                renderIndicator={(currentIndex, allSize) => (
+                                    <View style={{
+                                        position: 'absolute',
+                                        top: 30,
+                                        alignSelf: 'center',
+                                        backgroundColor: 'rgba(0,0,0,0.5)',
+                                        paddingHorizontal: 10,
+                                        paddingVertical: 6,
+                                        borderRadius: 5,
+                                        zIndex: 999,
+                                    }}>
+                                        <Text style={{ color: '#fff' }}>{currentIndex} / {allSize}</Text>
+                                    </View>
+                                )}
+                                renderImage={(props) => (
+                                    <Image
+                                        {...props}
+                                        resizeMode="contain"
+                                        style={{ width: '100%', height: '100%' }}
+                                    />
+                                )}
+                            />
+                        </Modal>
                         {/* <Image source={require('../../Images/slider.png')} style={styles.Bottomimage} /> */}
                     </ScrollView>
                 )}
@@ -1330,6 +1372,39 @@ const ProfileDetail = ({ route, navigation }) => {
                                 <FontAwesome5 name="instagram" size={30} color="#E4405F" />
                             </TouchableOpacity>
                         </View>
+                        <Modal visible={modalVisible1} transparent={true} onRequestClose={() => setModalVisible1(false)}>
+                            <ImageViewer
+                                imageUrls={formattedImages1}
+                                index={imageIndex1}
+                                onSwipeDown={() => setModalVisible1(false)}
+                                onCancel={() => setModalVisible1(false)}
+                                enableSwipeDown={true}
+                                enablePreload={true}
+                                saveToLocalByLongPress={false}
+                                backgroundColor="rgba(0,0,0,0.95)"
+                                renderIndicator={(currentIndex, allSize) => (
+                                    <View style={{
+                                        position: 'absolute',
+                                        top: 30,
+                                        alignSelf: 'center',
+                                        backgroundColor: 'rgba(0,0,0,0.5)',
+                                        paddingHorizontal: 10,
+                                        paddingVertical: 6,
+                                        borderRadius: 5,
+                                        zIndex: 999,
+                                    }}>
+                                        <Text style={{ color: '#fff' }}>{currentIndex} / {allSize}</Text>
+                                    </View>
+                                )}
+                                renderImage={(props) => (
+                                    <Image
+                                        {...props}
+                                        resizeMode="contain"
+                                        style={{ width: '100%', height: '100%' }}
+                                    />
+                                )}
+                            />
+                        </Modal>
                         {/* <Image source={require('../../Images/slider.png')} style={styles.Bottomimage} /> */}
                     </ScrollView>
                 )}
@@ -1537,6 +1612,39 @@ const ProfileDetail = ({ route, navigation }) => {
                                 <FontAwesome5 name="instagram" size={30} color="#E4405F" />
                             </TouchableOpacity>
                         </View>
+                        <Modal visible={modalVisible1} transparent={true} onRequestClose={() => setModalVisible1(false)}>
+                            <ImageViewer
+                                imageUrls={formattedImages1}
+                                index={imageIndex1}
+                                onSwipeDown={() => setModalVisible1(false)}
+                                onCancel={() => setModalVisible1(false)}
+                                enableSwipeDown={true}
+                                enablePreload={true}
+                                saveToLocalByLongPress={false}
+                                backgroundColor="rgba(0,0,0,0.95)"
+                                renderIndicator={(currentIndex, allSize) => (
+                                    <View style={{
+                                        position: 'absolute',
+                                        top: 30,
+                                        alignSelf: 'center',
+                                        backgroundColor: 'rgba(0,0,0,0.5)',
+                                        paddingHorizontal: 10,
+                                        paddingVertical: 6,
+                                        borderRadius: 5,
+                                        zIndex: 999,
+                                    }}>
+                                        <Text style={{ color: '#fff' }}>{currentIndex} / {allSize}</Text>
+                                    </View>
+                                )}
+                                renderImage={(props) => (
+                                    <Image
+                                        {...props}
+                                        resizeMode="contain"
+                                        style={{ width: '100%', height: '100%' }}
+                                    />
+                                )}
+                            />
+                        </Modal>
                         {/* <Image source={require('../../Images/slider.png')} style={styles.Bottomimage} /> */}
                     </ScrollView>
                 )}

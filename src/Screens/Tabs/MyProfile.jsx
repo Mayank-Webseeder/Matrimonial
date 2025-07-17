@@ -396,37 +396,37 @@ const MyProfile = ({ navigation }) => {
 
             <View style={styles.container1}>
                 <View>
-                   <TouchableOpacity onPress={() => setImageViewVisible(true)}>
-  <Image
-    source={
-      selectedImage
-        ? { uri: selectedImage }
-        : image
-          ? { uri: image }
-          : require('../../Images/Profile.png')
-    }
-    style={styles.image}
-    resizeMode="cover"
-  />
-</TouchableOpacity>
+                    <TouchableOpacity onPress={() => setImageViewVisible(true)}>
+                        <Image
+                            source={
+                                selectedImage
+                                    ? { uri: selectedImage }
+                                    : image
+                                        ? { uri: image }
+                                        : require('../../Images/Profile.png')
+                            }
+                            style={styles.image}
+                            resizeMode="cover"
+                        />
+                    </TouchableOpacity>
 
-{isImageViewVisible && (
-  <Modal visible={true} transparent={true} onRequestClose={() => setImageViewVisible(false)}>
-    <ImageViewer
-      imageUrls={
-        (selectedImage || image)
-          ? [{ url: selectedImage || image }]
-          : [{ url: '' }]
-      }
-      enableSwipeDown
-      onSwipeDown={() => setImageViewVisible(false)}
-      onCancel={() => setImageViewVisible(false)}
-      saveToLocalByLongPress={false}
-      renderIndicator={() => null}
-      backgroundColor="rgba(0,0,0,0.95)"
-    />
-  </Modal>
-)}
+                    {isImageViewVisible && (
+                        <Modal visible={true} transparent={true} onRequestClose={() => setImageViewVisible(false)}>
+                            <ImageViewer
+                                imageUrls={
+                                    (selectedImage || image)
+                                        ? [{ url: selectedImage || image }]
+                                        : [{ url: '' }]
+                                }
+                                enableSwipeDown
+                                onSwipeDown={() => setImageViewVisible(false)}
+                                onCancel={() => setImageViewVisible(false)}
+                                saveToLocalByLongPress={false}
+                                renderIndicator={() => null}
+                                backgroundColor="rgba(0,0,0,0.95)"
+                            />
+                        </Modal>
+                    )}
                     <View style={styles.profileButtons}>
                         <View style={{ flexDirection: "row", alignItems: "center" }}>
                             <Text
@@ -439,7 +439,7 @@ const MyProfile = ({ navigation }) => {
                         <Text style={styles.editText} onPress={() => navigation.navigate('UpdateProfile')}>Update Profile</Text>
                     </View>
 
-                    <ScrollView style={{ paddingVertical: SH(5), paddingHorizontal: SW(10)}} showsVerticalScrollIndicator={false}>
+                    <ScrollView style={{ paddingVertical: SH(5), paddingHorizontal: SW(10) }} showsVerticalScrollIndicator={false}>
                         <View style={styles.userDeatil}>
                             <View style={styles.userData}>
                                 <Text style={styles.text}>User ID:  {profileData.userId || 'NA'}</Text>

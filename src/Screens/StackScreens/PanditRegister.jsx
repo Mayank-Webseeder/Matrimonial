@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, SafeAreaView, StatusBar, FlatList, ActivityIndicator, Modal, Alert } from 'react-native';
+import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, StatusBar, FlatList, ActivityIndicator, Modal, Alert } from 'react-native';
 import styles from '../StyleScreens/RoleRegisterStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux';
 import RazorpayCheckout from 'react-native-razorpay';
 import { showMessage } from "react-native-flash-message";
 import { launchImageLibrary } from 'react-native-image-picker';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 const PanditRegister = ({ navigation }) => {
@@ -202,13 +203,11 @@ const PanditRegister = ({ navigation }) => {
         }));
     };
 
-    const ADDL_LIMIT = 5;                // max extra photos
-
+    const ADDL_LIMIT = 5;                
     const pickerOpts = {
-        selectionLimit: ADDL_LIMIT,        // gallery stops user at 5
-        mediaType: 'photo',
-        includeBase64: true,               // we still need base‑64
-        maxWidth: 1000,                     // optional resize
+        selectionLimit: ADDL_LIMIT,        
+        includeBase64: true,               
+        maxWidth: 1000,                    
         maxHeight: 1000,
         quality: 1,
     };
@@ -233,7 +232,7 @@ const PanditRegister = ({ navigation }) => {
 
             setRoleRegisterData(prevData => ({
                 ...prevData,
-                profilePhoto: base64Image, // ✅ Base64 photo set
+                profilePhoto: base64Image, 
             }));
 
         } catch (err) {
@@ -263,7 +262,7 @@ const PanditRegister = ({ navigation }) => {
 
             setRoleRegisterData((prev) => ({
                 ...prev,
-                additionalPhotos: newPhotos, // Replace previous photos
+                additionalPhotos: newPhotos, 
             }));
         });
     };
@@ -293,8 +292,6 @@ const PanditRegister = ({ navigation }) => {
             whatsapp: /^(https?:\/\/)?(api\.whatsapp\.com\/send\?phone=\d+|wa\.me\/\d+)\/?$/,
         };
 
-
-        // ✅ Validate MANDATORY FIELDS
         MANDATORY_FIELDS.forEach((field) => {
             const value = String(data[field] || "").trim();
             if (!value) {
@@ -313,11 +310,9 @@ const PanditRegister = ({ navigation }) => {
             }
         });
 
-        // ✅ Validate URLs and check for duplicates across all url fields
         const urlFields = ["websiteUrl", "facebookUrl", "youtubeUrl", "instagramUrl", "whatsapp"];
-        const validUrlValues = {}; // Only collect valid URLs here
+        const validUrlValues = {}; 
 
-        // Step 1: Validate each URL field first
         urlFields.forEach((field) => {
             const value = String(data[field] || "").trim();
             const pattern = urlPatterns[field];
@@ -325,19 +320,17 @@ const PanditRegister = ({ navigation }) => {
 
             if (value) {
                 if (!pattern.test(value)) {
-                    errors[field] = `Enter a valid ${label} URL.`; // ✅ Invalid message
+                    errors[field] = `Enter a valid ${label} URL.`; 
                 } else {
-                    validUrlValues[field] = value; // ✅ Only store valid URLs
+                    validUrlValues[field] = value; 
                 }
             }
         });
 
-        // Step 2: Check for duplicates ONLY among valid URLs
         const seenUrls = new Set();
 
         Object.entries(validUrlValues).forEach(([field, value]) => {
             if (seenUrls.has(value)) {
-                // ✅ Only set duplicate error if no error already exists
                 if (!errors[field]) {
                     errors[field] = `This URL is already used in another field.`;
                 }
@@ -346,7 +339,6 @@ const PanditRegister = ({ navigation }) => {
             }
         });
 
-        // ✅ Ensure at least one service is selected
         const selectedServices = Object.keys(checked).filter(
             service => servicesOptions["Pandit"].some(opt => opt.value === service) && checked[service]
         );

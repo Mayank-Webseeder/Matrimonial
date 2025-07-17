@@ -223,10 +223,10 @@ const styles = StyleSheet.create({
     marginBottom: SH(2),
   },
   image: {
-    width: '50%',
+    width:SW(200),
     height: SH(100),
     marginBottom: SH(1),
-    marginRight: SW(10),
+    marginRight: SW(3),
     borderRadius: 3
   },
   noReviewsText: {

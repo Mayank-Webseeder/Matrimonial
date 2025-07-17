@@ -89,7 +89,7 @@ const ViewEntityImages = ({ navigation, route }) => {
                                     styles.image,
                                     { aspectRatio: imageAspectRatios[index] || 1 }
                                 ]}
-                                resizeMode="cover"
+                                resizeMode="contain"
                             />
                         </TouchableOpacity>
                     ))}

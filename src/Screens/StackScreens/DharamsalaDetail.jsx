@@ -42,6 +42,8 @@ const DharamsalaDetail = ({ navigation, route }) => {
   const subCaste = dharamsalaData?.subCaste ?? "Not specified";
   const city = dharamsalaData?.city ?? "Unknown";
   const fromScreen = route.params?.fromScreen;
+  const [galleryIndex, setGalleryIndex] = useState(0);
+  const [adIndex, setAdIndex] = useState(0);
 
   const openImageViewer = (index) => {
     setImageIndex(index);
@@ -179,35 +181,40 @@ const DharamsalaDetail = ({ navigation, route }) => {
   useEffect(() => {
     if (!formattedImages || formattedImages.length === 0) return;
 
-    const duration = (formattedImages[currentIndex]?.duration || 1) * 1000;
+    const duration = (formattedImages[galleryIndex]?.duration || 5) * 1000;
 
     const timeout = setTimeout(() => {
-      const nextIndex =
-        currentIndex < formattedImages.length - 1 ? currentIndex + 1 : 0;
-      setCurrentIndex(nextIndex);
-      topSliderRef.current?.goToSlide(nextIndex);
+      const isLast = galleryIndex === formattedImages.length - 1;
+      const nextIndex = isLast ? 0 : galleryIndex + 1;
+
+      setGalleryIndex(nextIndex);
+
+      if (topSliderRef.current) {
+        topSliderRef.current?.goToSlide(nextIndex, true);
+      }
     }, duration);
 
     return () => clearTimeout(timeout);
-  }, [currentIndex, formattedImages]);
+  }, [galleryIndex, formattedImages]);
+
 
 
   useEffect(() => {
     if (slider.length === 0) return;
 
-    const currentSlide = slider[currentIndex];
-    const durationInSeconds = currentSlide?.duration || 2;
-    const durationInMilliseconds = durationInSeconds * 1000;
+    const duration = (slider[adIndex]?.duration || 5) * 1000;
 
     const timeout = setTimeout(() => {
-      const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
-      setCurrentIndex(nextIndex);
-      sliderRef.current?.goToSlide(nextIndex);
-    }, durationInMilliseconds);
+      const nextIndex = adIndex < slider.length - 1 ? adIndex + 1 : 0;
+      setAdIndex(nextIndex);
+
+      if (sliderRef.current) {
+        sliderRef.current.goToSlide(nextIndex);
+      }
+    }, duration);
 
     return () => clearTimeout(timeout);
-  }, [currentIndex, slider]);
-
+  }, [adIndex, slider]);
 
 
   useEffect(() => {
@@ -238,6 +245,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
             image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution,
             hyperlink: mediaItem.hyperlink,
+            duration: mediaItem.duration || 4,
           }))
         );
 
@@ -427,7 +435,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
             showDoneButton={false}
             dotStyle={styles.dot}
             activeDotStyle={styles.activeDot}
-            onSlideChange={(index) => setCurrentIndex(index)}
+            onSlideChange={(index) => setGalleryIndex(index)}
           />
           <Modal visible={modalVisible} transparent={true} animationType="fade" onRequestClose={() => setModalVisible(false)}>
             <ImageViewer
@@ -541,6 +549,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
             showDoneButton={false}
             dotStyle={Globalstyles.dot}
             activeDotStyle={Globalstyles.activeDot}
+            onSlideChange={(index) => setAdIndex(index)}
           />
 
         </View>

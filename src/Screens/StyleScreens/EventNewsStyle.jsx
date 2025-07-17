@@ -55,13 +55,13 @@ const styles = StyleSheet.create({
         justifyContent: "space-between"
     },
     image1: {
-        width: SW(160),
+        width: SW(165),
         height: SH(150),
         marginRight: 0,
         borderRadius: 2,
     },
     image2: {
-        width: SW(320),
+        width: SW(330),
         height: SH(150),
         marginRight: 0,
         borderRadius: 2,
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
         paddingVertical: SH(2),
     },
     optionText: {
-        fontSize: SF(15),
+        fontSize: SF(13),
         fontFamily: "Poppins-Regular"
     },
     emptyContainer: {

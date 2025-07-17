@@ -1,4 +1,4 @@
-import { Text, View, TextInput, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, FlatList } from 'react-native'
+import { Text, View, TextInput, ScrollView, StatusBar, ActivityIndicator, FlatList } from 'react-native'
 import React, { useState, useEffect, useCallback } from 'react'
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/PartnerPreferenceStyle';
@@ -13,6 +13,8 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import { useFocusEffect } from '@react-navigation/native';
 import { setBioData } from '../../ReduxStore/Slices/BiodataSlice';
 import { useDispatch } from 'react-redux';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 import {
     PartnerOccupationData, FamilyTypeData,
     FamilyFinancialStatusData, PartnersLiveinData, BodyStructureData, ComplexionData, PartnerQualificationData, PartnerDietHabit, Disabilities, subCasteOptions,

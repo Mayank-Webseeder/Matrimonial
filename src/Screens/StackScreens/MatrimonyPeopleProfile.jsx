@@ -19,7 +19,6 @@ import { useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SF, SH, SW } from '../../utils/Dimensions';
 import { showMessage } from 'react-native-flash-message';
-const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 import AppIntroSlider from 'react-native-app-intro-slider';
 import ImageViewer from 'react-native-image-zoom-viewer';
 
@@ -37,7 +36,6 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
   const [profileData, setProfileData] = useState([]);
   const [userData, setUserData] = useState({});
-  const MyprofileData = useSelector((state) => state.getBiodata);
   const [imageIndex, setImageIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [isSwitchOn, setIsSwitchOn] = useState(isVerified);
@@ -99,7 +97,8 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   useEffect(() => {
     if (!formattedImages || formattedImages.length === 0) return;
 
-    const duration = (formattedImages[currentIndex]?.duration || 1) * 1000;
+    const bufferMs = 800;
+    const duration = (formattedImages[currentIndex]?.duration || 4) * 1000 + bufferMs;
 
     const timeout = setTimeout(() => {
       const nextIndex =
@@ -116,9 +115,10 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
     if (slider.length === 0) return;
 
     const currentSlide = slider[currentIndex];
-    const durationInSeconds = currentSlide?.duration || 2;
-    const durationInMilliseconds = durationInSeconds * 1000;
-
+    const durationInSeconds = Number(currentSlide?.duration) || 4;
+    const bufferMs = 1000;
+    const durationInMilliseconds = durationInSeconds * 1000 + bufferMs;
+    console.log("durationInSeconds", durationInSeconds);
     const timeout = setTimeout(() => {
       const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
       setCurrentIndex(nextIndex);
@@ -127,6 +127,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
     return () => clearTimeout(timeout);
   }, [currentIndex, slider]);
+
 
 
   const Advertisement_window = async () => {
@@ -166,6 +167,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution,
             hyperlink: mediaItem.hyperlink,
+            duration: mediaItem.duration || 4,
           }))
         );
 

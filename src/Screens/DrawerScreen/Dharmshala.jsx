@@ -193,6 +193,7 @@ const Dharmshala = ({ route }) => {
             image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution, // 👈 yeh add kiya
             hyperlink: mediaItem.hyperlink,
+            duration: mediaItem.duration || 4,
           }))
         );
 
@@ -280,21 +281,6 @@ const Dharmshala = ({ route }) => {
   };
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (currentIndex < slider.length - 1) {
-        setCurrentIndex((prevIndex) => prevIndex + 1);
-        sliderRef.current?.goToSlide(currentIndex + 1);
-      } else {
-        setCurrentIndex(0);
-        sliderRef.current?.goToSlide(0);
-      }
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, [currentIndex]);
-
-
-  useEffect(() => {
     fetchDharamsalaData("all");
     Advertisement_window();
   }, []);
@@ -304,9 +290,9 @@ const Dharmshala = ({ route }) => {
     if (slider.length === 0) return;
 
     const currentSlide = slider[currentIndex];
-    const durationInSeconds = currentSlide?.duration || 2;
-    const durationInMilliseconds = durationInSeconds * 1000;
-
+    const durationInSeconds = Number(currentSlide?.duration) || 4;
+    const bufferMs = 800;
+    const durationInMilliseconds = durationInSeconds * 1000 + bufferMs;
     const timeout = setTimeout(() => {
       const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
       setCurrentIndex(nextIndex);
@@ -315,7 +301,6 @@ const Dharmshala = ({ route }) => {
 
     return () => clearTimeout(timeout);
   }, [currentIndex, slider]);
-
 
   const renderSkeleton = () => (
     <SkeletonPlaceholder>
@@ -450,7 +435,7 @@ const Dharmshala = ({ route }) => {
     return (
       <View style={styles.card}
       >
-        <Pressable style={styles.cardData} onPress={() => navigation.navigate("DharamsalaDetail", { DharamsalaData: item, isSaved: isSaved, _id: item?._id ,fromScreen: "Dharmshala" })} >
+        <Pressable style={styles.cardData} onPress={() => navigation.navigate("DharamsalaDetail", { DharamsalaData: item, isSaved: isSaved, _id: item?._id, fromScreen: "Dharmshala" })} >
           <TouchableOpacity onPress={() => openImageViewer(item?.images?.[0])}>
             <Image
               source={item?.images?.[0] ? { uri: item?.images?.[0] } : require('../../Images/NoImage.png')}
@@ -666,7 +651,7 @@ const Dharmshala = ({ route }) => {
                 <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                   <Image
                     source={{ uri: item.image }}
-                     style={{ width:"100%", height:SH(180) , resizeMode: 'contain' }}
+                    style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
                   />
                 </TouchableOpacity>
               );

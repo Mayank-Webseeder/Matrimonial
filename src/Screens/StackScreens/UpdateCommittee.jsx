@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, FlatList } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, StatusBar, ActivityIndicator, FlatList } from 'react-native';
 import Colors from '../../utils/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -12,6 +12,8 @@ import { UPDATE_COMMITTEE } from '../../utils/BaseUrl';
 import { CityData, subCasteOptions } from '../../DummyData/DropdownData';
 import { showMessage } from 'react-native-flash-message';
 import { Dropdown } from 'react-native-element-dropdown';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 const UpdateCommittee = ({ navigation, route }) => {
     const { committeeData } = route.params;
     const [cityInput, setCityInput] = useState('');
@@ -117,11 +119,10 @@ const UpdateCommittee = ({ navigation, route }) => {
         }
     }, [committeeData]);
 
-    // Handle Image Selection
     const handleImagePick = () => {
         ImageCropPicker.openPicker({
-            width: 300,
-            height: 250,
+            width: 1000,
+            height: 1000,
             cropping: true,
             includeBase64: true,
             mediaType: "photo",
@@ -151,7 +152,6 @@ const UpdateCommittee = ({ navigation, route }) => {
 
             const payload = { ...CommitteeData };
 
-            // If photoUrl is not base64 (i.e., user didn't select a new image), remove it from the payload
             if (!payload.photoUrl?.startsWith("data:image/")) {
                 delete payload.photoUrl;
             }

@@ -215,6 +215,7 @@ const Committee = ({ navigation, route }) => {
             image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution,
             hyperlink: mediaItem.hyperlink,
+            duration: mediaItem.duration || 4,
           }))
         );
 
@@ -292,7 +293,7 @@ const Committee = ({ navigation, route }) => {
 
   const openImageViewer = (imageUri) => {
     if (imageUri) {
-      setSelectedImage([{ url: imageUri }]); // Important: `url` key is used by ImageViewer
+      setSelectedImage([{ url: imageUri }]);
       setImageVisible(true);
     }
   };
@@ -308,9 +309,10 @@ const Committee = ({ navigation, route }) => {
     if (slider.length === 0) return;
 
     const currentSlide = slider[currentIndex];
-    const durationInSeconds = currentSlide?.duration || 2;
-    const durationInMilliseconds = durationInSeconds * 1000;
-
+    const durationInSeconds = Number(currentSlide?.duration) || 4;
+     const bufferMs = 800;
+    const durationInMilliseconds = durationInSeconds * 1000 + bufferMs;
+    console.log("durationInSeconds", durationInSeconds);
     const timeout = setTimeout(() => {
       const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
       setCurrentIndex(nextIndex);
@@ -319,6 +321,7 @@ const Committee = ({ navigation, route }) => {
 
     return () => clearTimeout(timeout);
   }, [currentIndex, slider]);
+
 
   const renderSkeleton = () => (
     <SkeletonPlaceholder>
@@ -463,8 +466,6 @@ const Committee = ({ navigation, route }) => {
               />
             </Modal>
           )}
-
-
           <View style={styles.leftContainer}>
             <Text style={styles.title}>{item?.committeeTitle}</Text>
             <Text style={styles.Nametext}>President - {item?.presidentName}</Text>
@@ -477,7 +478,6 @@ const Committee = ({ navigation, route }) => {
         </Pressable>
 
         <View style={styles.sharecontainer}>
-          {/* Bookmark Button */}
           <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id || id)}>
             <FontAwesome
               name={item?.isSaved ? "bookmark" : "bookmark-o"}

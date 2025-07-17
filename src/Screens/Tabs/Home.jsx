@@ -24,6 +24,7 @@ import { SF, SW, SH } from '../../utils/Dimensions';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import Video from 'react-native-video';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -47,56 +48,35 @@ const Home = ({ navigation }) => {
     (sub) => sub.serviceType === "Biodata" && sub.status === "Expired"
   );
 
-  const isPanditExpired = profile_data?.serviceSubscriptions?.some(
-    (sub) => sub.serviceType === "Pandit" && sub.status === "Expired"
-  );
-  const isJyotishExpired = profile_data?.serviceSubscriptions?.some(
-    (sub) => sub.serviceType === "Jyotish" && sub.status === "Expired"
-  );
-  const isKathavachakExpired = profile_data?.serviceSubscriptions?.some(
-    (sub) => sub.serviceType === "Kathavachak" && sub.status === "Expired"
-  );
-
-  const partnerPreferences = MyprofileData?.Biodata?.partnerPreferences || null;
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
   const [NotificationData, setNotificationData] = useState({});
-
+const [isVideoPaused, setIsVideoPaused] = useState(true);
+const [currentSlide, setCurrentSlide] = useState(0);
+const [mutedMap, setMutedMap] = useState({}); // Per video mute state
   const isBiodataEmpty = Object.keys(MyprofileData?.Biodata || {}).length === 0;
 
   const sections = ["dummy"];
 
-  // useEffect(() => {
-  //   const expiredServices = [];
+ 
+useFocusEffect(
+  React.useCallback(() => {
+    setIsVideoPaused(false);
+    return () => setIsVideoPaused(true);
+  }, [])
+);
 
-  //   if (isBiodataExpired) expiredServices.push('Biodata');
-  //   if (isPanditExpired) expiredServices.push('Pandit');
-  //   if (isJyotishExpired) expiredServices.push('Jyotish');
-  //   if (isKathavachakExpired) expiredServices.push('Kathavachak');
-  //   if (expiredServices.length > 0) {
-  //     Alert.alert(
-  //       'Subscription Expired',
-  //       `Your ${expiredServices.join(', ')} subscription(s) have expired. Please renew to continue using the services.`,
-  //       [
-  //         {
-  //           text: 'OK',
-  //           style: 'default',
-  //           onPress: () => {
-  //             navigation.navigate("MainApp", {
-  //               screen: "Tabs",
-  //               params: {
-  //                 screen: "MyProfile",
-  //               },
-  //             });
-  //           },
-  //         },
-  //       ]
-  //     );
-  //   }
-  // }, [isBiodataExpired, isPanditExpired, isJyotishExpired, isKathavachakExpired]);
+// Helper to get mute state for current slide
+const isMuted = mutedMap[currentSlide] ?? true;
 
+const toggleMute = (index) => {
+  setMutedMap(prev => ({
+    ...prev,
+    [index]: !prev[index],
+  }));
+};
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -114,6 +94,45 @@ const Home = ({ navigation }) => {
       getActivistProfile();
     }, 2000);
   }, []);
+
+
+  useEffect(() => {
+    if (Topslider.length === 0) return;
+
+    const currentSlideTop = Topslider[currentIndexTop];
+    const durationInSecondsTop = Number(currentSlideTop?.duration) || 4;
+    const bufferMs = 800;
+    const durationInMillisecondsTop = durationInSecondsTop * 1000 + bufferMs;
+
+    console.log("⏱️ Top Duration (sec):", durationInSecondsTop);
+
+    const timeoutTop = setTimeout(() => {
+      const nextIndexTop = currentIndexTop < Topslider.length - 1 ? currentIndexTop + 1 : 0;
+      setCurrentIndexTop(nextIndexTop);
+      sliderRefTop.current?.goToSlide(nextIndexTop);
+    }, durationInMillisecondsTop);
+
+    return () => clearTimeout(timeoutTop);
+  }, [currentIndexTop, Topslider]);
+
+
+  useEffect(() => {
+    if (Bottomslider.length === 0) return;
+
+    const currentSlideBottom = Bottomslider[currentIndexBottom];
+    const durationInSecondsBottom = Number(currentSlideBottom?.duration) || 4;
+    const bufferMs = 800;
+    const durationInMillisecondsBottom = durationInSecondsBottom * 1000 + bufferMs;
+    console.log("⏱️ Bottom Duration (sec):", durationInSecondsBottom);
+
+    const timeoutBottom = setTimeout(() => {
+      const nextIndexBottom = currentIndexBottom < Bottomslider.length - 1 ? currentIndexBottom + 1 : 0;
+      setCurrentIndexBottom(nextIndexBottom);
+      sliderRefBottom.current?.goToSlide(nextIndexBottom);
+    }, durationInMillisecondsBottom);
+
+    return () => clearTimeout(timeoutBottom);
+  }, [currentIndexBottom, Bottomslider]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -287,11 +306,12 @@ const Home = ({ navigation }) => {
             resolution: mediaItem.resolution,
             mediaType: mediaItem.mediaUrl.includes('.mp4') ? 'video' : 'image',
             hyperlink: mediaItem.hyperlink,
+            duration: Number(mediaItem.duration) || 4,
           }))
         );
 
         TopsetSlider(fullSliderData);
-        console.log("Slider Data:", fullSliderData);
+        console.log("top Slider Data:", fullSliderData);
       } else {
         TopsetSlider([]);
       }
@@ -337,14 +357,15 @@ const Home = ({ navigation }) => {
             title: item.title,
             description: item.description,
             image: `${PHOTO_URL}/${mediaItem.mediaUrl}`,
-            resolution: mediaItem.resolution, // 👈 yeh add kiya
-            mediaType: mediaItem.mediaUrl.includes('.mp4') ? 'video' : 'image', // Determine media type
+            resolution: mediaItem.resolution,
+            mediaType: mediaItem.mediaUrl.includes('.mp4') ? 'video' : 'image',
             hyperlink: mediaItem.hyperlink,
+            duration: Number(mediaItem.duration) || 4,
           }))
         );
 
         BottomsetSlider(fullSliderData);
-        console.log("Slider Data:", fullSliderData);
+        console.log("Bottom Slider Data:", fullSliderData);
       } else {
         BottomsetSlider([]);
       }
@@ -487,39 +508,6 @@ const Home = ({ navigation }) => {
     }
   }
 
-  useEffect(() => {
-    if (slider.length === 0) return;
-
-    // Handling the top slider change
-    const currentSlideTop = slider[currentIndexTop];
-    const durationInSecondsTop = currentSlideTop?.duration || 2;
-    const durationInMillisecondsTop = durationInSecondsTop * 1000;
-
-    const timeoutTop = setTimeout(() => {
-      const nextIndexTop = currentIndexTop < slider.length - 1 ? currentIndexTop + 1 : 0;
-      setCurrentIndexTop(nextIndexTop);  // Move top slider
-      sliderRefTop.current?.goToSlide(nextIndexTop);
-    }, durationInMillisecondsTop);
-
-    return () => clearTimeout(timeoutTop);
-  }, [currentIndexTop, slider]);
-
-  useEffect(() => {
-    if (slider.length === 0) return;
-    const currentSlideBottom = slider[currentIndexBottom];
-    const durationInSecondsBottom = currentSlideBottom?.duration || 2;
-    const durationInMillisecondsBottom = durationInSecondsBottom * 1000;
-
-    const timeoutBottom = setTimeout(() => {
-      const nextIndexBottom = currentIndexBottom < slider.length - 1 ? currentIndexBottom + 1 : 0;
-      setCurrentIndexBottom(nextIndexBottom);
-      sliderRefBottom.current?.goToSlide(nextIndexBottom);
-    }, durationInMillisecondsBottom);
-
-    return () => clearTimeout(timeoutBottom);
-  }, [currentIndexBottom, slider]);
-
-
   const TAB_SCREENS = ["Home", "Pandit", "Matrimonial", "BioData", "EventNews", "MyProfile"];
   const DRAWER_SCREENS = ["MainPartnerPrefrence", "Interested Profile", "Saved Profile", "Pandit", "EventNews", "Dharmshala", "Committee", "Activist", "FeedBack", "Jyotish", "Kathavachak", "SuccessStories", "NotificationSettings", "ChangePassword", "PrivacySettings", "InActiveDelete", "AboutUs", "PrivacyPolicy", "TermsConditions", "SubscriptionPolicy", "MyProfile", "SubscriptionHistory", "MySuccessStory"];
 
@@ -592,49 +580,76 @@ const Home = ({ navigation }) => {
         ListHeaderComponent={
           <>
             <View style={styles.sliderContainer}>
-              <View style={styles.topSlider}>
-                <AppIntroSlider
-                  ref={sliderRefTop}
-                  data={Topslider}
-                  renderItem={({ item }) => {
-                    const { width, height } = item.resolution;
+             <AppIntroSlider
+  ref={sliderRefTop}
+  data={Topslider}
+  showPagination={Topslider.length > 1}
+  onSlideChange={(index) => {
+    setCurrentSlide(index);
+    setMutedMap(prev => ({ ...prev, [index]: true })); 
+  }}
+  renderItem={({ item, index }) => {
+    const handlePress = () => {
+      if (item.mediaType === 'video') {
+      }
+      if (item.hyperlink) {
+        Linking.openURL(item.hyperlink).catch(err =>
+          console.error("Failed to open URL:", err)
+        );
+      }
+    };
 
-                    const handlePress = () => {
-                      if (item.hyperlink) {
-                        Linking.openURL(item.hyperlink).catch(err =>
-                          console.error("Failed to open URL:", err)
-                        );
-                      }
-                    };
+    return (
+      <TouchableOpacity activeOpacity={0.9} onPress={handlePress}>
+        {item.mediaType === 'video' ? (
+          <View style={{ position: 'relative' }}>
+            <Video
+              source={{ uri: item.image }}
+              style={{ width: '100%', height: 200 }}
+              resizeMode="contain"
+              repeat
+              muted={isMuted}
+              paused={isVideoPaused}
+              controls={false}
+              ignoreSilentSwitch="ignore"
+            />
+            <TouchableOpacity
+              onPress={() => toggleMute(index)}
+              style={{
+                position: 'absolute',
+                bottom: 10,
+                right: 20,
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                borderRadius: 20,
+                padding: 8,
+              }}
+            >
+              <Ionicons
+                name={isMuted ? 'volume-mute' : 'volume-high'}
+                size={24}
+                color="#fff"
+              />
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <Image
+            source={{ uri: item.image }}
+            style={{ width: '100%', height: SH(180) }}
+            resizeMode="cover"
+          />
+        )}
+      </TouchableOpacity>
+    );
+  }}
+  showNextButton={false}
+  showDoneButton={false}
+  {...(Topslider.length > 1 && {
+    dotStyle: styles.dot,
+    activeDotStyle: styles.activeDot,
+  })}
+/>
 
-                    return (
-                      <TouchableOpacity activeOpacity={0.9} onPress={handlePress}>
-                        {item.mediaType === 'video' ? (
-                          <Video
-                            source={{ uri: item.image }}
-                               style={{ width:"100%", height:SH(180) , resizeMode: 'contain' }}
-                            resizeMode="cover"
-                            repeat
-                            muted={false}
-                            controls={false}
-                            paused={false}
-                          />
-                        ) : (
-                          <Image
-                            source={{ uri: item.image }}
-                             style={{ width:"100%", height:SH(180) , resizeMode: 'contain' }}
-                            resizeMode="cover"
-                          />
-                        )}
-                      </TouchableOpacity>
-                    );
-                  }}
-                  showNextButton={false}
-                  showDoneButton={false}
-                  dotStyle={styles.dot}
-                  activeDotStyle={styles.activeDot}
-                />
-              </View>
+
             </View>
             <View>
               <HeadingWithViewAll

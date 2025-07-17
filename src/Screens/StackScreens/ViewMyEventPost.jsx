@@ -21,6 +21,7 @@ import { CommonActions } from '@react-navigation/native';
 import { VIEW_EVENT } from '../../utils/BaseUrl';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { BackHandler } from 'react-native';
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 const ViewMyEventPost = ({ navigation, route }) => {
   const sheetRef = useRef(null);
@@ -45,6 +46,13 @@ const ViewMyEventPost = ({ navigation, route }) => {
   const myprofile_id = profileData?._id || null;
   const [eventList, setEventList] = useState([]);
    const [deletingCommentId, setDeletingCommentId] = useState(null);
+
+
+   
+     const [modalVisible1, setModalVisible1] = useState(false);
+     const [imageIndex, setImageIndex] = useState(0);
+     const [formattedImages, setFormattedImages] = useState([]);
+   
 
   useFocusEffect(
     React.useCallback(() => {
@@ -482,74 +490,85 @@ const ViewMyEventPost = ({ navigation, route }) => {
     });
   };
 
-  const renderImages = (images, item) => {
-    if (images.length === 0) {
-      return <Text style={styles.noImageText}>No images available for this post</Text>;
-    }
-
-    if (images.length === 1) {
-      return (
-        <TouchableOpacity
-          onPress={() => navigation.navigate('ViewPost', { image: images[0], postId: item._id })}
-        >
-          <Image source={{ uri: images[0] }} style={[styles.image1, { width: '100%', height: SH(250) }]} />
-        </TouchableOpacity>
-      );
-    }
-
-    if (images.length === 2) {
-      return (
-        <View style={{ flexDirection: 'row' }}>
-          {images.map((image, index) => (
-            <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, postId: item._id})}>
-              <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(2) }]} />
-            </TouchableOpacity>
-          ))}
-        </View>
-      );
-    }
-
-    if (images.length === 3) {
-      return (
-        <View>
-          <View style={{ flexDirection: 'row' }}>
-            <TouchableOpacity onPress={() => navigation.navigate('ViewPost', { image: images[0], postId: item._id})}>
-              <Image source={{ uri: images[0] }} style={[styles.image2, { flex: 1, margin: SW(2) }]} />
-            </TouchableOpacity>
-          </View>
-          <View style={{ flexDirection: 'row' }}>
-            {images.slice(1).map((image, index) => (
-              <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, postId: item._id})}>
-                <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(2) }]} />
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-      );
-    }
-
-    if (images.length >= 4) {
-      return (
-        <View>
-          <View style={{ flexDirection: 'row' }}>
-            {images.slice(0, 2).map((image, index) => (
-              <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, postId: item._id })}>
-                <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(1) }]} />
-              </TouchableOpacity>
-            ))}
-          </View>
-          <View style={{ flexDirection: 'row' }}>
-            {images.slice(2, 4).map((image, index) => (
-              <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, postId: item._id })}>
-                <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(1) }]} />
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-      );
-    }
-  };
-
+   const renderImages = (images, item) => {
+     if (images.length === 0) return null;
+ 
+     const openImageViewer = (index) => {
+       console.log("📷 Opening viewer for images:", images);
+       console.log("👉 Opening at index:", index);
+ 
+       const cleanImages = images
+         .filter(img => typeof img === 'string' && img.startsWith('http'))
+         .map(uri => ({ url: uri }));
+ 
+       console.log("✅ Formatted for ImageViewer:", cleanImages);
+ 
+       setImageIndex(index);
+       setFormattedImages(cleanImages);
+       setModalVisible1(true);
+     };
+ 
+     if (images.length === 1) {
+       return (
+         <TouchableOpacity onPress={() => openImageViewer(0)}>
+           <Image source={{ uri: images[0] }} style={[styles.image1, { width: '100%', height: SH(250) }]} />
+         </TouchableOpacity>
+       );
+     }
+ 
+     if (images.length === 2) {
+       return (
+         <View style={{ flexDirection: 'row' }}>
+           {images.map((image, index) => (
+             <TouchableOpacity key={index} onPress={() => openImageViewer(index)}>
+               <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(2) }]} />
+             </TouchableOpacity>
+           ))}
+         </View>
+       );
+     }
+ 
+     if (images.length === 3) {
+       return (
+         <View>
+           <View style={{ flexDirection: 'row' }}>
+             <TouchableOpacity onPress={() => openImageViewer(0)}>
+               <Image source={{ uri: images[0] }} style={[styles.image2, { flex: 1, margin: SW(2) }]} />
+             </TouchableOpacity>
+           </View>
+           <View style={{ flexDirection: 'row' }}>
+             {images.slice(1).map((image, index) => (
+               <TouchableOpacity key={index} onPress={() => openImageViewer(index + 1)}>
+                 <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(2) }]} />
+               </TouchableOpacity>
+             ))}
+           </View>
+         </View>
+       );
+     }
+ 
+     if (images.length >= 4) {
+       return (
+         <View>
+           <View style={{ flexDirection: 'row' }}>
+             {images.slice(0, 2).map((image, index) => (
+               <TouchableOpacity key={index} onPress={() => openImageViewer(index)}>
+                 <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(1) }]} />
+               </TouchableOpacity>
+             ))}
+           </View>
+           <View style={{ flexDirection: 'row' }}>
+             {images.slice(2, 4).map((image, index) => (
+               <TouchableOpacity key={index} onPress={() => openImageViewer(index + 2)}>
+                 <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(1) }]} />
+               </TouchableOpacity>
+             ))}
+           </View>
+         </View>
+       );
+     }
+   };
+   
   const renderItem = ({ item }) => {
     const isLiked = item.isLiked || null;
     const images = item.images || [];
@@ -741,6 +760,52 @@ const ViewMyEventPost = ({ navigation, route }) => {
             </View>
           </View>
         </RBSheet>
+
+
+          <Modal
+                  visible={modalVisible1}
+                  transparent={true}
+                  animationType="fade"
+                  onRequestClose={() => setModalVisible1(false)}
+                >
+                  <View style={{ flex: 1, backgroundColor: "white" }}>
+                    <ImageViewer
+                      imageUrls={formattedImages}
+                      index={imageIndex}
+                      enableSwipeDown={true}
+                      enablePreload={true}
+                      onSwipeDown={() => setModalVisible1(false)}
+                      onCancel={() => setModalVisible1(false)}
+                      saveToLocalByLongPress={false}
+                      backgroundColor="rgba(0,0,0,0.95)"
+                      renderIndicator={(currentIndex, allSize) => (
+                        <View
+                          style={{
+                            position: "absolute",
+                            top: SH(30),
+                            alignSelf: "center",
+                            backgroundColor: "rgba(0,0,0,0.6)",
+                            paddingHorizontal: SW(8),
+                            borderRadius: 5,
+                            paddingVertical: SH(8),
+                            zIndex: 999
+                          }}
+                        >
+                          <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>
+                            {currentIndex} / {allSize}
+                          </Text>
+                        </View>
+                      )}
+                      renderImage={(props) => (
+                        <Image
+                          {...props}
+                          resizeMode="contain"
+                          style={{ width: '100%', height: '100%' }}
+                        />
+                      )}
+                    />
+                  </View>
+                </Modal>
 
       </View>
     );

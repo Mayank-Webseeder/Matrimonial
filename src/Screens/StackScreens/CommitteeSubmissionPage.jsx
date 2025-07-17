@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, SafeAreaView, StatusBar, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, StatusBar, FlatList, ActivityIndicator } from 'react-native';
 import Colors from '../../utils/Colors';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -12,12 +12,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { showMessage } from 'react-native-flash-message';
 import { Dropdown } from 'react-native-element-dropdown';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const CommitteeSubmissionPage = ({ navigation }) => {
-    const [subCasteInput, setSubCasteInput] = useState('');
     const [cityInput, setCityInput] = useState('');
     const [filteredCities, setFilteredCities] = useState([]);
-    const [filteredSubCaste, setFilteredSubCaste] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState({});
     const [CommitteeData, setCommitteeData] = useState({
@@ -189,8 +188,8 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     icon: "success",
                 });
                 navigation.navigate('MainApp', {
-  screen: 'Committee',
-});
+                    screen: 'Committee',
+                });
             } else {
                 showMessage({
                     type: "danger",
@@ -390,7 +389,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                     keyboardType="phone-pad"
                     maxLength={10}
                     placeholderTextColor={Colors.gray}
-                    value={CommitteeData?.mobileNo} 
+                    value={CommitteeData?.mobileNo}
                     onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
                     autoComplete="off" importantForAutofill="no"
                     autoCorrect={false}

@@ -1,18 +1,17 @@
-import { Text, View, TouchableOpacity, Image, TextInput, SafeAreaView, StatusBar, ScrollView, ActivityIndicator } from 'react-native'
+import { Text, View, TouchableOpacity, Image, TextInput, StatusBar, ScrollView, ActivityIndicator } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from '../StyleScreens/CreatePostStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Globalstyles from '../../utils/GlobalCss';
-import ImageCropPicker from 'react-native-image-crop-picker';
 import { useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { CREATE_EVENT_NEWS } from '../../utils/BaseUrl';
 import { showMessage } from 'react-native-flash-message';
 import { launchImageLibrary } from 'react-native-image-picker';
-import { CommonActions } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const CreatePost = ({ navigation, route }) => {
     const MyActivistProfile = useSelector((state) => state.activist.activist_data);
@@ -26,46 +25,26 @@ const CreatePost = ({ navigation, route }) => {
     })
 
     const pickerOptions = {
-        selectionLimit: 5,
+        selectionLimit: 4,
         mediaType: 'photo',
         includeBase64: true,
-        maxWidth: 400,
-        maxHeight: 400,
+        maxWidth: 1000,
+        maxHeight: 1000,
         quality: 1,
     };
 
-    // const handleImageUpload = () => {
-    //     ImageCropPicker.openPicker({
-    //       multiple: true,
-    //       maxFiles: 5,          // 🔒 hard limit inside the picker
-    //       cropping: true,
-    //       width: 400,
-    //       height: 400,
-    //       includeBase64: true,
-    //       compressImageQuality: 1,
-    //     })
-    //       .then((images) => {
-    //         // images.length is guaranteed ≤ 5
-    //         const newPhotos = images.map((img) => img.data); // base64 only
-    //         setPhotos(newPhotos);
-    //       })
-    //       .catch((err) => console.log('Crop Picker Error:', err));
-    //   };
-
     const handleImageUpload = () => {
         launchImageLibrary(pickerOptions, (response) => {
-            if (response.didCancel) return;                 // user backed out
+            if (response.didCancel) return;                
             if (response.errorCode) {
                 console.log('ImagePicker Error:', response.errorMessage);
                 return;
             }
-
-            // response.assets is an array (max 5 because of selectionLimit)
             const newPhotos = response.assets.map(
-                (asset) => asset.base64                       // plain base64
+                (asset) => asset.base64                      
             );
 
-            setPhotos(newPhotos);                           // overwrite old photos
+            setPhotos(newPhotos);                          
         });
     };
 
@@ -104,7 +83,7 @@ const CreatePost = ({ navigation, route }) => {
                 });
                 navigation.navigate("MainApp", {
                     screen: "Tabs",
-                    params: { screen: "EventNews" } 
+                    params: { screen: "EventNews" }
                 });
             } else {
                 throw new Error(response.data.message || "Unexpected response from server");
@@ -112,7 +91,7 @@ const CreatePost = ({ navigation, route }) => {
 
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error fetching biodata:", errorMsg);
+            console.error("Error fetching eventnews :", errorMsg);
             showMessage({
                 type: 'danger',
                 message: 'Error',
@@ -169,7 +148,7 @@ const CreatePost = ({ navigation, route }) => {
                 </View>
             </View>
             <View style={styles.textContainer}>
-                <TextInput
+                {/* <TextInput
                     style={Globalstyles.input}
                     placeholder="Title"
                     placeholderTextColor={Colors.gray}
@@ -179,7 +158,7 @@ const CreatePost = ({ navigation, route }) => {
                     textContentType="none"
                     importantForAutofill="no"
                     autoCorrect={false}
-                />
+                /> */}
                 <TextInput
                     style={Globalstyles.textInput}
                     placeholder="What’s on your mind?"
@@ -197,7 +176,7 @@ const CreatePost = ({ navigation, route }) => {
 
             <View style={styles.addPhoto}>
                 <View>
-                    <Text style={styles.Text}>Add Image ( Max Limit 5 )</Text>
+                    <Text style={styles.Text}>Add Image ( Max Limit 4 )</Text>
                 </View>
                 <View style={styles.righticons}>
                     <TouchableOpacity onPress={handleImageUpload}>

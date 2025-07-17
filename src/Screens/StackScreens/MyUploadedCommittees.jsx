@@ -23,17 +23,14 @@ const MyUploadedCommittees = ({ navigation, route }) => {
 
     const openImageViewer = (imageUri) => {
         if (imageUri) {
-            setSelectedImage([{ url: imageUri }]); // Important: `url` key is used by ImageViewer
+            setSelectedImage([{ url: imageUri }]); 
             setImageVisible(true);
         }
     };
 
     const handleDelete = async (id) => {
-        console.log("🗑️ Deleting Committee ID:", id);
-
         try {
-            setIsLoading(true);  // Show loading indicator
-
+            setIsLoading(true);  
             const token = await AsyncStorage.getItem("userToken");
             if (!token) throw new Error("Authorization token is missing");
 
@@ -41,9 +38,8 @@ const MyUploadedCommittees = ({ navigation, route }) => {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             };
-
+            
             console.log("🔹 Headers:", headers);
-
             const response = await axios.delete(`${DELETE_COMMITTEE}/${id}`, { headers });
 
             console.log("✅ Delete Response:", response.data);
@@ -56,10 +52,9 @@ const MyUploadedCommittees = ({ navigation, route }) => {
                     duarion: 7000
                 });
 
-                setModalVisible(false);  // Close modal
-                setSelectedItem(null);  // Reset selected item
+                setModalVisible(false);  
+                setSelectedItem(null);  
 
-                // ✅ Ensure navigation is available before using it
                 if (navigation && navigation.navigate) {
                     navigation.navigate('MainApp', {
                         screen: 'Committee',
@@ -95,11 +90,9 @@ const MyUploadedCommittees = ({ navigation, route }) => {
                 });
             }
         } finally {
-            setIsLoading(false);  // Hide loading indicator
+            setIsLoading(false);
         }
     };
-
-
 
 
     const openMenu = (item, event) => {

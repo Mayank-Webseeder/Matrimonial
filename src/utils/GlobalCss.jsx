@@ -12,7 +12,7 @@ const Globalstyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    height: SH(50),
+    height: SH(45),
     marginVertical: SH(35),
     marginBottom: SH(5),
     backgroundColor: '#f5edf0',
@@ -20,7 +20,7 @@ const Globalstyles = StyleSheet.create({
   },
   headerText: {
     color: Colors.theme_color,
-    fontSize: SF(17),
+    fontSize: SF(15),
     fontFamily: "Poppins-Regular",
     marginHorizontal: SW(10),
   },
@@ -61,7 +61,7 @@ const Globalstyles = StyleSheet.create({
   },
   title: {
     fontFamily: "Poppins-Medium",
-    fontSize: SF(16),
+    fontSize: SF(15),
   },
   form: {
     backgroundColor: Colors.light,

@@ -48,7 +48,7 @@ const Pandit = ({ navigation, route }) => {
   const profile_data = ProfileData?.profiledata || {};
   const [refreshing, setRefreshing] = useState(false);
   const [slider, setSlider] = useState([]);
-  
+
   useFocusEffect(
     React.useCallback(() => {
       Top_Advertisement_window();
@@ -95,38 +95,23 @@ const Pandit = ({ navigation, route }) => {
     fetchPanditData()
   }
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (currentIndex < slider.length - 1) {
-        setCurrentIndex((prevIndex) => prevIndex + 1);
-        sliderRef.current?.goToSlide(currentIndex + 1);
-      } else {
-        setCurrentIndex(0);
-        sliderRef.current?.goToSlide(0);
-      }
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, [currentIndex]);
-
-
   useFocusEffect(
-  React.useCallback(() => {
-    const onBackPress = () => {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: "MainApp" }],
-      });
-      return true; 
-    };
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "MainApp" }],
+        });
+        return true;
+      };
 
-    BackHandler.addEventListener("hardwareBackPress", onBackPress);
+      BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
-    return () => {
-      BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-    };
-  }, [navigation])
-);
+      return () => {
+        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+      };
+    }, [navigation])
+  );
 
   const fetchPanditData = async (filterType = "search") => {
     try {
@@ -183,7 +168,7 @@ const Pandit = ({ navigation, route }) => {
           routes: [{ name: "AuthStack" }],
         });
       }
-      setPanditData([]); 
+      setPanditData([]);
     } finally {
       setLoading(false);
     }
@@ -200,8 +185,9 @@ const Pandit = ({ navigation, route }) => {
     if (slider.length === 0) return;
 
     const currentSlide = slider[currentIndex];
-    const durationInSeconds = currentSlide?.duration || 2;
-    const durationInMilliseconds = durationInSeconds * 1000;
+    const durationInSeconds = Number(currentSlide?.duration) || 4;
+    const bufferMs = 800;
+    const durationInMilliseconds = durationInSeconds * 1000 + bufferMs;
 
     const timeout = setTimeout(() => {
       const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
@@ -211,7 +197,6 @@ const Pandit = ({ navigation, route }) => {
 
     return () => clearTimeout(timeout);
   }, [currentIndex, slider]);
-
 
   const Top_Advertisement_window = async () => {
     try {
@@ -237,6 +222,7 @@ const Pandit = ({ navigation, route }) => {
             image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution,
             hyperlink: mediaItem.hyperlink,
+            duration: mediaItem.duration || 4,
           }))
         );
 
@@ -337,9 +323,6 @@ const Pandit = ({ navigation, route }) => {
     }
   };
 
-
-
-
   const shareProfile = async (profileId) => {
     const profileType = "pandit-detail";
     console.log("profileId:", profileId);
@@ -356,9 +339,6 @@ const Pandit = ({ navigation, route }) => {
       console.error("Sharing failed:", error?.message || error);
     }
   };
-
-
-
 
   const renderSkeleton = () => (
     <SkeletonPlaceholder>

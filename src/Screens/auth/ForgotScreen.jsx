@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, ImageBackground, TouchableOpacity, TextInput, SafeAreaView, ActivityIndicator, ScrollView, Platform } from "react-native";
+import { Text, View, ImageBackground, TouchableOpacity, TextInput, ActivityIndicator, ScrollView, Platform } from "react-native";
 import styles from "../StyleScreens/RegisterStyle";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Colors from "../../utils/Colors";
@@ -9,6 +9,7 @@ import Globalstyles from "../../utils/GlobalCss";
 import Entypo from 'react-native-vector-icons/Entypo';
 import { SH, SW, SF } from "../../utils/Dimensions";
 import { showMessage } from "react-native-flash-message";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const ForgotScreen = ({ navigation }) => {
     const [mobileNumber, setMobileNumber] = useState("");

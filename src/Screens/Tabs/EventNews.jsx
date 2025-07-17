@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, TextInput, ActivityIndicator, RefreshControl, Linking, BackHandler, Share } from 'react-native';
+import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, TextInput, ActivityIndicator, RefreshControl, Linking, BackHandler, Share, Modal } from 'react-native';
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import styles from '../StyleScreens/EventNewsStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -21,6 +21,8 @@ import { showMessage } from 'react-native-flash-message';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import { CommonActions } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/native';
+import ImageViewer from 'react-native-image-zoom-viewer';
+
 
 const EventNews = ({ navigation }) => {
   const route = useRoute();
@@ -49,6 +51,10 @@ const EventNews = ({ navigation }) => {
   const [eventList, setEventList] = useState([]);
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [imageIndex, setImageIndex] = useState(0);
+  const [formattedImages, setFormattedImages] = useState([]);
 
   useEffect(() => {
     console.log("myprofile_id", myprofile_id);
@@ -158,9 +164,10 @@ const EventNews = ({ navigation }) => {
     if (slider.length === 0) return;
 
     const currentSlide = slider[currentIndex];
-    const durationInSeconds = currentSlide?.duration || 2;
-    const durationInMilliseconds = durationInSeconds * 1000;
-
+    const durationInSeconds = currentSlide?.duration || 4;
+    const bufferMs = 800;
+    const durationInMilliseconds = durationInSeconds * 1000 + bufferMs;
+    console.log("durationInSeconds", durationInSeconds);
     const timeout = setTimeout(() => {
       const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
       setCurrentIndex(nextIndex);
@@ -184,7 +191,7 @@ const EventNews = ({ navigation }) => {
 
       if (response.data) {
         const fetchedData = response.data.data;
-        console.log("fetchedData", JSON.stringify(fetchedData));
+        console.log("event news fetchedData", JSON.stringify(fetchedData));
 
         const fullSliderData = fetchedData.flatMap((item) =>
           item.media.map((mediaItem) => ({
@@ -194,6 +201,7 @@ const EventNews = ({ navigation }) => {
             image: `https://api-matrimonial.webseeder.tech/${mediaItem.mediaUrl}`,
             resolution: mediaItem.resolution,
             hyperlink: mediaItem.hyperlink,
+            duration: Number(mediaItem.duration) || 4,
           }))
         );
 
@@ -551,14 +559,26 @@ const EventNews = ({ navigation }) => {
   }
 
   const renderImages = (images, item) => {
-    if (images.length === 0) {
-      return null;
-    }
+    if (images.length === 0) return null;
+
+    const openImageViewer = (index) => {
+      console.log("📷 Opening viewer for images:", images);
+      console.log("👉 Opening at index:", index);
+
+      const cleanImages = images
+        .filter(img => typeof img === 'string' && img.startsWith('http'))
+        .map(uri => ({ url: uri }));
+
+      console.log("✅ Formatted for ImageViewer:", cleanImages);
+
+      setImageIndex(index);
+      setFormattedImages(cleanImages);
+      setModalVisible(true);
+    };
+
     if (images.length === 1) {
       return (
-        <TouchableOpacity
-          onPress={() => navigation.navigate('ViewPost', { image: images[0], postId: item._id })}
-        >
+        <TouchableOpacity onPress={() => openImageViewer(0)}>
           <Image source={{ uri: images[0] }} style={[styles.image1, { width: '100%', height: SH(250) }]} />
         </TouchableOpacity>
       );
@@ -568,7 +588,7 @@ const EventNews = ({ navigation }) => {
       return (
         <View style={{ flexDirection: 'row' }}>
           {images.map((image, index) => (
-            <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, postId: item._id })}>
+            <TouchableOpacity key={index} onPress={() => openImageViewer(index)}>
               <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(2) }]} />
             </TouchableOpacity>
           ))}
@@ -580,13 +600,13 @@ const EventNews = ({ navigation }) => {
       return (
         <View>
           <View style={{ flexDirection: 'row' }}>
-            <TouchableOpacity onPress={() => navigation.navigate('ViewPost', { image: images[0], postId: item._id })}>
+            <TouchableOpacity onPress={() => openImageViewer(0)}>
               <Image source={{ uri: images[0] }} style={[styles.image2, { flex: 1, margin: SW(2) }]} />
             </TouchableOpacity>
           </View>
           <View style={{ flexDirection: 'row' }}>
             {images.slice(1).map((image, index) => (
-              <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, postId: item._id })}>
+              <TouchableOpacity key={index} onPress={() => openImageViewer(index + 1)}>
                 <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(2) }]} />
               </TouchableOpacity>
             ))}
@@ -600,14 +620,14 @@ const EventNews = ({ navigation }) => {
         <View>
           <View style={{ flexDirection: 'row' }}>
             {images.slice(0, 2).map((image, index) => (
-              <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, postId: item._id })}>
+              <TouchableOpacity key={index} onPress={() => openImageViewer(index)}>
                 <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(1) }]} />
               </TouchableOpacity>
             ))}
           </View>
           <View style={{ flexDirection: 'row' }}>
             {images.slice(2, 4).map((image, index) => (
-              <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, postId: item._id })}>
+              <TouchableOpacity key={index} onPress={() => openImageViewer(index + 2)}>
                 <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(1) }]} />
               </TouchableOpacity>
             ))}
@@ -616,6 +636,7 @@ const EventNews = ({ navigation }) => {
       );
     }
   };
+
 
   const renderItem = ({ item }) => {
     const likeInfo = likeData[item._id] || {
@@ -759,6 +780,52 @@ const EventNews = ({ navigation }) => {
           </View>
         </RBSheet>
 
+        <Modal
+          visible={modalVisible}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={{ flex: 1, backgroundColor: "white" }}>
+            <ImageViewer
+              imageUrls={formattedImages}
+              index={imageIndex}
+              enableSwipeDown={true}
+              enablePreload={true}
+              onSwipeDown={() => setModalVisible(false)}
+              onCancel={() => setModalVisible(false)}
+              saveToLocalByLongPress={false}
+              backgroundColor="rgba(0,0,0,0.95)"
+              renderIndicator={(currentIndex, allSize) => (
+                <View
+                  style={{
+                    position: "absolute",
+                    top: SH(30),
+                    alignSelf: "center",
+                    backgroundColor: "rgba(0,0,0,0.6)",
+                    paddingHorizontal: SW(8),
+                    borderRadius: 5,
+                    paddingVertical: SH(8),
+                    zIndex: 999
+                  }}
+                >
+                  <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>
+                    {currentIndex} / {allSize}
+                  </Text>
+                </View>
+              )}
+              renderImage={(props) => (
+                <Image
+                  {...props}
+                  resizeMode="contain"
+                  style={{ width: '100%', height: '100%' }}
+                />
+              )}
+            />
+          </View>
+        </Modal>
+
+
       </View>
     );
   };
@@ -869,9 +936,6 @@ const EventNews = ({ navigation }) => {
                 Events or news uploaded by Activists will be shown here.
               </Text>
             </View>
-            // <View style={styles.emptyContainer}>
-            //   <Text style={styles.emptyText}>No Event & News Posted Yet</Text>
-            // </View>
           }
         />
         {getPostsForPage().length >= 10 && (
@@ -899,7 +963,7 @@ const EventNews = ({ navigation }) => {
                 <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                   <Image
                     source={{ uri: item.image }}
-                      style={{ width:"100%", height:SH(180) , resizeMode: 'contain' }}
+                    style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
                   />
                 </TouchableOpacity>
               );

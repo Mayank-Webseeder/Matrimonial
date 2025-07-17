@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, StatusBar, SafeAreaView, FlatList, ActivityIndicator} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, StatusBar, FlatList, ActivityIndicator } from 'react-native';
 import Colors from '../../utils/Colors';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -13,6 +13,7 @@ import axios from 'axios';
 import _ from "lodash";
 import { showMessage } from 'react-native-flash-message';
 import { Dropdown } from 'react-native-element-dropdown';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const UpdateDharamsala = ({ navigation, route }) => {
     const { DharmshalaData } = route.params || {};
@@ -80,7 +81,7 @@ const UpdateDharamsala = ({ navigation, route }) => {
         setFilteredCities([]);
     };
 
-      const handleInputChange = (field, value) => {
+    const handleInputChange = (field, value) => {
         setDharamsalaData(prev => ({
             ...prev,
             [field]: value,
@@ -91,8 +92,8 @@ const UpdateDharamsala = ({ navigation, route }) => {
         ImageCropPicker.openPicker({
             multiple: true,
             cropping: true,
-            width: 400,
-            height: 400,
+            width: 1000,
+            height: 1000,
             compressImageQuality: 1,
             mediaType: "photo"
         })
@@ -305,7 +306,7 @@ const UpdateDharamsala = ({ navigation, route }) => {
                 />
 
                 <Text style={Globalstyles.title}>Sub-Caste Name <Entypo name={'star'} color={'red'} size={12} /></Text>
-               <Dropdown
+                <Dropdown
                     style={[
                         Globalstyles.input,
                     ]}

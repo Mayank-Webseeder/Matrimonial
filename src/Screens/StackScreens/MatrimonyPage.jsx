@@ -77,7 +77,7 @@ const MatrimonyPage = ({ navigation, route }) => {
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
                 keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
-                <ScrollView contentContainerStyle={[styles.container, { paddingBottom: insets.bottom + SH(50), flexGrow: 1 }]} showsVerticalScrollIndicator={false}>
+                <ScrollView style={styles.container} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
                     <View>
                         <View style={styles.topContainer}>
 
@@ -166,7 +166,9 @@ const MatrimonyPage = ({ navigation, route }) => {
                         </View>
 
                         {/* Render Active Component */}
-                        {renderActiveComponent()}
+                        <View>
+                            {renderActiveComponent()}
+                        </View>
 
                     </View>
                 </ScrollView>

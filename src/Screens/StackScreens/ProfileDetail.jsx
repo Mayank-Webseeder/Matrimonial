@@ -27,11 +27,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 const ProfileDetail = ({ route, navigation }) => {
     const insets = useSafeAreaInsets();
     const { profileType } = route.params || {};
-    const topSliderRef = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
+    const topSliderRef = useRef(null); // make sure it's initialized
     const [profileData, setProfileData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [postloading, setPostLoading] = useState(false);
+    const [sliderReady, setSliderReady] = useState(false);
     const images = profileData?.additionalPhotos || [];
     const [visible, setVisible] = useState(false);
     const [imageIndex, setImageIndex] = useState(0);
@@ -59,32 +60,17 @@ const ProfileDetail = ({ route, navigation }) => {
     };
 
     useEffect(() => {
-        if (!formattedImages || formattedImages.length === 0) return;
+        if (!formattedImages || formattedImages.length === 0 || !topSliderRef.current) return;
 
         const duration = (formattedImages[currentIndex]?.duration || 4) * 1000;
 
         const timeout = setTimeout(() => {
-            const nextIndex =
-                currentIndex < formattedImages.length - 1 ? currentIndex + 1 : 0;
-
+            const nextIndex = currentIndex < formattedImages.length - 1 ? currentIndex + 1 : 0;
             topSliderRef.current?.goToSlide(nextIndex, true);
         }, duration);
 
         return () => clearTimeout(timeout);
     }, [currentIndex, formattedImages]);
-
-    useEffect(() => {
-        if (formattedImages && formattedImages.length > 0) {
-
-            const initialDuration = (formattedImages[0]?.duration || 4) * 1000;
-
-            const timeout = setTimeout(() => {
-                topSliderRef.current?.goToSlide(1, true);
-            }, initialDuration);
-
-            return () => clearTimeout(timeout);
-        }
-    }, [formattedImages]);
 
     const handleSlideChange = (index) => {
         setCurrentIndex(index);

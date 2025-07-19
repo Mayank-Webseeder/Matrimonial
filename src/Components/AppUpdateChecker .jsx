@@ -5,27 +5,30 @@ import SpInAppUpdates, { IAUUpdateKind } from 'sp-react-native-in-app-updates';
 const UpdateCheck = () => {
   useEffect(() => {
     const checkUpdate = async () => {
+      if (__DEV__) return; 
+
       if (Platform.OS === 'android') {
-        const inAppUpdates = new SpInAppUpdates(true); 
+        const inAppUpdates = new SpInAppUpdates(true);
         try {
           const result = await inAppUpdates.checkNeedsUpdate();
-          if (result.shouldUpdate) {
-            inAppUpdates.startUpdate({
-              updateType: IAUUpdateKind.IMMEDIATE, 
-            });
+
+          if (result.shouldUpdate && result.store === 'PLAY_STORE') {
+            inAppUpdates.startUpdate({ updateType: IAUUpdateKind.IMMEDIATE });
           }
         } catch (error) {
-          console.log('Update check failed', error);
+          if (error?.message?.includes('-10')) {
+            console.log('App not installed from Play Store. Update skipped.');
+          } else {
+            console.log('Update check failed', error);
+          }
         }
-      } else {
-        console.log('In-app updates not supported on iOS');
       }
     };
 
     checkUpdate();
   }, []);
 
-  return null; // No UI needed, update runs in background
+  return null;
 };
 
 export default UpdateCheck;

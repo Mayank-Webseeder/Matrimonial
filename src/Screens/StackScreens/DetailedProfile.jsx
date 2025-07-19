@@ -874,7 +874,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
         style={{ flex: 1 }}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
       >
-        <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: insets.bottom + SH(65)}} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+        <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: insets.bottom + SH(65), flexGrow: 1 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
           <View style={Globalstyles.form} importantForAutofill="no" removeClippedSubviews={true}>
             <View style={styles.detail}>
               <Text style={styles.Formtitle}>Create Biodata</Text>

@@ -318,7 +318,6 @@ const PartnersPreference = ({ navigation, profileData }) => {
                 backgroundColor="transparent"
                 translucent
             />
-
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}

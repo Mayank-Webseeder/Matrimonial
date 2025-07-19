@@ -128,11 +128,16 @@ const UpdateCommittee = ({ navigation, route }) => {
             height: 1000,
             cropping: true,
             freeStyleCropEnabled: true,
-            cropperToolbarTitle: 'Crop Image',
-            cropperCircleOverlay: false,
             includeBase64: true,
             compressImageQuality: 1,
             mediaType: 'photo',
+            cropperToolbarTitle: 'Crop Image',
+            cropperStatusBarColor: '#000000',
+            cropperToolbarColor: '#FFFFFF',
+            cropperToolbarWidgetColor: '#000000',
+            cropperChooseText: 'Done',
+            cropperCancelText: 'Cancel',
+            immersiveMode: true,
         })
             .then(image => {
                 const base64Image = `data:${image.mime};base64,${image.data}`;
@@ -219,7 +224,7 @@ const UpdateCommittee = ({ navigation, route }) => {
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
                 keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
-                <ScrollView contentContainerStyle={[Globalstyles.form,{paddingBottom: insets.bottom, flexGrow: 1}]} showsVerticalScrollIndicator={false}
+                <ScrollView contentContainerStyle={[Globalstyles.form, { paddingBottom: insets.bottom, flexGrow: 1 }]} showsVerticalScrollIndicator={false}
                     keyboardShouldPersistTaps="handled">
                     <View>
                         <Text style={styles.title}>Update Committee Details</Text>

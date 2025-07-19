@@ -68,19 +68,21 @@ const CommitteeSubmissionPage = ({ navigation }) => {
 
     const handleImagePick = () => {
         ImageCropPicker.openPicker({
+            multiple: false,
             width: 1000,
             height: 1000,
             cropping: true,
             freeStyleCropEnabled: true,
-            cropperToolbarTitle: 'Crop Image',
-            cropperCircleOverlay: false,
             includeBase64: true,
             compressImageQuality: 1,
             mediaType: 'photo',
+            cropperToolbarTitle: 'Crop Image',
             cropperStatusBarColor: '#000000',
             cropperToolbarColor: '#FFFFFF',
-            cropperActiveWidgetColor: '#000000',
             cropperToolbarWidgetColor: '#000000',
+            cropperChooseText: 'Done',
+            cropperCancelText: 'Cancel',
+            immersiveMode: true,
         })
             .then(image => {
                 setCommitteeData(prev => ({

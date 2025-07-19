@@ -347,23 +347,26 @@ const SavedProfile = ({ navigation }) => {
           </View>
         </View>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-          <View style={styles.tabContainer}>
-            {["Biodata", "Pandit", "Jyotish", "Kathavachak", "Dharmshala", "Committee"].map((category, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[styles.tabButton, activeCategory === category && styles.activeTab]}
-                onPress={() => {
-                  setActiveCategory(category);
-                  setTimeout(() => {
-                    flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
-                  }, 100);
-                }}
-              >
-                <Text style={[styles.tabText, activeCategory === category && styles.activeTabText]}>{category}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </ScrollView>
+  <View style={{ flexDirection: 'row' }}>
+    <View style={styles.tabContainer}>
+      {["Biodata", "Pandit", "Jyotish", "Kathavachak", "Dharmshala", "Committee"].map((category, index) => (
+        <TouchableOpacity
+          key={index}
+          style={[styles.tabButton, activeCategory === category && styles.activeTab]}
+          onPress={() => {
+            setActiveCategory(category);
+            setTimeout(() => {
+              flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+            }, 100);
+          }}
+        >
+          <Text style={[styles.tabText, activeCategory === category && styles.activeTabText]}>{category}</Text>
+        </TouchableOpacity>
+      ))}
+    </View>
+  </View>
+</ScrollView>
+
         <HeadingWithViewAll heading={`${activeCategory} SAVED PROFILES`} />
 
         {loading && ["Biodata", "Pandit", "Jyotish", "Kathavachak", "Dharmshala", "Committee"].includes(activeCategory) ? (

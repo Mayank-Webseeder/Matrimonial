@@ -19,7 +19,7 @@ import { duration } from 'moment';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const DharamsalaSubmissionPage = ({ navigation }) => {
-     const insets = useSafeAreaInsets();
+    const insets = useSafeAreaInsets();
     const [cityInput, setCityInput] = useState('');
     const [filteredCities, setFilteredCities] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -262,7 +262,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
                 keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
-                <ScrollView contentContainerStyle={[Globalstyles.form,{paddingBottom: insets.bottom + SH(65), flexGrow: 1}]} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+                <ScrollView contentContainerStyle={[Globalstyles.form, { paddingBottom: insets.bottom + SH(65), flexGrow: 1 }]} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
                     <View>
                         <Text style={styles.title}>Upload Your Dharamsala Details</Text>
 
@@ -403,8 +403,6 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                                 </ScrollView>
                             </View>
                         )}
-
-
                         {errors.images && (
                             <Text style={styles.errorText}>{errors.images}</Text>
                         )}

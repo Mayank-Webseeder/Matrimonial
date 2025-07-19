@@ -230,7 +230,7 @@ const BuySubscription = ({ navigation, route }) => {
   // }
 
   return (
-    <View style={Globalstyles.container}>
+    <View style={Globalstyles.container} edges={['top', 'bottom']}>
       <View style={Globalstyles.header}>
         <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>

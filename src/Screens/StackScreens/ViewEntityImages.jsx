@@ -63,55 +63,57 @@ const ViewEntityImages = ({ navigation, route }) => {
 
             <ScrollView showsVerticalScrollIndicator={false}>
                 {/* Profile Info */}
-                <View style={styles.postHeader}>
-                    <Image
-                        source={entityDetails?.profilePhoto
-                            ? { uri: entityDetails.profilePhoto }
-                            : require('../../Images/NoImage.png')
-                        }
-                        style={styles.profileImage}
-                        resizeMode="cover"
-                    />
-
-
-                    <View style={styles.postTextContainer}>
-                        <Text style={styles.Text}>{entityDetails?.fullName || "N/A"}</Text>
-                        <Text style={styles.Text}>{entityDetails?.city || "City Unknown"} || {entityDetails?.subCaste || "SubCaste Unknown"}</Text>
-                        <Text style={styles.Text}>{entityType}</Text>
-                    </View>
-                </View>
-                <View style={{ marginVertical: SH(10) }}>
-                    {images.map((image, index) => (
-                        <TouchableOpacity key={index} onPress={() => openImageViewer(image)}>
-                            <Image
-                                source={typeof image === 'string' ? { uri: image } : image}
-                                style={[
-                                    styles.image,
-                                    { aspectRatio: imageAspectRatios[index] || 1 }
-                                ]}
-                                resizeMode="contain"
-                            />
-                        </TouchableOpacity>
-                    ))}
-                </View>
-
-                {selectedImage && (
-                    <Modal
-                        visible={isImageVisible}
-                        transparent={true}
-                        onRequestClose={() => setImageVisible(false)}
-                    >
-                        <ImageViewer
-                            imageUrls={selectedImage}
-                            enableSwipeDown={true}
-                            onSwipeDown={() => setImageVisible(false)}
-                            onCancel={() => setImageVisible(false)}
-                            enablePreload={true}
-                            saveToLocalByLongPress={false}
-                            renderIndicator={() => null}
+                <View>
+                    <View style={styles.postHeader}>
+                        <Image
+                            source={entityDetails?.profilePhoto
+                                ? { uri: entityDetails.profilePhoto }
+                                : require('../../Images/NoImage.png')
+                            }
+                            style={styles.profileImage}
+                            resizeMode="cover"
                         />
-                    </Modal>
-                )}
+
+
+                        <View style={styles.postTextContainer}>
+                            <Text style={styles.Text}>{entityDetails?.fullName || "N/A"}</Text>
+                            <Text style={styles.Text}>{entityDetails?.city || "City Unknown"} || {entityDetails?.subCaste || "SubCaste Unknown"}</Text>
+                            <Text style={styles.Text}>{entityType}</Text>
+                        </View>
+                    </View>
+                    <View style={{ marginVertical: SH(10) }}>
+                        {images.map((image, index) => (
+                            <TouchableOpacity key={index} onPress={() => openImageViewer(image)}>
+                                <Image
+                                    source={typeof image === 'string' ? { uri: image } : image}
+                                    style={[
+                                        styles.image,
+                                        { aspectRatio: imageAspectRatios[index] || 1 }
+                                    ]}
+                                    resizeMode="contain"
+                                />
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+
+                    {selectedImage && (
+                        <Modal
+                            visible={isImageVisible}
+                            transparent={true}
+                            onRequestClose={() => setImageVisible(false)}
+                        >
+                            <ImageViewer
+                                imageUrls={selectedImage}
+                                enableSwipeDown={true}
+                                onSwipeDown={() => setImageVisible(false)}
+                                onCancel={() => setImageVisible(false)}
+                                enablePreload={true}
+                                saveToLocalByLongPress={false}
+                                renderIndicator={() => null}
+                            />
+                        </Modal>
+                    )}
+                </View>
 
             </ScrollView>
         </SafeAreaView>

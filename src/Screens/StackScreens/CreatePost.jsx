@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, Image, TextInput, StatusBar, ScrollView, ActivityIndicator } from 'react-native'
+import { Text, View, TouchableOpacity, Image, TextInput, StatusBar, ScrollView, ActivityIndicator, SafeAreaView } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -11,7 +11,7 @@ import axios from 'axios';
 import { CREATE_EVENT_NEWS } from '../../utils/BaseUrl';
 import { showMessage } from 'react-native-flash-message';
 import { launchImageLibrary } from 'react-native-image-picker';
-import { SafeAreaView } from 'react-native-safe-area-context';
+// import { SafeAreaView } from 'react-native-safe-area-context';
 
 const CreatePost = ({ navigation, route }) => {
     const MyActivistProfile = useSelector((state) => state.activist.activist_data);
@@ -35,16 +35,16 @@ const CreatePost = ({ navigation, route }) => {
 
     const handleImageUpload = () => {
         launchImageLibrary(pickerOptions, (response) => {
-            if (response.didCancel) return;                
+            if (response.didCancel) return;
             if (response.errorCode) {
                 console.log('ImagePicker Error:', response.errorMessage);
                 return;
             }
             const newPhotos = response.assets.map(
-                (asset) => asset.base64                      
+                (asset) => asset.base64
             );
 
-            setPhotos(newPhotos);                          
+            setPhotos(newPhotos);
         });
     };
 
@@ -119,7 +119,7 @@ const CreatePost = ({ navigation, route }) => {
     };
 
     return (
-        <SafeAreaView style={Globalstyles.container}>
+        <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
             <StatusBar
                 barStyle="dark-content"
                 backgroundColor="transparent"
@@ -148,17 +148,6 @@ const CreatePost = ({ navigation, route }) => {
                 </View>
             </View>
             <View style={styles.textContainer}>
-                {/* <TextInput
-                    style={Globalstyles.input}
-                    placeholder="Title"
-                    placeholderTextColor={Colors.gray}
-                    value={title}
-                    onChangeText={setTitle}
-                    autoComplete="off"
-                    textContentType="none"
-                    importantForAutofill="no"
-                    autoCorrect={false}
-                /> */}
                 <TextInput
                     style={Globalstyles.textInput}
                     placeholder="What’s on your mind?"
@@ -189,14 +178,16 @@ const CreatePost = ({ navigation, route }) => {
                 <View style={styles.photosContainer}>
                     <Text style={Globalstyles.title}>Uploaded Photos:</Text>
                     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                        {photos.map((photo, index) => (
-                            <Image
-                                key={index}
-                                source={{ uri: `data:image/png;base64,${photo}` }} // ✅ PNG/JPEG check kar
-                                style={styles.photo}
-                                onError={(e) => console.log("Image Load Error:", e.nativeEvent.error)}
-                            />
-                        ))}
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            {photos.map((photo, index) => (
+                                <Image
+                                    key={index}
+                                    source={{ uri: `data:image/png;base64,${photo}` }}
+                                    style={styles.photo}
+                                    onError={(e) => console.log("Image Load Error:", e.nativeEvent.error)}
+                                />
+                            ))}
+                        </View>
                     </ScrollView>
                 </View>
             )}

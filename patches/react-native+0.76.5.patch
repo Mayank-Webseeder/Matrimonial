@@ -1,0 +1,54 @@
+diff --git a/node_modules/react-native/Libraries/LogBox/UI/LogBoxInspectorCodeFrame.js b/node_modules/react-native/Libraries/LogBox/UI/LogBoxInspectorCodeFrame.js
+index eff4443..753a494 100644
+--- a/node_modules/react-native/Libraries/LogBox/UI/LogBoxInspectorCodeFrame.js
++++ b/node_modules/react-native/Libraries/LogBox/UI/LogBoxInspectorCodeFrame.js
+@@ -8,7 +8,7 @@
+  * @format
+  */
+ 
+-import type {CodeFrame} from '../Data/parseLogBoxLog';
++import type { CodeFrame } from '../Data/parseLogBoxLog';
+ 
+ import ScrollView from '../../Components/ScrollView/ScrollView';
+ import View from '../../Components/View/View';
+@@ -47,9 +47,8 @@ function LogBoxInspectorCodeFrame(props: Props): React.Node {
+     // $FlowFixMe[incompatible-use]
+     const location = codeFrame.location;
+     if (location != null) {
+-      return ` (${location.row}:${
+-        location.column + 1 /* Code frame columns are zero indexed */
+-      })`;
++      return ` (${location.row}:${location.column + 1 /* Code frame columns are zero indexed */
++        })`;
+     }
+ 
+     return null;
+@@ -60,7 +59,9 @@ function LogBoxInspectorCodeFrame(props: Props): React.Node {
+       <View style={styles.box}>
+         <View style={styles.frame}>
+           <ScrollView horizontal>
+-            <AnsiHighlight style={styles.content} text={codeFrame.content} />
++            <View style={{ flexDirection: 'row' }}>
++              <AnsiHighlight style={styles.content} text={codeFrame.content} />
++            </View>
+           </ScrollView>
+         </View>
+         <LogBoxButton
+@@ -143,7 +144,7 @@ const styles = StyleSheet.create({
+     fontSize: 12,
+     includeFontPadding: false,
+     lineHeight: 20,
+-    fontFamily: Platform.select({android: 'monospace', ios: 'Menlo'}),
++    fontFamily: Platform.select({ android: 'monospace', ios: 'Menlo' }),
+   },
+   fileText: {
+     color: LogBoxStyle.getTextColor(0.5),
+@@ -152,7 +153,7 @@ const styles = StyleSheet.create({
+     fontSize: 12,
+     includeFontPadding: false,
+     lineHeight: 16,
+-    fontFamily: Platform.select({android: 'monospace', ios: 'Menlo'}),
++    fontFamily: Platform.select({ android: 'monospace', ios: 'Menlo' }),
+   },
+ });
+ 

@@ -1,4 +1,4 @@
-import { Text, View, TextInput, TouchableOpacity, Image, StatusBar, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { Text, View, TextInput, TouchableOpacity, Image, StatusBar, SafeAreaView, StyleSheet, Alert, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import React, { useState } from 'react';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -12,9 +12,12 @@ import { showMessage } from 'react-native-flash-message';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { POST_SUCESS_sTORY } from '../../utils/BaseUrl';
-import { SafeAreaView } from 'react-native-safe-area-context';
+// import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 
 const PostSuccessStories = ({ navigation }) => {
+     const insets = useSafeAreaInsets();
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
     const [gromname, setGromname] = useState('');
@@ -142,11 +145,16 @@ const PostSuccessStories = ({ navigation }) => {
 
     const handleImagePick = () => {
         ImageCropPicker.openPicker({
+            multiple: false,
             width: 1000,
             height: 1000,
             cropping: true,
-            compressImageQuality: 1,
+            freeStyleCropEnabled: true,
+            cropperToolbarTitle: 'Crop Image',
+            cropperCircleOverlay: false,
             includeBase64: true,
+            compressImageQuality: 1,
+            mediaType: 'photo',
         })
             .then(image => {
                 setSelectedImage(`data:${image.mime};base64,${image.data}`);
@@ -174,7 +182,7 @@ const PostSuccessStories = ({ navigation }) => {
     };
 
     return (
-        <SafeAreaView style={Globalstyles.container}>
+        <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
             <StatusBar
                 barStyle="dark-content"
                 backgroundColor="transparent"
@@ -188,85 +196,89 @@ const PostSuccessStories = ({ navigation }) => {
                     <Text style={Globalstyles.headerText}>Post Story</Text>
                 </View>
             </View>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
 
-            <ScrollView showsVerticalScrollIndicator={false}>
-                <View style={Globalstyles.form}>
-                    <Text style={styles.Text}>Post Your Success Story</Text>
-                    <Text style={styles.description}>Share your experience with Brahmin Milan </Text>
-                    <View style={styles.ratingContainer}>
-                        {renderStars()}
-                    </View>
-                    {errors.rating && (
-                        <Text style={styles.errorText}>{errors.rating}</Text>
-                    )}
-                    <Text style={Globalstyles.title}>Groom name <Entypo name={'star'} color={'red'} size={12} /> </Text>
-                    <TextInput
-                        style={Globalstyles.input}
-                        placeholder="Enter groom name"
-                        multiline={true}
-                        value={gromname}
-                        onChangeText={(text) => {
-                            const cleanText = text.replace(/[^A-Za-z\s]/g, '');
-                            setGromname(cleanText);
-                        }}
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
-                    />
-                    {errors.gromname && (
-                        <Text style={styles.errorText}>{errors.gromname}</Text>
-                    )}
-                    <Text style={Globalstyles.title}>Groom User ID  <Entypo name={'star'} color={'red'} size={12} /> </Text>
-                    <TextInput
-                        style={Globalstyles.input}
-                        placeholder="Enter Groom Biodata ID"
-                        multiline={true}
-                        value={groomBiodataId}
-                        onChangeText={setGroomBiodataId}
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
+                <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: insets.bottom, flexGrow: 1 }}>
+                    <View style={Globalstyles.form}>
+                        <Text style={styles.Text}>Post Your Success Story</Text>
+                        <Text style={styles.description}>Share your experience with Brahmin Milan </Text>
+                        <View style={styles.ratingContainer}>
+                            {renderStars()}
+                        </View>
+                        {errors.rating && (
+                            <Text style={styles.errorText}>{errors.rating}</Text>
+                        )}
+                        <Text style={Globalstyles.title}>Groom name <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                        <TextInput
+                            style={Globalstyles.input}
+                            placeholder="Enter groom name"
+                            multiline={true}
+                            value={gromname}
+                            onChangeText={(text) => {
+                                const cleanText = text.replace(/[^A-Za-z\s]/g, '');
+                                setGromname(cleanText);
+                            }}
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
+                        />
+                        {errors.gromname && (
+                            <Text style={styles.errorText}>{errors.gromname}</Text>
+                        )}
+                        <Text style={Globalstyles.title}>Groom User ID  <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                        <TextInput
+                            style={Globalstyles.input}
+                            placeholder="Enter Groom Biodata ID"
+                            multiline={true}
+                            value={groomBiodataId}
+                            onChangeText={setGroomBiodataId}
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
 
-                    />
-                    {errors.groomBiodataId && (
-                        <Text style={styles.errorText}>{errors.groomBiodataId}</Text>
-                    )}
-                    <Text style={Globalstyles.title}>Bride name  <Entypo name={'star'} color={'red'} size={12} /> </Text>
-                    <TextInput
-                        style={Globalstyles.input}
-                        placeholder="Enter Bride name"
-                        multiline={true}
-                        value={bridename}
-                        onChangeText={(text) => {
-                            const cleanText = text.replace(/[^A-Za-z\s]/g, '');
-                            setBridename(cleanText);
-                        }}
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
-                    />
-                    {errors.bridename && (
-                        <Text style={styles.errorText}>{errors.bridename}</Text>
-                    )}
-                    <Text style={Globalstyles.title}>Bride User ID  <Entypo name={'star'} color={'red'} size={12} /> </Text>
-                    <TextInput
-                        style={Globalstyles.input}
-                        placeholder="Enter Bride Biodata ID"
-                        multiline={true}
-                        value={brideBiodataId}
-                        onChangeText={setBrideBiodataId}
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
-                    />
-                    {errors.brideBiodataId && (
-                        <Text style={styles.errorText}>{errors.brideBiodataId}</Text>
-                    )}
-                    {/* <Text style={Globalstyles.title}>Wedding Date</Text>
+                        />
+                        {errors.groomBiodataId && (
+                            <Text style={styles.errorText}>{errors.groomBiodataId}</Text>
+                        )}
+                        <Text style={Globalstyles.title}>Bride name  <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                        <TextInput
+                            style={Globalstyles.input}
+                            placeholder="Enter Bride name"
+                            multiline={true}
+                            value={bridename}
+                            onChangeText={(text) => {
+                                const cleanText = text.replace(/[^A-Za-z\s]/g, '');
+                                setBridename(cleanText);
+                            }}
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
+                        />
+                        {errors.bridename && (
+                            <Text style={styles.errorText}>{errors.bridename}</Text>
+                        )}
+                        <Text style={Globalstyles.title}>Bride User ID  <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                        <TextInput
+                            style={Globalstyles.input}
+                            placeholder="Enter Bride Biodata ID"
+                            multiline={true}
+                            value={brideBiodataId}
+                            onChangeText={setBrideBiodataId}
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
+                        />
+                        {errors.brideBiodataId && (
+                            <Text style={styles.errorText}>{errors.brideBiodataId}</Text>
+                        )}
+                        {/* <Text style={Globalstyles.title}>Wedding Date</Text>
                     <TouchableOpacity
                         style={Globalstyles.input}
                         onPress={() => setShowDatePicker(true)}
@@ -285,48 +297,49 @@ const PostSuccessStories = ({ navigation }) => {
                             maximumDate={new Date()}
                         />
                     )} */}
-                    <Text style={Globalstyles.title}>Your thoughts <Entypo name={'star'} color={'red'} size={12} /> </Text>
-                    <TextInput
-                        style={Globalstyles.textInput}
-                        placeholder="Add your thoughts..."
-                        multiline={true}
-                        value={comment}
-                        onChangeText={setComment}
-                        placeholderTextColor={Colors.gray} textAlignVertical='top'
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
-                    />
-                    {errors.comment && (
-                        <Text style={styles.errorText}>{errors.comment}</Text>
-                    )}
-                    <Text style={Globalstyles.title}>Upload your one couple picture</Text>
-                    <TouchableOpacity style={styles.uploadButton} onPress={handleImagePick}>
-                        <Text style={styles.uploadText}>{selectedImage ? 'Change Image' : 'Upload Image'}</Text>
-                    </TouchableOpacity>
-                    {selectedImage && (
-                        <View style={styles.photosContainer}>
-                            <Text style={Globalstyles.title}>Uploaded Image</Text>
-                            <Image
-                                source={{ uri: selectedImage }}
-                                style={{ width: SW(100), height: SH(100), borderRadius: 10 }}
-                                resizeMode="cover"
-                            />
-                        </View>
-                    )}
-                    <TouchableOpacity
-                        style={styles.submitButton}
-                        onPress={handleSubmit}
-                        disabled={isSubmitting}
-                    >
-                        {isSubmitting ? (
-                            <ActivityIndicator size="small" color="#fff" />
-                        ) : (
-                            <Text style={styles.submitText}>Post Story</Text>
+                        <Text style={Globalstyles.title}>Your thoughts <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                        <TextInput
+                            style={Globalstyles.textInput}
+                            placeholder="Add your thoughts..."
+                            multiline={true}
+                            value={comment}
+                            onChangeText={setComment}
+                            placeholderTextColor={Colors.gray} textAlignVertical='top'
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
+                        />
+                        {errors.comment && (
+                            <Text style={styles.errorText}>{errors.comment}</Text>
                         )}
-                    </TouchableOpacity>
-                </View>
-            </ScrollView>
+                        <Text style={Globalstyles.title}>Upload your one couple picture</Text>
+                        <TouchableOpacity style={styles.uploadButton} onPress={handleImagePick}>
+                            <Text style={styles.uploadText}>{selectedImage ? 'Change Image' : 'Upload Image'}</Text>
+                        </TouchableOpacity>
+                        {selectedImage && (
+                            <View style={styles.photosContainer}>
+                                <Text style={Globalstyles.title}>Uploaded Image</Text>
+                                <Image
+                                    source={{ uri: selectedImage }}
+                                    style={{ width: SW(100), height: SH(100), borderRadius: 10 }}
+                                    resizeMode="cover"
+                                />
+                            </View>
+                        )}
+                        <TouchableOpacity
+                            style={styles.submitButton}
+                            onPress={handleSubmit}
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? (
+                                <ActivityIndicator size="small" color="#fff" />
+                            ) : (
+                                <Text style={styles.submitText}>Post Story</Text>
+                            )}
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     );
 };

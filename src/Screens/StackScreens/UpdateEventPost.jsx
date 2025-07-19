@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, Image, TextInput, StatusBar, ScrollView, ActivityIndicator } from 'react-native'
+import { Text, View, TouchableOpacity, Image, TextInput, SafeAreaView, StatusBar, ScrollView, ActivityIndicator } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -11,8 +11,9 @@ import { UPDATE_EVENT_NEWS } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { showMessage } from 'react-native-flash-message';
-import { SafeAreaView } from 'react-native-safe-area-context';
+// import { SafeAreaView } from 'react-native-safe-area-context';
 import { launchImageLibrary } from 'react-native-image-picker';
+
 
 const UpdateEventPost = ({ navigation, route }) => {
     const { eventData: initialEventData } = route.params || {};
@@ -174,7 +175,7 @@ const UpdateEventPost = ({ navigation, route }) => {
 
 
     return (
-        <SafeAreaView style={Globalstyles.container}>
+        <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
             <StatusBar
                 barStyle="dark-content"
                 backgroundColor="transparent"
@@ -233,19 +234,18 @@ const UpdateEventPost = ({ navigation, route }) => {
                 <View style={styles.photosContainer}>
                     <Text style={Globalstyles.title}>Uploaded Photos:</Text>
                     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                        {photos.length > 0
-                            ? photos.map((photo, index) => (
-                                <Image key={index} source={{ uri: photo }} style={styles.photo} />
-                            ))
-                            : eventData?.images?.map((photo, index) => (
-                                <Image key={index} source={{ uri: photo }} style={styles.photo} />
-                            ))
-                        }
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            {(photos.length > 0 ? photos : eventData?.images)?.map((photo, index) => (
+                                <Image
+                                    key={index}
+                                    source={{ uri: photo }}
+                                    style={styles.photo}
+                                />
+                            ))}
+                        </View>
                     </ScrollView>
                 </View>
-
             )}
-
 
             <TouchableOpacity
                 style={styles.PostButton}

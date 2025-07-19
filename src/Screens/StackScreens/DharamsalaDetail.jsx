@@ -18,8 +18,10 @@ const { width, height } = Dimensions.get("window");
 import { useSelector } from 'react-redux';
 import { CommonActions, useFocusEffect } from '@react-navigation/native';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const DharamsalaDetail = ({ navigation, route }) => {
+   const insets = useSafeAreaInsets();
   const { _id, isSaved: initialSavedState, id } = route.params;
   const profileId = _id || id;
   const [dharamsalaData, SetDharamsalaData] = useState('');
@@ -360,7 +362,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
   };
 
   return (
-    <SafeAreaView style={Globalstyles.container}>
+    <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
 
       {/* Header */}
@@ -423,135 +425,135 @@ const DharamsalaDetail = ({ navigation, route }) => {
           </TouchableOpacity>
         </View>
       </View>
-
-      <ScrollView showsVerticalScrollIndicator={false}>
-
-        <View style={styles.sliderContainer}>
-          <AppIntroSlider
-            ref={topSliderRef}
-            data={formattedImages}
-            renderItem={SliderrenderItem}
-            showNextButton={false}
-            showDoneButton={false}
-            dotStyle={styles.dot}
-            activeDotStyle={styles.activeDot}
-            onSlideChange={(index) => setGalleryIndex(index)}
-          />
-          <Modal visible={modalVisible} transparent={true} animationType="fade" onRequestClose={() => setModalVisible(false)}>
-            <ImageViewer
-              imageUrls={formattedImages.map(img => ({ url: img.uri }))}
-              index={imageIndex}
-              onSwipeDown={() => setModalVisible(false)}
-              onCancel={() => setModalVisible(false)}
-              enableSwipeDown={true}
-              enablePreload={true}
-              saveToLocalByLongPress={false}
-              renderIndicator={(currentIndex, allSize) => (
-                <View style={{
-                  position: "absolute",
-                  top: SH(30),
-                  alignSelf: "center",
-                  backgroundColor: "rgba(0,0,0,0.6)",
-                  paddingHorizontal: SW(8),
-                  borderRadius: 5,
-                  paddingVertical: SH(8),
-                  zIndex: 999
-                }}>
-                  <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>
-                    {currentIndex} / {allSize}
-                  </Text>
-                </View>
-              )}
-              renderImage={(props) => (
-                <Image
-                  {...props}
-                  resizeMode="contain"
-                  style={{ width: '100%', height: '100%' }}
-                />
-              )}
-              backgroundColor="rgba(0,0,0,0.95)"
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(65), flexGrow: 1}}>
+        <View>
+          <View style={styles.sliderContainer}>
+            <AppIntroSlider
+              ref={topSliderRef}
+              data={formattedImages}
+              renderItem={SliderrenderItem}
+              showNextButton={false}
+              showDoneButton={false}
+              dotStyle={styles.dot}
+              activeDotStyle={styles.activeDot}
+              onSlideChange={(index) => setGalleryIndex(index)}
             />
-          </Modal>
-
-        </View>
-
-        {/* Dharamsala Details */}
-        <View style={styles.textContainer}>
-          <View style={styles.TextView}>
-            <Text style={[Globalstyles.title, { fontFamily: "Poppins-Bold" }]}>{dharmshalaName || 'NA'}</Text>
-            <Text style={styles.Text}>{subCaste || "N/A"}</Text>
-            <Text style={styles.smalltext}>{city || 'NA'}</Text>
-          </View>
-
-          {/* Description with Read More / Read Less */}
-          <View style={styles.TextView}>
-            <Text style={Globalstyles.title}>Description</Text>
-            <Text style={styles.descriptionText}>
-              {showFullText ? description : truncatedDescription}
-            </Text>
-            {description.length > 300 && (
-              <TouchableOpacity onPress={() => setShowFullText(!showFullText)}>
-                <Text style={styles.viewMore}>
-                  {showFullText ? 'Read Less' : 'Read More'}
-                </Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
-
-        {/* Share & Call Section */}
-        <View style={styles.sharecontainer}>
-          <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
-            <FontAwesome
-              name={Save ? "bookmark" : "bookmark-o"}
-              size={19}
-              color={Colors.dark}
-            />
-            <Text style={styles.iconText}>{Save ? "Saved" : "Save"}</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
-            <Feather name="send" size={20} color={Colors.dark} />
-            <Text style={styles.iconText}>Share</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${dharamsalaData.mobileNo}`)}>
-            <MaterialIcons name="call" size={18} color={Colors.light} />
-            <Text style={styles.RequestText}>  call</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.Bottomimage}>
-          <AppIntroSlider
-            ref={sliderRef}
-            data={slider}
-            renderItem={({ item }) => {
-              const { width, height } = item.resolution;
-
-              const handlePress = () => {
-                if (item.hyperlink) {
-                  Linking.openURL(item.hyperlink).catch(err =>
-                    console.error("Failed to open URL:", err)
-                  );
-                }
-              };
-
-              return (
-                <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+            <Modal visible={modalVisible} transparent={true} animationType="fade" onRequestClose={() => setModalVisible(false)}>
+              <ImageViewer
+                imageUrls={formattedImages.map(img => ({ url: img.uri }))}
+                index={imageIndex}
+                onSwipeDown={() => setModalVisible(false)}
+                onCancel={() => setModalVisible(false)}
+                enableSwipeDown={true}
+                enablePreload={true}
+                saveToLocalByLongPress={false}
+                renderIndicator={(currentIndex, allSize) => (
+                  <View style={{
+                    position: "absolute",
+                    top: SH(30),
+                    alignSelf: "center",
+                    backgroundColor: "rgba(0,0,0,0.6)",
+                    paddingHorizontal: SW(8),
+                    borderRadius: 5,
+                    paddingVertical: SH(8),
+                    zIndex: 999
+                  }}>
+                    <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>
+                      {currentIndex} / {allSize}
+                    </Text>
+                  </View>
+                )}
+                renderImage={(props) => (
                   <Image
-                    source={{ uri: item.image }}
-                    style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
+                    {...props}
+                    resizeMode="contain"
+                    style={{ width: '100%', height: '100%' }}
                   />
-                </TouchableOpacity>
-              );
-            }}
-            showNextButton={false}
-            showDoneButton={false}
-            dotStyle={Globalstyles.dot}
-            activeDotStyle={Globalstyles.activeDot}
-            onSlideChange={(index) => setAdIndex(index)}
-          />
+                )}
+                backgroundColor="rgba(0,0,0,0.95)"
+              />
+            </Modal>
 
+          </View>
+
+          {/* Dharamsala Details */}
+          <View style={styles.textContainer}>
+            <View style={styles.TextView}>
+              <Text style={[Globalstyles.title, { fontFamily: "Poppins-Bold" }]}>{dharmshalaName || 'NA'}</Text>
+              <Text style={styles.Text}>{subCaste || "N/A"}</Text>
+              <Text style={styles.smalltext}>{city || 'NA'}</Text>
+            </View>
+
+            {/* Description with Read More / Read Less */}
+            <View style={styles.TextView}>
+              <Text style={Globalstyles.title}>Description</Text>
+              <Text style={styles.descriptionText}>
+                {showFullText ? description : truncatedDescription}
+              </Text>
+              {description.length > 300 && (
+                <TouchableOpacity onPress={() => setShowFullText(!showFullText)}>
+                  <Text style={styles.viewMore}>
+                    {showFullText ? 'Read Less' : 'Read More'}
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+
+          {/* Share & Call Section */}
+          <View style={styles.sharecontainer}>
+            <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
+              <FontAwesome
+                name={Save ? "bookmark" : "bookmark-o"}
+                size={19}
+                color={Colors.dark}
+              />
+              <Text style={styles.iconText}>{Save ? "Saved" : "Save"}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
+              <Feather name="send" size={20} color={Colors.dark} />
+              <Text style={styles.iconText}>Share</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${dharamsalaData.mobileNo}`)}>
+              <MaterialIcons name="call" size={18} color={Colors.light} />
+              <Text style={styles.RequestText}>  call</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.Bottomimage}>
+            <AppIntroSlider
+              ref={sliderRef}
+              data={slider}
+              renderItem={({ item }) => {
+                const { width, height } = item.resolution;
+
+                const handlePress = () => {
+                  if (item.hyperlink) {
+                    Linking.openURL(item.hyperlink).catch(err =>
+                      console.error("Failed to open URL:", err)
+                    );
+                  }
+                };
+
+                return (
+                  <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                    <Image
+                      source={{ uri: item.image }}
+                      style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
+                    />
+                  </TouchableOpacity>
+                );
+              }}
+              showNextButton={false}
+              showDoneButton={false}
+              dotStyle={Globalstyles.dot}
+              activeDotStyle={Globalstyles.activeDot}
+              onSlideChange={(index) => setAdIndex(index)}
+            />
+
+          </View>
         </View>
 
       </ScrollView>

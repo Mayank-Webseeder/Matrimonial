@@ -14,8 +14,10 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import ImageViewing from 'react-native-image-viewing';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const SuccessStories = ({ navigation }) => {
+  const insets = useSafeAreaInsets();
   const [refreshing, setRefreshing] = useState(false);
   const [stories, setStories] = useState([]);
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
@@ -199,12 +201,12 @@ const SuccessStories = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={Globalstyles.container}>
+    <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
-           <Image source={require('../../Images/menu.png')} style={{width: SW(30),height: SH(30)}} />
+            <Image source={require('../../Images/menu.png')} style={{ width: SW(30), height: SH(30) }} />
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>Success Stories</Text>
         </View>
@@ -259,6 +261,10 @@ const SuccessStories = ({ navigation }) => {
         renderItem={renderItem}
         keyExtractor={(item) => item._id}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: insets.bottom + SH(65),
+          flexGrow: 1, 
+        }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }

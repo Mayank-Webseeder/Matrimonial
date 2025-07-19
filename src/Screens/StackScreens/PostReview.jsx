@@ -192,7 +192,7 @@ const PostReview = ({ navigation, route }) => {
 
 
     return (
-        <SafeAreaView style={Globalstyles.container}>
+        <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
             <View style={Globalstyles.header}>
                 <View style={{ alignItems: "center", flexDirection: "row" }}>

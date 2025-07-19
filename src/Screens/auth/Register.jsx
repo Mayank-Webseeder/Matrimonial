@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Text, View, ImageBackground, TouchableOpacity, TextInput, ScrollView, SafeAreaView, ActivityIndicator, FlatList, Pressable, Alert } from "react-native";
+import { Text, View, ImageBackground, TouchableOpacity, TextInput, ScrollView, SafeAreaView, ActivityIndicator, FlatList, Pressable, Alert, KeyboardAvoidingView, Platform } from "react-native";
 import styles from "../StyleScreens/RegisterStyle";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -366,7 +366,7 @@ const Register = ({ navigation }) => {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={styles.container} >
             <ImageBackground
                 source={require("../../Images/Signup.png")}
                 style={styles.image}
@@ -378,280 +378,287 @@ const Register = ({ navigation }) => {
                     color={Colors.light}
                     onPress={() => navigation.navigate("Splash")}
                 />
-                <ScrollView style={styles.contentContainer} contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
-                    showsVerticalScrollIndicator={false}>
-                    <Text style={styles.text}>Sign Up</Text>
-
-                    <View style={Globalstyles.form}>
-                        <Text style={Globalstyles.title}>Full Name <Entypo name={'star'} color={'red'} size={12} /></Text>
-                        <TextInput
-                            style={Globalstyles.input}
-                            placeholder="Enter your full name"
-                            value={fullName}
-                            onChangeText={(text) => {
-                                const cleanText = text.replace(/[^A-Za-z\s]/g, '');
-                                setFullName(cleanText);
-                            }}
-                            placeholderTextColor={Colors.gray}
-                            autoComplete="off"
-                            textContentType="none"
-                            importantForAutofill="no"
-                            autoCorrect={false}
-                        />
-                        {errors.fullName && (
-                            <Text style={styles.errorText}>{errors.fullName}</Text>
-                        )}
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                    style={{ flex: 1 }}
+                    keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+                    <ScrollView style={styles.contentContainer} contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+                        showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
                         <View>
-                            <Text style={Globalstyles.title}>
-                                Date of Birth <Entypo name="star" color="red" size={12} />
-                            </Text>
+                            <Text style={styles.text}>Sign Up</Text>
 
-                            <View
-                                style={[
-                                    Globalstyles.inputContainer,
-                                    {
-                                        flexDirection: "row",
-                                        alignItems: "center",
-                                        justifyContent: "space-between"
-                                    }
-                                ]}
-                            >
-                                <TouchableOpacity
-                                    style={{ flex: 1 }}
-                                    onPress={() => setShowDatePicker(true)}
-                                    activeOpacity={0.8}
-                                >
-                                    <Text style={[styles.dateText]}>
-                                        {selectedDate ? formatDate(selectedDate) : "Select Date"}
+                            <View style={Globalstyles.form}>
+                                <Text style={Globalstyles.title}>Full Name <Entypo name={'star'} color={'red'} size={12} /></Text>
+                                <TextInput
+                                    style={Globalstyles.input}
+                                    placeholder="Enter your full name"
+                                    value={fullName}
+                                    onChangeText={(text) => {
+                                        const cleanText = text.replace(/[^A-Za-z\s]/g, '');
+                                        setFullName(cleanText);
+                                    }}
+                                    placeholderTextColor={Colors.gray}
+                                    autoComplete="off"
+                                    textContentType="none"
+                                    importantForAutofill="no"
+                                    autoCorrect={false}
+                                />
+                                {errors.fullName && (
+                                    <Text style={styles.errorText}>{errors.fullName}</Text>
+                                )}
+                                <View>
+                                    <Text style={Globalstyles.title}>
+                                        Date of Birth <Entypo name="star" color="red" size={12} />
                                     </Text>
-                                </TouchableOpacity>
-                            </View>
 
-                            {errors.selectedDate && (
-                                <Text style={styles.errorText}>{errors.selectedDate}</Text>
-                            )}
-                        </View>
+                                    <View
+                                        style={[
+                                            Globalstyles.inputContainer,
+                                            {
+                                                flexDirection: "row",
+                                                alignItems: "center",
+                                                justifyContent: "space-between"
+                                            }
+                                        ]}
+                                    >
+                                        <TouchableOpacity
+                                            style={{ flex: 1 }}
+                                            onPress={() => setShowDatePicker(true)}
+                                            activeOpacity={0.8}
+                                        >
+                                            <Text style={[styles.dateText]}>
+                                                {selectedDate ? formatDate(selectedDate) : "Select Date"}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
 
-                        {showDatePicker && (
-                            <DateTimePicker
-                                value={selectedDate || new Date(2000, 0, 1)}
-                                mode="date"
-                                display="default"
-                                onChange={handleDateChange}
-                                maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))}
-                                themeVariant="light"
-                            />
-                        )}
+                                    {errors.selectedDate && (
+                                        <Text style={styles.errorText}>{errors.selectedDate}</Text>
+                                    )}
+                                </View>
+
+                                {showDatePicker && (
+                                    <DateTimePicker
+                                        value={selectedDate || new Date(2000, 0, 1)}
+                                        mode="date"
+                                        display="default"
+                                        onChange={handleDateChange}
+                                        maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))}
+                                        themeVariant="light"
+                                    />
+                                )}
 
 
-                        {/* City */}
-                        <Text style={Globalstyles.title}>City <Entypo name={'star'} color={'red'} size={12} /></Text>
-                        <TextInput
-                            style={Globalstyles.input}
-                            value={cityInput}
-                            onChangeText={handleCityInputChange}
-                            placeholder="Enter your city"
-                            placeholderTextColor={Colors.gray}
-                            autoComplete="off"
-                            textContentType="none"
-                            importantForAutofill="no"
-                            autoCorrect={false}
-                            maxLength={30}
-                        />
-                        {filteredCities.length > 0 && cityInput ? (
-                            <FlatList
-                                data={filteredCities}
-                                scrollEnabled={false}
-                                keyExtractor={(item, index) => index.toString()}
-                                renderItem={({ item }) => (
+                                {/* City */}
+                                <Text style={Globalstyles.title}>City <Entypo name={'star'} color={'red'} size={12} /></Text>
+                                <TextInput
+                                    style={Globalstyles.input}
+                                    value={cityInput}
+                                    onChangeText={handleCityInputChange}
+                                    placeholder="Enter your city"
+                                    placeholderTextColor={Colors.gray}
+                                    autoComplete="off"
+                                    textContentType="none"
+                                    importantForAutofill="no"
+                                    autoCorrect={false}
+                                    maxLength={30}
+                                />
+                                {filteredCities.length > 0 && cityInput ? (
+                                    <FlatList
+                                        data={filteredCities}
+                                        scrollEnabled={false}
+                                        keyExtractor={(item, index) => index.toString()}
+                                        renderItem={({ item }) => (
+                                            <TouchableOpacity
+                                                onPress={() => {
+                                                    setCityInput(item);
+                                                    setSelectedCity(item);
+                                                    setFilteredCities([]);
+                                                }}
+                                            >
+                                                <Text style={Globalstyles.listItem}>{item}</Text>
+                                            </TouchableOpacity>
+                                        )}
+                                        style={Globalstyles.suggestions}
+                                    />
+                                ) : cityInput && (
                                     <TouchableOpacity
                                         onPress={() => {
-                                            setCityInput(item);
-                                            setSelectedCity(item);
+                                            setSelectedCity(cityInput);
                                             setFilteredCities([]);
                                         }}
                                     >
-                                        <Text style={Globalstyles.listItem}>{item}</Text>
                                     </TouchableOpacity>
                                 )}
-                                style={Globalstyles.suggestions}
-                            />
-                        ) : cityInput && (
-                            <TouchableOpacity
-                                onPress={() => {
-                                    setSelectedCity(cityInput);
-                                    setFilteredCities([]);
-                                }}
-                            >
-                            </TouchableOpacity>
-                        )}
 
 
-                        {errors.selectedCity && (
-                            <Text style={styles.errorText}>{errors.selectedCity}</Text>
-                        )}
-
-
-                        {/* Gender */}
-                        <Text style={Globalstyles.title}>Gender  <Entypo name={'star'} color={'red'} size={12} /> </Text>
-                        <Dropdown
-                            data={genderData}
-                            labelField="label"
-                            valueField="value"
-                            placeholder="Select Gender"
-                            value={gender}
-                            onChange={(item) => setGender(item.value)}
-                            style={Globalstyles.input}
-                            placeholderStyle={{ color: '#E7E7E7' }}
-                        />
-
-                        {errors.gender && (
-                            <Text style={styles.errorText}>{errors.gender}</Text>
-                        )}
-
-                        <View>
-                            <Text style={Globalstyles.title}>Create Password  <Entypo name={'star'} color={'red'} size={12} /> </Text>
-                            <View style={styles.passwordContainer}>
-                                <TextInput
-                                    style={styles.passwordInput}
-                                    secureTextEntry={!showPassword}
-                                    value={password}
-                                    onChangeText={setPassword}
-                                    placeholder="Create a strong password"
-                                    placeholderTextColor={Colors.gray}
-                                    autoComplete="off"
-                                    textContentType="none"
-                                    importantForAutofill="no"
-                                    autoCorrect={false}
-                                />
-                                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                                    <AntDesign
-                                        name={showPassword ? "eye" : "eyeo"}
-                                        size={20}
-                                        style={styles.eyeIcon}
-                                        color={Colors.dark}
-                                    />
-                                </TouchableOpacity>
-                            </View>
-                            {errors.password && (
-                                <Text style={styles.errorText}>{errors.password}</Text>
-                            )}
-                        </View>
-
-                        {/* Confirm Password */}
-                        <View>
-                            <Text style={Globalstyles.title}>Confirm Password <Entypo name={'star'} color={'red'} size={12} /> </Text>
-                            <View style={styles.passwordContainer}>
-                                <TextInput
-                                    style={styles.passwordInput}
-                                    secureTextEntry={!showConfirmPassword}
-                                    value={confirmPassword}
-                                    onChangeText={setConfirmpassword}
-                                    placeholder="Confirm your password"
-                                    placeholderTextColor={Colors.gray}
-                                    autoComplete="off"
-                                    textContentType="none"
-                                    importantForAutofill="no"
-                                    autoCorrect={false}
-                                />
-                                <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
-                                    <AntDesign
-                                        name={showConfirmPassword ? "eye" : "eyeo"}
-                                        size={20}
-                                        style={styles.eyeIcon}
-                                        color={Colors.dark}
-                                    />
-                                </TouchableOpacity>
-                            </View>
-                            {errors.confirmPassword && (
-                                <Text style={styles.errorText}>{errors.confirmPassword}</Text>
-                            )}
-                        </View>
-                        <Text style={Globalstyles.title}>Upload Your Profile Image</Text>
-                        <View style={Globalstyles.input}>
-                            <TouchableOpacity onPress={handleImageUpload}>
-                                <Text style={styles.imagePlaceholder}>{selectedImageName}</Text>
-                            </TouchableOpacity>
-                        </View>
-
-                        {/* Mobile Number */}
-                        <Text style={Globalstyles.title}>Mobile Number <Entypo name={'star'} color={'red'} size={12} /></Text>
-                        <View style={{ flexDirection: "row", alignItems: "center" }}>
-                            <TextInput
-                                style={[Globalstyles.input, { flex: 1 }]}
-                                keyboardType='phone-pad'
-                                placeholder="Enter your mobile number"
-                                value={mobileNumber}
-                                onChangeText={(text) => setMobileNumber(text.replace(/[^0-9]/g, ''))}
-                                maxLength={10}
-                                placeholderTextColor={Colors.gray}
-                                editable={!otpSent}
-                                autoComplete="off"
-                                textContentType="none"
-                                importantForAutofill="no"
-                                autoCorrect={false}
-                            />
-                            <TouchableOpacity
-                                style={styles.otpButton}
-                                onPress={handleSendOtp}
-                                disabled={isOtpLoading || otpTimer > 0}
-                            >
-                                {isOtpLoading ? (
-                                    <ActivityIndicator size="small" color={Colors.theme_color} />
-                                ) : (
-                                    <Text
-                                        style={[
-                                            styles.otpButtonText,
-                                            otpTimer > 0 && { color: 'red', fontFamily: "Poppins-Medium" }
-                                        ]}
-                                    >
-                                        {otpTimer > 0
-                                            ? `Resend OTP  ${Math.floor(otpTimer / 60)}:${(otpTimer % 60)
-                                                .toString()
-                                                .padStart(2, "0")}`
-                                            : "Send OTP"}
-                                    </Text>
+                                {errors.selectedCity && (
+                                    <Text style={styles.errorText}>{errors.selectedCity}</Text>
                                 )}
-                            </TouchableOpacity>
+
+
+                                {/* Gender */}
+                                <Text style={Globalstyles.title}>Gender  <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                                <Dropdown
+                                    data={genderData}
+                                    labelField="label"
+                                    valueField="value"
+                                    placeholder="Select Gender"
+                                    value={gender}
+                                    onChange={(item) => setGender(item.value)}
+                                    style={Globalstyles.input}
+                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                />
+
+                                {errors.gender && (
+                                    <Text style={styles.errorText}>{errors.gender}</Text>
+                                )}
+
+                                <View>
+                                    <Text style={Globalstyles.title}>Create Password  <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                                    <View style={styles.passwordContainer}>
+                                        <TextInput
+                                            style={styles.passwordInput}
+                                            secureTextEntry={!showPassword}
+                                            value={password}
+                                            onChangeText={setPassword}
+                                            placeholder="Create a strong password"
+                                            placeholderTextColor={Colors.gray}
+                                            autoComplete="off"
+                                            textContentType="none"
+                                            importantForAutofill="no"
+                                            autoCorrect={false}
+                                        />
+                                        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                                            <AntDesign
+                                                name={showPassword ? "eye" : "eyeo"}
+                                                size={20}
+                                                style={styles.eyeIcon}
+                                                color={Colors.dark}
+                                            />
+                                        </TouchableOpacity>
+                                    </View>
+                                    {errors.password && (
+                                        <Text style={styles.errorText}>{errors.password}</Text>
+                                    )}
+                                </View>
+
+                                {/* Confirm Password */}
+                                <View>
+                                    <Text style={Globalstyles.title}>Confirm Password <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                                    <View style={styles.passwordContainer}>
+                                        <TextInput
+                                            style={styles.passwordInput}
+                                            secureTextEntry={!showConfirmPassword}
+                                            value={confirmPassword}
+                                            onChangeText={setConfirmpassword}
+                                            placeholder="Confirm your password"
+                                            placeholderTextColor={Colors.gray}
+                                            autoComplete="off"
+                                            textContentType="none"
+                                            importantForAutofill="no"
+                                            autoCorrect={false}
+                                        />
+                                        <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+                                            <AntDesign
+                                                name={showConfirmPassword ? "eye" : "eyeo"}
+                                                size={20}
+                                                style={styles.eyeIcon}
+                                                color={Colors.dark}
+                                            />
+                                        </TouchableOpacity>
+                                    </View>
+                                    {errors.confirmPassword && (
+                                        <Text style={styles.errorText}>{errors.confirmPassword}</Text>
+                                    )}
+                                </View>
+                                <Text style={Globalstyles.title}>Upload Your Profile Image</Text>
+                                <View style={Globalstyles.input}>
+                                    <TouchableOpacity onPress={handleImageUpload}>
+                                        <Text style={styles.imagePlaceholder}>{selectedImageName}</Text>
+                                    </TouchableOpacity>
+                                </View>
+
+                                {/* Mobile Number */}
+                                <Text style={Globalstyles.title}>Mobile Number <Entypo name={'star'} color={'red'} size={12} /></Text>
+                                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                    <TextInput
+                                        style={[Globalstyles.input, { flex: 1 }]}
+                                        keyboardType='phone-pad'
+                                        placeholder="Enter your mobile number"
+                                        value={mobileNumber}
+                                        onChangeText={(text) => setMobileNumber(text.replace(/[^0-9]/g, ''))}
+                                        maxLength={10}
+                                        placeholderTextColor={Colors.gray}
+                                        editable={!otpSent}
+                                        autoComplete="off"
+                                        textContentType="none"
+                                        importantForAutofill="no"
+                                        autoCorrect={false}
+                                    />
+                                    <TouchableOpacity
+                                        style={styles.otpButton}
+                                        onPress={handleSendOtp}
+                                        disabled={isOtpLoading || otpTimer > 0}
+                                    >
+                                        {isOtpLoading ? (
+                                            <ActivityIndicator size="small" color={Colors.theme_color} />
+                                        ) : (
+                                            <Text
+                                                style={[
+                                                    styles.otpButtonText,
+                                                    otpTimer > 0 && { color: 'red', fontFamily: "Poppins-Medium" }
+                                                ]}
+                                            >
+                                                {otpTimer > 0
+                                                    ? `Resend OTP  ${Math.floor(otpTimer / 60)}:${(otpTimer % 60)
+                                                        .toString()
+                                                        .padStart(2, "0")}`
+                                                    : "Send OTP"}
+                                            </Text>
+                                        )}
+                                    </TouchableOpacity>
 
 
 
 
+                                </View>
+                                {errors.mobileNumber && (
+                                    <Text style={styles.errorText}>{errors.mobileNumber}</Text>
+                                )}
+                                {/* Mobile Number */}
+                                <Text style={Globalstyles.title}>OTP <Entypo name={'star'} color={'red'} size={12} /></Text>
+
+                                <TextInput style={Globalstyles.input}
+                                    keyboardType='phone-pad'
+                                    placeholder="Enter Your Otp"
+                                    placeholderTextColor={Colors.gray}
+                                    value={otp}
+                                    onChangeText={setOtp} maxLength={6}
+                                    autoComplete="off"
+                                    textContentType="none"
+                                    importantForAutofill="no"
+                                    autoCorrect={false} />
+
+                                {errors.otp && (
+                                    <Text style={styles.errorText}>{errors.otp}</Text>
+                                )}
+                            </View>
+                            {/* Continue Button */}
+                            <Pressable
+                                style={styles.button}
+                                onPress={handleSignup}
+                                disabled={isLoading}
+                            >
+                                {isLoading ? (
+                                    <ActivityIndicator size={'large'} color={Colors.light} />
+                                ) : (
+                                    <Text style={styles.buttonText}>Sign Up</Text>
+                                )}
+                            </Pressable>
                         </View>
-                        {errors.mobileNumber && (
-                            <Text style={styles.errorText}>{errors.mobileNumber}</Text>
-                        )}
-                        {/* Mobile Number */}
-                        <Text style={Globalstyles.title}>OTP <Entypo name={'star'} color={'red'} size={12} /></Text>
-
-                        <TextInput style={Globalstyles.input}
-                            keyboardType='phone-pad'
-                            placeholder="Enter Your Otp"
-                            placeholderTextColor={Colors.gray}
-                            value={otp}
-                            onChangeText={setOtp} maxLength={6}
-                            autoComplete="off"
-                            textContentType="none"
-                            importantForAutofill="no"
-                            autoCorrect={false} />
-
-                        {errors.otp && (
-                            <Text style={styles.errorText}>{errors.otp}</Text>
-                        )}
-                    </View>
-                    {/* Continue Button */}
-                    <Pressable
-                        style={styles.button}
-                        onPress={handleSignup}
-                        disabled={isLoading}
-                    >
-                        {isLoading ? (
-                            <ActivityIndicator size={'large'} color={Colors.light} />
-                        ) : (
-                            <Text style={styles.buttonText}>Sign Up</Text>
-                        )}
-                    </Pressable>
-                </ScrollView>
+                    </ScrollView>
+                </KeyboardAvoidingView>
             </ImageBackground>
         </SafeAreaView>
     );

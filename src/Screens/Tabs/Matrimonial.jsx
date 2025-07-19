@@ -492,7 +492,7 @@ const Matrimonial = ({ navigation }) => {
   }
 
   return (
-    <SafeAreaView style={Globalstyles.container}>
+    <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
         <View style={styles.headerContainer}>
@@ -628,46 +628,48 @@ const Matrimonial = ({ navigation }) => {
       )}
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {!searchMode && (
-          <>
-            <View style={[styles.sliderContainer, { paddingBottom: SH(10) }]}>
-              <AppIntroSlider
-                ref={sliderRef}
-                data={slider}
-                renderItem={({ item }) => {
-                  const { width, height } = item.resolution;
+        <View>
+          {!searchMode && (
+            <>
+              <View style={[styles.sliderContainer, { paddingBottom: SH(10) }]}>
+                <AppIntroSlider
+                  ref={sliderRef}
+                  data={slider}
+                  renderItem={({ item }) => {
+                    const { width, height } = item.resolution;
 
-                  const handlePress = () => {
-                    if (item.hyperlink) {
-                      Linking.openURL(item.hyperlink).catch(err =>
-                        console.error("Failed to open URL:", err)
-                      );
-                    }
-                  };
+                    const handlePress = () => {
+                      if (item.hyperlink) {
+                        Linking.openURL(item.hyperlink).catch(err =>
+                          console.error("Failed to open URL:", err)
+                        );
+                      }
+                    };
 
-                  return (
-                    <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
-                      <Image
-                        source={{ uri: item.image }}
-                        style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
-                      />
-                    </TouchableOpacity>
-                  );
-                }}
-                showNextButton={false}
-                showDoneButton={false}
-                dotStyle={Globalstyles.dot}
-                activeDotStyle={Globalstyles.activeDot}
-              />
-            </View>
-          </>
-        )}
-        <FlatList data={dataToDisplay} renderItem={renderProfileCard} keyExtractor={(item) => item._id} scrollEnabled={false}
-          ListEmptyComponent={
-            <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>No Profiles Available</Text>
-            </View>
-          } />
+                    return (
+                      <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                        <Image
+                          source={{ uri: item.image }}
+                          style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
+                        />
+                      </TouchableOpacity>
+                    );
+                  }}
+                  showNextButton={false}
+                  showDoneButton={false}
+                  dotStyle={Globalstyles.dot}
+                  activeDotStyle={Globalstyles.activeDot}
+                />
+              </View>
+            </>
+          )}
+          <FlatList data={dataToDisplay} renderItem={renderProfileCard} keyExtractor={(item) => item._id} scrollEnabled={false}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>No Profiles Available</Text>
+              </View>
+            } />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

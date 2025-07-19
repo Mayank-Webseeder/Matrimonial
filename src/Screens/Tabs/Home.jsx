@@ -53,30 +53,30 @@ const Home = ({ navigation }) => {
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
   const [NotificationData, setNotificationData] = useState({});
-const [isVideoPaused, setIsVideoPaused] = useState(true);
-const [currentSlide, setCurrentSlide] = useState(0);
-const [mutedMap, setMutedMap] = useState({}); // Per video mute state
+  const [isVideoPaused, setIsVideoPaused] = useState(true);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [mutedMap, setMutedMap] = useState({}); // Per video mute state
   const isBiodataEmpty = Object.keys(MyprofileData?.Biodata || {}).length === 0;
 
   const sections = ["dummy"];
 
- 
-useFocusEffect(
-  React.useCallback(() => {
-    setIsVideoPaused(false);
-    return () => setIsVideoPaused(true);
-  }, [])
-);
 
-// Helper to get mute state for current slide
-const isMuted = mutedMap[currentSlide] ?? true;
+  useFocusEffect(
+    React.useCallback(() => {
+      setIsVideoPaused(false);
+      return () => setIsVideoPaused(true);
+    }, [])
+  );
 
-const toggleMute = (index) => {
-  setMutedMap(prev => ({
-    ...prev,
-    [index]: !prev[index],
-  }));
-};
+  // Helper to get mute state for current slide
+  const isMuted = mutedMap[currentSlide] ?? true;
+
+  const toggleMute = (index) => {
+    setMutedMap(prev => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+  };
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -530,7 +530,7 @@ const toggleMute = (index) => {
   }
 
   return (
-    <SafeAreaView style={Globalstyles.container}>
+    <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']} >
       <StatusBar
         barStyle="dark-content"
         backgroundColor="transparent"
@@ -580,74 +580,74 @@ const toggleMute = (index) => {
         ListHeaderComponent={
           <>
             <View style={styles.sliderContainer}>
-             <AppIntroSlider
-  ref={sliderRefTop}
-  data={Topslider}
-  showPagination={Topslider.length > 1}
-  onSlideChange={(index) => {
-    setCurrentSlide(index);
-    setMutedMap(prev => ({ ...prev, [index]: true })); 
-  }}
-  renderItem={({ item, index }) => {
-    const handlePress = () => {
-      if (item.mediaType === 'video') {
-      }
-      if (item.hyperlink) {
-        Linking.openURL(item.hyperlink).catch(err =>
-          console.error("Failed to open URL:", err)
-        );
-      }
-    };
+              <AppIntroSlider
+                ref={sliderRefTop}
+                data={Topslider}
+                showPagination={Topslider.length > 1}
+                onSlideChange={(index) => {
+                  setCurrentSlide(index);
+                  setMutedMap(prev => ({ ...prev, [index]: true }));
+                }}
+                renderItem={({ item, index }) => {
+                  const handlePress = () => {
+                    if (item.mediaType === 'video') {
+                    }
+                    if (item.hyperlink) {
+                      Linking.openURL(item.hyperlink).catch(err =>
+                        console.error("Failed to open URL:", err)
+                      );
+                    }
+                  };
 
-    return (
-      <TouchableOpacity activeOpacity={0.9} onPress={handlePress}>
-        {item.mediaType === 'video' ? (
-          <View style={{ position: 'relative' }}>
-            <Video
-              source={{ uri: item.image }}
-              style={{ width: '100%', height: 200 }}
-              resizeMode="contain"
-              repeat
-              muted={isMuted}
-              paused={isVideoPaused}
-              controls={false}
-              ignoreSilentSwitch="ignore"
-            />
-            <TouchableOpacity
-              onPress={() => toggleMute(index)}
-              style={{
-                position: 'absolute',
-                bottom: 10,
-                right: 20,
-                backgroundColor: 'rgba(0,0,0,0.5)',
-                borderRadius: 20,
-                padding: 8,
-              }}
-            >
-              <Ionicons
-                name={isMuted ? 'volume-mute' : 'volume-high'}
-                size={24}
-                color="#fff"
+                  return (
+                    <TouchableOpacity activeOpacity={0.9} onPress={handlePress}>
+                      {item.mediaType === 'video' ? (
+                        <View style={{ position: 'relative' }}>
+                          <Video
+                            source={{ uri: item.image }}
+                            style={{ width: '100%', height: SH(200) }}
+                            resizeMode="contain"
+                            repeat
+                            muted={isMuted}
+                            paused={isVideoPaused}
+                            controls={false}
+                            ignoreSilentSwitch="ignore"
+                          />
+                          <TouchableOpacity
+                            onPress={() => toggleMute(index)}
+                            style={{
+                              position: 'absolute',
+                              bottom: 10,
+                              right: 20,
+                              backgroundColor: 'rgba(0,0,0,0.5)',
+                              borderRadius: 20,
+                              padding: 8,
+                            }}
+                          >
+                            <Ionicons
+                              name={isMuted ? 'volume-mute' : 'volume-high'}
+                              size={12}
+                              color="#fff"
+                            />
+                          </TouchableOpacity>
+                        </View>
+                      ) : (
+                        <Image
+                          source={{ uri: item.image }}
+                          style={{ width: '100%', height: SH(180) }}
+                          resizeMode="cover"
+                        />
+                      )}
+                    </TouchableOpacity>
+                  );
+                }}
+                showNextButton={false}
+                showDoneButton={false}
+                {...(Topslider.length > 1 && {
+                  dotStyle: styles.dot,
+                  activeDotStyle: styles.activeDot,
+                })}
               />
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <Image
-            source={{ uri: item.image }}
-            style={{ width: '100%', height: SH(180) }}
-            resizeMode="cover"
-          />
-        )}
-      </TouchableOpacity>
-    );
-  }}
-  showNextButton={false}
-  showDoneButton={false}
-  {...(Topslider.length > 1 && {
-    dotStyle: styles.dot,
-    activeDotStyle: styles.activeDot,
-  })}
-/>
 
 
             </View>
@@ -713,31 +713,33 @@ const toggleMute = (index) => {
                 data={Category}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
-                  <TouchableOpacity
-                    style={styles.CategoryContainer}
-                    onPress={() => {
-                      if (!item?.screen) {
-                        console.warn("Screen not specified for this category.");
-                        return;
-                      }
+                  <View>
+                    <TouchableOpacity
+                      style={styles.CategoryContainer}
+                      onPress={() => {
+                        if (!item?.screen) {
+                          console.warn("Screen not specified for this category.");
+                          return;
+                        }
 
-                      if (TAB_SCREENS.includes(item.screen)) {
-                        navigation.navigate("MainApp", {
-                          screen: "Tabs",
-                          params: { screen: item.screen },
-                        });
-                      } else if (DRAWER_SCREENS.includes(item.screen)) {
-                        navigation.navigate(item.screen);
-                      } else {
-                        navigation.navigate(item.screen);
-                      }
-                    }}
-                  >
-                    <Image source={item.image} style={styles.images} />
-                    <Text style={styles.text}>{item.text}</Text>
-                  </TouchableOpacity>
+                        if (TAB_SCREENS.includes(item.screen)) {
+                          navigation.navigate("MainApp", {
+                            screen: "Tabs",
+                            params: { screen: item.screen },
+                          });
+                        } else if (DRAWER_SCREENS.includes(item.screen)) {
+                          navigation.navigate(item.screen);
+                        } else {
+                          navigation.navigate(item.screen);
+                        }
+                      }}
+                    >
+                      <Image source={item.image} style={styles.images} />
+                      <Text style={styles.text}>{item.text}</Text>
+                    </TouchableOpacity>
+                  </View>
                 )}
-                horizontal
+                horizontal={true}
                 showsHorizontalScrollIndicator={false}
               />
 
@@ -750,18 +752,20 @@ const toggleMute = (index) => {
                 data={communityData}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
-                  <TouchableOpacity
-                    style={styles.CategoryContainer}
-                    onPress={() => {
-                      if (item.screen) navigation.navigate(item.screen);
-                      else console.warn("Screen not specified");
-                    }}
-                  >
-                    <Image source={item.image} style={styles.images} />
-                    <Text style={styles.text}>{item.text}</Text>
-                  </TouchableOpacity>
+                  <View>
+                    <TouchableOpacity
+                      style={styles.CategoryContainer}
+                      onPress={() => {
+                        if (item.screen) navigation.navigate(item.screen);
+                        else console.warn("Screen not specified");
+                      }}
+                    >
+                      <Image source={item.image} style={styles.images} />
+                      <Text style={styles.text}>{item.text}</Text>
+                    </TouchableOpacity>
+                  </View>
                 )}
-                horizontal
+                horizontal={true}
                 showsHorizontalScrollIndicator={false}
               />
             </View>

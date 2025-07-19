@@ -1,4 +1,4 @@
-import { Text, View, Image, ScrollView, SafeAreaView, StatusBar } from 'react-native'
+import { Text, View, Image, ScrollView, SafeAreaView, StatusBar, KeyboardAvoidingView, Platform } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Colors from '../../utils/Colors';
@@ -54,7 +54,7 @@ const MainPartnerPrefrence = ({ navigation }) => {
     };
 
     return (
-        <SafeAreaView style={Globalstyles.container}>
+        <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
             <View style={Globalstyles.header}>
                 <View style={styles.headerContainer}>
@@ -64,97 +64,105 @@ const MainPartnerPrefrence = ({ navigation }) => {
                     <Text style={Globalstyles.headerText}>{profileData?.profiledata?.username || 'NA'} Profile</Text>
                 </View>
             </View>
-            <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+                <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+                    <View>
 
-                <View style={styles.topContainer}>
+                        <View style={styles.topContainer}>
 
-                    <TouchableOpacity onPress={() => setVisible(true)}>
-                        <Image source={imageSource} style={styles.image} />
-                    </TouchableOpacity>
-                    <ImageViewing
-                        images={[{ uri: image }]}
-                        imageIndex={0}
-                        visible={visible}
-                        onRequestClose={() => setVisible(false)}
-                    />
-                    <View style={styles.userDeatil}>
-                        <View>
-                            <Text style={styles.text}>{capitalizeFirstLetter(profileData?.profiledata?.username || 'NA')}</Text>
-                            <Text style={styles.text}>DOB: {formattedDate || 'NA'}</Text>
-                            <Text style={styles.text}>City: {capitalizeFirstLetter(profileData?.profiledata?.city || 'NA')}</Text>
+                            <TouchableOpacity onPress={() => setVisible(true)}>
+                                <Image source={imageSource} style={styles.image} />
+                            </TouchableOpacity>
+                            <ImageViewing
+                                images={[{ uri: image }]}
+                                imageIndex={0}
+                                visible={visible}
+                                onRequestClose={() => setVisible(false)}
+                            />
+                            <View style={styles.userDeatil}>
+                                <View>
+                                    <Text style={styles.text}>{capitalizeFirstLetter(profileData?.profiledata?.username || 'NA')}</Text>
+                                    <Text style={styles.text}>DOB: {formattedDate || 'NA'}</Text>
+                                    <Text style={styles.text}>City: {capitalizeFirstLetter(profileData?.profiledata?.city || 'NA')}</Text>
+                                </View>
+                                <View>
+                                    <Text style={styles.text}>
+                                        Contact: {profileData?.profiledata?.mobileNo}</Text>
+                                    <Text style={styles.text}>Gender: {capitalizeFirstLetter(profileData?.profiledata?.gender || 'NA')}</Text>
+                                </View>
+                            </View>
+
                         </View>
+                        {/* Tab Buttons */}
+                        <View style={styles.IconFlex}>
+                            <TouchableOpacity
+                                style={styles.IconsButton}
+                                onPress={() => handlePress("DetailedProfile")}
+                            >
+                                <View
+                                    style={[
+                                        styles.iconWrapper,
+                                        activeComponent === "DetailedProfile" && styles.activeIcon,
+                                    ]}
+                                >
+                                    <AntDesign
+                                        name="user"
+                                        color={activeComponent === "DetailedProfile" ? "white" : Colors.theme_color}
+                                        size={20}
+                                    />
+                                </View>
+                                <Text style={styles.logotext}>Biodata Details</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={styles.IconsButton}
+                                onPress={() => handlePress("PartnersPreference")}
+                            >
+                                <View
+                                    style={[
+                                        styles.iconWrapper,
+                                        activeComponent === "PartnersPreference" && styles.activeIcon,
+                                    ]}
+                                >
+                                    <FontAwesome5
+                                        name="user-friends"
+                                        color={activeComponent === "PartnersPreference" ? "white" : Colors.theme_color}
+                                        size={20}
+                                    />
+                                </View>
+                                <Text style={styles.logotext}>Partner Preference</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={styles.IconsButton}
+                                onPress={() => handlePress("PhotoGallery")}
+                            >
+                                <View
+                                    style={[
+                                        styles.iconWrapper,
+                                        activeComponent === "PhotoGallery" && styles.activeIcon,
+                                    ]}
+                                >
+                                    <MaterialIcons
+                                        name="photo-library"
+                                        color={activeComponent === "PhotoGallery" ? "white" : Colors.theme_color}
+                                        size={20}
+                                    />
+                                </View>
+                                <Text style={styles.logotext}>Photo Gallery</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        {/* Render Active Component */}
                         <View>
-                            <Text style={styles.text}>
-                                Contact: {profileData?.profiledata?.mobileNo}</Text>
-                            <Text style={styles.text}>Gender: {capitalizeFirstLetter(profileData?.profiledata?.gender || 'NA')}</Text>
+                            {renderActiveComponent()}
                         </View>
                     </View>
-
-                </View>
-                {/* Tab Buttons */}
-                <View style={styles.IconFlex}>
-                    <TouchableOpacity
-                        style={styles.IconsButton}
-                        onPress={() => handlePress("DetailedProfile")}
-                    >
-                        <View
-                            style={[
-                                styles.iconWrapper,
-                                activeComponent === "DetailedProfile" && styles.activeIcon,
-                            ]}
-                        >
-                            <AntDesign
-                                name="user"
-                                color={activeComponent === "DetailedProfile" ? "white" : Colors.theme_color}
-                                size={20}
-                            />
-                        </View>
-                        <Text style={styles.logotext}>Biodata Details</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.IconsButton}
-                        onPress={() => handlePress("PartnersPreference")}
-                    >
-                        <View
-                            style={[
-                                styles.iconWrapper,
-                                activeComponent === "PartnersPreference" && styles.activeIcon,
-                            ]}
-                        >
-                            <FontAwesome5
-                                name="user-friends"
-                                color={activeComponent === "PartnersPreference" ? "white" : Colors.theme_color}
-                                size={20}
-                            />
-                        </View>
-                        <Text style={styles.logotext}>Partner Preference</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.IconsButton}
-                        onPress={() => handlePress("PhotoGallery")}
-                    >
-                        <View
-                            style={[
-                                styles.iconWrapper,
-                                activeComponent === "PhotoGallery" && styles.activeIcon,
-                            ]}
-                        >
-                            <MaterialIcons
-                                name="photo-library"
-                                color={activeComponent === "PhotoGallery" ? "white" : Colors.theme_color}
-                                size={20}
-                            />
-                        </View>
-                        <Text style={styles.logotext}>Photo Gallery</Text>
-                    </TouchableOpacity>
-                </View>
-
-                {/* Render Active Component */}
-                {renderActiveComponent()}
-
-            </ScrollView>
+                </ScrollView>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     );
 };

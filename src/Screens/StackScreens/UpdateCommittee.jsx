@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, StatusBar, ActivityIndicator, FlatList } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, SafeAreaView, ScrollView, StatusBar, ActivityIndicator, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
 import Colors from '../../utils/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -12,9 +12,11 @@ import { UPDATE_COMMITTEE } from '../../utils/BaseUrl';
 import { CityData, subCasteOptions } from '../../DummyData/DropdownData';
 import { showMessage } from 'react-native-flash-message';
 import { Dropdown } from 'react-native-element-dropdown';
-import { SafeAreaView } from 'react-native-safe-area-context';
+// import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const UpdateCommittee = ({ navigation, route }) => {
+    const insets = useSafeAreaInsets();
     const { committeeData } = route.params;
     const [cityInput, setCityInput] = useState('');
     const [filteredCities, setFilteredCities] = useState([]);
@@ -121,12 +123,16 @@ const UpdateCommittee = ({ navigation, route }) => {
 
     const handleImagePick = () => {
         ImageCropPicker.openPicker({
+            multiple: false,
             width: 1000,
             height: 1000,
             cropping: true,
+            freeStyleCropEnabled: true,
+            cropperToolbarTitle: 'Crop Image',
+            cropperCircleOverlay: false,
             includeBase64: true,
-            mediaType: "photo",
-            compressImageQuality: 1
+            compressImageQuality: 1,
+            mediaType: 'photo',
         })
             .then(image => {
                 const base64Image = `data:${image.mime};base64,${image.data}`;
@@ -199,7 +205,7 @@ const UpdateCommittee = ({ navigation, route }) => {
 
 
     return (
-        <SafeAreaView style={Globalstyles.container}>
+        <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
             <View style={Globalstyles.header}>
                 <View style={{ flexDirection: 'row', alignItems: "center" }}>
@@ -209,109 +215,117 @@ const UpdateCommittee = ({ navigation, route }) => {
                     <Text style={Globalstyles.headerText}>Update Committees</Text>
                 </View>
             </View>
-            <ScrollView style={Globalstyles.form}>
-                <Text style={styles.title}>Update Committee Details</Text>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+                <ScrollView contentContainerStyle={[Globalstyles.form,{paddingBottom: insets.bottom, flexGrow: 1}]} showsVerticalScrollIndicator={false}
+                    keyboardShouldPersistTaps="handled">
+                    <View>
+                        <Text style={styles.title}>Update Committee Details</Text>
 
-                <Text style={Globalstyles.title}>Committee title <Entypo name={'star'} color={'red'} size={12} /></Text>
-                <TextInput
-                    style={Globalstyles.input}
-                    placeholder="Enter title"
-                    value={CommitteeData?.committeeTitle}
-                    autoComplete="off"
-                    textContentType="none"
-                    onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, committeeTitle: text }))} placeholderTextColor={Colors.gray}
-                />
+                        <Text style={Globalstyles.title}>Committee title <Entypo name={'star'} color={'red'} size={12} /></Text>
+                        <TextInput
+                            style={Globalstyles.input}
+                            placeholder="Enter title"
+                            value={CommitteeData?.committeeTitle}
+                            autoComplete="off"
+                            textContentType="none"
+                            onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, committeeTitle: text }))} placeholderTextColor={Colors.gray}
+                        />
 
-                {/* Dharamsala Name */}
-                <Text style={Globalstyles.title}>Committee President Name <Entypo name={'star'} color={'red'} size={12} /></Text>
-                <TextInput
-                    style={Globalstyles.input}
-                    placeholder="Enter President Name"
-                    value={CommitteeData?.presidentName}
-                    onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, presidentName: text }))}
-                    placeholderTextColor={Colors.gray}
-                    autoComplete="off"
-                    textContentType="none"
-                />
+                        {/* Dharamsala Name */}
+                        <Text style={Globalstyles.title}>Committee President Name <Entypo name={'star'} color={'red'} size={12} /></Text>
+                        <TextInput
+                            style={Globalstyles.input}
+                            placeholder="Enter President Name"
+                            value={CommitteeData?.presidentName}
+                            onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, presidentName: text }))}
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                        />
 
-                <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
-                <Dropdown
-                    style={[
-                        Globalstyles.input,
-                    ]}
-                    data={subCasteOptions}
-                    labelField="label"
-                    valueField="value"
-                    value={CommitteeData?.subCaste}
-                    onChange={(text) => handleInputChange("subCaste", text.value)}
-                    placeholder="Select Your subCaste"
-                    placeholderStyle={{ color: '#E7E7E7' }}
-                    autoScroll={false}
-                    showsVerticalScrollIndicator={false}
-                />
+                        <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
+                        <Dropdown
+                            style={[
+                                Globalstyles.input,
+                            ]}
+                            data={subCasteOptions}
+                            labelField="label"
+                            valueField="value"
+                            value={CommitteeData?.subCaste}
+                            onChange={(text) => handleInputChange("subCaste", text.value)}
+                            placeholder="Select Your subCaste"
+                            placeholderStyle={{ color: '#E7E7E7' }}
+                            autoScroll={false}
+                            showsVerticalScrollIndicator={false}
+                        />
 
-                <Text style={Globalstyles.title}>City <Entypo name={'star'} color={'red'} size={12} /></Text>
-                <TextInput
-                    style={Globalstyles.input}
-                    value={CommitteeData?.city}
-                    onChangeText={handleCityInputChange}
-                    placeholder="Enter your city"
-                    placeholderTextColor={Colors.gray}
-                    autoComplete="off"
-                    textContentType="none"
-                />
-                {filteredCities.length > 0 && cityInput ? (
-                    <FlatList
-                        data={filteredCities.slice(0, 5)}
-                        scrollEnabled={false}
-                        keyExtractor={(item, index) => index.toString()}
-                        renderItem={({ item }) => (
-                            <TouchableOpacity onPress={() => handleCitySelect(item)}>
-                                <Text style={Globalstyles.listItem}>{item}</Text>
+                        <Text style={Globalstyles.title}>City <Entypo name={'star'} color={'red'} size={12} /></Text>
+                        <TextInput
+                            style={Globalstyles.input}
+                            value={CommitteeData?.city}
+                            onChangeText={handleCityInputChange}
+                            placeholder="Enter your city"
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                        />
+                        {filteredCities.length > 0 && cityInput ? (
+                            <FlatList
+                                data={filteredCities.slice(0, 5)}
+                                scrollEnabled={false}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity onPress={() => handleCitySelect(item)}>
+                                        <Text style={Globalstyles.listItem}>{item}</Text>
+                                    </TouchableOpacity>
+                                )}
+                                style={Globalstyles.suggestions}
+                            />
+                        ) : null}
+
+                        <Text style={Globalstyles.title}>Area</Text>
+                        <TextInput
+                            style={Globalstyles.input}
+                            placeholder="Enter Your Area"
+                            value={CommitteeData?.area} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, area: text }))}
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                        />
+
+                        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginVertical: SH(10) }}>
+                            <Text style={Globalstyles.title}>Upload President Image</Text>
+                            <TouchableOpacity style={styles.uploadButton} onPress={handleImagePick}>
+                                <Text style={styles.uploadButtonText}>{CommitteeData.photoUrl ? "Change Image" : "Upload Image"}</Text>
                             </TouchableOpacity>
-                        )}
-                        style={Globalstyles.suggestions}
-                    />
-                ) : null}
+                        </View>
+                        {CommitteeData?.photoUrl ? (
+                            <Image
+                                source={{ uri: CommitteeData?.photoUrl }}
+                                style={styles.imagePreviewContainer}
+                            />
+                        ) : null}
 
-                <Text style={Globalstyles.title}>Area</Text>
-                <TextInput
-                    style={Globalstyles.input}
-                    placeholder="Enter Your Area"
-                    value={CommitteeData?.area} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, area: text }))}
-                    placeholderTextColor={Colors.gray}
-                    autoComplete="off"
-                    textContentType="none"
-                />
-
-                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginVertical: SH(10) }}>
-                    <Text style={Globalstyles.title}>Upload President Image</Text>
-                    <TouchableOpacity style={styles.uploadButton} onPress={handleImagePick}>
-                        <Text style={styles.uploadButtonText}>{CommitteeData.photoUrl ? "Change Image" : "Upload Image"}</Text>
-                    </TouchableOpacity>
-                </View>
-                {CommitteeData?.photoUrl ? (
-                    <Image
-                        source={{ uri: CommitteeData?.photoUrl }}
-                        style={styles.imagePreviewContainer}
-                    />
-                ) : null}
-
-                <Text style={Globalstyles.title}>Contact Number Of President <Entypo name={'star'} color={'red'} size={12} /></Text>
-                <TextInput
-                    style={Globalstyles.input}
-                    placeholder="Enter contact number"
-                    keyboardType='phone-pad'
-                    maxLength={10}
-                    placeholderTextColor={Colors.gray}
-                    autoComplete="off"
-                    textContentType="none"
-                    value={CommitteeData?.mobileNo} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, mobileNo: text }))}
-                />
-                <TouchableOpacity style={styles.submitButton} onPress={handleCommitteeUpdate} disabled={isLoading}>
-                    {isLoading ? <ActivityIndicator size="large" color={Colors.light} /> : <Text style={styles.submitButtonText}>Submit</Text>}
-                </TouchableOpacity>
-            </ScrollView>
+                        <Text style={Globalstyles.title}>Contact Number Of President <Entypo name={'star'} color={'red'} size={12} /></Text>
+                        <TextInput
+                            style={Globalstyles.input}
+                            placeholder="Enter contact number"
+                            keyboardType='phone-pad'
+                            maxLength={10}
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                            value={CommitteeData?.mobileNo} onChangeText={(text) => setCommitteeData((prev) => ({ ...prev, mobileNo: text }))}
+                        />
+                        <TouchableOpacity style={styles.submitButton} onPress={handleCommitteeUpdate} disabled={isLoading}>
+                            {isLoading ? <ActivityIndicator size="large" color={Colors.light} /> : <Text style={styles.submitButtonText}>Submit</Text>}
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     );
 };

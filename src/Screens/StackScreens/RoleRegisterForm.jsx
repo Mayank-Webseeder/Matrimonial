@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, SafeAreaView, StatusBar, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, SafeAreaView, StatusBar, FlatList, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import styles from '../StyleScreens/RoleRegisterStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
@@ -14,8 +14,10 @@ import ImageCropPicker from 'react-native-image-crop-picker';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector } from 'react-redux';
 import { showMessage } from 'react-native-flash-message';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const RoleRegisterForm = ({ navigation }) => {
+    const insets = useSafeAreaInsets();
     const [stateInput, setStateInput] = useState('');
     const [cityInput, setCityInput] = useState('');
     const [selectedRoles, setSelectedRoles] = useState([]);
@@ -164,11 +166,19 @@ const RoleRegisterForm = ({ navigation }) => {
         try {
             const image = await ImageCropPicker.openPicker({
                 multiple: false,
+                width: 1000,
+                height: 1000,
                 cropping: true,
-                width: 400,
-                height: 400,
+                freeStyleCropEnabled: true,
+                cropperToolbarTitle: 'Crop Image',
+                cropperCircleOverlay: false,
                 includeBase64: true,
-                compressImageQuality: 1
+                compressImageQuality: 1,
+                mediaType: 'photo',
+                cropperStatusBarColor: '#000000',
+                cropperToolbarColor: '#FFFFFF',
+                cropperActiveWidgetColor: '#000000',
+                cropperToolbarWidgetColor: '#000000',
             });
 
             if (!image.data) {
@@ -489,7 +499,7 @@ const RoleRegisterForm = ({ navigation }) => {
 
 
     return (
-        <SafeAreaView style={Globalstyles.container}>
+        <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
             <View style={Globalstyles.header}>
                 <View style={{ flexDirection: 'row', alignItems: "center" }}>
@@ -499,310 +509,319 @@ const RoleRegisterForm = ({ navigation }) => {
                     <Text style={Globalstyles.headerText}>Register</Text>
                 </View>
             </View>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
 
-            <ScrollView showsVerticalScrollIndicator={false}>
-                <View style={Globalstyles.form}>
-                    {/* <Text style={styles.editText}>Edit Details</Text> */}
-                    <Text style={Globalstyles.title}>Name <Entypo name={'star'} color={'red'} size={12} /></Text>
-                    <TextInput style={Globalstyles.input}
-                        value={RoleRegisterData?.fullName || fetchProfileDetails?.fullName || ''}
-                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, fullName: text }))}
-                        placeholder='Enter Your Full Name'
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
-                    />
-                    {errors.fullName && <Text style={styles.errorText}>{errors.fullName}</Text>}
-
-                    <Text style={Globalstyles.title}>Mobile No. <Entypo name={'star'} color={'red'} size={12} /></Text>
-                    <TextInput style={Globalstyles.input}
-                        value={RoleRegisterData?.mobileNo || fetchProfileDetails?.mobileNo || ''}
-                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, mobileNo: text }))}
-                        keyboardType="phone-pad"
-                        placeholder="Enter Your Mobile No." maxLength={10}
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no" />
-
-                    {errors.mobileNo && <Text style={styles.errorText}>{errors.mobileNo}</Text>}
-                    <Text style={[Globalstyles.title, { color: Colors.theme_color }]}>Address</Text>
-
-                    <Text style={Globalstyles.title}>State <Entypo name={'star'} color={'red'} size={12} /></Text>
-                    <TextInput
-                        style={Globalstyles.input}
-                        value={RoleRegisterData?.state || fetchProfileDetails?.state || ''} // `biodata?.state` ki jagah `stateInput` use karein
-                        onChangeText={handleStateInputChange}
-                        placeholder="Type your State"
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
-                    />
-                    {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
-
-                    {filteredStates.length > 0 ? (
-                        <FlatList
-                            data={filteredStates.slice(0, 5)}
-                            scrollEnabled={false}
-                            keyExtractor={(item, index) => index.toString()}
-                            renderItem={({ item }) => (
-                                <TouchableOpacity onPress={() => handleStateSelect(item)}>
-                                    <Text style={Globalstyles.listItem}>{item}</Text>
-                                </TouchableOpacity>
-                            )}
-                            style={Globalstyles.suggestions}
+                <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom, flexGrow: 1 }}
+                    showsVerticalScrollIndicator={false}
+                    keyboardShouldPersistTaps="handled">
+                    <View style={Globalstyles.form}>
+                        {/* <Text style={styles.editText}>Edit Details</Text> */}
+                        <Text style={Globalstyles.title}>Name <Entypo name={'star'} color={'red'} size={12} /></Text>
+                        <TextInput style={Globalstyles.input}
+                            value={RoleRegisterData?.fullName || fetchProfileDetails?.fullName || ''}
+                            onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, fullName: text }))}
+                            placeholder='Enter Your Full Name'
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
                         />
-                    ) : null}
+                        {errors.fullName && <Text style={styles.errorText}>{errors.fullName}</Text>}
 
-                    <Text style={Globalstyles.title}>Village / City <Entypo name={'star'} color={'red'} size={12} /></Text>
-                    <TextInput
-                        style={Globalstyles.input}
-                        value={RoleRegisterData?.city || fetchProfileDetails?.city || ''}
-                        onChangeText={handleCityInputChange}
-                        placeholder="Enter your city"
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
-                    />
-                    {errors.city && <Text style={styles.errorText}>{errors.city}</Text>}
-                    {filteredCities.length > 0 && cityInput ? (
-                        <FlatList
-                            data={filteredCities.slice(0, 5)}
-                            scrollEnabled={false}
-                            keyExtractor={(item, index) => index.toString()}
-                            renderItem={({ item }) => (
-                                <TouchableOpacity onPress={() => handleCitySelect(item)}>
-                                    <Text style={Globalstyles.listItem}>{item}</Text>
-                                </TouchableOpacity>
-                            )}
-                            style={Globalstyles.suggestions}
+                        <Text style={Globalstyles.title}>Mobile No. <Entypo name={'star'} color={'red'} size={12} /></Text>
+                        <TextInput style={Globalstyles.input}
+                            value={RoleRegisterData?.mobileNo || fetchProfileDetails?.mobileNo || ''}
+                            onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, mobileNo: text }))}
+                            keyboardType="phone-pad"
+                            placeholder="Enter Your Mobile No." maxLength={10}
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no" />
+
+                        {errors.mobileNo && <Text style={styles.errorText}>{errors.mobileNo}</Text>}
+                        <Text style={[Globalstyles.title, { color: Colors.theme_color }]}>Address</Text>
+
+                        <Text style={Globalstyles.title}>State <Entypo name={'star'} color={'red'} size={12} /></Text>
+                        <TextInput
+                            style={Globalstyles.input}
+                            value={RoleRegisterData?.state || fetchProfileDetails?.state || ''} // `biodata?.state` ki jagah `stateInput` use karein
+                            onChangeText={handleStateInputChange}
+                            placeholder="Type your State"
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
                         />
-                    ) : null}
+                        {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
 
+                        {filteredStates.length > 0 ? (
+                            <FlatList
+                                data={filteredStates.slice(0, 5)}
+                                scrollEnabled={false}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity onPress={() => handleStateSelect(item)}>
+                                        <Text style={Globalstyles.listItem}>{item}</Text>
+                                    </TouchableOpacity>
+                                )}
+                                style={Globalstyles.suggestions}
+                            />
+                        ) : null}
 
-                    <Text style={Globalstyles.title}>Area</Text>
-                    <TextInput style={Globalstyles.input}
-                        value={RoleRegisterData?.residentialAddress || fetchProfileDetails?.residentialAddress || ''}
-                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, residentialAddress: text }))}
-                        placeholder='Enter Your Area'
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
-                    />
-
-                    <Text style={Globalstyles.title}>Aadhar No. </Text>
-                    <TextInput style={Globalstyles.input}
-                        value={RoleRegisterData?.aadharNo || fetchProfileDetails?.aadharNo || ''}
-                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, aadharNo: text }))}
-                        placeholder='Enter Your Aadhar No.'
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
-                    />
-
-                    <Text style={Globalstyles.title}>Sub Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
-                    <TextInput
-                        style={Globalstyles.input}
-                        value={RoleRegisterData?.subCaste || fetchProfileDetails?.subCaste || ''} // `myBiodata?.subCaste` ki jagah `subCasteInput` use karein
-                        onChangeText={handleSubCasteInputChange}
-                        placeholder="Type your sub caste"
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
-                    />
-                    {errors.subCaste && <Text style={styles.errorText}>{errors.subCaste}</Text>}
-
-                    {/* Agar user type karega toh list dikhegi */}
-                    {filteredSubCaste.length > 0 ? (
-                        <FlatList
-                            data={filteredSubCaste.slice(0, 5)}
-                            scrollEnabled={false}
-                            keyExtractor={(item, index) => index.toString()}
-                            renderItem={({ item }) => (
-                                <TouchableOpacity onPress={() => handleSubCasteSelect(item)}>
-                                    <Text style={Globalstyles.listItem}>{item}</Text>
-                                </TouchableOpacity>
-                            )}
-                            style={Globalstyles.suggestions}
+                        <Text style={Globalstyles.title}>Village / City <Entypo name={'star'} color={'red'} size={12} /></Text>
+                        <TextInput
+                            style={Globalstyles.input}
+                            value={RoleRegisterData?.city || fetchProfileDetails?.city || ''}
+                            onChangeText={handleCityInputChange}
+                            placeholder="Enter your city"
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
                         />
-                    ) : null}
+                        {errors.city && <Text style={styles.errorText}>{errors.city}</Text>}
+                        {filteredCities.length > 0 && cityInput ? (
+                            <FlatList
+                                data={filteredCities.slice(0, 5)}
+                                scrollEnabled={false}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity onPress={() => handleCitySelect(item)}>
+                                        <Text style={Globalstyles.listItem}>{item}</Text>
+                                    </TouchableOpacity>
+                                )}
+                                style={Globalstyles.suggestions}
+                            />
+                        ) : null}
 
 
-                    {/* Role Selection with Checkboxes */}
-                    <Text style={Globalstyles.title}>You are Registering for <Entypo name={'star'} color={'red'} size={12} /></Text>
-                    <View style={styles.checkboxContainer}>
-                        {roleOptions.map(role => (
-                            <View key={role.value} style={styles.checkboxItem}>
-                                <Checkbox
-                                    status={selectedRoles.includes(role.value) ? 'checked' : 'unchecked'}
-                                    onPress={() => handleRoleChange(role.value)}
-                                    color={Colors.theme_color}
-                                />
-                                <Text>{role.label}</Text>
-                            </View>
-                        ))}
-                    </View>
+                        <Text style={Globalstyles.title}>Area</Text>
+                        <TextInput style={Globalstyles.input}
+                            value={RoleRegisterData?.residentialAddress || fetchProfileDetails?.residentialAddress || ''}
+                            onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, residentialAddress: text }))}
+                            placeholder='Enter Your Area'
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
+                        />
 
-                    {/* Show services for selected roles */}
-                    {selectedRoles.map(role => (
-                        <View key={role} style={styles.roleServices}>
-                            <Text style={styles.servicesLabel}>{role} Services</Text>
-                            {servicesOptions[role]?.map(service => (
-                                <View key={service.value} style={styles.checkboxContainer1}>
-                                    <Checkbox.Item
-                                        label={service.label}
-                                        status={checked[service.value] ? 'checked' : 'unchecked'}
-                                        onPress={() => handleCheckboxChange(service.value)}
+                        <Text style={Globalstyles.title}>Aadhar No. </Text>
+                        <TextInput style={Globalstyles.input}
+                            value={RoleRegisterData?.aadharNo || fetchProfileDetails?.aadharNo || ''}
+                            onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, aadharNo: text }))}
+                            placeholder='Enter Your Aadhar No.'
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
+                        />
+
+                        <Text style={Globalstyles.title}>Sub Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
+                        <TextInput
+                            style={Globalstyles.input}
+                            value={RoleRegisterData?.subCaste || fetchProfileDetails?.subCaste || ''} // `myBiodata?.subCaste` ki jagah `subCasteInput` use karein
+                            onChangeText={handleSubCasteInputChange}
+                            placeholder="Type your sub caste"
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
+                        />
+                        {errors.subCaste && <Text style={styles.errorText}>{errors.subCaste}</Text>}
+
+                        {/* Agar user type karega toh list dikhegi */}
+                        {filteredSubCaste.length > 0 ? (
+                            <FlatList
+                                data={filteredSubCaste.slice(0, 5)}
+                                scrollEnabled={false}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity onPress={() => handleSubCasteSelect(item)}>
+                                        <Text style={Globalstyles.listItem}>{item}</Text>
+                                    </TouchableOpacity>
+                                )}
+                                style={Globalstyles.suggestions}
+                            />
+                        ) : null}
+
+
+                        {/* Role Selection with Checkboxes */}
+                        <Text style={Globalstyles.title}>You are Registering for <Entypo name={'star'} color={'red'} size={12} /></Text>
+                        <View style={styles.checkboxContainer}>
+                            {roleOptions.map(role => (
+                                <View key={role.value} style={styles.checkboxItem}>
+                                    <Checkbox
+                                        status={selectedRoles.includes(role.value) ? 'checked' : 'unchecked'}
+                                        onPress={() => handleRoleChange(role.value)}
                                         color={Colors.theme_color}
                                     />
+                                    <Text>{role.label}</Text>
                                 </View>
                             ))}
                         </View>
-                    ))}
 
-                    <Text style={Globalstyles.title}>Experience</Text>
-                    <View>
-                        <Dropdown
-                            style={Globalstyles.input}
-                            data={ExperienceData}
-                            labelField="label"
-                            valueField="value"
-                            value={RoleRegisterData?.experience}
-                            onChange={(text) => handleInputChange("experience", text.value)}
-                            placeholder="Select Experience"
-                            placeholderStyle={{ color: '#E7E7E7' }}
+                        {/* Show services for selected roles */}
+                        {selectedRoles.map(role => (
+                            <View key={role} style={styles.roleServices}>
+                                <Text style={styles.servicesLabel}>{role} Services</Text>
+                                {servicesOptions[role]?.map(service => (
+                                    <View key={service.value} style={styles.checkboxContainer1}>
+                                        <Checkbox.Item
+                                            label={service.label}
+                                            status={checked[service.value] ? 'checked' : 'unchecked'}
+                                            onPress={() => handleCheckboxChange(service.value)}
+                                            color={Colors.theme_color}
+                                        />
+                                    </View>
+                                ))}
+                            </View>
+                        ))}
+
+                        <Text style={Globalstyles.title}>Experience</Text>
+                        <View>
+                            <Dropdown
+                                style={Globalstyles.input}
+                                data={ExperienceData}
+                                labelField="label"
+                                valueField="value"
+                                value={RoleRegisterData?.experience}
+                                onChange={(text) => handleInputChange("experience", text.value)}
+                                placeholder="Select Experience"
+                                placeholderStyle={{ color: '#E7E7E7' }}
+                            />
+                        </View>
+
+                        <Text style={Globalstyles.title}>Profile Photo <Entypo name={'star'} color={'red'} size={12} /></Text>
+                        <View style={Globalstyles.input}>
+                            <TouchableOpacity onPress={handleProfilePhotoPick}>
+                                {RoleRegisterData.profilePhoto ? (
+                                    <Image
+                                        source={{ uri: RoleRegisterData.profilePhoto }}
+                                        style={styles.profileImage}
+                                    />
+                                ) : (
+                                    <Text style={styles.imagePlaceholder}>Upload Profile Photo</Text>
+                                )}
+                            </TouchableOpacity>
+                        </View>
+                        {errors.profilePhoto && <Text style={styles.errorText}>{errors.profilePhoto}</Text>}
+
+                        <Text style={Globalstyles.title}>Add Description</Text>
+                        <TextInput style={Globalstyles.textInput} value={RoleRegisterData.description || fetchProfileDetails?.description || ''}
+                            onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, description: text }))}
+                            textAlignVertical='top' placeholder="Add Your Description"
+                            placeholderTextColor={Colors.gray} multiline={true}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
                         />
-                    </View>
 
-                    <Text style={Globalstyles.title}>Profile Photo <Entypo name={'star'} color={'red'} size={12} /></Text>
-                    <View style={Globalstyles.input}>
-                        <TouchableOpacity onPress={handleProfilePhotoPick}>
-                            {RoleRegisterData.profilePhoto ? (
-                                <Image
-                                    source={{ uri: RoleRegisterData.profilePhoto }}
-                                    style={styles.profileImage}
-                                />
+                        <View style={styles.photopickContainer}>
+                            <Text style={styles.title}>Upload Photos For Your Page </Text>
+
+                            {/* Crop Picker Button */}
+                            <TouchableOpacity style={styles.PickPhotoButton} onPress={handleAdditionalPhotosPick}>
+                                <Text style={styles.PickPhotoText}>Pick & Crop Photo</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        {/* Display Selected Photos */}
+                        {RoleRegisterData?.additionalPhotos?.length > 0 && (
+                            <View style={styles.photosContainer}>
+                                <Text style={styles.label}>Uploaded Photos:</Text>
+                                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        {RoleRegisterData?.additionalPhotos.map((photo, index) => (
+                                            <Image key={index} source={{ uri: photo }} style={styles.photo} />
+                                        ))}
+                                    </View>
+                                </ScrollView>
+                            </View>
+                        )}
+
+                        <Text style={Globalstyles.title}>Website Link</Text>
+                        <TextInput
+                            style={Globalstyles.input}
+                            value={tempUrlData.websiteUrl || RoleRegisterData.websiteUrl}
+                            onChangeText={(text) => validateAndSetUrl(text, "websiteUrl")}
+                            onBlur={() => handleBlur("websiteUrl")}
+                            placeholder="Give Your Website Link"
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
+                        />
+
+                        <Text style={Globalstyles.title}>Youtube Link</Text>
+                        <TextInput
+                            style={Globalstyles.input}
+                            value={tempUrlData.youtubeUrl || RoleRegisterData.youtubeUrl}
+                            onChangeText={(text) => validateAndSetUrl(text, "youtubeUrl")}
+                            onBlur={() => handleBlur("youtubeUrl")}
+                            placeholder="Give Your Youtube Link"
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
+                        />
+
+                        <Text style={Globalstyles.title}>Whatsapp Link</Text>
+                        <TextInput
+                            style={Globalstyles.input}
+                            value={tempUrlData.whatsapp || RoleRegisterData.whatsapp}
+                            onChangeText={(text) => validateAndSetUrl(text, "whatsapp")}
+                            onBlur={() => handleBlur("whatsapp")}
+                            placeholder="Give Your Whatsapp Link"
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
+                        />
+
+                        <Text style={Globalstyles.title}>Facebook Link</Text>
+                        <TextInput
+                            style={Globalstyles.input}
+                            value={tempUrlData.facebookUrl || RoleRegisterData.facebookUrl}
+                            onChangeText={(text) => validateAndSetUrl(text, "facebookUrl")}
+                            onBlur={() => handleBlur("facebookUrl")}
+                            placeholder="Give Your Facebook Link"
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
+                        />
+
+                        <Text style={Globalstyles.title}>Instagram Link</Text>
+                        <TextInput
+                            style={Globalstyles.input}
+                            value={tempUrlData.instagramUrl || RoleRegisterData.instagramUrl}
+                            onChangeText={(text) => validateAndSetUrl(text, "instagramUrl")}
+                            onBlur={() => handleBlur("instagramUrl")}
+                            placeholder="Give Your Instagram Link"
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
+                        />
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={handleSubmit}
+                            disabled={isLoading}
+                        >
+                            {isLoading ? (
+                                <ActivityIndicator size="large" color={Colors.light} />
                             ) : (
-                                <Text style={styles.imagePlaceholder}>Upload Profile Photo</Text>
+                                <Text style={styles.buttonText}>submit</Text>
                             )}
                         </TouchableOpacity>
                     </View>
-                    {errors.profilePhoto && <Text style={styles.errorText}>{errors.profilePhoto}</Text>}
-
-                    <Text style={Globalstyles.title}>Add Description</Text>
-                    <TextInput style={Globalstyles.textInput} value={RoleRegisterData.description || fetchProfileDetails?.description || ''}
-                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, description: text }))}
-                        textAlignVertical='top' placeholder="Add Your Description"
-                        placeholderTextColor={Colors.gray} multiline={true}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
-                    />
-
-                    <View style={styles.photopickContainer}>
-                        <Text style={styles.title}>Upload Photos For Your Page </Text>
-
-                        {/* Crop Picker Button */}
-                        <TouchableOpacity style={styles.PickPhotoButton} onPress={handleAdditionalPhotosPick}>
-                            <Text style={styles.PickPhotoText}>Pick & Crop Photo</Text>
-                        </TouchableOpacity>
-                    </View>
-
-                    {/* Display Selected Photos */}
-                    {RoleRegisterData?.additionalPhotos?.length > 0 && (
-                        <View style={styles.photosContainer}>
-                            <Text style={styles.label}>Uploaded Photos:</Text>
-                            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                                {RoleRegisterData?.additionalPhotos.map((photo, index) => (
-                                    <Image key={index} source={{ uri: photo }} style={styles.photo} />
-                                ))}
-                            </ScrollView>
-                        </View>
-                    )}
-
-                    <Text style={Globalstyles.title}>Website Link</Text>
-                    <TextInput
-                        style={Globalstyles.input}
-                        value={tempUrlData.websiteUrl || RoleRegisterData.websiteUrl}
-                        onChangeText={(text) => validateAndSetUrl(text, "websiteUrl")}
-                        onBlur={() => handleBlur("websiteUrl")}
-                        placeholder="Give Your Website Link"
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
-                    />
-
-                    <Text style={Globalstyles.title}>Youtube Link</Text>
-                    <TextInput
-                        style={Globalstyles.input}
-                        value={tempUrlData.youtubeUrl || RoleRegisterData.youtubeUrl}
-                        onChangeText={(text) => validateAndSetUrl(text, "youtubeUrl")}
-                        onBlur={() => handleBlur("youtubeUrl")}
-                        placeholder="Give Your Youtube Link"
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
-                    />
-
-                    <Text style={Globalstyles.title}>Whatsapp Link</Text>
-                    <TextInput
-                        style={Globalstyles.input}
-                        value={tempUrlData.whatsapp || RoleRegisterData.whatsapp}
-                        onChangeText={(text) => validateAndSetUrl(text, "whatsapp")}
-                        onBlur={() => handleBlur("whatsapp")}
-                        placeholder="Give Your Whatsapp Link"
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
-                    />
-
-                    <Text style={Globalstyles.title}>Facebook Link</Text>
-                    <TextInput
-                        style={Globalstyles.input}
-                        value={tempUrlData.facebookUrl || RoleRegisterData.facebookUrl}
-                        onChangeText={(text) => validateAndSetUrl(text, "facebookUrl")}
-                        onBlur={() => handleBlur("facebookUrl")}
-                        placeholder="Give Your Facebook Link"
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
-                    />
-
-                    <Text style={Globalstyles.title}>Instagram Link</Text>
-                    <TextInput
-                        style={Globalstyles.input}
-                        value={tempUrlData.instagramUrl || RoleRegisterData.instagramUrl}
-                        onChangeText={(text) => validateAndSetUrl(text, "instagramUrl")}
-                        onBlur={() => handleBlur("instagramUrl")}
-                        placeholder="Give Your Instagram Link"
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
-                    />
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={handleSubmit}
-                        disabled={isLoading}
-                    >
-                        {isLoading ? (
-                            <ActivityIndicator size="large" color={Colors.light} />
-                        ) : (
-                            <Text style={styles.buttonText}>submit</Text>
-                        )}
-                    </TouchableOpacity>
-                </View>
-            </ScrollView>
+                </ScrollView>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     );
 };

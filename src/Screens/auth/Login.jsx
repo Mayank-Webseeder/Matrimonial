@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, ImageBackground, TouchableOpacity, TextInput, ScrollView, ActivityIndicator, KeyboardAvoidingView } from "react-native";
+import { Text, View, ImageBackground, TouchableOpacity, TextInput, ScrollView, SafeAreaView, ActivityIndicator, KeyboardAvoidingView, Platform } from "react-native";
 import styles from "../StyleScreens/LoginStyle";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import axios from "axios";
@@ -9,7 +9,8 @@ import { useDispatch } from "react-redux";
 import { setLoginData } from "../../ReduxStore/Slices/authSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { showMessage } from "react-native-flash-message";
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SH } from "../../utils/Dimensions";
+// import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Login = ({ navigation }) => {
     const [mobileNumber, setMobileNumber] = useState("");
@@ -133,90 +134,102 @@ const Login = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
-            <ImageBackground
-                source={require("../../Images/LoginBackground.png")}
-                style={styles.image}
-            >
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
                 <ScrollView
                     contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
                     showsVerticalScrollIndicator={false}
+                    keyboardShouldPersistTaps="handled"
                 >
-                    <KeyboardAvoidingView>
-                        <Text style={styles.text}>Login</Text>
-                        <Text style={styles.passwordText}>
-                            Enter phone number to send one time Password
-                        </Text>
-
-                        {/* Mobile Number */}
-                        <View>
-                            <Text style={styles.HeadingText}>Phone Number</Text>
-                            <TextInput
-                                style={styles.inputText}
-                                keyboardType='phone-pad'
-                                placeholder="Enter your mobile number"
-                                value={mobileNumber}
-                                onChangeText={(text) => setMobileNumber(text.replace(/[^0-9]/g, ''))}
-                                placeholderTextColor={Colors.gray}
-                                maxLength={10}
-                                autoComplete="off"
-                                textContentType="none"
-                                importantForAutofill="no"
-                                autoCorrect={false}
-                            />
-                            {errors.mobileNumber && (
-                                <Text style={styles.errorText}>{errors.mobileNumber}</Text>
-                            )}
-                        </View>
-
-                        {/* Password */}
-                        <View>
-                            <Text style={styles.HeadingText}>Password</Text>
-
-                            <View style={styles.passwordContainer}>
-                                <TextInput
-                                    style={styles.passwordInput}
-                                    secureTextEntry={!passwordVisible}
-                                    placeholder="Enter Your Password"
-                                    value={password}
-                                    onChangeText={setPassword}
-                                    placeholderTextColor={Colors.gray}
-                                    autoComplete="off"
-                                    textContentType="none"
-                                    importantForAutofill="no"
-                                    autoCorrect={false}
-                                />
-                                <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
-                                    <AntDesign
-                                        name={passwordVisible ? "eye" : "eyeo"}
-                                        size={20}
-                                        style={styles.eyeIcon}
-                                        color={Colors.theme_color}
-                                    />
-                                </TouchableOpacity>
-                            </View>
-                            {errors.password && (
-                                <Text style={styles.errorText}>{errors.password}</Text>
-                            )}
-
-                        </View>
-                        <TouchableOpacity style={styles.forgotPasswordButton} onPress={() => navigation.navigate('ForgotScreen')}>
-                            <Text style={styles.forgotPasswordText}>Forgot Password</Text>
-                        </TouchableOpacity>
-                        {/* Login Button */}
-                        <TouchableOpacity
-                            style={styles.button}
-                            onPress={handleLogin}
-                            disabled={loading}
+                    <View>
+                        <ImageBackground
+                            source={require("../../Images/LoginBackground.png")}
+                            style={styles.image}
                         >
-                            {loading ? (
-                                <ActivityIndicator size="large" color={Colors.light} />
-                            ) : (
-                                <Text style={styles.buttonText}>Login</Text>
-                            )}
-                        </TouchableOpacity>
-                    </KeyboardAvoidingView>
+                            <View style={{ paddingTop: SH(85) }}>
+                                <Text style={styles.text}>Login</Text>
+                                <Text style={styles.passwordText}>
+                                    Enter phone number to send one time Password
+                                </Text>
+
+                                {/* Mobile Number */}
+                                <View>
+                                    <Text style={styles.HeadingText}>Phone Number</Text>
+                                    <TextInput
+                                        style={styles.inputText}
+                                        keyboardType='phone-pad'
+                                        placeholder="Enter your mobile number"
+                                        value={mobileNumber}
+                                        onChangeText={(text) => setMobileNumber(text.replace(/[^0-9]/g, ''))}
+                                        placeholderTextColor={Colors.gray}
+                                        maxLength={10}
+                                        autoComplete="off"
+                                        textContentType="none"
+                                        importantForAutofill="no"
+                                        autoCorrect={false}
+                                    />
+                                    {errors.mobileNumber && (
+                                        <Text style={styles.errorText}>{errors.mobileNumber}</Text>
+                                    )}
+                                </View>
+
+                                {/* Password */}
+                                <View>
+                                    <Text style={styles.HeadingText}>Password</Text>
+
+                                    <View style={styles.passwordContainer}>
+                                        <TextInput
+                                            style={styles.passwordInput}
+                                            secureTextEntry={!passwordVisible}
+                                            placeholder="Enter Your Password"
+                                            value={password}
+                                            onChangeText={setPassword}
+                                            placeholderTextColor={Colors.gray}
+                                            autoComplete="off"
+                                            textContentType="none"
+                                            importantForAutofill="no"
+                                            autoCorrect={false}
+                                        />
+                                        <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
+                                            <AntDesign
+                                                name={passwordVisible ? "eye" : "eyeo"}
+                                                size={20}
+                                                style={styles.eyeIcon}
+                                                color={Colors.theme_color}
+                                            />
+                                        </TouchableOpacity>
+                                    </View>
+                                    {errors.password && (
+                                        <Text style={styles.errorText}>{errors.password}</Text>
+                                    )}
+
+                                </View>
+                                <View>
+                                    <TouchableOpacity style={styles.forgotPasswordButton} onPress={() => navigation.navigate('ForgotScreen')}>
+                                        <Text style={styles.forgotPasswordText}>Forgot Password</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                {/* Login Button */}
+                                <View>
+                                    <TouchableOpacity
+                                        style={styles.button}
+                                        onPress={handleLogin}
+                                        disabled={loading}
+                                    >
+                                        {loading ? (
+                                            <ActivityIndicator size="large" color={Colors.light} />
+                                        ) : (
+                                            <Text style={styles.buttonText}>Login</Text>
+                                        )}
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </ImageBackground>
+                    </View>
                 </ScrollView>
-            </ImageBackground>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     );
 };

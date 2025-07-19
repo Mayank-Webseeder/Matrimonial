@@ -14,8 +14,10 @@ import { useSelector } from 'react-redux';
 import { setAllNotification } from '../../ReduxStore/Slices/GetAllNotificationSlice';
 import { useDispatch } from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Notification = ({ navigation }) => {
+   const insets = useSafeAreaInsets();
   const [NotificationData, setNotificationData] = useState([]);
   const [seenotificationData, setseenNotificationData] = useState([]);
   const [viewNotification, setViewnotification] = useState({});
@@ -487,7 +489,7 @@ const Notification = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={Globalstyles.container}>
+    <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -532,6 +534,7 @@ const Notification = ({ navigation }) => {
             renderItem={showSeen ? renderSeenItem : renderItem}
             keyExtractor={(item) => item._id}
             showsVerticalScrollIndicator={false}
+            contentContainerStyle={{paddingBottom: insets.bottom + SH(50), flexGrow: 1}}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }

@@ -26,7 +26,10 @@ import { showMessage } from 'react-native-flash-message';
 import { useCallback } from 'react';
 import { CommonActions } from '@react-navigation/native';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 const Dharmshala = ({ route }) => {
+  const insets = useSafeAreaInsets();
   const { id } = route.params || {};
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
@@ -520,7 +523,7 @@ const Dharmshala = ({ route }) => {
 
 
   return (
-    <SafeAreaView style={Globalstyles.container}>
+    <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
       <StatusBar
         barStyle="dark-content"
         backgroundColor="transparent"
@@ -628,58 +631,62 @@ const Dharmshala = ({ route }) => {
       </View>
 
       {/* Scrollable Content */}
-      <ScrollView showsVerticalScrollIndicator={false} refreshControl={
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{
+        paddingBottom: insets.bottom + SH(65)
+      }} refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }>
-        {/* Image Slider */}
-        <View style={styles.sliderContainer}>
-          <AppIntroSlider
-            ref={sliderRef}
-            data={slider}
-            renderItem={({ item }) => {
-              const { width, height } = item.resolution;
+        <View>
+          {/* Image Slider */}
+          <View style={styles.sliderContainer}>
+            <AppIntroSlider
+              ref={sliderRef}
+              data={slider}
+              renderItem={({ item }) => {
+                const { width, height } = item.resolution;
 
-              const handlePress = () => {
-                if (item.hyperlink) {
-                  Linking.openURL(item.hyperlink).catch(err =>
-                    console.error("Failed to open URL:", err)
-                  );
-                }
-              };
+                const handlePress = () => {
+                  if (item.hyperlink) {
+                    Linking.openURL(item.hyperlink).catch(err =>
+                      console.error("Failed to open URL:", err)
+                    );
+                  }
+                };
 
-              return (
-                <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
-                  <Image
-                    source={{ uri: item.image }}
-                    style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
-                  />
-                </TouchableOpacity>
-              );
-            }}
-            showNextButton={false}
-            showDoneButton={false}
-            dotStyle={styles.dot}
-            activeDotStyle={styles.activeDot}
-          />
+                return (
+                  <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                    <Image
+                      source={{ uri: item.image }}
+                      style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
+                    />
+                  </TouchableOpacity>
+                );
+              }}
+              showNextButton={false}
+              showDoneButton={false}
+              dotStyle={styles.dot}
+              activeDotStyle={styles.activeDot}
+            />
+          </View>
+
+          {loading ? renderSkeleton() : (
+            <FlatList
+              data={dharamsalaData}
+              renderItem={renderItem}
+              keyExtractor={(item) => item._id.toString()}
+              scrollEnabled={false}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.DharamSalaList}
+              ListEmptyComponent={
+                <View style={styles.emptyContainer}>
+                  <FontAwesome name="building" size={60} color="#ccc" style={{ marginBottom: 15 }} />
+                  <Text style={styles.emptyText}>No Dharamsala Data Available</Text>
+                  <Text style={styles.infoText}>Dharamsala listings will appear here once available.</Text>
+                </View>
+              }
+            />
+          )}
         </View>
-
-        {loading ? renderSkeleton() : (
-          <FlatList
-            data={dharamsalaData}
-            renderItem={renderItem}
-            keyExtractor={(item) => item._id.toString()}
-            scrollEnabled={false}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.DharamSalaList}
-            ListEmptyComponent={
-              <View style={styles.emptyContainer}>
-                <FontAwesome name="building" size={60} color="#ccc" style={{ marginBottom: 15 }} />
-                <Text style={styles.emptyText}>No Dharamsala Data Available</Text>
-                <Text style={styles.infoText}>Dharamsala listings will appear here once available.</Text>
-              </View>
-            }
-          />
-        )}
 
       </ScrollView>
 

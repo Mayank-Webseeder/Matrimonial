@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, FlatList, ScrollView,Image } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, FlatList, ScrollView, Image } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { DrawerActions, useFocusEffect } from '@react-navigation/native';
 import Globalstyles from '../../utils/GlobalCss';
@@ -8,8 +8,10 @@ import { SF, SH, SW } from '../../utils/Dimensions';
 import { SUBSCRIPTION_HISTORY } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const SubscriptionHistory = ({ navigation }) => {
+    const insets = useSafeAreaInsets();
     const [activeTab, setActiveTab] = useState('Pandit');
     const [subscriptionData, setSubscriptionData] = useState([]);
     const [IsLoading, setIsLoading] = useState(false);
@@ -148,11 +150,11 @@ const SubscriptionHistory = ({ navigation }) => {
     const tabs = ['Pandit', 'Jyotish', 'Kathavachak', 'Biodata'];
 
     return (
-        <View style={styles.container}>
+        <View style={styles.container} edges={['top', 'bottom']}>
             <View style={Globalstyles.header}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
-                          <Image source={require('../../Images/menu.png')} style={{width: SW(30),height: SH(30)}} />
+                        <Image source={require('../../Images/menu.png')} style={{ width: SW(30), height: SH(30) }} />
                     </TouchableOpacity>
                     <Text style={Globalstyles.headerText}>Subscription History</Text>
                 </View>
@@ -160,7 +162,7 @@ const SubscriptionHistory = ({ navigation }) => {
 
             <View style={{ width: "100%" }}>
                 <ScrollView
-                    horizontal
+                    horizontal={true}
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={[
                         styles.tabContainer,
@@ -188,15 +190,17 @@ const SubscriptionHistory = ({ navigation }) => {
                     ))}
                 </ScrollView>
             </View>
-            <FlatList
-                data={filteredData}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={renderItem}
-                contentContainerStyle={styles.listContent}
-                ListEmptyComponent={
-                    <Text style={styles.emptyText}>No subscriptions found for {activeTab}.</Text>
-                }
-            />
+            <View>
+                <FlatList
+                    data={filteredData}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={renderItem}
+                    contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom, flexGrow: 1 }]}
+                    ListEmptyComponent={
+                        <Text style={styles.emptyText}>No subscriptions found for {activeTab}.</Text>
+                    }
+                />
+            </View>
         </View>
     );
 };

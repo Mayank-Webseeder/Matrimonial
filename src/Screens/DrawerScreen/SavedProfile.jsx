@@ -14,8 +14,10 @@ import { useSelector } from "react-redux";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { SH, SF, SW } from "../../utils/Dimensions";
 import { showMessage } from "react-native-flash-message";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const SavedProfile = ({ navigation }) => {
+  const insets = useSafeAreaInsets();
   const flatListRef = useRef(null);
   const [activeCategory, setActiveCategory] = useState("Biodata");
   const [savedProfiles, setSavedProfiles] = useState([]);
@@ -92,7 +94,7 @@ const SavedProfile = ({ navigation }) => {
           duration: 5000,
         });
 
-        setSavedProfiles(prev => prev.filter(p => p.saveProfile?._id !== _id));
+        setSavedProfiles(prev => prev.filter(p => p._id !== _id));
       } else {
         throw new Error(response?.data?.message || "Something went wrong!");
       }
@@ -305,7 +307,7 @@ const SavedProfile = ({ navigation }) => {
   }
 
   return (
-    <SafeAreaView style={Globalstyles.container}>
+    <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View>
         <View style={Globalstyles.header}>
@@ -389,7 +391,7 @@ const SavedProfile = ({ navigation }) => {
             keyExtractor={(item) => (item.id ? item.id.toString() : item._id.toString())}
             numColumns={2}
             columnWrapperStyle={styles.row}
-            contentContainerStyle={styles.ProfileContainer}
+            contentContainerStyle={[styles.ProfileContainer,{paddingBottom: insets.bottom, flexGrow: 1}]}
             showsVerticalScrollIndicator={false}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

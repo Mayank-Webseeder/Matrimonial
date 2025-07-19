@@ -22,10 +22,11 @@ import AppIntroSlider from 'react-native-app-intro-slider';
 import { CommonActions } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/native';
 import ImageViewer from 'react-native-image-zoom-viewer';
-
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const EventNews = ({ navigation }) => {
   const route = useRoute();
+  const insets = useSafeAreaInsets();
   const { postId } = route.params || {};
   const sheetRef = useRef(null);
   const sliderRef = useRef(null);
@@ -144,15 +145,14 @@ const EventNews = ({ navigation }) => {
   };
 
 
-  useFocusEffect(
-    useCallback(() => {
-      fetchPostData();
-      GetEventNews();
-      Advertisement_window();
-      setPage(1);
-    }, [])
-  );
-
+ useFocusEffect(
+  useCallback(() => {
+    fetchPostData();
+    GetEventNews();
+    Advertisement_window();
+    setPage(1);
+  }, [route?.params?.refresh]) // <-- triggers again when refresh param changes
+);
 
   useEffect(() => {
     fetchPostData();
@@ -551,11 +551,13 @@ const EventNews = ({ navigation }) => {
     if (sheetRef.current) {
       sheetRef.current.close();
     }
-    navigation.navigate("MainApp", {
-      screen: "Tabs",
-      params: { screen: "EventNews" },
-    });
-
+   navigation.navigate("MainApp", {
+  screen: "Tabs",
+  params: {
+    screen: "EventNews",
+    params: { refresh: Date.now() }, // pass a dynamic param
+  },
+});
   }
 
   const renderImages = (images, item) => {
@@ -839,7 +841,7 @@ const EventNews = ({ navigation }) => {
   }
 
   return (
-    <SafeAreaView style={Globalstyles.container}>
+    <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
       <StatusBar
         barStyle="dark-content"
         backgroundColor="transparent"
@@ -907,72 +909,75 @@ const EventNews = ({ navigation }) => {
       )}
 
       <ScrollView
-        style={styles.bottomContainer}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={{
+          paddingBottom: insets.bottom + SH(65), flexGrow: 1
+        }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        <FlatList
-          data={postId ? eventdata : getPostsForPage()}
-          renderItem={renderItem}
-          keyExtractor={(item) => item._id}
-          scrollEnabled={true}
-          nestedScrollEnabled={true}
-          showsVerticalScrollIndicator={false}
-          ListEmptyComponent={
-            <View style={styles.emptyContainer}>
-              <Ionicons
-                name={'newspaper'}
-                size={60}
-                color={Colors.theme_color}
-                style={{ marginBottom: SH(10) }}
-              />
-              <Text style={[styles.emptyText, { fontFamily: "POppins-Bold", fontSize: SF(16) }]}>
-                No Event & News Posted Yet
-              </Text>
-              <Text style={{ color: 'gray', textAlign: 'center', marginTop: SH(5), paddingHorizontal: SW(20), fontFamily: "POppins-Medium" }}>
-                Events or news uploaded by Activists will be shown here.
-              </Text>
-            </View>
-          }
-        />
-        {getPostsForPage().length >= 10 && (
-          <TouchableOpacity style={styles.loadMoreButton} onPress={loadNextPage}>
-            <Text style={styles.loadMoreText}>Load More Posts</Text>
-          </TouchableOpacity>
-        )}
-
-        <View style={[Globalstyles.bottomImage, { paddingBottom: SH(10) }]}>
-          <AppIntroSlider
-            ref={sliderRef}
-            data={slider}
-            renderItem={({ item }) => {
-              const { width, height } = item.resolution;
-
-              const handlePress = () => {
-                if (item.hyperlink) {
-                  Linking.openURL(item.hyperlink).catch(err =>
-                    console.error("Failed to open URL:", err)
-                  );
-                }
-              };
-
-              return (
-                <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
-                  <Image
-                    source={{ uri: item.image }}
-                    style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
-                  />
-                </TouchableOpacity>
-              );
-            }}
-            showNextButton={false}
-            showDoneButton={false}
-            dotStyle={Globalstyles.dot}
-            activeDotStyle={Globalstyles.activeDot}
+        <View style={styles.bottomContainer}>
+          <FlatList
+            data={postId ? eventdata : getPostsForPage()}
+            renderItem={renderItem}
+            keyExtractor={(item) => item._id}
+            scrollEnabled={true}
+            nestedScrollEnabled={true}
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <Ionicons
+                  name={'newspaper'}
+                  size={60}
+                  color={Colors.theme_color}
+                  style={{ marginBottom: SH(10) }}
+                />
+                <Text style={[styles.emptyText, { fontFamily: "POppins-Bold", fontSize: SF(16) }]}>
+                  No Event & News Posted Yet
+                </Text>
+                <Text style={{ color: 'gray', textAlign: 'center', marginTop: SH(5), paddingHorizontal: SW(20), fontFamily: "POppins-Medium" }}>
+                  Events or news uploaded by Activists will be shown here.
+                </Text>
+              </View>
+            }
           />
+          {getPostsForPage().length >= 10 && (
+            <TouchableOpacity style={styles.loadMoreButton} onPress={loadNextPage}>
+              <Text style={styles.loadMoreText}>Load More Posts</Text>
+            </TouchableOpacity>
+          )}
+
+          <View style={[Globalstyles.bottomImage, { paddingBottom: SH(10) }]}>
+            <AppIntroSlider
+              ref={sliderRef}
+              data={slider}
+              renderItem={({ item }) => {
+                const { width, height } = item.resolution;
+
+                const handlePress = () => {
+                  if (item.hyperlink) {
+                    Linking.openURL(item.hyperlink).catch(err =>
+                      console.error("Failed to open URL:", err)
+                    );
+                  }
+                };
+
+                return (
+                  <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                    <Image
+                      source={{ uri: item.image }}
+                      style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
+                    />
+                  </TouchableOpacity>
+                );
+              }}
+              showNextButton={false}
+              showDoneButton={false}
+              dotStyle={Globalstyles.dot}
+              activeDotStyle={Globalstyles.activeDot}
+            />
+          </View>
         </View>
 
       </ScrollView>

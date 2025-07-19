@@ -28,8 +28,9 @@ const styles = StyleSheet.create({
     },
     Formtitle: {
         fontFamily: "Poppins-Medium",
-        fontSize: SF(18),
-        color: Colors.theme_color
+        fontSize: SF(15),
+        color: Colors.theme_color,
+        marginLeft:SW(10)
     },
     editText: {
         color: Colors.theme_color,

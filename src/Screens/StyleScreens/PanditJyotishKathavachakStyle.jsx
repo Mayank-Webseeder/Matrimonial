@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     alignItems: 'center',
     flexDirection: "row",
-    marginRight:SW(20)
+    marginRight:SW(65)
   },
   rating: {
     flexDirection: 'row',
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
   },
   leftContainer: {
     marginVertical: SH(10),
-    width: "65%"
+    width: "80%"
   },
   searchContainer: {
     flexDirection: "row",

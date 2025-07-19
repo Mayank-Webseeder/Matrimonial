@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, StatusBar, FlatList } from "react-native";
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, SafeAreaView, ScrollView, StatusBar, FlatList, KeyboardAvoidingView } from "react-native";
 import React, { useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
@@ -12,9 +12,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSelector } from "react-redux";
 import { showMessage } from "react-native-flash-message";
 import { CityData } from "../../DummyData/DropdownData";
-import { SafeAreaView } from 'react-native-safe-area-context';
+// import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 
 const UpdateProfile = ({ navigation }) => {
+  const insets = useSafeAreaInsets();
   const ProfileData = useSelector((state) => state.profile);
   const profileData = ProfileData?.profiledata || {};
   const [username, setUsername] = useState(profileData.username || "");
@@ -120,7 +123,7 @@ const UpdateProfile = ({ navigation }) => {
     }
   };
   return (
-    <SafeAreaView style={Globalstyles.container}>
+    <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
         <View style={styles.headerContainer}>
@@ -130,17 +133,18 @@ const UpdateProfile = ({ navigation }) => {
           <Text style={Globalstyles.headerText}>Update Profile</Text>
         </View>
       </View>
-      <ScrollView contentContainerStyle={Globalstyles.form}>
-        <Text style={Globalstyles.title}>Username</Text>
-        <TextInput
-          style={Globalstyles.input}
-          placeholder="Enter your name"
-          value={username}
-          onChangeText={setUsername}
-          placeholderTextColor={Colors.gray}
-        />
+      <ScrollView contentContainerStyle={[Globalstyles.form,{paddingBottom: insets.bottom, flexGrow: 1}]} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+        <View>
+          <Text style={Globalstyles.title}>Username</Text>
+          <TextInput
+            style={Globalstyles.input}
+            placeholder="Enter your name"
+            value={username}
+            onChangeText={setUsername}
+            placeholderTextColor={Colors.gray}
+          />
 
-        {/* <Text style={Globalstyles.title}>Mobile Number</Text>
+          {/* <Text style={Globalstyles.title}>Mobile Number</Text>
         <TextInput
           style={Globalstyles.input}
           placeholder="Enter your mobile number"
@@ -150,71 +154,72 @@ const UpdateProfile = ({ navigation }) => {
           placeholderTextColor={Colors.gray}
         /> */}
 
-        <Text style={Globalstyles.title}>Date of Birth</Text>
-        <TouchableOpacity onPress={() => setShowDatePicker(true)} style={Globalstyles.input}>
-          <Text style={styles.dateText}>{moment(dob).format("DD MMMM YYYY")}</Text>
-        </TouchableOpacity>
-        {showDatePicker && (
-          <DateTimePicker
-            value={dob ? new Date(dob) : new Date(2000, 0, 1)}
-            mode="date"
-            display="default"
-            maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))}
-            onChange={handleDateChange}
-            themeVariant="light"
-          />
-        )}
-        <Text style={Globalstyles.title}>City</Text>
-        <TextInput
-          style={Globalstyles.input}
-          value={city}
-          onChangeText={handleCityInputChange}
-          placeholder="Enter your city"
-          placeholderTextColor={Colors.gray}
-          autoComplete="off"
-          textContentType="none"
-        />
-        {filteredCities.length > 0 && city.length > 0 ? (
-          <FlatList
-            data={filteredCities.slice(0, 5)}
-            scrollEnabled={false}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => handleCitySelect(item)}>
-                <Text style={Globalstyles.listItem}>{item}</Text>
-              </TouchableOpacity>
-            )}
-            style={Globalstyles.suggestions}
-          />
-        ) : null}
-
-        <Text style={Globalstyles.title}>Gender</Text>
-        <View style={styles.genderContainer}>
-          <TouchableOpacity
-            style={[styles.genderButton, gender === "male" && styles.selectedGender]}
-            onPress={() => setGender("male")}
-          >
-            <Text
-              style={[styles.genderText, gender === "male" && styles.selectedGenderText]}
-            >
-              Male
-            </Text>
+          <Text style={Globalstyles.title}>Date of Birth</Text>
+          <TouchableOpacity onPress={() => setShowDatePicker(true)} style={Globalstyles.input}>
+            <Text style={styles.dateText}>{moment(dob).format("DD MMMM YYYY")}</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.genderButton, gender === "female" && styles.selectedGender]}
-            onPress={() => setGender("female")}
-          >
-            <Text
-              style={[styles.genderText, gender === "female" && styles.selectedGenderText]}
+          {showDatePicker && (
+            <DateTimePicker
+              value={dob ? new Date(dob) : new Date(2000, 0, 1)}
+              mode="date"
+              display="default"
+              maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))}
+              onChange={handleDateChange}
+              themeVariant="light"
+            />
+          )}
+          <Text style={Globalstyles.title}>City</Text>
+          <TextInput
+            style={Globalstyles.input}
+            value={city}
+            onChangeText={handleCityInputChange}
+            placeholder="Enter your city"
+            placeholderTextColor={Colors.gray}
+            autoComplete="off"
+            textContentType="none"
+          />
+          {filteredCities.length > 0 && city.length > 0 ? (
+            <FlatList
+              data={filteredCities.slice(0, 5)}
+              scrollEnabled={false}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item }) => (
+                <TouchableOpacity onPress={() => handleCitySelect(item)}>
+                  <Text style={Globalstyles.listItem}>{item}</Text>
+                </TouchableOpacity>
+              )}
+              style={Globalstyles.suggestions}
+            />
+          ) : null}
+
+          <Text style={Globalstyles.title}>Gender</Text>
+          <View style={styles.genderContainer}>
+            <TouchableOpacity
+              style={[styles.genderButton, gender === "male" && styles.selectedGender]}
+              onPress={() => setGender("male")}
             >
-              Female
-            </Text>
+              <Text
+                style={[styles.genderText, gender === "male" && styles.selectedGenderText]}
+              >
+                Male
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.genderButton, gender === "female" && styles.selectedGender]}
+              onPress={() => setGender("female")}
+            >
+              <Text
+                style={[styles.genderText, gender === "female" && styles.selectedGenderText]}
+              >
+                Female
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity style={styles.updateButton} onPress={update_profile}>
+            <Text style={styles.updateButtonText}>Update Profile</Text>
           </TouchableOpacity>
         </View>
-
-        <TouchableOpacity style={styles.updateButton} onPress={update_profile}>
-          <Text style={styles.updateButtonText}>Update Profile</Text>
-        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );

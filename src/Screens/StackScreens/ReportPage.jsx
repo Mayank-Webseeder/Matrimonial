@@ -109,7 +109,7 @@ const ReportPage = ({ navigation, route }) => {
   };
 
   return (
-    <View style={Globalstyles.container}>
+    <View style={Globalstyles.container} edges={['top', 'bottom']}>
       <View style={Globalstyles.header}>
         <View style={{ alignItems: 'center', flexDirection: 'row' }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>

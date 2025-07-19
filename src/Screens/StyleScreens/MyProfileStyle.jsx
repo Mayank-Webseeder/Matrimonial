@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     },
     image: {
         width: "100%",
-        height: SH(300),
+        height: SH(280),
         alignSelf: 'center',
         borderRadius: 10,
     },
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     text: {
         fontFamily: "Poppins-Regular",
         fontSize: SF(15),
-        paddingVertical: SH(3)
+        paddingVertical: SH(1)
     },
     editText: {
         color: Colors.theme_color,

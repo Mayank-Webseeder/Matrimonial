@@ -262,10 +262,20 @@ const MyProfile = ({ navigation }) => {
 
     const handleImageUpload = async () => {
         ImageCropPicker.openPicker({
+            multiple: false,
             width: 1000,
             height: 1000,
             cropping: true,
+            freeStyleCropEnabled: true,
+            cropperToolbarTitle: 'Crop Image',
+            cropperCircleOverlay: false,
             includeBase64: true,
+            compressImageQuality: 1,
+            mediaType: 'photo',
+            cropperStatusBarColor: '#000000',
+            cropperToolbarColor: '#FFFFFF',
+            cropperActiveWidgetColor: '#000000',
+            cropperToolbarWidgetColor: '#000000',
         })
             .then(image => {
                 setSelectedImage(image.path);
@@ -379,7 +389,7 @@ const MyProfile = ({ navigation }) => {
     }
 
     return (
-        <SafeAreaView style={Globalstyles.container}>
+        <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
             <StatusBar
                 barStyle="dark-content"
                 backgroundColor="transparent"
@@ -439,43 +449,45 @@ const MyProfile = ({ navigation }) => {
                         <Text style={styles.editText} onPress={() => navigation.navigate('UpdateProfile')}>Update Profile</Text>
                     </View>
 
-                    <ScrollView style={{ paddingVertical: SH(5), paddingHorizontal: SW(10) }} showsVerticalScrollIndicator={false}>
-                        <View style={styles.userDeatil}>
-                            <View style={styles.userData}>
-                                <Text style={styles.text}>User ID:  {profileData.userId || 'NA'}</Text>
-                                <Text style={styles.text}>{capitalizeFirstLetter(profileData.username || 'NA')}</Text>
-                                <Text style={styles.text}>DOB: {formattedDate || 'NA'}</Text>
-                                <Text style={styles.text}>City: {capitalizeFirstLetter(profileData.city || 'NA')}</Text>
+                    <ScrollView contentContainerStyle={{ paddingVertical: SH(5), paddingHorizontal: SW(10) }} showsVerticalScrollIndicator={false}>
+                        <View>
+                            <View style={styles.userDeatil}>
+                                <View style={styles.userData}>
+                                    <Text style={styles.text}>User ID:  {profileData.userId || 'NA'}</Text>
+                                    <Text style={styles.text}>{capitalizeFirstLetter(profileData.username || 'NA')}</Text>
+                                    <Text style={styles.text}>DOB: {formattedDate || 'NA'}</Text>
+                                    <Text style={styles.text}>City: {capitalizeFirstLetter(profileData.city || 'NA')}</Text>
+                                </View>
+                                <View style={styles.userData}>
+                                    <Text style={styles.text}>
+                                        Contact: {profileData.mobileNo}</Text>
+                                    <Text style={styles.text}>Gender: {capitalizeFirstLetter(profileData.gender || 'NA')}</Text>
+                                </View>
                             </View>
-                            <View style={styles.userData}>
-                                <Text style={styles.text}>
-                                    Contact: {profileData.mobileNo}</Text>
-                                <Text style={styles.text}>Gender: {capitalizeFirstLetter(profileData.gender || 'NA')}</Text>
+                            {/* First Row */}
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                <TouchableOpacity style={styles.IconsButton} onPress={() => handlePress('Biodata')}>
+                                    <FontAwesome name="id-card" color={selectedButton === 'CreateBioData' ? 'white' : Colors.theme_color} size={25} style={selectedButton === 'CreateBioData' ? styles.Selectedicon : styles.icon} />
+                                    <Text style={styles.logotext}>{profileData.isMatrimonial ? 'My Bio Data' : 'Create Bio Data'}</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity style={styles.IconsButton} onPress={() => handlePress('Pandit')}>
+                                    <FontAwesome5 name={profileData.isPandit ? "user" : "user-plus"} color={Colors.theme_color} size={25} style={styles.icon} />
+                                    <Text style={styles.logotext}>{profileData.isPandit ? 'My Pandit Profile' : 'Register as Pandit'}</Text>
+                                </TouchableOpacity>
                             </View>
-                        </View>
-                        {/* First Row */}
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <TouchableOpacity style={styles.IconsButton} onPress={() => handlePress('Biodata')}>
-                                <FontAwesome name="id-card" color={selectedButton === 'CreateBioData' ? 'white' : Colors.theme_color} size={25} style={selectedButton === 'CreateBioData' ? styles.Selectedicon : styles.icon} />
-                                <Text style={styles.logotext}>{profileData.isMatrimonial ? 'My Bio Data' : 'Create Bio Data'}</Text>
-                            </TouchableOpacity>
+                            {/* Second Row */}
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: SH(10) }}>
+                                <TouchableOpacity style={styles.IconsButton} onPress={() => handlePress('Jyotish')}>
+                                    <FontAwesome5 name={profileData.isJyotish ? "user" : "user-plus"} color={Colors.theme_color} size={25} style={styles.icon} />
+                                    <Text style={styles.logotext}>{profileData.isJyotish ? 'My Jyotish Profile' : 'Register as Jyotish'}</Text>
+                                </TouchableOpacity>
 
-                            <TouchableOpacity style={styles.IconsButton} onPress={() => handlePress('Pandit')}>
-                                <FontAwesome5 name={profileData.isPandit ? "user" : "user-plus"} color={Colors.theme_color} size={25} style={styles.icon} />
-                                <Text style={styles.logotext}>{profileData.isPandit ? 'My Pandit Profile' : 'Register as Pandit'}</Text>
-                            </TouchableOpacity>
-                        </View>
-                        {/* Second Row */}
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: SH(10) }}>
-                            <TouchableOpacity style={styles.IconsButton} onPress={() => handlePress('Jyotish')}>
-                                <FontAwesome5 name={profileData.isJyotish ? "user" : "user-plus"} color={Colors.theme_color} size={25} style={styles.icon} />
-                                <Text style={styles.logotext}>{profileData.isJyotish ? 'My Jyotish Profile' : 'Register as Jyotish'}</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity style={styles.IconsButton} onPress={() => handlePress('Kathavachak')}>
-                                <FontAwesome5 name={profileData.isKathavachak ? "user" : "user-plus"} color={Colors.theme_color} size={25} style={styles.icon} />
-                                <Text style={styles.logotext}>{profileData.isKathavachak ? 'My Kathavachak Profile' : 'Register as Kathavachak'}</Text>
-                            </TouchableOpacity>
+                                <TouchableOpacity style={styles.IconsButton} onPress={() => handlePress('Kathavachak')}>
+                                    <FontAwesome5 name={profileData.isKathavachak ? "user" : "user-plus"} color={Colors.theme_color} size={25} style={styles.icon} />
+                                    <Text style={styles.logotext}>{profileData.isKathavachak ? 'My Kathavachak Profile' : 'Register as Kathavachak'}</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </ScrollView>
 

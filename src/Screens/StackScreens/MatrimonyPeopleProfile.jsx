@@ -21,8 +21,10 @@ import { SF, SH, SW } from '../../utils/Dimensions';
 import { showMessage } from 'react-native-flash-message';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const MatrimonyPeopleProfile = ({ navigation }) => {
+  const insets = useSafeAreaInsets();
   const sliderRef = useRef(null);
   const topSliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -614,7 +616,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
 
   return (
-    <SafeAreaView style={Globalstyles.container}>
+    <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: "center" }}>
@@ -656,533 +658,535 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         </View>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.sliderContainer}>
-          <AppIntroSlider
-            ref={topSliderRef}
-            data={formattedImages}
-            renderItem={SliderrenderItem}
-            showNextButton={false}
-            showDoneButton={false}
-            dotStyle={Globalstyles.dot}
-            activeDotStyle={Globalstyles.activeDot}
-            onSlideChange={(index) => setCurrentIndex(index)}
-          />
-
-          {/* Modal for Full Image View */}
-          <Modal visible={modalVisible} transparent={true} animationType="fade" onRequestClose={() => setModalVisible(false)}>
-            <ImageViewer
-              imageUrls={formattedImages.map(img => ({ url: img.uri }))}
-              index={imageIndex}
-              onSwipeDown={() => setModalVisible(false)}
-              onCancel={() => setModalVisible(false)}
-              enableSwipeDown={true}
-              enablePreload={true}
-              saveToLocalByLongPress={false}
-              renderIndicator={(currentIndex, allSize) => (
-                <View style={{
-                  position: "absolute",
-                  top: SH(30),
-                  alignSelf: "center",
-                  backgroundColor: "rgba(0,0,0,0.6)",
-                  paddingHorizontal: SW(8),
-                  borderRadius: 5,
-                  paddingVertical: SH(8),
-                  zIndex: 999
-                }}>
-                  <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>
-                    {currentIndex} / {allSize}
-                  </Text>
-                </View>
-              )}
-              renderImage={(props) => (
-                <Image
-                  {...props}
-                  resizeMode="contain"
-                  style={{ width: '100%', height: '100%' }}
-                  blurRadius={isBlurCondition ? 10 : 0} // 👈 Add blur here conditionally
-                />
-              )}
-              backgroundColor="rgba(0,0,0,0.95)"
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(50), flexGrow: 1}}>
+        <View>
+          <View style={styles.sliderContainer}>
+            <AppIntroSlider
+              ref={topSliderRef}
+              data={formattedImages}
+              renderItem={SliderrenderItem}
+              showNextButton={false}
+              showDoneButton={false}
+              dotStyle={Globalstyles.dot}
+              activeDotStyle={Globalstyles.activeDot}
+              onSlideChange={(index) => setCurrentIndex(index)}
             />
-          </Modal>
 
-        </View>
-
-
-        {isActivist ? (
-          <View style={styles.verifiedContainer}>
-            {isVerified ? (
-              <>
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: "flex-end" }}>
+            {/* Modal for Full Image View */}
+            <Modal visible={modalVisible} transparent={true} animationType="fade" onRequestClose={() => setModalVisible(false)}>
+              <ImageViewer
+                imageUrls={formattedImages.map(img => ({ url: img.uri }))}
+                index={imageIndex}
+                onSwipeDown={() => setModalVisible(false)}
+                onCancel={() => setModalVisible(false)}
+                enableSwipeDown={true}
+                enablePreload={true}
+                saveToLocalByLongPress={false}
+                renderIndicator={(currentIndex, allSize) => (
+                  <View style={{
+                    position: "absolute",
+                    top: SH(30),
+                    alignSelf: "center",
+                    backgroundColor: "rgba(0,0,0,0.6)",
+                    paddingHorizontal: SW(8),
+                    borderRadius: 5,
+                    paddingVertical: SH(8),
+                    zIndex: 999
+                  }}>
+                    <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>
+                      {currentIndex} / {allSize}
+                    </Text>
+                  </View>
+                )}
+                renderImage={(props) => (
                   <Image
-                    source={require("../../Images/verified.png")}
-                    style={styles.verifiedBadge}
+                    {...props}
+                    resizeMode="contain"
+                    style={{ width: '100%', height: '100%' }}
+                    blurRadius={isBlurCondition ? 10 : 0} // 👈 Add blur here conditionally
                   />
-                  <Text style={[styles.verifiedText, { paddingHorizontal: SW(5), paddingVertical: SH(3) }]}> Already Verified</Text>
-                </View>
+                )}
+                backgroundColor="rgba(0,0,0,0.95)"
+              />
+            </Modal>
 
-                {verifiedBy === activistId && (
+          </View>
+
+
+          {isActivist ? (
+            <View style={styles.verifiedContainer}>
+              {isVerified ? (
+                <>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: "flex-end" }}>
+                    <Image
+                      source={require("../../Images/verified.png")}
+                      style={styles.verifiedBadge}
+                    />
+                    <Text style={[styles.verifiedText, { paddingHorizontal: SW(5), paddingVertical: SH(3) }]}> Already Verified</Text>
+                  </View>
+
+                  {verifiedBy === activistId && (
+                    <Switch
+                      value={isSwitchOn}
+                      onValueChange={handleToggle}
+                      thumbColor={isSwitchOn ? "#4CAF50" : "#767577"}
+                      trackColor={{ false: "#f4f3f4", true: "#4CAF50" }}
+                    />
+                  )}
+                </>
+              ) : (
+                <>
+                  <Text style={styles.verifiedText}>Verify Profile</Text>
                   <Switch
                     value={isSwitchOn}
                     onValueChange={handleToggle}
                     thumbColor={isSwitchOn ? "#4CAF50" : "#767577"}
                     trackColor={{ false: "#f4f3f4", true: "#4CAF50" }}
                   />
-                )}
-              </>
-            ) : (
-              <>
-                <Text style={styles.verifiedText}>Verify Profile</Text>
-                <Switch
-                  value={isSwitchOn}
-                  onValueChange={handleToggle}
-                  thumbColor={isSwitchOn ? "#4CAF50" : "#767577"}
-                  trackColor={{ false: "#f4f3f4", true: "#4CAF50" }}
-                />
-              </>
-            )}
-          </View>
-        ) : (
-          isVerified && (
-            <View style={[styles.verifiedContainer, { top: SH(320), left: SW(275), width: SW(80) }]}>
-              <Image
-                source={require("../../Images/verified.png")}
-                style={styles.verifiedBadge}
-              />
-              <Text style={styles.verifiedText}>Verified</Text>
+                </>
+              )}
             </View>
-          )
-        )}
-        <View style={styles.flexContainer}>
-          <View style={styles.flex}>
-            <Text style={styles.Idtext}>
-              {"ID NO. :-".toUpperCase()} {userData?.bioDataId}
-            </Text>
-
-            {matchPercentage > 0 && (
-              <Text style={styles.toptext}>
-                {matchPercentage}% Compatible according to your preference
+          ) : (
+            isVerified && (
+              <View style={[styles.verifiedContainer, { top: SH(320), left: SW(275), width: SW(80) }]}>
+                <Image
+                  source={require("../../Images/verified.png")}
+                  style={styles.verifiedBadge}
+                />
+                <Text style={styles.verifiedText}>Verified</Text>
+              </View>
+            )
+          )}
+          <View style={styles.flexContainer}>
+            <View style={styles.flex}>
+              <Text style={styles.Idtext}>
+                {"ID NO. :-".toUpperCase()} {userData?.bioDataId}
               </Text>
-            )}
-          </View>
-          <View style={styles.sharecontainer}>
-            <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles()}>
-              <FontAwesome
-                name={Save ? "bookmark" : "bookmark-o"}
-                size={19}
-                color={Colors.theme_color}
-              />
-              <Text style={styles.iconText}>{Save ? "Saved" : "Save"}</Text>
-            </TouchableOpacity>
 
-            <TouchableOpacity style={styles.iconContainer} onPress={shareProfiles}>
-              <Feather name={"send"} size={19} color={Colors.theme_color} />
-              <Text style={styles.iconText}>Share</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.interestedButton}
-              onPress={requestId ? () => DeleteIntrest(requestId) : sendInterestRequest}
-              disabled={
-                status === "accepted" ||
-                status === "rejected" ||
-                (requestId ? intrestLoading : loadingIntrest)
-              }
-            >
-              {(requestId ? intrestLoading : loadingIntrest) ? (
-                <ActivityIndicator size="small" color={Colors.theme_color} />
-              ) : (
-                <Text style={styles.buttonText}>
-                  {status === "accepted" || status === "rejected" ? (
-                    status.charAt(0).toUpperCase() + status.slice(1)
-                  ) : requestId ? (
-                    "Cancel Interest"
-                  ) : (
-                    "Send Interest"
-                  )}
+              {matchPercentage > 0 && (
+                <Text style={styles.toptext}>
+                  {matchPercentage}% Compatible according to your preference
                 </Text>
               )}
-            </TouchableOpacity>
+            </View>
+            <View style={styles.sharecontainer}>
+              <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles()}>
+                <FontAwesome
+                  name={Save ? "bookmark" : "bookmark-o"}
+                  size={19}
+                  color={Colors.theme_color}
+                />
+                <Text style={styles.iconText}>{Save ? "Saved" : "Save"}</Text>
+              </TouchableOpacity>
 
+              <TouchableOpacity style={styles.iconContainer} onPress={shareProfiles}>
+                <Feather name={"send"} size={19} color={Colors.theme_color} />
+                <Text style={styles.iconText}>Share</Text>
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              style={[styles.iconContainer, hideContact && { opacity: 0.5 }]}
-              onPress={() => {
-                if (!hideContact && personalDetails?.contactNumber1) {
-                  Linking.openURL('tel:' + personalDetails?.contactNumber1);
+              <TouchableOpacity
+                style={styles.interestedButton}
+                onPress={requestId ? () => DeleteIntrest(requestId) : sendInterestRequest}
+                disabled={
+                  status === "accepted" ||
+                  status === "rejected" ||
+                  (requestId ? intrestLoading : loadingIntrest)
                 }
-              }}
-              disabled={hideContact} // Disable press functionality when hidden
-            >
-              <MaterialIcons name={"call"} size={19} color={Colors.theme_color} />
-              <Text style={styles.iconText}>Call</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ReportPage', { profileId: _id })}>
-              <MaterialIcons name={"error-outline"} size={20} color={Colors.theme_color} />
-              <Text style={styles.iconText}>Report</Text>
-            </TouchableOpacity>
+              >
+                {(requestId ? intrestLoading : loadingIntrest) ? (
+                  <ActivityIndicator size="small" color={Colors.theme_color} />
+                ) : (
+                  <Text style={styles.buttonText}>
+                    {status === "accepted" || status === "rejected" ? (
+                      status.charAt(0).toUpperCase() + status.slice(1)
+                    ) : requestId ? (
+                      "Cancel Interest"
+                    ) : (
+                      "Send Interest"
+                    )}
+                  </Text>
+                )}
+              </TouchableOpacity>
+
+
+              <TouchableOpacity
+                style={[styles.iconContainer, hideContact && { opacity: 0.5 }]}
+                onPress={() => {
+                  if (!hideContact && personalDetails?.contactNumber1) {
+                    Linking.openURL('tel:' + personalDetails?.contactNumber1);
+                  }
+                }}
+                disabled={hideContact} // Disable press functionality when hidden
+              >
+                <MaterialIcons name={"call"} size={19} color={Colors.theme_color} />
+                <Text style={styles.iconText}>Call</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ReportPage', { profileId: _id })}>
+                <MaterialIcons name={"error-outline"} size={20} color={Colors.theme_color} />
+                <Text style={styles.iconText}>Report</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
 
-        {/* Personal Details Section */}
-        <View style={styles.flexContainer1}>
-          {/* Left Container */}
-          <View style={styles.leftContainer}>
-            {/* Fullname at the top */}
-            <Text style={styles.HeadingText}>{personalDetails?.fullname}</Text>
+          {/* Personal Details Section */}
+          <View style={styles.flexContainer1}>
+            {/* Left Container */}
+            <View style={styles.leftContainer}>
+              {/* Fullname at the top */}
+              <Text style={styles.HeadingText}>{personalDetails?.fullname}</Text>
 
-            {/* Other details */}
-            <Text style={styles.text}>{calculateAge(personalDetails?.dob)} Yrs, {formattedHeight} </Text>
-            {personalDetails?.subCaste && <Text style={styles.text}>{personalDetails?.subCaste}</Text>}
-            {personalDetails?.maritalStatus && <Text style={styles.text}>{personalDetails?.maritalStatus}</Text>}
-            {personalDetails?.manglikStatus && <Text style={styles.text}>{personalDetails?.manglikStatus}</Text>}
-            {personalDetails?.disabilities && <Text style={styles.text}>Disability: {personalDetails?.disabilities}</Text>}
-            {personalDetails?.profileCreatedBy && <Text style={styles.text}>Profile Created By: {personalDetails?.profileCreatedBy}</Text>}
+              {/* Other details */}
+              <Text style={styles.text}>{calculateAge(personalDetails?.dob)} Yrs, {formattedHeight} </Text>
+              {personalDetails?.subCaste && <Text style={styles.text}>{personalDetails?.subCaste}</Text>}
+              {personalDetails?.maritalStatus && <Text style={styles.text}>{personalDetails?.maritalStatus}</Text>}
+              {personalDetails?.manglikStatus && <Text style={styles.text}>{personalDetails?.manglikStatus}</Text>}
+              {personalDetails?.disabilities && <Text style={styles.text}>Disability: {personalDetails?.disabilities}</Text>}
+              {personalDetails?.profileCreatedBy && <Text style={styles.text}>Profile Created By: {personalDetails?.profileCreatedBy}</Text>}
+            </View>
+
+            {/** Right Container */}
+            <View style={styles.rightContainer}>
+              {/* Right-side details */}
+              {personalDetails?.currentCity && <Text style={styles.text}>{personalDetails?.currentCity}</Text>}
+              {personalDetails?.occupation && <Text style={[styles.text, { textTransform: "none" }]}>{personalDetails?.occupation}</Text>}
+              {personalDetails?.annualIncome && <Text style={[styles.text, { textTransform: "none" }]}>{personalDetails?.annualIncome} </Text>}
+              {personalDetails?.qualification && <Text style={[styles.text, { textTransform: "none" }]}>{personalDetails?.qualification}</Text>}
+            </View>
           </View>
 
-          {/** Right Container */}
-          <View style={styles.rightContainer}>
-            {/* Right-side details */}
-            {personalDetails?.currentCity && <Text style={styles.text}>{personalDetails?.currentCity}</Text>}
-            {personalDetails?.occupation && <Text style={[styles.text, { textTransform: "none" }]}>{personalDetails?.occupation}</Text>}
-            {personalDetails?.annualIncome && <Text style={[styles.text, { textTransform: "none" }]}>{personalDetails?.annualIncome} </Text>}
-            {personalDetails?.qualification && <Text style={[styles.text, { textTransform: "none" }]}>{personalDetails?.qualification}</Text>}
-          </View>
-        </View>
-
-        {/* Horoscope Section */}
-        {personalDetails?.dob && (
-          <View style={styles.familyDiv}>
-            <View>
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
-                <MaterialIcons name="stars" size={25} color={Colors.theme_color} />
-                <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Horoscope</Text>
-              </View>
-
-              {/* Displaying Date of Birth and Time of Birth */}
-              <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>DOB :</Text>
-                <Text style={styles.infoValue}>{moment(personalDetails.dob).format("DD-MM-YYYY")} / Time: {personalDetails?.timeOfBirth}</Text>
-              </View>
-
-              {/* Displaying Place of Birth */}
-              {personalDetails?.placeofbirth && (
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Place of Birth :</Text>
-                  <Text style={styles.infoValue}>{personalDetails?.placeofbirth}</Text>
-                </View>
-              )}
-
-              {/* Optional Details for Horoscope */}
+          {/* Horoscope Section */}
+          {personalDetails?.dob && (
+            <View style={styles.familyDiv}>
               <View>
-                {!hideOptionalDetails && personalDetails?.nadi && (
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
+                  <MaterialIcons name="stars" size={25} color={Colors.theme_color} />
+                  <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Horoscope</Text>
+                </View>
+
+                {/* Displaying Date of Birth and Time of Birth */}
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>DOB :</Text>
+                  <Text style={styles.infoValue}>{moment(personalDetails.dob).format("DD-MM-YYYY")} / Time: {personalDetails?.timeOfBirth}</Text>
+                </View>
+
+                {/* Displaying Place of Birth */}
+                {personalDetails?.placeofbirth && (
                   <View style={styles.infoRow}>
-                    <Text style={styles.infoLabel}>Nadi :</Text>
-                    <Text style={styles.infoValue}>{personalDetails?.nadi}</Text>
+                    <Text style={styles.infoLabel}>Place of Birth :</Text>
+                    <Text style={styles.infoValue}>{personalDetails?.placeofbirth}</Text>
                   </View>
                 )}
 
-                {!hideOptionalDetails && personalDetails?.gotraSelf && (
-                  <View style={styles.infoRow}>
-                    <Text style={styles.infoLabel}>Gotra (Self) :</Text>
-                    <Text style={styles.infoValue}>{personalDetails?.gotraSelf}</Text>
-                  </View>
-                )}
+                {/* Optional Details for Horoscope */}
+                <View>
+                  {!hideOptionalDetails && personalDetails?.nadi && (
+                    <View style={styles.infoRow}>
+                      <Text style={styles.infoLabel}>Nadi :</Text>
+                      <Text style={styles.infoValue}>{personalDetails?.nadi}</Text>
+                    </View>
+                  )}
 
-                {personalDetails?.manglikStatus && (
-                  <View style={styles.infoRow}>
-                    <Text style={styles.infoLabel}>Manglik Status :</Text>
-                    <Text style={styles.infoValue}>{personalDetails?.manglikStatus}</Text>
-                  </View>
-                )}
+                  {!hideOptionalDetails && personalDetails?.gotraSelf && (
+                    <View style={styles.infoRow}>
+                      <Text style={styles.infoLabel}>Gotra (Self) :</Text>
+                      <Text style={styles.infoValue}>{personalDetails?.gotraSelf}</Text>
+                    </View>
+                  )}
 
-                {!hideOptionalDetails && personalDetails?.gotraMother && (
-                  <View style={styles.infoRow}>
-                    <Text style={styles.infoLabel}>Gotra (Mother) :</Text>
-                    <Text style={styles.infoValue}>{personalDetails?.gotraMother}</Text>
-                  </View>
-                )}
+                  {personalDetails?.manglikStatus && (
+                    <View style={styles.infoRow}>
+                      <Text style={styles.infoLabel}>Manglik Status :</Text>
+                      <Text style={styles.infoValue}>{personalDetails?.manglikStatus}</Text>
+                    </View>
+                  )}
+
+                  {!hideOptionalDetails && personalDetails?.gotraMother && (
+                    <View style={styles.infoRow}>
+                      <Text style={styles.infoLabel}>Gotra (Mother) :</Text>
+                      <Text style={styles.infoValue}>{personalDetails?.gotraMother}</Text>
+                    </View>
+                  )}
+                </View>
               </View>
             </View>
-          </View>
-        )}
+          )}
 
-        {/* About Me Section */}
-        {!hideOptionalDetails && (
-          <View style={styles.familyDiv}>
+          {/* About Me Section */}
+          {!hideOptionalDetails && (
+            <View style={styles.familyDiv}>
+              <View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
+                  <MaterialCommunityIcons name="account-box-outline" size={25} color={Colors.theme_color} />
+                  <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>About Me</Text>
+                </View>
+
+                {personalDetails?.aboutMe?.trim() !== "" && (
+                  <Text style={styles.text}>{personalDetails?.aboutMe}</Text>
+                )}
+
+                <View style={{ marginVertical: SH(4) }}>
+                  <View style={styles.infoRow}>
+                    {personalDetails?.complexion && (
+                      <>
+                        <Text style={styles.infoLabel}>Complexion :</Text>
+                        <Text style={styles.infoValue}>{personalDetails.complexion}</Text>
+                      </>
+                    )}
+                  </View>
+
+                  <View style={styles.infoRow}>
+                    {personalDetails?.weight && (
+                      <>
+                        <Text style={styles.infoLabel}>Weight :</Text>
+                        <Text style={styles.infoValue}>{personalDetails.weight} kg</Text>
+                      </>
+                    )}
+                  </View>
+
+                  <View style={styles.infoRow}>
+                    {personalDetails?.livingStatus && (
+                      <>
+                        <Text style={styles.infoLabel}>Living with family :</Text>
+                        <Text style={styles.infoValue}>{personalDetails.livingStatus}</Text>
+                      </>
+                    )}
+                  </View>
+                </View>
+              </View>
+            </View>
+          )}
+
+          {/* Family Section */}
+          <View style={[styles.familyDiv]}>
             <View>
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
-                <MaterialCommunityIcons name="account-box-outline" size={25} color={Colors.theme_color} />
-                <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>About Me</Text>
-              </View>
-
-              {personalDetails?.aboutMe?.trim() !== "" && (
-                <Text style={styles.text}>{personalDetails?.aboutMe}</Text>
-              )}
-
-              <View style={{ marginVertical: SH(4) }}>
-                <View style={styles.infoRow}>
-                  {personalDetails?.complexion && (
-                    <>
-                      <Text style={styles.infoLabel}>Complexion :</Text>
-                      <Text style={styles.infoValue}>{personalDetails.complexion}</Text>
-                    </>
-                  )}
-                </View>
-
-                <View style={styles.infoRow}>
-                  {personalDetails?.weight && (
-                    <>
-                      <Text style={styles.infoLabel}>Weight :</Text>
-                      <Text style={styles.infoValue}>{personalDetails.weight} kg</Text>
-                    </>
-                  )}
-                </View>
-
-                <View style={styles.infoRow}>
-                  {personalDetails?.livingStatus && (
-                    <>
-                      <Text style={styles.infoLabel}>Living with family :</Text>
-                      <Text style={styles.infoValue}>{personalDetails.livingStatus}</Text>
-                    </>
-                  )}
-                </View>
-              </View>
-            </View>
-          </View>
-        )}
-
-        {/* Family Section */}
-        <View style={[styles.familyDiv]}>
-          <View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
-              <FontAwesome name="group" size={20} color={Colors.theme_color} />
-              <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Family Section</Text>
-            </View>
-
-            {personalDetails?.fatherName && (
-              <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Father’s Name :</Text>
-                <Text style={styles.infoValue}>{personalDetails.fatherName}</Text>
-              </View>
-            )}
-            {personalDetails?.motherName && (
-              <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Mother’s Name :</Text>
-                <Text style={styles.infoValue}>{personalDetails.motherName}</Text>
-              </View>
-            )}
-            {personalDetails?.fatherOccupation && (
-              <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Father’s Occupation :</Text>
-                <Text style={styles.infoValue}>{personalDetails.fatherOccupation}</Text>
-              </View>
-            )}
-            {personalDetails?.fatherIncomeAnnually && (
-              <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Father Income :</Text>
-                <Text style={styles.infoValue}>{personalDetails.fatherIncomeAnnually}</Text>
-              </View>
-            )}
-            {personalDetails?.motherOccupation && (
-              <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Mother’s Occupation :</Text>
-                <Text style={styles.infoValue}>{personalDetails.motherOccupation}</Text>
-              </View>
-            )}
-            {personalDetails?.motherIncomeAnnually && (
-              <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Mother’s Income :</Text>
-                <Text style={styles.infoValue}>{personalDetails.motherIncomeAnnually}</Text>
-              </View>
-            )}
-            {personalDetails?.siblings && (
-              <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Siblings :</Text>
-                <Text style={styles.infoValue}>{personalDetails.siblings}</Text>
-              </View>
-            )}
-            {personalDetails?.familyType && (
-              <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Family Type :</Text>
-                <Text style={styles.infoValue}>{personalDetails.familyType}</Text>
-              </View>
-            )}
-          </View>
-
-        </View>
-
-        {
-          !hideOptionalDetails && personalDetails?.otherFamilyMemberInfo && (
-            <View style={styles.detailbox}>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
                 <FontAwesome name="group" size={20} color={Colors.theme_color} />
-                <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Family's Other Details</Text>
+                <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Family Section</Text>
               </View>
-              {personalDetails?.otherFamilyMemberInfo && <Text style={styles.text}>Other Family Members: {personalDetails.otherFamilyMemberInfo}</Text>}
-            </View>
-          )
-        }
 
-        {/* Contact Section */}
-        {!hideContact && (
-          <View style={styles.detailbox}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
-              <AntDesign name="contacts" size={25} color={Colors.theme_color} />
-              <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Contact Details</Text>
+              {personalDetails?.fatherName && (
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Father’s Name :</Text>
+                  <Text style={styles.infoValue}>{personalDetails.fatherName}</Text>
+                </View>
+              )}
+              {personalDetails?.motherName && (
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Mother’s Name :</Text>
+                  <Text style={styles.infoValue}>{personalDetails.motherName}</Text>
+                </View>
+              )}
+              {personalDetails?.fatherOccupation && (
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Father’s Occupation :</Text>
+                  <Text style={styles.infoValue}>{personalDetails.fatherOccupation}</Text>
+                </View>
+              )}
+              {personalDetails?.fatherIncomeAnnually && (
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Father Income :</Text>
+                  <Text style={styles.infoValue}>{personalDetails.fatherIncomeAnnually}</Text>
+                </View>
+              )}
+              {personalDetails?.motherOccupation && (
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Mother’s Occupation :</Text>
+                  <Text style={styles.infoValue}>{personalDetails.motherOccupation}</Text>
+                </View>
+              )}
+              {personalDetails?.motherIncomeAnnually && (
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Mother’s Income :</Text>
+                  <Text style={styles.infoValue}>{personalDetails.motherIncomeAnnually}</Text>
+                </View>
+              )}
+              {personalDetails?.siblings && (
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Siblings :</Text>
+                  <Text style={styles.infoValue}>{personalDetails.siblings}</Text>
+                </View>
+              )}
+              {personalDetails?.familyType && (
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Family Type :</Text>
+                  <Text style={styles.infoValue}>{personalDetails.familyType}</Text>
+                </View>
+              )}
             </View>
 
-            {personalDetails?.contactNumber1 && (
-              <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Mobile No. 1 :</Text>
-                <Text style={styles.infoValue}>{personalDetails.contactNumber1}</Text>
-              </View>
-            )}
-            {personalDetails?.contactNumber2 && (
-              <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Mobile No. 2 :</Text>
-                <Text style={styles.infoValue}>{personalDetails.contactNumber2}</Text>
-              </View>
-            )}
-            {personalDetails?.cityOrVillage && (
-              <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>City :</Text>
-                <Text style={styles.infoValue}>{personalDetails.cityOrVillage}</Text>
-              </View>
-            )}
-            {personalDetails?.state && (
-              <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>State :</Text>
-                <Text style={styles.infoValue}>{personalDetails.state}</Text>
-              </View>
-            )}
           </View>
-        )}
 
+          {
+            !hideOptionalDetails && personalDetails?.otherFamilyMemberInfo && (
+              <View style={styles.detailbox}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
+                  <FontAwesome name="group" size={20} color={Colors.theme_color} />
+                  <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Family's Other Details</Text>
+                </View>
+                {personalDetails?.otherFamilyMemberInfo && <Text style={styles.text}>Other Family Members: {personalDetails.otherFamilyMemberInfo}</Text>}
+              </View>
+            )
+          }
 
-        {/* Other Details */}
-        {!hideOptionalDetails && hasOtherDetails && (
-          <View style={styles.familyDiv}>
-            <View>
+          {/* Contact Section */}
+          {!hideContact && (
+            <View style={styles.detailbox}>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
-                <MaterialIcons name="details" size={25} color={Colors.theme_color} />
-                <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Other Details</Text>
+                <AntDesign name="contacts" size={25} color={Colors.theme_color} />
+                <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Contact Details</Text>
               </View>
 
-              {personalDetails?.knowCooking && (
+              {personalDetails?.contactNumber1 && (
                 <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Cooking :</Text>
-                  <Text style={styles.infoValue}>{personalDetails.knowCooking}</Text>
+                  <Text style={styles.infoLabel}>Mobile No. 1 :</Text>
+                  <Text style={styles.infoValue}>{personalDetails.contactNumber1}</Text>
                 </View>
               )}
-              {personalDetails?.dietaryHabit && (
+              {personalDetails?.contactNumber2 && (
                 <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Diet :</Text>
-                  <Text style={styles.infoValue}>{personalDetails.dietaryHabit}</Text>
+                  <Text style={styles.infoLabel}>Mobile No. 2 :</Text>
+                  <Text style={styles.infoValue}>{personalDetails.contactNumber2}</Text>
                 </View>
               )}
-              {personalDetails?.smokingHabit && (
+              {personalDetails?.cityOrVillage && (
                 <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Smoke :</Text>
-                  <Text style={styles.infoValue}>{personalDetails.smokingHabit}</Text>
+                  <Text style={styles.infoLabel}>City :</Text>
+                  <Text style={styles.infoValue}>{personalDetails.cityOrVillage}</Text>
                 </View>
               )}
-              {personalDetails?.drinkingHabit && (
+              {personalDetails?.state && (
                 <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Drinking :</Text>
-                  <Text style={styles.infoValue}>{personalDetails.drinkingHabit}</Text>
-                </View>
-              )}
-              {personalDetails?.tobaccoHabits && (
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Tobacco :</Text>
-                  <Text style={styles.infoValue}>{personalDetails.tobaccoHabits}</Text>
-                </View>
-              )}
-              {personalDetails?.hobbies && (
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Hobbies :</Text>
-                  <Text style={styles.infoValue}>{personalDetails.hobbies}</Text>
+                  <Text style={styles.infoLabel}>State :</Text>
+                  <Text style={styles.infoValue}>{personalDetails.state}</Text>
                 </View>
               )}
             </View>
-          </View>
-        )}
+          )}
 
-        {partnerPreferences?.partnerExpectations &&
-          <View style={styles.flexContainer3}>
-            <Text style={styles.HeadingText}>
-              Expectation with partner</Text>
-            <Text>{partnerPreferences?.partnerExpectations}</Text>
-          </View>
-        }
 
-        {Object.keys(profileData?.comparisonResults || {}).length > 0 ? (
-          <View style={styles.flexContainer3}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
-              <MaterialCommunityIcons name="heart-half-full" size={25} color={Colors.theme_color} />
-              <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Your Similarities</Text>
-            </View>
-            <View style={styles.flex}>
-              <Image
-                source={{ uri: profileData?.loggedInUserBiodata?.personalDetails?.closeUpPhoto }}
-                style={styles.smallImage}
-              />
-              <Text style={styles.text}>{matchedCount}/{totalCriteria}</Text>
-              <Image
-                source={{ uri: profileData?.targetUserBioData?.personalDetails?.closeUpPhoto }}
-                style={styles.smallImage}
-              />
-            </View>
+          {/* Other Details */}
+          {!hideOptionalDetails && hasOtherDetails && (
+            <View style={styles.familyDiv}>
+              <View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
+                  <MaterialIcons name="details" size={25} color={Colors.theme_color} />
+                  <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Other Details</Text>
+                </View>
 
-            {/* Comparison List */}
-            {Object.keys(profileData?.comparisonResults).map((key, index) => (
-              <View key={index} style={styles.flexContainer5}>
-                <Text style={styles.label}>{key.replace(/([A-Z])/g, " $1").trim()}</Text>
-                {profileData.comparisonResults[key] ? (
-                  <MaterialIcons name={"check"} style={[styles.icon, styles.checkIcon]} />
-                ) : (
-                  <MaterialIcons name={"close"} style={[styles.icon, styles.crossIcon]} />
+                {personalDetails?.knowCooking && (
+                  <View style={styles.infoRow}>
+                    <Text style={styles.infoLabel}>Cooking :</Text>
+                    <Text style={styles.infoValue}>{personalDetails.knowCooking}</Text>
+                  </View>
+                )}
+                {personalDetails?.dietaryHabit && (
+                  <View style={styles.infoRow}>
+                    <Text style={styles.infoLabel}>Diet :</Text>
+                    <Text style={styles.infoValue}>{personalDetails.dietaryHabit}</Text>
+                  </View>
+                )}
+                {personalDetails?.smokingHabit && (
+                  <View style={styles.infoRow}>
+                    <Text style={styles.infoLabel}>Smoke :</Text>
+                    <Text style={styles.infoValue}>{personalDetails.smokingHabit}</Text>
+                  </View>
+                )}
+                {personalDetails?.drinkingHabit && (
+                  <View style={styles.infoRow}>
+                    <Text style={styles.infoLabel}>Drinking :</Text>
+                    <Text style={styles.infoValue}>{personalDetails.drinkingHabit}</Text>
+                  </View>
+                )}
+                {personalDetails?.tobaccoHabits && (
+                  <View style={styles.infoRow}>
+                    <Text style={styles.infoLabel}>Tobacco :</Text>
+                    <Text style={styles.infoValue}>{personalDetails.tobaccoHabits}</Text>
+                  </View>
+                )}
+                {personalDetails?.hobbies && (
+                  <View style={styles.infoRow}>
+                    <Text style={styles.infoLabel}>Hobbies :</Text>
+                    <Text style={styles.infoValue}>{personalDetails.hobbies}</Text>
+                  </View>
                 )}
               </View>
-            ))}
+            </View>
+          )}
+
+          {partnerPreferences?.partnerExpectations &&
+            <View style={styles.flexContainer3}>
+              <Text style={styles.HeadingText}>
+                Expectation with partner</Text>
+              <Text>{partnerPreferences?.partnerExpectations}</Text>
+            </View>
+          }
+
+          {Object.keys(profileData?.comparisonResults || {}).length > 0 ? (
+            <View style={styles.flexContainer3}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
+                <MaterialCommunityIcons name="heart-half-full" size={25} color={Colors.theme_color} />
+                <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>Your Similarities</Text>
+              </View>
+              <View style={styles.flex}>
+                <Image
+                  source={{ uri: profileData?.loggedInUserBiodata?.personalDetails?.closeUpPhoto }}
+                  style={styles.smallImage}
+                />
+                <Text style={styles.text}>{matchedCount}/{totalCriteria}</Text>
+                <Image
+                  source={{ uri: profileData?.targetUserBioData?.personalDetails?.closeUpPhoto }}
+                  style={styles.smallImage}
+                />
+              </View>
+
+              {/* Comparison List */}
+              {Object.keys(profileData?.comparisonResults).map((key, index) => (
+                <View key={index} style={styles.flexContainer5}>
+                  <Text style={styles.label}>{key.replace(/([A-Z])/g, " $1").trim()}</Text>
+                  {profileData.comparisonResults[key] ? (
+                    <MaterialIcons name={"check"} style={[styles.icon, styles.checkIcon]} />
+                  ) : (
+                    <MaterialIcons name={"close"} style={[styles.icon, styles.crossIcon]} />
+                  )}
+                </View>
+              ))}
+            </View>
+          ) : (
+            <Text style={styles.warningText}>
+              To find better matches, please set your partner preferences.
+            </Text>
+          )}
+
+          <View style={Globalstyles.bottomImage}>
+            <AppIntroSlider
+              ref={sliderRef}
+              data={slider}
+              renderItem={({ item }) => {
+                const { width, height } = item.resolution;
+
+                const handlePress = () => {
+                  if (item.hyperlink) {
+                    Linking.openURL(item.hyperlink).catch(err =>
+                      console.error("Failed to open URL:", err)
+                    );
+                  }
+                };
+
+                return (
+                  <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                    <Image
+                      source={{ uri: item.image }}
+                      style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
+                    />
+                  </TouchableOpacity>
+                );
+              }}
+              showNextButton={false}
+              showDoneButton={false}
+              dotStyle={Globalstyles.dot}
+              activeDotStyle={Globalstyles.activeDot}
+            />
           </View>
-        ) : (
-          <Text style={styles.warningText}>
-            To find better matches, please set your partner preferences.
-          </Text>
-        )}
-
-        <View style={Globalstyles.bottomImage}>
-          <AppIntroSlider
-            ref={sliderRef}
-            data={slider}
-            renderItem={({ item }) => {
-              const { width, height } = item.resolution;
-
-              const handlePress = () => {
-                if (item.hyperlink) {
-                  Linking.openURL(item.hyperlink).catch(err =>
-                    console.error("Failed to open URL:", err)
-                  );
-                }
-              };
-
-              return (
-                <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
-                  <Image
-                    source={{ uri: item.image }}
-                    style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
-                  />
-                </TouchableOpacity>
-              );
-            }}
-            showNextButton={false}
-            showDoneButton={false}
-            dotStyle={Globalstyles.dot}
-            activeDotStyle={Globalstyles.activeDot}
-          />
         </View>
       </ScrollView>
     </SafeAreaView>

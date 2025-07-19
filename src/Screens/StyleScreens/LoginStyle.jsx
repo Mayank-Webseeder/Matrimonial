@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
         marginBottom: SH(20),
     },
     HeadingText: {
-        backgroundColor: Colors.light,
+        // backgroundColor: Colors.light,
         paddingHorizontal: SW(5),
         color: Colors.theme_color,
         marginLeft: SW(25),

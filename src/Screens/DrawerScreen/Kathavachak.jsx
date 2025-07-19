@@ -21,8 +21,10 @@ import { useFocusEffect } from '@react-navigation/native';
 import { showMessage } from 'react-native-flash-message';
 import { useSelector } from 'react-redux';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Kathavachak = ({ navigation, route }) => {
+  const insets = useSafeAreaInsets();
   const { id } = route.params || {};
   const sliderRef = useRef(null);
   const [activeButton, setActiveButton] = useState(null);
@@ -98,22 +100,22 @@ const Kathavachak = ({ navigation, route }) => {
 
 
   useEffect(() => {
-     if (slider.length === 0) return;
-   
-     const currentSlide = slider[currentIndex];
-     const durationInSeconds = Number(currentSlide?.duration) || 4;
+    if (slider.length === 0) return;
+
+    const currentSlide = slider[currentIndex];
+    const durationInSeconds = Number(currentSlide?.duration) || 4;
     const bufferMs = 800;
     const durationInMilliseconds = durationInSeconds * 1000 + bufferMs;
-      console.log("durationInSeconds",durationInSeconds);
-     const timeout = setTimeout(() => {
-       const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
-       setCurrentIndex(nextIndex);
-       sliderRef.current?.goToSlide(nextIndex);
-     }, durationInMilliseconds);
-   
-     return () => clearTimeout(timeout);
-   }, [currentIndex, slider]);
-   
+    console.log("durationInSeconds", durationInSeconds);
+    const timeout = setTimeout(() => {
+      const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
+      setCurrentIndex(nextIndex);
+      sliderRef.current?.goToSlide(nextIndex);
+    }, durationInMilliseconds);
+
+    return () => clearTimeout(timeout);
+  }, [currentIndex, slider]);
+
 
 
   useFocusEffect(
@@ -123,11 +125,11 @@ const Kathavachak = ({ navigation, route }) => {
           index: 0,
           routes: [{ name: "MainApp" }],
         });
-        return true; 
+        return true;
       };
-  
+
       BackHandler.addEventListener("hardwareBackPress", onBackPress);
-  
+
       return () => {
         BackHandler.removeEventListener("hardwareBackPress", onBackPress);
       };
@@ -461,7 +463,7 @@ const Kathavachak = ({ navigation, route }) => {
 
 
   return (
-    <SafeAreaView style={Globalstyles.container}>
+    <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
         <View style={styles.headerContainer}>
@@ -529,57 +531,61 @@ const Kathavachak = ({ navigation, route }) => {
           )}
         </View>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false} refreshControl={
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{
+        paddingBottom: insets.bottom + SH(65)
+      }} refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }>
-        <View style={Globalstyles.sliderContainer}>
-          <AppIntroSlider
-            ref={sliderRef}
-            data={slider}
-            renderItem={({ item }) => {
-              const { width, height } = item.resolution;
+        <View>
+          <View style={Globalstyles.sliderContainer}>
+            <AppIntroSlider
+              ref={sliderRef}
+              data={slider}
+              renderItem={({ item }) => {
+                const { width, height } = item.resolution;
 
-              const handlePress = () => {
-                if (item.hyperlink) {
-                  Linking.openURL(item.hyperlink).catch(err =>
-                    console.error("Failed to open URL:", err)
-                  );
-                }
-              };
+                const handlePress = () => {
+                  if (item.hyperlink) {
+                    Linking.openURL(item.hyperlink).catch(err =>
+                      console.error("Failed to open URL:", err)
+                    );
+                  }
+                };
 
-              return (
-                <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
-                  <Image
-                    source={{ uri: item.image }}
-                    style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
-                  />
-                </TouchableOpacity>
-              );
-            }}
-            showNextButton={false}
-            showDoneButton={false}
-            dotStyle={Globalstyles.dot}
-            activeDotStyle={Globalstyles.activeDot}
-          />
+                return (
+                  <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                    <Image
+                      source={{ uri: item.image }}
+                      style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
+                    />
+                  </TouchableOpacity>
+                );
+              }}
+              showNextButton={false}
+              showDoneButton={false}
+              dotStyle={Globalstyles.dot}
+              activeDotStyle={Globalstyles.activeDot}
+            />
+          </View>
+          {isLoading ? renderSkeleton() : (
+            <FlatList
+              data={kathavachakData}
+              renderItem={renderItem}
+              keyExtractor={(item) => item._id}
+              scrollEnabled={false}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.panditListData}
+              ListEmptyComponent={
+                <View style={styles.emptyContainer}>
+                  <FontAwesome name="user-circle" size={60} color="#ccc" style={{ marginBottom: 15 }} />
+                  <Text style={styles.emptyText}>No Kathavachak Data Available</Text>
+                  <Text style={styles.infoText}>Kathavachak profiles will appear here once available.</Text>
+                </View>
+              }
+            />
+
+          )}
         </View>
-        {isLoading ? renderSkeleton() : (
-          <FlatList
-            data={kathavachakData}
-            renderItem={renderItem}
-            keyExtractor={(item) => item._id}
-            scrollEnabled={false}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.panditListData}
-            ListEmptyComponent={
-              <View style={styles.emptyContainer}>
-                <FontAwesome name="user-circle" size={60} color="#ccc" style={{ marginBottom: 15 }} />
-                <Text style={styles.emptyText}>No Kathavachak Data Available</Text>
-                <Text style={styles.infoText}>Kathavachak profiles will appear here once available.</Text>
-              </View>
-            }
-          />
-
-        )}
       </ScrollView>
       <Modal
         visible={modalVisible}

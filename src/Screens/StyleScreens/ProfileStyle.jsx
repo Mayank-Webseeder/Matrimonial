@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingVertical: SH(10),
         paddingHorizontal: SW(10),
-        marginVertical: SH(15),
+        marginVertical: SH(5),
         marginBottom: 0,
         marginHorizontal: SW(7),
         borderRadius: 10,
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
 
     text: {
         fontFamily: "Poppins-Regular",
-        fontSize: SF(15),
+        fontSize: SF(14),
     },
     Gallerytext: {
         fontFamily: "Poppins-Regular",
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     },
     Formtitle: {
         fontFamily: "Poppins-Medium",
-        fontSize: SF(18),
+        fontSize: SF(15),
         color: Colors.theme_color
     },
     detailText: {

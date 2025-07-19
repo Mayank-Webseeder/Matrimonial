@@ -1,4 +1,4 @@
-import { Text, View, TextInput, TouchableOpacity, Image, StatusBar, ActivityIndicator } from 'react-native'
+import { Text, View, TextInput, TouchableOpacity, Image, StatusBar, ActivityIndicator,KeyboardAvoidingView,SafeAreaView } from 'react-native'
 import React, { useState } from 'react'
 import styles from '../StyleScreens/FeedbackStyle';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -10,7 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { showMessage } from 'react-native-flash-message';
 import { SH } from '../../utils/Dimensions';
-import { SafeAreaView } from 'react-native-safe-area-context';
+// import { SafeAreaView } from 'react-native-safe-area-context';
 
 const FeedBack = ({ navigation }) => {
   const [rating, setRating] = useState(0);
@@ -108,7 +108,7 @@ const FeedBack = ({ navigation }) => {
 
 
   return (
-    <SafeAreaView style={Globalstyles.container}>
+    <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
       <StatusBar
         barStyle="dark-content"
         backgroundColor="transparent"

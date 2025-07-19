@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, ImageBackground, TouchableOpacity, TextInput, ActivityIndicator, ScrollView, Platform } from "react-native";
+import { Text, View, ImageBackground, TouchableOpacity, TextInput, ActivityIndicator,SafeAreaView, ScrollView, Platform, KeyboardAvoidingView } from "react-native";
 import styles from "../StyleScreens/RegisterStyle";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Colors from "../../utils/Colors";
@@ -9,7 +9,7 @@ import Globalstyles from "../../utils/GlobalCss";
 import Entypo from 'react-native-vector-icons/Entypo';
 import { SH, SW, SF } from "../../utils/Dimensions";
 import { showMessage } from "react-native-flash-message";
-import { SafeAreaView } from 'react-native-safe-area-context';
+// import { SafeAreaView } from 'react-native-safe-area-context';
 
 const ForgotScreen = ({ navigation }) => {
     const [mobileNumber, setMobileNumber] = useState("");
@@ -128,103 +128,109 @@ const ForgotScreen = ({ navigation }) => {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
-            <ScrollView>
-                <ImageBackground
-                    source={require("../../Images/LoginBackground.png")}
-                    style={styles.image}
-                >
-                    <AntDesign
-                        name={"arrowleft"}
-                        size={25}
-                        style={styles.backArrow}
-                        color={Colors.light}
-                        onPress={() => navigation.navigate("Splash")}
-                    />
-                    <View style={{ marginTop: SH(320), marginHorizontal: SW(20) }}>
-                        <Text style={[styles.text, { textAlign: "left", fontSize: SF(17) }]}>Reset Your Password</Text>
-                        <View style={{ marginTop: SH(20) }}>
-                            <Text style={Globalstyles.title}>Mobile Number <Entypo name={'star'} color={'red'} size={12} /></Text>
-                            <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                <TextInput
-                                    style={[Globalstyles.input, { flex: 1 }]}
-                                    keyboardType="phone-pad"
-                                    placeholder="Enter your mobile number"
-                                    value={mobileNumber}
-                                    onChangeText={setMobileNumber}
-                                    maxLength={10}
-                                    placeholderTextColor={Colors.gray}
-                                    editable={!otpSent}
-                                    autoComplete="off"
-                                    textContentType="none"
-                                    importantForAutofill="no"
-                                    autoCorrect={false}
-                                />
-                                <TouchableOpacity style={styles.otpButton} onPress={handleSendOtp} disabled={isOtpLoading}>
-                                    {isOtpLoading ? <ActivityIndicator size="small" color={Colors.theme_color} /> : <Text style={styles.otpButtonText}>Send OTP</Text>}
-                                </TouchableOpacity>
-
-                            </View>
-                        </View>
-                        {/* Mobile Number */}
-                        <Text style={Globalstyles.title}>Otp <Entypo name={'star'} color={'red'} size={12} /></Text>
-
-                        <TextInput style={Globalstyles.input}
-                            placeholder="Enter Your OTP"
-                            value={otp} onChangeText={setOtp} maxLength={6}
-                            placeholderTextColor={Colors.gray}
-                            keyboardType="phone-pad"
-                            autoComplete="off"
-                            textContentType="none"
-                            importantForAutofill="no"
-                            autoCorrect={false}
+        <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+                <ScrollView  keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+                 <View>
+                       <ImageBackground
+                        source={require("../../Images/LoginBackground.png")}
+                        style={styles.image}
+                    >
+                        <AntDesign
+                            name={"arrowleft"}
+                            size={25}
+                            style={styles.backArrow}
+                            color={Colors.light}
+                            onPress={() => navigation.navigate("Splash")}
                         />
-
-                        {errors.Otp && (
-                            <Text style={styles.errorText}>{errors.Otp}</Text>
-                        )}
-                        <View>
-                            <Text style={Globalstyles.title}>New Password  <Entypo name={'star'} color={'red'} size={12} /> </Text>
-                            <View style={styles.passwordContainer}>
-                                <TextInput
-                                    style={[styles.passwordInput, { paddingVertical: Platform.OS === 'ios' ? SH(10) : SH(10), }]}
-                                    secureTextEntry={!showPassword}
-                                    placeholder="Enter Your New password"
-                                    value={newPassword}
-                                    onChangeText={setNewPassword}
-                                    placeholderTextColor={Colors.gray}
-                                    autoComplete="off"
-                                    textContentType="none"
-                                    importantForAutofill="no"
-                                    autoCorrect={false}
-                                />
-                                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                                    <AntDesign
-                                        name={showPassword ? "eye" : "eyeo"}
-                                        size={20}
-                                        style={styles.eyeIcon}
-                                        color={Colors.dark}
+                        <View style={{ marginTop: SH(320), marginHorizontal: SW(20) }}>
+                            <Text style={[styles.text, { textAlign: "left", fontSize: SF(17) }]}>Reset Your Password</Text>
+                            <View style={{ marginTop: SH(20) }}>
+                                <Text style={Globalstyles.title}>Mobile Number <Entypo name={'star'} color={'red'} size={12} /></Text>
+                                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                    <TextInput
+                                        style={[Globalstyles.input, { flex: 1 }]}
+                                        keyboardType="phone-pad"
+                                        placeholder="Enter your mobile number"
+                                        value={mobileNumber}
+                                        onChangeText={setMobileNumber}
+                                        maxLength={10}
+                                        placeholderTextColor={Colors.gray}
+                                        editable={!otpSent}
+                                        autoComplete="off"
+                                        textContentType="none"
+                                        importantForAutofill="no"
+                                        autoCorrect={false}
                                     />
-                                </TouchableOpacity>
+                                    <TouchableOpacity style={styles.otpButton} onPress={handleSendOtp} disabled={isOtpLoading}>
+                                        {isOtpLoading ? <ActivityIndicator size="small" color={Colors.theme_color} /> : <Text style={styles.otpButtonText}>Send OTP</Text>}
+                                    </TouchableOpacity>
+
+                                </View>
                             </View>
-                            {errors.password && (
-                                <Text style={styles.errorText}>{errors.password}</Text>
+                            {/* Mobile Number */}
+                            <Text style={Globalstyles.title}>Otp <Entypo name={'star'} color={'red'} size={12} /></Text>
+
+                            <TextInput style={Globalstyles.input}
+                                placeholder="Enter Your OTP"
+                                value={otp} onChangeText={setOtp} maxLength={6}
+                                placeholderTextColor={Colors.gray}
+                                keyboardType="phone-pad"
+                                autoComplete="off"
+                                textContentType="none"
+                                importantForAutofill="no"
+                                autoCorrect={false}
+                            />
+
+                            {errors.Otp && (
+                                <Text style={styles.errorText}>{errors.Otp}</Text>
                             )}
+                            <View>
+                                <Text style={Globalstyles.title}>New Password  <Entypo name={'star'} color={'red'} size={12} /> </Text>
+                                <View style={styles.passwordContainer}>
+                                    <TextInput
+                                        style={[styles.passwordInput, { paddingVertical: Platform.OS === 'ios' ? SH(10) : SH(10), }]}
+                                        secureTextEntry={!showPassword}
+                                        placeholder="Enter Your New password"
+                                        value={newPassword}
+                                        onChangeText={setNewPassword}
+                                        placeholderTextColor={Colors.gray}
+                                        autoComplete="off"
+                                        textContentType="none"
+                                        importantForAutofill="no"
+                                        autoCorrect={false}
+                                    />
+                                    <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                                        <AntDesign
+                                            name={showPassword ? "eye" : "eyeo"}
+                                            size={20}
+                                            style={styles.eyeIcon}
+                                            color={Colors.dark}
+                                        />
+                                    </TouchableOpacity>
+                                </View>
+                                {errors.password && (
+                                    <Text style={styles.errorText}>{errors.password}</Text>
+                                )}
+                            </View>
+                            <TouchableOpacity
+                                style={styles.button}
+                                onPress={handleForgotPassword}
+                                disabled={isLoading}
+                            >
+                                {isLoading ? (
+                                    <ActivityIndicator size={'large'} color={Colors.light} />
+                                ) : (
+                                    <Text style={styles.buttonText}>Reset Password</Text>
+                                )}
+                            </TouchableOpacity>
                         </View>
-                        <TouchableOpacity
-                            style={styles.button}
-                            onPress={handleForgotPassword}
-                            disabled={isLoading}
-                        >
-                            {isLoading ? (
-                                <ActivityIndicator size={'large'} color={Colors.light} />
-                            ) : (
-                                <Text style={styles.buttonText}>Reset Password</Text>
-                            )}
-                        </TouchableOpacity>
-                    </View>
-                </ImageBackground>
-            </ScrollView>
+                    </ImageBackground>
+                 </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     );
 };

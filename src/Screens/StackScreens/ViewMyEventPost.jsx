@@ -22,8 +22,10 @@ import { VIEW_EVENT } from '../../utils/BaseUrl';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { BackHandler } from 'react-native';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const ViewMyEventPost = ({ navigation, route }) => {
+  const insets = useSafeAreaInsets();
   const sheetRef = useRef(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
@@ -45,14 +47,14 @@ const ViewMyEventPost = ({ navigation, route }) => {
   const profileData = ProfileData?.profiledata || {};
   const myprofile_id = profileData?._id || null;
   const [eventList, setEventList] = useState([]);
-   const [deletingCommentId, setDeletingCommentId] = useState(null);
+  const [deletingCommentId, setDeletingCommentId] = useState(null);
 
 
-   
-     const [modalVisible1, setModalVisible1] = useState(false);
-     const [imageIndex, setImageIndex] = useState(0);
-     const [formattedImages, setFormattedImages] = useState([]);
-   
+
+  const [modalVisible1, setModalVisible1] = useState(false);
+  const [imageIndex, setImageIndex] = useState(0);
+  const [formattedImages, setFormattedImages] = useState([]);
+
 
   useFocusEffect(
     React.useCallback(() => {
@@ -84,7 +86,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
   useFocusEffect(
     useCallback(() => {
       fetchPostData();
-    }, [])
+    }, [route?.params?.refresh])
   );
 
   useEffect(() => {
@@ -250,7 +252,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
     }
   };
 
- const COMMENT = async (postId) => {
+  const COMMENT = async (postId) => {
     try {
       setCommentLoading(true);
       const token = await AsyncStorage.getItem("userToken");
@@ -475,11 +477,11 @@ const ViewMyEventPost = ({ navigation, route }) => {
     if (sheetRef.current) {
       sheetRef.current.close();
     }
-    navigation.navigate("MainApp", {
-      screen: "Tabs",
-      params: { screen: "EventNews" }
+
+    navigation.navigate("ViewMyEventPost", {
+      refresh: Date.now(),
     });
-  }
+  };
 
   const showModal = (event, item) => {
     event.stopPropagation();
@@ -490,85 +492,85 @@ const ViewMyEventPost = ({ navigation, route }) => {
     });
   };
 
-   const renderImages = (images, item) => {
-     if (images.length === 0) return null;
- 
-     const openImageViewer = (index) => {
-       console.log("📷 Opening viewer for images:", images);
-       console.log("👉 Opening at index:", index);
- 
-       const cleanImages = images
-         .filter(img => typeof img === 'string' && img.startsWith('http'))
-         .map(uri => ({ url: uri }));
- 
-       console.log("✅ Formatted for ImageViewer:", cleanImages);
- 
-       setImageIndex(index);
-       setFormattedImages(cleanImages);
-       setModalVisible1(true);
-     };
- 
-     if (images.length === 1) {
-       return (
-         <TouchableOpacity onPress={() => openImageViewer(0)}>
-           <Image source={{ uri: images[0] }} style={[styles.image1, { width: '100%', height: SH(250) }]} />
-         </TouchableOpacity>
-       );
-     }
- 
-     if (images.length === 2) {
-       return (
-         <View style={{ flexDirection: 'row' }}>
-           {images.map((image, index) => (
-             <TouchableOpacity key={index} onPress={() => openImageViewer(index)}>
-               <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(2) }]} />
-             </TouchableOpacity>
-           ))}
-         </View>
-       );
-     }
- 
-     if (images.length === 3) {
-       return (
-         <View>
-           <View style={{ flexDirection: 'row' }}>
-             <TouchableOpacity onPress={() => openImageViewer(0)}>
-               <Image source={{ uri: images[0] }} style={[styles.image2, { flex: 1, margin: SW(2) }]} />
-             </TouchableOpacity>
-           </View>
-           <View style={{ flexDirection: 'row' }}>
-             {images.slice(1).map((image, index) => (
-               <TouchableOpacity key={index} onPress={() => openImageViewer(index + 1)}>
-                 <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(2) }]} />
-               </TouchableOpacity>
-             ))}
-           </View>
-         </View>
-       );
-     }
- 
-     if (images.length >= 4) {
-       return (
-         <View>
-           <View style={{ flexDirection: 'row' }}>
-             {images.slice(0, 2).map((image, index) => (
-               <TouchableOpacity key={index} onPress={() => openImageViewer(index)}>
-                 <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(1) }]} />
-               </TouchableOpacity>
-             ))}
-           </View>
-           <View style={{ flexDirection: 'row' }}>
-             {images.slice(2, 4).map((image, index) => (
-               <TouchableOpacity key={index} onPress={() => openImageViewer(index + 2)}>
-                 <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(1) }]} />
-               </TouchableOpacity>
-             ))}
-           </View>
-         </View>
-       );
-     }
-   };
-   
+  const renderImages = (images, item) => {
+    if (images.length === 0) return null;
+
+    const openImageViewer = (index) => {
+      console.log("📷 Opening viewer for images:", images);
+      console.log("👉 Opening at index:", index);
+
+      const cleanImages = images
+        .filter(img => typeof img === 'string' && img.startsWith('http'))
+        .map(uri => ({ url: uri }));
+
+      console.log("✅ Formatted for ImageViewer:", cleanImages);
+
+      setImageIndex(index);
+      setFormattedImages(cleanImages);
+      setModalVisible1(true);
+    };
+
+    if (images.length === 1) {
+      return (
+        <TouchableOpacity onPress={() => openImageViewer(0)}>
+          <Image source={{ uri: images[0] }} style={[styles.image1, { width: '100%', height: SH(250) }]} />
+        </TouchableOpacity>
+      );
+    }
+
+    if (images.length === 2) {
+      return (
+        <View style={{ flexDirection: 'row' }}>
+          {images.map((image, index) => (
+            <TouchableOpacity key={index} onPress={() => openImageViewer(index)}>
+              <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(2) }]} />
+            </TouchableOpacity>
+          ))}
+        </View>
+      );
+    }
+
+    if (images.length === 3) {
+      return (
+        <View>
+          <View style={{ flexDirection: 'row' }}>
+            <TouchableOpacity onPress={() => openImageViewer(0)}>
+              <Image source={{ uri: images[0] }} style={[styles.image2, { flex: 1, margin: SW(2) }]} />
+            </TouchableOpacity>
+          </View>
+          <View style={{ flexDirection: 'row' }}>
+            {images.slice(1).map((image, index) => (
+              <TouchableOpacity key={index} onPress={() => openImageViewer(index + 1)}>
+                <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(2) }]} />
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      );
+    }
+
+    if (images.length >= 4) {
+      return (
+        <View>
+          <View style={{ flexDirection: 'row' }}>
+            {images.slice(0, 2).map((image, index) => (
+              <TouchableOpacity key={index} onPress={() => openImageViewer(index)}>
+                <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(1) }]} />
+              </TouchableOpacity>
+            ))}
+          </View>
+          <View style={{ flexDirection: 'row' }}>
+            {images.slice(2, 4).map((image, index) => (
+              <TouchableOpacity key={index} onPress={() => openImageViewer(index + 2)}>
+                <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(1) }]} />
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      );
+    }
+  };
+
   const renderItem = ({ item }) => {
     const isLiked = item.isLiked || null;
     const images = item.images || [];
@@ -748,7 +750,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
                 onChangeText={setMyComment}
                 placeholderTextColor={Colors.gray}
               />
-               <TouchableOpacity
+              <TouchableOpacity
                 style={styles.postButton}
                 onPress={() => COMMENT(selectedPostId)}
                 disabled={commentLoading || !Boolean(myComment.trim())}
@@ -762,50 +764,50 @@ const ViewMyEventPost = ({ navigation, route }) => {
         </RBSheet>
 
 
-          <Modal
-                  visible={modalVisible1}
-                  transparent={true}
-                  animationType="fade"
-                  onRequestClose={() => setModalVisible1(false)}
+        <Modal
+          visible={modalVisible1}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setModalVisible1(false)}
+        >
+          <View style={{ flex: 1, backgroundColor: "white" }}>
+            <ImageViewer
+              imageUrls={formattedImages}
+              index={imageIndex}
+              enableSwipeDown={true}
+              enablePreload={true}
+              onSwipeDown={() => setModalVisible1(false)}
+              onCancel={() => setModalVisible1(false)}
+              saveToLocalByLongPress={false}
+              backgroundColor="rgba(0,0,0,0.95)"
+              renderIndicator={(currentIndex, allSize) => (
+                <View
+                  style={{
+                    position: "absolute",
+                    top: SH(30),
+                    alignSelf: "center",
+                    backgroundColor: "rgba(0,0,0,0.6)",
+                    paddingHorizontal: SW(8),
+                    borderRadius: 5,
+                    paddingVertical: SH(8),
+                    zIndex: 999
+                  }}
                 >
-                  <View style={{ flex: 1, backgroundColor: "white" }}>
-                    <ImageViewer
-                      imageUrls={formattedImages}
-                      index={imageIndex}
-                      enableSwipeDown={true}
-                      enablePreload={true}
-                      onSwipeDown={() => setModalVisible1(false)}
-                      onCancel={() => setModalVisible1(false)}
-                      saveToLocalByLongPress={false}
-                      backgroundColor="rgba(0,0,0,0.95)"
-                      renderIndicator={(currentIndex, allSize) => (
-                        <View
-                          style={{
-                            position: "absolute",
-                            top: SH(30),
-                            alignSelf: "center",
-                            backgroundColor: "rgba(0,0,0,0.6)",
-                            paddingHorizontal: SW(8),
-                            borderRadius: 5,
-                            paddingVertical: SH(8),
-                            zIndex: 999
-                          }}
-                        >
-                          <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>
-                            {currentIndex} / {allSize}
-                          </Text>
-                        </View>
-                      )}
-                      renderImage={(props) => (
-                        <Image
-                          {...props}
-                          resizeMode="contain"
-                          style={{ width: '100%', height: '100%' }}
-                        />
-                      )}
-                    />
-                  </View>
-                </Modal>
+                  <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>
+                    {currentIndex} / {allSize}
+                  </Text>
+                </View>
+              )}
+              renderImage={(props) => (
+                <Image
+                  {...props}
+                  resizeMode="contain"
+                  style={{ width: '100%', height: '100%' }}
+                />
+              )}
+            />
+          </View>
+        </Modal>
 
       </View>
     );
@@ -813,7 +815,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
 
 
   return (
-    <SafeAreaView style={Globalstyles.container}>
+    <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
       <StatusBar
         barStyle="dark-content"
         backgroundColor="transparent"
@@ -849,34 +851,36 @@ const ViewMyEventPost = ({ navigation, route }) => {
           />
         </View>
       </View>
-      <ScrollView style={styles.bottomContainer} showsVerticalScrollIndicator={false}>
-        <FlatList
-          data={events}
-          renderItem={renderItem}
-          keyExtractor={(item) => item._id}
-          scrollEnabled={false}
-          nestedScrollEnabled={true}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          ListEmptyComponent={
-            <View style={styles.emptyContainer}>
-              <Ionicons
-                name={'newspaper'}
-                size={60}
-                color={Colors.theme_color}
-                style={{ marginBottom: SH(10) }}
-              />
-              <Text style={[styles.emptyText, { fontFamily: "POppins-Bold", fontSize: SF(16) }]}>
-                No Event & News Posted Yet
-              </Text>
-              <Text style={{ color: 'gray', textAlign: 'center', marginTop: SH(5), paddingHorizontal: SW(20), fontFamily: "POppins-Medium" }}>
-                Events or news uploaded by Activists will be shown here.
-              </Text>
-            </View>
-          }
-        />
+      <ScrollView contentContainerStyle={[styles.bottomContainer, { paddingBottom: insets.bottom, flexGrow: 1 }]} showsVerticalScrollIndicator={false}>
+        <View>
+          <FlatList
+            data={events}
+            renderItem={renderItem}
+            keyExtractor={(item) => item._id}
+            scrollEnabled={false}
+            nestedScrollEnabled={true}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <Ionicons
+                  name={'newspaper'}
+                  size={60}
+                  color={Colors.theme_color}
+                  style={{ marginBottom: SH(10) }}
+                />
+                <Text style={[styles.emptyText, { fontFamily: "POppins-Bold", fontSize: SF(16) }]}>
+                  No Event & News Posted Yet
+                </Text>
+                <Text style={{ color: 'gray', textAlign: 'center', marginTop: SH(5), paddingHorizontal: SW(20), fontFamily: "POppins-Medium" }}>
+                  Events or news uploaded by Activists will be shown here.
+                </Text>
+              </View>
+            }
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

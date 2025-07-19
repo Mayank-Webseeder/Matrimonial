@@ -12,8 +12,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SH } from '../../utils/Dimensions';
 import { showMessage } from 'react-native-flash-message';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const MyuploadedDharamsala = ({ navigation, route }) => {
+   const insets = useSafeAreaInsets();
   const { DharmshalaData } = route.params;
   const [isImageVisible, setImageVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState([]);
@@ -201,7 +203,7 @@ const MyuploadedDharamsala = ({ navigation, route }) => {
   };
 
   return (
-    <SafeAreaView style={Globalstyles.container}>
+    <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: "center" }}>
@@ -211,20 +213,22 @@ const MyuploadedDharamsala = ({ navigation, route }) => {
           <Text style={Globalstyles.headerText}>My Dharamsala</Text>
         </View>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <FlatList
-          data={DharmshalaData}
-          renderItem={renderItem}
-          keyExtractor={(item) => item?._id}
-          scrollEnabled={false}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.panditListData}
-          ListEmptyComponent={
-            <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>No dharamsala Available</Text>
-            </View>
-          }
-        />
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(50), flexGrow: 1}}>
+        <View>
+          <FlatList
+            data={DharmshalaData}
+            renderItem={renderItem}
+            keyExtractor={(item) => item?._id}
+            scrollEnabled={false}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.panditListData}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>No dharamsala Available</Text>
+              </View>
+            }
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

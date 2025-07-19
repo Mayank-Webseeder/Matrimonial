@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, StatusBar, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, SafeAreaView, ScrollView, StatusBar, FlatList, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import Colors from '../../utils/Colors';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -13,9 +13,11 @@ import axios from 'axios';
 import _ from "lodash";
 import { showMessage } from 'react-native-flash-message';
 import { Dropdown } from 'react-native-element-dropdown';
-import { SafeAreaView } from 'react-native-safe-area-context';
+// import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const UpdateDharamsala = ({ navigation, route }) => {
+    const insets = useSafeAreaInsets();
     const { DharmshalaData } = route.params || {};
     const [cityInput, setCityInput] = useState('');
     const [filteredCities, setFilteredCities] = useState([]);
@@ -90,12 +92,16 @@ const UpdateDharamsala = ({ navigation, route }) => {
 
     const handleImageUpload = () => {
         ImageCropPicker.openPicker({
-            multiple: true,
-            cropping: true,
+            multiple: false,
             width: 1000,
             height: 1000,
+            cropping: true,
+            freeStyleCropEnabled: true,
+            cropperToolbarTitle: 'Crop Image',
+            cropperCircleOverlay: false,
+            includeBase64: true,
             compressImageQuality: 1,
-            mediaType: "photo"
+            mediaType: 'photo',
         })
             .then((images) => {
                 if (images.length > 4) {
@@ -270,7 +276,7 @@ const UpdateDharamsala = ({ navigation, route }) => {
 
 
     return (
-        <SafeAreaView style={Globalstyles.container}>
+        <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
             <StatusBar
                 barStyle="dark-content"
                 backgroundColor="transparent"
@@ -289,123 +295,137 @@ const UpdateDharamsala = ({ navigation, route }) => {
                 </View>
 
             </View>
-            <View style={Globalstyles.form}>
-                <Text style={styles.title}>Upload Your Dharamsala Details</Text>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+                <ScrollView contentContainerStyle={[Globalstyles.form,{paddingBottom: insets.bottom, flexGrow: 1}]} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+                    <View>
+                        <Text style={styles.title}>Upload Your Dharamsala Details</Text>
 
-                <Text style={Globalstyles.title}>Dharamsala Name <Entypo name={'star'} color={'red'} size={12} /></Text>
-                <TextInput
-                    style={Globalstyles.input}
-                    placeholder="Enter Dharamsala Name"
-                    value={DharamsalaData.dharmshalaName}
-                    onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, dharmshalaName: text }))}
-                    placeholderTextColor={Colors.gray}
-                    autoComplete="off"
-                    textContentType="dharmshalaName"
-                    importantForAutofill="no"
-                    autoCorrect={false}
-                />
+                        <Text style={Globalstyles.title}>Dharamsala Name <Entypo name={'star'} color={'red'} size={12} /></Text>
+                        <TextInput
+                            style={Globalstyles.input}
+                            placeholder="Enter Dharamsala Name"
+                            value={DharamsalaData.dharmshalaName}
+                            onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, dharmshalaName: text }))}
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="dharmshalaName"
+                            importantForAutofill="no"
+                            autoCorrect={false}
+                        />
 
-                <Text style={Globalstyles.title}>Sub-Caste Name <Entypo name={'star'} color={'red'} size={12} /></Text>
-                <Dropdown
-                    style={[
-                        Globalstyles.input,
-                    ]}
-                    data={subCasteOptions}
-                    labelField="label"
-                    valueField="value"
-                    value={DharamsalaData?.subCaste}
-                    onChange={(text) => handleInputChange("subCaste", text.value)}
-                    placeholder="Select Your subCaste"
-                    placeholderStyle={{ color: '#E7E7E7' }}
-                    autoScroll={false}
-                    showsVerticalScrollIndicator={false}
-                />
+                        <Text style={Globalstyles.title}>Sub-Caste Name <Entypo name={'star'} color={'red'} size={12} /></Text>
+                        <Dropdown
+                            style={[
+                                Globalstyles.input,
+                            ]}
+                            data={subCasteOptions}
+                            labelField="label"
+                            valueField="value"
+                            value={DharamsalaData?.subCaste}
+                            onChange={(text) => handleInputChange("subCaste", text.value)}
+                            placeholder="Select Your subCaste"
+                            placeholderStyle={{ color: '#E7E7E7' }}
+                            autoScroll={false}
+                            showsVerticalScrollIndicator={false}
+                        />
 
-                <Text style={Globalstyles.title}>City <Entypo name={'star'} color={'red'} size={12} /></Text>
-                <TextInput
-                    style={Globalstyles.input}
-                    value={DharamsalaData?.city}
-                    onChangeText={handleCityInputChange}
-                    placeholder="Enter your city"
-                    placeholderTextColor={Colors.gray}
-                    autoComplete="off"
-                    textContentType="city"
-                    importantForAutofill="no"
-                    autoCorrect={false}
-                />
-                {filteredCities.length > 0 && cityInput ? (
-                    <FlatList
-                        data={filteredCities.slice(0, 5)}
-                        scrollEnabled={false}
-                        keyExtractor={(item, index) => index.toString()}
-                        renderItem={({ item }) => (
-                            <TouchableOpacity onPress={() => handleCitySelect(item)}>
-                                <Text style={Globalstyles.listItem}>{item}</Text>
+                        <Text style={Globalstyles.title}>City <Entypo name={'star'} color={'red'} size={12} /></Text>
+                        <TextInput
+                            style={Globalstyles.input}
+                            value={DharamsalaData?.city}
+                            onChangeText={handleCityInputChange}
+                            placeholder="Enter your city"
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="city"
+                            importantForAutofill="no"
+                            autoCorrect={false}
+                        />
+                        {filteredCities.length > 0 && cityInput ? (
+                            <FlatList
+                                data={filteredCities.slice(0, 5)}
+                                scrollEnabled={false}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity onPress={() => handleCitySelect(item)}>
+                                        <Text style={Globalstyles.listItem}>{item}</Text>
+                                    </TouchableOpacity>
+                                )}
+                                style={Globalstyles.suggestions}
+                            />
+                        ) : null}
+
+                        <Text style={Globalstyles.title}>Contact <Entypo name={'star'} color={'red'} size={12} /></Text>
+                        <TextInput
+                            style={Globalstyles.input}
+                            placeholder="Enter Person's Contact No."
+                            keyboardType='phone-pad'
+                            maxLength={10}
+                            placeholderTextColor={Colors.gray}
+                            value={DharamsalaData.mobileNo} onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, mobileNo: text }))}
+                            autoComplete="off"
+                            textContentType="mobileNo"
+                            importantForAutofill="no"
+                            autoCorrect={false}
+                        />
+
+                        <Text style={Globalstyles.title}>Description (Optional)</Text>
+                        <TextInput
+                            style={[Globalstyles.input, styles.textArea]}
+                            placeholder="Enter Description"
+                            placeholderTextColor={Colors.gray}
+                            value={DharamsalaData.description} onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, description: text }))}
+                            multiline={true}
+                            autoComplete="off"
+                            textContentType="description"
+                            importantForAutofill="no"
+                            autoCorrect={false}
+                        />
+                        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                            <Text style={Globalstyles.title}>
+                                Upload Images (Max Limit 4) <Entypo name={"star"} color={"red"} size={12} />
+                            </Text>
+                            <TouchableOpacity style={styles.uploadButton} onPress={handleImageUpload}>
+                                <Text style={styles.uploadButtonText}>
+                                    {DharamsalaData.images?.length > 0 ? "Change Image" : "Upload Image"}
+                                </Text>
                             </TouchableOpacity>
+                        </View>
+
+                        {DharamsalaData.images?.length > 0 && (
+                            <View style={styles.imagePreview}>
+                                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        {DharamsalaData.images.map((photo, index) => (
+                                            <Image
+                                                key={index}
+                                                source={{ uri: photo?.uri || photo }}
+                                                style={styles.photo}
+                                            />
+                                        ))}
+                                    </View>
+                                </ScrollView>
+                            </View>
                         )}
-                        style={Globalstyles.suggestions}
-                    />
-                ) : null}
 
-                <Text style={Globalstyles.title}>Contact <Entypo name={'star'} color={'red'} size={12} /></Text>
-                <TextInput
-                    style={Globalstyles.input}
-                    placeholder="Enter Person's Contact No."
-                    keyboardType='phone-pad'
-                    maxLength={10}
-                    placeholderTextColor={Colors.gray}
-                    value={DharamsalaData.mobileNo} onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, mobileNo: text }))}
-                    autoComplete="off"
-                    textContentType="mobileNo"
-                    importantForAutofill="no"
-                    autoCorrect={false}
-                />
 
-                <Text style={Globalstyles.title}>Description (Optional)</Text>
-                <TextInput
-                    style={[Globalstyles.input, styles.textArea]}
-                    placeholder="Enter Description"
-                    placeholderTextColor={Colors.gray}
-                    value={DharamsalaData.description} onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, description: text }))}
-                    multiline={true}
-                    autoComplete="off"
-                    textContentType="description"
-                    importantForAutofill="no"
-                    autoCorrect={false}
-                />
-                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                    <Text style={Globalstyles.title}>
-                        Upload Images (Max Limit 4) <Entypo name={"star"} color={"red"} size={12} />
-                    </Text>
-                    <TouchableOpacity style={styles.uploadButton} onPress={handleImageUpload}>
-                        <Text style={styles.uploadButtonText}>
-                            {DharamsalaData.images?.length > 0 ? "Change Image" : "Upload Image"}
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-
-                {DharamsalaData.images?.length > 0 && (
-                    <View style={styles.imagePreview}>
-                        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                            {DharamsalaData.images.map((photo, index) => (
-                                <Image key={index} source={{ uri: photo?.uri || photo }} style={styles.photo} />
-                            ))}
-                        </ScrollView>
+                        <TouchableOpacity
+                            style={styles.submitButton}
+                            onPress={handleUpdateDharamSala}
+                            disabled={isLoading}
+                        >
+                            {isLoading ? (
+                                <ActivityIndicator size="large" color={Colors.light} />
+                            ) : (
+                                <Text style={styles.submitButtonText}>Submit</Text>
+                            )}
+                        </TouchableOpacity>
                     </View>
-                )}
-
-                <TouchableOpacity
-                    style={styles.submitButton}
-                    onPress={handleUpdateDharamSala}
-                    disabled={isLoading}
-                >
-                    {isLoading ? (
-                        <ActivityIndicator size="large" color={Colors.light} />
-                    ) : (
-                        <Text style={styles.submitButtonText}>Submit</Text>
-                    )}
-                </TouchableOpacity>
-            </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     );
 };

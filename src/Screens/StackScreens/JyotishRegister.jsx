@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, StatusBar, FlatList, ActivityIndicator, Modal, Alert } from 'react-native';
+import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, StatusBar, FlatList, ActivityIndicator, Modal, Alert, KeyboardAvoidingView, Platform, SafeAreaView } from 'react-native';
 import styles from '../StyleScreens/RoleRegisterStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
@@ -16,10 +16,12 @@ import { useSelector } from 'react-redux';
 import RazorpayCheckout from 'react-native-razorpay';
 import { showMessage } from 'react-native-flash-message';
 import { launchImageLibrary } from 'react-native-image-picker';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
+// import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SH } from '../../utils/Dimensions';
 
 const JyotishRegister = ({ navigation }) => {
+    const insets = useSafeAreaInsets();
     const [stateInput, setStateInput] = useState('');
     const [cityInput, setCityInput] = useState('');
     const [selectedRoles, setSelectedRoles] = useState([]);
@@ -236,11 +238,19 @@ const JyotishRegister = ({ navigation }) => {
         try {
             const image = await ImageCropPicker.openPicker({
                 multiple: false,
-                cropping: true,
                 width: 1000,
                 height: 1000,
+                cropping: true,
+                freeStyleCropEnabled: true,
+                cropperToolbarTitle: 'Crop Image',
+                cropperCircleOverlay: false,
                 includeBase64: true,
-                compressImageQuality: 1
+                compressImageQuality: 1,
+                mediaType: 'photo',
+                cropperStatusBarColor: '#000000',
+                cropperToolbarColor: '#FFFFFF',
+                cropperActiveWidgetColor: '#000000',
+                cropperToolbarWidgetColor: '#000000',
             });
 
             if (!image.data) {
@@ -754,7 +764,7 @@ const JyotishRegister = ({ navigation }) => {
     };
 
     return (
-        <SafeAreaView style={Globalstyles.container}>
+        <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
             <View style={Globalstyles.header}>
                 <View style={{ flexDirection: 'row', alignItems: "center" }}>
@@ -765,158 +775,163 @@ const JyotishRegister = ({ navigation }) => {
                 </View>
             </View>
 
-            <ScrollView showsVerticalScrollIndicator={false}>
-                <View style={Globalstyles.form} importantForAutofill="no" removeClippedSubviews={true}>
-                    {/* <Text style={styles.editText}>Edit Details</Text> */}
-                    <Text style={Globalstyles.title}>Name <Entypo name={'star'} color={'red'} size={12} /></Text>
-                    <TextInput style={[Globalstyles.input, errors.fullName && styles.errorInput]}
-                        value={RoleRegisterData?.fullName}
-                        onChangeText={(text) => {
-                            const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
-                            setRoleRegisterData((prev) => ({ ...prev, fullName: filteredText }));
-                        }}
-                        placeholder='Enter Your Full Name'
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
-                        autoCorrect={false}
-                    />
-                    {errors.fullName && <Text style={styles.errorText}>{errors.fullName}</Text>}
-
-                    <Text style={Globalstyles.title}>Mobile No. <Entypo name={'star'} color={'red'} size={12} /></Text>
-                    <TextInput
-                        style={[Globalstyles.input, errors.mobileNo && styles.errorInput]}
-                        value={RoleRegisterData?.mobileNo}
-                        onChangeText={(text) => {
-                            const digits = text.replace(/[^0-9]/g, '').slice(0, 10);
-                            if (digits !== RoleRegisterData.mobileNo) {
-                                setRoleRegisterData((prev) => ({ ...prev, mobileNo: digits }));
-                            }
-                        }}
-                        keyboardType="phone-pad"
-                        placeholder="Enter Your Mobile No."
-                        maxLength={10}
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        autoCorrect={false}
-                        importantForAutofill="no"
-                        textContentType="none"
-                        inputMode="numeric"
-                        autoCapitalize="none"
-                    />
-
-                    {errors.mobileNo && <Text style={styles.errorText}>{errors.mobileNo}</Text>}
-                    <Text style={[Globalstyles.title, { color: Colors.theme_color }]}>Address</Text>
-
-                    <Text style={Globalstyles.title}>State <Entypo name={'star'} color={'red'} size={12} /></Text>
-                    <TextInput
-                        style={[Globalstyles.input, errors.state && styles.errorInput]}
-                        value={RoleRegisterData?.state} // `biodata?.state` ki jagah `stateInput` use karein
-                        onChangeText={handleStateInputChange}
-                        placeholder="Type your State"
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
-                        autoCorrect={false}
-                    />
-                    {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
-
-                    {filteredStates.length > 0 ? (
-                        <FlatList
-                            data={filteredStates.slice(0, 5)}
-                            scrollEnabled={false}
-                            keyExtractor={(item, index) => index.toString()}
-                            renderItem={({ item }) => (
-                                <TouchableOpacity onPress={() => handleStateSelect(item)}>
-                                    <Text style={Globalstyles.listItem}>{item}</Text>
-                                </TouchableOpacity>
-                            )}
-                            style={Globalstyles.suggestions}
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+            >
+                <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: insets.bottom + SH(65), flexGrow: 1 }}>
+                    <View style={Globalstyles.form} importantForAutofill="no" removeClippedSubviews={true}>
+                        {/* <Text style={styles.editText}>Edit Details</Text> */}
+                        <Text style={Globalstyles.title}>Name <Entypo name={'star'} color={'red'} size={12} /></Text>
+                        <TextInput style={[Globalstyles.input, errors.fullName && styles.errorInput]}
+                            value={RoleRegisterData?.fullName}
+                            onChangeText={(text) => {
+                                const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+                                setRoleRegisterData((prev) => ({ ...prev, fullName: filteredText }));
+                            }}
+                            placeholder='Enter Your Full Name'
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
+                            autoCorrect={false}
                         />
-                    ) : null}
+                        {errors.fullName && <Text style={styles.errorText}>{errors.fullName}</Text>}
 
-                    <Text style={Globalstyles.title}>Village / City <Entypo name={'star'} color={'red'} size={12} /></Text>
-                    <TextInput
-                        style={[Globalstyles.input, errors.city && styles.errorInput]}
-                        value={RoleRegisterData?.city}
-                        onChangeText={handleCityInputChange}
-                        placeholder="Enter your city"
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
-                        autoCorrect={false}
-                    />
-                    {errors.city && <Text style={styles.errorText}>{errors.city}</Text>}
-                    {filteredCities.length > 0 && cityInput ? (
-                        <FlatList
-                            data={filteredCities.slice(0, 5)}
-                            scrollEnabled={false}
-                            keyExtractor={(item, index) => index.toString()}
-                            renderItem={({ item }) => (
-                                <TouchableOpacity onPress={() => handleCitySelect(item)}>
-                                    <Text style={Globalstyles.listItem}>{item}</Text>
-                                </TouchableOpacity>
-                            )}
-                            style={Globalstyles.suggestions}
+                        <Text style={Globalstyles.title}>Mobile No. <Entypo name={'star'} color={'red'} size={12} /></Text>
+                        <TextInput
+                            style={[Globalstyles.input, errors.mobileNo && styles.errorInput]}
+                            value={RoleRegisterData?.mobileNo}
+                            onChangeText={(text) => {
+                                const digits = text.replace(/[^0-9]/g, '').slice(0, 10);
+                                if (digits !== RoleRegisterData.mobileNo) {
+                                    setRoleRegisterData((prev) => ({ ...prev, mobileNo: digits }));
+                                }
+                            }}
+                            keyboardType="phone-pad"
+                            placeholder="Enter Your Mobile No."
+                            maxLength={10}
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            autoCorrect={false}
+                            importantForAutofill="no"
+                            textContentType="none"
+                            inputMode="numeric"
+                            autoCapitalize="none"
                         />
-                    ) : null}
+
+                        {errors.mobileNo && <Text style={styles.errorText}>{errors.mobileNo}</Text>}
+                        <Text style={[Globalstyles.title, { color: Colors.theme_color }]}>Address</Text>
+
+                        <Text style={Globalstyles.title}>State <Entypo name={'star'} color={'red'} size={12} /></Text>
+                        <TextInput
+                            style={[Globalstyles.input, errors.state && styles.errorInput]}
+                            value={RoleRegisterData?.state} // `biodata?.state` ki jagah `stateInput` use karein
+                            onChangeText={handleStateInputChange}
+                            placeholder="Type your State"
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
+                            autoCorrect={false}
+                        />
+                        {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
+
+                        {filteredStates.length > 0 ? (
+                            <FlatList
+                                data={filteredStates.slice(0, 5)}
+                                scrollEnabled={false}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity onPress={() => handleStateSelect(item)}>
+                                        <Text style={Globalstyles.listItem}>{item}</Text>
+                                    </TouchableOpacity>
+                                )}
+                                style={Globalstyles.suggestions}
+                            />
+                        ) : null}
+
+                        <Text style={Globalstyles.title}>Village / City <Entypo name={'star'} color={'red'} size={12} /></Text>
+                        <TextInput
+                            style={[Globalstyles.input, errors.city && styles.errorInput]}
+                            value={RoleRegisterData?.city}
+                            onChangeText={handleCityInputChange}
+                            placeholder="Enter your city"
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
+                            autoCorrect={false}
+                        />
+                        {errors.city && <Text style={styles.errorText}>{errors.city}</Text>}
+                        {filteredCities.length > 0 && cityInput ? (
+                            <FlatList
+                                data={filteredCities.slice(0, 5)}
+                                scrollEnabled={false}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity onPress={() => handleCitySelect(item)}>
+                                        <Text style={Globalstyles.listItem}>{item}</Text>
+                                    </TouchableOpacity>
+                                )}
+                                style={Globalstyles.suggestions}
+                            />
+                        ) : null}
 
 
-                    <Text style={Globalstyles.title}>Area</Text>
-                    <TextInput style={Globalstyles.input}
-                        value={RoleRegisterData?.residentialAddress}
-                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, residentialAddress: text }))}
-                        placeholder='Enter Your Area'
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
-                        autoCorrect={false}
-                    />
+                        <Text style={Globalstyles.title}>Area</Text>
+                        <TextInput style={Globalstyles.input}
+                            value={RoleRegisterData?.residentialAddress}
+                            onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, residentialAddress: text }))}
+                            placeholder='Enter Your Area'
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
+                            autoCorrect={false}
+                        />
 
-                    <Text style={Globalstyles.title}>Aadhar No. </Text>
-                    <TextInput
-                        style={Globalstyles.input}
-                        value={RoleRegisterData?.aadharNo}
-                        onChangeText={(text) => {
-                            const digits = text.replace(/[^0-9]/g, '').slice(0, 12);
-                            if (digits !== RoleRegisterData.aadharNo) {
-                                setRoleRegisterData((prev) => ({ ...prev, aadharNo: digits }));
-                            }
-                        }}
-                        keyboardType="phone-pad"
-                        placeholder="Enter Your Aadhar No."
-                        maxLength={12}
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        autoCorrect={false}
-                        importantForAutofill="no"
-                        textContentType="none"
-                        inputMode="numeric"
-                        autoCapitalize="none"
-                    />
+                        <Text style={Globalstyles.title}>Aadhar No. </Text>
+                        <TextInput
+                            style={Globalstyles.input}
+                            value={RoleRegisterData?.aadharNo}
+                            onChangeText={(text) => {
+                                const digits = text.replace(/[^0-9]/g, '').slice(0, 12);
+                                if (digits !== RoleRegisterData.aadharNo) {
+                                    setRoleRegisterData((prev) => ({ ...prev, aadharNo: digits }));
+                                }
+                            }}
+                            keyboardType="phone-pad"
+                            placeholder="Enter Your Aadhar No."
+                            maxLength={12}
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            autoCorrect={false}
+                            importantForAutofill="no"
+                            textContentType="none"
+                            inputMode="numeric"
+                            autoCapitalize="none"
+                        />
 
 
-                    <Text style={Globalstyles.title}>Sub Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
-                    <Dropdown
-                        style={[Globalstyles.input, errors.subCaste && styles.errorInput]}
-                        data={subCasteOptions}
-                        labelField="label"
-                        valueField="value"
-                        value={RoleRegisterData?.subCaste}
-                        onChange={(text) => handleInputChange("subCaste", text.value)}
-                        placeholder="Select Your subCaste"
-                        placeholderStyle={{ color: '#E7E7E7' }}
-                        autoScroll={false}
-                        showsVerticalScrollIndicator={false}
-                    />
-                    {errors.subCaste && <Text style={styles.errorText}>{errors.subCaste}</Text>}
+                        <Text style={Globalstyles.title}>Sub Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
+                        <Dropdown
+                            style={[Globalstyles.input, errors.subCaste && styles.errorInput]}
+                            data={subCasteOptions}
+                            labelField="label"
+                            valueField="value"
+                            value={RoleRegisterData?.subCaste}
+                            onChange={(text) => handleInputChange("subCaste", text.value)}
+                            placeholder="Select Your subCaste"
+                            placeholderStyle={{ color: '#E7E7E7' }}
+                            autoScroll={false}
+                            showsVerticalScrollIndicator={false}
+                        />
+                        {errors.subCaste && <Text style={styles.errorText}>{errors.subCaste}</Text>}
 
-                    {/* Agar user type karega toh list dikhegi */}
-                    {/* {filteredSubCaste.length > 0 ? (
+                        {/* Agar user type karega toh list dikhegi */}
+                        {/* {filteredSubCaste.length > 0 ? (
                         <FlatList
                             data={filteredSubCaste.slice(0, 5)}
                             scrollEnabled={false}
@@ -931,261 +946,264 @@ const JyotishRegister = ({ navigation }) => {
                     ) : null} */}
 
 
-                    {/* Role Selection with Checkboxes */}
-                    <Text style={Globalstyles.title}>Select Jyotish Services <Entypo name={'star'} color={'red'} size={12} /></Text>
-                    <View style={[styles.checkboxContainer, errors.selectedRoles && styles.errorInput]}>
-                        {roleOptions.map(role => (
-                            <View key={role.value} style={styles.checkboxItem}>
-                                <Checkbox
-                                    status={selectedRoles.includes(role.value) ? 'checked' : 'unchecked'}
-                                    onPress={() => handleRoleChange(role.value)}
-                                    color={Colors.theme_color}
-                                />
-                                <Text>{role.label}</Text>
-                            </View>
-                        ))}
-                    </View>
-
-                    {/* Show services for selected roles */}
-                    {selectedRoles.map(role => (
-                        <View key={role} style={styles.roleServices}>
-                            <Text style={styles.servicesLabel}>{role} Services</Text>
-                            {servicesOptions[role]?.map(service => (
-                                <View key={service.value} style={styles.checkboxContainer1}>
-                                    <Checkbox.Item
-                                        label={service.label}
-                                        status={checked[service.value] ? 'checked' : 'unchecked'}
-                                        onPress={() => handleCheckboxChange(service.value)}
+                        {/* Role Selection with Checkboxes */}
+                        <Text style={Globalstyles.title}>Select Jyotish Services <Entypo name={'star'} color={'red'} size={12} /></Text>
+                        <View style={[styles.checkboxContainer, errors.selectedRoles && styles.errorInput]}>
+                            {roleOptions.map(role => (
+                                <View key={role.value} style={styles.checkboxItem}>
+                                    <Checkbox
+                                        status={selectedRoles.includes(role.value) ? 'checked' : 'unchecked'}
+                                        onPress={() => handleRoleChange(role.value)}
                                         color={Colors.theme_color}
                                     />
+                                    <Text>{role.label}</Text>
                                 </View>
                             ))}
                         </View>
-                    ))}
 
-                    {errors?.jyotishServices && <Text style={styles.errorText}>{errors.jyotishServices}</Text>}
-
-                    <Text style={Globalstyles.title}>Experience</Text>
-                    <View>
-                        <Dropdown
-                            style={Globalstyles.input}
-                            data={ExperienceData}
-                            labelField="label"
-                            valueField="value"
-                            value={RoleRegisterData?.experience}
-                            onChange={(text) => handleInputChange("experience", text.value)}
-                            placeholder="Select Experience"
-                            placeholderStyle={{ color: '#E7E7E7' }}
-                            autoScroll={false}
-                            showsVerticalScrollIndicator={false}
-                        />
-                    </View>
-
-                    <Text style={Globalstyles.title}>Profile Photo <Entypo name={'star'} color={'red'} size={12} /></Text>
-                    <View style={[Globalstyles.input, errors.profilePhoto && styles.errorInput]}>
-                        <TouchableOpacity onPress={handleProfilePhotoPick}>
-                            {RoleRegisterData.profilePhoto ? (
-                                <Image
-                                    source={{ uri: RoleRegisterData.profilePhoto }}
-                                    style={styles.profileImage}
-                                />
-                            ) : (
-                                <Text style={styles.imagePlaceholder}>Upload Profile Photo</Text>
-                            )}
-                        </TouchableOpacity>
-                    </View>
-                    {!RoleRegisterData.profilePhoto && errors.profilePhoto && (
-                        <Text style={styles.errorText}>{errors.profilePhoto}</Text>
-                    )}
-
-                    <Text style={Globalstyles.title}>Add Description</Text>
-                    <TextInput style={Globalstyles.textInput} value={RoleRegisterData.description}
-                        onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, description: text }))}
-                        textAlignVertical='top' placeholder="Add Your Description"
-                        placeholderTextColor={Colors.gray} multiline={true}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
-                        autoCorrect={false}
-                    />
-
-                    <View style={styles.photopickContainer}>
-                        <Text style={styles.smalltitle}>Upload Photos For Your Page </Text>
-
-                        {/* Crop Picker Button */}
-                        <TouchableOpacity style={styles.PickPhotoButton} onPress={handleAdditionalPhotosPick}>
-                            <Text style={styles.PickPhotoText}>Pick & Crop Photo</Text>
-                        </TouchableOpacity>
-                    </View>
-
-                    {/* Display Selected Photos */}
-                    {RoleRegisterData?.additionalPhotos?.length > 0 && (
-                        <View style={styles.photosContainer}>
-                            <Text style={styles.label}>Uploaded Photos:</Text>
-                            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                                {RoleRegisterData?.additionalPhotos.map((photo, index) => (
-                                    <Image key={index} source={{ uri: photo }} style={styles.photo} />
+                        {/* Show services for selected roles */}
+                        {selectedRoles.map(role => (
+                            <View key={role} style={styles.roleServices}>
+                                <Text style={styles.servicesLabel}>{role} Services</Text>
+                                {servicesOptions[role]?.map(service => (
+                                    <View key={service.value} style={styles.checkboxContainer1}>
+                                        <Checkbox.Item
+                                            label={service.label}
+                                            status={checked[service.value] ? 'checked' : 'unchecked'}
+                                            onPress={() => handleCheckboxChange(service.value)}
+                                            color={Colors.theme_color}
+                                        />
+                                    </View>
                                 ))}
-                            </ScrollView>
+                            </View>
+                        ))}
+
+                        {errors?.jyotishServices && <Text style={styles.errorText}>{errors.jyotishServices}</Text>}
+
+                        <Text style={Globalstyles.title}>Experience</Text>
+                        <View>
+                            <Dropdown
+                                style={Globalstyles.input}
+                                data={ExperienceData}
+                                labelField="label"
+                                valueField="value"
+                                value={RoleRegisterData?.experience}
+                                onChange={(text) => handleInputChange("experience", text.value)}
+                                placeholder="Select Experience"
+                                placeholderStyle={{ color: '#E7E7E7' }}
+                                autoScroll={false}
+                                showsVerticalScrollIndicator={false}
+                            />
                         </View>
-                    )}
 
-                    <Text style={Globalstyles.title}>Website Link</Text>
-                    <TextInput
-                        style={[Globalstyles.input, errors.websiteUrl && styles.errorInput]}
-                        value={tempUrlData.websiteUrl || RoleRegisterData.websiteUrl}
-                        onChangeText={(text) => validateAndSetUrl(text, "websiteUrl")}
-                        placeholder="Give Your Website Link"
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
-                        autoCorrect={false}
-                    />
-                    {errors.websiteUrl && (
-                        <Text style={styles.errorText}>{errors.websiteUrl}</Text>
-                    )}
-                    <Text style={Globalstyles.title}>Youtube Link</Text>
-                    <TextInput
-                        style={[Globalstyles.input, errors.youtubeUrl && styles.errorInput]}
-                        value={tempUrlData.youtubeUrl || RoleRegisterData.youtubeUrl}
-                        onChangeText={(text) => validateAndSetUrl(text, "youtubeUrl")}
-                        placeholder="Give Your Youtube Link"
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
-                        autoCorrect={false}
-                    />
-                    {errors.youtubeUrl && (
-                        <Text style={styles.errorText}>{errors.youtubeUrl}</Text>
-                    )}
-                    <Text style={Globalstyles.title}>Whatsapp Link</Text>
-                    <TextInput
-                        style={[Globalstyles.input, errors.whatsapp && styles.errorInput]}
-                        value={tempUrlData.whatsapp || RoleRegisterData.whatsapp}
-                        onChangeText={(text) => validateAndSetUrl(text, "whatsapp")}
-                        placeholder="Give Your Whatsapp Link"
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
-                        autoCorrect={false}
-                    />
-                    {errors.whatsapp && (
-                        <Text style={styles.errorText}>{errors.whatsapp}</Text>
-                    )}
-                    <Text style={Globalstyles.title}>Facebook Link</Text>
-                    <TextInput
-                        style={[Globalstyles.input, errors.facebookUrl && styles.errorInput]}
-                        value={tempUrlData.facebookUrl || RoleRegisterData.facebookUrl}
-                        onChangeText={(text) => validateAndSetUrl(text, "facebookUrl")}
-                        placeholder="Give Your Facebook Link"
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
-                        autoCorrect={false}
-                    />
-                    {errors.facebookUrl && (
-                        <Text style={styles.errorText}>{errors.facebookUrl}</Text>
-                    )}
-                    <Text style={Globalstyles.title}>Instagram Link</Text>
-                    <TextInput
-                        style={[Globalstyles.input, errors.instagramUrl && styles.errorInput]}
-                        value={tempUrlData.instagramUrl || RoleRegisterData.instagramUrl}
-                        onChangeText={(text) => validateAndSetUrl(text, "instagramUrl")}
-                        placeholder="Give Your Instagram Link"
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentType="none"
-                        importantForAutofill="no"
-                        autoCorrect={false}
-                    />
-                    {errors.instagramUrl && (
-                        <Text style={styles.errorText}>{errors.instagramUrl}</Text>
-                    )}
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={handleSubmit}
-                        disabled={isLoading}
-                    >
-                        {isLoading ? (
-                            <ActivityIndicator size="large" color={Colors.light} />
-                        ) : (
-                            <Text style={styles.buttonText}>submit</Text>
+                        <Text style={Globalstyles.title}>Profile Photo <Entypo name={'star'} color={'red'} size={12} /></Text>
+                        <View style={[Globalstyles.input, errors.profilePhoto && styles.errorInput]}>
+                            <TouchableOpacity onPress={handleProfilePhotoPick}>
+                                {RoleRegisterData.profilePhoto ? (
+                                    <Image
+                                        source={{ uri: RoleRegisterData.profilePhoto }}
+                                        style={styles.profileImage}
+                                    />
+                                ) : (
+                                    <Text style={styles.imagePlaceholder}>Upload Profile Photo</Text>
+                                )}
+                            </TouchableOpacity>
+                        </View>
+                        {!RoleRegisterData.profilePhoto && errors.profilePhoto && (
+                            <Text style={styles.errorText}>{errors.profilePhoto}</Text>
                         )}
-                    </TouchableOpacity>
-                    <Modal visible={modalVisible} animationType="slide" transparent={true}>
-                        <View style={styles.modalOverlay}>
-                            <View style={styles.modalContent}>
-                                <ScrollView showsVerticalScrollIndicator={false}>
-                                    <View style={styles.cardContainer}>
-                                        {plans.map((plan) => (
-                                            <View key={plan._id} style={styles.card}>
-                                                {plan.photoUrl ? (
-                                                    <Image
-                                                        source={{ uri: plan.photoUrl }}
-                                                        style={styles.planImage}
-                                                        resizeMode="cover"
-                                                        onError={(e) => console.log("Image load error:", e.nativeEvent.error)}
-                                                    />
-                                                ) : null}
-                                                <View style={styles.cardContent}>
-                                                    {plan.trialPeriod ? (
-                                                        <Text style={styles.Text}>
-                                                            <Text style={styles.boldLabel}>Trial Period: </Text>
-                                                            {plan.trialPeriod} days
-                                                        </Text>
-                                                    ) : null}
 
-                                                    {plan.duration ? (
-                                                        <Text style={styles.Text}>
-                                                            <Text style={styles.boldLabel}>Duration: </Text>
-                                                            {plan.duration} months
-                                                        </Text>
-                                                    ) : null}
+                        <Text style={Globalstyles.title}>Add Description</Text>
+                        <TextInput style={Globalstyles.textInput} value={RoleRegisterData.description}
+                            onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, description: text }))}
+                            textAlignVertical='top' placeholder="Add Your Description"
+                            placeholderTextColor={Colors.gray} multiline={true}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
+                            autoCorrect={false}
+                        />
 
-                                                    {plan.amount ? (
-                                                        <Text style={styles.Text}>
-                                                            <Text style={styles.boldLabel}>Amount: </Text>
-                                                            ₹{plan.amount}
-                                                        </Text>
-                                                    ) : null}
+                        <View style={styles.photopickContainer}>
+                            <Text style={styles.smalltitle}>Upload Photos For Your Page </Text>
 
-                                                    <View style={{ flex: 1, justifyContent: 'space-between' }}>
-                                                        {plan.description ? (
-                                                            <Text style={styles.description}>{plan.description}</Text>
-                                                        ) : null}
-                                                        <View style={styles.buttonRowAligned}>
-                                                            {!hasTrial && (
-                                                                <TouchableOpacity style={styles.trialButton} onPress={() => handleFreeTrial(plan)}>
-                                                                    <Text style={styles.trialText}>
-                                                                        {TrialPlanId === plan._id ? 'Starting...' : 'Start Free Trial'}
-                                                                    </Text>
-                                                                </TouchableOpacity>
-                                                            )}
-                                                            <TouchableOpacity style={styles.buyButton} onPress={() => handleBuyNow(plan)}>
-                                                                <Text style={styles.buyButtonText}>
-                                                                    {buyingPlanId === plan._id ? 'Buying...' : 'Buy Now'}
-                                                                </Text>
-                                                            </TouchableOpacity>
-                                                        </View>
-                                                    </View>
-                                                </View>
-                                            </View>
+                            {/* Crop Picker Button */}
+                            <TouchableOpacity style={styles.PickPhotoButton} onPress={handleAdditionalPhotosPick}>
+                                <Text style={styles.PickPhotoText}>Pick & Crop Photo</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        {/* Display Selected Photos */}
+                        {RoleRegisterData?.additionalPhotos?.length > 0 && (
+                            <View style={styles.photosContainer}>
+                                <Text style={styles.label}>Uploaded Photos:</Text>
+                                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        {RoleRegisterData?.additionalPhotos.map((photo, index) => (
+                                            <Image key={index} source={{ uri: photo }} style={styles.photo} />
                                         ))}
                                     </View>
                                 </ScrollView>
-
-                                <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
-                                    <Text style={styles.closeText}>Close</Text>
-                                </TouchableOpacity>
                             </View>
-                        </View>
-                    </Modal>
-                </View>
-            </ScrollView>
+                        )}
+
+                        <Text style={Globalstyles.title}>Website Link</Text>
+                        <TextInput
+                            style={[Globalstyles.input, errors.websiteUrl && styles.errorInput]}
+                            value={tempUrlData.websiteUrl || RoleRegisterData.websiteUrl}
+                            onChangeText={(text) => validateAndSetUrl(text, "websiteUrl")}
+                            placeholder="Give Your Website Link"
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
+                            autoCorrect={false}
+                        />
+                        {errors.websiteUrl && (
+                            <Text style={styles.errorText}>{errors.websiteUrl}</Text>
+                        )}
+                        <Text style={Globalstyles.title}>Youtube Link</Text>
+                        <TextInput
+                            style={[Globalstyles.input, errors.youtubeUrl && styles.errorInput]}
+                            value={tempUrlData.youtubeUrl || RoleRegisterData.youtubeUrl}
+                            onChangeText={(text) => validateAndSetUrl(text, "youtubeUrl")}
+                            placeholder="Give Your Youtube Link"
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
+                            autoCorrect={false}
+                        />
+                        {errors.youtubeUrl && (
+                            <Text style={styles.errorText}>{errors.youtubeUrl}</Text>
+                        )}
+                        <Text style={Globalstyles.title}>Whatsapp Link</Text>
+                        <TextInput
+                            style={[Globalstyles.input, errors.whatsapp && styles.errorInput]}
+                            value={tempUrlData.whatsapp || RoleRegisterData.whatsapp}
+                            onChangeText={(text) => validateAndSetUrl(text, "whatsapp")}
+                            placeholder="Give Your Whatsapp Link"
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
+                            autoCorrect={false}
+                        />
+                        {errors.whatsapp && (
+                            <Text style={styles.errorText}>{errors.whatsapp}</Text>
+                        )}
+                        <Text style={Globalstyles.title}>Facebook Link</Text>
+                        <TextInput
+                            style={[Globalstyles.input, errors.facebookUrl && styles.errorInput]}
+                            value={tempUrlData.facebookUrl || RoleRegisterData.facebookUrl}
+                            onChangeText={(text) => validateAndSetUrl(text, "facebookUrl")}
+                            placeholder="Give Your Facebook Link"
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
+                            autoCorrect={false}
+                        />
+                        {errors.facebookUrl && (
+                            <Text style={styles.errorText}>{errors.facebookUrl}</Text>
+                        )}
+                        <Text style={Globalstyles.title}>Instagram Link</Text>
+                        <TextInput
+                            style={[Globalstyles.input, errors.instagramUrl && styles.errorInput]}
+                            value={tempUrlData.instagramUrl || RoleRegisterData.instagramUrl}
+                            onChangeText={(text) => validateAndSetUrl(text, "instagramUrl")}
+                            placeholder="Give Your Instagram Link"
+                            placeholderTextColor={Colors.gray}
+                            autoComplete="off"
+                            textContentType="none"
+                            importantForAutofill="no"
+                            autoCorrect={false}
+                        />
+                        {errors.instagramUrl && (
+                            <Text style={styles.errorText}>{errors.instagramUrl}</Text>
+                        )}
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={handleSubmit}
+                            disabled={isLoading}
+                        >
+                            {isLoading ? (
+                                <ActivityIndicator size="large" color={Colors.light} />
+                            ) : (
+                                <Text style={styles.buttonText}>submit</Text>
+                            )}
+                        </TouchableOpacity>
+                        <Modal visible={modalVisible} animationType="slide" transparent={true}>
+                            <View style={styles.modalOverlay}>
+                                <View style={styles.modalContent}>
+                                    <ScrollView showsVerticalScrollIndicator={false}>
+                                        <View style={styles.cardContainer}>
+                                            {plans.map((plan) => (
+                                                <View key={plan._id} style={styles.card}>
+                                                    {plan.photoUrl ? (
+                                                        <Image
+                                                            source={{ uri: plan.photoUrl }}
+                                                            style={styles.planImage}
+                                                            resizeMode="cover"
+                                                            onError={(e) => console.log("Image load error:", e.nativeEvent.error)}
+                                                        />
+                                                    ) : null}
+                                                    <View style={styles.cardContent}>
+                                                        {plan.trialPeriod ? (
+                                                            <Text style={styles.Text}>
+                                                                <Text style={styles.boldLabel}>Trial Period: </Text>
+                                                                {plan.trialPeriod} days
+                                                            </Text>
+                                                        ) : null}
+
+                                                        {plan.duration ? (
+                                                            <Text style={styles.Text}>
+                                                                <Text style={styles.boldLabel}>Duration: </Text>
+                                                                {plan.duration} months
+                                                            </Text>
+                                                        ) : null}
+
+                                                        {plan.amount ? (
+                                                            <Text style={styles.Text}>
+                                                                <Text style={styles.boldLabel}>Amount: </Text>
+                                                                ₹{plan.amount}
+                                                            </Text>
+                                                        ) : null}
+
+                                                        <View style={{ flex: 1, justifyContent: 'space-between' }}>
+                                                            {plan.description ? (
+                                                                <Text style={styles.description}>{plan.description}</Text>
+                                                            ) : null}
+                                                            <View style={styles.buttonRowAligned}>
+                                                                {!hasTrial && (
+                                                                    <TouchableOpacity style={styles.trialButton} onPress={() => handleFreeTrial(plan)}>
+                                                                        <Text style={styles.trialText}>
+                                                                            {TrialPlanId === plan._id ? 'Starting...' : 'Start Free Trial'}
+                                                                        </Text>
+                                                                    </TouchableOpacity>
+                                                                )}
+                                                                <TouchableOpacity style={styles.buyButton} onPress={() => handleBuyNow(plan)}>
+                                                                    <Text style={styles.buyButtonText}>
+                                                                        {buyingPlanId === plan._id ? 'Buying...' : 'Buy Now'}
+                                                                    </Text>
+                                                                </TouchableOpacity>
+                                                            </View>
+                                                        </View>
+                                                    </View>
+                                                </View>
+                                            ))}
+                                        </View>
+                                    </ScrollView>
+
+                                    <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
+                                        <Text style={styles.closeText}>Close</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </Modal>
+                    </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     );
 };

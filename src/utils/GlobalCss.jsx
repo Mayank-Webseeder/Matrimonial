@@ -16,7 +16,7 @@ const Globalstyles = StyleSheet.create({
     marginVertical: SH(35),
     marginBottom: SH(5),
     backgroundColor: '#f5edf0',
-    paddingRight: SW(10)
+    paddingHorizontal: SW(5)
   },
   headerText: {
     color: Colors.theme_color,

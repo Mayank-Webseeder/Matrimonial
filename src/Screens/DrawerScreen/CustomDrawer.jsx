@@ -203,116 +203,118 @@ const CustomDrawer = (props) => {
 
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {menuItems.map((item, index) => {
-          if (item.title === 'Account & Settings') {
-            return (
-              <View key={index}>
+        <View>
+          {menuItems.map((item, index) => {
+            if (item.title === 'Account & Settings') {
+              return (
+                <View key={index}>
+                  <TouchableOpacity
+                    style={styles.drawerButton}
+                    onPress={() => handleDropdownToggle('accountSettings')}
+                  >
+                    <Text style={styles.buttonText}>{item.title}</Text>
+                    <AntDesign
+                      name={openDropdown === 'accountSettings' ? 'up' : 'down'}
+                      size={20}
+                      color={Colors.theme_color}
+                    />
+                  </TouchableOpacity>
+                  {openDropdown === 'accountSettings' &&
+                    accountSettingsOptions.map((option, subIndex) => (
+                      <TouchableOpacity
+                        key={subIndex}
+                        style={styles.subOption}
+                        onPress={() => handleNavigation(option.screen)}
+                      >
+                        <Text style={styles.subOptionText}>{option.title}</Text>
+                      </TouchableOpacity>
+                    ))}
+                </View>
+              );
+            } else if (item.title === 'Pandit/Jyotish') {
+              return (
+                <View key={index}>
+                  <TouchableOpacity
+                    style={styles.drawerButton}
+                    onPress={() => handleDropdownToggle('panditOptions')}
+                  >
+                    <Text style={styles.buttonText}>{item.title}</Text>
+                    <AntDesign
+                      name={openDropdown === 'panditOptions' ? 'up' : 'down'}
+                      size={20}
+                      color={Colors.theme_color}
+                    />
+                  </TouchableOpacity>
+                  {openDropdown === 'panditOptions' &&
+                    panditOptions.map((option, subIndex) => (
+                      <TouchableOpacity
+                        key={subIndex}
+                        style={styles.subOption}
+                        onPress={() => handleNavigation(option.screen)}
+                      >
+                        <Text style={styles.subOptionText}>{option.title}</Text>
+                      </TouchableOpacity>
+                    ))}
+                </View>
+              );
+            }
+            else if (item.title === 'About Us') {
+              return (
+                <View key={index}>
+                  <TouchableOpacity
+                    style={styles.drawerButton}
+                    onPress={() => handleDropdownToggle('AboutusOptions')}
+                  >
+                    <Text style={styles.buttonText}>{item.title}</Text>
+                    <AntDesign
+                      name={openDropdown === 'AboutusOptions' ? 'up' : 'down'}
+                      size={20}
+                      color={Colors.theme_color}
+                    />
+                  </TouchableOpacity>
+                  {openDropdown === 'AboutusOptions' &&
+                    AboutusOptions.map((option, subIndex) => (
+                      <TouchableOpacity
+                        key={subIndex}
+                        style={styles.subOption}
+                        onPress={() => handleNavigation(option.screen)}
+                      >
+                        <Text style={styles.subOptionText}>{option.title}</Text>
+                      </TouchableOpacity>
+                    ))}
+                </View>
+              );
+            }
+            else if (item.title === 'Share App') {
+              return (
                 <TouchableOpacity
+                  key={index}
                   style={styles.drawerButton}
-                  onPress={() => handleDropdownToggle('accountSettings')}
+                  onPress={handleShare}
                 >
                   <Text style={styles.buttonText}>{item.title}</Text>
-                  <AntDesign
-                    name={openDropdown === 'accountSettings' ? 'up' : 'down'}
-                    size={20}
-                    color={Colors.theme_color}
-                  />
                 </TouchableOpacity>
-                {openDropdown === 'accountSettings' &&
-                  accountSettingsOptions.map((option, subIndex) => (
-                    <TouchableOpacity
-                      key={subIndex}
-                      style={styles.subOption}
-                      onPress={() => handleNavigation(option.screen)}
-                    >
-                      <Text style={styles.subOptionText}>{option.title}</Text>
-                    </TouchableOpacity>
-                  ))}
-              </View>
-            );
-          } else if (item.title === 'Pandit/Jyotish') {
-            return (
-              <View key={index}>
-                <TouchableOpacity
-                  style={styles.drawerButton}
-                  onPress={() => handleDropdownToggle('panditOptions')}
-                >
-                  <Text style={styles.buttonText}>{item.title}</Text>
-                  <AntDesign
-                    name={openDropdown === 'panditOptions' ? 'up' : 'down'}
-                    size={20}
-                    color={Colors.theme_color}
-                  />
-                </TouchableOpacity>
-                {openDropdown === 'panditOptions' &&
-                  panditOptions.map((option, subIndex) => (
-                    <TouchableOpacity
-                      key={subIndex}
-                      style={styles.subOption}
-                      onPress={() => handleNavigation(option.screen)}
-                    >
-                      <Text style={styles.subOptionText}>{option.title}</Text>
-                    </TouchableOpacity>
-                  ))}
-              </View>
-            );
-          }
-          else if (item.title === 'About Us') {
-            return (
-              <View key={index}>
-                <TouchableOpacity
-                  style={styles.drawerButton}
-                  onPress={() => handleDropdownToggle('AboutusOptions')}
-                >
-                  <Text style={styles.buttonText}>{item.title}</Text>
-                  <AntDesign
-                    name={openDropdown === 'AboutusOptions' ? 'up' : 'down'}
-                    size={20}
-                    color={Colors.theme_color}
-                  />
-                </TouchableOpacity>
-                {openDropdown === 'AboutusOptions' &&
-                  AboutusOptions.map((option, subIndex) => (
-                    <TouchableOpacity
-                      key={subIndex}
-                      style={styles.subOption}
-                      onPress={() => handleNavigation(option.screen)}
-                    >
-                      <Text style={styles.subOptionText}>{option.title}</Text>
-                    </TouchableOpacity>
-                  ))}
-              </View>
-            );
-          }
-          else if (item.title === 'Share App') {
+              );
+            }
             return (
               <TouchableOpacity
                 key={index}
                 style={styles.drawerButton}
-                onPress={handleShare}
+                onPress={() => handleNavigation(item.screen)}
               >
                 <Text style={styles.buttonText}>{item.title}</Text>
               </TouchableOpacity>
             );
-          }
-          return (
+          })}
+          <View style={styles.logoutContainer}>
             <TouchableOpacity
-              key={index}
-              style={styles.drawerButton}
-              onPress={() => handleNavigation(item.screen)}
+              style={styles.logoutButton}
+              onPress={() => setLogoutModalVisible(true)}
             >
-              <Text style={styles.buttonText}>{item.title}</Text>
+              <Text style={styles.logoutText}>Logout</Text>
+              <AntDesign name={'logout'} size={25} color={Colors.theme_color} style={{ marginHorizontal: SW(10) }} />
             </TouchableOpacity>
-          );
-        })}
-        <View style={styles.logoutContainer}>
-          <TouchableOpacity
-            style={styles.logoutButton}
-            onPress={() => setLogoutModalVisible(true)}
-          >
-            <Text style={styles.logoutText}>Logout</Text>
-            <AntDesign name={'logout'} size={25} color={Colors.theme_color} style={{ marginHorizontal: SW(10) }} />
-          </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
       <Modal

@@ -11,8 +11,11 @@ import { DELETE_COMMITTEE } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showMessage } from 'react-native-flash-message';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SH } from '../../utils/Dimensions';
 
 const MyUploadedCommittees = ({ navigation, route }) => {
+     const insets = useSafeAreaInsets();
     const { committeeData } = route.params;
     const [isImageVisible, setImageVisible] = useState(false);
     const [selectedImage, setSelectedImage] = useState([]);
@@ -23,14 +26,14 @@ const MyUploadedCommittees = ({ navigation, route }) => {
 
     const openImageViewer = (imageUri) => {
         if (imageUri) {
-            setSelectedImage([{ url: imageUri }]); 
+            setSelectedImage([{ url: imageUri }]);
             setImageVisible(true);
         }
     };
 
     const handleDelete = async (id) => {
         try {
-            setIsLoading(true);  
+            setIsLoading(true);
             const token = await AsyncStorage.getItem("userToken");
             if (!token) throw new Error("Authorization token is missing");
 
@@ -38,7 +41,7 @@ const MyUploadedCommittees = ({ navigation, route }) => {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             };
-            
+
             console.log("🔹 Headers:", headers);
             const response = await axios.delete(`${DELETE_COMMITTEE}/${id}`, { headers });
 
@@ -52,8 +55,8 @@ const MyUploadedCommittees = ({ navigation, route }) => {
                     duarion: 7000
                 });
 
-                setModalVisible(false);  
-                setSelectedItem(null);  
+                setModalVisible(false);
+                setSelectedItem(null);
 
                 if (navigation && navigation.navigate) {
                     navigation.navigate('MainApp', {
@@ -191,7 +194,7 @@ const MyUploadedCommittees = ({ navigation, route }) => {
     };
 
     return (
-        <SafeAreaView style={Globalstyles.container}>
+        <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
             <View style={Globalstyles.header}>
                 <View style={{ flexDirection: 'row', alignItems: "center" }}>
@@ -201,20 +204,22 @@ const MyUploadedCommittees = ({ navigation, route }) => {
                     <Text style={Globalstyles.headerText}>My Committees</Text>
                 </View>
             </View>
-            <ScrollView showsVerticalScrollIndicator={false}>
-                <FlatList
-                    data={committeeData}
-                    renderItem={renderItem}
-                    keyExtractor={(item) => item?._id}
-                    scrollEnabled={false}
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={styles.panditListData}
-                    ListEmptyComponent={
-                        <View style={styles.emptyContainer}>
-                            <Text style={styles.emptyText}>No committeeData Available</Text>
-                        </View>
-                    }
-                />
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(50), flexGrow: 1}}>
+                <View>
+                    <FlatList
+                        data={committeeData}
+                        renderItem={renderItem}
+                        keyExtractor={(item) => item?._id}
+                        scrollEnabled={false}
+                        showsVerticalScrollIndicator={false}
+                        contentContainerStyle={styles.panditListData}
+                        ListEmptyComponent={
+                            <View style={styles.emptyContainer}>
+                                <Text style={styles.emptyText}>No committeeData Available</Text>
+                            </View>
+                        }
+                    />
+                </View>
             </ScrollView>
         </SafeAreaView>
     );

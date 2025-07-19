@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, TouchableOpacity, Text, SafeAreaView, StatusBar, Image, FlatList, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, TouchableOpacity, Text, SafeAreaView, StatusBar, Image, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styles from '../StyleScreens/IntrestedProfileStyle';
 import Colors from '../../utils/Colors';
@@ -13,8 +13,10 @@ import { SF, SH, SW } from '../../utils/Dimensions';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const IntrestedProfile = ({ navigation }) => {
+  const insets = useSafeAreaInsets();
   const [activeButton, setActiveButton] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [interestSentData, setInterestSentData] = useState([]);
@@ -161,7 +163,7 @@ const IntrestedProfile = ({ navigation }) => {
   }
 
   return (
-    <SafeAreaView style={Globalstyles.container}>
+    <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
 
       <View style={Globalstyles.header}>
@@ -224,7 +226,7 @@ const IntrestedProfile = ({ navigation }) => {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-        contentContainerStyle={{ paddingBottom: 20 }}
+        contentContainerStyle={{ paddingBottom: insets.bottom + SH(65), flexGrow: 1 }}
       />
     </SafeAreaView>
 

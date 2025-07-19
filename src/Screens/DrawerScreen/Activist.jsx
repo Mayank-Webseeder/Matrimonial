@@ -21,9 +21,11 @@ import { useDispatch } from 'react-redux';
 import { Dropdown } from 'react-native-element-dropdown';
 import { CommonActions } from '@react-navigation/native';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Activist = ({ navigation }) => {
   const dispatch = useDispatch();
+  const insets = useSafeAreaInsets();
   const [modalVisible, setModalVisible] = useState(false);
   const [activistData, setActivistData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -321,7 +323,7 @@ const Activist = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={Globalstyles.container}>
+    <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View>
         <View style={Globalstyles.header}>
@@ -406,7 +408,9 @@ const Activist = ({ navigation }) => {
           </View>
         </View>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{
+        paddingBottom: insets.bottom + SH(65), flexGrow: 1
+      }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>

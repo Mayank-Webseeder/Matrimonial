@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-menuIcon: {
+  menuIcon: {
     width: SW(30),
     height: SH(30)
   },
@@ -24,7 +24,7 @@ menuIcon: {
     flexDirection: 'row',
   },
   imageWrapper: {
-    marginHorizontal: SW(2),
+    marginLeft: SW(7),
     marginVertical: SH(7),
   },
   CategoryContainer: {
@@ -49,12 +49,12 @@ menuIcon: {
   },
   images: {
     width: SW(100),
-    height: SH(70),
+    height: SH(65),
     resizeMode: "contain"
   },
   ProfileImages: {
-    width: SW(118),
-    height: SH(115),
+    width: SW(112),
+    height: SH(110),
     resizeMode: "cover",
     borderRadius: 10,
   },
@@ -91,8 +91,8 @@ menuIcon: {
     marginBottom: SH(30)
   },
   sliderImage: {
-    width:"100%",
-    height:SH(180),
+    width: "100%",
+    height: SH(180),
     resizeMode: 'cover',
   },
   dot: {
@@ -121,7 +121,7 @@ menuIcon: {
     alignItems: 'center',
     paddingHorizontal: SW(35),
     paddingVertical: SH(10),
-    backgroundColor:Colors.light_theme,
+    backgroundColor: Colors.light_theme,
     borderRadius: SW(12),
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -141,17 +141,18 @@ menuIcon: {
     color: '#888',
     textAlign: 'center',
   },
-  bottomSlider:{
-    paddingBottom:SH(10)
+  bottomSlider: {
+    paddingBottom: SH(10)
   },
   volumeIcon: {
-  position: 'absolute',
-  bottom: 10,
-  right: 10,
-  backgroundColor: 'rgba(0,0,0,0.5)',
-  borderRadius: 20,
-  padding: 8,
-}
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 20,
+    paddingVertical: SH(8),
+    paddingHorizontal: SW(8)
+  }
 });
 
 export default styles;

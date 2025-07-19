@@ -1,12 +1,4 @@
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  Image,
-  Alert,
-  SafeAreaView,
-  StatusBar,
-} from 'react-native';
+import { Text, View, TouchableOpacity, Image, Alert, SafeAreaView, StatusBar } from 'react-native';
 import React, { useCallback, useState } from 'react';
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -30,7 +22,7 @@ const MySuccessStory = ({ navigation, route }) => {
 
   const { groomDetails: groom = {}, brideDetails: bride = {} } = story || {};
 
-   const notifications = useSelector(
+  const notifications = useSelector(
     (state) => state.GetAllNotification.AllNotification
   );
   const notificationCount = notifications ? notifications.length : 0;
@@ -148,7 +140,7 @@ const MySuccessStory = ({ navigation, route }) => {
   };
 
   return (
-    <SafeAreaView style={Globalstyles.container}>
+    <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>

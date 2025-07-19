@@ -328,7 +328,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
         );
     };
     return (
-        <SafeAreaView style={Globalstyles.container}>
+        <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
             <View style={Globalstyles.header}>
                 <View style={styles.headerContainer}>
@@ -343,18 +343,20 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false}>
-                <FlatList
-                    data={Array.isArray(Biodata) ? Biodata : [Biodata]}
-                    renderItem={renderProfileCard}
-                    keyExtractor={(item) => item._id || Math.random().toString()}
-                    scrollEnabled={false}
-                    ListEmptyComponent={
-                        <View style={styles.emptyContainer}>
-                            <Text style={styles.emptyText}>No Profiles Available</Text>
-                        </View>
-                    }
-                />
+                <View>
+                    <FlatList
+                        data={Array.isArray(Biodata) ? Biodata : [Biodata]}
+                        renderItem={renderProfileCard}
+                        keyExtractor={(item) => item._id || Math.random().toString()}
+                        scrollEnabled={false}
+                        ListEmptyComponent={
+                            <View style={styles.emptyContainer}>
+                                <Text style={styles.emptyText}>No Profiles Available</Text>
+                            </View>
+                        }
+                    />
 
+                </View>
             </ScrollView>
         </SafeAreaView>
     );

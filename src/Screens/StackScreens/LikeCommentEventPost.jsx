@@ -11,7 +11,7 @@ import { SW, SH, SF } from '../../utils/Dimensions';
 import Globalstyles from '../../utils/GlobalCss';
 import moment from 'moment';
 import RBSheet from "react-native-raw-bottom-sheet";
-import { DELETE_EVENT, COMMENTPOST, LIKEPOST, BASE_URL, VIEW_LIKE_COMMENT_EVENTNEWS } from '../../utils/BaseUrl';
+import { DELETE_EVENT, COMMENTPOST, LIKEPOST, BASE_URL } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector } from 'react-redux';
@@ -19,8 +19,10 @@ import { useFocusEffect } from '@react-navigation/native';
 import { showMessage } from 'react-native-flash-message';
 import { CommonActions } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const LikeCommentEventPost = ({ navigation, route }) => {
+       const insets = useSafeAreaInsets();
     const sheetRef = useRef(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
@@ -713,7 +715,7 @@ const LikeCommentEventPost = ({ navigation, route }) => {
                                     )}
                                 </View>
                             )}
-                            contentContainerStyle={{ paddingBottom: SH(60) }}
+                            contentContainerStyle={{ paddingBottom: SH(60), paddingBottom: insets.bottom + SH(50), flexGrow: 1 }}
                         />
                         <View style={styles.fixedCommentInputContainer}>
                             <TextInput
@@ -742,7 +744,7 @@ const LikeCommentEventPost = ({ navigation, route }) => {
 
 
     return (
-        <SafeAreaView style={Globalstyles.container}>
+        <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
             <StatusBar
                 barStyle="dark-content"
                 backgroundColor="transparent"
@@ -779,39 +781,41 @@ const LikeCommentEventPost = ({ navigation, route }) => {
                 </View>
             </View>
             <ScrollView style={styles.bottomContainer} showsVerticalScrollIndicator={false}>
-                <FlatList
-                    data={myeventpost}
-                    renderItem={renderItem}
-                    keyExtractor={(item) => item._id}
-                    scrollEnabled={false}
-                    nestedScrollEnabled={true}
-                    showsVerticalScrollIndicator={false}
-                    refreshControl={
-                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                    }
-                    ListEmptyComponent={
-                        <View style={styles.emptyContainer}>
-                            <Ionicons
-                                name={'newspaper'}
-                                size={60}
-                                color={Colors.theme_color}
-                                style={{ marginBottom: SH(10) }}
-                            />
-                            <Text style={[styles.emptyText, { fontFamily: "POppins-Bold", fontSize: SF(16) }]}>
-                                {errorMessage || "No Event & News Posted Yet"}
-                            </Text>
-                            <Text style={{
-                                color: 'gray',
-                                textAlign: 'center',
-                                marginTop: SH(5),
-                                paddingHorizontal: SW(20),
-                                fontFamily: "POppins-Medium"
-                            }}>
-                                {errorMessage ? "" : "Events or news uploaded by Activists will be shown here."}
-                            </Text>
-                        </View>
-                    }
-                />
+                <View>
+                    <FlatList
+                        data={myeventpost}
+                        renderItem={renderItem}
+                        keyExtractor={(item) => item._id}
+                        scrollEnabled={false}
+                        nestedScrollEnabled={true}
+                        showsVerticalScrollIndicator={false}
+                        refreshControl={
+                            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                        }
+                        ListEmptyComponent={
+                            <View style={styles.emptyContainer}>
+                                <Ionicons
+                                    name={'newspaper'}
+                                    size={60}
+                                    color={Colors.theme_color}
+                                    style={{ marginBottom: SH(10) }}
+                                />
+                                <Text style={[styles.emptyText, { fontFamily: "POppins-Bold", fontSize: SF(16) }]}>
+                                    {errorMessage || "No Event & News Posted Yet"}
+                                </Text>
+                                <Text style={{
+                                    color: 'gray',
+                                    textAlign: 'center',
+                                    marginTop: SH(5),
+                                    paddingHorizontal: SW(20),
+                                    fontFamily: "POppins-Medium"
+                                }}>
+                                    {errorMessage ? "" : "Events or news uploaded by Activists will be shown here."}
+                                </Text>
+                            </View>
+                        }
+                    />
+                </View>
             </ScrollView>
         </SafeAreaView>
     );

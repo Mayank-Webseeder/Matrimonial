@@ -25,9 +25,11 @@ import { showMessage } from 'react-native-flash-message';
 import { CommonActions } from '@react-navigation/native';
 import { Dropdown } from 'react-native-element-dropdown';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Committee = ({ navigation, route }) => {
   const { id } = route.params || {};
+  const insets = useSafeAreaInsets();
   const flatListRef = useRef(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [locality, setLocality] = useState('');
@@ -310,7 +312,7 @@ const Committee = ({ navigation, route }) => {
 
     const currentSlide = slider[currentIndex];
     const durationInSeconds = Number(currentSlide?.duration) || 4;
-     const bufferMs = 800;
+    const bufferMs = 800;
     const durationInMilliseconds = durationInSeconds * 1000 + bufferMs;
     console.log("durationInSeconds", durationInSeconds);
     const timeout = setTimeout(() => {
@@ -525,7 +527,7 @@ const Committee = ({ navigation, route }) => {
   }
 
   return (
-    <SafeAreaView style={Globalstyles.container}>
+    <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
       <StatusBar
         barStyle="dark-content"
         backgroundColor="transparent"
@@ -626,65 +628,69 @@ const Committee = ({ navigation, route }) => {
         </View>
 
       </View>
-      <ScrollView showsVerticalScrollIndicator={false} refreshControl={
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{
+        paddingBottom: insets.bottom + SH(65)
+      }} refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }>
-        <View style={styles.sliderContainer}>
-          <AppIntroSlider
-            ref={sliderRef}
-            data={slider}
-            renderItem={({ item }) => {
-              const { width, height } = item.resolution;
+        <View>
+          <View style={styles.sliderContainer}>
+            <AppIntroSlider
+              ref={sliderRef}
+              data={slider}
+              renderItem={({ item }) => {
+                const { width, height } = item.resolution;
 
-              const handlePress = () => {
-                if (item.hyperlink) {
-                  Linking.openURL(item.hyperlink).catch(err =>
-                    console.error("Failed to open URL:", err)
-                  );
-                }
-              };
+                const handlePress = () => {
+                  if (item.hyperlink) {
+                    Linking.openURL(item.hyperlink).catch(err =>
+                      console.error("Failed to open URL:", err)
+                    );
+                  }
+                };
 
-              return (
-                <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
-                  <Image
-                    source={{ uri: item?.image }}
-                    style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
-                  />
-                </TouchableOpacity>
-              );
-            }}
-            showNextButton={false}
-            showDoneButton={false}
-            dotStyle={styles.dot}
-            activeDotStyle={styles.activeDot}
-          />
+                return (
+                  <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+                    <Image
+                      source={{ uri: item?.image }}
+                      style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
+                    />
+                  </TouchableOpacity>
+                );
+              }}
+              showNextButton={false}
+              showDoneButton={false}
+              dotStyle={styles.dot}
+              activeDotStyle={styles.activeDot}
+            />
+          </View>
+          {isLoading ? renderSkeleton() : (
+            <FlatList
+              ref={flatListRef}
+              data={committeeData}
+              renderItem={renderItem}
+              keyExtractor={(item) => item._id}
+              scrollEnabled={false}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.panditListData}
+              onScrollToIndexFailed={(info) => {
+                setTimeout(() => {
+                  flatListRef.current?.scrollToIndex({
+                    index: info.index,
+                    animated: true,
+                  });
+                }, 500);
+              }}
+              ListEmptyComponent={
+                <View style={styles.emptyContainer}>
+                  <FontAwesome name="users" size={60} color="#ccc" style={{ marginBottom: 15 }} />
+                  <Text style={styles.emptyText}>No Committee Data Available</Text>
+                  <Text style={styles.infoText}>Committee member profiles will appear here once available.</Text>
+                </View>
+              }
+            />
+          )}
         </View>
-        {isLoading ? renderSkeleton() : (
-          <FlatList
-            ref={flatListRef}
-            data={committeeData}
-            renderItem={renderItem}
-            keyExtractor={(item) => item._id}
-            scrollEnabled={false}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.panditListData}
-            onScrollToIndexFailed={(info) => {
-              setTimeout(() => {
-                flatListRef.current?.scrollToIndex({
-                  index: info.index,
-                  animated: true,
-                });
-              }, 500);
-            }}
-            ListEmptyComponent={
-              <View style={styles.emptyContainer}>
-                <FontAwesome name="users" size={60} color="#ccc" style={{ marginBottom: 15 }} />
-                <Text style={styles.emptyText}>No Committee Data Available</Text>
-                <Text style={styles.infoText}>Committee member profiles will appear here once available.</Text>
-              </View>
-            }
-          />
-        )}
       </ScrollView>
 
       <Modal

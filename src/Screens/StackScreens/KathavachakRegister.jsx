@@ -265,7 +265,7 @@ const KathavachakRegister = ({ navigation }) => {
         }
     };
 
-    const ADDL_LIMIT = 5;
+    const ADDL_LIMIT = 4;
 
     const pickerOpts = {
         selectionLimit: ADDL_LIMIT,

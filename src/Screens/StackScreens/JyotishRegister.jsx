@@ -271,7 +271,7 @@ const JyotishRegister = ({ navigation }) => {
         }
     };
 
-    const ADDL_LIMIT = 5;                // max extra photos
+    const ADDL_LIMIT = 4;                // max extra photos
 
     const pickerOpts = {
         selectionLimit: ADDL_LIMIT,        // gallery stops user at 5

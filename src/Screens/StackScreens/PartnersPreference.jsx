@@ -1,4 +1,4 @@
-import { Text, View, TextInput, ScrollView, StatusBar, ActivityIndicator, FlatList, KeyboardAvoidingView } from 'react-native'
+import { Text, View, TextInput, ScrollView, StatusBar, ActivityIndicator, FlatList, KeyboardAvoidingView, Platform } from 'react-native'
 import React, { useState, useEffect, useCallback } from 'react'
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/PartnerPreferenceStyle';
@@ -23,6 +23,7 @@ import {
     PartnersubCasteOptions
 } from '../../DummyData/DropdownData';
 import { showMessage } from 'react-native-flash-message';
+import { SH } from '../../utils/Dimensions';
 
 const PartnersPreference = ({ navigation, profileData }) => {
     const insets = useSafeAreaInsets();
@@ -320,7 +321,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
             />
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                style={{ flex: 1 }}
+                style={{ flex: 1 ,marginTop:-SH(20)}}
                 keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
                 <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom, flexGrow: 1 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
                     <Text style={styles.Formtitle}>Set Your Preference </Text>

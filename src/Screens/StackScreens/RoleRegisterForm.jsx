@@ -15,6 +15,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector } from 'react-redux';
 import { showMessage } from 'react-native-flash-message';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SH } from '../../utils/Dimensions';
 
 const RoleRegisterForm = ({ navigation }) => {
     const insets = useSafeAreaInsets();
@@ -515,7 +516,7 @@ const RoleRegisterForm = ({ navigation }) => {
                 style={{ flex: 1 }}
                 keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
 
-                <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom, flexGrow: 1 }}
+                <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + SH(10), flexGrow: 1 }}
                     showsVerticalScrollIndicator={false}
                     keyboardShouldPersistTaps="handled">
                     <View style={Globalstyles.form}>

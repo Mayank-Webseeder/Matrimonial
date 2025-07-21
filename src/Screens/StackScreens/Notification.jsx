@@ -534,7 +534,7 @@ const Notification = ({ navigation }) => {
             renderItem={showSeen ? renderSeenItem : renderItem}
             keyExtractor={(item) => item._id}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{paddingBottom: insets.bottom + SH(50), flexGrow: 1}}
+            contentContainerStyle={{paddingBottom: insets.bottom + SH(10), flexGrow: 1}}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }

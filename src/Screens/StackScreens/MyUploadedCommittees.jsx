@@ -204,7 +204,7 @@ const MyUploadedCommittees = ({ navigation, route }) => {
                     <Text style={Globalstyles.headerText}>My Committees</Text>
                 </View>
             </View>
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(50), flexGrow: 1}}>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(10), flexGrow: 1}}>
                 <View>
                     <FlatList
                         data={committeeData}

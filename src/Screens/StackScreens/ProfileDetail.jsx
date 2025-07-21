@@ -392,7 +392,7 @@ const ProfileDetail = ({ route, navigation }) => {
                     <Text style={[styles.HeadingText, { color: Colors.theme_color }]}>{profileType} Details</Text>
                 </View>
             </View>
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: insets.bottom, flexGrow: 1 }}>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: insets.bottom + SH(10), flexGrow: 1 }}>
                 <View>
                     {profileType === 'Biodata' && (
                         <>

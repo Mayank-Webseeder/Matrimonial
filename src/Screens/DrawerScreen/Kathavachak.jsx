@@ -532,7 +532,7 @@ const Kathavachak = ({ navigation, route }) => {
         </View>
       </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{
-        paddingBottom: insets.bottom + SH(65)
+        paddingBottom: insets.bottom + SH(10)
       }} refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }>

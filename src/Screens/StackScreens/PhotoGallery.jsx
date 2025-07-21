@@ -4,12 +4,12 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/PhotoGallleryStyle';
 import { useSelector } from 'react-redux';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const PhotoGallery = () => {
+    const insets = useSafeAreaInsets();
     const MyprofileData = useSelector((state) => state.getBiodata);
     const myBiodata = MyprofileData?.Biodata?.personalDetails || {};
-
-    // Check if all images are missing
     const noImages = !myBiodata?.bestPhoto && !myBiodata?.closeUpPhoto && !myBiodata?.fullPhoto;
 
     return (
@@ -19,14 +19,13 @@ const PhotoGallery = () => {
                 backgroundColor="transparent"
                 translucent
             />
-            <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
+            <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: insets.bottom + SH(10) }} showsVerticalScrollIndicator={false}>
                 <View>
                     <View style={styles.flex}>
                         <Text style={styles.detailText}>PHOTO GALLERY</Text>
                         <AntDesign name={'camera'} color={Colors.theme_color} size={25} />
                     </View>
 
-                    {/* Agar koi image na ho toh ye message show hoga */}
                     {noImages ? (
                         <Text style={styles.noImageText}>
                             Please upload your Close-up, Best, and Full photo by making your biodata.

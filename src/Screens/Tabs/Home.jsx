@@ -605,7 +605,7 @@ const Home = ({ navigation }) => {
                         <View style={{ position: 'relative' }}>
                           <Video
                             source={{ uri: item.image }}
-                            style={{ width: '100%', height: SH(200) }}
+                            style={{ width: '100%', height: SH(200)}}
                             resizeMode="contain"
                             repeat
                             muted={isMuted}
@@ -617,11 +617,12 @@ const Home = ({ navigation }) => {
                             onPress={() => toggleMute(index)}
                             style={{
                               position: 'absolute',
-                              bottom: 10,
-                              right: 20,
+                              bottom: SH(10),
+                              right: SW(20),
                               backgroundColor: 'rgba(0,0,0,0.5)',
                               borderRadius: 20,
-                              padding: 8,
+                              paddingHorizontal:SW(8),
+                              paddingVertical:SH(8)
                             }}
                           >
                             <Ionicons
@@ -648,10 +649,8 @@ const Home = ({ navigation }) => {
                   activeDotStyle: styles.activeDot,
                 })}
               />
-
-
             </View>
-            <View>
+            <View style={{marginTop:-SH(10)}}>
               <HeadingWithViewAll
                 heading="MATRIMONY"
                 showViewAll={true}

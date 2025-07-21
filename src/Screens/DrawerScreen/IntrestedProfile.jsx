@@ -226,7 +226,7 @@ const IntrestedProfile = ({ navigation }) => {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-        contentContainerStyle={{ paddingBottom: insets.bottom + SH(65), flexGrow: 1 }}
+        contentContainerStyle={{ paddingBottom: insets.bottom + SH(10), flexGrow: 1 }}
       />
     </SafeAreaView>
 

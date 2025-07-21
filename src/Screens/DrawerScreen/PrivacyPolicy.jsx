@@ -20,7 +20,7 @@ const PrivacyPolicy = ({ navigation }) => {
                     <Text style={Globalstyles.headerText}>Privacy Policy</Text>
                 </View>
             </View>
-            <ScrollView style={styles.container} showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(65), flexGrow: 1}}>
+            <ScrollView style={styles.container} showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(10), flexGrow: 1}}>
                 <View>
                     <Text style={styles.heading}>Privacy Policy</Text>
 

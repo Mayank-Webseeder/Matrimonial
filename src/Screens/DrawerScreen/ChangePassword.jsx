@@ -131,7 +131,7 @@ const ChangePassword = ({ navigation }) => {
           </View>
         </View>
 
-        <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: insets.bottom + SH(65), flexGrow: 1 }}>
+        <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: insets.bottom + SH(10), flexGrow: 1 }}>
           <View>
             <Text style={styles.Text}>Please enter your new password and confirm it to change your old password</Text>
 

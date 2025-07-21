@@ -409,7 +409,7 @@ const Activist = ({ navigation }) => {
         </View>
       </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{
-        paddingBottom: insets.bottom + SH(65), flexGrow: 1
+        paddingBottom: insets.bottom + SH(10), flexGrow: 1
       }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

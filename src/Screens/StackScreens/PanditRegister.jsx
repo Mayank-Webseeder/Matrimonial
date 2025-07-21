@@ -18,6 +18,7 @@ import { showMessage } from "react-native-flash-message";
 import { launchImageLibrary } from 'react-native-image-picker';
 // import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SH } from '../../utils/Dimensions';
 
 
 const PanditRegister = ({ navigation }) => {
@@ -769,7 +770,7 @@ const PanditRegister = ({ navigation }) => {
                 style={{ flex: 1 }}
                 keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
             >
-                <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: insets.bottom, flexGrow: 1 }}>
+                <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: insets.bottom + SH(10), flexGrow: 1 }}>
                     <View style={Globalstyles.form} importantForAutofill="no" removeClippedSubviews={true}>
                         <Text style={Globalstyles.title}>Name <Entypo name={'star'} color={'red'} size={12} /></Text>
                         <TextInput style={[Globalstyles.input, errors.fullName && styles.errorInput]}

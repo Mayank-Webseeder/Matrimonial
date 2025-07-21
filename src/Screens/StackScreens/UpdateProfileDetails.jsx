@@ -154,17 +154,13 @@ const UpdateProfileDetails = ({ navigation, route }) => {
     const convertToBase64 = async (imageUri) => {
         try {
             if (!imageUri) return null;
-
-            // Agar already Base64 format me hai toh direct return kar do ✅
             if (imageUri.startsWith("data:image")) {
                 return imageUri;
             }
-
-            // Fetch image and convert to blob ✅
             const response = await fetch(imageUri);
             const blob = await response.blob();
 
-            const mimeType = blob.type || "image/jpeg"; // Default JPEG ✅
+            const mimeType = blob.type || "image/jpeg"; 
 
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();

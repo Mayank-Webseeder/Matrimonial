@@ -195,7 +195,7 @@ const SubscriptionHistory = ({ navigation }) => {
                     data={filteredData}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={renderItem}
-                    contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom, flexGrow: 1 }]}
+                    contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + SH(10), flexGrow: 1 }]}
                     ListEmptyComponent={
                         <Text style={styles.emptyText}>No subscriptions found for {activeTab}.</Text>
                     }

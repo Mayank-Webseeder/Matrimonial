@@ -715,7 +715,7 @@ const LikeCommentEventPost = ({ navigation, route }) => {
                                     )}
                                 </View>
                             )}
-                            contentContainerStyle={{ paddingBottom: SH(60), paddingBottom: insets.bottom + SH(50), flexGrow: 1 }}
+                            contentContainerStyle={{ paddingBottom: SH(60), paddingBottom: insets.bottom + SH(10), flexGrow: 1 }}
                         />
                         <View style={styles.fixedCommentInputContainer}>
                             <TextInput

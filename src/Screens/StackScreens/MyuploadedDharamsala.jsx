@@ -213,7 +213,7 @@ const MyuploadedDharamsala = ({ navigation, route }) => {
           <Text style={Globalstyles.headerText}>My Dharamsala</Text>
         </View>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(50), flexGrow: 1}}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(10), flexGrow: 1}}>
         <View>
           <FlatList
             data={DharmshalaData}

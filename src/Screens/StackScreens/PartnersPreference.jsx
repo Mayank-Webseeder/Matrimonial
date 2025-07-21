@@ -323,7 +323,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 ,marginTop:-SH(20)}}
                 keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
-                <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom, flexGrow: 1 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+                <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
                     <Text style={styles.Formtitle}>Set Your Preference </Text>
                     <View style={[Globalstyles.form]}>
                         <Text style={Globalstyles.title}>Sub-Caste  </Text>

@@ -133,7 +133,7 @@ const UpdateProfile = ({ navigation }) => {
           <Text style={Globalstyles.headerText}>Update Profile</Text>
         </View>
       </View>
-      <ScrollView contentContainerStyle={[Globalstyles.form,{paddingBottom: insets.bottom, flexGrow: 1}]} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+      <ScrollView contentContainerStyle={[Globalstyles.form,{paddingBottom: insets.bottom + SH(10), flexGrow: 1}]} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
         <View>
           <Text style={Globalstyles.title}>Username</Text>
           <TextInput

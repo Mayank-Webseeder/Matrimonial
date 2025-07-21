@@ -13,8 +13,10 @@ import DetailedProfile from '../StackScreens/DetailedProfile';
 import PartnersPreference from '../StackScreens/PartnersPreference';
 import PhotoGallery from '../StackScreens/PhotoGallery';
 import ImageViewing from 'react-native-image-viewing';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const MainPartnerPrefrence = ({ navigation }) => {
+     const insets = useSafeAreaInsets();
     const [activeComponent, setActiveComponent] = useState("PartnersPreference");
     const profileData = useSelector((state) => state.profile);
     console.log("profileData in myprofile", profileData);
@@ -68,7 +70,7 @@ const MainPartnerPrefrence = ({ navigation }) => {
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
                 keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
-                <ScrollView style={styles.container} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+                <ScrollView contentContainerStyle={[styles.container,{paddingBottom: insets.bottom + SH(10)}]} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
                     <View>
 
                         <View style={styles.topContainer}>

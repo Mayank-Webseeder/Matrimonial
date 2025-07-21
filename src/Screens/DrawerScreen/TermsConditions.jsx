@@ -19,7 +19,7 @@ const TermsConditions = ({ navigation }) => {
                     <Text style={Globalstyles.headerText}>Terms & Conditions</Text>
                 </View>
             </View>
-            <ScrollView style={styles.container} showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(65), flexGrow: 1}}>
+            <ScrollView style={styles.container} showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(10), flexGrow: 1}}>
                 <View>
                     <Text style={styles.heading}>Terms and Conditions</Text>
                     <Text style={styles.paragraph}>

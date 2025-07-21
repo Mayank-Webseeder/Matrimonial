@@ -201,7 +201,7 @@ const PostSuccessStories = ({ navigation }) => {
                 style={{ flex: 1 }}
                 keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
 
-                <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: insets.bottom, flexGrow: 1 }}>
+                <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: insets.bottom + SH(10), flexGrow: 1 }}>
                     <View style={Globalstyles.form}>
                         <Text style={styles.Text}>Post Your Success Story</Text>
                         <Text style={styles.description}>Share your experience with Brahmin Milan </Text>

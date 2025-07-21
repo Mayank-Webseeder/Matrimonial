@@ -5,8 +5,10 @@ import { SH, SW, SF } from '../../utils/Dimensions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Globalstyles from '../../utils/GlobalCss';
 import { DrawerActions } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const SubscriptionPolicy = ({ navigation }) => {
+     const insets = useSafeAreaInsets();
     return (
         <View style={[Globalstyles.container, { paddingBottom: SH(20) }]} edges={['top', 'bottom']}>
             <View style={Globalstyles.header}>
@@ -17,7 +19,7 @@ const SubscriptionPolicy = ({ navigation }) => {
                     <Text style={Globalstyles.headerText}>Subscription Policy</Text>
                 </View>
             </View>
-            <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+            <ScrollView contentContainerStyle={[styles.content,{paddingBottom: insets.bottom + SH(10)}]} showsVerticalScrollIndicator={false}>
                 <View>
                     <Text style={styles.heading}>Subscription Policy</Text>
                     <Text style={styles.text}>

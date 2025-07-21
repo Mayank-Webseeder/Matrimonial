@@ -444,7 +444,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                     </TouchableOpacity>
                 </View>
             </View>
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(65), flexGrow: 1}}>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(10), flexGrow: 1}}>
                 <View>
                     <View style={styles.profileSection}>
                         <TouchableOpacity onPress={() => setVisible(true)}>

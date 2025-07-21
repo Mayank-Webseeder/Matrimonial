@@ -548,7 +548,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />
         </View>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(65), flexGrow: 1}}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(10), flexGrow: 1}}>
         <View>
           <View style={styles.sliderContainer}>
             <AppIntroSlider

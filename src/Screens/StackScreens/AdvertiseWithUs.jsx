@@ -142,7 +142,7 @@ const AdvertiseWithUs = ({ navigation }) => {
 
                 <ScrollView showsVerticalScrollIndicator={false} removeClippedSubviews={true} keyboardShouldPersistTaps="handled"
                     contentContainerStyle={{
-                        paddingBottom: insets.bottom + SH(65), flexGrow: 1
+                        paddingBottom: insets.bottom + SH(10), flexGrow: 1
                     }}>
                     <View>
                         <ImageBackground

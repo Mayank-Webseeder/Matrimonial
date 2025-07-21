@@ -262,7 +262,7 @@ const SuccessStories = ({ navigation }) => {
         keyExtractor={(item) => item._id}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          paddingBottom: insets.bottom + SH(65),
+          paddingBottom: insets.bottom + SH(10),
           flexGrow: 1, 
         }}
         refreshControl={

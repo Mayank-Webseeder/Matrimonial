@@ -9,8 +9,11 @@ import { SW, SH, SF } from '../../utils/Dimensions';
 import Colors from '../../utils/Colors';
 import axios from 'axios';
 import { FETCH_PLANS, PAID_URL, PAYMENT_VERIFICATION, PHOTO_URL, RAZORPAY } from '../../utils/BaseUrl';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 
 const BuySubscription = ({ navigation, route }) => {
+  const insets = useSafeAreaInsets();
   const { serviceType } = route.params || {};
   console.log("Service Type:", serviceType);
   const [buyLoading, setBuyLoading] = useState(false);
@@ -239,7 +242,7 @@ const BuySubscription = ({ navigation, route }) => {
           <Text style={[Globalstyles.headerText, { textAlign: "left" }]}>Buy Subscription</Text>
         </View>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(10), flexGrow: 1 }}>
         <View style={styles.cardContainer}>
           {plansLoading ? (
             <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: SH(20) }}>

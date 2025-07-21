@@ -394,7 +394,7 @@ const SavedProfile = ({ navigation }) => {
             keyExtractor={(item) => (item.id ? item.id.toString() : item._id.toString())}
             numColumns={2}
             columnWrapperStyle={styles.row}
-            contentContainerStyle={[styles.ProfileContainer,{paddingBottom: insets.bottom, flexGrow: 1}]}
+            contentContainerStyle={[styles.ProfileContainer,{paddingBottom: insets.bottom + SH(10), flexGrow: 1}]}
             showsVerticalScrollIndicator={false}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

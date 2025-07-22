@@ -24,7 +24,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
     const [selectedState, setSelectedState] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const { profileData, profileType } = route.params || {};
-    console.log("profileData", JSON.stringify(profileData));
+    console.log('profileData', JSON.stringify(profileData));
     const [errors, setErrors] = useState({});
 
     const [RoleRegisterData, setRoleRegisterData] = useState({
@@ -44,7 +44,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
         facebookUrl: profileData?.facebookUrl || '',
         youtubeUrl: profileData?.youtubeUrl || '',
         instagramUrl: profileData?.instagramUrl || '',
-        whatsapp: profileData?.whatsapp || ''
+        whatsapp: profileData?.whatsapp || '',
     });
 
     const [tempUrlData, setTempUrlData] = useState({});
@@ -59,7 +59,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
             facebookUrl: profileData?.facebookUrl || '',
             youtubeUrl: profileData?.youtubeUrl || '',
             instagramUrl: profileData?.instagramUrl || '',
-            whatsapp: profileData?.whatsapp || ''
+            whatsapp: profileData?.whatsapp || '',
         });
     }, [profileData]);
 
@@ -74,16 +74,16 @@ const UpdateProfileDetails = ({ navigation, route }) => {
     const [checked, setChecked] = useState({});
 
     useEffect(() => {
-        if (!profileData || !profileType || !servicesOptions[profileType]) return;
+        if (!profileData || !profileType || !servicesOptions[profileType]) {return;}
 
-        console.log("✅ Updating checked services...");
+        console.log('✅ Updating checked services...');
 
         const updatedChecked = {};
         servicesOptions[profileType].forEach(service => {
             updatedChecked[service.value] = profileData[profileServicesKey]?.includes(service.value);
         });
 
-        console.log("✅ New checked state:", updatedChecked);
+        console.log('✅ New checked state:', updatedChecked);
         setChecked(updatedChecked);
     }, [profileData]);
 
@@ -153,28 +153,28 @@ const UpdateProfileDetails = ({ navigation, route }) => {
 
     const convertToBase64 = async (imageUri) => {
         try {
-            if (!imageUri) return null;
-            if (imageUri.startsWith("data:image")) {
+            if (!imageUri) {return null;}
+            if (imageUri.startsWith('data:image')) {
                 return imageUri;
             }
             const response = await fetch(imageUri);
             const blob = await response.blob();
 
-            const mimeType = blob.type || "image/jpeg"; 
+            const mimeType = blob.type || 'image/jpeg';
 
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onloadend = () => {
                     if (reader.result) {
-                        resolve(`data:${mimeType};base64,${reader.result.split(",")[1]}`);
+                        resolve(`data:${mimeType};base64,${reader.result.split(',')[1]}`);
                     } else {
-                        reject("Error reading Base64 data.");
+                        reject('Error reading Base64 data.');
                     }
                 };
                 reader.readAsDataURL(blob);
             });
         } catch (error) {
-            console.error("Error converting image to Base64:", error);
+            console.error('Error converting image to Base64:', error);
             return null;
         }
     };
@@ -200,7 +200,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
             });
 
             if (!image.data) {
-                console.error("Base64 data missing!");
+                console.error('Base64 data missing!');
                 return;
             }
 
@@ -212,7 +212,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
             }));
 
         } catch (err) {
-            console.log("Profile Photo Picker Error:", err);
+            console.log('Profile Photo Picker Error:', err);
         }
     };
 
@@ -230,7 +230,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
 
     const handleAdditionalPhotosPick = () => {
         launchImageLibrary(pickerOpts, (response) => {
-            if (response.didCancel) return;
+            if (response.didCancel) {return;}
             if (response.errorCode) {
                 console.log('ImagePicker Error:', response.errorMessage);
                 return;
@@ -257,14 +257,14 @@ const UpdateProfileDetails = ({ navigation, route }) => {
 
 
     const OPTIONAL_FIELDS = [
-        "residentialAddress", "additionalPhotos", "experience", "websiteUrl",
-        "facebookUrl", "youtubeUrl", "instagramUrl", "whatsapp", "description", "aadharNo"
+        'residentialAddress', 'additionalPhotos', 'experience', 'websiteUrl',
+        'facebookUrl', 'youtubeUrl', 'instagramUrl', 'whatsapp', 'description', 'aadharNo',
     ];
 
     const validateForm = (data) => {
         let errors = {};
 
-        if (!data) return errors;
+        if (!data) {return errors;}
 
         const allFields = Object.keys(data);
         const MANDATORY_FIELDS = allFields.filter(field => !OPTIONAL_FIELDS.includes(field));
@@ -283,15 +283,15 @@ const UpdateProfileDetails = ({ navigation, route }) => {
 
         // ✅ Validate MANDATORY FIELDS
         MANDATORY_FIELDS.forEach((field) => {
-            const value = String(data[field] || "").trim();
+            const value = String(data[field] || '').trim();
             if (!value) {
                 errors[field] = `${field} is required.`;
                 return;
             }
-            if (field === "mobileNo" && !/^\d{10}$/.test(value)) {
-                errors[field] = "Enter a valid 10-digit mobile number.";
+            if (field === 'mobileNo' && !/^\d{10}$/.test(value)) {
+                errors[field] = 'Enter a valid 10-digit mobile number.';
             }
-            if (field === "fullName") {
+            if (field === 'fullName') {
                 if (!/^[A-Za-z\s]+$/.test(value)) {
                     errors[field] = `${field} must contain only letters and spaces.`;
                 } else if (value.length > 30) {
@@ -300,14 +300,14 @@ const UpdateProfileDetails = ({ navigation, route }) => {
             }
         });
 
-        const urlFields = ["websiteUrl", "facebookUrl", "youtubeUrl", "instagramUrl", "whatsapp"];
+        const urlFields = ['websiteUrl', 'facebookUrl', 'youtubeUrl', 'instagramUrl', 'whatsapp'];
         const validUrlValues = {}; // Only collect valid URLs here
 
         // Step 1: Validate each URL field first
         urlFields.forEach((field) => {
-            const value = String(data[field] || "").trim();
+            const value = String(data[field] || '').trim();
             const pattern = urlPatterns[field];
-            const label = field.replace("Url", "");
+            const label = field.replace('Url', '');
 
             if (value) {
                 if (!pattern.test(value)) {
@@ -325,7 +325,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
             if (seenUrls.has(value)) {
                 // ✅ Only set duplicate error if no error already exists
                 if (!errors[field]) {
-                    errors[field] = `This URL is already used in another field.`;
+                    errors[field] = 'This URL is already used in another field.';
                 }
             } else {
                 seenUrls.add(value);
@@ -340,26 +340,26 @@ const UpdateProfileDetails = ({ navigation, route }) => {
         const roleApiMapping = {
             Pandit: UPDATE_PANDIT,
             Jyotish: UPDATE_JYOTISH,
-            Kathavachak: UPDATE_KATHAVACHAK
+            Kathavachak: UPDATE_KATHAVACHAK,
         };
 
         if (!profileType || !roleApiMapping[profileType]) {
             showMessage({
-                type: "danger",
-                message: "Invalid profile type selected.",
-                duarion: 5000
+                type: 'danger',
+                message: 'Invalid profile type selected.',
+                duarion: 5000,
             });
             setIsLoading(false);
             return;
         }
 
         try {
-            const token = await AsyncStorage.getItem("userToken");
-            if (!token) throw new Error("Authorization token is missing.");
+            const token = await AsyncStorage.getItem('userToken');
+            if (!token) {throw new Error('Authorization token is missing.');}
 
             const headers = {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             };
             const url = roleApiMapping[profileType];
             const servicesKey = `${profileType.toLowerCase()}Services`;
@@ -371,9 +371,9 @@ const UpdateProfileDetails = ({ navigation, route }) => {
             if (RoleRegisterData.profilePhoto) {
                 try {
                     profilePhotoBase64 = await convertToBase64(RoleRegisterData.profilePhoto);
-                    console.log("Converted Profile Photo:", profilePhotoBase64);
+                    console.log('Converted Profile Photo:', profilePhotoBase64);
                 } catch (error) {
-                    console.error("Profile Photo Base64 Conversion Error:", error);
+                    console.error('Profile Photo Base64 Conversion Error:', error);
                 }
             }
 
@@ -406,17 +406,17 @@ const UpdateProfileDetails = ({ navigation, route }) => {
 
             const mergedPayload = { ...commonPayload, ...tempUrlData };
             const errors = validateForm(mergedPayload, checked, servicesOptions);
-            console.log("mergedPayload:", JSON.stringify(mergedPayload));
-            console.log("Validation Errors:", errors);
+            console.log('mergedPayload:', JSON.stringify(mergedPayload));
+            console.log('Validation Errors:', errors);
 
             if (Object.keys(errors).length > 0) {
                 setErrors(errors);
                 showMessage({
-                    message: "Please complete all mandatory sections before submitting.",
-                    type: "danger",
+                    message: 'Please complete all mandatory sections before submitting.',
+                    type: 'danger',
                     duration: 4000,
-                    icon: "danger",
-                    position: 'bottom'
+                    icon: 'danger',
+                    position: 'bottom',
                 });
                 setIsLoading(false);
                 return;
@@ -426,18 +426,18 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                 ...tempUrlData,
             };
 
-            console.log("Final Payload to be Sent:", payload);
+            console.log('Final Payload to be Sent:', payload);
 
             const response = await axios.patch(url, payload, { headers });
-            console.log("response", JSON.stringify(response.data))
+            console.log('response', JSON.stringify(response.data));
 
             if (response.status === 200 || response.data.status === true) {
                 showMessage({
-                    type: "success",
-                    message: "Success!",
+                    type: 'success',
+                    message: 'Success!',
                     description: `Successfully updated profile for ${profileType}.`,
-                    icon: "success",
-                    duarion: 5000
+                    icon: 'success',
+                    duarion: 5000,
                 });
 
                 // setTimeout(() => {
@@ -446,10 +446,10 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                 // }, 2000);
 
                 setTimeout(() => {
-                    navigation.navigate("MainApp", {
-                        screen: "Tabs",
+                    navigation.navigate('MainApp', {
+                        screen: 'Tabs',
                         params: {
-                            screen: "MyProfile",
+                            screen: 'MyProfile',
                         },
                     });
                 }, 5000);
@@ -457,30 +457,30 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                 setIsLoading(false);
 
             } else {
-                throw new Error(response.data.message || "Failed to update profile.");
+                throw new Error(response.data.message || 'Failed to update profile.');
             }
 
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error fetching biodata:", errorMsg);
+            console.error('Error fetching biodata:', errorMsg);
             showMessage({
-                type: "danger",
-                message: "Update Failed",
-                description: errorMsg || "Invalid request. Please check your input.",
-                icon: "danger",
-                duarion: 5000
+                type: 'danger',
+                message: 'Update Failed',
+                description: errorMsg || 'Invalid request. Please check your input.',
+                icon: 'danger',
+                duarion: 5000,
             });
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
         } finally {
@@ -499,7 +499,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
         <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
             <View style={Globalstyles.header}>
-                <View style={{ flexDirection: 'row', alignItems: "center" }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
@@ -520,7 +520,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                                 const cleanText = text.replace(/[^A-Za-z\s]/g, '');
                                 setRoleRegisterData((prev) => ({ ...prev, fullName: cleanText }));
                             }}
-                            placeholder='Enter Your Full Name'
+                            placeholder="Enter Your Full Name"
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
                             textContentType="none"
@@ -611,7 +611,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                         <TextInput style={Globalstyles.input}
                             value={RoleRegisterData?.residentialAddress}
                             onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, residentialAddress: text }))}
-                            placeholder='Enter Your Area'
+                            placeholder="Enter Your Area"
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
                             textContentType="none"
@@ -648,7 +648,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                             labelField="label"
                             valueField="value"
                             value={RoleRegisterData?.subCaste}
-                            onChange={(text) => handleInputChange("subCaste", text.value)}
+                            onChange={(text) => handleInputChange('subCaste', text.value)}
                             placeholder="Select Your subCaste"
                             placeholderStyle={{ color: '#E7E7E7' }}
                             autoScroll={false}
@@ -677,7 +677,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                                 labelField="label"
                                 valueField="value"
                                 value={String(RoleRegisterData?.experience)}
-                                onChange={(text) => handleInputChange("experience", text.value)}
+                                onChange={(text) => handleInputChange('experience', text.value)}
                                 placeholder="Select Experience"
                                 placeholderStyle={{ color: '#E7E7E7' }}
                             />
@@ -701,7 +701,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                         <Text style={Globalstyles.title}>Add Description</Text>
                         <TextInput style={Globalstyles.textInput} value={RoleRegisterData.description}
                             onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, description: text }))}
-                            textAlignVertical='top' placeholder="Add Your Description"
+                            textAlignVertical="top" placeholder="Add Your Description"
                             placeholderTextColor={Colors.gray} multiline={true}
                             autoComplete="off"
                             textContentType="none"
@@ -711,7 +711,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
 
 
                         <View style={styles.photopickContainer}>
-                            <Text style={styles.smalltitle}>Photos (Up to 5)</Text>
+                            <Text style={styles.smalltitle}>Photos (Up to 4)</Text>
 
                             {/* Crop Picker Button */}
                             <TouchableOpacity style={[styles.PickPhotoButton]} onPress={handleAdditionalPhotosPick}>
@@ -722,14 +722,16 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                         {/* Display Selected Photos */}
                         {RoleRegisterData?.additionalPhotos?.length > 0 && (
                             <View style={styles.photosContainer}>
-                                <Text style={styles.label}>Uploaded Photos:</Text>
-                                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                        {RoleRegisterData?.additionalPhotos.map((photo, index) => (
-                                            <Image key={index} source={{ uri: photo }} style={styles.photo} />
-                                        ))}
-                                    </View>
-                                </ScrollView>
+                                <FlatList
+                                    data={RoleRegisterData.additionalPhotos}
+                                    keyExtractor={(item, index) => index.toString()}
+                                    horizontal
+                                    showsHorizontalScrollIndicator={false}
+                                    renderItem={({ item }) => (
+                                        <Image source={{ uri: item }} style={styles.photo} />
+                                    )}
+                                    contentContainerStyle={{ flexDirection: 'row', alignItems: 'center' }}
+                                />
                             </View>
                         )}
 
@@ -737,7 +739,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                         <TextInput
                             style={[Globalstyles.input, errors.websiteUrl && styles.errorInput]}
                             value={tempUrlData.websiteUrl}
-                            onChangeText={(text) => validateAndSetUrl(text, "websiteUrl")}
+                            onChangeText={(text) => validateAndSetUrl(text, 'websiteUrl')}
                             placeholder="Give Your Website Link"
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
@@ -752,7 +754,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                         <TextInput
                             style={[Globalstyles.input, errors.youtubeUrl && styles.errorInput]}
                             value={tempUrlData.youtubeUrl}
-                            onChangeText={(text) => validateAndSetUrl(text, "youtubeUrl")}
+                            onChangeText={(text) => validateAndSetUrl(text, 'youtubeUrl')}
                             placeholder="Give Your Youtube Link"
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
@@ -767,7 +769,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                         <TextInput
                             style={[Globalstyles.input, errors.whatsapp && styles.errorInput]}
                             value={tempUrlData.whatsapp}
-                            onChangeText={(text) => validateAndSetUrl(text, "whatsapp")}
+                            onChangeText={(text) => validateAndSetUrl(text, 'whatsapp')}
                             placeholder="Give Your Whatsapp Link"
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
@@ -782,7 +784,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                         <TextInput
                             style={[Globalstyles.input, errors.facebookUrl && styles.errorInput]}
                             value={tempUrlData.facebookUrl}
-                            onChangeText={(text) => validateAndSetUrl(text, "facebookUrl")}
+                            onChangeText={(text) => validateAndSetUrl(text, 'facebookUrl')}
                             placeholder="Give Your Facebook Link"
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
@@ -797,7 +799,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                         <TextInput
                             style={[Globalstyles.input, errors.instagramUrl && styles.errorInput]}
                             value={tempUrlData.instagramUrl}
-                            onChangeText={(text) => validateAndSetUrl(text, "instagramUrl")}
+                            onChangeText={(text) => validateAndSetUrl(text, 'instagramUrl')}
                             placeholder="Give Your Instagram Link"
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"

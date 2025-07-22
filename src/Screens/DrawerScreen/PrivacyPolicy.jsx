@@ -1,6 +1,4 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image } from 'react-native';
-import React from 'react';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Globalstyles from '../../utils/GlobalCss';
 import { DrawerActions } from '@react-navigation/native';
 import Colors from '../../utils/Colors';
@@ -13,7 +11,7 @@ const PrivacyPolicy = ({ navigation }) => {
     return (
         <View style={[Globalstyles.container, { paddingBottom: SH(20) }]} edges={['top', 'bottom']}>
             <View style={Globalstyles.header}>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
                         <Image source={require('../../Images/menu.png')} style={{ width: SW(30), height: SH(30) }} />
                     </TouchableOpacity>
@@ -222,22 +220,22 @@ const styles = StyleSheet.create({
     },
     heading: {
         fontSize: SF(18),
-        fontFamily: "Poppins-Bold",
-        color: Colors.theme_color
+        fontFamily: 'Poppins-Bold',
+        color: Colors.theme_color,
         // marginBottom: 15,
         // textAlign: 'center',
     },
     sectionHeading: {
         fontSize: SF(18),
-        fontWeight: "Poppins-Bold",
+        fontWeight: 'Poppins-Bold',
         marginTop: SH(15),
         marginBottom: SH(5),
-        color: Colors.theme_color
+        color: Colors.theme_color,
     },
     text: {
         fontSize: SF(13),
         lineHeight: SH(24),
         color: '#555',
-        fontFamily: "Poppins-Regular"
+        fontFamily: 'Poppins-Regular',
     },
 });

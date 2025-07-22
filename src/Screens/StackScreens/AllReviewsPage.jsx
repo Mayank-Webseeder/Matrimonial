@@ -15,8 +15,8 @@ const AllReviewsPage = ({ route, navigation }) => {
     const { reviews } = route.params || {};
 
     useEffect(() => {
-        console.log("reviews", reviews);
-    }, [])
+        console.log('reviews', reviews);
+    }, []);
 
     return (
         <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
@@ -26,35 +26,35 @@ const AllReviewsPage = ({ route, navigation }) => {
                 translucent
             />
             <View style={Globalstyles.header}>
-                <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
-                    <Text style={[Globalstyles.headerText, { textAlign: "left" }]}>All Reviews</Text>
+                    <Text style={[Globalstyles.headerText, { textAlign: 'left' }]}>All Reviews</Text>
                 </View>
             </View>
             <ScrollView contentContainerStyle={{ marginVertical: SH(10), paddingBottom: insets.bottom + SH(10), flexGrow: 1 }} showsVerticalScrollIndicator={false}>
                 <View>
                     {reviews.map((review, index) => (
                         <View key={review._id || index} style={styles.reviewContainer}>
-                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                 <View>
                                     <Image
                                         source={review?.userId?.photoUrl[0]
                                             ? { uri: review.userId.photoUrl[0] }
-                                            : require("../../Images/NoImage.png")
+                                            : require('../../Images/NoImage.png')
                                         }
                                         style={{
                                             width: SW(50),
                                             height: SW(50),
                                             borderRadius: SW(25),
-                                            marginRight: SW(10)
+                                            marginRight: SW(10),
                                         }}
                                         resizeMode="cover"
                                     />
                                 </View>
                                 <View style={{ flex: 1, marginHorizontal: SW(10) }}>
-                                    <Text style={styles.reviewName}>{review?.userId?.username || "Unknown"}</Text>
+                                    <Text style={styles.reviewName}>{review?.userId?.username || 'Unknown'}</Text>
                                     <View style={styles.reviewRating}>
                                         <Rating
                                             type="star"
@@ -67,12 +67,12 @@ const AllReviewsPage = ({ route, navigation }) => {
                                     <Text style={styles.reviewText}>{review?.review}</Text>
 
                                 </View>
-                                <View style={{ alignSelf: "flex-start" }}>
+                                <View style={{ alignSelf: 'flex-start' }}>
                                     <Text style={styles.reviewDate}>
-                                        {moment(review.createdAt).format("DD-MM-YYYY")}
+                                        {moment(review.createdAt).format('DD-MM-YYYY')}
                                     </Text>
                                     <Text style={styles.reviewDate}>
-                                        {moment(review.createdAt).format("hh:mm A")}
+                                        {moment(review.createdAt).format('hh:mm A')}
                                     </Text>
 
                                 </View>

@@ -43,10 +43,10 @@ const ViewPost = ({ navigation, route }) => {
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        navigation.navigate("MainApp", {
-          screen: "Tabs",
+        navigation.navigate('MainApp', {
+          screen: 'Tabs',
           params: {
-            screen: "EventNews",
+            screen: 'EventNews',
           },
         });
         return true;
@@ -64,18 +64,18 @@ const ViewPost = ({ navigation, route }) => {
 
   const getEventNewsData = async () => {
     try {
-      const token = await AsyncStorage.getItem("userToken");
+      const token = await AsyncStorage.getItem('userToken');
       if (!token) {
         showMessage({
-          type: "danger",
-          message: "Authentication Error",
-          description: "No token found. Please log in again.",
-          duration: 5000
+          type: 'danger',
+          message: 'Authentication Error',
+          description: 'No token found. Please log in again.',
+          duration: 5000,
         });
 
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
         return;
       }
@@ -88,30 +88,30 @@ const ViewPost = ({ navigation, route }) => {
 
 
       if (response.status === 200 && response.data.status === true) {
-        console.log("✅ Fetched Event Data:", response.data.data);
+        console.log('✅ Fetched Event Data:', response.data.data);
         setPostData(response.data.data);
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("❌ Error fetching event post:", errorMsg);
+      console.error('❌ Error fetching event post:', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
     }
   };
 
-  if (!postData) return null;
+  if (!postData) {return null;}
 
   const images = postData?.images || [];
   const author = postData?.activistDetails || {};
@@ -125,11 +125,11 @@ const ViewPost = ({ navigation, route }) => {
       />
 
       <View style={Globalstyles.header}>
-        <View style={{ flexDirection: 'row', alignItems: "center" }}>
-          <TouchableOpacity onPress={() => navigation.navigate("MainApp", {
-            screen: "Tabs",
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <TouchableOpacity onPress={() => navigation.navigate('MainApp', {
+            screen: 'Tabs',
             params: {
-              screen: "EventNews",
+              screen: 'EventNews',
             },
           })}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
@@ -161,7 +161,7 @@ const ViewPost = ({ navigation, route }) => {
             </View>
           </View>
 
-          <Text style={styles.postDescriptionText}>{postData?.description || "No description"}</Text>
+          <Text style={styles.postDescriptionText}>{postData?.description || 'No description'}</Text>
 <View style={{ flex: 1 }}>
   {images.length > 0 && (
     <ScrollView

@@ -1,6 +1,6 @@
-import { StyleSheet } from "react-native";
-import Colors from "../../utils/Colors";
-import { SH, SW, SF } from "../../utils/Dimensions";
+import { StyleSheet } from 'react-native';
+import Colors from '../../utils/Colors';
+import { SH, SW, SF } from '../../utils/Dimensions';
 
 const styles = StyleSheet.create({
     errorInput: {
@@ -8,23 +8,23 @@ const styles = StyleSheet.create({
         borderWidth: 1,
     },
     tag: {
-        flexDirection: "row",
-        backgroundColor: "#E0E0E0",
+        flexDirection: 'row',
+        backgroundColor: '#E0E0E0',
         paddingHorizontal: SW(10),
         paddingVertical: SH(5),
         borderRadius: 20,
         marginVertical: SH(5),
         marginHorizontal: SW(5),
-        alignItems: "center",
+        alignItems: 'center',
     },
     tagText: {
-        color: "green",
+        color: 'green',
         marginRight: SW(8),
     },
     removeTag: {
-        color: "red",
+        color: 'red',
         fontSize: SF(16),
-        fontFamily: "Poppins-Bold"
+        fontFamily: 'Poppins-Bold',
     },
     radioGroup: {
         flexDirection: 'row',
@@ -55,13 +55,13 @@ const styles = StyleSheet.create({
     },
     uploadText: {
         color: Colors.theme_color,
-        textAlign: "center"
+        textAlign: 'center',
     },
     imagePreviewContainer: {
         marginVertical: SH(10),
         width: SW(70),
         height: SH(70),
-        borderRadius: 10
+        borderRadius: 10,
     },
     submitButton: {
         backgroundColor: Colors.theme_color,
@@ -69,13 +69,13 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         alignItems: 'center',
         marginTop: SH(20),
-        marginBottom: SH(80)
+        marginBottom: SH(80),
     },
     submitText: {
         color: Colors.light,
         fontSize: SF(15),
         fontWeight: 'Poppins-Bold',
-        textTransform: "capitalize"
+        textTransform: 'capitalize',
     },
     photosContainer: {
         paddingVertical: SH(10),
@@ -89,8 +89,8 @@ const styles = StyleSheet.create({
     dateText: {
         flex: 1,
         fontSize: SF(16),
-        color: "gray",
-        paddingVertical: SH(10)
+        color: 'gray',
+        paddingVertical: SH(10),
     },
     arrow: {
         marginLeft: SW(10),
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     errorText: {
         color: 'red',
         fontSize: SF(13),
-        fontFamily: "Poppins-Regular"
+        fontFamily: 'Poppins-Regular',
     },
 });
 

@@ -1,33 +1,33 @@
-import { StyleSheet } from "react-native";
-import { SH, SW, SF } from "../../utils/Dimensions";
-import Colors from "../../utils/Colors";
+import { StyleSheet } from 'react-native';
+import { SH, SW, SF } from '../../utils/Dimensions';
+import Colors from '../../utils/Colors';
 
 const styles = StyleSheet.create({
   loaderContainer: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.2)",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.2)',
   },
   righticons: {
     flexDirection: 'row',
-    alignItems: "center"
+    alignItems: 'center',
   },
   ProfileContainer: {
     marginVertical: SH(10),
     paddingBottom:SH(200),
-    flexGrow:1
+    flexGrow:1,
   },
   tabContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingHorizontal: SW(10),
     paddingVertical: SH(10),
-    marginBottom: SH(10)
+    marginBottom: SH(10),
   },
   tabButton: {
     paddingVertical: SH(10),
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     height: SH(40),
     borderWidth: 1,
     borderColor: Colors.theme_color,
-    marginRight: SW(10)
+    marginRight: SW(10),
   },
   activeTab: {
     backgroundColor: Colors.theme_color,
@@ -46,8 +46,8 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: SF(14),
     fontFamily: 'Poppins-Regular',
-    textAlign: "center",
-    color: Colors.theme_color
+    textAlign: 'center',
+    color: Colors.theme_color,
   },
   activeTabText: {
     color: Colors.light,
@@ -65,20 +65,20 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 3,
     width: '48%',
-    paddingBottom:0
+    paddingBottom:0,
   },
   image: {
     width: '100%',
     height: SH(150),
-    borderRadius: 10
+    borderRadius: 10,
   },
   detailsContainer: {
     paddingHorizontal: SW(10),
     paddingVertical: SH(10),
-    paddingBottom:SH(5)
+    paddingBottom:SH(5),
   },
   detailscontent: {
-    paddingVertical: SH(10)
+    paddingVertical: SH(10),
   },
   row: {
     flexDirection: 'row',
@@ -113,27 +113,27 @@ const styles = StyleSheet.create({
     marginTop: SH(5),
   },
   noDataContainer: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     marginTop: SH(20),
   },
   noDataText: {
     fontSize: SF(16),
-    color: "gray",
-    fontWeight: "bold",
+    color: 'gray',
+    fontWeight: 'bold',
   },
   unsaveText: {
     backgroundColor: Colors.theme_color,
     color: Colors.light,
-    alignSelf: "flex-start",
-    textAlign: "center",
+    alignSelf: 'flex-start',
+    textAlign: 'center',
     // marginTop: SH(5),
     paddingVertical: SH(2),
     paddingHorizontal: SW(5),
-    fontFamily:"Poppins-Medium",
+    fontFamily:'Poppins-Medium',
     fontSize:SF(12),
-    borderRadius:2
-  }
+    borderRadius:2,
+  },
 });
 
 export default styles;

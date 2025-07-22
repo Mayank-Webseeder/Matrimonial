@@ -1,33 +1,33 @@
-import io from "socket.io-client";
-import { showMessage } from "react-native-flash-message";
+import io from 'socket.io-client';
+import { showMessage } from 'react-native-flash-message';
 
-const SOCKET_URL = "https://api-matrimonial.webseeder.tech";
+const SOCKET_URL = 'https://api-matrimonial.webseeder.tech';
 
 let socket = null;
 
 export const initializeSocket = (userId) => {
   if (socket) {
-    console.log("🔁 Re-initializing socket...");
+    console.log('🔁 Re-initializing socket...');
     socket.disconnect();
   }
 
-  console.log("🔄 Initializing socket with userId:", userId);
+  console.log('🔄 Initializing socket with userId:', userId);
 
   socket = io(SOCKET_URL, {
-    transports: ["websocket"],
+    transports: ['websocket'],
     auth: { userId },
   });
 
-  socket.on("connect", () => {
-    console.log("✅ Socket connected:", socket.id);
+  socket.on('connect', () => {
+    console.log('✅ Socket connected:', socket.id);
   });
 
-  socket.on("disconnect", (reason) => {
-    console.log("⚠️ Socket disconnected. Reason:", reason);
+  socket.on('disconnect', (reason) => {
+    console.log('⚠️ Socket disconnected. Reason:', reason);
   });
 
-  socket.on("connect_error", (error) => {
-    console.error("🚨 Socket connection error:", error.message);
+  socket.on('connect_error', (error) => {
+    console.error('🚨 Socket connection error:', error.message);
   });
 
   // Log ALL incoming events
@@ -46,7 +46,7 @@ export const initializeSocket = (userId) => {
 export const getSocket = () => {
   if (!socket) {
     console.error("❌ Tried to get socket but it's not initialized");
-    throw new Error("❌ Socket not initialized");
+    throw new Error('❌ Socket not initialized');
   }
   return socket;
 };
@@ -59,15 +59,15 @@ export const isSocketConnected = () => {
 
 export const disconnectSocket = () => {
   if (socket) {
-    console.log("🚫 Manually disconnecting socket...");
+    console.log('🚫 Manually disconnecting socket...');
     socket.disconnect();
     socket = null;
     showMessage({
-      type: "info",
-      message: "Socket disconnected",
-      icon: "info",
+      type: 'info',
+      message: 'Socket disconnected',
+      icon: 'info',
     });
   } else {
-    console.log("❗ Attempted to disconnect, but socket is null");
+    console.log('❗ Attempted to disconnect, but socket is null');
   }
 };

@@ -1,24 +1,24 @@
-import { StyleSheet } from "react-native";
-import { SH, SW, SF } from "../../utils/Dimensions";
-import Colors from "../../utils/Colors";
+import { StyleSheet } from 'react-native';
+import { SH, SW, SF } from '../../utils/Dimensions';
+import Colors from '../../utils/Colors';
 const styles = StyleSheet.create({
   errorInput: {
     borderColor: 'red',
     borderWidth: 1,
   },
   errorText: {
-    fontFamily: "Poppins-Medium",
+    fontFamily: 'Poppins-Medium',
     fontSize: SF(13),
-    color: "red"
+    color: 'red',
   },
   editText: {
     fontSize: SF(15),
     color: Colors.theme_color,
     marginLeft: SW(250),
-    fontFamily: "Poppins-Bold"
+    fontFamily: 'Poppins-Bold',
   },
   profileImage: {
-    width: SW(100), height: SH(100), borderRadius: 10
+    width: SW(100), height: SH(100), borderRadius: 10,
   },
   button: {
     backgroundColor: Colors.theme_color,
@@ -26,16 +26,16 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: 'center',
     marginTop: SH(20),
-    marginBottom: SH(80)
+    marginBottom: SH(80),
   },
   buttonText: {
     color: Colors.light,
     fontSize: SF(15),
     fontWeight: 'Poppins-Bold',
-    textTransform: "capitalize"
+    textTransform: 'capitalize',
   },
   arrow: {
-    marginLeft: SW(290)
+    marginLeft: SW(290),
   },
   PickPhotoButton: {
     backgroundColor: Colors.theme_color,
@@ -51,12 +51,11 @@ const styles = StyleSheet.create({
     fontWeight: 'Poppins-Bold',
   },
   photopickContainer: {
-    flexDirection: "row", justifyContent: "space-between",
-    marginBottom: SH(5)
+    flexDirection: 'row', justifyContent: 'space-between',
+    marginBottom: SH(5),
   },
   photosContainer: {
-    marginTop: SH(10),
-    paddingVertical: SH(10),
+    marginTop: SH(5),
   },
 
   photo: {
@@ -72,9 +71,9 @@ const styles = StyleSheet.create({
     marginBottom: SH(5),
     paddingHorizontal: SW(10),
     borderRadius: 5,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between"
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   checkboxContainer1: {
     borderColor: '#ccc',
@@ -82,20 +81,20 @@ const styles = StyleSheet.create({
     marginBottom: SH(5),
     borderRadius: 5,
     height: SH(40),
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   checkboxItem: {
-    flexDirection: "row",
-    alignItems: "center"
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   servicesLabel: {
     fontSize: SF(15),
     marginBottom: SH(5),
-    fontFamily: "Poppins-Bold"
+    fontFamily: 'Poppins-Bold',
   },
   imagePlaceholder: {
-    fontFamily: "Poppins-Regular",
-    color: Colors.gray
+    fontFamily: 'Poppins-Regular',
+    color: Colors.gray,
   },
   modalOverlay: {
     flex: 1,
@@ -119,20 +118,20 @@ const styles = StyleSheet.create({
         paddingBottom: SH(20),
     },
     card: {
-    width: "95%",
+    width: '95%',
     backgroundColor:Colors.light,
     borderRadius: 12,
     margin: SW(10),
-    overflow: "hidden",
-    shadowColor: "#000",
+    overflow: 'hidden',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 4,
   },
   planImage: {
-    width: "100%",
-    height: SH(200)
+    width: '100%',
+    height: SH(200),
   },
   cardContent: {
     paddingHorizontal: SW(12),
@@ -140,20 +139,20 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: SF(16),
-    fontFamily: "Inter-Bold",
+    fontFamily: 'Inter-Bold',
     color: Colors.theme_color,
     marginBottom: SH(4),
   },
   Text: {
     fontSize: SF(13),
-    color: "#000",
-    fontFamily: "Poppins-Regular"
+    color: '#000',
+    fontFamily: 'Poppins-Regular',
   },
   description: {
     fontSize: SF(12),
     marginTop: SH(6),
-    color: "#666",
-    fontFamily: "Poppins-Regular"
+    color: '#666',
+    fontFamily: 'Poppins-Regular',
   },
   closeButton: {
     // backgroundColor:Colors.theme_color,
@@ -165,8 +164,8 @@ const styles = StyleSheet.create({
   },
   closeText: {
     color: Colors.theme_color,
-    fontFamily: "Poppins-Bold",
-    fontSize: SF(13)
+    fontFamily: 'Poppins-Bold',
+    fontSize: SF(13),
   },
   buttonRow: {
     flexDirection: 'row',
@@ -181,13 +180,13 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: SW(5),
     alignItems: 'center',
-    marginVertical: SH(10)
+    marginVertical: SH(10),
   },
   buyButtonText: {
     color: 'white',
-    fontFamily: "Poppins-Bold",
-    textAlign: "center",
-    fontSize: SF(14)
+    fontFamily: 'Poppins-Bold',
+    textAlign: 'center',
+    fontSize: SF(14),
   },
   trialButton: {
     backgroundColor: '#666266',
@@ -200,9 +199,9 @@ const styles = StyleSheet.create({
   },
   trialText: {
     color: 'white',
-    fontFamily: "Poppins-Bold",
-    textAlign: "center",
-    fontSize: SF(15)
+    fontFamily: 'Poppins-Bold',
+    textAlign: 'center',
+    fontSize: SF(15),
   },
   buttonRowAligned: {
     marginTop: SH(10),

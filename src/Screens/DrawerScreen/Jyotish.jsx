@@ -13,10 +13,9 @@ import { ExperienceData, RatingData, jyotishServices } from '../../DummyData/Dro
 import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
 import axios from 'axios';
-import { slider } from '../../DummyData/DummyData';
-import { DeepLink, GET_ALL_JYOTISH, JYOTISH_ADVERDISE_WINDOW, SAVED_PROFILES, TOP_JYOTISH_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
+import { DeepLink, GET_ALL_JYOTISH, SAVED_PROFILES, TOP_JYOTISH_ADVERDISE_WINDOW } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import { useFocusEffect } from '@react-navigation/native';
 import { showMessage } from 'react-native-flash-message';
@@ -59,11 +58,11 @@ const Jyotish = ({ navigation, route }) => {
     setTimeout(() => {
       setRefreshing(false);
       setLocality('');
-      setModalLocality('')
-      setRating(' ')
-      setExperience(' ')
-      setServices('')
-      JyotishDataAPI("all");
+      setModalLocality('');
+      setRating(' ');
+      setExperience(' ');
+      setServices('');
+      JyotishDataAPI('all');
       Advertisement_window();
     }, 2000);
   }, []);
@@ -81,19 +80,19 @@ const Jyotish = ({ navigation, route }) => {
 
   const handleCloseFilter = () => {
     setModalVisible(false);
-    JyotishDataAPI("modal");
+    JyotishDataAPI('modal');
   };
 
   const resetFilter = () => {
-    setModalLocality('')
-    setRating(' ')
-    setExperience(' ')
-    setServices('')
-    JyotishDataAPI()
-  }
+    setModalLocality('');
+    setRating(' ');
+    setExperience(' ');
+    setServices('');
+    JyotishDataAPI();
+  };
 
   useEffect(() => {
-    JyotishDataAPI("all");
+    JyotishDataAPI('all');
     Advertisement_window();
   }, []);
 
@@ -103,27 +102,27 @@ const Jyotish = ({ navigation, route }) => {
       const onBackPress = () => {
         navigation.reset({
           index: 0,
-          routes: [{ name: "MainApp" }],
+          routes: [{ name: 'MainApp' }],
         });
         return true;
       };
 
-      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
 
       return () => {
-        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
       };
     }, [navigation])
   );
 
   useEffect(() => {
-    if (slider.length === 0) return;
+    if (slider.length === 0) { return; }
 
     const currentSlide = slider[currentIndex];
     const durationInSeconds = Number(currentSlide?.duration) || 4;
     const bufferMs = 800;
     const durationInMilliseconds = durationInSeconds * 1000 + bufferMs;
-    console.log("durationInSeconds", durationInSeconds);
+    console.log('durationInSeconds', durationInSeconds);
     const timeout = setTimeout(() => {
       const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
       setCurrentIndex(nextIndex);
@@ -138,7 +137,7 @@ const Jyotish = ({ navigation, route }) => {
   const Advertisement_window = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) throw new Error('No token found');
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -149,7 +148,7 @@ const Jyotish = ({ navigation, route }) => {
 
       if (response.data) {
         const fetchedData = response.data.data;
-        console.log("fetchedData", JSON.stringify(fetchedData));
+        console.log('fetchedData', JSON.stringify(fetchedData));
 
         const fullSliderData = fetchedData.flatMap((item) =>
           item.media.map((mediaItem) => ({
@@ -164,79 +163,79 @@ const Jyotish = ({ navigation, route }) => {
         );
 
         setSlider(fullSliderData);
-        console.log("Slider Data:", fullSliderData);
+        console.log('Slider Data:', fullSliderData);
       } else {
         setSlider([]);
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching advertisement:", errorMsg);
+      console.error('Error fetching advertisement:', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
     }
   };
 
 
-  const JyotishDataAPI = async (filterType = "search") => {
+  const JyotishDataAPI = async (filterType = 'search') => {
     try {
       setLoading(true);
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       };
 
       let queryParams = [];
 
-      if (filterType === "search" && locality.trim()) {
+      if (filterType === 'search' && locality.trim()) {
         queryParams.push(`locality=${encodeURIComponent(locality.trim().toLowerCase())}`);
       }
-      else if (filterType === "modal") {
-        if (modalLocality?.trim()) queryParams.push(`locality=${encodeURIComponent(modalLocality.trim().toLowerCase())}`);
-        if (services?.trim()) queryParams.push(`services=${encodeURIComponent(services.trim())}`);
-        if (rating?.trim()) queryParams.push(`rating=${encodeURIComponent(rating.trim())}`);
-        if (experience?.trim()) queryParams.push(`experience=${encodeURIComponent(experience.trim())}`);
+      else if (filterType === 'modal') {
+        if (modalLocality?.trim()) { queryParams.push(`locality=${encodeURIComponent(modalLocality.trim().toLowerCase())}`); }
+        if (services?.trim()) { queryParams.push(`services=${encodeURIComponent(services.trim())}`); }
+        if (rating?.trim()) { queryParams.push(`rating=${encodeURIComponent(rating.trim())}`); }
+        if (experience?.trim()) { queryParams.push(`experience=${encodeURIComponent(experience.trim())}`); }
       }
 
       // ⚡️ Construct URL only with valid params
       const url = queryParams.length > 0
-        ? `${GET_ALL_JYOTISH}?${queryParams.join("&")}`
+        ? `${GET_ALL_JYOTISH}?${queryParams.join('&')}`
         : GET_ALL_JYOTISH;
 
-      console.log("Fetching Data from:", url);
+      console.log('Fetching Data from:', url);
 
       const response = await axios.get(url, { headers });
-      console.log("response.data?.data", response.data?.data);
+      console.log('response.data?.data', response.data?.data);
       setJyotishData(response.data?.data || []);
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching jyotish data:", errorMsg);
+      console.error('Error fetching jyotish data:', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
     } finally {
@@ -247,10 +246,10 @@ const Jyotish = ({ navigation, route }) => {
   const savedProfiles = async (_id) => {
     if (!_id) {
       showMessage({
-        type: "danger",
-        message: "Error",
-        description: "User ID not found!",
-        icon: "danger",
+        type: 'danger',
+        message: 'Error',
+        description: 'User ID not found!',
+        icon: 'danger',
         duration: 5000,
       });
       return;
@@ -262,39 +261,39 @@ const Jyotish = ({ navigation, route }) => {
     );
 
     try {
-      const token = await AsyncStorage.getItem("userToken");
+      const token = await AsyncStorage.getItem('userToken');
       if (!token) {
-        throw new Error("No token found");
+        throw new Error('No token found');
       }
 
       const headers = {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       };
 
       const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
 
-      console.log("Response Data:", JSON.stringify(response?.data));
+      console.log('Response Data:', JSON.stringify(response?.data));
 
       if (response.status === 200 && response.data.status === true) {
         showMessage({
-          type: "success",
-          message: response.data?.message || "Profile saved successfully!",
-          icon: "success",
-          duration: 5000
+          type: 'success',
+          message: response.data?.message || 'Profile saved successfully!',
+          icon: 'success',
+          duration: 5000,
         });
       } else {
-        throw new Error(response.data?.message || "Something went wrong!");
+        throw new Error(response.data?.message || 'Something went wrong!');
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching biodata:", errorMsg);
+      console.error('Error fetching biodata:', errorMsg);
 
       showMessage({
-        type: "danger",
-        message: errorMsg || "Failed to save profile!",
-        icon: "danger",
-        duration: 5000
+        type: 'danger',
+        message: errorMsg || 'Failed to save profile!',
+        icon: 'danger',
+        duration: 5000,
       });
 
       setJyotishData((prevProfiles) =>
@@ -304,16 +303,16 @@ const Jyotish = ({ navigation, route }) => {
       );
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
     }
@@ -324,7 +323,7 @@ const Jyotish = ({ navigation, route }) => {
     <SkeletonPlaceholder>
       <View style={{ margin: SH(20) }}>
         {[1, 2, 3, 4].map((_, index) => (
-          <View key={index} style={{ flexDirection: "row", marginBottom: 20 }}>
+          <View key={index} style={{ flexDirection: 'row', marginBottom: 20 }}>
             <View style={{ width: SW(80), height: SH(80), borderRadius: 40, marginRight: SW(10) }} />
             <View>
               <View style={{ width: SW(150), height: SH(20), borderRadius: 4 }} />
@@ -338,19 +337,19 @@ const Jyotish = ({ navigation, route }) => {
   );
 
   const shareProfile = async (profileId) => {
-    const profileType = "jyotish-detail";
-    console.log("profileId:", profileId);
+    const profileType = 'jyotish-detail';
+    console.log('profileId:', profileId);
 
     try {
-      if (!profileId) throw new Error("Missing profile ID");
+      if (!profileId) { throw new Error('Missing profile ID'); }
 
       const directLink = `${DeepLink}/${profileType}/${profileId}`;
 
       await Share.share({
-        message: `Check this profile in Brahmin Milan app:\n${directLink}`
+        message: `Check this profile in Brahmin Milan app:\n${directLink}`,
       });
     } catch (error) {
-      console.error("Sharing failed:", error?.message || error);
+      console.error('Sharing failed:', error?.message || error);
     }
   };
 
@@ -404,12 +403,12 @@ const Jyotish = ({ navigation, route }) => {
                         icon: 'info',
                         duration: 3000,
                       });
-                      navigation.navigate('BuySubscription', { serviceType: 'Jyotish' })
+                      navigation.navigate('BuySubscription', { serviceType: 'Jyotish' });
                     } else {
                       navigation.navigate('JyotishDetailsPage', {
                         jyotish_id: item._id || id,
                         isSaved: isSaved,
-                        fromScreen: "Jyotish",
+                        fromScreen: 'Jyotish',
                       });
                     }
                   }}>
@@ -419,9 +418,9 @@ const Jyotish = ({ navigation, route }) => {
                     <Rating type="star" ratingCount={5} imageSize={15} startingValue={rating} readonly />
                   </View>
                   <View>
-                    <Text style={[styles.text, { fontFamily: "Poppins-Bold" }]}>
+                    <Text style={[styles.text, { fontFamily: 'Poppins-Bold' }]}>
                       {item?.city}
-                      <Text style={[styles.text, { fontFamily: "Poppins-Regular" }]}>
+                      <Text style={[styles.text, { fontFamily: 'Poppins-Regular' }]}>
                         {` , ${item?.state}`}
                       </Text>
                     </Text>
@@ -436,7 +435,7 @@ const Jyotish = ({ navigation, route }) => {
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginRight: SW(10) }}>
                   <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id || id)}>
                     <FontAwesome
-                      name={item.isSaved ? "bookmark" : "bookmark-o"}
+                      name={item.isSaved ? 'bookmark' : 'bookmark-o'}
                       size={19}
                       color={Colors.dark}
                     />
@@ -462,10 +461,10 @@ const Jyotish = ({ navigation, route }) => {
                     icon: 'info',
                     duration: 3000,
                   });
-                  navigation.navigate('BuySubscription', { serviceType: 'Jyotish' })
+                  navigation.navigate('BuySubscription', { serviceType: 'Jyotish' });
                 } else {
                   navigation.navigate('JyotishDetailsPage', {
-                    jyotish_id: item._id || id, isSaved: isSaved
+                    jyotish_id: item._id || id, isSaved: isSaved,
                   });
                 }
               }}>
@@ -484,9 +483,9 @@ const Jyotish = ({ navigation, route }) => {
               )}
 
               <View>
-                <Text style={[styles.text, { fontFamily: "Poppins-Bold" }]}>
+                <Text style={[styles.text, { fontFamily: 'Poppins-Bold' }]}>
                   {item?.city}
-                  <Text style={[styles.text, { fontFamily: "Poppins-Regular" }]}>
+                  <Text style={[styles.text, { fontFamily: 'Poppins-Regular' }]}>
                     {` , ${item?.state}`}
                   </Text>
                 </Text>
@@ -506,7 +505,7 @@ const Jyotish = ({ navigation, route }) => {
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginRight: SW(10) }}>
                 <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id || id)}>
                   <FontAwesome
-                    name={item.isSaved ? "bookmark" : "bookmark-o"}
+                    name={item.isSaved ? 'bookmark' : 'bookmark-o'}
                     size={19}
                     color={Colors.dark}
                   />
@@ -533,7 +532,7 @@ const Jyotish = ({ navigation, route }) => {
         <View style={styles.headerContainer}>
           <TouchableOpacity onPress={() => navigation.reset({
             index: 0,
-            routes: [{ name: "MainApp" }],
+            routes: [{ name: 'MainApp' }],
           })}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
@@ -549,18 +548,18 @@ const Jyotish = ({ navigation, route }) => {
             {notificationCount > 0 && (
               <View
                 style={{
-                  position: "absolute",
+                  position: 'absolute',
                   right: -5,
                   top: -5,
                   width: SW(16),
                   height: SW(16),
                   borderRadius: SW(16) / 2,
-                  backgroundColor: "red",
-                  justifyContent: "center",
-                  alignItems: "center",
+                  backgroundColor: 'red',
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}
               >
-                <Text style={{ color: 'white', fontSize: SF(9), fontFamily: "Poppins-Bold" }}>
+                <Text style={{ color: 'white', fontSize: SF(9), fontFamily: 'Poppins-Bold' }}>
                   {notificationCount}
                 </Text>
               </View>
@@ -581,22 +580,22 @@ const Jyotish = ({ navigation, route }) => {
             placeholder="Search in Your city"
             value={locality}
             onChangeText={(text) => setLocality(text)}
-            onSubmitEditing={() => JyotishDataAPI("search")}
-            placeholderTextColor={"gray"}
+            onSubmitEditing={() => JyotishDataAPI('search')}
+            placeholderTextColor={'gray'}
             style={{ flex: 1 }}
           />
           {locality.length > 0 ? (
             <AntDesign name={'close'} size={20} color={'gray'} onPress={() => {
               setLocality('');
-              JyotishDataAPI("all")
+              JyotishDataAPI('all');
             }} />
           ) : (
-            <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => JyotishDataAPI("search")} />
+            <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => JyotishDataAPI('search')} />
           )}
         </View>
       </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{
-        paddingBottom: insets.bottom + SH(10)
+        paddingBottom: insets.bottom,
       }} refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }>
@@ -611,7 +610,7 @@ const Jyotish = ({ navigation, route }) => {
                 const handlePress = () => {
                   if (item.hyperlink) {
                     Linking.openURL(item.hyperlink).catch(err =>
-                      console.error("Failed to open URL:", err)
+                      console.error('Failed to open URL:', err)
                     );
                   }
                 };
@@ -620,7 +619,7 @@ const Jyotish = ({ navigation, route }) => {
                   <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                     <Image
                       source={{ uri: item.image }}
-                      style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
+                      style={{ width: '100%', height: SH(180), resizeMode: 'contain' }}
                     />
                   </TouchableOpacity>
                 );
@@ -727,13 +726,13 @@ const Jyotish = ({ navigation, route }) => {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  setModalVisible(false)
+                  setModalVisible(false);
                   setLocality('');
-                  setModalLocality('')
-                  setRating(' ')
-                  setExperience(' ')
-                  setServices('')
-                  JyotishDataAPI("all");
+                  setModalLocality('');
+                  setRating(' ');
+                  setExperience(' ');
+                  setServices('');
+                  JyotishDataAPI('all');
                 }}
                 style={styles.crossButton}>
                 <View style={styles.circle}>

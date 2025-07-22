@@ -46,23 +46,23 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
 
     useEffect(() => {
         fetchBiodataProfile();
-        console.log("Biodata", Biodata);
-    }, [userId, id])
+        console.log('Biodata', Biodata);
+    }, [userId, id]);
 
     const fetchBiodataProfile = async () => {
         setLoading(true);
 
         const profileId = userId || id;
-        console.log("profileId", profileId);
+        console.log('profileId', profileId);
 
         if (!profileId) {
             showMessage({
-                type: "danger",
-                message: "Biodata ID not found!",
-                icon: "danger",
-                duration: 5000
+                type: 'danger',
+                message: 'Biodata ID not found!',
+                icon: 'danger',
+                duration: 5000,
             });
-            console.error("[fetchBiodataProfile] ❌ No valid ID provided. _id:", profileId, " | id:", id);
+            console.error('[fetchBiodataProfile] ❌ No valid ID provided. _id:', profileId, ' | id:', id);
             setLoading(false);
             return;
         }
@@ -70,22 +70,22 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
         const token = await AsyncStorage.getItem('userToken');
         if (!token) {
             showMessage({
-                type: "danger",
-                message: "Authentication Error",
-                description: "No token found. Please log in again.",
-                duration: 5000
+                type: 'danger',
+                message: 'Authentication Error',
+                description: 'No token found. Please log in again.',
+                duration: 5000,
             });
 
             navigation.reset({
                 index: 0,
-                routes: [{ name: "AuthStack" }],
+                routes: [{ name: 'AuthStack' }],
             });
             return;
         }
         const url = `${GET_BIODATA_BY_ID}/${profileId}`;
-        console.log("[fetchBiodataProfile] ✅ Fetching data...");
-        console.log("🔗 URL:", url);
-        console.log("🔐 Token:", token.substring(0, 20) + "...");
+        console.log('[fetchBiodataProfile] ✅ Fetching data...');
+        console.log('🔗 URL:', url);
+        console.log('🔐 Token:', token.substring(0, 20) + '...');
 
         try {
             const response = await axios.get(url, {
@@ -94,43 +94,43 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                 },
             });
 
-            console.log("📦 Raw API Response:", JSON.stringify(response.data, null, 2));
+            console.log('📦 Raw API Response:', JSON.stringify(response.data, null, 2));
 
             if (response.data.status) {
-                console.log("✅ Biodata Profile Fetched:", response.data.data);
+                console.log('✅ Biodata Profile Fetched:', response.data.data);
                 SetBiodataData(response.data.data.biodata); // <- update your state setter accordingly
             } else {
                 showMessage({
-                    type: "danger",
-                    message: "No Biodata Found",
-                    description: response.data.message || "Something went wrong!",
-                    duration: 5000
+                    type: 'danger',
+                    message: 'No Biodata Found',
+                    description: response.data.message || 'Something went wrong!',
+                    duration: 5000,
                 });
-                console.warn("⚠️ API returned false status:", response.data.message);
+                console.warn('⚠️ API returned false status:', response.data.message);
             }
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("❌ Error fetching biodata profile:", errorMsg);
+            console.error('❌ Error fetching biodata profile:', errorMsg);
 
             showMessage({
-                type: "danger",
+                type: 'danger',
                 message: errorMsg,
-                description: "Failed to load biodata profile",
-                duration: 5000
+                description: 'Failed to load biodata profile',
+                duration: 5000,
             });
 
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                console.warn("⚠️ Session expired, clearing token...");
-                await AsyncStorage.removeItem("userToken");
+                console.warn('⚠️ Session expired, clearing token...');
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
         } finally {
@@ -143,8 +143,8 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
             showMessage({
                 message: 'User ID not found!',
                 type: 'danger',
-                icon: "danger",
-                duarion: 5000
+                icon: 'danger',
+                duarion: 5000,
             });
             return;
         }
@@ -152,30 +152,30 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
         setIsSaved((prev) => !prev);
 
         try {
-            const token = await AsyncStorage.getItem("userToken");
+            const token = await AsyncStorage.getItem('userToken');
             if (!token) {
-                throw new Error("No token found");
+                throw new Error('No token found');
             }
 
             const headers = {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             };
 
             const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
 
-            console.log("Response Data:", JSON.stringify(response?.data));
+            console.log('Response Data:', JSON.stringify(response?.data));
 
             if (response?.data?.message) {
                 showMessage({
                     message: 'Success',
                     description: response.data.message,
-                    type: "success",
+                    type: 'success',
                     duarion: 5000,
-                    icon: "success"
+                    icon: 'success',
                 });
 
-                if (response.data.message === "Profile saved successfully.") {
+                if (response.data.message === 'Profile saved successfully.') {
                     setIsSaved(true);
                 } else {
                     setIsSaved(false);
@@ -185,39 +185,39 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                     message: 'Something went wrong!',
                     type: 'danger',
                     duarion: 5000,
-                    icon: "danger"
+                    icon: 'danger',
                 });
             }
         } catch (error) {
             console.error(
-                "API Error:",
+                'API Error:',
                 error?.response ? JSON.stringify(error.response.data) : error.message
             );
 
             showMessage({
-                message: error.response?.data?.message || "Failed to save profile!",
+                message: error.response?.data?.message || 'Failed to save profile!',
                 type: 'danger',
-                duarion: 5000
+                duarion: 5000,
             });
         }
     };
 
 
     const shareProfiles = async (profileId) => {
-        const profileType = "short-matrimonial-profile";
+        const profileType = 'short-matrimonial-profile';
 
-        console.log("profileId", profileId);
+        console.log('profileId', profileId);
 
         try {
-            if (!profileId) throw new Error("Missing profile ID");
+            if (!profileId) {throw new Error('Missing profile ID');}
 
             const directLink = `${DeepLink}/${profileType}/${profileId}`;
 
             await Share.share({
-                message: `Check this profile in Brahmin Milan app:\n${directLink}`
+                message: `Check this profile in Brahmin Milan app:\n${directLink}`,
             });
         } catch (error) {
-            console.error("Sharing failed:", error?.message || error);
+            console.error('Sharing failed:', error?.message || error);
         }
     };
 
@@ -233,9 +233,9 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                 message: 'Biodata Missing',
                 description: 'Please create biodata to see full information of this profile.',
                 type: 'warning',
-                duarion: 5000
+                duarion: 5000,
             });
-            navigation.navigate('MatrimonyPage')
+            navigation.navigate('MatrimonyPage');
         } else if (isBiodataExpired) {
             showMessage({
                 message: 'Subscription Expired',
@@ -251,8 +251,8 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
 
     const renderProfileCard = ({ item }) => {
         const formattedHeight = item?.personalDetails?.heightFeet
-            ?.replace(/\s*-\s*/, "")
-            ?.replace(/\s+/g, "");
+            ?.replace(/\s*-\s*/, '')
+            ?.replace(/\s+/g, '');
 
         return (
             <View style={styles.card}>
@@ -265,7 +265,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                     {item.verified && (
                         <View style={styles.verifiedContainer}>
                             <Image
-                                source={require("../../Images/verified.png")}
+                                source={require('../../Images/verified.png')}
                                 style={styles.verifiedBadge}
                             />
                             <Text style={styles.verifiedText}>Verified</Text>
@@ -292,9 +292,9 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                             {/* Right Column */}
                             <View style={styles.rightColumn}>
                                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.currentCity}</Text>
-                                <Text style={[styles.text, styles.rowItem, { textTransform: "none" }]}>{item?.personalDetails?.occupation}</Text>
-                                <Text style={[styles.text, styles.rowItem, { textTransform: "none" }]}>{item?.personalDetails?.annualIncome}</Text>
-                                <Text style={[styles.text, styles.rowItem, { textTransform: "none" }]}>{item?.personalDetails?.qualification}</Text>
+                                <Text style={[styles.text, styles.rowItem, { textTransform: 'none' }]}>{item?.personalDetails?.occupation}</Text>
+                                <Text style={[styles.text, styles.rowItem, { textTransform: 'none' }]}>{item?.personalDetails?.annualIncome}</Text>
+                                <Text style={[styles.text, styles.rowItem, { textTransform: 'none' }]}>{item?.personalDetails?.qualification}</Text>
                             </View>
                         </View>
                     </View>
@@ -302,11 +302,11 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                 <View style={[styles.sharecontainer, { paddingHorizontal: SW(20) }]}>
                     <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
                         <FontAwesome
-                            name={Save ? "bookmark" : "bookmark-o"}
+                            name={Save ? 'bookmark' : 'bookmark-o'}
                             size={19}
                             color={Colors.dark}
                         />
-                        <Text style={styles.iconText}>{Save ? "Saved" : "Save"}</Text>
+                        <Text style={styles.iconText}>{Save ? 'Saved' : 'Save'}</Text>
                     </TouchableOpacity>
 
                     {/* <TouchableOpacity style={styles.iconContainer} onPress={() => shareProfiles(item?._id)}>
@@ -334,7 +334,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                 <View style={styles.headerContainer}>
                     <TouchableOpacity onPress={() => navigation.reset({
                         index: 0,
-                        routes: [{ name: "MainApp" }],
+                        routes: [{ name: 'MainApp' }],
                     })}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>

@@ -1,13 +1,13 @@
 
-import { StyleSheet } from "react-native";
-import Colors from "../../utils/Colors";
-import { SW, SH, SF } from "../../utils/Dimensions";
+import { StyleSheet } from 'react-native';
+import Colors from '../../utils/Colors';
+import { SW, SH, SF } from '../../utils/Dimensions';
 
 const styles = StyleSheet.create({
 
   label: {
     fontSize: SF(16),
-    fontFamily: "Poppins-Bold",
+    fontFamily: 'Poppins-Bold',
     color: Colors.dark,
     marginBottom: SH(10),
   },
@@ -46,23 +46,23 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     marginHorizontal: SW(20),
-    marginVertical: SH(50)
+    marginVertical: SH(50),
   },
   submitButtonText: {
     color: Colors.light,
     fontSize: SF(14),
-    fontFamily: "Poppins-Bold"
+    fontFamily: 'Poppins-Bold',
   },
   contentContainer: {
     marginHorizontal: SW(5),
     marginVertical: SH(5),
     paddingVertical: SH(5),
-    paddingHorizontal: SW(5)
+    paddingHorizontal: SW(5),
   },
   errorText: {
     color: 'red',
     fontSize: SF(13),
-    fontFamily: "Poppins-Regular"
+    fontFamily: 'Poppins-Regular',
 },
 });
 

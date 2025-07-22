@@ -1,17 +1,17 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, SafeAreaView, ScrollView, StatusBar, FlatList, KeyboardAvoidingView } from "react-native";
-import React, { useState } from "react";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import moment from "moment";
-import Colors from "../../utils/Colors";
-import Globalstyles from "../../utils/GlobalCss";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import { SH, SW, SF } from "../../utils/Dimensions";
-import { UPDATE_PROFILE } from "../../utils/BaseUrl";
-import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useSelector } from "react-redux";
-import { showMessage } from "react-native-flash-message";
-import { CityData } from "../../DummyData/DropdownData";
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, SafeAreaView, ScrollView, StatusBar, FlatList, KeyboardAvoidingView } from 'react-native';
+import React, { useState } from 'react';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import moment from 'moment';
+import Colors from '../../utils/Colors';
+import Globalstyles from '../../utils/GlobalCss';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { SH, SW, SF } from '../../utils/Dimensions';
+import { UPDATE_PROFILE } from '../../utils/BaseUrl';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSelector } from 'react-redux';
+import { showMessage } from 'react-native-flash-message';
+import { CityData } from '../../DummyData/DropdownData';
 // import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -20,13 +20,13 @@ const UpdateProfile = ({ navigation }) => {
   const insets = useSafeAreaInsets();
   const ProfileData = useSelector((state) => state.profile);
   const profileData = ProfileData?.profiledata || {};
-  const [username, setUsername] = useState(profileData.username || "");
-  const [mobileNo, setMobileNo] = useState(profileData.mobileNo || "");
+  const [username, setUsername] = useState(profileData.username || '');
+  const [mobileNo, setMobileNo] = useState(profileData.mobileNo || '');
   const [dob, setDob] = useState(profileData.dob ? new Date(profileData.dob) : new Date());
-  const [gender, setGender] = useState(profileData.gender || "");
+  const [gender, setGender] = useState(profileData.gender || '');
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const [city, setCity] = useState(profileData.city || "");
+  const [city, setCity] = useState(profileData.city || '');
   const [filteredCities, setFilteredCities] = useState([]);
 
   const handleCityInputChange = (text) => {
@@ -50,11 +50,11 @@ const UpdateProfile = ({ navigation }) => {
 
   const update_profile = async () => {
     try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("Authorization token is missing.");
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {throw new Error('Authorization token is missing.');}
 
       const headers = {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       };
 
@@ -65,50 +65,50 @@ const UpdateProfile = ({ navigation }) => {
         gender,
       };
 
-      console.log("🔹 Sending Profile Update Request to:", UPDATE_PROFILE);
-      console.log("🔹 Payload:", payload);
+      console.log('🔹 Sending Profile Update Request to:', UPDATE_PROFILE);
+      console.log('🔹 Payload:', payload);
 
       const response = await axios.put(UPDATE_PROFILE, payload, { headers });
 
-      console.log("✅ Profile Update Response:", JSON.stringify(response.data));
+      console.log('✅ Profile Update Response:', JSON.stringify(response.data));
 
       if (response.status === 200 || response.data.status === true) {
         showMessage({
-          type: "success",
-          message: "Success",
-          description: "Profile Updated Successfully!",
-          icon: "none",
-          duarion: 5000
+          type: 'success',
+          message: 'Success',
+          description: 'Profile Updated Successfully!',
+          icon: 'none',
+          duarion: 5000,
         });
-        navigation.navigate("MainApp", {
-          screen: "Tabs",
+        navigation.navigate('MainApp', {
+          screen: 'Tabs',
           params: {
-            screen: "MyProfile",
+            screen: 'MyProfile',
           },
         });
       } else {
-        throw new Error(response.data.message || "Your profile has been updated, but there was an issue.");
+        throw new Error(response.data.message || 'Your profile has been updated, but there was an issue.');
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching biodata:", errorMsg);
+      console.error('Error fetching biodata:', errorMsg);
       showMessage({
-        type: "danger",
+        type: 'danger',
         message: errorMsg,
-        icon: "danger",
-        duarion: 5000
+        icon: 'danger',
+        duarion: 5000,
       });
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
 
@@ -117,8 +117,8 @@ const UpdateProfile = ({ navigation }) => {
 
   const handleDateChange = (event, selectedDate) => {
     setShowDatePicker(false);
-    if (event.type === "set" && selectedDate) {
-      const formattedDate = moment(selectedDate).format("YYYY-MM-DD");
+    if (event.type === 'set' && selectedDate) {
+      const formattedDate = moment(selectedDate).format('YYYY-MM-DD');
       setDob(formattedDate);
     }
   };
@@ -156,7 +156,7 @@ const UpdateProfile = ({ navigation }) => {
 
           <Text style={Globalstyles.title}>Date of Birth</Text>
           <TouchableOpacity onPress={() => setShowDatePicker(true)} style={Globalstyles.input}>
-            <Text style={styles.dateText}>{moment(dob).format("DD MMMM YYYY")}</Text>
+            <Text style={styles.dateText}>{moment(dob).format('DD MMMM YYYY')}</Text>
           </TouchableOpacity>
           {showDatePicker && (
             <DateTimePicker
@@ -195,21 +195,21 @@ const UpdateProfile = ({ navigation }) => {
           <Text style={Globalstyles.title}>Gender</Text>
           <View style={styles.genderContainer}>
             <TouchableOpacity
-              style={[styles.genderButton, gender === "male" && styles.selectedGender]}
-              onPress={() => setGender("male")}
+              style={[styles.genderButton, gender === 'male' && styles.selectedGender]}
+              onPress={() => setGender('male')}
             >
               <Text
-                style={[styles.genderText, gender === "male" && styles.selectedGenderText]}
+                style={[styles.genderText, gender === 'male' && styles.selectedGenderText]}
               >
                 Male
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.genderButton, gender === "female" && styles.selectedGender]}
-              onPress={() => setGender("female")}
+              style={[styles.genderButton, gender === 'female' && styles.selectedGender]}
+              onPress={() => setGender('female')}
             >
               <Text
-                style={[styles.genderText, gender === "female" && styles.selectedGenderText]}
+                style={[styles.genderText, gender === 'female' && styles.selectedGenderText]}
               >
                 Female
               </Text>
@@ -230,20 +230,20 @@ export default UpdateProfile;
 const styles = StyleSheet.create({
 
   headerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 
   dateText: {
     fontSize: 14,
     color: Colors.dark_gray,
-    paddingTop: SH(8)
+    paddingTop: SH(8),
   },
   genderContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginVertical: SH(20),
-    marginRight: SW(100)
+    marginRight: SW(100),
   },
   genderButton: {
     flex: 1,
@@ -270,12 +270,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: 'center',
     marginTop: SH(20),
-    marginBottom: SH(80)
+    marginBottom: SH(80),
   },
   updateButtonText: {
     color: Colors.light,
     fontSize: SF(15),
     fontWeight: 'Poppins-Bold',
-    textTransform: "capitalize"
+    textTransform: 'capitalize',
   },
 });

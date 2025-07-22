@@ -1,5 +1,5 @@
-import { Text, View, TouchableOpacity, Image, TextInput, SafeAreaView, StatusBar, ScrollView, ActivityIndicator } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import { Text, View, TouchableOpacity, Image, TextInput, SafeAreaView, StatusBar, ScrollView, ActivityIndicator, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from '../StyleScreens/CreatePostStyle';
@@ -35,7 +35,7 @@ const UpdateEventPost = ({ navigation, route }) => {
 
     const handleImageUpload = () => {
         launchImageLibrary(pickerOptions, (response) => {
-            if (response.didCancel) return;
+            if (response.didCancel) {return;}
 
             if (response.errorCode) {
                 console.log('ImagePicker Error:', response.errorMessage);
@@ -60,10 +60,10 @@ const UpdateEventPost = ({ navigation, route }) => {
 
     const convertToBase64 = async (imageUri) => {
         try {
-            if (!imageUri) return null;
+            if (!imageUri) {return null;}
 
             // If already in Base64 format, return directly ✅
-            if (imageUri.startsWith("data:image")) {
+            if (imageUri.startsWith('data:image')) {
                 return imageUri;
             }
 
@@ -71,21 +71,21 @@ const UpdateEventPost = ({ navigation, route }) => {
             const response = await fetch(imageUri);
             const blob = await response.blob();
 
-            const mimeType = blob.type || "image/jpeg"; // Default JPEG ✅
+            const mimeType = blob.type || 'image/jpeg'; // Default JPEG ✅
 
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onloadend = () => {
                     if (reader.result) {
-                        resolve(`data:${mimeType};base64,${reader.result.split(",")[1]}`);
+                        resolve(`data:${mimeType};base64,${reader.result.split(',')[1]}`);
                     } else {
-                        reject("Error reading Base64 data.");
+                        reject('Error reading Base64 data.');
                     }
                 };
                 reader.readAsDataURL(blob);
             });
         } catch (error) {
-            console.error("Error converting image to Base64:", error);
+            console.error('Error converting image to Base64:', error);
             return null;
         }
     };
@@ -95,11 +95,11 @@ const UpdateEventPost = ({ navigation, route }) => {
         try {
             setLoading(true);
 
-            const token = await AsyncStorage.getItem("userToken");
-            if (!token) throw new Error("No token found");
+            const token = await AsyncStorage.getItem('userToken');
+            if (!token) {throw new Error('No token found');}
 
             if (!eventData?._id) {
-                throw new Error("Event ID is missing, update cannot proceed.");
+                throw new Error('Event ID is missing, update cannot proceed.');
             }
 
             // Convert images to Base64 format before sending
@@ -115,57 +115,57 @@ const UpdateEventPost = ({ navigation, route }) => {
             };
 
             const headers = {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             };
 
-            console.log("🔹 API Request to:", UPDATE_EVENT_NEWS);
-            console.log("🔹 Payload:", JSON.stringify(payload));
+            console.log('🔹 API Request to:', UPDATE_EVENT_NEWS);
+            console.log('🔹 Payload:', JSON.stringify(payload));
 
             const response = await axios.patch(UPDATE_EVENT_NEWS, payload, { headers });
 
-            console.log("✅ Event Updated Response:", JSON.stringify(response.data));
+            console.log('✅ Event Updated Response:', JSON.stringify(response.data));
 
             if (response.status === 200 && response.data.status === true) {
                 showMessage({
-                    type: "success",
-                    message: "Success",
-                    description: response.data.message || "Event updated successfully!",
-                    icon: "success",
-                    duarion: 5000
+                    type: 'success',
+                    message: 'Success',
+                    description: response.data.message || 'Event updated successfully!',
+                    icon: 'success',
+                    duarion: 5000,
                 });
 
                 if (navigation && navigation.replace) {
-                    navigation.replace("ViewMyEventPost");
+                    navigation.replace('ViewMyEventPost');
                 } else {
-                    console.warn("⚠️ Navigation is not available");
+                    console.warn('⚠️ Navigation is not available');
                 }
 
                 // setTimeout(() => navigation.navigate("EventNews"), 2000);
                 return;
             }
 
-            throw new Error(response.data.message || "Something went wrong");
+            throw new Error(response.data.message || 'Something went wrong');
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error fetching biodata:", errorMsg);
+            console.error('Error fetching biodata:', errorMsg);
             showMessage({
-                type: "danger",
+                type: 'danger',
                 message: errorMsg,
-                icon: "danger",
-                duarion: 5000
+                icon: 'danger',
+                duarion: 5000,
             });
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
         } finally {
@@ -183,7 +183,7 @@ const UpdateEventPost = ({ navigation, route }) => {
             />
 
             <View style={Globalstyles.header}>
-                <View style={{ flexDirection: 'row', alignItems: "center" }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
@@ -210,9 +210,9 @@ const UpdateEventPost = ({ navigation, route }) => {
                 /> */}
                 <TextInput
                     style={Globalstyles.textInput}
-                    placeholder='What’s on your mind?'
+                    placeholder="What’s on your mind?"
                     placeholderTextColor={Colors.gray}
-                    textAlignVertical='top'
+                    textAlignVertical="top"
                     multiline={true}
                     value={eventData?.description}
                     onChangeText={(text) => setEventData((prev) => ({ ...prev, description: text }))}
@@ -233,19 +233,23 @@ const UpdateEventPost = ({ navigation, route }) => {
             {(photos.length > 0 || eventData?.images?.length > 0) && (
                 <View style={styles.photosContainer}>
                     <Text style={Globalstyles.title}>Uploaded Photos:</Text>
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            {(photos.length > 0 ? photos : eventData?.images)?.map((photo, index) => (
-                                <Image
-                                    key={index}
-                                    source={{ uri: photo }}
-                                    style={styles.photo}
-                                />
-                            ))}
-                        </View>
-                    </ScrollView>
+
+                    <FlatList
+                        data={photos.length > 0 ? photos : eventData?.images || []}
+                        keyExtractor={(_, index) => index.toString()}
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        renderItem={({ item }) => (
+                            <Image
+                                source={{ uri: item }}
+                                style={styles.photo}
+                            />
+                        )}
+                        contentContainerStyle={{ alignItems: 'center' }}
+                    />
                 </View>
             )}
+
 
             <TouchableOpacity
                 style={styles.PostButton}
@@ -262,4 +266,4 @@ const UpdateEventPost = ({ navigation, route }) => {
     );
 };
 
-export default UpdateEventPost
+export default UpdateEventPost;

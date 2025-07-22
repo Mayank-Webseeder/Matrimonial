@@ -60,7 +60,7 @@ const ProfileDetail = ({ route, navigation }) => {
     };
 
     useEffect(() => {
-        if (!formattedImages || formattedImages.length === 0 || !topSliderRef.current) return;
+        if (!formattedImages || formattedImages.length === 0 || !topSliderRef.current) {return;}
 
         const duration = (formattedImages[currentIndex]?.duration || 4) * 1000;
 
@@ -94,7 +94,7 @@ const ProfileDetail = ({ route, navigation }) => {
     const profile_data = ProfileData?.profiledata || {};
 
     const isBiodataExpired = profile_data?.serviceSubscriptions?.some(
-        (sub) => sub.serviceType === "Biodata" && sub.status === "Expired"
+        (sub) => sub.serviceType === 'Biodata' && sub.status === 'Expired'
     );
 
     const panditStatus = profile_data?.serviceSubscriptions?.find(
@@ -112,7 +112,7 @@ const ProfileDetail = ({ route, navigation }) => {
     const formattedImages = [
         profileData?.personalDetails?.closeUpPhoto,
         profileData?.personalDetails?.fullPhoto,
-        profileData?.personalDetails?.bestPhoto
+        profileData?.personalDetails?.bestPhoto,
     ]
         .filter(Boolean)
         .map((url) => ({ uri: url }));
@@ -180,23 +180,23 @@ const ProfileDetail = ({ route, navigation }) => {
             if (response.data && Object.keys(response.data).length > 0) {
                 setProfileData(response.data.data);
             } else {
-                console.warn("Empty response received.");
+                console.warn('Empty response received.');
             }
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error fetching detials :", errorMsg);
+            console.error('Error fetching detials :', errorMsg);
 
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
         }
@@ -213,12 +213,12 @@ const ProfileDetail = ({ route, navigation }) => {
             }
             );
             const trials = response.data.trials;
-            console.log("trials", JSON.stringify(trials))
+            console.log('trials', JSON.stringify(trials));
 
             if (!trials || trials.length === 0) {
                 return {
                     isTrialActive: false,
-                    trials: []
+                    trials: [],
                 };
             }
 
@@ -233,20 +233,20 @@ const ProfileDetail = ({ route, navigation }) => {
 
             return {
                 isTrialActive: updatedTrials.some(t => t.isActive),
-                trials: updatedTrials
+                trials: updatedTrials,
             };
         } catch (error) {
             console.error(error);
             return {
                 isTrialActive: false,
-                trials: []
+                trials: [],
             };
         }
     };
 
     if (loading) {
         return (
-            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <ActivityIndicator size="large" color={Colors.theme_color} />
             </View>
         );
@@ -257,17 +257,17 @@ const ProfileDetail = ({ route, navigation }) => {
     }
 
     const calculateAge = (dob) => {
-        if (!dob) return "N/A";
+        if (!dob) {return 'N/A';}
         const birthDate = moment(dob);
         const currentDate = moment();
-        return currentDate.diff(birthDate, "years");
+        return currentDate.diff(birthDate, 'years');
     };
 
     const openLink = (url, platform) => {
         if (url) {
             Linking.openURL(url);
         } else {
-            Alert.alert("Not Available", `${platform} link is not available.`);
+            Alert.alert('Not Available', `${platform} link is not available.`);
         }
     };
 
@@ -277,7 +277,7 @@ const ProfileDetail = ({ route, navigation }) => {
             message: message,
             duarion: 5000,
             autoHide: true,
-            icon: "info"
+            icon: 'info',
         });
     };
 
@@ -313,15 +313,15 @@ const ProfileDetail = ({ route, navigation }) => {
 
 
     const formattedHeight = profileData?.personalDetails?.heightFeet
-        ?.replace(/\s*-\s*/, "")
-        ?.replace(/\s+/g, "");
+        ?.replace(/\s*-\s*/, '')
+        ?.replace(/\s+/g, '');
 
     const Repost = async () => {
         setPostLoading(true);
 
         const token = await AsyncStorage.getItem('userToken');
         if (!token) {
-            Alert.alert("Error", "No token found!");
+            Alert.alert('Error', 'No token found!');
             setPostLoading(false);
             return;
         }
@@ -334,29 +334,29 @@ const ProfileDetail = ({ route, navigation }) => {
         try {
             const response = await axios.post(REPOST, {}, { headers });
 
-            console.log("✅ Repost Data:", response.data);
+            console.log('✅ Repost Data:', response.data);
 
             if (response.status === 200 && response.data.status === true) {
-                Alert.alert("Success", response.data.message || 'Reposted successfully!');
+                Alert.alert('Success', response.data.message || 'Reposted successfully!');
                 fetchData();
             } else {
                 throw new Error(response.data.message || 'Something went wrong!');
             }
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error fetching biodata:", errorMsg);
-            Alert.alert("Info", errorMsg);
+            console.error('Error fetching biodata:', errorMsg);
+            Alert.alert('Info', errorMsg);
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
         } finally {
@@ -367,10 +367,10 @@ const ProfileDetail = ({ route, navigation }) => {
 
     const getDatesForService = (trialData, serviceType) => {
         const trial = trialData.find(t => t.serviceType.toLowerCase() === serviceType.toLowerCase());
-        if (!trial) return null;
+        if (!trial) {return null;}
         return {
-            startDate: moment(trial.startDate).format("DD MMM YYYY"),
-            endDate: moment(trial.endDate).format("DD MMM YYYY"),
+            startDate: moment(trial.startDate).format('DD MMM YYYY'),
+            endDate: moment(trial.endDate).format('DD MMM YYYY'),
         };
     };
 
@@ -383,9 +383,9 @@ const ProfileDetail = ({ route, navigation }) => {
     return (
         <View style={Globalstyles.container} edges={['top', 'bottom']}>
             <View style={Globalstyles.header}>
-                <View style={{ flex: 1, flexDirection: 'row', alignContent: "center" }}>
+                <View style={{ flexDirection: 'row',alignItems: 'center' }}>
                     <TouchableOpacity
-                        onPress={() => navigation.navigate("MainApp")}
+                        onPress={() => navigation.navigate('MainApp')}
                     >
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
@@ -419,16 +419,16 @@ const ProfileDetail = ({ route, navigation }) => {
                                         saveToLocalByLongPress={false}
                                         renderIndicator={(currentIndex, allSize) => (
                                             <View style={{
-                                                position: "absolute",
+                                                position: 'absolute',
                                                 top: SH(30),
-                                                alignSelf: "center",
-                                                backgroundColor: "rgba(0,0,0,0.6)",
+                                                alignSelf: 'center',
+                                                backgroundColor: 'rgba(0,0,0,0.6)',
                                                 paddingHorizontal: SW(8),
                                                 borderRadius: 5,
                                                 paddingVertical: SH(8),
-                                                zIndex: 999
+                                                zIndex: 999,
                                             }}>
-                                                <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>
+                                                <Text style={{ color: 'white', fontSize: SF(16), fontWeight: 'bold' }}>
                                                     {currentIndex} / {allSize}
                                                 </Text>
                                             </View>
@@ -447,12 +447,12 @@ const ProfileDetail = ({ route, navigation }) => {
                             </View>
 
                             <View>
-                                <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+                                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                                     <View>
                                         {isBiodataExpired ? (
                                             <TouchableOpacity
                                                 style={styles.editButton}
-                                                onPress={() => navigation.navigate("BuySubscription", { serviceType: profileType })}
+                                                onPress={() => navigation.navigate('BuySubscription', { serviceType: profileType })}
                                             >
                                                 <Text style={[styles.editButtonText, { color: Colors.light }]}>Buy Subscription</Text>
                                             </TouchableOpacity>
@@ -464,15 +464,15 @@ const ProfileDetail = ({ route, navigation }) => {
                                             </TouchableOpacity>
                                         )}
                                     </View>
-                                    <View style={{ display: "flex", flexDirection: "row", alignItems: "center", alignSelf: "flex-end", }}>
+                                    <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-end' }}>
                                         <Text
                                             style={[
                                                 styles.RepostText,
-                                                { backgroundColor: profileData?.repostStatus === "Yes" ? "red" : "green" }
+                                                { backgroundColor: profileData?.repostStatus === 'Yes' ? 'red' : 'green' },
                                             ]}
                                             onPress={() => !postloading && Repost()}
                                         >
-                                            {postloading ? <ActivityIndicator color="white" /> : "Repost"}
+                                            {postloading ? <ActivityIndicator color="white" /> : 'Repost'}
                                         </Text>
 
                                         <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('MatrimonyPage', { profileData })}>
@@ -517,13 +517,13 @@ const ProfileDetail = ({ route, navigation }) => {
                                                 <Text style={styles.text}>{profileData?.personalDetails?.currentCity}</Text>
                                             )}
                                             {profileData?.personalDetails?.occupation && (
-                                                <Text style={[styles.text, { textTransform: "none" }]}>{profileData?.personalDetails?.occupation}</Text>
+                                                <Text style={[styles.text, { textTransform: 'none' }]}>{profileData?.personalDetails?.occupation}</Text>
                                             )}
                                             {profileData?.personalDetails?.annualIncome && (
-                                                <Text style={[styles.text, { textTransform: "none" }]}>{profileData?.personalDetails?.annualIncome}</Text>
+                                                <Text style={[styles.text, { textTransform: 'none' }]}>{profileData?.personalDetails?.annualIncome}</Text>
                                             )}
                                             {profileData?.personalDetails?.qualification && (
-                                                <Text style={[styles.text, { textTransform: "none" }]}>{profileData?.personalDetails?.qualification}</Text>
+                                                <Text style={[styles.text, { textTransform: 'none' }]}>{profileData?.personalDetails?.qualification}</Text>
                                             )}
                                         </View>
                                     </View>
@@ -540,7 +540,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                                 {/* Displaying Date of Birth and Time of Birth */}
                                                 <View style={styles.infoRow}>
                                                     <Text style={styles.infoLabel}>DOB :</Text>
-                                                    <Text style={styles.infoValue}>{moment(personalDetails.dob).format("DD-MM-YYYY")} / Time: {personalDetails?.timeOfBirth}</Text>
+                                                    <Text style={styles.infoValue}>{moment(personalDetails.dob).format('DD-MM-YYYY')} / Time: {personalDetails?.timeOfBirth}</Text>
                                                 </View>
 
                                                 {/* Displaying Place of Birth */}
@@ -602,7 +602,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                         <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>About Me</Text>
                                     </View>
 
-                                    {personalDetails?.aboutMe?.trim() !== "" && (
+                                    {personalDetails?.aboutMe?.trim() !== '' && (
                                         <Text style={styles.text}>{personalDetails?.aboutMe}</Text>
                                     )}
 
@@ -921,7 +921,7 @@ const ProfileDetail = ({ route, navigation }) => {
 
                         </>
                     )}
-                    {profileType === "Pandit" && (
+                    {profileType === 'Pandit' && (
                         <ScrollView showsVerticalScrollIndicator={false}>
                             <View>
                                 <View style={styles.profileSection}>
@@ -951,7 +951,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                         <Text style={styles.name} numberOfLines={2}>{profileData?.fullName}</Text>
 
                                         <View style={styles.FlexContainer}>
-                                            <Text style={[styles.city, { fontFamily: "Poppins-Bold" }]}>{profileData?.city}</Text>
+                                            <Text style={[styles.city, { fontFamily: 'Poppins-Bold' }]}>{profileData?.city}</Text>
                                             <Text style={styles.city}>{profileData?.state}</Text>
                                         </View>
 
@@ -970,13 +970,13 @@ const ProfileDetail = ({ route, navigation }) => {
                                                 readonly
                                             />
                                             <Text style={styles.rating}>
-                                                {profileData?.ratings?.length > 0 ? `${profileData?.ratings?.length} Reviews` : "No Ratings Yet"}
+                                                {profileData?.ratings?.length > 0 ? `${profileData?.ratings?.length} Reviews` : 'No Ratings Yet'}
                                             </Text>
                                         </View>
                                     </View>
                                 </View>
                                 <View style={styles.contentContainer}>
-                                    <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: SH(5) }}>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: SH(5) }}>
                                         {panditStatus === 'Expired' ? (
                                             <TouchableOpacity
                                                 style={styles.editButton}
@@ -991,7 +991,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                                 style={[styles.editButton, { backgroundColor: '#c4f2e4' }]}
                                                 disabled={true}
                                             >
-                                                <Text style={[styles.editButtonText, { color: "red" }]}>Subscription Pending</Text>
+                                                <Text style={[styles.editButtonText, { color: 'red' }]}>Subscription Pending</Text>
                                             </TouchableOpacity>
                                         ) : (
                                             <TouchableOpacity disabled={true}>
@@ -1048,25 +1048,25 @@ const ProfileDetail = ({ route, navigation }) => {
 
                                     </View>
                                     <View>
-                                        <Text style={[styles.sectionTitle, { textAlign: "center" }]}>Reviews</Text>
+                                        <Text style={[styles.sectionTitle, { textAlign: 'center' }]}>Reviews</Text>
 
                                         {profileData?.ratings?.length > 0 ? (
                                             <>
                                                 {profileData?.ratings?.slice(0, 2).map((review, index) => (
-                                                    <View key={review._id || index} style={[styles.reviewContainer, { marginHorizontal: 0, width: "100%" }]}>
-                                                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                                                    <View key={review._id || index} style={[styles.reviewContainer, { marginHorizontal: 0, width: '100%' }]}>
+                                                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                                             <View>
                                                                 <Image
                                                                     source={review?.userId?.photoUrl[0]
                                                                         ? { uri: review?.userId?.photoUrl[0] }
-                                                                        : require("../../Images/NoImage.png") // Fallback image
+                                                                        : require('../../Images/NoImage.png') // Fallback image
                                                                     }
                                                                     style={{ width: SW(50), height: SH(50), borderRadius: 50 }}
                                                                     resizeMode="cover"
                                                                 />
                                                             </View>
                                                             <View style={{ flex: 1, marginHorizontal: SW(10) }}>
-                                                                <Text style={styles.reviewName}>{review?.userId?.username || "Unknown"}</Text>
+                                                                <Text style={styles.reviewName}>{review?.userId?.username || 'Unknown'}</Text>
                                                                 <View style={styles.reviewRating}>
                                                                     <Rating
                                                                         type="star"
@@ -1079,12 +1079,12 @@ const ProfileDetail = ({ route, navigation }) => {
                                                                 <Text style={styles.reviewText}>{review?.review}</Text>
 
                                                             </View>
-                                                            <View style={{ alignSelf: "flex-end" }}>
+                                                            <View style={{ alignSelf: 'flex-end' }}>
                                                                 <Text style={styles.reviewDate}>
-                                                                    {moment(review.createdAt).format("DD-MM-YYYY")}
+                                                                    {moment(review.createdAt).format('DD-MM-YYYY')}
                                                                 </Text>
                                                                 <Text style={styles.reviewDate}>
-                                                                    {moment(review.createdAt).format("hh:mm A")}
+                                                                    {moment(review.createdAt).format('hh:mm A')}
                                                                 </Text>
 
                                                             </View>
@@ -1114,23 +1114,23 @@ const ProfileDetail = ({ route, navigation }) => {
                                     {renderImages(images)}
                                 </View>
                                 <View style={styles.socialIcons}>
-                                    <TouchableOpacity onPress={() => profileData?.websiteUrl ? openLink(profileData.websiteUrl, "Website") : showMessages("Website link not available")}>
+                                    <TouchableOpacity onPress={() => profileData?.websiteUrl ? openLink(profileData.websiteUrl, 'Website') : showMessages('Website link not available')}>
                                         <Image source={require('../../Images/website.png')} style={styles.websiteIcon} />
                                     </TouchableOpacity>
 
-                                    <TouchableOpacity onPress={() => profileData?.youtubeUrl ? openLink(profileData.youtubeUrl, "YouTube") : showMessages("YouTube link not available")}>
+                                    <TouchableOpacity onPress={() => profileData?.youtubeUrl ? openLink(profileData.youtubeUrl, 'YouTube') : showMessages('YouTube link not available')}>
                                         <MaterialCommunityIcons name="youtube" size={30} color="#FF0000" />
                                     </TouchableOpacity>
 
-                                    <TouchableOpacity onPress={() => profileData?.whatsapp ? openLink(profileData.whatsapp, "WhatsApp") : showMessages("WhatsApp link not available")}>
+                                    <TouchableOpacity onPress={() => profileData?.whatsapp ? openLink(profileData.whatsapp, 'WhatsApp') : showMessages('WhatsApp link not available')}>
                                         <FontAwesome5 name="whatsapp" size={30} color="#25D366" />
                                     </TouchableOpacity>
 
-                                    <TouchableOpacity onPress={() => profileData?.facebookUrl ? openLink(profileData.facebookUrl, "Facebook") : showMessages("Facebook link not available")}>
+                                    <TouchableOpacity onPress={() => profileData?.facebookUrl ? openLink(profileData.facebookUrl, 'Facebook') : showMessages('Facebook link not available')}>
                                         <FontAwesome5 name="facebook" size={30} color="#3b5998" />
                                     </TouchableOpacity>
 
-                                    <TouchableOpacity onPress={() => profileData?.instagramUrl ? openLink(profileData.instagramUrl, "Instagram") : showMessages("Instagram link not available")}>
+                                    <TouchableOpacity onPress={() => profileData?.instagramUrl ? openLink(profileData.instagramUrl, 'Instagram') : showMessages('Instagram link not available')}>
                                         <FontAwesome5 name="instagram" size={30} color="#E4405F" />
                                     </TouchableOpacity>
                                 </View>
@@ -1202,7 +1202,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                         <Text style={styles.name} numberOfLines={2}>{profileData?.fullName}</Text>
 
                                         <View style={styles.FlexContainer}>
-                                            <Text style={[styles.city, { fontFamily: "Poppins-Bold" }]}>{profileData?.city}</Text>
+                                            <Text style={[styles.city, { fontFamily: 'Poppins-Bold' }]}>{profileData?.city}</Text>
                                             <Text style={styles.city}>{profileData?.state}</Text>
                                         </View>
 
@@ -1215,14 +1215,14 @@ const ProfileDetail = ({ route, navigation }) => {
                                                 readonly
                                             />
                                             <Text style={styles.rating}>
-                                                {profileData?.ratings?.length > 0 ? `${profileData?.ratings?.length} Reviews` : "No Ratings Yet"}
+                                                {profileData?.ratings?.length > 0 ? `${profileData?.ratings?.length} Reviews` : 'No Ratings Yet'}
                                             </Text>
                                         </View>
                                         <Text style={styles.text} numberOfLines={1}>{profileData?.residentialAddress}</Text>
                                     </View>
                                 </View>
                                 <View style={styles.contentContainer}>
-                                    <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: SH(5) }}>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: SH(5) }}>
                                         {KathavachakStatus === 'Expired' ? (
                                             <TouchableOpacity
                                                 style={styles.editButton}
@@ -1235,7 +1235,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                                 style={[styles.editButton, { backgroundColor: '#c4f2e4' }]}
                                                 disabled={true}
                                             >
-                                                <Text style={[styles.editButtonText, { color: "red" }]}>Subscription Pending</Text>
+                                                <Text style={[styles.editButtonText, { color: 'red' }]}>Subscription Pending</Text>
                                             </TouchableOpacity>
                                         ) : (
                                             <TouchableOpacity disabled={true}>
@@ -1294,25 +1294,25 @@ const ProfileDetail = ({ route, navigation }) => {
 
                                     </View>
                                     <View>
-                                        <Text style={[styles.sectionTitle, { textAlign: "center" }]}>Reviews</Text>
+                                        <Text style={[styles.sectionTitle, { textAlign: 'center' }]}>Reviews</Text>
 
                                         {profileData?.ratings?.length > 0 ? (
                                             <>
                                                 {profileData?.ratings?.slice(0, 2).map((review, index) => (
-                                                    <View key={review._id || index} style={[styles.reviewContainer, { marginHorizontal: 0, width: "100%" }]}>
-                                                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                                                    <View key={review._id || index} style={[styles.reviewContainer, { marginHorizontal: 0, width: '100%' }]}>
+                                                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                                             <View>
                                                                 <Image
                                                                     source={review?.userId?.photoUrl[0]
                                                                         ? { uri: review?.userId?.photoUrl[0] }
-                                                                        : require("../../Images/NoImage.png") // Fallback image
+                                                                        : require('../../Images/NoImage.png') // Fallback image
                                                                     }
                                                                     style={{ width: SW(50), height: SH(50), borderRadius: 50 }}
                                                                     resizeMode="cover"
                                                                 />
                                                             </View>
                                                             <View style={{ flex: 1, marginHorizontal: SW(10) }}>
-                                                                <Text style={styles.reviewName}>{review?.userId?.username || "Unknown"}</Text>
+                                                                <Text style={styles.reviewName}>{review?.userId?.username || 'Unknown'}</Text>
                                                                 <View style={styles.reviewRating}>
                                                                     <Rating
                                                                         type="star"
@@ -1325,12 +1325,12 @@ const ProfileDetail = ({ route, navigation }) => {
                                                                 <Text style={styles.reviewText}>{review?.review}</Text>
 
                                                             </View>
-                                                            <View style={{ alignSelf: "flex-end" }}>
+                                                            <View style={{ alignSelf: 'flex-end' }}>
                                                                 <Text style={styles.reviewDate}>
-                                                                    {moment(review.createdAt).format("DD-MM-YYYY")}
+                                                                    {moment(review.createdAt).format('DD-MM-YYYY')}
                                                                 </Text>
                                                                 <Text style={styles.reviewDate}>
-                                                                    {moment(review.createdAt).format("hh:mm A")}
+                                                                    {moment(review.createdAt).format('hh:mm A')}
                                                                 </Text>
 
                                                             </View>
@@ -1359,23 +1359,23 @@ const ProfileDetail = ({ route, navigation }) => {
                                     {renderImages(images)}
                                 </View>
                                 <View style={styles.socialIcons}>
-                                    <TouchableOpacity onPress={() => profileData?.websiteUrl ? openLink(profileData.websiteUrl, "Website") : showMessages("Website link not available")}>
+                                    <TouchableOpacity onPress={() => profileData?.websiteUrl ? openLink(profileData.websiteUrl, 'Website') : showMessages('Website link not available')}>
                                         <Image source={require('../../Images/website.png')} style={styles.websiteIcon} />
                                     </TouchableOpacity>
 
-                                    <TouchableOpacity onPress={() => profileData?.youtubeUrl ? openLink(profileData.youtubeUrl, "YouTube") : showMessages("YouTube link not available")}>
+                                    <TouchableOpacity onPress={() => profileData?.youtubeUrl ? openLink(profileData.youtubeUrl, 'YouTube') : showMessages('YouTube link not available')}>
                                         <MaterialCommunityIcons name="youtube" size={30} color="#FF0000" />
                                     </TouchableOpacity>
 
-                                    <TouchableOpacity onPress={() => profileData?.whatsapp ? openLink(profileData.whatsapp, "WhatsApp") : showMessages("WhatsApp link not available")}>
+                                    <TouchableOpacity onPress={() => profileData?.whatsapp ? openLink(profileData.whatsapp, 'WhatsApp') : showMessages('WhatsApp link not available')}>
                                         <FontAwesome5 name="whatsapp" size={30} color="#25D366" />
                                     </TouchableOpacity>
 
-                                    <TouchableOpacity onPress={() => profileData?.facebookUrl ? openLink(profileData.facebookUrl, "Facebook") : showMessages("Facebook link not available")}>
+                                    <TouchableOpacity onPress={() => profileData?.facebookUrl ? openLink(profileData.facebookUrl, 'Facebook') : showMessages('Facebook link not available')}>
                                         <FontAwesome5 name="facebook" size={30} color="#3b5998" />
                                     </TouchableOpacity>
 
-                                    <TouchableOpacity onPress={() => profileData?.instagramUrl ? openLink(profileData.instagramUrl, "Instagram") : showMessages("Instagram link not available")}>
+                                    <TouchableOpacity onPress={() => profileData?.instagramUrl ? openLink(profileData.instagramUrl, 'Instagram') : showMessages('Instagram link not available')}>
                                         <FontAwesome5 name="instagram" size={30} color="#E4405F" />
                                     </TouchableOpacity>
                                 </View>
@@ -1446,7 +1446,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                         <Text style={styles.name} numberOfLines={2}>{profileData?.fullName}</Text>
 
                                         <View style={styles.FlexContainer}>
-                                            <Text style={[styles.city, { fontFamily: "Poppins-Bold" }]}>{profileData?.city}</Text>
+                                            <Text style={[styles.city, { fontFamily: 'Poppins-Bold' }]}>{profileData?.city}</Text>
                                             <Text style={styles.city}>{profileData?.state}</Text>
                                         </View>
 
@@ -1459,14 +1459,14 @@ const ProfileDetail = ({ route, navigation }) => {
                                                 readonly
                                             />
                                             <Text style={styles.rating}>
-                                                {profileData?.ratings?.length > 0 ? `${profileData?.ratings?.length} Reviews` : "No Ratings Yet"}
+                                                {profileData?.ratings?.length > 0 ? `${profileData?.ratings?.length} Reviews` : 'No Ratings Yet'}
                                             </Text>
                                         </View>
                                         <Text style={styles.text} numberOfLines={1}>{profileData?.residentialAddress}</Text>
                                     </View>
                                 </View>
                                 <View style={styles.contentContainer}>
-                                    <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: SH(5) }}>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: SH(5) }}>
                                         {JyotishStatus === 'Expired' ? (
                                             <TouchableOpacity
                                                 style={styles.editButton}
@@ -1479,7 +1479,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                                 style={[styles.editButton, { backgroundColor: '#c4f2e4' }]}
                                                 disabled={true}
                                             >
-                                                <Text style={[styles.editButtonText, { color: "red" }]}>Subscription Pending</Text>
+                                                <Text style={[styles.editButtonText, { color: 'red' }]}>Subscription Pending</Text>
                                             </TouchableOpacity>
                                         ) : (
                                             <TouchableOpacity disabled={true}>
@@ -1536,25 +1536,25 @@ const ProfileDetail = ({ route, navigation }) => {
 
                                     </View>
                                     <View>
-                                        <Text style={[styles.sectionTitle, { textAlign: "center" }]}>Reviews</Text>
+                                        <Text style={[styles.sectionTitle, { textAlign: 'center' }]}>Reviews</Text>
 
                                         {profileData?.ratings?.length > 0 ? (
                                             <>
                                                 {profileData?.ratings?.slice(0, 2).map((review, index) => (
-                                                    <View key={review._id || index} style={[styles.reviewContainer, { marginHorizontal: 0, width: "100%" }]}>
-                                                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                                                    <View key={review._id || index} style={[styles.reviewContainer, { marginHorizontal: 0, width: '100%' }]}>
+                                                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                                             <View>
                                                                 <Image
                                                                     source={review?.userId?.photoUrl[0]
                                                                         ? { uri: review?.userId?.photoUrl[0] }
-                                                                        : require("../../Images/NoImage.png") // Fallback image
+                                                                        : require('../../Images/NoImage.png') // Fallback image
                                                                     }
                                                                     style={{ width: SW(50), height: SH(50), borderRadius: 50 }}
                                                                     resizeMode="cover"
                                                                 />
                                                             </View>
                                                             <View style={{ flex: 1, marginHorizontal: SW(10) }}>
-                                                                <Text style={styles.reviewName}>{review?.userId?.username || "Unknown"}</Text>
+                                                                <Text style={styles.reviewName}>{review?.userId?.username || 'Unknown'}</Text>
                                                                 <View style={styles.reviewRating}>
                                                                     <Rating
                                                                         type="star"
@@ -1567,12 +1567,12 @@ const ProfileDetail = ({ route, navigation }) => {
                                                                 <Text style={styles.reviewText}>{review?.review}</Text>
 
                                                             </View>
-                                                            <View style={{ alignSelf: "flex-end" }}>
+                                                            <View style={{ alignSelf: 'flex-end' }}>
                                                                 <Text style={styles.reviewDate}>
-                                                                    {moment(review.createdAt).format("DD-MM-YYYY")}
+                                                                    {moment(review.createdAt).format('DD-MM-YYYY')}
                                                                 </Text>
                                                                 <Text style={styles.reviewDate}>
-                                                                    {moment(review.createdAt).format("hh:mm A")}
+                                                                    {moment(review.createdAt).format('hh:mm A')}
                                                                 </Text>
 
                                                             </View>
@@ -1601,23 +1601,23 @@ const ProfileDetail = ({ route, navigation }) => {
                                     {renderImages(images)}
                                 </View>
                                 <View style={styles.socialIcons}>
-                                    <TouchableOpacity onPress={() => profileData?.websiteUrl ? openLink(profileData.websiteUrl, "Website") : showMessages("Website link not available")}>
+                                    <TouchableOpacity onPress={() => profileData?.websiteUrl ? openLink(profileData.websiteUrl, 'Website') : showMessages('Website link not available')}>
                                         <Image source={require('../../Images/website.png')} style={styles.websiteIcon} />
                                     </TouchableOpacity>
 
-                                    <TouchableOpacity onPress={() => profileData?.youtubeUrl ? openLink(profileData.youtubeUrl, "YouTube") : showMessages("YouTube link not available")}>
+                                    <TouchableOpacity onPress={() => profileData?.youtubeUrl ? openLink(profileData.youtubeUrl, 'YouTube') : showMessages('YouTube link not available')}>
                                         <MaterialCommunityIcons name="youtube" size={30} color="#FF0000" />
                                     </TouchableOpacity>
 
-                                    <TouchableOpacity onPress={() => profileData?.whatsapp ? openLink(profileData.whatsapp, "WhatsApp") : showMessages("WhatsApp link not available")}>
+                                    <TouchableOpacity onPress={() => profileData?.whatsapp ? openLink(profileData.whatsapp, 'WhatsApp') : showMessages('WhatsApp link not available')}>
                                         <FontAwesome5 name="whatsapp" size={30} color="#25D366" />
                                     </TouchableOpacity>
 
-                                    <TouchableOpacity onPress={() => profileData?.facebookUrl ? openLink(profileData.facebookUrl, "Facebook") : showMessages("Facebook link not available")}>
+                                    <TouchableOpacity onPress={() => profileData?.facebookUrl ? openLink(profileData.facebookUrl, 'Facebook') : showMessages('Facebook link not available')}>
                                         <FontAwesome5 name="facebook" size={30} color="#3b5998" />
                                     </TouchableOpacity>
 
-                                    <TouchableOpacity onPress={() => profileData?.instagramUrl ? openLink(profileData.instagramUrl, "Instagram") : showMessages("Instagram link not available")}>
+                                    <TouchableOpacity onPress={() => profileData?.instagramUrl ? openLink(profileData.instagramUrl, 'Instagram') : showMessages('Instagram link not available')}>
                                         <FontAwesome5 name="instagram" size={30} color="#E4405F" />
                                     </TouchableOpacity>
                                 </View>

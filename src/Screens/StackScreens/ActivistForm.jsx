@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, FlatList, Image, SafeAreaView, ActivityIndicator, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/ActivistFormStyle';
@@ -15,7 +15,6 @@ import moment from 'moment';
 import { useSelector } from 'react-redux';
 import { showMessage } from 'react-native-flash-message';
 import { Dropdown } from 'react-native-element-dropdown';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 // import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SH } from '../../utils/Dimensions';
@@ -31,7 +30,7 @@ export default function ActivistForm({ navigation }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(true);
   const MyActivistProfile = useSelector((state) => state.activist.activist_data);
-  const [tempId, setTempId] = useState("");
+  const [tempId, setTempId] = useState('');
   const [errors, setErrors] = useState({});
   const [typingTimeout, setTypingTimeout] = useState(null);
 
@@ -57,12 +56,12 @@ export default function ActivistForm({ navigation }) {
   // }, [MyActivistProfile]);
 
   useEffect(() => {
-    console.log("MyActivistProfile", MyActivistProfile);
+    console.log('MyActivistProfile', MyActivistProfile);
     if (MyActivistProfile) {
       setActivistData((prev) => ({
         ...prev,
         ...MyActivistProfile,
-        dob: MyActivistProfile.dob ? new Date(MyActivistProfile.dob) : "",
+        dob: MyActivistProfile.dob ? new Date(MyActivistProfile.dob) : '',
       }));
     }
   }, [MyActivistProfile]);
@@ -88,10 +87,10 @@ export default function ActivistForm({ navigation }) {
         immersiveMode: true,
       });
 
-      console.log("📷 Selected Image:", image);
+      console.log('📷 Selected Image:', image);
 
       if (!image.data) {
-        console.error("❌ Base64 data is missing!");
+        console.error('❌ Base64 data is missing!');
         return;
       }
       setActivistData((prev) => ({
@@ -100,8 +99,8 @@ export default function ActivistForm({ navigation }) {
       }));
 
     } catch (error) {
-      if (error.code !== "E_PICKER_CANCELLED") {
-        console.error("❌ Image Picking Error:", error.message || error);
+      if (error.code !== 'E_PICKER_CANCELLED') {
+        console.error('❌ Image Picking Error:', error.message || error);
       }
     }
   };
@@ -164,44 +163,44 @@ export default function ActivistForm({ navigation }) {
 
   const convertToBase64 = async (imageUri) => {
     try {
-      if (!imageUri) return null;
-      if (imageUri.startsWith("data:image")) {
+      if (!imageUri) {return null;}
+      if (imageUri.startsWith('data:image')) {
         return imageUri;
       }
 
       const response = await fetch(imageUri);
       const blob = await response.blob();
 
-      const mimeType = blob.type || "image/jpeg";
+      const mimeType = blob.type || 'image/jpeg';
 
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onloadend = () => {
           if (reader.result) {
-            resolve(`data:${mimeType};base64,${reader.result.split(",")[1]}`);
+            resolve(`data:${mimeType};base64,${reader.result.split(',')[1]}`);
           } else {
-            reject("Error reading Base64 data.");
+            reject('Error reading Base64 data.');
           }
         };
         reader.readAsDataURL(blob);
       });
     } catch (error) {
-      console.error("Error converting image to Base64:", error);
+      console.error('Error converting image to Base64:', error);
       return null;
     }
   };
 
   const constructActivistPayload = async (ActivistData, isNew = false) => {
     const keys = [
-      "fullname", "subCaste", "dob", "state", "city",
-      "mobileNo", "knownActivistId", "engagedWithCommittee", "profilePhoto",
+      'fullname', 'subCaste', 'dob', 'state', 'city',
+      'mobileNo', 'knownActivistId', 'engagedWithCommittee', 'profilePhoto',
     ];
 
     const payload = {};
 
     for (const key of keys) {
       const value = ActivistData[key];
-      if (value !== undefined && value !== "") {
+      if (value !== undefined && value !== '') {
         payload[key] = value;
       }
     }
@@ -210,18 +209,18 @@ export default function ActivistForm({ navigation }) {
 
       if (moment(payload.dob, moment.ISO_8601, true).isValid()) {
         parsedDate = moment(payload.dob);
-      } else if (moment(payload.dob, "DD/MM/YYYY", true).isValid()) {
-        parsedDate = moment(payload.dob, "DD/MM/YYYY");
+      } else if (moment(payload.dob, 'DD/MM/YYYY', true).isValid()) {
+        parsedDate = moment(payload.dob, 'DD/MM/YYYY');
       }
 
       if (parsedDate && parsedDate.isValid()) {
-        payload.dob = parsedDate.format("DD/MM/YYYY");
+        payload.dob = parsedDate.format('DD/MM/YYYY');
       } else {
-        console.error("Invalid DOB format received:", payload.dob);
-        throw new Error("Invalid DOB format. Expected format is YYYY-MM-DD.");
+        console.error('Invalid DOB format received:', payload.dob);
+        throw new Error('Invalid DOB format. Expected format is YYYY-MM-DD.');
       }
     }
-    if (ActivistData.knownActivistId && ActivistData.knownActivistId.trim() !== "") {
+    if (ActivistData.knownActivistId && ActivistData.knownActivistId.trim() !== '') {
       const id = ActivistData.knownActivistId.trim().toUpperCase();
 
       if (!/^[A-Z]{2}[0-9]{4}$/.test(id)) {
@@ -235,9 +234,9 @@ export default function ActivistForm({ navigation }) {
     if (ActivistData.profilePhoto) {
       try {
         payload.profilePhoto = await convertToBase64(ActivistData.profilePhoto);
-        console.log("📸 Converted Base64 Image:", payload.profilePhoto);
+        console.log('📸 Converted Base64 Image:', payload.profilePhoto);
       } catch (error) {
-        console.error("Base64 Conversion Error:", error);
+        console.error('Base64 Conversion Error:', error);
       }
     }
 
@@ -256,19 +255,19 @@ export default function ActivistForm({ navigation }) {
     const newErrors = {};
     const cleanedMobile = ActivistData.mobileNo.trim();
     if (!cleanedMobile) {
-      newErrors.mobileNo = "Mobile number is required.";
+      newErrors.mobileNo = 'Mobile number is required.';
     } else if (!/^\d{10}$/.test(cleanedMobile)) {
-      newErrors.mobileNo = "Enter a valid 10-digit mobile number.";
+      newErrors.mobileNo = 'Enter a valid 10-digit mobile number.';
     }
     if (!ActivistData.fullname) {
-      newErrors.fullname = "Full name is required.";
+      newErrors.fullname = 'Full name is required.';
     } else if (!/^[A-Za-z\s]+$/.test(ActivistData.fullname)) {
-      newErrors.fullname = "Name must contain only letters.";
+      newErrors.fullname = 'Name must contain only letters.';
     } else if (ActivistData.fullname.length > 30) {
-      newErrors.fullname = "Name cannot exceed 30 characters.";
+      newErrors.fullname = 'Name cannot exceed 30 characters.';
     }
     if (!ActivistData.dob) {
-      newErrors.dob = "Date of Birth is required.";
+      newErrors.dob = 'Date of Birth is required.';
     } else {
       const today = new Date();
       const birthDate = new Date(ActivistData.dob);
@@ -278,20 +277,20 @@ export default function ActivistForm({ navigation }) {
         age--;
       }
       if (age < 18) {
-        newErrors.dob = "Age must be 18 or older.";
+        newErrors.dob = 'Age must be 18 or older.';
       }
     }
     if (!ActivistData.city?.trim()) {
-      newErrors.city = "City is required.";
+      newErrors.city = 'City is required.';
     }
     if (!ActivistData.subCaste?.trim()) {
-      newErrors.subCaste = "Sub caste is required.";
+      newErrors.subCaste = 'Sub caste is required.';
     }
     if (!ActivistData.state?.trim()) {
-      newErrors.state = "state is required.";
+      newErrors.state = 'state is required.';
     }
     if (!ActivistData.profilePhoto?.trim()) {
-      newErrors.profilePhoto = "profilePhoto is required.";
+      newErrors.profilePhoto = 'profilePhoto is required.';
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -301,51 +300,51 @@ export default function ActivistForm({ navigation }) {
     try {
       if (!validateFields()) {
         showMessage({
-          message: "Please complete all mandatory sections before submitting.",
-          type: "danger",
+          message: 'Please complete all mandatory sections before submitting.',
+          type: 'danger',
           duration: 4000,
-          icon: "danger",
-          position: 'bottom'
+          icon: 'danger',
+          position: 'bottom',
         });
         return;
       }
       let payload;
 
       setIsLoading(true);
-      const token = await AsyncStorage.getItem("userToken");
+      const token = await AsyncStorage.getItem('userToken');
 
       if (!token) {
-        Alert.alert("Error", "Authorization token is missing.");
+        Alert.alert('Error', 'Authorization token is missing.');
         return;
       }
 
       const headers = {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       };
 
       try {
         payload = await constructActivistPayload(ActivistData, !ActivistData?._id);
-        console.log("🧾 Final Payload:", JSON.stringify(payload, null, 2));
+        console.log('🧾 Final Payload:', JSON.stringify(payload, null, 2));
       } catch (err) {
-        console.error("🚨 Payload construction failed:", err.message);
-        Alert.alert("Payload Error", err.message);
+        console.error('🚨 Payload construction failed:', err.message);
+        Alert.alert('Payload Error', err.message);
         return;
       }
       const apiCall = ActivistData?._id ? axios.patch : axios.post;
       const endpoint = ActivistData?._id ? UPDATE_ACTIVIST : CREATE_ACTIVIST;
 
       const response = await apiCall(endpoint, payload, { headers });
-      console.log("API Response:", response.data);
+      console.log('API Response:', response.data);
 
       if (response.status === 200 && response.data.status === true) {
         showMessage({
-          type: "success",
+          type: 'success',
           message: ActivistData?._id
-            ? "Activist Profile Updated Successfully"
-            : "Your activist approval request is on its way! Stay tuned.",
-          description: response.data.message || "Your changes have been saved!",
-          icon: "success",
+            ? 'Activist Profile Updated Successfully'
+            : 'Your activist approval request is on its way! Stay tuned.',
+          description: response.data.message || 'Your changes have been saved!',
+          icon: 'success',
           duration: 7000, // shows for 3 seconds
         });
 
@@ -362,27 +361,27 @@ export default function ActivistForm({ navigation }) {
         return;
       }
 
-      throw new Error(response.data.message || "Something went wrong");
+      throw new Error(response.data.message || 'Something went wrong');
 
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error saving activist data:", errorMsg);
+      console.error('Error saving activist data:', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
 
-      Alert.alert("Error", errorMsg);
+      Alert.alert('Error', errorMsg);
 
     } finally {
       setIsLoading(false);
@@ -393,7 +392,7 @@ export default function ActivistForm({ navigation }) {
   return (
     <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
       <View style={Globalstyles.header}>
-        <View style={{ display: "flex", flexDirection: 'row', alignItems: "center" }}>
+        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
@@ -434,7 +433,7 @@ export default function ActivistForm({ navigation }) {
             valueField="value"
             value={ActivistData?.subCaste}
             editable={isEditing}
-            onChange={(item) => handleInputChange("subCaste", item.value)}
+            onChange={(item) => handleInputChange('subCaste', item.value)}
             placeholder="Select subCaste"
             placeholderStyle={{ color: '#E7E7E7' }}
             autoScroll={false}
@@ -460,15 +459,15 @@ export default function ActivistForm({ navigation }) {
               <View style={[
                 Globalstyles.inputContainer, errors.dob && styles.errorInput,
                 {
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between"
-                }
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                },
               ]}>
                 <Text style={styles.dateText}>
                   {ActivistData?.dob
-                    ? moment(ActivistData.dob, "YYYY-MM-DD").format("DD/MM/YYYY")
-                    : "Select Your Date"}
+                    ? moment(ActivistData.dob, 'YYYY-MM-DD').format('DD/MM/YYYY')
+                    : 'Select Your Date'}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -486,10 +485,10 @@ export default function ActivistForm({ navigation }) {
                 themeVariant="light"
                 onChange={(event, selectedDate) => {
                   setShowDatePicker(false);
-                  if (event.type === "set" && selectedDate) {
+                  if (event.type === 'set' && selectedDate) {
                     setActivistData((prevState) => ({
                       ...prevState,
-                      dob: moment(selectedDate).format("YYYY-MM-DD"),
+                      dob: moment(selectedDate).format('YYYY-MM-DD'),
                     }));
                   }
                 }}
@@ -573,7 +572,7 @@ export default function ActivistForm({ navigation }) {
           <TextInput
             style={[Globalstyles.input, errors.mobileNo && styles.errorInput]}
             placeholder="Enter contact number"
-            keyboardType='phone-pad'
+            keyboardType="phone-pad"
             maxLength={10}
             placeholderTextColor={Colors.gray}
             value={ActivistData.mobileNo} onChangeText={(text) => setActivistData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
@@ -608,12 +607,12 @@ export default function ActivistForm({ navigation }) {
             <TouchableOpacity
               style={[
                 styles.radioButton,
-                ActivistData.engagedWithCommittee === "Yes" && styles.radioSelected,
+                ActivistData.engagedWithCommittee === 'Yes' && styles.radioSelected,
               ]}
               onPress={() =>
                 setActivistData((prev) => ({
                   ...prev,
-                  engagedWithCommittee: "Yes",
+                  engagedWithCommittee: 'Yes',
                 }))
               }
             >
@@ -622,12 +621,12 @@ export default function ActivistForm({ navigation }) {
             <TouchableOpacity
               style={[
                 styles.radioButton,
-                ActivistData.engagedWithCommittee === "No" && styles.radioSelected,
+                ActivistData.engagedWithCommittee === 'No' && styles.radioSelected,
               ]}
               onPress={() =>
                 setActivistData((prev) => ({
                   ...prev,
-                  engagedWithCommittee: "No",
+                  engagedWithCommittee: 'No',
                 }))
               }
             >
@@ -639,7 +638,7 @@ export default function ActivistForm({ navigation }) {
           <View>
             <Text>Profile Picture <Entypo name={'star'} color={'red'} size={12} /></Text>
             <TouchableOpacity style={styles.uploadButton} onPress={handleImagePick}>
-              <Text>{ActivistData.profilePhoto ? "Change Image" : "Upload Image"}</Text>
+              <Text>{ActivistData.profilePhoto ? 'Change Image' : 'Upload Image'}</Text>
             </TouchableOpacity>
 
             {ActivistData.profilePhoto ? (

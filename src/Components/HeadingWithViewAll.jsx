@@ -25,13 +25,13 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.gray,
     paddingVertical: SH(2),
     borderRadius: 5,
-    marginHorizontal: SW(5)
+    marginHorizontal: SW(5),
   },
   headingStyle: {
     fontSize: SF(12),
     fontFamily: 'Poppins-Bold',
     color: Colors.black,
-    textTransform:"uppercase"
+    textTransform:'uppercase',
   },
   viewAllText: {
     fontSize: SF(14),

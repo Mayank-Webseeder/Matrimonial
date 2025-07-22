@@ -1,22 +1,22 @@
-import { StyleSheet ,Platform} from "react-native";
-import { SH, SW, SF } from "../../utils/Dimensions";
-import Colors from "../../utils/Colors";
+import { StyleSheet ,Platform} from 'react-native';
+import { SH, SW, SF } from '../../utils/Dimensions';
+import Colors from '../../utils/Colors';
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fff",
+        backgroundColor: '#fff',
     },
     image: {
-        width: "100%",
-        height: "100%",
-        resizeMode: "cover",
+        width: '100%',
+        height: '100%',
+        resizeMode: 'cover',
     },
     text: {
         fontSize: SF(24),
-        fontFamily: "Poppins-Bold",
+        fontFamily: 'Poppins-Bold',
         color: Colors.dark,
-        textAlign: "center",
+        textAlign: 'center',
         marginTop: SH(300),
     },
     button: {
@@ -28,17 +28,17 @@ const styles = StyleSheet.create({
         marginTop: SH(20),
     },
     buttonText: {
-        textAlign: "center",
+        textAlign: 'center',
         color: Colors.light,
-        fontFamily: "Poppins-Bold",
+        fontFamily: 'Poppins-Bold',
         fontSize: SF(20),
     },
     passwordText: {
-        fontFamily: "Poppins-Regular",
+        fontFamily: 'Poppins-Regular',
         fontSize: SF(17),
         color: Colors.dark,
         marginHorizontal: SW(40),
-        textAlign: "center",
+        textAlign: 'center',
         marginBottom: SH(5),
     },
     inputText: {
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
         marginLeft: SW(25),
         marginBottom: SH(5),
         fontSize: SF(15),
-        fontFamily: "Poppins-Medium",
+        fontFamily: 'Poppins-Medium',
     },
     passwordContainer: {
         paddingHorizontal: SW(10),
@@ -67,8 +67,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         color: Colors.dark,
         marginBottom: SH(10),
-        flexDirection: "row",
-        alignItems: "center",
+        flexDirection: 'row',
+        alignItems: 'center',
         borderRadius: 10,
     },
     passwordInput: {
@@ -77,19 +77,19 @@ const styles = StyleSheet.create({
         paddingVertical: Platform.OS === 'ios' ? SH(10) : SH(10),
     },
     errorText: {
-        color: "red",
+        color: 'red',
         fontSize: SF(13),
-        fontFamily: "Poppins-Regular",
+        fontFamily: 'Poppins-Regular',
         marginHorizontal: SW(30),
     },
     forgotPasswordButton: {
-        alignSelf: "flex-end",
-        marginRight: SW(30)
+        alignSelf: 'flex-end',
+        marginRight: SW(30),
     },
     forgotPasswordText: {
         color: Colors.theme_color,
-        fontFamily: "Poppins-Bold"
-    }
+        fontFamily: 'Poppins-Bold',
+    },
 
 });
 

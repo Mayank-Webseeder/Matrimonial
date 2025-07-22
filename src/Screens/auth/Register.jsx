@@ -1,21 +1,21 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Text, View, ImageBackground, TouchableOpacity, TextInput, ScrollView, SafeAreaView, ActivityIndicator, FlatList, Pressable, Alert, KeyboardAvoidingView, Platform } from "react-native";
-import styles from "../StyleScreens/RegisterStyle";
+import React, { useState, useRef, useEffect } from 'react';
+import { Text, View, ImageBackground, TouchableOpacity, TextInput, ScrollView, SafeAreaView, ActivityIndicator, FlatList, Pressable, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import styles from '../StyleScreens/RegisterStyle';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Dropdown } from 'react-native-element-dropdown';
-import Colors from "../../utils/Colors";
-import axios from "axios";
-import { SIGNUP_ENDPOINT, OTP_ENDPOINT } from "../../utils/BaseUrl";
-import { CityData, genderData } from "../../DummyData/DropdownData";
-import Globalstyles from "../../utils/GlobalCss";
+import Colors from '../../utils/Colors';
+import axios from 'axios';
+import { SIGNUP_ENDPOINT, OTP_ENDPOINT } from '../../utils/BaseUrl';
+import { CityData, genderData } from '../../DummyData/DropdownData';
+import Globalstyles from '../../utils/GlobalCss';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import Entypo from 'react-native-vector-icons/Entypo';
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { resetBioData } from "../../ReduxStore/Slices/BiodataSlice";
-import { useDispatch } from "react-redux";
-import { initializeSocket } from "../../../socket";
-import { showMessage } from "react-native-flash-message";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { resetBioData } from '../../ReduxStore/Slices/BiodataSlice';
+import { useDispatch } from 'react-redux';
+import { initializeSocket } from '../../../socket';
+import { showMessage } from 'react-native-flash-message';
 
 const Register = ({ navigation }) => {
     const dispatch = useDispatch();
@@ -34,7 +34,7 @@ const Register = ({ navigation }) => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
-    const [selectedImageName, setSelectedImageName] = useState("Upload Image");
+    const [selectedImageName, setSelectedImageName] = useState('Upload Image');
     const [selectedImage, setSelectedImage] = useState(null);
     const [otpSent, setOtpSent] = useState(false);
     const [isOtpLoading, setIsOtpLoading] = useState(false);
@@ -43,7 +43,7 @@ const Register = ({ navigation }) => {
 
     useEffect(() => {
         const checkOtpTime = async () => {
-            const storedTime = await AsyncStorage.getItem("otpSentAt");
+            const storedTime = await AsyncStorage.getItem('otpSentAt');
             if (storedTime) {
                 const elapsed = Math.floor((Date.now() - parseInt(storedTime)) / 1000);
                 const remaining = otpValidityDuration - elapsed;
@@ -51,7 +51,7 @@ const Register = ({ navigation }) => {
                     setOtpTimer(remaining);
                     startOtpCountdown(remaining);
                 } else {
-                    await AsyncStorage.removeItem("otpSentAt");
+                    await AsyncStorage.removeItem('otpSentAt');
                     setOtpTimer(0);
                 }
             }
@@ -60,7 +60,7 @@ const Register = ({ navigation }) => {
         checkOtpTime();
 
         return () => {
-            if (timerRef.current) clearInterval(timerRef.current);
+            if (timerRef.current) {clearInterval(timerRef.current);}
         };
     }, []);
 
@@ -72,12 +72,12 @@ const Register = ({ navigation }) => {
             height: 250,
             cropping: true,
             includeBase64: true,
-            mediaType: "any"
+            mediaType: 'any',
         })
             .then(image => {
                 console.log('Selected Image:', image);
                 if (!image.data) {
-                    console.error("Base64 data is missing!");
+                    console.error('Base64 data is missing!');
                     return;
                 }
                 setSelectedImage(image.data);
@@ -110,21 +110,21 @@ const Register = ({ navigation }) => {
         const newErrors = {};
 
         if (!mobileNumber) {
-            newErrors.mobileNumber = "Mobile number is required.";
+            newErrors.mobileNumber = 'Mobile number is required.';
         } else if (!/^\d{10}$/.test(mobileNumber)) {
-            newErrors.mobileNumber = "Enter a valid 10-digit mobile number.";
+            newErrors.mobileNumber = 'Enter a valid 10-digit mobile number.';
         }
 
         if (!fullName) {
-            newErrors.fullName = "Full name is required.";
+            newErrors.fullName = 'Full name is required.';
         } else if (!/^[A-Za-z\s]+$/.test(fullName)) {
-            newErrors.fullName = "Name must contain only letters.";
+            newErrors.fullName = 'Name must contain only letters.';
         } else if (fullName.length > 30) {
-            newErrors.fullName = "Name cannot exceed 30 characters.";
+            newErrors.fullName = 'Name cannot exceed 30 characters.';
         }
 
         if (!selectedDate) {
-            newErrors.selectedDate = "Date of Birth is required.";
+            newErrors.selectedDate = 'Date of Birth is required.';
         } else {
             const today = new Date();
             const birthDate = new Date(selectedDate);
@@ -136,54 +136,54 @@ const Register = ({ navigation }) => {
             }
 
             if (age < 18) {
-                newErrors.selectedDate = "Your age is below 18";
+                newErrors.selectedDate = 'Your age is below 18';
             }
         }
 
-        if (!cityInput.trim()) newErrors.selectedCity = "City is required.";
-        if (!gender) newErrors.gender = "Gender is required.";
+        if (!cityInput.trim()) {newErrors.selectedCity = 'City is required.';}
+        if (!gender) {newErrors.gender = 'Gender is required.';}
 
         const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
         if (!password) {
-            newErrors.password = "Password is required.";
+            newErrors.password = 'Password is required.';
         } else if (!strongPasswordRegex.test(password)) {
-            newErrors.password = "Password must be at least 8 characters long, contain one uppercase letter, one number, and one special character.";
+            newErrors.password = 'Password must be at least 8 characters long, contain one uppercase letter, one number, and one special character.';
         }
 
         if (!confirmPassword) {
-            newErrors.confirmPassword = "Confirm Password is required.";
+            newErrors.confirmPassword = 'Confirm Password is required.';
         } else if (password !== confirmPassword) {
-            newErrors.confirmPassword = "Passwords do not match.";
+            newErrors.confirmPassword = 'Passwords do not match.';
         }
 
         if (!otp) {
-            newErrors.otp = "OTP is required.";
+            newErrors.otp = 'OTP is required.';
         } else if (!/^\d{6}$/.test(otp)) {
-            newErrors.otp = "Enter a valid 6-digit OTP.";
+            newErrors.otp = 'Enter a valid 6-digit OTP.';
         }
 
         setErrors(newErrors);
         return {
             isValid: Object.keys(newErrors).length === 0,
-            newErrors
+            newErrors,
         };
     };
 
     const formattedDate = selectedDate
-        ? `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, "0")}-${selectedDate.getDate().toString().padStart(2, "0")}`
+        ? `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, '0')}-${selectedDate.getDate().toString().padStart(2, '0')}`
         : null;
 
 
     const otpValidityDuration = 60;
 
     const startOtpCountdown = (duration) => {
-        if (timerRef.current) clearInterval(timerRef.current);
+        if (timerRef.current) {clearInterval(timerRef.current);}
 
         timerRef.current = setInterval(() => {
             setOtpTimer(prev => {
                 if (prev <= 1) {
                     clearInterval(timerRef.current);
-                    AsyncStorage.removeItem("otpSentAt");
+                    AsyncStorage.removeItem('otpSentAt');
                     return 0;
                 }
                 return prev - 1;
@@ -194,9 +194,9 @@ const Register = ({ navigation }) => {
     const handleSendOtp = async () => {
         if (!/^\d{10}$/.test(mobileNumber)) {
             showMessage({
-                type: "danger",
-                message: "Invalid Number",
-                description: "Enter a valid 10-digit mobile number",
+                type: 'danger',
+                message: 'Invalid Number',
+                description: 'Enter a valid 10-digit mobile number',
                 duration: 5000,
             });
             return;
@@ -206,35 +206,35 @@ const Register = ({ navigation }) => {
             setIsOtpLoading(true);
             const response = await axios.post(OTP_ENDPOINT, { mobileNo: mobileNumber });
 
-            console.log("OTP Response:", response.data);
+            console.log('OTP Response:', response.data);
 
             if (response.status === 200 || response.data.status === true) {
                 setOtpSent(true);
                 showMessage({
-                    type: "success",
-                    message: "OTP Sent",
-                    description: "Check your SMS for the OTP",
-                    icon: "success",
+                    type: 'success',
+                    message: 'OTP Sent',
+                    description: 'Check your SMS for the OTP',
+                    icon: 'success',
                     duration: 5000,
                 });
 
                 // Save timestamp to AsyncStorage
                 const currentTimestamp = Date.now();
-                await AsyncStorage.setItem("otpSentAt", currentTimestamp.toString());
+                await AsyncStorage.setItem('otpSentAt', currentTimestamp.toString());
 
                 setOtpTimer(otpValidityDuration);
                 startOtpCountdown(otpValidityDuration); // start countdown
             } else {
-                throw new Error(response.data.message || "OTP request failed");
+                throw new Error(response.data.message || 'OTP request failed');
             }
         } catch (error) {
-            console.error("OTP Error:", error);
-            const message = error.response?.data?.message || error.message || "Failed to send OTP";
+            console.error('OTP Error:', error);
+            const message = error.response?.data?.message || error.message || 'Failed to send OTP';
             showMessage({
-                type: "danger",
-                message: "OTP Failed",
+                type: 'danger',
+                message: 'OTP Failed',
                 description: message,
-                icon: "danger",
+                icon: 'danger',
                 duration: 5000,
             });
         } finally {
@@ -259,16 +259,16 @@ const Register = ({ navigation }) => {
         const { isValid, newErrors } = validateFields();
 
         if (!isValid) {
-            const errorDetails = Object.values(newErrors).join("\n");
+            const errorDetails = Object.values(newErrors).join('\n');
 
             showMessage({
-                type: "danger",
-                message: "Validation Failed",
+                type: 'danger',
+                message: 'Validation Failed',
                 description: errorDetails,
                 duration: 5000,
-                icon: "danger"
+                icon: 'danger',
             });
-            console.log("❌ Validation failed. Errors:", newErrors);
+            console.log('❌ Validation failed. Errors:', newErrors);
             setErrors(newErrors);
             setIsLoading(false);
             return;
@@ -276,12 +276,12 @@ const Register = ({ navigation }) => {
 
         try {
             setIsLoading(true);
-            console.log("SignUp Payload:", payload);
+            console.log('SignUp Payload:', payload);
 
             const response = await axios.post(SIGNUP_ENDPOINT, payload);
             const RegisterData = response.data;
 
-            console.log("Signup Response:", JSON.stringify(RegisterData));
+            console.log('Signup Response:', JSON.stringify(RegisterData));
 
             if (response.status === 200 && RegisterData.status === true) {
                 dispatch(resetBioData());
@@ -290,54 +290,54 @@ const Register = ({ navigation }) => {
                 const userId = RegisterData?.user?.user?.id;
 
                 if (token && userId) {
-                    await AsyncStorage.setItem("userToken", token);
-                    await AsyncStorage.setItem("userId", userId);
-                    console.log("Token saved:", token);
+                    await AsyncStorage.setItem('userToken', token);
+                    await AsyncStorage.setItem('userId', userId);
+                    console.log('Token saved:', token);
                 }
 
                 try {
                     initializeSocket(userId);
                     console.log(`✅ Socket initialized successfully for user: ${userId}`);
                 } catch (socketError) {
-                    console.error("🚨 Socket Initialization Failed:", socketError);
+                    console.error('🚨 Socket Initialization Failed:', socketError);
                 }
 
                 showMessage({
-                    type: "success",
-                    message: "Sign Up Successful",
-                    description: "You have successfully signed up!",
-                    icon: "success",
+                    type: 'success',
+                    message: 'Sign Up Successful',
+                    description: 'You have successfully signed up!',
+                    icon: 'success',
                     duration: 3000,
                 });
 
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AppStack" }],
+                    routes: [{ name: 'AppStack' }],
                 });
             } else {
-                throw new Error(RegisterData.message || "Signup failed");
+                throw new Error(RegisterData.message || 'Signup failed');
             }
         } catch (error) {
-            console.error("Sign Up Error:", error);
+            console.error('Sign Up Error:', error);
 
-            let errorMessage = "An unexpected error occurred.";
-            let errorDescription = "";
+            let errorMessage = 'An unexpected error occurred.';
+            let errorDescription = '';
 
             if (error.response) {
-                errorMessage = error.response.data.message || "Server error";
-                errorDescription = error.response.data.error || "Please check your input.";
+                errorMessage = error.response.data.message || 'Server error';
+                errorDescription = error.response.data.error || 'Please check your input.';
             } else if (error.request) {
-                errorMessage = "Network Error";
-                errorDescription = "Check your internet connection.";
+                errorMessage = 'Network Error';
+                errorDescription = 'Check your internet connection.';
             } else {
                 errorDescription = error.message;
             }
 
             showMessage({
-                type: "danger",
+                type: 'danger',
                 message: errorMessage,
                 description: errorDescription,
-                icon: "danger",
+                icon: 'danger',
                 duration: 5000,
             });
         } finally {
@@ -359,8 +359,8 @@ const Register = ({ navigation }) => {
     };
 
     const formatDate = (date) => {
-        const day = date.getDate().toString().padStart(2, "0");
-        const month = (date.getMonth() + 1).toString().padStart(2, "0");
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const year = date.getFullYear();
         return `${day}/${month}/${year}`;
     };
@@ -368,21 +368,21 @@ const Register = ({ navigation }) => {
     return (
         <SafeAreaView style={styles.container} >
             <ImageBackground
-                source={require("../../Images/Signup.png")}
+                source={require('../../Images/Signup.png')}
                 style={styles.image}
             >
                 <AntDesign
-                    name={"arrowleft"}
+                    name={'arrowleft'}
                     size={25}
                     style={styles.backArrow}
                     color={Colors.light}
-                    onPress={() => navigation.navigate("Splash")}
+                    onPress={() => navigation.navigate('Splash')}
                 />
-                <KeyboardAvoidingView
+                {/* <KeyboardAvoidingView
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                     style={{ flex: 1 }}
-                    keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
-                    <ScrollView style={styles.contentContainer} contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+                    keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}> */}
+                    <ScrollView style={styles.contentContainer} contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
                         showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
                         <View>
                             <Text style={styles.text}>Sign Up</Text>
@@ -415,10 +415,10 @@ const Register = ({ navigation }) => {
                                         style={[
                                             Globalstyles.inputContainer,
                                             {
-                                                flexDirection: "row",
-                                                alignItems: "center",
-                                                justifyContent: "space-between"
-                                            }
+                                                flexDirection: 'row',
+                                                alignItems: 'center',
+                                                justifyContent: 'space-between',
+                                            },
                                         ]}
                                     >
                                         <TouchableOpacity
@@ -427,7 +427,7 @@ const Register = ({ navigation }) => {
                                             activeOpacity={0.8}
                                         >
                                             <Text style={[styles.dateText]}>
-                                                {selectedDate ? formatDate(selectedDate) : "Select Date"}
+                                                {selectedDate ? formatDate(selectedDate) : 'Select Date'}
                                             </Text>
                                         </TouchableOpacity>
                                     </View>
@@ -487,8 +487,7 @@ const Register = ({ navigation }) => {
                                             setSelectedCity(cityInput);
                                             setFilteredCities([]);
                                         }}
-                                    >
-                                    </TouchableOpacity>
+                                     />
                                 )}
 
 
@@ -531,7 +530,7 @@ const Register = ({ navigation }) => {
                                         />
                                         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                                             <AntDesign
-                                                name={showPassword ? "eye" : "eyeo"}
+                                                name={showPassword ? 'eye' : 'eyeo'}
                                                 size={20}
                                                 style={styles.eyeIcon}
                                                 color={Colors.dark}
@@ -561,7 +560,7 @@ const Register = ({ navigation }) => {
                                         />
                                         <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
                                             <AntDesign
-                                                name={showConfirmPassword ? "eye" : "eyeo"}
+                                                name={showConfirmPassword ? 'eye' : 'eyeo'}
                                                 size={20}
                                                 style={styles.eyeIcon}
                                                 color={Colors.dark}
@@ -581,10 +580,10 @@ const Register = ({ navigation }) => {
 
                                 {/* Mobile Number */}
                                 <Text style={Globalstyles.title}>Mobile Number <Entypo name={'star'} color={'red'} size={12} /></Text>
-                                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                     <TextInput
                                         style={[Globalstyles.input, { flex: 1 }]}
-                                        keyboardType='phone-pad'
+                                        keyboardType="phone-pad"
                                         placeholder="Enter your mobile number"
                                         value={mobileNumber}
                                         onChangeText={(text) => setMobileNumber(text.replace(/[^0-9]/g, ''))}
@@ -607,14 +606,14 @@ const Register = ({ navigation }) => {
                                             <Text
                                                 style={[
                                                     styles.otpButtonText,
-                                                    otpTimer > 0 && { color: 'red', fontFamily: "Poppins-Medium" }
+                                                    otpTimer > 0 && { color: 'red', fontFamily: 'Poppins-Medium' },
                                                 ]}
                                             >
                                                 {otpTimer > 0
                                                     ? `Resend OTP  ${Math.floor(otpTimer / 60)}:${(otpTimer % 60)
                                                         .toString()
-                                                        .padStart(2, "0")}`
-                                                    : "Send OTP"}
+                                                        .padStart(2, '0')}`
+                                                    : 'Send OTP'}
                                             </Text>
                                         )}
                                     </TouchableOpacity>
@@ -630,7 +629,7 @@ const Register = ({ navigation }) => {
                                 <Text style={Globalstyles.title}>OTP <Entypo name={'star'} color={'red'} size={12} /></Text>
 
                                 <TextInput style={Globalstyles.input}
-                                    keyboardType='phone-pad'
+                                    keyboardType="phone-pad"
                                     placeholder="Enter Your Otp"
                                     placeholderTextColor={Colors.gray}
                                     value={otp}
@@ -658,7 +657,7 @@ const Register = ({ navigation }) => {
                             </Pressable>
                         </View>
                     </ScrollView>
-                </KeyboardAvoidingView>
+                {/* </KeyboardAvoidingView> */}
             </ImageBackground>
         </SafeAreaView>
     );

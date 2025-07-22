@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, Switch, TouchableOpacity, SafeAreaView, StatusBar, ActivityIndicator, Image } from 'react-native';
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/NotificationSettingStyle';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Globalstyles from '../../utils/GlobalCss';
 import { HIDE_CONTACT, HIDE_OPTIONAL_DETAILS, INACTIVE_ID, BLUR_PHOTOS } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -17,7 +16,7 @@ const PrivacySettings = ({ navigation }) => {
   const MyprofileData = useSelector((state) => state.getBiodata);
   const hideContact = MyprofileData?.Biodata?.hideContact ?? false;
   const hideOptionalDetails = MyprofileData?.Biodata?.hideOptionalDetails ?? false;
-  const isActive = MyprofileData?.Biodata?.activityStatus === "Inactive";
+  const isActive = MyprofileData?.Biodata?.activityStatus === 'Inactive';
   const isBlur = MyprofileData?.Biodata?.isBlur ?? false;
   const [inactivateId, setInactivateId] = useState(isActive);
   const [hideContactDetails, setHideContactDetails] = useState(hideContact);
@@ -25,16 +24,16 @@ const PrivacySettings = ({ navigation }) => {
   const [blurPhotos, setBlurPhotos] = useState(isBlur);
 
   useEffect(() => {
-    console.log("MyprofileData", JSON.stringify(MyprofileData));
-  }, [])
+    console.log('MyprofileData', JSON.stringify(MyprofileData));
+  }, []);
 
   const togglePrivacySetting = async (settingType, currentValue, setter, apiUrl) => {
     try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       };
 
@@ -43,53 +42,53 @@ const PrivacySettings = ({ navigation }) => {
 
       const response = await axios.patch(apiUrl, { status: newValue }, { headers });
 
-      console.log("Toggle API Response:", response.data);
+      console.log('Toggle API Response:', response.data);
 
       if (response.status === 200) {
         showMessage({
-          type: "success",
-          message: "Success",
+          type: 'success',
+          message: 'Success',
           description: response.data.message || `${settingType} updated successfully!`,
-          icon: "success"
+          icon: 'success',
         });
       } else {
-        throw new Error(response.data.message || "Something went wrong!");
+        throw new Error(response.data.message || 'Something went wrong!');
       }
 
     } catch (error) {
       console.error(`Error updating ${settingType}:`, error?.response?.data || error.message);
       const errorMsg = error.response?.data?.message || error.message;
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
         return;
       }
       let errorMessage = `Failed to update ${settingType}. Please try again!`;
       if (error.response?.status === 400) {
-        errorMessage = error.response.data?.message || "Invalid request!";
+        errorMessage = error.response.data?.message || 'Invalid request!';
       }
       showMessage({
-        type: "danger",
-        message: "Info",
+        type: 'danger',
+        message: 'Info',
         description: errorMessage,
-        icon: "danger"
+        icon: 'danger',
       });
       setter(currentValue);
     }
-  }
+  };
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color={Colors.theme_color} />
       </View>
     );
@@ -100,7 +99,7 @@ const PrivacySettings = ({ navigation }) => {
     <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
-        <View style={{ flexDirection: 'row', alignItems: "center" }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
             <Image source={require('../../Images/menu.png')} style={{ width: SW(30), height: SH(30) }} />
           </TouchableOpacity>
@@ -115,7 +114,7 @@ const PrivacySettings = ({ navigation }) => {
           <Switch
             trackColor={{ false: Colors.gray, true: Colors.gray }}
             thumbColor={inactivateId ? Colors.theme_color : Colors.theme_color}
-            onValueChange={() => togglePrivacySetting("Inactivate ID", inactivateId, setInactivateId, INACTIVE_ID)}
+            onValueChange={() => togglePrivacySetting('Inactivate ID', inactivateId, setInactivateId, INACTIVE_ID)}
             value={inactivateId}
             disabled={isLoading}
             animated
@@ -127,7 +126,7 @@ const PrivacySettings = ({ navigation }) => {
           <Switch
             trackColor={{ false: Colors.gray, true: Colors.gray }}
             thumbColor={hideContactDetails ? Colors.theme_color : Colors.theme_color}
-            onValueChange={() => togglePrivacySetting("Hide Contact Details", hideContactDetails, setHideContactDetails, HIDE_CONTACT)}
+            onValueChange={() => togglePrivacySetting('Hide Contact Details', hideContactDetails, setHideContactDetails, HIDE_CONTACT)}
             value={hideContactDetails}
             disabled={isLoading}
             animated
@@ -139,7 +138,7 @@ const PrivacySettings = ({ navigation }) => {
           <Switch
             trackColor={{ false: Colors.gray, true: Colors.gray }}
             thumbColor={blurPhotos ? Colors.theme_color : Colors.theme_color}
-            onValueChange={() => togglePrivacySetting("Blur Photos", blurPhotos, setBlurPhotos, BLUR_PHOTOS)}
+            onValueChange={() => togglePrivacySetting('Blur Photos', blurPhotos, setBlurPhotos, BLUR_PHOTOS)}
             value={blurPhotos}
             animated
           />
@@ -150,7 +149,7 @@ const PrivacySettings = ({ navigation }) => {
           <Switch
             trackColor={{ false: Colors.gray, true: Colors.gray }}
             thumbColor={hideOptionalDetailsState ? Colors.theme_color : Colors.theme_color}
-            onValueChange={() => togglePrivacySetting("Hide Optional Details", hideOptionalDetailsState, setHideOptionalDetailsState, HIDE_OPTIONAL_DETAILS)}
+            onValueChange={() => togglePrivacySetting('Hide Optional Details', hideOptionalDetailsState, setHideOptionalDetailsState, HIDE_OPTIONAL_DETAILS)}
             value={hideOptionalDetailsState}
             disabled={isLoading}
             animated

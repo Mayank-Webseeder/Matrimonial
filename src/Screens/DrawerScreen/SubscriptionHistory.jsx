@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, FlatList, ScrollView, Image } from 'react-native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { DrawerActions, useFocusEffect } from '@react-navigation/native';
 import Globalstyles from '../../utils/GlobalCss';
 import Colors from '../../utils/Colors';
@@ -18,17 +17,17 @@ const SubscriptionHistory = ({ navigation }) => {
 
     useFocusEffect(useCallback(() => {
         GetsubscriptionHistory();
-    }, []))
+    }, []));
 
     const GetsubscriptionHistory = async () => {
         try {
             setIsLoading(true);
             setSubscriptionData([]);
-            const token = await AsyncStorage.getItem("userToken");
-            if (!token) throw new Error("No token found");
+            const token = await AsyncStorage.getItem('userToken');
+            if (!token) {throw new Error('No token found');}
 
             const headers = {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             };
 
@@ -42,23 +41,23 @@ const SubscriptionHistory = ({ navigation }) => {
                 razorpayOrderId: item.razorpayOrderId,
             }));
 
-            console.log("allSubscriptions", JSON.stringify(allSubscriptions));
+            console.log('allSubscriptions', JSON.stringify(allSubscriptions));
             setSubscriptionData(allSubscriptions);
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error fetching subscriptions:", errorMsg);
+            console.error('Error fetching subscriptions:', errorMsg);
 
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
         } finally {
@@ -85,7 +84,7 @@ const SubscriptionHistory = ({ navigation }) => {
                 status,
                 startDate,
                 endDate,
-                isTrial
+                isTrial,
             },
             paymentDate,
             paymentDetails,
@@ -102,13 +101,13 @@ const SubscriptionHistory = ({ navigation }) => {
                                 styles.statusText,
                                 {
                                     backgroundColor: isExpired ? '#f44336' : '#04AA6D',
-                                    color: "white",
+                                    color: 'white',
                                     paddingHorizontal: SW(5),
                                     paddingTop: SH(2),
                                     borderRadius: 5,
                                     alignSelf: 'flex-start',
-                                    textAlign: "center",
-                                    fontSize: SF(11)
+                                    textAlign: 'center',
+                                    fontSize: SF(11),
                                 },
                             ]}
                         >
@@ -160,13 +159,13 @@ const SubscriptionHistory = ({ navigation }) => {
                 </View>
             </View>
 
-            <View style={{ width: "100%" }}>
+            <View style={{ width: '100%' }}>
                 <ScrollView
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={[
                         styles.tabContainer,
-                        { paddingLeft: SW(10), paddingRight: SW(10) }
+                        { paddingLeft: SW(10), paddingRight: SW(10) },
                     ]}
                 >
                     {tabs.map((tab) => (
@@ -214,7 +213,7 @@ const styles = StyleSheet.create({
     },
     listContent: {
         paddingVertical: SH(10),
-        paddingHorizontal: SW(10)
+        paddingHorizontal: SW(10),
     },
     tabContainer: {
         flexDirection: 'row',
@@ -242,13 +241,13 @@ const styles = StyleSheet.create({
     },
     activeTabText: {
         color: '#fff',
-        fontFamily: "Poppins-Medium"
+        fontFamily: 'Poppins-Medium',
     },
     emptyText: {
         textAlign: 'center',
         marginTop: SH(20),
         color: '#888',
-        fontFamily: "Poppins-Bold"
+        fontFamily: 'Poppins-Bold',
     },
     card: {
         backgroundColor: '#ffffff',
@@ -313,8 +312,8 @@ const styles = StyleSheet.create({
         paddingVertical: SH(2),
         borderRadius: 6,
         alignItems: 'center',
-        alignSelf: "flex-end",
-        paddingHorizontal: SW(10)
+        alignSelf: 'flex-end',
+        paddingHorizontal: SW(10),
     },
     buyButtonText: {
         color: '#fff',

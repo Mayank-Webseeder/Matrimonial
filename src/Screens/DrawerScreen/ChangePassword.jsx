@@ -35,21 +35,21 @@ const ChangePassword = ({ navigation }) => {
   );
 
   const togglePasswordVisibility = (field) => {
-    if (field === "old") setShowOldPassword(!showOldPassword);
-    else if (field === "new") setShowNewPassword(!showNewPassword);
-    else setShowConfirmPassword(!showConfirmPassword);
+    if (field === 'old') {setShowOldPassword(!showOldPassword);}
+    else if (field === 'new') {setShowNewPassword(!showNewPassword);}
+    else {setShowConfirmPassword(!showConfirmPassword);}
   };
 
   const handleChangePassword = async () => {
     if (!oldPassword || !newPassword || !confirmPassword) {
-      setPasswordError("All fields are required!");
-      showMessage({ type: 'danger', message: 'Validation Error', description: 'All fields are required!', icon: "danger", duration: 7000 });
+      setPasswordError('All fields are required!');
+      showMessage({ type: 'danger', message: 'Validation Error', description: 'All fields are required!', icon: 'danger', duration: 7000 });
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setPasswordError("Passwords do not match!");
-      showMessage({ type: "danger", message: 'Validation Error', description: 'Passwords do not match!', duration: 7000 });
+      setPasswordError('Passwords do not match!');
+      showMessage({ type: 'danger', message: 'Validation Error', description: 'Passwords do not match!', duration: 7000 });
       return;
     }
 
@@ -59,7 +59,7 @@ const ChangePassword = ({ navigation }) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) {
-        showMessage({ type: "danger", message: 'Authentication Error', description: 'No token found! Please log in again.', duration: 5000 });
+        showMessage({ type: 'danger', message: 'Authentication Error', description: 'No token found! Please log in again.', duration: 5000 });
         setLoading(false);
         return;
       }
@@ -67,44 +67,44 @@ const ChangePassword = ({ navigation }) => {
       const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
       const payload = { oldPassword, newPassword };
 
-      console.log("🔹 Sending API Request:", payload);
+      console.log('🔹 Sending API Request:', payload);
       const response = await axios.post(CHANGE_PASSWORD, payload, { headers });
 
-      console.log("✅ API Response:", response.data);
+      console.log('✅ API Response:', response.data);
       setLoading(false);
 
       if (response.status === 200 && response.data.status === true) {
-        showMessage({ type: 'success', message: 'Success', description: 'Password changed successfully!', icon: "success", duration: 7000 });
+        showMessage({ type: 'success', message: 'Success', description: 'Password changed successfully!', icon: 'success', duration: 7000 });
         setIsModalVisible(true);
       } else {
-        showMessage({ type: 'danger', message: 'Error', description: response.data.message || "Something went wrong!", icon: "danger", duration: 5000 });
+        showMessage({ type: 'danger', message: 'Error', description: response.data.message || 'Something went wrong!', icon: 'danger', duration: 5000 });
       }
 
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching biodata:", errorMsg);
+      console.error('Error fetching biodata:', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
       setLoading(false);
 
       if (error.response && error.response.status === 400) {
-        console.log("❌ API Error Response:", error.response.data);
-        showMessage({ type: "danger", message: 'Error', description: errorMsg || "Error changing password!", duration: 7000 });
+        console.log('❌ API Error Response:', error.response.data);
+        showMessage({ type: 'danger', message: 'Error', description: errorMsg || 'Error changing password!', duration: 7000 });
       } else {
-        console.log("❌ Network Error:", error);
-        showMessage({ type: "danger", message: 'Network Error', description: 'Please try again.', icon: "danger", duration: 7000 });
+        console.log('❌ Network Error:', error);
+        showMessage({ type: 'danger', message: 'Network Error', description: 'Please try again.', icon: 'danger', duration: 7000 });
       }
     }
   };
@@ -117,13 +117,13 @@ const ChangePassword = ({ navigation }) => {
 
   return (
     <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
-      <KeyboardAvoidingView
+      {/* <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}> */}
         <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
         <View style={Globalstyles.header}>
-          <View style={{ flexDirection: 'row', alignItems: "center" }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
               <Image source={require('../../Images/menu.png')} style={{ width: SW(30), height: SH(30) }} />
             </TouchableOpacity>
@@ -131,7 +131,7 @@ const ChangePassword = ({ navigation }) => {
           </View>
         </View>
 
-        <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: insets.bottom + SH(10), flexGrow: 1 }}>
+        <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
           <View>
             <Text style={styles.Text}>Please enter your new password and confirm it to change your old password</Text>
 
@@ -150,8 +150,8 @@ const ChangePassword = ({ navigation }) => {
                   importantForAutofill="no"
                   autoCorrect={false}
                 />
-                <TouchableOpacity onPress={() => togglePasswordVisibility("old")} style={styles.eyeIcon}>
-                  <AntDesign name={showOldPassword ? "eye" : "eyeo"} size={24} color={Colors.theme_color} />
+                <TouchableOpacity onPress={() => togglePasswordVisibility('old')} style={styles.eyeIcon}>
+                  <AntDesign name={showOldPassword ? 'eye' : 'eyeo'} size={24} color={Colors.theme_color} />
                 </TouchableOpacity>
               </View>
 
@@ -169,8 +169,8 @@ const ChangePassword = ({ navigation }) => {
                   importantForAutofill="no"
                   autoCorrect={false}
                 />
-                <TouchableOpacity onPress={() => togglePasswordVisibility("new")} style={styles.eyeIcon}>
-                  <AntDesign name={showNewPassword ? "eye" : "eyeo"} size={24} color={Colors.theme_color} />
+                <TouchableOpacity onPress={() => togglePasswordVisibility('new')} style={styles.eyeIcon}>
+                  <AntDesign name={showNewPassword ? 'eye' : 'eyeo'} size={24} color={Colors.theme_color} />
                 </TouchableOpacity>
               </View>
 
@@ -188,15 +188,15 @@ const ChangePassword = ({ navigation }) => {
                   importantForAutofill="no"
                   autoCorrect={false}
                 />
-                <TouchableOpacity onPress={() => togglePasswordVisibility("confirm")} style={styles.eyeIcon}>
-                  <AntDesign name={showConfirmPassword ? "eye" : "eyeo"} size={24} color={Colors.theme_color} />
+                <TouchableOpacity onPress={() => togglePasswordVisibility('confirm')} style={styles.eyeIcon}>
+                  <AntDesign name={showConfirmPassword ? 'eye' : 'eyeo'} size={24} color={Colors.theme_color} />
                 </TouchableOpacity>
               </View>
 
               {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
 
               <TouchableOpacity style={styles.optionButton} onPress={handleChangePassword} disabled={loading}>
-                <Text style={styles.optionText}>{loading ? "Updating..." : "Change Password"}</Text>
+                <Text style={styles.optionText}>{loading ? 'Updating...' : 'Change Password'}</Text>
               </TouchableOpacity>
             </View>
 
@@ -218,7 +218,7 @@ const ChangePassword = ({ navigation }) => {
             </Modal>
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
+      {/* </KeyboardAvoidingView> */}
     </SafeAreaView>
   );
 };

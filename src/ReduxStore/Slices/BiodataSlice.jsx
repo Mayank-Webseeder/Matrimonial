@@ -1,16 +1,16 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const BiodataSlice = createSlice({
-  name: "getBiodata",
+  name: 'getBiodata',
   initialState: {
-    Biodata: {}, 
+    Biodata: {},
   },
   reducers: {
     setBioData: (state, action) => {
-      state.Biodata = action.payload; 
+      state.Biodata = action.payload;
     },
     resetBioData: (state) => {
-      state.Biodata = {}; 
+      state.Biodata = {};
     },
   },
 });

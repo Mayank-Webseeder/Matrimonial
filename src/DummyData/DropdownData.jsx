@@ -18,7 +18,7 @@ export const OccupationData = [
   { label: 'Research Scholar', value: 'Research Scholar' },
   { label: 'Retired', value: 'Retired' },
   { label: 'Not Working', value: 'Not Working' },
-  { label: 'Other', value: 'Other' }
+  { label: 'Other', value: 'Other' },
 ];
 
 export const MotherOccupationData = [
@@ -42,7 +42,7 @@ export const MotherOccupationData = [
   { label: 'Not Working', value: 'Not Working' },
   { label: 'Home Maker', value: 'Home Maker' },
   { label: 'Expired', value: 'Expired' },
-  { label: 'Other', value: 'Other' }
+  { label: 'Other', value: 'Other' },
 ];
 
 export const PartnerOccupationData = [
@@ -105,7 +105,7 @@ export const maritalStatusData = [
   { label: 'Re - Marraige', value: 'Re - Marraige' },
   { label: 'Widow', value: 'Widow' },
   { label: 'Divorcee', value: 'Divorcee' },
-  { label: 'Annulled', value: 'Annulled' }
+  { label: 'Annulled', value: 'Annulled' },
 ];
 
 export const PartnermaritalStatusData = [
@@ -132,7 +132,7 @@ export const PartnerManglikStatusData = [
 export const LivingData = [
   { label: 'Yes', value: 'Yes' },
   { label: 'No', value: 'No' },
-]
+];
 
 export const ProfileCreatedData = [
   { label: 'Self', value: 'Self' },
@@ -178,8 +178,8 @@ export const CityData = [
 ];
 
 export const genderData = [
-  { label: "Male", value: "male" },
-  { label: "Female", value: "female" },
+  { label: 'Male', value: 'male' },
+  { label: 'Female', value: 'female' },
 ];
 
 export const Income = [
@@ -189,7 +189,7 @@ export const Income = [
   { label: '10 Lakh - 20 Lakh INR', value: '10 Lakh - 20 Lakh INR' },
   { label: 'Above 20 Lakh INR', value: 'Above 20 Lakh INR' },
   { label: 'No Income', value: 'No Income' },
-]
+];
 
 export const PartnerFamliyIncome = [
   { label: 'Less than 1 Lakh INR', value: 'Less than 1 Lakh INR' },
@@ -199,24 +199,24 @@ export const PartnerFamliyIncome = [
   { label: 'Above 20 Lakh INR', value: 'Above 20 Lakh INR' },
   { label: 'No Income', value: 'No Income' },
   { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
-]
+];
 
 export const FamilyType = [
   { label: 'Nuclear Family', value: 'Nuclear Family' },
   { label: 'Joint Family', value: 'Joint Family' },
   { label: 'Extended Family', value: 'Extended Family' },
-]
+];
 
 export const CookingStatus = [
   { label: 'Yes', value: 'Yes' },
   { label: 'No', value: 'No' },
-]
+];
 
 export const DietHabit = [
   { label: 'Vegetarian', value: 'Vegetarian' },
   { label: 'Non-Vegetarian', value: 'Non-Vegetarian' },
   { label: 'Eggetarian', value: 'Eggetarian' },
-]
+];
 
 export const PartnerDietHabit = [
   { label: 'Vegetarian', value: 'Vegetarian' },
@@ -224,73 +224,73 @@ export const PartnerDietHabit = [
   { label: 'Eggetarian', value: 'Eggetarian' },
   { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
 
-]
+];
 
 export const smokingStatusData = [
   { label: 'Yes', value: 'Yes' },
   { label: 'No', value: 'No' },
-]
+];
 
 export const PartnersmokingStatusData = [
   { label: 'Yes', value: 'Yes' },
   { label: 'No', value: 'No' },
-  { label: 'Doesn’t Matter', value: 'Doesn’t Matter' }
-]
+  { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
+];
 
 export const DrinkingHabit = [
   { label: 'Yes', value: 'Yes' },
   { label: 'No', value: 'No' },
   { label: 'Occasionally', value: 'Occasionally' },
-]
+];
 
 export const TobacooHabit = [
   { label: 'Yes', value: 'Yes' },
   { label: 'No', value: 'No' },
-]
+];
 
 export const PartnerDrinkingHabit = [
   { label: 'Yes', value: 'Yes' },
   { label: 'No', value: 'No' },
   { label: 'Occasionally', value: 'Occasionally' },
   { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
-]
+];
 
 export const PeoplePosition = [
   { label: 'Activist', value: 'Activist' },
   { label: 'Pandit', value: 'Pandit' },
   { label: 'Kathavachak', value: 'Kathavachak' },
   { label: 'Jyotish', value: 'Jyotish' },
-]
+];
 
 export const StateData = [
-  { label: "Andhra Pradesh" },
-  { label: "Arunachal Pradesh" },
-  { label: "Assam" },
-  { label: "Bihar" },
-  { label: "Chattisgarh" },
-  { label: "Goa" },
-  { label: "Gujarat" },
-  { label: "Haryana" },
-  { label: "Himachal Pradesh" },
-  { label: "Jharkhand" },
-  { label: "Karnataka" },
-  { label: "Kerala" },
-  { label: "Madhya Pradesh" },
-  { label: "Maharashtra" },
-  { label: "Manipur" },
-  { label: "Meghalaya" },
-  { label: "Mizoram" },
-  { label: "Nagaland" },
-  { label: "Odisha" },
-  { label: "Punjab" },
-  { label: "Rajasthan" },
-  { label: "Sikkim" },
-  { label: "Tamil Nadu" },
-  { label: "Telangana" },
-  { label: "Tripura" },
-  { label: "Uttar Pradesh" },
-  { label: "Uttarakhand" },
-  { label: "West Bengal" },
+  { label: 'Andhra Pradesh' },
+  { label: 'Arunachal Pradesh' },
+  { label: 'Assam' },
+  { label: 'Bihar' },
+  { label: 'Chattisgarh' },
+  { label: 'Goa' },
+  { label: 'Gujarat' },
+  { label: 'Haryana' },
+  { label: 'Himachal Pradesh' },
+  { label: 'Jharkhand' },
+  { label: 'Karnataka' },
+  { label: 'Kerala' },
+  { label: 'Madhya Pradesh' },
+  { label: 'Maharashtra' },
+  { label: 'Manipur' },
+  { label: 'Meghalaya' },
+  { label: 'Mizoram' },
+  { label: 'Nagaland' },
+  { label: 'Odisha' },
+  { label: 'Punjab' },
+  { label: 'Rajasthan' },
+  { label: 'Sikkim' },
+  { label: 'Tamil Nadu' },
+  { label: 'Telangana' },
+  { label: 'Tripura' },
+  { label: 'Uttar Pradesh' },
+  { label: 'Uttarakhand' },
+  { label: 'West Bengal' },
 ];
 
 
@@ -321,14 +321,14 @@ export const FamilyIncomeData = [
 export const PartnersLiveinData = [
   { label: 'India', value: 'India' },
   { label: 'Abroad', value: 'Abroad' },
-]
+];
 
 export const BodyStructureData = [
   { label: 'Slim', value: 'Slim' },
   { label: 'Normal', value: 'Normal' },
   { label: 'Fatty', value: 'Fatty' },
   { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
-]
+];
 
 export const ComplexionData = [
   { label: 'Pale', value: 'Pale' },
@@ -338,7 +338,7 @@ export const ComplexionData = [
   { label: 'Naturally brown ', value: 'Naturally brown ' },
   { label: 'Dark Brown/Black', value: 'Dark Brown/Black' },
   { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
-]
+];
 
 export const MyComplexionData = [
   { label: 'Pale', value: 'Pale' },
@@ -347,18 +347,18 @@ export const MyComplexionData = [
   { label: 'Olive', value: 'Olive' },
   { label: 'Naturally brown ', value: 'Naturally brown ' },
   { label: 'Dark Brown/Black', value: 'Dark Brown/Black' },
-]
+];
 
 export const Disabilities = [
   { label: 'yes', value: 'Yes' },
   { label: 'No', value: 'No' },
-  { label: 'Doesn’t Matter', value: 'Doesn’t Matter' }
-]
+  { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
+];
 
 export const MyDisabilities = [
   { label: 'yes', value: 'Yes' },
   { label: 'No', value: 'No' },
-]
+];
 
 export const subCasteOptions = [
   { label: 'Anavil', value: 'Anavil' },
@@ -567,51 +567,51 @@ export const RatingData = [
   { label: '3 Stars', value: '3' },
   { label: '4 Stars', value: '4' },
   { label: '5 Stars', value: '5' },
-]
+];
 
 export const panditServices = [
-  { label: "Pujan", value: "pujan" },
-  { label: "Havan Evam Yagya", value: "havan evam yagya" },
-  { label: "Rudrabhishek", value: "rudrabhishek" },
-  { label: "Mahamrityunjay Jaap", value: "mahamrityunjay jaap" },
-  { label: "Marriage Pujan", value: "marriage pujan" },
-  { label: "Pran Pratishtha Pujan", value: "pran pratishtha pujan" },
-  { label: "Yagyopavit Sanskar", value: "yagyopavit sanskar" },
-  { label: "Mool Shanti Pujan", value: "mool shanti pujan" },
-  { label: "Chandi Yagya", value: "chandi yagya" },
-  { label: "Saptashati Anushthan", value: "saptashati anushthan" },
-  { label: "Baglamukhi Anushthan", value: "baglamukhi anushthan" },
-  { label: "Kaal Sarp Dosh Pujan", value: "kaal sarp dosh pujan" },
-  { label: "Mangaldosh Pujan", value: "mangaldosh pujan" },
-  { label: "Pitru Dosh Pujan", value: "pitru dosh pujan" },
-  { label: "Rahu Ketu Dosh", value: "rahu ketu dosh" },
-  { label: "Navgrah Shanti", value: "navgrah shanti" },
-  { label: "Antim Sanskar Vidhi", value: "antim sanskar vidhi" },
-  { label: "Asthi Visarjan Vidhi", value: "asthi visarjan vidhi" },
-  { label: "Pind Daan Tarpan", value: "pind daan tarpan" },
-  { label: "Dashakarma Vidhi", value: "dashakarma vidhi" },
-  { label: "Garud Puram Vachan", value: "garud puram vachan" },
-  { label: "Shraddh Vidhi", value: "shraddh vidhi" },
-  { label: "Tantra Sadhana", value: "tantra sadhana" }
+  { label: 'Pujan', value: 'pujan' },
+  { label: 'Havan Evam Yagya', value: 'havan evam yagya' },
+  { label: 'Rudrabhishek', value: 'rudrabhishek' },
+  { label: 'Mahamrityunjay Jaap', value: 'mahamrityunjay jaap' },
+  { label: 'Marriage Pujan', value: 'marriage pujan' },
+  { label: 'Pran Pratishtha Pujan', value: 'pran pratishtha pujan' },
+  { label: 'Yagyopavit Sanskar', value: 'yagyopavit sanskar' },
+  { label: 'Mool Shanti Pujan', value: 'mool shanti pujan' },
+  { label: 'Chandi Yagya', value: 'chandi yagya' },
+  { label: 'Saptashati Anushthan', value: 'saptashati anushthan' },
+  { label: 'Baglamukhi Anushthan', value: 'baglamukhi anushthan' },
+  { label: 'Kaal Sarp Dosh Pujan', value: 'kaal sarp dosh pujan' },
+  { label: 'Mangaldosh Pujan', value: 'mangaldosh pujan' },
+  { label: 'Pitru Dosh Pujan', value: 'pitru dosh pujan' },
+  { label: 'Rahu Ketu Dosh', value: 'rahu ketu dosh' },
+  { label: 'Navgrah Shanti', value: 'navgrah shanti' },
+  { label: 'Antim Sanskar Vidhi', value: 'antim sanskar vidhi' },
+  { label: 'Asthi Visarjan Vidhi', value: 'asthi visarjan vidhi' },
+  { label: 'Pind Daan Tarpan', value: 'pind daan tarpan' },
+  { label: 'Dashakarma Vidhi', value: 'dashakarma vidhi' },
+  { label: 'Garud Puram Vachan', value: 'garud puram vachan' },
+  { label: 'Shraddh Vidhi', value: 'shraddh vidhi' },
+  { label: 'Tantra Sadhana', value: 'tantra sadhana' },
 ];
 
 export const jyotishServices = [
-  { label: "Janam Kundli Making", value: "janam kundli making" },
-  { label: "Kundli Milan", value: "kundli milan" },
-  { label: "Astrology Consultation", value: "astrology consultation" },
-  { label: "Palm Reading", value: "palm reading" },
-  { label: "Face Reading", value: "face reading" },
-  { label: "Tarot Astrology", value: "tarot astrology" },
-  { label: "Nadi Reading", value: "nadi reading" }
+  { label: 'Janam Kundli Making', value: 'janam kundli making' },
+  { label: 'Kundli Milan', value: 'kundli milan' },
+  { label: 'Astrology Consultation', value: 'astrology consultation' },
+  { label: 'Palm Reading', value: 'palm reading' },
+  { label: 'Face Reading', value: 'face reading' },
+  { label: 'Tarot Astrology', value: 'tarot astrology' },
+  { label: 'Nadi Reading', value: 'nadi reading' },
 ];
 
 export const kathavachakServices = [
-  { label: "Bhagwat Katha", value: "bhagwat katha" },
-  { label: "Shiv Puran", value: "shiv puran" },
-  { label: "Satsang Evam Bhajan", value: "satsang evam bhajan" },
-  { label: "Sundar Kand", value: "sundar kand" },
-  { label: "Shri Ram Katha", value: "shri ram katha" },
-  { label: "Nani Bai Ka Mayra", value: "nani bai ka mayra" }
+  { label: 'Bhagwat Katha', value: 'bhagwat katha' },
+  { label: 'Shiv Puran', value: 'shiv puran' },
+  { label: 'Satsang Evam Bhajan', value: 'satsang evam bhajan' },
+  { label: 'Sundar Kand', value: 'sundar kand' },
+  { label: 'Shri Ram Katha', value: 'shri ram katha' },
+  { label: 'Nani Bai Ka Mayra', value: 'nani bai ka mayra' },
 ];
 
 

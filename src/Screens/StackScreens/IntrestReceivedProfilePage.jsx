@@ -18,13 +18,12 @@ import { SH, SW, SF } from '../../utils/Dimensions';
 import moment from 'moment';
 import { useFocusEffect } from '@react-navigation/native';
 import { showMessage } from 'react-native-flash-message';
-const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 import ImageViewer from 'react-native-image-zoom-viewer';
 import { CommonActions } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const IntrestReceivedProfilePage = ({ navigation, route }) => {
-   const insets = useSafeAreaInsets();
+  const insets = useSafeAreaInsets();
   const sliderRef = useRef(null);
   const topSliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -47,11 +46,11 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const hideOptionalDetails = userData?.hideOptionalDetails === true && currentStatus === 'accepted'
     ? false
     : !!userData?.hideOptionalDetails;
-  console.log("hideOptionalDetails", hideOptionalDetails);
+  console.log('hideOptionalDetails', hideOptionalDetails);
   const requestId = profileData?.requestId;
   const isVisible = profileData?.isVisible;
   const isBlur = userData?.isBlur;
-  const isBlurCondition = currentStatus === "accepted" ? !isVisible : isBlur;
+  const isBlurCondition = currentStatus === 'accepted' ? !isVisible : isBlur;
   const MyprofileData = useSelector((state) => state.getBiodata);
   const [imageIndex, setImageIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
@@ -81,7 +80,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const formattedImages = [
     personalDetails?.closeUpPhoto,
     !hideOptionalDetails && personalDetails?.fullPhoto,
-    !hideOptionalDetails && personalDetails?.bestPhoto
+    !hideOptionalDetails && personalDetails?.bestPhoto,
   ]
     .filter(Boolean)
     .map((url) => ({ uri: url }));
@@ -104,7 +103,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
 
   useFocusEffect(
     useCallback(() => {
-      console.log("initialSavedState", initialSavedState);
+      console.log('initialSavedState', initialSavedState);
       if (profile_id) {
         fetchUserProfile(profile_id);
       }
@@ -123,7 +122,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   }, [profile_id]);
 
   useEffect(() => {
-    if (!formattedImages || formattedImages.length === 0) return;
+    if (!formattedImages || formattedImages.length === 0) {return;}
 
     const duration = (formattedImages[currentIndex]?.duration || 2) * 1000;
 
@@ -139,7 +138,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
 
 
   useEffect(() => {
-    if (slider.length === 0) return;
+    if (slider.length === 0) {return;}
 
     const currentSlide = slider[currentIndex];
     const durationInSeconds = currentSlide?.duration || 2;
@@ -159,15 +158,15 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) {
         showMessage({
-          type: "danger",
-          message: "Authentication Error",
-          description: "No token found. Please log in again.",
-          duration: 5000
+          type: 'danger',
+          message: 'Authentication Error',
+          description: 'No token found. Please log in again.',
+          duration: 5000,
         });
 
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
         return;
       }
@@ -180,7 +179,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
 
       if (response.data) {
         const fetchedData = response.data.data;
-        console.log("fetchedData", JSON.stringify(fetchedData));
+        console.log('fetchedData', JSON.stringify(fetchedData));
 
         const fullSliderData = fetchedData.flatMap((item) =>
           item.media.map((mediaItem) => ({
@@ -194,25 +193,25 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         );
 
         setSlider(fullSliderData);
-        console.log("Slider Data:", fullSliderData);
+        console.log('Slider Data:', fullSliderData);
       } else {
         setSlider([]);
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching advertisement:", errorMsg);
+      console.error('Error fetching advertisement:', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
     }
@@ -220,7 +219,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
 
   const fetchUserProfile = async (id) => {
     const token = await AsyncStorage.getItem('userToken');
-    if (!token) throw new Error('No token found');
+    if (!token) {throw new Error('No token found');}
 
     const headers = {
       'Content-Type': 'application/json',
@@ -230,7 +229,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
     try {
       setLoading(true);
       const response = await axios.get(`${MATCHED_PROFILE}/${id}`, { headers });
-      console.log("response", JSON.stringify(response.data));
+      console.log('response', JSON.stringify(response.data));
 
       if (response.data.status) {
         setProfileData(response.data);
@@ -239,36 +238,36 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         setProfileData(null);
         setUserData(null);
         setLoading(false);
-        Alert.alert("Error", "User account has been deleted or no biodata available.");
+        Alert.alert('Error', 'User account has been deleted or no biodata available.');
       }
     } catch (error) {
-      console.error("❌ Error fetching profile");
+      console.error('❌ Error fetching profile');
       if (error.response) {
         const errorMsg = error.response?.data?.message || error.message;
-        console.error("Error fetching profile:", errorMsg);
+        console.error('Error fetching profile:', errorMsg);
 
-        if (errorMsg === "Target user has not set any biodata or personal details.") {
+        if (errorMsg === 'Target user has not set any biodata or personal details.') {
           setProfileData(null);
           setUserData(null);
           setLoading(false);
         }
       } else if (error.request) {
-        console.error("📡 No response received from server.");
-        console.error("Request Details:", error.request);
+        console.error('📡 No response received from server.');
+        console.error('Request Details:', error.request);
       } else {
-        console.error("⚠️ Error Message:", error.message);
+        console.error('⚠️ Error Message:', error.message);
       }
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
       setLoading(false);
@@ -279,52 +278,52 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
 
   const savedProfiles = async () => {
     if (!_id) {
-      showMessage({ type: "danger", message: "User ID not found!", icon: "danger" });
+      showMessage({ type: 'danger', message: 'User ID not found!', icon: 'danger' });
       return;
     }
 
     try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       };
 
       const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
-      console.log("Response Data:", response?.data);
+      console.log('Response Data:', response?.data);
 
       if (response.status === 200 && response.data.status === true) {
         showMessage({
-          type: "success",
-          message: "Success",
-          description: response.data.message || "Profile saved successfully!",
-          icon: "success",
+          type: 'success',
+          message: 'Success',
+          description: response.data.message || 'Profile saved successfully!',
+          icon: 'success',
         });
 
-        const isNowSaved = response.data.message.includes("saved successfully");
+        const isNowSaved = response.data.message.includes('saved successfully');
         setIsSaved(isNowSaved);
       } else {
-        throw new Error(response.data.message || "Something went wrong");
+        throw new Error(response.data.message || 'Something went wrong');
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching biodata:", errorMsg);
+      console.error('Error fetching biodata:', errorMsg);
       showMessage({
-        type: "danger",
-        message: "Error",
+        type: 'danger',
+        message: 'Error',
         description: errorMsg,
-        icon: "danger",
+        icon: 'danger',
       });
 
       if ([
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ].includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
-        navigation.reset({ index: 0, routes: [{ name: "AuthStack" }] });
+        await AsyncStorage.removeItem('userToken');
+        navigation.reset({ index: 0, routes: [{ name: 'AuthStack' }] });
       }
     }
   };
@@ -332,66 +331,66 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   // Accept Connection Request
   const acceptConnectionRequest = async (requestId) => {
     setLoadingAccept(true);
-    if (!requestId) return;
+    if (!requestId) {return;}
 
-    console.log("✅ Accepting request for userId:", requestId);
+    console.log('✅ Accepting request for userId:', requestId);
 
     try {
-      const token = await AsyncStorage.getItem("userToken");
+      const token = await AsyncStorage.getItem('userToken');
       if (!token) {
         showMessage({
-          type: "danger",
-          message: "Error",
-          description: "User token missing!",
-          duarion: 5000
+          type: 'danger',
+          message: 'Error',
+          description: 'User token missing!',
+          duarion: 5000,
         });
         return;
       }
 
-      const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` };
+      const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
       const response = await axios.post(`${ACCEPTED_API}/${requestId}`, {}, { headers });
 
-      console.log("🚀 Response Status:", response.status);
+      console.log('🚀 Response Status:', response.status);
 
       if (response.status === 200 && response.data.status === true) {
         showMessage({
-          type: "success",
-          message: "Success",
-          description: response.data.message || "Request accepted successfully!",
-          icon: "success",
-          duarion: 7000
+          type: 'success',
+          message: 'Success',
+          description: response.data.message || 'Request accepted successfully!',
+          icon: 'success',
+          duarion: 7000,
         });
-        setCurrentStatus("accepted");
+        setCurrentStatus('accepted');
         setProfileData(prev => ({
           ...prev,
           isVisible: true,
         }));
       } else {
-        throw new Error(response.data.message || "Something went wrong");
+        throw new Error(response.data.message || 'Something went wrong');
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error in accept request:", errorMsg);
+      console.error('Error in accept request:', errorMsg);
 
       showMessage({
-        type: "danger",
-        message: "Error",
+        type: 'danger',
+        message: 'Error',
         description: errorMsg,
-        icon: "danger",
-        duarion: 7000
+        icon: 'danger',
+        duarion: 7000,
       });
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
       setLoadingAccept(false);
@@ -404,84 +403,84 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   // Reject Connection Request
   const rejectConnectionRequest = async (requestId) => {
     setLoadingDecline(true);
-    if (!requestId) return;
+    if (!requestId) {return;}
 
-    console.log("❌ Rejecting request for userId:", requestId);
+    console.log('❌ Rejecting request for userId:', requestId);
 
     try {
-      const token = await AsyncStorage.getItem("userToken");
+      const token = await AsyncStorage.getItem('userToken');
       if (!token) {
         showMessage({
-          type: "danger",
-          message: "Error",
-          description: "User token missing!",
-          duarion: 5000
+          type: 'danger',
+          message: 'Error',
+          description: 'User token missing!',
+          duarion: 5000,
         });
         return;
       }
 
-      const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` };
+      const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
       const response = await axios.post(`${REJECTED_API}/${requestId}`, {}, { headers });
 
-      console.log("🚀 Response Status:", response.status);
+      console.log('🚀 Response Status:', response.status);
 
       if (response.status === 200 && response.data.status === true) {
         showMessage({
-          type: "success",
-          message: "Success",
-          description: response.data.message || "Request rejected successfully!",
-          icon: "success",
-          duarion: 7000
+          type: 'success',
+          message: 'Success',
+          description: response.data.message || 'Request rejected successfully!',
+          icon: 'success',
+          duarion: 7000,
         });
-        setCurrentStatus("rejected");
+        setCurrentStatus('rejected');
       } else {
-        throw new Error(response.data.message || "Something went wrong");
+        throw new Error(response.data.message || 'Something went wrong');
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error in reject request:", errorMsg);
+      console.error('Error in reject request:', errorMsg);
       showMessage({
-        type: "error",
-        message: "Error",
+        type: 'error',
+        message: 'Error',
         description: errorMsg,
-        icon: "danger",
-        duarion: 7000
+        icon: 'danger',
+        duarion: 7000,
       });
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
       setLoadingDecline(false);
     }
     finally {
-      setLoadingDecline(false)
+      setLoadingDecline(false);
     }
   };
 
   const shareProfiles = async () => {
-    const profileType = "interest-received-profile";
+    const profileType = 'interest-received-profile';
 
-    console.log("userId", userId);
+    console.log('userId', userId);
 
     try {
-      if (!userId) throw new Error("Missing profile ID");
+      if (!userId) {throw new Error('Missing profile ID');}
 
       const directLink = `${DeepLink}/${profileType}/${userId}`;
 
       await Share.share({
-        message: `Check this profile in Brahmin Milan app:\n${directLink}`
+        message: `Check this profile in Brahmin Milan app:\n${directLink}`,
       });
     } catch (error) {
-      console.error("Sharing failed:", error?.message || error);
+      console.error('Sharing failed:', error?.message || error);
     }
   };
 
@@ -492,12 +491,12 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   const matchPercentage = totalCriteria > 0 ? Math.round((matchedCount / totalCriteria) * 100) : 0;
 
   const formattedHeight = personalDetails?.heightFeet
-    ?.replace(/\s*-\s*/, "")
-    ?.replace(/\s+/g, "");
+    ?.replace(/\s*-\s*/, '')
+    ?.replace(/\s+/g, '');
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color={Colors.theme_color} />
       </View>
     );
@@ -517,10 +516,10 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   }
 
   return (
-    <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
+    <SafeAreaView style={Globalstyles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
-        <View style={{ flexDirection: 'row', alignItems: "center" }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity
             onPress={() =>
               navigation.dispatch(
@@ -545,10 +544,10 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           <Text style={Globalstyles.headerText}>{personalDetails?.fullname || 'Raj Sharma'}</Text>
         </View>
         <View style={styles.righticons}>
-          <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification') }} />
+          <AntDesign name={'bells'} size={25} color={Colors.theme_color} onPress={() => { navigation.navigate('Notification'); }} />
         </View>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(10), flexGrow: 1}}>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View>
           <View style={styles.sliderContainer}>
             <AppIntroSlider
@@ -574,16 +573,16 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
                 saveToLocalByLongPress={false}
                 renderIndicator={(currentIndex, allSize) => (
                   <View style={{
-                    position: "absolute",
+                    position: 'absolute',
                     top: SH(30),
-                    alignSelf: "center",
-                    backgroundColor: "rgba(0,0,0,0.6)",
+                    alignSelf: 'center',
+                    backgroundColor: 'rgba(0,0,0,0.6)',
                     paddingHorizontal: SW(8),
                     borderRadius: 5,
                     paddingVertical: SH(8),
-                    zIndex: 999
+                    zIndex: 999,
                   }}>
-                    <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>
+                    <Text style={{ color: 'white', fontSize: SF(16), fontWeight: 'bold' }}>
                       {currentIndex} / {allSize}
                     </Text>
                   </View>
@@ -603,7 +602,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           {(userData?.verified) && (
             <View style={styles.verifiedContainer}>
               <Image
-                source={require("../../Images/verified.png")}
+                source={require('../../Images/verified.png')}
                 style={styles.verifiedBadge}
               />
               <Text style={styles.verifiedText}>Verified</Text>
@@ -612,7 +611,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           <View style={styles.flexContainer}>
             <View style={styles.flex}>
               {/* <Text style={styles.Idtext}>ID NO. :- {userId}</Text> */}
-              <Text style={styles.Idtext}>{"ID NO. :-".toUpperCase()} {userData?.bioDataId}</Text>
+              <Text style={styles.Idtext}>{'ID NO. :-'.toUpperCase()} {userData?.bioDataId}</Text>
               <Text style={styles.toptext}>{matchPercentage > 0 && (
                 <Text style={styles.toptext}>
                   {matchPercentage}% Compatible according to your preference
@@ -623,11 +622,11 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
             <View style={styles.sharecontainer}>
               <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
                 <FontAwesome
-                  name={Save ? "bookmark" : "bookmark-o"}
+                  name={Save ? 'bookmark' : 'bookmark-o'}
                   size={19}
                   color={Colors.theme_color}
                 />
-                <Text style={styles.iconText}>{Save ? "Saved" : "Save"}</Text>
+                <Text style={styles.iconText}>{Save ? 'Saved' : 'Save'}</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.iconContainer} onPress={shareProfiles}>
                 <Feather name="send" size={19} color={Colors.theme_color} />
@@ -669,7 +668,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
             <View style={styles.rightContainer}>
               {personalDetails?.currentCity && <Text style={styles.text}>{personalDetails?.currentCity}</Text>}
               {personalDetails?.occupation && <Text style={styles.text}>{personalDetails?.occupation}</Text>}
-              {personalDetails?.annualIncome && <Text style={[styles.text, { textTransform: "none" }]}>{personalDetails?.annualIncome} </Text>}
+              {personalDetails?.annualIncome && <Text style={[styles.text, { textTransform: 'none' }]}>{personalDetails?.annualIncome} </Text>}
               {personalDetails?.qualification && <Text style={styles.text}>{personalDetails?.qualification}</Text>}
             </View>
           </View >
@@ -684,7 +683,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
                 {/* Displaying Date of Birth and Time of Birth */}
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>DOB :</Text>
-                  <Text style={styles.infoValue}>{moment(personalDetails.dob).format("DD-MM-YYYY")} / Time: {personalDetails?.timeOfBirth}</Text>
+                  <Text style={styles.infoValue}>{moment(personalDetails.dob).format('DD-MM-YYYY')} / Time: {personalDetails?.timeOfBirth}</Text>
                 </View>
 
                 {/* Displaying Place of Birth */}
@@ -737,7 +736,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
                   <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>About Me</Text>
                 </View>
 
-                {personalDetails?.aboutMe?.trim() !== "" && (
+                {personalDetails?.aboutMe?.trim() !== '' && (
                   <Text style={styles.text}>{personalDetails?.aboutMe}</Text>
                 )}
 
@@ -953,7 +952,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
               {/* Comparison List */}
               {Object.keys(profileData?.comparisonResults).map((key, index) => (
                 <View key={index} style={styles.flexContainer5}>
-                  <Text style={styles.label}>{key.replace(/([A-Z])/g, " $1").trim()}</Text>
+                  <Text style={styles.label}>{key.replace(/([A-Z])/g, ' $1').trim()}</Text>
                   {profileData?.comparisonResults[key] ? (
                     <MaterialIcons name="check" style={[styles.icon, styles.checkIcon]} />
                   ) : (
@@ -977,7 +976,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
                 const handlePress = () => {
                   if (item.hyperlink) {
                     Linking.openURL(item.hyperlink).catch(err =>
-                      console.error("Failed to open URL:", err)
+                      console.error('Failed to open URL:', err)
                     );
                   }
                 };
@@ -1000,21 +999,21 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
         </View>
       </ScrollView>
 
-      {currentStatus !== "accepted" && currentStatus !== "rejected" && (
+      {currentStatus !== 'accepted' && currentStatus !== 'rejected' && (
         <View style={styles.bottomContainer}>
           <TouchableOpacity
             style={[
               styles.declineButton,
-              (currentStatus === "rejected" || currentStatus === "accepted") && { backgroundColor: "#dbcccf" }
+              (currentStatus === 'rejected' || currentStatus === 'accepted') && { backgroundColor: '#dbcccf' },
             ]}
             onPress={() => rejectConnectionRequest(requestId)}
-            disabled={loadingDecline || currentStatus === "rejected" || currentStatus === "accepted"}
+            disabled={loadingDecline || currentStatus === 'rejected' || currentStatus === 'accepted'}
           >
             {loadingDecline ? (
               <ActivityIndicator size="small" color="#fff" />
             ) : (
               <>
-                <Entypo name={"cross"} color={Colors.light} size={20} />
+                <Entypo name={'cross'} color={Colors.light} size={20} />
                 <Text style={styles.declineButtonText}>Decline</Text>
               </>
             )}
@@ -1023,23 +1022,22 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
           <TouchableOpacity
             style={[
               styles.acceptButton,
-              (currentStatus === "accepted" || currentStatus === "rejected") && { backgroundColor: "#dbcccf" }
+              (currentStatus === 'accepted' || currentStatus === 'rejected') && { backgroundColor: '#dbcccf' },
             ]}
             onPress={() => acceptConnectionRequest(requestId)}
-            disabled={loadingAccept || currentStatus === "accepted" || currentStatus === "rejected"}
+            disabled={loadingAccept || currentStatus === 'accepted' || currentStatus === 'rejected'}
           >
             {loadingAccept ? (
               <ActivityIndicator size="small" color="#fff" />
             ) : (
               <>
-                <Entypo name={"check"} color={Colors.light} size={20} />
+                <Entypo name={'check'} color={Colors.light} size={20} />
                 <Text style={styles.acceptButtonText}>Accept</Text>
               </>
             )}
           </TouchableOpacity>
         </View>
       )}
-
     </SafeAreaView>
   );
 };

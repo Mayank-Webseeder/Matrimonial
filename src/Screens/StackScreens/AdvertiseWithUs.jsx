@@ -1,57 +1,57 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, Linking, ActivityIndicator, KeyboardAvoidingView, Platform, SafeAreaView } from "react-native";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import Globalstyles from "../../utils/GlobalCss";
-import Colors from "../../utils/Colors";
-import styles from "../StyleScreens/AdvertiseWithUsStyle";
-import { ImageBackground } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
-import { ADVERTISE_WITH_US } from "../../utils/BaseUrl";
-import { showMessage } from "react-native-flash-message";
-import { SF, SH, SW } from "../../utils/Dimensions";
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, Linking, ActivityIndicator, KeyboardAvoidingView, Platform, SafeAreaView } from 'react-native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Globalstyles from '../../utils/GlobalCss';
+import Colors from '../../utils/Colors';
+import styles from '../StyleScreens/AdvertiseWithUsStyle';
+import { ImageBackground } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { ADVERTISE_WITH_US } from '../../utils/BaseUrl';
+import { showMessage } from 'react-native-flash-message';
+import { SF, SH, SW } from '../../utils/Dimensions';
 // import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const AdvertiseWithUs = ({ navigation }) => {
     const insets = useSafeAreaInsets();
-    const [fullName, setFullname] = useState("");
-    const [mobileNo, setMobileNo] = useState("");
-    const [email, setEmail] = useState("");
-    const [message, setMessage] = useState("");
+    const [fullName, setFullname] = useState('');
+    const [mobileNo, setMobileNo] = useState('');
+    const [email, setEmail] = useState('');
+    const [message, setMessage] = useState('');
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
 
     const validateFields = () => {
         const newErrors = {};
 
-        if (!mobileNo) newErrors.mobileNo = "Mobile number is required.";
-        else if (!/^\d{10}$/.test(mobileNo)) newErrors.mobileNo = "Enter a valid 10-digit mobile number.";
+        if (!mobileNo) {newErrors.mobileNo = 'Mobile number is required.';}
+        else if (!/^\d{10}$/.test(mobileNo)) {newErrors.mobileNo = 'Enter a valid 10-digit mobile number.';}
 
         if (!fullName) {
-            newErrors.fullName = "fullName is required.";
+            newErrors.fullName = 'fullName is required.';
         } else if (!/^[A-Za-z\s]+$/.test(fullName)) {
-            newErrors.fullName = "fullName must contain only letters.";
+            newErrors.fullName = 'fullName must contain only letters.';
         } else if (fullName.length > 15) {
-            newErrors.fullName = "fullName cannot exceed 15 characters.";
+            newErrors.fullName = 'fullName cannot exceed 15 characters.';
         }
-        if (!email.trim()) newErrors.email = "email is required.";
+        if (!email.trim()) {newErrors.email = 'email is required.';}
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
     const handleSubmit = async () => {
         try {
-            setIsLoading(true)
-            if (!validateFields()) return;
+            setIsLoading(true);
+            if (!validateFields()) {return;}
             const token = await AsyncStorage.getItem('userToken'); // ✅ Fetch Token
-            if (!token) throw new Error('No token found');
+            if (!token) {throw new Error('No token found');}
 
             const payload = {
                 fullName,
                 email,
                 phoneNumber: mobileNo,
-                message
+                message,
             };
 
             const headers = {
@@ -62,7 +62,7 @@ const AdvertiseWithUs = ({ navigation }) => {
             console.log('Payload:', payload);
 
             const response = await axios.post(ADVERTISE_WITH_US, payload, { headers });
-            console.log("Feedback response:", JSON.stringify(response.data));
+            console.log('Feedback response:', JSON.stringify(response.data));
 
             // ✅ Ensure response is successful
             if (response.status === 200 && response.data.status === true) {
@@ -70,8 +70,8 @@ const AdvertiseWithUs = ({ navigation }) => {
                     type: 'success',
                     message: 'Success',
                     description: response.data.message || 'Your Advertise Request has been submitted successfully!',
-                    icon: "success",
-                    duarion: 7000
+                    icon: 'success',
+                    duarion: 7000,
                 });
 
                 setTimeout(() => {
@@ -81,35 +81,35 @@ const AdvertiseWithUs = ({ navigation }) => {
             }
 
             // ❌ If response is not successful, throw an error
-            throw new Error(response.data.message || "Something went wrong");
+            throw new Error(response.data.message || 'Something went wrong');
 
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error fetching biodata:", errorMsg);
+            console.error('Error fetching biodata:', errorMsg);
             showMessage({
                 type: 'danger',
                 message: 'Error',
                 description: errorMsg,
-                icon: "danger",
-                duarion: 7000
+                icon: 'danger',
+                duarion: 7000,
             });
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
-            setIsLoading(false)
+            setIsLoading(false);
         }
         finally {
-            setIsLoading(false)
+            setIsLoading(false);
 
         }
     };
@@ -138,17 +138,15 @@ const AdvertiseWithUs = ({ navigation }) => {
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
-                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+                // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+                >
 
-                <ScrollView showsVerticalScrollIndicator={false} removeClippedSubviews={true} keyboardShouldPersistTaps="handled"
-                    contentContainerStyle={{
-                        paddingBottom: insets.bottom + SH(10), flexGrow: 1
-                    }}>
+                <ScrollView showsVerticalScrollIndicator={false} removeClippedSubviews={true} keyboardShouldPersistTaps="handled">
                     <View>
                         <ImageBackground
                             source={require('../../Images/Advertisement.jpeg')}
                             style={styles.background}
-                            resizeMode="cover"
+                            resizeMode="contain"
                         >
 
                             {/* Contact Info Section */}
@@ -157,8 +155,8 @@ const AdvertiseWithUs = ({ navigation }) => {
                                     <View style={styles.iconContainer}>
                                         <MaterialIcons name="phone" size={11} color={Colors.dark} />
                                         <Text
-                                            style={[styles.contactText, { color: Colors.dark, fontSize: SF(14), fontFamily: "Poppins-Bold" }]}
-                                            onPress={() => Linking.openURL("tel:8871186630")}
+                                            style={[styles.contactText, { color: Colors.dark, fontSize: SF(9.5), fontFamily: 'Poppins-Bold' }]}
+                                            onPress={() => Linking.openURL('tel:8871186630')}
                                         >
                                             8871186630 🤙
                                         </Text>
@@ -166,8 +164,8 @@ const AdvertiseWithUs = ({ navigation }) => {
                                     <View style={styles.iconContainer}>
                                         <MaterialIcons name="phone" size={11} color={Colors.dark} />
                                         <Text
-                                            style={[styles.contactText, { color: Colors.dark, fontSize: SF(14), fontFamily: "Poppins-Bold" }]}
-                                            onPress={() => Linking.openURL("tel:8602210689")}
+                                            style={[styles.contactText, { color: Colors.dark, fontSize: SF(9.5), fontFamily: 'Poppins-Bold' }]}
+                                            onPress={() => Linking.openURL('tel:8602210689')}
                                         >
                                             8602210689 🤙
                                         </Text>
@@ -175,20 +173,20 @@ const AdvertiseWithUs = ({ navigation }) => {
                                 </View>
                                 <View style={styles.contactCard}>
                                     <View style={styles.iconContainer}>
-                                        <MaterialIcons name="email" size={11} color={Colors.light} />
+                                        {/* <MaterialIcons name="email" size={11} color={Colors.light} /> */}
                                         <Text
                                             style={styles.contactText}
-                                            onPress={() => Linking.openURL("mailto:brahminmilan.in@gmail.com")}
+                                            onPress={() => Linking.openURL('mailto:brahminmilan.in@gmail.com')}
                                         >
                                             brahminmilan.in@gmail.com
                                         </Text>
                                     </View>
 
                                     <View style={styles.iconContainer}>
-                                        <MaterialIcons name="email" size={11} color={Colors.light} />
+                                        {/* <MaterialIcons name="email" size={11} color={Colors.light} /> */}
                                         <Text
                                             style={styles.contactText}
-                                            onPress={() => Linking.openURL("mailto:appwin.in@gmail.com")}
+                                            onPress={() => Linking.openURL('mailto:appwin.in@gmail.com')}
                                         >
                                             appwin.in@gmail.com
                                         </Text>
@@ -248,7 +246,7 @@ const AdvertiseWithUs = ({ navigation }) => {
                                 style={[Globalstyles.textInput]}
                                 placeholder="Write your message..."
                                 value={message}
-                                textAlignVertical='top'
+                                textAlignVertical="top"
                                 placeholderTextColor={Colors.gray}
                                 onChangeText={handleTextChange}
                                 multiline

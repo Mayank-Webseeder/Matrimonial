@@ -1,24 +1,24 @@
-import { StyleSheet } from "react-native";
-import { SH, SW, SF } from "../../utils/Dimensions";
-import Colors from "../../utils/Colors";
+import { StyleSheet } from 'react-native';
+import { SH, SW, SF } from '../../utils/Dimensions';
+import Colors from '../../utils/Colors';
 
 const styles = StyleSheet.create({
   loading: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   menuIcon: {
     width: SW(30),
-    height: SH(30)
+    height: SH(30),
   },
   headerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   menuIcon: {
     width: SW(30),
-    height: SH(30)
+    height: SH(30),
   },
   righticons: {
     flexDirection: 'row',
@@ -45,26 +45,26 @@ const styles = StyleSheet.create({
 
   image: {
     width: SW(100),
-    height: SH(100)
+    height: SH(100),
   },
   images: {
     width: SW(100),
     height: SH(65),
-    resizeMode: "contain"
+    resizeMode: 'contain',
   },
   ProfileImages: {
     width: SW(112),
     height: SH(110),
-    resizeMode: "cover",
+    resizeMode: 'cover',
     borderRadius: 10,
   },
   verifiedContainer: {
-    position: "absolute",
+    position: 'absolute',
     top: SH(99),
     left: SW(69),
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "white",
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'white',
     paddingHorizontal: SW(5),
     paddingVertical: SW(2),
     borderRadius: 5,
@@ -73,25 +73,25 @@ const styles = StyleSheet.create({
     width: SW(10),
     height: SH(10),
     marginRight: SW(1),
-    resizeMode: "contain"
+    resizeMode: 'contain',
   },
   verifiedText: {
-    color: "green",
-    fontWeight: "bold",
+    color: 'green',
+    fontWeight: 'bold',
     fontSize: SF(7),
   },
   text: {
     paddingVertical: SH(4),
-    fontFamily: "Poppins-Bold",
+    fontFamily: 'Poppins-Bold',
     paddingBottom: 0,
     fontSize: SF(11),
-    textTransform: "uppercase"
+    textTransform: 'uppercase',
   },
   sliderContainer: {
-    marginBottom: SH(30)
+    marginBottom: SH(30),
   },
   sliderImage: {
-    width: "100%",
+    width: '100%',
     height: SH(180),
     resizeMode: 'cover',
   },
@@ -101,14 +101,14 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: '#ccc',
     marginHorizontal: SH(2),
-    marginTop: SW(100)
+    marginTop: SW(100),
   },
   activeDot: {
     width: SW(25),
     height: SH(5),
     borderRadius: 4,
     backgroundColor: Colors.theme_color,
-    marginTop: SW(100)
+    marginTop: SW(100),
   },
   emptyWrapper: {
     flex: 1,
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   bottomSlider: {
-    paddingBottom: SH(10)
+    paddingBottom: SH(10),
   },
   volumeIcon: {
     position: 'absolute',
@@ -151,8 +151,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
     borderRadius: 20,
     paddingVertical: SH(8),
-    paddingHorizontal: SW(8)
-  }
+    paddingHorizontal: SW(8),
+  },
 });
 
 export default styles;

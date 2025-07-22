@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Text, View, TouchableOpacity, Modal, SafeAreaView, StatusBar, Linking ,Image } from 'react-native';
-import Colors from '../../utils/Colors';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styles from '../StyleScreens/InactiveDeleteStyle';
 import Globalstyles from '../../utils/GlobalCss';
-import { DELETE_BIODATA, DELETE_USER } from '../../utils/BaseUrl';
+import { DELETE_BIODATA } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector } from 'react-redux';
@@ -23,18 +21,18 @@ const InActiveDelete = ({ navigation }) => {
     const Profiledata = profileData?.profiledata || null;
 
     useEffect(() => {
-        console.log("Profiledata", Profiledata);
-    }, [])
+        console.log('Profiledata', Profiledata);
+    }, []);
 
     const DELETE_BIODATA_API = async () => {
         try {
             setIsLoading(true);
-            const token = await AsyncStorage.getItem("userToken");
+            const token = await AsyncStorage.getItem('userToken');
 
-            if (!token) throw new Error("No token found");
+            if (!token) {throw new Error('No token found');}
 
             const headers = {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             };
 
@@ -43,42 +41,42 @@ const InActiveDelete = ({ navigation }) => {
             if (response.status === 200 && response.data.status === true) {
                 // ✅ Success
                 showMessage({
-                    type: "success",
-                    message: "Success",
-                    description: "Your Biodata has been deleted successfully!",
-                    icon:"success",
-                    duration: 5000
+                    type: 'success',
+                    message: 'Success',
+                    description: 'Your Biodata has been deleted successfully!',
+                    icon:'success',
+                    duration: 5000,
                 });
                 setSuccessModalVisible(true);
                 dispatch(resetBioData());
             } else {
-                throw new Error(response.data.message || "Unexpected response from server");
+                throw new Error(response.data.message || 'Unexpected response from server');
             }
 
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error deleting biodata:", errorMsg);
-        
+            console.error('Error deleting biodata:', errorMsg);
+
             const sessionExpiredMessages = [
-              "User does not Exist....!Please login again",
-              "Invalid token. Please login again",
-              "Token has expired. Please login again"
+              'User does not Exist....!Please login again',
+              'Invalid token. Please login again',
+              'Token has expired. Please login again',
             ];
-        
+
             if (sessionExpiredMessages.includes(errorMsg)) {
-              await AsyncStorage.removeItem("userToken");
+              await AsyncStorage.removeItem('userToken');
               navigation.reset({
                 index: 0,
-                routes: [{ name: "AuthStack" }],
+                routes: [{ name: 'AuthStack' }],
               });
-            } 
+            }
 
             showMessage({
-                type: "danger",
-                message: "Error",
+                type: 'danger',
+                message: 'Error',
                 description: errorMsg,
-                icon:"danger",
-                duration: 5000
+                icon:'danger',
+                duration: 5000,
             });
 
         } finally {
@@ -97,7 +95,7 @@ const InActiveDelete = ({ navigation }) => {
         if (actionType === 'deleteBiodata') {
             await DELETE_BIODATA_API();
         } else if (actionType === 'deleteAccount') {
-            Linking.openURL("https://accounts.brahminmilan.in/");
+            Linking.openURL('https://accounts.brahminmilan.in/');
         }
     };
 
@@ -110,7 +108,7 @@ const InActiveDelete = ({ navigation }) => {
         <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
             <View style={Globalstyles.header}>
-                <View style={{ flexDirection: 'row', alignItems: "center" }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
                        <Image source={require('../../Images/menu.png')} style={{width: SW(30),height: SH(30)}} />
                     </TouchableOpacity>

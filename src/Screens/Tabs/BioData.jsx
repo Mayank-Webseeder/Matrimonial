@@ -26,7 +26,7 @@ const BioData = ({ navigation }) => {
   const [Topslider, TopsetSlider] = useState([]);
   const [Bottomslider, BottomsetSlider] = useState([]);
   const [all_profiles, setAllprofiles] = useState({});
-  const [isLoading, setIsLoading] = useState("");
+  const [isLoading, setIsLoading] = useState('');
   const MatrimonialData = all_profiles?.metrimony || [];
   const savedProfiles = all_profiles?.savedProfiles || [];
   const interestedProfiles = all_profiles?.interestedProfiles || [];
@@ -62,9 +62,9 @@ const BioData = ({ navigation }) => {
   const get_all_mixed_matrimony_profiles = async () => {
     try {
       setAllprofiles({});
-      setIsLoading(true)
+      setIsLoading(true);
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) throw new Error('No token found');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
         'Content-Type': 'application/json',
@@ -72,45 +72,45 @@ const BioData = ({ navigation }) => {
       };
 
       const response = await axios.get(MATRIMONY_SUMMRARY, { headers });
-      console.log("MATRIMONY_SUMMRARY", response.data)
+      console.log('MATRIMONY_SUMMRARY', response.data);
       if (response.data) {
         const fetchedData = response.data;
-        console.log("fetchedData", JSON.stringify(response.data))
+        console.log('fetchedData', JSON.stringify(response.data));
         setAllprofiles(fetchedData);
-        setIsLoading(false)
+        setIsLoading(false);
       } else {
         setAllprofiles({});
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching biodata:", errorMsg);
+      console.error('Error fetching biodata:', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
     }
     finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   };
   useEffect(() => {
-    if (Topslider.length === 0) return;
+    if (Topslider.length === 0) {return;}
 
     const currentSlideTop = Topslider[currentIndexTop];
     const durationInSecondsTop = Number(currentSlideTop?.duration) || 4;
     const bufferMs = 800;
     const durationInMillisecondsTop = durationInSecondsTop * 1000 + bufferMs;
-    console.log("⏱️ Top Duration (sec):", durationInSecondsTop);
+    console.log('⏱️ Top Duration (sec):', durationInSecondsTop);
 
     const timeoutTop = setTimeout(() => {
       const nextIndexTop = currentIndexTop < Topslider.length - 1 ? currentIndexTop + 1 : 0;
@@ -123,13 +123,13 @@ const BioData = ({ navigation }) => {
 
 
   useEffect(() => {
-    if (Bottomslider.length === 0) return;
+    if (Bottomslider.length === 0) {return;}
 
     const currentSlideBottom = Bottomslider[currentIndexBottom];
     const durationInSecondsBottom = Number(currentSlideBottom?.duration) || 4;
     const durationInMillisecondsBottom = durationInSecondsBottom * 1000;
 
-    console.log("⏱️ Bottom Duration (sec):", durationInSecondsBottom);
+    console.log('⏱️ Bottom Duration (sec):', durationInSecondsBottom);
 
     const timeoutBottom = setTimeout(() => {
       const nextIndexBottom = currentIndexBottom < Bottomslider.length - 1 ? currentIndexBottom + 1 : 0;
@@ -143,7 +143,7 @@ const BioData = ({ navigation }) => {
   const Top_Advertisement_window = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) throw new Error('No token found');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
         'Content-Type': 'application/json',
@@ -154,7 +154,7 @@ const BioData = ({ navigation }) => {
 
       if (response.data) {
         const fetchedData = response.data.data;
-        console.log("Top fetchedData", JSON.stringify(fetchedData));
+        console.log('Top fetchedData', JSON.stringify(fetchedData));
 
         const fullSliderData = fetchedData.flatMap((item) =>
           item.media.map((mediaItem) => ({
@@ -170,25 +170,25 @@ const BioData = ({ navigation }) => {
         );
 
         TopsetSlider(fullSliderData);
-        console.log("Slider Data:", fullSliderData);
+        console.log('Slider Data:', fullSliderData);
       } else {
         TopsetSlider([]);
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching advertisement:", errorMsg);
+      console.error('Error fetching advertisement:', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
     }
@@ -197,7 +197,7 @@ const BioData = ({ navigation }) => {
   const Bottom_Advertisement_window = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) throw new Error('No token found');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
         'Content-Type': 'application/json',
@@ -208,7 +208,7 @@ const BioData = ({ navigation }) => {
 
       if (response.data) {
         const fetchedData = response.data.data;
-        console.log("Bottom fetchedData", JSON.stringify(fetchedData));
+        console.log('Bottom fetchedData', JSON.stringify(fetchedData));
 
         const fullSliderData = fetchedData.flatMap((item) =>
           item.media.map((mediaItem) => ({
@@ -224,25 +224,25 @@ const BioData = ({ navigation }) => {
         );
 
         BottomsetSlider(fullSliderData);
-        console.log("Slider Data:", fullSliderData);
+        console.log('Slider Data:', fullSliderData);
       } else {
         BottomsetSlider([]);
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching advertisement :", errorMsg);
+      console.error('Error fetching advertisement :', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
     }
@@ -254,7 +254,7 @@ const BioData = ({ navigation }) => {
     const handlePress = () => {
       if (item.hyperlink) {
         Linking.openURL(item.hyperlink).catch(err =>
-          console.error("Failed to open URL:", err)
+          console.error('Failed to open URL:', err)
         );
       }
     };
@@ -263,7 +263,7 @@ const BioData = ({ navigation }) => {
       <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
         <Image
           source={{ uri: item.image }}
-          style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
+          style={{ width: '100%', height: SH(180), resizeMode: 'contain' }}
         />
       </TouchableOpacity>
     );
@@ -286,21 +286,21 @@ const BioData = ({ navigation }) => {
 
 
   const calculateAge = (dob) => {
-    if (!dob) return "N/A";
+    if (!dob) {return 'N/A';}
     const birthDate = moment(dob);
     const currentDate = moment();
-    return currentDate.diff(birthDate, "years");
+    return currentDate.diff(birthDate, 'years');
   };
 
 
   const renderProfileData = ({ item }) => {
     const formattedHeight = item?.personalDetails?.heightFeet
-      ?.replace(/\s*-\s*/, "")
-      ?.replace(/\s+/g, "");
+      ?.replace(/\s*-\s*/, '')
+      ?.replace(/\s+/g, '');
     const isBlur = item?.isBlur;
     const status = item?.status;
     const isVisible = item?.isVisible;
-    const isBlurCondition = status === "accepted" ? !isVisible : isBlur;
+    const isBlurCondition = status === 'accepted' ? !isVisible : isBlur;
 
     return (
       <View>
@@ -328,7 +328,7 @@ const BioData = ({ navigation }) => {
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color={Colors.theme_color} />
       </View>
     );
@@ -342,7 +342,7 @@ const BioData = ({ navigation }) => {
         translucent
       />
       <View style={Globalstyles.header}>
-        <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: 'row' }}>
           <MaterialIcons name={'arrow-back-ios-new'} size={25} color={Colors.theme_color} onPress={() => navigation.goBack()} />
           <Text style={Globalstyles.headerText}>Matrimony</Text>
         </View>
@@ -355,18 +355,18 @@ const BioData = ({ navigation }) => {
           {notificationCount > 0 && (
             <View
               style={{
-                position: "absolute",
+                position: 'absolute',
                 right: -5,
                 top: -5,
                 width: SW(16),
                 height: SW(16),
                 borderRadius: SW(16) / 2,
-                backgroundColor: "red",
-                justifyContent: "center",
-                alignItems: "center",
+                backgroundColor: 'red',
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
             >
-              <Text style={{ color: 'white', fontSize: SF(9), fontFamily: "Poppins-Bold" }}>
+              <Text style={{ color: 'white', fontSize: SF(9), fontFamily: 'Poppins-Bold' }}>
                 {notificationCount}
               </Text>
             </View>

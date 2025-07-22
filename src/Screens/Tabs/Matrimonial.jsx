@@ -24,8 +24,8 @@ const Matrimonial = ({ navigation }) => {
   const gender = MyprofileData?.Biodata?.gender || null;
 
   const [activeButton, setActiveButton] = useState(() => {
-    if (gender?.toLowerCase() === "male") return 1;
-    if (gender?.toLowerCase() === "female") return 2;
+    if (gender?.toLowerCase() === 'male') {return 1;}
+    if (gender?.toLowerCase() === 'female') {return 2;}
     return 1;
   });
 
@@ -41,10 +41,10 @@ const Matrimonial = ({ navigation }) => {
   const notificationCount = notifications ? notifications.length : 0;
 
   useEffect(() => {
-    console.log("MyprofileData", MyprofileData);
-    console.log("gender", gender);
-    console.log("profile_data", profile_data);
-  }, [])
+    console.log('MyprofileData', MyprofileData);
+    console.log('gender', gender);
+    console.log('profile_data', profile_data);
+  }, []);
 
   useEffect(() => {
     if (searchQuery.length > 0) {
@@ -57,7 +57,7 @@ const Matrimonial = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       setSearchMode(false);
-      fetchProfiles("");
+      fetchProfiles('');
       fetchGirlsFilterData();
       fetchBoysFilterData();
     }, [])
@@ -83,13 +83,13 @@ const Matrimonial = ({ navigation }) => {
 
 
   useEffect(() => {
-    if (slider.length === 0) return;
+    if (slider.length === 0) {return;}
 
     const currentSlide = slider[currentIndex];
     const durationInSeconds = Number(currentSlide?.duration) || 4;
     const bufferMs = 800;
     const durationInMilliseconds = durationInSeconds * 1000 + bufferMs;
-    console.log("durationInSeconds", durationInSeconds);
+    console.log('durationInSeconds', durationInSeconds);
     const timeout = setTimeout(() => {
       const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
       setCurrentIndex(nextIndex);
@@ -104,7 +104,7 @@ const Matrimonial = ({ navigation }) => {
   const Advertisement_window = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) throw new Error('No token found');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
         'Content-Type': 'application/json',
@@ -115,7 +115,7 @@ const Matrimonial = ({ navigation }) => {
 
       if (response.data) {
         const fetchedData = response.data.data;
-        console.log("fetchedData", JSON.stringify(fetchedData));
+        console.log('fetchedData', JSON.stringify(fetchedData));
 
         const fullSliderData = fetchedData.flatMap((item) =>
           item.media.map((mediaItem) => ({
@@ -130,53 +130,53 @@ const Matrimonial = ({ navigation }) => {
         );
 
         setSlider(fullSliderData);
-        console.log("Slider Data:", fullSliderData);
+        console.log('Slider Data:', fullSliderData);
       } else {
         setSlider([]);
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching advertisement:", errorMsg);
+      console.error('Error fetching advertisement:', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
     }
   };
 
   useEffect(() => {
-    if (activeButton === 1) fetchGirlsFilterData();
-    else if (activeButton === 2) fetchBoysFilterData();
+    if (activeButton === 1) {fetchGirlsFilterData();}
+    else if (activeButton === 2) {fetchBoysFilterData();}
   }, [activeButton]);
 
 
-  const fetchProfiles = async (query = "") => {
+  const fetchProfiles = async (query = '') => {
     const token = await AsyncStorage.getItem('userToken');
     if (!token) {
       showMessage({
-        type: "danger",
-        message: "Authentication Error",
-        description: "No token found. Please log in again.",
-        duration: 5000
+        type: 'danger',
+        message: 'Authentication Error',
+        description: 'No token found. Please log in again.',
+        duration: 5000,
       });
 
       navigation.reset({
         index: 0,
-        routes: [{ name: "AuthStack" }],
+        routes: [{ name: 'AuthStack' }],
       });
       return;
     }
-    setProfiles([])
+    setProfiles([]);
 
     const headers = {
       'Content-Type': 'application/json',
@@ -187,160 +187,160 @@ const Matrimonial = ({ navigation }) => {
       const queryString = new URLSearchParams({ searchTerm: query }).toString();
       const finalURL = `${GET_ALL_BIODATA_PROFILES}?${queryString}`;
 
-      console.log("🛠 Final API URL:", finalURL);
+      console.log('🛠 Final API URL:', finalURL);
       const finalResponse = await axios.get(finalURL, { headers });
-      console.log("📥 Filtered Data:", JSON.stringify(finalResponse.data));
+      console.log('📥 Filtered Data:', JSON.stringify(finalResponse.data));
 
       setProfiles(finalResponse.data.feedUsers || []);
     } catch (error) {
-      console.error("❌ Error fetching profiles:", error.response?.data || error);
+      console.error('❌ Error fetching profiles:', error.response?.data || error);
     }
   };
 
   useEffect(() => {
-    if (activeButton === 1) fetchGirlsFilterData();
-    else if (activeButton === 2) fetchBoysFilterData();
+    if (activeButton === 1) {fetchGirlsFilterData();}
+    else if (activeButton === 2) {fetchBoysFilterData();}
   }, [activeButton]);
 
   const fetchBoysFilterData = async () => {
     try {
-      setboysProfiles([])
-      setProfileLoading(true)
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+      setboysProfiles([]);
+      setProfileLoading(true);
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {throw new Error('No token found');}
 
-      const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` };
+      const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
       const res = await axios.get(MALE_FILTER_API, { headers });
-      console.log("res.data.Girls", JSON.stringify(res.data.feedUsers));
+      console.log('res.data.Girls', JSON.stringify(res.data.feedUsers));
       setboysProfiles(res.data.feedUsers);
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching profiles:", errorMsg);
+      console.error('Error fetching profiles:', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
-      setProfileLoading(false)
+      setProfileLoading(false);
     }
     finally {
-      setProfileLoading(false)
+      setProfileLoading(false);
     }
   };
 
   const fetchGirlsFilterData = async () => {
     try {
-      setgirlsProfiles([])
-      setProfileLoading(true)
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+      setgirlsProfiles([]);
+      setProfileLoading(true);
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {throw new Error('No token found');}
 
-      const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` };
+      const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
       const res = await axios.get(FEMALE_FILTER_API, { headers });
-      console.log("res.data.Boys", JSON.stringify(res.data.feedUsers));
+      console.log('res.data.Boys', JSON.stringify(res.data.feedUsers));
       setgirlsProfiles(res.data.feedUsers);
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching female biodata:", errorMsg);
+      console.error('Error fetching female biodata:', errorMsg);
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
-      setProfileLoading(false)
+      setProfileLoading(false);
     }
     finally {
-      setProfileLoading(false)
+      setProfileLoading(false);
     }
   };
 
   const shareProfiles = async (profileId) => {
-    const profileType = "Matrimonial";
+    const profileType = 'Matrimonial';
 
-    console.log("profileId", profileId);
+    console.log('profileId', profileId);
 
     try {
-      if (!profileId) throw new Error("Missing profile ID");
+      if (!profileId) {throw new Error('Missing profile ID');}
 
       const directLink = `${DeepLink}/${profileType}/${profileId}`;
 
       await Share.share({
-        message: `Check this profile in Brahmin Milan app:\n${directLink}`
+        message: `Check this profile in Brahmin Milan app:\n${directLink}`,
       });
     } catch (error) {
-      console.error("Sharing failed:", error?.message || error);
+      console.error('Sharing failed:', error?.message || error);
     }
   };
 
   const popop = async () => {
     const isBiodataExpired = profile_data?.serviceSubscriptions?.some(
-      (sub) => sub.serviceType === "Biodata" && sub.status === "Expired"
+      (sub) => sub.serviceType === 'Biodata' && sub.status === 'Expired'
     );
 
     const isBiodataEmpty = !MyprofileData.Biodata || Object.keys(MyprofileData.Biodata).length === 0;
 
     if (isBiodataEmpty) {
       showMessage({
-        message: "Create Biodata",
-        description: "Please create biodata to see full information of this profile.",
-        type: "info",
+        message: 'Create Biodata',
+        description: 'Please create biodata to see full information of this profile.',
+        type: 'info',
         duration: 3000,
       });
 
       setTimeout(() => {
-        navigation.navigate("MatrimonyPage");
+        navigation.navigate('MatrimonyPage');
       }, 2000);
     } else if (isBiodataExpired) {
       showMessage({
-        message: "Subscription Required",
-        description: "Please activate your subscription to see full information of this profile.",
-        type: "info",
-        icon: "info",
+        message: 'Subscription Required',
+        description: 'Please activate your subscription to see full information of this profile.',
+        type: 'info',
+        icon: 'info',
         duration: 3000,
       });
 
       setTimeout(() => {
-        navigation.navigate("BuySubscription", { serviceType: "Biodata" });
+        navigation.navigate('BuySubscription', { serviceType: 'Biodata' });
       }, 2000);
     } else {
-      navigation.navigate("MatrimonyPage");
+      navigation.navigate('MatrimonyPage');
     }
   };
 
   const savedProfiles = async (_id) => {
     if (!_id) {
       showMessage({
-        type: "danger",
-        message: "Error",
-        description: "User ID not found!",
-        icon: "info"
+        type: 'danger',
+        message: 'Error',
+        description: 'User ID not found!',
+        icon: 'info',
       });
       return;
     }
 
     try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       };
       setgirlsProfiles((prev) =>
@@ -358,25 +358,25 @@ const Matrimonial = ({ navigation }) => {
       // **Make API Request**
       const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
 
-      console.log("✅ Response Data:", JSON.stringify(response?.data));
+      console.log('✅ Response Data:', JSON.stringify(response?.data));
 
       if (response.status !== 200 || response.data.status !== true) {
-        throw new Error(response.data.message || "Something went wrong!");
+        throw new Error(response.data.message || 'Something went wrong!');
       }
 
       showMessage({
-        type: "success",
-        message: "Success",
-        description: response.data.message || "Profile saved successfully!",
+        type: 'success',
+        message: 'Success',
+        description: response.data.message || 'Profile saved successfully!',
         visibilityTime: 3000,
-        icon: "success"
+        icon: 'success',
       });
     } catch (error) {
-      console.error("🚨 API Error:", error?.response?.data || error.message);
+      console.error('🚨 API Error:', error?.response?.data || error.message);
 
-      let errorMessage = "Failed to save profile!";
+      let errorMessage = 'Failed to save profile!';
       if (error.response?.status === 400) {
-        errorMessage = error.response.data?.message || "Bad request.";
+        errorMessage = error.response.data?.message || 'Bad request.';
       }
 
       // **Revert UI Update if API fails**
@@ -393,10 +393,10 @@ const Matrimonial = ({ navigation }) => {
       );
 
       showMessage({
-        type: "danger",
-        message: "Error",
+        type: 'danger',
+        message: 'Error',
         description: errorMessage,
-        icon: "danger"
+        icon: 'danger',
       });
     }
   };
@@ -409,8 +409,8 @@ const Matrimonial = ({ navigation }) => {
 
   const renderProfileCard = ({ item }) => {
     const formattedHeight = item?.personalDetails?.heightFeet
-      ?.replace(/\s*-\s*/, "")
-      ?.replace(/\s+/g, "");
+      ?.replace(/\s*-\s*/, '')
+      ?.replace(/\s+/g, '');
 
     return (
       <View style={styles.card}>
@@ -423,7 +423,7 @@ const Matrimonial = ({ navigation }) => {
           {item.verified && (
             <View style={styles.verifiedContainer}>
               <Image
-                source={require("../../Images/verified.png")}
+                source={require('../../Images/verified.png')}
                 style={styles.verifiedBadge}
               />
               <Text style={styles.verifiedText}>Verified</Text>
@@ -450,9 +450,9 @@ const Matrimonial = ({ navigation }) => {
               {/* Right Column */}
               <View style={styles.rightColumn}>
                 <Text style={[styles.text, styles.rowItem]}>{item?.personalDetails?.currentCity}</Text>
-                <Text style={[styles.text, styles.rowItem, { textTransform: "none" }]}>{item?.personalDetails?.occupation}</Text>
-                <Text style={[styles.text, styles.rowItem, { textTransform: "none" }]}>{item?.personalDetails?.annualIncome} </Text>
-                <Text style={[styles.text, styles.rowItem, { textTransform: "none" }]}>{item?.personalDetails?.qualification}</Text>
+                <Text style={[styles.text, styles.rowItem, { textTransform: 'none' }]}>{item?.personalDetails?.occupation}</Text>
+                <Text style={[styles.text, styles.rowItem, { textTransform: 'none' }]}>{item?.personalDetails?.annualIncome} </Text>
+                <Text style={[styles.text, styles.rowItem, { textTransform: 'none' }]}>{item?.personalDetails?.qualification}</Text>
               </View>
             </View>
           </View>
@@ -460,11 +460,11 @@ const Matrimonial = ({ navigation }) => {
         <View style={[styles.sharecontainer, { paddingHorizontal: SW(20) }]}>
           <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
             <FontAwesome
-              name={item?.isSaved ? "bookmark" : "bookmark-o"}
+              name={item?.isSaved ? 'bookmark' : 'bookmark-o'}
               size={19}
               color={Colors.dark}
             />
-            <Text style={styles.iconText}>{item?.isSaved ? "Saved" : "Save"}</Text>
+            <Text style={styles.iconText}>{item?.isSaved ? 'Saved' : 'Save'}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.iconContainer} onPress={() => shareProfiles(item?._id)}>
@@ -485,14 +485,14 @@ const Matrimonial = ({ navigation }) => {
 
   if (profileLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color={Colors.theme_color} />
       </View>
     );
   }
 
   return (
-    <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
+    <SafeAreaView style={Globalstyles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
         <View style={styles.headerContainer}>
@@ -514,18 +514,18 @@ const Matrimonial = ({ navigation }) => {
             {notificationCount > 0 && (
               <View
                 style={{
-                  position: "absolute",
+                  position: 'absolute',
                   right: -5,
                   top: -5,
                   width: SW(16),
                   height: SW(16),
                   borderRadius: SW(16) / 2,
-                  backgroundColor: "red",
-                  justifyContent: "center",
-                  alignItems: "center",
+                  backgroundColor: 'red',
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}
               >
-                <Text style={{ color: 'white', fontSize: SF(9), fontFamily: "Poppins-Bold" }}>
+                <Text style={{ color: 'white', fontSize: SF(9), fontFamily: 'Poppins-Bold' }}>
                   {notificationCount}
                 </Text>
               </View>
@@ -535,23 +535,23 @@ const Matrimonial = ({ navigation }) => {
       </View>
       <View style={styles.ButtonContainer}>
         <View style={styles.leftButtons}>
-          {gender?.toLowerCase() === "male" ? (
+          {gender?.toLowerCase() === 'male' ? (
             <TouchableOpacity
               style={[
                 styles.button,
                 styles.activeButton,
-                { width: "36%" },
+                { width: '36%' },
               ]}
               onPress={() => setActiveButton(1)}
             >
               <Text style={styles.activeText}>Girls</Text>
             </TouchableOpacity>
-          ) : gender?.toLowerCase() === "female" ? (
+          ) : gender?.toLowerCase() === 'female' ? (
             <TouchableOpacity
               style={[
                 styles.button,
                 styles.activeButton,
-                { width: "36%" },
+                { width: '36%' },
               ]}
               onPress={() => setActiveButton(2)}
             >
@@ -563,7 +563,7 @@ const Matrimonial = ({ navigation }) => {
                 style={[
                   styles.button,
                   activeButton === 1 ? styles.activeButton : styles.inactiveButton,
-                  { width: "30%" },
+                  { width: '30%' },
                 ]}
                 onPress={() => setActiveButton(1)}
               >
@@ -576,7 +576,7 @@ const Matrimonial = ({ navigation }) => {
                 style={[
                   styles.button,
                   activeButton === 2 ? styles.activeButton : styles.inactiveButton,
-                  { width: "30%" },
+                  { width: '30%' },
                 ]}
                 onPress={() => setActiveButton(2)}
               >
@@ -591,7 +591,7 @@ const Matrimonial = ({ navigation }) => {
           style={[styles.button, activeButton === 3 ? styles.activeButton : styles.inactiveButton]}
           onPress={() => {
             setActiveButton(3);
-            navigation.navigate("MainPartnerPrefrence");
+            navigation.navigate('MainPartnerPrefrence');
           }}
         >
           <Text style={activeButton === 3 ? styles.activeText : styles.inactiveText}>
@@ -603,12 +603,12 @@ const Matrimonial = ({ navigation }) => {
       {searchMode && (
         <View style={Globalstyles.inputContainer}>
           <TextInput
-            style={{ color: "#000", flex: 1 }}
+            style={{ color: '#000', flex: 1 }}
             placeholder="Search by Name, ID, Occupation, City"
             value={searchQuery}
             onChangeText={(text) => {
               setSearchQuery(text);
-              if (!searchMode) setSearchMode(true);
+              if (!searchMode) {setSearchMode(true);}
             }}
             autoFocus
             placeholderTextColor={Colors.gray}
@@ -641,7 +641,7 @@ const Matrimonial = ({ navigation }) => {
                     const handlePress = () => {
                       if (item.hyperlink) {
                         Linking.openURL(item.hyperlink).catch(err =>
-                          console.error("Failed to open URL:", err)
+                          console.error('Failed to open URL:', err)
                         );
                       }
                     };
@@ -650,7 +650,7 @@ const Matrimonial = ({ navigation }) => {
                       <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                         <Image
                           source={{ uri: item.image }}
-                          style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
+                          style={{ width: '100%', height: SH(180), resizeMode: 'contain' }}
                         />
                       </TouchableOpacity>
                     );

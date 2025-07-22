@@ -1,5 +1,5 @@
-import { Text, View, Image, ScrollView, SafeAreaView, StatusBar, KeyboardAvoidingView, Platform } from 'react-native'
-import React, { useState, useEffect, useCallback } from 'react'
+import { Text, View, Image, ScrollView, SafeAreaView, StatusBar, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/ProfileStyle';
@@ -7,7 +7,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { useSelector } from 'react-redux';
-import moment from "moment";
+import moment from 'moment';
 import Globalstyles from '../../utils/GlobalCss';
 import DetailedProfile from './DetailedProfile';
 import PartnersPreference from './PartnersPreference';
@@ -20,12 +20,12 @@ import { SH } from '../../utils/Dimensions';
 const MatrimonyPage = ({ navigation, route }) => {
     const insets = useSafeAreaInsets();
     const { profileData } = route.params || {};
-    const [activeComponent, setActiveComponent] = useState("DetailedProfile");
+    const [activeComponent, setActiveComponent] = useState('DetailedProfile');
     const profile_Data = useSelector((state) => state.profile);
-    console.log("profileData in myprofile", profileData);
+    console.log('profileData in myprofile', profileData);
     const image = profile_Data?.profiledata?.photoUrl?.[0];
-    console.log("image", image);
-    const formattedDate = moment(profile_Data?.profiledata?.dob).format("DD/MM/YYYY");
+    console.log('image', image);
+    const formattedDate = moment(profile_Data?.profiledata?.dob).format('DD/MM/YYYY');
     const MyprofileData = useSelector((state) => state.getBiodata);
     const [biodataAvailable, setBiodataAvailable] = useState(false);
     const [visible, setVisible] = useState(false);
@@ -45,16 +45,16 @@ const MatrimonyPage = ({ navigation, route }) => {
     );
 
     const capitalizeFirstLetter = (text) => {
-        return text ? text.charAt(0).toUpperCase() + text.slice(1) : "Unknown";
+        return text ? text.charAt(0).toUpperCase() + text.slice(1) : 'Unknown';
     };
 
     const renderActiveComponent = () => {
         switch (activeComponent) {
-            case "DetailedProfile":
+            case 'DetailedProfile':
                 return <DetailedProfile navigation={navigation} profileData={profileData} />;
-            case "PartnersPreference":
+            case 'PartnersPreference':
                 return <PartnersPreference navigation={navigation} profileData={profileData} />;
-            case "PhotoGallery":
+            case 'PhotoGallery':
                 return <PhotoGallery navigation={navigation} profileData={profileData} />;
             default:
                 return null;
@@ -109,17 +109,17 @@ const MatrimonyPage = ({ navigation, route }) => {
                         <View style={styles.IconFlex}>
                             <TouchableOpacity
                                 style={styles.IconsButton}
-                                onPress={() => handlePress("DetailedProfile")}
+                                onPress={() => handlePress('DetailedProfile')}
                             >
                                 <View
                                     style={[
                                         styles.iconWrapper,
-                                        activeComponent === "DetailedProfile" && styles.activeIcon,
+                                        activeComponent === 'DetailedProfile' && styles.activeIcon,
                                     ]}
                                 >
                                     <AntDesign
                                         name="user"
-                                        color={activeComponent === "DetailedProfile" ? "white" : Colors.theme_color}
+                                        color={activeComponent === 'DetailedProfile' ? 'white' : Colors.theme_color}
                                         size={20}
                                     />
                                 </View>
@@ -128,17 +128,17 @@ const MatrimonyPage = ({ navigation, route }) => {
 
                             <TouchableOpacity
                                 style={styles.IconsButton}
-                                onPress={() => handlePress("PartnersPreference")}
+                                onPress={() => handlePress('PartnersPreference')}
                             >
                                 <View
                                     style={[
                                         styles.iconWrapper,
-                                        activeComponent === "PartnersPreference" && styles.activeIcon,
+                                        activeComponent === 'PartnersPreference' && styles.activeIcon,
                                     ]}
                                 >
                                     <FontAwesome5
                                         name="user-friends"
-                                        color={activeComponent === "PartnersPreference" ? "white" : Colors.theme_color}
+                                        color={activeComponent === 'PartnersPreference' ? 'white' : Colors.theme_color}
                                         size={20}
                                     />
                                 </View>
@@ -147,17 +147,17 @@ const MatrimonyPage = ({ navigation, route }) => {
 
                             <TouchableOpacity
                                 style={styles.IconsButton}
-                                onPress={() => handlePress("PhotoGallery")}
+                                onPress={() => handlePress('PhotoGallery')}
                             >
                                 <View
                                     style={[
                                         styles.iconWrapper,
-                                        activeComponent === "PhotoGallery" && styles.activeIcon,
+                                        activeComponent === 'PhotoGallery' && styles.activeIcon,
                                     ]}
                                 >
                                     <MaterialIcons
                                         name="photo-library"
-                                        color={activeComponent === "PhotoGallery" ? "white" : Colors.theme_color}
+                                        color={activeComponent === 'PhotoGallery' ? 'white' : Colors.theme_color}
                                         size={20}
                                     />
                                 </View>

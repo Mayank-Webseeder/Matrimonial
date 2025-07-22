@@ -13,14 +13,14 @@ const AboutUs = ({ navigation }) => {
     return (
         <View style={Globalstyles.container} edges={['top', 'bottom']}>
             <View style={Globalstyles.header}>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
                         <Image source={require('../../Images/menu.png')} style={{ width: SW(30), height: SH(30) }} />
                     </TouchableOpacity>
                     <Text style={Globalstyles.headerText}>About Us</Text>
                 </View>
             </View>
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={[styles.content,{paddingBottom: insets.bottom + SH(10), flexGrow: 1}]}>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={[styles.content,{paddingBottom: insets.bottom, flexGrow: 1}]}>
                 <View>
                     <Text style={styles.heading}>हमारे बारे में</Text>
                     <Text style={styles.text}>ब्राह्मण मिलन ऐप में आपका स्वागत है, "Brahmin Milan" Appwin Info Tech द्वारा विकसित एक मोबाइल ऐप है, जिसका उद्देश्य ब्राह्मण समुदाय को तकनीक के माध्यम से एकजुट और सशक्त बनाना है। यह ऐप ब्राह्मण समाज की विशेष आवश्यकताओं को पूरा करने के लिए डिज़ाइन किया गया है।</Text>
@@ -64,27 +64,27 @@ export default AboutUs;
 const styles = StyleSheet.create({
     content: {
         paddingHorizontal: SW(10),
-        paddingBottom: SH(50)
+        paddingBottom: SH(50),
     },
     linkText: {
-        color: "blue",
+        color: 'blue',
         textDecorationLine: 'underline',
-        fontFamily: "poppins-Bold",
+        fontFamily: 'poppins-Bold',
         fontSize: SF(13),
-        marginBottom: SH(10)
+        marginBottom: SH(10),
     },
     heading: {
         fontSize: SF(16),
-        fontFamily: "Poppins-Bold",
+        fontFamily: 'Poppins-Bold',
         marginBottom: SH(10),
-        color: Colors.theme_color
+        color: Colors.theme_color,
     },
     text: {
         fontSize: SF(13),
         marginBottom: SH(10),
-        fontFamily: "Poppins-Regular"
+        fontFamily: 'Poppins-Regular',
     },
     bold: {
-        fontFamily: "Poppins-Bold"
+        fontFamily: 'Poppins-Bold',
     },
 });

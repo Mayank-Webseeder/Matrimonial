@@ -1,7 +1,7 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const GetAllBiodataSlice = createSlice({
-  name: "getAllBiodata",
+  name: 'getAllBiodata',
   initialState: {
     allBiodata: [],
   },

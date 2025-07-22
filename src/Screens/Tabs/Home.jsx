@@ -21,7 +21,7 @@ import { useCallback } from 'react';
 import { setProfiledata } from '../../ReduxStore/Slices/ProfileSlice';
 import { reseAllNotification, setAllNotification } from '../../ReduxStore/Slices/GetAllNotificationSlice';
 import { SF, SW, SH } from '../../utils/Dimensions';
-import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import Video from 'react-native-video';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -33,9 +33,9 @@ const Home = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [currentIndexTop, setCurrentIndexTop] = useState(0);
   const [currentIndexBottom, setCurrentIndexBottom] = useState(1);
-  const [biodata, setBiodata] = useState("");
-  const [mybiodata, setMybiodata] = useState("");
-  const [allbiodata, setallBiodata] = useState("");
+  const [biodata, setBiodata] = useState('');
+  const [mybiodata, setMybiodata] = useState('');
+  const [allbiodata, setallBiodata] = useState('');
   const [profiledata, setProfileData] = useState({});
   const MyprofileData = useSelector((state) => state.getBiodata);
   const ProfileData = useSelector((state) => state.profile);
@@ -45,7 +45,7 @@ const Home = ({ navigation }) => {
   const [activitData, setActivitData] = useState({});
   const isBiodataMissing = Object.keys(MyprofileData?.Biodata || {}).length > 0;
   const isBiodataExpired = profile_data?.serviceSubscriptions?.some(
-    (sub) => sub.serviceType === "Biodata" && sub.status === "Expired"
+    (sub) => sub.serviceType === 'Biodata' && sub.status === 'Expired'
   );
 
   const [isLoading, setIsLoading] = useState(false);
@@ -58,7 +58,7 @@ const Home = ({ navigation }) => {
   const [mutedMap, setMutedMap] = useState({}); // Per video mute state
   const isBiodataEmpty = Object.keys(MyprofileData?.Biodata || {}).length === 0;
 
-  const sections = ["dummy"];
+  const sections = ['dummy'];
 
 
   useFocusEffect(
@@ -81,9 +81,9 @@ const Home = ({ navigation }) => {
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
-      setNotificationData({})
-      setMybiodata("")
-      setallBiodata("")
+      setNotificationData({});
+      setMybiodata('');
+      setallBiodata('');
       setRefreshing(false);
       getBiodata();
       GetAll_Notification();
@@ -97,14 +97,14 @@ const Home = ({ navigation }) => {
 
 
   useEffect(() => {
-    if (Topslider.length === 0) return;
+    if (Topslider.length === 0) {return;}
 
     const currentSlideTop = Topslider[currentIndexTop];
     const durationInSecondsTop = Number(currentSlideTop?.duration) || 4;
     const bufferMs = 800;
     const durationInMillisecondsTop = durationInSecondsTop * 1000 + bufferMs;
 
-    console.log("⏱️ Top Duration (sec):", durationInSecondsTop);
+    console.log('⏱️ Top Duration (sec):', durationInSecondsTop);
 
     const timeoutTop = setTimeout(() => {
       const nextIndexTop = currentIndexTop < Topslider.length - 1 ? currentIndexTop + 1 : 0;
@@ -117,13 +117,13 @@ const Home = ({ navigation }) => {
 
 
   useEffect(() => {
-    if (Bottomslider.length === 0) return;
+    if (Bottomslider.length === 0) {return;}
 
     const currentSlideBottom = Bottomslider[currentIndexBottom];
     const durationInSecondsBottom = Number(currentSlideBottom?.duration) || 4;
     const bufferMs = 800;
     const durationInMillisecondsBottom = durationInSecondsBottom * 1000 + bufferMs;
-    console.log("⏱️ Bottom Duration (sec):", durationInSecondsBottom);
+    console.log('⏱️ Bottom Duration (sec):', durationInSecondsBottom);
 
     const timeoutBottom = setTimeout(() => {
       const nextIndexBottom = currentIndexBottom < Bottomslider.length - 1 ? currentIndexBottom + 1 : 0;
@@ -154,11 +154,11 @@ const Home = ({ navigation }) => {
     try {
       setIsLoading(true);
       setNotificationData({});
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       };
 
@@ -174,19 +174,19 @@ const Home = ({ navigation }) => {
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching notifications:", errorMsg);
+      console.error('Error fetching notifications:', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       } else {
         setNotificationData({});
@@ -200,36 +200,36 @@ const Home = ({ navigation }) => {
   const fetchProfile = async () => {
     setProfileData({});
     try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       };
 
-      console.log("headers in profile", headers);
+      console.log('headers in profile', headers);
       const res = await axios.get(PROFILE_ENDPOINT, { headers });
-      console.log("API Response:", JSON.stringify(res.data));
+      console.log('API Response:', JSON.stringify(res.data));
 
       setProfileData(res.data.data);
       dispatch(setProfiledata(res.data.data));
 
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching profile:", errorMsg);
+      console.error('Error fetching profile:', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
     }
@@ -237,10 +237,10 @@ const Home = ({ navigation }) => {
 
   const getBiodata = async () => {
     try {
-      setLoading(true)
-      setMybiodata("")
+      setLoading(true);
+      setMybiodata('');
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) throw new Error('No token found');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
         'Content-Type': 'application/json',
@@ -250,33 +250,33 @@ const Home = ({ navigation }) => {
       const response = await axios.get(GET_BIODATA, { headers });
       if (response.data) {
         const fetchedData = response.data.data;
-        console.log("My bio data in home page", fetchedData);
+        console.log('My bio data in home page', fetchedData);
         setMybiodata(fetchedData);
         dispatch(setBioData(fetchedData));
-        setLoading(false)
+        setLoading(false);
       } else {
         setBiodata({});
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching biodata:", errorMsg);
+      console.error('Error fetching biodata:', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
     }
     finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -284,7 +284,7 @@ const Home = ({ navigation }) => {
   const Top_Advertisement_window = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) throw new Error('No token found');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
         'Content-Type': 'application/json',
@@ -295,7 +295,7 @@ const Home = ({ navigation }) => {
 
       if (response.data) {
         const fetchedData = response.data.data;
-        console.log("fetchedData", JSON.stringify(fetchedData));
+        console.log('fetchedData', JSON.stringify(fetchedData));
 
         const fullSliderData = fetchedData.flatMap((item) =>
           item.media.map((mediaItem) => ({
@@ -311,25 +311,25 @@ const Home = ({ navigation }) => {
         );
 
         TopsetSlider(fullSliderData);
-        console.log("top Slider Data:", fullSliderData);
+        console.log('top Slider Data:', fullSliderData);
       } else {
         TopsetSlider([]);
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching advertisement :", errorMsg);
+      console.error('Error fetching advertisement :', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
     }
@@ -338,7 +338,7 @@ const Home = ({ navigation }) => {
   const Bottom_Advertisement_window = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) throw new Error('No token found');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
         'Content-Type': 'application/json',
@@ -349,7 +349,7 @@ const Home = ({ navigation }) => {
 
       if (response.data) {
         const fetchedData = response.data.data;
-        console.log("fetchedData", JSON.stringify(fetchedData));
+        console.log('fetchedData', JSON.stringify(fetchedData));
 
         const fullSliderData = fetchedData.flatMap((item) =>
           item.media.map((mediaItem) => ({
@@ -365,25 +365,25 @@ const Home = ({ navigation }) => {
         );
 
         BottomsetSlider(fullSliderData);
-        console.log("Bottom Slider Data:", fullSliderData);
+        console.log('Bottom Slider Data:', fullSliderData);
       } else {
         BottomsetSlider([]);
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching advertisement :", errorMsg);
+      console.error('Error fetching advertisement :', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
     }
@@ -395,7 +395,7 @@ const Home = ({ navigation }) => {
       setIsLoading(true);
 
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) throw new Error('No token found');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
         'Content-Type': 'application/json',
@@ -403,7 +403,7 @@ const Home = ({ navigation }) => {
       };
 
       const response = await axios.get(GET_ACTIVIST, { headers });
-      console.log("Activist data", JSON.stringify(response.data));
+      console.log('Activist data', JSON.stringify(response.data));
 
       if (response.data && response.data.data) {
         const fetchedData = response.data.data;
@@ -415,19 +415,19 @@ const Home = ({ navigation }) => {
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching activist data:", errorMsg);
+      console.error('Error fetching activist data:', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
       if (error.response && error.response.status === 400) {
@@ -439,24 +439,24 @@ const Home = ({ navigation }) => {
   };
 
   const handleNavigateToProfile = (item) => {
-    console.log("item?.connectionStatus", item?.connectionStatus);
-    if (!navigation.isFocused()) return;
+    console.log('item?.connectionStatus', item?.connectionStatus);
+    if (!navigation.isFocused()) {return;}
 
     if (!isBiodataMissing || isBiodataExpired) {
-      console.log("Navigating to ShortMatrimonialProfile because Biodata is missing or expired");
-      navigation.navigate("ShortMatrimonialProfile", {
+      console.log('Navigating to ShortMatrimonialProfile because Biodata is missing or expired');
+      navigation.navigate('ShortMatrimonialProfile', {
         userDetails: item,
         userId: item.userId,
       });
     } else if (item?.connectionStatus === 'received') {
-      console.log("Navigating to IntrestReceivedProfilePage");
-      navigation.navigate("IntrestReceivedProfilePage", {
+      console.log('Navigating to IntrestReceivedProfilePage');
+      navigation.navigate('IntrestReceivedProfilePage', {
         userId: item?.userId,
         isSaved: item?.isSaved,
       });
     } else {
-      console.log("Navigating to MatrimonyPeopleProfile");
-      navigation.navigate("MatrimonyPeopleProfile", {
+      console.log('Navigating to MatrimonyPeopleProfile');
+      navigation.navigate('MatrimonyPeopleProfile', {
         userDetails: item,
         userId: item?.userId,
         isSaved: item?.isSaved,
@@ -467,56 +467,56 @@ const Home = ({ navigation }) => {
 
   const GetAll_Biodata = async () => {
     try {
-      setLoading(true)
-      setallBiodata("")
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+      setLoading(true);
+      setallBiodata('');
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       };
 
-      console.log("headers in profile", headers);
+      console.log('headers in profile', headers);
       const res = await axios.get(GET_ALL_BIODATA_PROFILES, { headers });
       const biodata = res.data.feedUsers;
-      console.log("res.data.feedUsers", JSON.stringify(res.data.feedUsers))
+      console.log('res.data.feedUsers', JSON.stringify(res.data.feedUsers));
       setallBiodata(biodata);
       // console.log("biodata", biodata);
       dispatch(setAllBiodata(biodata));
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching biodata:", errorMsg);
+      console.error('Error fetching biodata:', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
-      setLoading(false)
+      setLoading(false);
     }
     finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  const TAB_SCREENS = ["Home", "Pandit", "Matrimonial", "BioData", "EventNews", "MyProfile"];
-  const DRAWER_SCREENS = ["MainPartnerPrefrence", "Interested Profile", "Saved Profile", "Pandit", "EventNews", "Dharmshala", "Committee", "Activist", "FeedBack", "Jyotish", "Kathavachak", "SuccessStories", "NotificationSettings", "ChangePassword", "PrivacySettings", "InActiveDelete", "AboutUs", "PrivacyPolicy", "TermsConditions", "SubscriptionPolicy", "MyProfile", "SubscriptionHistory", "MySuccessStory"];
+  const TAB_SCREENS = ['Home', 'Pandit', 'Matrimonial', 'BioData', 'EventNews', 'MyProfile'];
+  const DRAWER_SCREENS = ['MainPartnerPrefrence', 'Interested Profile', 'Saved Profile', 'Pandit', 'EventNews', 'Dharmshala', 'Committee', 'Activist', 'FeedBack', 'Jyotish', 'Kathavachak', 'SuccessStories', 'NotificationSettings', 'ChangePassword', 'PrivacySettings', 'InActiveDelete', 'AboutUs', 'PrivacyPolicy', 'TermsConditions', 'SubscriptionPolicy', 'MyProfile', 'SubscriptionHistory', 'MySuccessStory'];
 
   const renderSkeleton = () => (
     <SkeletonPlaceholder>
       <View style={{ marginVertical: SH(20) }}>
-        <View style={{ flexDirection: "row", justifyContent: "space-between", gap: SW(10) }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: SW(10) }}>
           {[1, 2, 3, 4].map((_, index) => (
-            <View key={index} style={{ width: SW(118), height: SH(115), resizeMode: "cover", borderRadius: 10, }} />
+            <View key={index} style={{ width: SW(118), height: SH(115), resizeMode: 'cover', borderRadius: 10 }} />
           ))}
         </View>
       </View>
@@ -530,7 +530,7 @@ const Home = ({ navigation }) => {
   }
 
   return (
-    <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']} >
+    <SafeAreaView style={Globalstyles.container}>
       <StatusBar
         barStyle="dark-content"
         backgroundColor="transparent"
@@ -554,18 +554,18 @@ const Home = ({ navigation }) => {
             {notificationCount > 0 && (
               <View
                 style={{
-                  position: "absolute",
+                  position: 'absolute',
                   right: -5,
                   top: -5,
                   width: SW(16),
                   height: SW(16),
                   borderRadius: SW(16) / 2,
-                  backgroundColor: "red",
-                  justifyContent: "center",
-                  alignItems: "center",
+                  backgroundColor: 'red',
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}
               >
-                <Text style={{ color: 'white', fontSize: SF(9), fontFamily: "Poppins-Bold" }}>
+                <Text style={{ color: 'white', fontSize: SF(9), fontFamily: 'Poppins-Bold' }}>
                   {notificationCount}
                 </Text>
               </View>
@@ -594,7 +594,7 @@ const Home = ({ navigation }) => {
                     }
                     if (item.hyperlink) {
                       Linking.openURL(item.hyperlink).catch(err =>
-                        console.error("Failed to open URL:", err)
+                        console.error('Failed to open URL:', err)
                       );
                     }
                   };
@@ -622,7 +622,7 @@ const Home = ({ navigation }) => {
                               backgroundColor: 'rgba(0,0,0,0.5)',
                               borderRadius: 20,
                               paddingHorizontal:SW(8),
-                              paddingVertical:SH(8)
+                              paddingVertical:SH(8),
                             }}
                           >
                             <Ionicons
@@ -673,14 +673,14 @@ const Home = ({ navigation }) => {
                           source={
                             item?.personalDetails?.closeUpPhoto
                               ? { uri: item.personalDetails.closeUpPhoto }
-                              : require("../../Images/NoImage.png")
+                              : require('../../Images/NoImage.png')
                           }
                           style={[styles.ProfileImages]}
                         />
                         {item.verified && (
                           <View style={styles.verifiedContainer}>
                             <Image
-                              source={require("../../Images/verified.png")}
+                              source={require('../../Images/verified.png')}
                               style={styles.verifiedBadge}
                             />
                             <Text style={styles.verifiedText}>Verified</Text>
@@ -717,13 +717,13 @@ const Home = ({ navigation }) => {
                       style={styles.CategoryContainer}
                       onPress={() => {
                         if (!item?.screen) {
-                          console.warn("Screen not specified for this category.");
+                          console.warn('Screen not specified for this category.');
                           return;
                         }
 
                         if (TAB_SCREENS.includes(item.screen)) {
-                          navigation.navigate("MainApp", {
-                            screen: "Tabs",
+                          navigation.navigate('MainApp', {
+                            screen: 'Tabs',
                             params: { screen: item.screen },
                           });
                         } else if (DRAWER_SCREENS.includes(item.screen)) {
@@ -755,8 +755,8 @@ const Home = ({ navigation }) => {
                     <TouchableOpacity
                       style={styles.CategoryContainer}
                       onPress={() => {
-                        if (item.screen) navigation.navigate(item.screen);
-                        else console.warn("Screen not specified");
+                        if (item.screen) {navigation.navigate(item.screen);}
+                        else {console.warn('Screen not specified');}
                       }}
                     >
                       <Image source={item.image} style={styles.images} />
@@ -778,7 +778,7 @@ const Home = ({ navigation }) => {
                   const handlePress = () => {
                     if (item.hyperlink) {
                       Linking.openURL(item.hyperlink).catch(err =>
-                        console.error("Failed to open URL:", err)
+                        console.error('Failed to open URL:', err)
                       );
                     }
                   };

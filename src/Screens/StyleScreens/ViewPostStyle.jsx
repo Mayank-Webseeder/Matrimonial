@@ -1,14 +1,14 @@
-import { StyleSheet } from "react-native";
-import { SH, SW, SF } from "../../utils/Dimensions";
-import Colors from "../../utils/Colors";
+import { StyleSheet } from 'react-native';
+import { SH, SW, SF } from '../../utils/Dimensions';
+import Colors from '../../utils/Colors';
 
 const styles = StyleSheet.create({
     profileImage: {
-        width: SW(50), height: SH(50), borderRadius: 50
+        width: SW(50), height: SH(50), borderRadius: 50,
     },
     righticons: {
         flexDirection: 'row',
-        alignItems: "center"
+        alignItems: 'center',
     },
     card: {
         backgroundColor: '#fff',
@@ -26,32 +26,32 @@ const styles = StyleSheet.create({
         paddingVertical: SH(5),
     },
     postHeader: {
-        display: "flex",
+        display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
         // justifyContent: "space-between"
     },
     postTextContainer: {
-        marginHorizontal: SW(10)
+        marginHorizontal: SW(10),
     },
     Text: {
         fontSize: SF(13),
         color: Colors.theme_color,
-        fontFamily: "Poppins-Regular"
+        fontFamily: 'Poppins-Regular',
     },
     postDescriptionText: {
         fontSize: SF(13),
         color: Colors.dark,
-        fontFamily: "Poppins-Regular",
+        fontFamily: 'Poppins-Regular',
         marginHorizontal: SW(15),
-        marginVertical: SH(10)
+        marginVertical: SH(10),
     },
     likeShareComment: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         marginVertical: SH(10),
-        marginHorizontal: SW(15)
+        marginHorizontal: SW(15),
     },
     likeShare: {
         flexDirection: 'row',
@@ -64,10 +64,10 @@ const styles = StyleSheet.create({
         marginLeft: SW(4),
     },
     image: {
-        width: "100%",
-        height: "auto",
+        width: '100%',
+        height: 'auto',
         borderRadius: 10,
-        marginBottom: SH(10)
+        marginBottom: SH(10),
     },
     EventheaderImage: {
         width: SW(50),
@@ -90,6 +90,6 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-Regular',
     },
 
-})
+});
 
-export default styles
+export default styles;

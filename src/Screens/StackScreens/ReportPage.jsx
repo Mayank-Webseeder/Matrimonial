@@ -13,7 +13,7 @@ import Globalstyles from '../../utils/GlobalCss';
 
 const ReportPage = ({ navigation, route }) => {
   const { profileId } = route.params || {};
-  console.log("profileId", profileId);
+  console.log('profileId', profileId);
   const [selectedReason, setSelectedReason] = useState('');
   const [additionalDetails, setAdditionalDetails] = useState('');
   const [isFocus, setIsFocus] = useState(false);
@@ -39,13 +39,13 @@ const ReportPage = ({ navigation, route }) => {
   };
 
   const handleSubmit = async () => {
-    if (!validateForm()) return;
+    if (!validateForm()) {return;}
 
     try {
-      setIsLoading(true); 
+      setIsLoading(true);
 
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {throw new Error('No token found');}
 
       const payload = {
         reportReason: selectedReason,
@@ -53,58 +53,58 @@ const ReportPage = ({ navigation, route }) => {
       };
 
       const headers = {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       };
 
       const API_URL = `${REPORT}/${profileId}`;
-      console.log("Submitting Report to:", API_URL);
-      console.log("Payload:", payload);
+      console.log('Submitting Report to:', API_URL);
+      console.log('Payload:', payload);
 
       const response = await axios.post(API_URL, payload, { headers });
 
-      console.log("Response:", JSON.stringify(response.data));
+      console.log('Response:', JSON.stringify(response.data));
 
       if (response.status === 200 && response.data.status === true) {
        showMessage({
-          type: "success",
+          type: 'success',
           message: response.data.message1,
           description: response.data.message2,
-          icon:"success",
-          duarion:5000
+          icon:'success',
+          duarion:5000,
         });
 
         setTimeout(() => {
           navigation.goBack();
         }, 2000);
       } else {
-        throw new Error(response.data.message || "Something went wrong");
+        throw new Error(response.data.message || 'Something went wrong');
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching biodata:", errorMsg);
+      console.error('Error fetching biodata:', errorMsg);
       showMessage({
-        type: "danger",
+        type: 'danger',
         message:error.response?.data?.message1,
         description: error.response?.data?.message2,
-        icon:"danger",
-        duarion:5000
+        icon:'danger',
+        duarion:5000,
       });
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
     } finally {
-      setIsLoading(false);  
+      setIsLoading(false);
     }
   };
 

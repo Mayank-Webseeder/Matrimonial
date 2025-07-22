@@ -1,20 +1,20 @@
-import React, { useState } from "react";
-import { Text, View, ImageBackground, TouchableOpacity, TextInput, ActivityIndicator,SafeAreaView, ScrollView, Platform, KeyboardAvoidingView } from "react-native";
-import styles from "../StyleScreens/RegisterStyle";
+import React, { useState } from 'react';
+import { Text, View, ImageBackground, TouchableOpacity, TextInput, ActivityIndicator,SafeAreaView, ScrollView, Platform, KeyboardAvoidingView } from 'react-native';
+import styles from '../StyleScreens/RegisterStyle';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import Colors from "../../utils/Colors";
-import axios from "axios";
-import { FORGOT_PASSWORD, FORGOT_PASSWORD_OTP } from "../../utils/BaseUrl";
-import Globalstyles from "../../utils/GlobalCss";
+import Colors from '../../utils/Colors';
+import axios from 'axios';
+import { FORGOT_PASSWORD, FORGOT_PASSWORD_OTP } from '../../utils/BaseUrl';
+import Globalstyles from '../../utils/GlobalCss';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { SH, SW, SF } from "../../utils/Dimensions";
-import { showMessage } from "react-native-flash-message";
+import { SH, SW, SF } from '../../utils/Dimensions';
+import { showMessage } from 'react-native-flash-message';
 // import { SafeAreaView } from 'react-native-safe-area-context';
 
 const ForgotScreen = ({ navigation }) => {
-    const [mobileNumber, setMobileNumber] = useState("");
-    const [newPassword, setNewPassword] = useState("");
-    const [otp, setOtp] = useState("");
+    const [mobileNumber, setMobileNumber] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [otp, setOtp] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
@@ -25,18 +25,18 @@ const ForgotScreen = ({ navigation }) => {
         const newErrors = {};
 
         if (!mobileNumber?.trim()) {
-            newErrors.mobileNumber = "Mobile number is required.";
+            newErrors.mobileNumber = 'Mobile number is required.';
         } else if (!/^\d{10}$/.test(mobileNumber.trim())) {
-            newErrors.mobileNumber = "Enter a valid 10-digit mobile number.";
+            newErrors.mobileNumber = 'Enter a valid 10-digit mobile number.';
         }
 
         if (!newPassword?.trim()) {
-            newErrors.newPassword = "Password is required.";
+            newErrors.newPassword = 'Password is required.';
         }
         if (!otp?.trim()) {
-            newErrors.otp = "OTP is required.";
+            newErrors.otp = 'OTP is required.';
         } else if (!/^\d{6}$/.test(otp.trim())) {
-            newErrors.otp = "Enter a valid 6-digit OTP.";
+            newErrors.otp = 'Enter a valid 6-digit OTP.';
         }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -44,7 +44,7 @@ const ForgotScreen = ({ navigation }) => {
 
     const handleSendOtp = async () => {
         if (!/^\d{10}$/.test(mobileNumber)) {
-            showMessage({ type: "danger", message: "Invalid Number", description: "Enter a valid 10-digit mobile number", icon: "danger" });
+            showMessage({ type: 'danger', message: 'Invalid Number', description: 'Enter a valid 10-digit mobile number', icon: 'danger' });
             return;
         }
 
@@ -52,27 +52,27 @@ const ForgotScreen = ({ navigation }) => {
             setIsOtpLoading(true);
             const response = await axios.post(FORGOT_PASSWORD_OTP, { mobileNo: mobileNumber });
 
-            console.log("OTP Response:", response.data);
+            console.log('OTP Response:', response.data);
 
             if (response.status === 200 && response.data.status === true) {
                 setOtpSent(true);
                 showMessage({
-                    type: "success",
-                    message: "OTP Sent",
-                    description: "Check your SMS for the OTP",
-                    icon: "success",
-                    duration: 5000
+                    type: 'success',
+                    message: 'OTP Sent',
+                    description: 'Check your SMS for the OTP',
+                    icon: 'success',
+                    duration: 5000,
                 });
             } else {
-                throw new Error(response.data.message || "OTP request failed");
+                throw new Error(response.data.message || 'OTP request failed');
             }
         } catch (error) {
-            console.error("OTP Error:", error);
+            console.error('OTP Error:', error);
 
             if (error.response?.status === 400) {
-                showMessage({ type: "danger", message: "Invalid Request", description: error.response.data.message || "Mobile number is required", duration: 5000 });
+                showMessage({ type: 'danger', message: 'Invalid Request', description: error.response.data.message || 'Mobile number is required', duration: 5000 });
             } else {
-                showMessage({ type: "danger", message: "OTP Failed", description: error.message || "Failed to send OTP. Try again.", icon: "danger", duration: 5000 });
+                showMessage({ type: 'danger', message: 'OTP Failed', description: error.message || 'Failed to send OTP. Try again.', icon: 'danger', duration: 5000 });
             }
         } finally {
             setIsOtpLoading(false);
@@ -80,47 +80,47 @@ const ForgotScreen = ({ navigation }) => {
     };
 
     const handleForgotPassword = async () => {
-        if (!validateFields()) return;
+        if (!validateFields()) {return;}
 
         setIsLoading(true);
         try {
             const payload = {
                 mobileNo: mobileNumber.trim(),
                 newPassword: newPassword.trim(),
-                otp: otp.trim()
+                otp: otp.trim(),
             };
 
-            console.log("Forgot Password Payload:", payload);
+            console.log('Forgot Password Payload:', payload);
 
             const response = await axios.post(FORGOT_PASSWORD, payload);
 
-            console.log("Forgot Password Response:", response.data);
+            console.log('Forgot Password Response:', response.data);
             if (response.status === 200 || response.data.status === true) {
                 showMessage({
-                    type: "success",
-                    message: "Password Reset Successful",
-                    description: response.data.message || "You can now log in with your new password.",
-                    icon: "success",
-                    duration: 5000
+                    type: 'success',
+                    message: 'Password Reset Successful',
+                    description: response.data.message || 'You can now log in with your new password.',
+                    icon: 'success',
+                    duration: 5000,
                 });
                 setTimeout(() => {
                     navigation.reset({
                         index: 0,
-                        routes: [{ name: "Login" }],
+                        routes: [{ name: 'Login' }],
                     });
                 }, 1000);
                 return;
             }
 
-            throw new Error(response.data.message || "Password reset failed.");
+            throw new Error(response.data.message || 'Password reset failed.');
         } catch (error) {
-            console.error("Forgot Password Error:", error);
+            console.error('Forgot Password Error:', error);
             showMessage({
-                type: "danger",
-                message: "Password Reset Failed",
-                description: error.response?.data?.message || error.message || "Something went wrong. Please try again.",
-                icon: "danger",
-                duration: 5000
+                type: 'danger',
+                message: 'Password Reset Failed',
+                description: error.response?.data?.message || error.message || 'Something went wrong. Please try again.',
+                icon: 'danger',
+                duration: 5000,
             });
         } finally {
             setIsLoading(false);
@@ -128,28 +128,28 @@ const ForgotScreen = ({ navigation }) => {
     };
 
     return (
-        <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
-            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        <SafeAreaView style={styles.container}>
+            {/* <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
-                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}> */}
                 <ScrollView  keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
                  <View>
                        <ImageBackground
-                        source={require("../../Images/LoginBackground.png")}
+                        source={require('../../Images/LoginBackground.png')}
                         style={styles.image}
                     >
                         <AntDesign
-                            name={"arrowleft"}
+                            name={'arrowleft'}
                             size={25}
                             style={styles.backArrow}
                             color={Colors.light}
-                            onPress={() => navigation.navigate("Splash")}
+                            onPress={() => navigation.navigate('Splash')}
                         />
                         <View style={{ marginTop: SH(320), marginHorizontal: SW(20) }}>
-                            <Text style={[styles.text, { textAlign: "left", fontSize: SF(17) }]}>Reset Your Password</Text>
+                            <Text style={[styles.text, { textAlign: 'left', fontSize: SF(17) }]}>Reset Your Password</Text>
                             <View style={{ marginTop: SH(20) }}>
                                 <Text style={Globalstyles.title}>Mobile Number <Entypo name={'star'} color={'red'} size={12} /></Text>
-                                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                     <TextInput
                                         style={[Globalstyles.input, { flex: 1 }]}
                                         keyboardType="phone-pad"
@@ -191,7 +191,7 @@ const ForgotScreen = ({ navigation }) => {
                                 <Text style={Globalstyles.title}>New Password  <Entypo name={'star'} color={'red'} size={12} /> </Text>
                                 <View style={styles.passwordContainer}>
                                     <TextInput
-                                        style={[styles.passwordInput, { paddingVertical: Platform.OS === 'ios' ? SH(10) : SH(10), }]}
+                                        style={[styles.passwordInput, { paddingVertical: Platform.OS === 'ios' ? SH(10) : SH(10) }]}
                                         secureTextEntry={!showPassword}
                                         placeholder="Enter Your New password"
                                         value={newPassword}
@@ -204,7 +204,7 @@ const ForgotScreen = ({ navigation }) => {
                                     />
                                     <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                                         <AntDesign
-                                            name={showPassword ? "eye" : "eyeo"}
+                                            name={showPassword ? 'eye' : 'eyeo'}
                                             size={20}
                                             style={styles.eyeIcon}
                                             color={Colors.dark}
@@ -230,7 +230,7 @@ const ForgotScreen = ({ navigation }) => {
                     </ImageBackground>
                  </View>
                 </ScrollView>
-            </KeyboardAvoidingView>
+            {/* </KeyboardAvoidingView> */}
         </SafeAreaView>
     );
 };

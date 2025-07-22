@@ -1,6 +1,6 @@
-import { StyleSheet } from "react-native";
-import { SH, SW, SF } from "../../utils/Dimensions";
-import Colors from "../../utils/Colors";
+import { StyleSheet } from 'react-native';
+import { SH, SW, SF } from '../../utils/Dimensions';
+import Colors from '../../utils/Colors';
 
 const styles = StyleSheet.create({
   container: {
@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: SF(22),
-    fontFamily: "Poppins-Bold",
+    fontFamily: 'Poppins-Bold',
     marginTop: SH(15),
     color: '#333',
   },
@@ -25,41 +25,41 @@ const styles = StyleSheet.create({
   },
   righticons: {
     flexDirection: 'row',
-    alignItems: "center"
+    alignItems: 'center',
   },
   topContainer: {
-    marginBottom: SH(20)
+    marginBottom: SH(20),
   },
 
   image: {
-    width: SW(350), height: SH(270), borderRadius: 10, resizeMode: "cover"
+    width: SW(350), height: SH(270), borderRadius: 10, resizeMode: 'cover',
   },
   verifiedContainer: {
-    position: "absolute",
+    position: 'absolute',
     top: SH(255),
     left: SW(228),
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#e3e6e4",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#e3e6e4',
     paddingHorizontal: SW(5),
     paddingVertical: SW(3),
     borderRadius: 5,
-    alignSelf: "flex-end",
-    width: SW(130)
+    alignSelf: 'flex-end',
+    width: SW(130),
   },
   verifiedBadge: {
     width: SW(20),
     height: SH(20),
     paddingHorizontal: SW(1),
-    resizeMode: "contain"
+    resizeMode: 'contain',
   },
   verifiedText: {
-    color: "green",
-    fontWeight: "bold",
+    color: 'green',
+    fontWeight: 'bold',
     fontSize: SF(13),
     paddingHorizontal: SW(2),
-    textTransform: "capitalize",
+    textTransform: 'capitalize',
   },
   dot: {
     backgroundColor: Colors.light,
@@ -83,15 +83,15 @@ const styles = StyleSheet.create({
     // shadowOpacity: 0.1,
     // shadowRadius: 5,
     // elevation: 5,
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
     paddingHorizontal: SW(8),
     paddingVertical: SH(10),
     borderRadius: 10,
-    width: "99%",
+    width: '99%',
     marginVertical: SH(5),
-    backgroundColor: "#fff", // Ensure background for shadow to show properly
+    backgroundColor: '#fff', // Ensure background for shadow to show properly
     marginHorizontal: SW(2),
     // Updated shadow
     shadowColor: Colors.theme_color,
@@ -104,8 +104,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: SW(8),
     paddingVertical: SH(10),
     borderRadius: 10,
-    width: "99%",
-    backgroundColor: "#fff", // Ensure background for shadow to show properly
+    width: '99%',
+    backgroundColor: '#fff', // Ensure background for shadow to show properly
     marginHorizontal: SW(2),
     // Updated shadow
     shadowColor: Colors.theme_color,
@@ -125,35 +125,35 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
     borderRadius: 10,
-    width: "99%",
+    width: '99%',
     marginVertical: SH(5),
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
   },
 
   leftContainer: {
-    width: "52%",
+    width: '52%',
     marginBottom: SH(10),
   },
 
   rightContainer: {
-    width: "48%",
+    width: '48%',
     paddingTop: SH(37),
     paddingLeft: SW(5),
-    alignSelf: "flex-start",
+    alignSelf: 'flex-start',
   },
 
   HeadingText: {
     fontSize: SF(15),
-    fontFamily: "Poppins-Bold",
-    textTransform: "capitalize",
+    fontFamily: 'Poppins-Bold',
+    textTransform: 'capitalize',
     lineHeight: SF(18),
-    paddingTop: SH(2)
+    paddingTop: SH(2),
   },
 
   text: {
-    fontfamily: "Poppins-Regular",
+    fontfamily: 'Poppins-Regular',
     color: '#000',
-    fontSize: SF(14)
+    fontSize: SF(14),
   },
 
   flexContainer: {
@@ -165,30 +165,30 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
     borderRadius: 10,
-    backgroundColor: "#fff",
-    width: "99%"
+    backgroundColor: '#fff',
+    width: '99%',
   },
   flex: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    flexWrap: "wrap",
-    marginRight: SW(5)
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    marginRight: SW(5),
   },
   toptext: {
     fontSize: SF(10),
-    fontFamily: "Poppins-Regular",
-    textTransform: "capitalize"
+    fontFamily: 'Poppins-Regular',
+    textTransform: 'capitalize',
   },
   Idtext: {
     fontSize: SF(12),
-    fontFamily: "Poppins-Bold",
-    color: Colors.dark
+    fontFamily: 'Poppins-Bold',
+    color: Colors.dark,
   },
   flexContainer2: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
 
   },
   sharecontainer: {
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: SW(3),
     paddingVertical: SH(3),
     backgroundColor: Colors.light,
-    marginTop: SH(5)
+    marginTop: SH(5),
   },
   iconContainer: {
     alignItems: 'center',
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     fontSize: SF(12),
     color: Colors.theme_color,
     marginTop: SH(5),
-    textTransform: "capitalize"
+    textTransform: 'capitalize',
   },
   interestedButton: {
     backgroundColor: Colors.theme_color,
@@ -217,28 +217,28 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: Colors.light,
-    fontFamily: "Poppins-Medium",
+    fontFamily: 'Poppins-Medium',
     fontSize: SF(12),
-    textTransform: "capitalize",
+    textTransform: 'capitalize',
 
   },
   ButtonText: {
     color: Colors.light,
-    fontFamily: "Poppins-Bold",
+    fontFamily: 'Poppins-Bold',
     fontSize: SF(12),
-    textAlign: "center",
+    textAlign: 'center',
     backgroundColor: Colors.theme_color,
     paddingVertical: SH(5),
     marginTop: SH(10),
     borderRadius: 10,
     marginHorizontal: SW(90),
-    textTransform: "capitalize"
+    textTransform: 'capitalize',
   },
   smallImage: {
     width: SW(80),
     height: SH(85),
-    resizeMode: "cover",
-    borderRadius: 50
+    resizeMode: 'cover',
+    borderRadius: 50,
   },
   flexContainer3: {
     shadowColor: Colors.theme_color,
@@ -246,21 +246,21 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 8,
     elevation: 4,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     borderRadius: 10,
     marginVertical: SH(5),
     paddingHorizontal: SW(10),
     paddingVertical: SH(10),
-    width: "99%"
+    width: '99%',
   },
   flexContainer4: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   label: {
     flex: 1,
-    textTransform: "capitalize"
+    textTransform: 'capitalize',
   },
   icon: {
     fontSize: SF(20),
@@ -272,58 +272,58 @@ const styles = StyleSheet.create({
     color: 'red',
   },
   flexContainer5: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     paddingHorizontal: SW(10),
-    paddingVertical: SH(10)
+    paddingVertical: SH(10),
   },
   bottomContainer: {
     paddingVertical: SH(10),
     paddingHorizontal: SW(10),
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
-    borderColor: "gray",
-    borderWidth: 1
+    borderColor: 'gray',
+    borderWidth: 1,
   },
   declineButton: {
-    backgroundColor: "#c10007",
+    backgroundColor: '#c10007',
     paddingVertical: SH(7),
     paddingHorizontal: SH(40),
     borderRadius: 50,
     marginHorizontal: SW(10),
-    display: "flex",
-    flexDirection: "row"
+    display: 'flex',
+    flexDirection: 'row',
   },
   declineButtonText: {
-    color: "#fff",
-    fontFamily: "Poppins-Regular",
+    color: '#fff',
+    fontFamily: 'Poppins-Regular',
     fontSize: SF(15),
-    marginHorizontal: SW(5)
+    marginHorizontal: SW(5),
   },
   acceptButton: {
-    backgroundColor: "#008236",
+    backgroundColor: '#008236',
     paddingVertical: SH(7),
     paddingHorizontal: SH(40),
     borderRadius: 50,
     marginHorizontal: SW(10),
-    display: "flex",
-    flexDirection: "row"
+    display: 'flex',
+    flexDirection: 'row',
   },
   acceptButtonText: {
-    color: "#fff", fontFamily: "Poppins-Regular",
+    color: '#fff', fontFamily: 'Poppins-Regular',
     fontSize: SF(15),
-    textTransform: "capitalize"
+    textTransform: 'capitalize',
   },
   warningText: {
-    color: "red",
+    color: 'red',
     fontSize: SF(14),
-    textAlign: "center",
+    textAlign: 'center',
     marginVertical: SH(10),
-    fontFamily: "Poppins-Bold",
-    textTransform: "capitalize"
+    fontFamily: 'Poppins-Bold',
+    textTransform: 'capitalize',
   },
   infoRow: {
     flexDirection: 'row',
@@ -331,9 +331,9 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     width: SW(150),
-    fontfamily: "Poppins-Regular",
+    fontfamily: 'Poppins-Regular',
     color: '#000',
-    fontSize: SF(15)
+    fontSize: SF(15),
   },
   infoValue: {
     flex: 1,
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
     height: SH(290),
   },
   sliderImage: {
-    width: "100%",
+    width: '100%',
     height: SH(290),
     resizeMode: 'cover',
   },

@@ -97,15 +97,15 @@ const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
 function MyTabs({ route }) {
-  const initialRoute = route?.params?.initialTab || "Home";
+  const initialRoute = route?.params?.initialTab || 'Home';
   const dispatch = useDispatch();
   const [profiledata, setProfileData] = useState({});
   const ProfileData = useSelector((state) => state.profile);
   const profile_data = ProfileData?.profiledata || {};
   const imagePath = profile_data?.photoUrl?.[0];
-  const isFullUrl = imagePath?.startsWith("http");
+  const isFullUrl = imagePath?.startsWith('http');
   const image = imagePath ? (isFullUrl ? imagePath : `${PHOTO_URL}/${imagePath}`) : null;
-  const isValidImage = image && !image.includes("undefined") && !image.includes("null") && image.trim() !== "";
+  const isValidImage = image && !image.includes('undefined') && !image.includes('null') && image.trim() !== '';
   const [isLoading, setLoading] = useState(true);
   const [biodata, setBiodata] = useState({});
   const [mybiodata, setMybiodata] = useState({});
@@ -114,41 +114,41 @@ function MyTabs({ route }) {
 
 
   useEffect(() => {
-    console.log("profileData in root file ", JSON.stringify(profile_data));
-  }, [])
+    console.log('profileData in root file ', JSON.stringify(profile_data));
+  }, []);
 
   const fetchProfile = async () => {
     setLoading(true);
     setProfileData({});
     try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {throw new Error('No token found');}
       const headers = {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       };
 
-      console.log("headers in profile", headers);
+      console.log('headers in profile', headers);
       const res = await axios.get(PROFILE_ENDPOINT, { headers });
-      console.log("API Response:", JSON.stringify(res.data));
+      console.log('API Response:', JSON.stringify(res.data));
       setProfileData(res.data.data);
       dispatch(setProfiledata(res.data.data));
 
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching profile:", errorMsg);
+      console.error('Error fetching profile:', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
     } finally {
@@ -162,7 +162,7 @@ function MyTabs({ route }) {
       setLoading(true);
 
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) throw new Error('No token found');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
         'Content-Type': 'application/json',
@@ -173,7 +173,7 @@ function MyTabs({ route }) {
 
       if (response.data) {
         const fetchedData = response.data.data;
-        console.log("My bio data", fetchedData);
+        console.log('My bio data', fetchedData);
         setMybiodata(fetchedData);
         dispatch(setBioData(fetchedData));
       } else {
@@ -182,19 +182,19 @@ function MyTabs({ route }) {
 
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching biodata:", errorMsg);
+      console.error('Error fetching biodata:', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
 
@@ -206,8 +206,8 @@ function MyTabs({ route }) {
 
   useFocusEffect(
     useCallback(() => {
-      console.log("partnerPreferences", partnerPreferences);
-      console.log("MyprofileData", MyprofileData);
+      console.log('partnerPreferences', partnerPreferences);
+      console.log('MyprofileData', MyprofileData);
       fetchProfile();
       getBiodata();
     }, [])
@@ -220,7 +220,7 @@ function MyTabs({ route }) {
   // }
 
   const isBiodataExpired = profile_data?.serviceSubscriptions?.some(
-    (sub) => sub.serviceType === "Biodata" && sub.status === "Expired"
+    (sub) => sub.serviceType === 'Biodata' && sub.status === 'Expired'
   );
 
   const isBiodataEmpty = Object.keys(MyprofileData?.Biodata || {}).length === 0;
@@ -236,7 +236,7 @@ function MyTabs({ route }) {
         tabBarShowLabel: true,
         tabBarLabelStyle: {
           fontSize: SF(9),
-          fontFamily: "Poppins-Medium",
+          fontFamily: 'Poppins-Medium',
           color: Colors.light,
         },
         tabBarIcon: ({ focused }) => {
@@ -270,7 +270,7 @@ function MyTabs({ route }) {
             tabBarIcon = (
               <Image
                 source={isValidImage ? { uri: image } : require('../Images/Profile.png')}
-                style={{ width: SW(25), height: SH(25), borderRadius: 20, resizeMode: "cover" }}
+                style={{ width: SW(25), height: SH(25), borderRadius: 20, resizeMode: 'cover' }}
               />
             );
           } else if (route.name === 'Home') {
@@ -299,9 +299,9 @@ function MyTabs({ route }) {
       <Tab.Screen name="Home" component={Home} options={{ tabBarLabel: 'Home' }} />
       <Tab.Screen name="Pandit" component={Pandit} options={{ tabBarLabel: 'Pandit' }} />
       <Tab.Screen
-        name={isBiodataExpired || isBiodataEmpty ? "Matrimonial" : "BioData"}
+        name={isBiodataExpired || isBiodataEmpty ? 'Matrimonial' : 'BioData'}
         component={isBiodataExpired || isBiodataEmpty ? Matrimonial : BioData}
-        options={{ tabBarLabel: "Matrimonial" }}
+        options={{ tabBarLabel: 'Matrimonial' }}
       />
       <Tab.Screen name="EventNews" component={EventNews} options={{ tabBarLabel: 'EventNews' }} />
       <Tab.Screen name="MyProfile" component={MyProfile} options={{ tabBarLabel: 'You' }} />
@@ -316,7 +316,7 @@ function MyDrawer() {
       screenOptions={{
         headerShown: false,
         drawerStyle: {
-          width: SW(240)
+          width: SW(240),
         },
       }}
     >
@@ -390,7 +390,7 @@ export const AppStack = () => (
 );
 
 export const AuthStack = () => (
-  <AuthStackNavigator.Navigator screenOptions={{ headerShown: false }} initialRouteName='Splash'>
+  <AuthStackNavigator.Navigator screenOptions={{ headerShown: false }} initialRouteName="Splash">
     <AuthStackNavigator.Screen name="Splash" component={Splash} />
     <AuthStackNavigator.Screen name="Register" component={Register} />
     <AuthStackNavigator.Screen name="Login" component={Login} />
@@ -410,11 +410,11 @@ const RootNavigator = () => {
 
   useEffect(() => {
     const checkUserToken = async () => {
-      const token = await AsyncStorage.getItem("userToken");
-      const userId = await AsyncStorage.getItem("userId");
-      console.log("Token in root file:", token);
+      const token = await AsyncStorage.getItem('userToken');
+      const userId = await AsyncStorage.getItem('userId');
+      console.log('Token in root file:', token);
 
-      setInitialRoute(token ? "AppStack" : "AuthStack");
+      setInitialRoute(token ? 'AppStack' : 'AuthStack');
       setTimeout(() => {
         setIsLoading(false);
       }, 3000);

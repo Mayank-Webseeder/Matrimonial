@@ -29,7 +29,7 @@ const InternetCheck = () => {
             setModalVisible(!state.isConnected);
         });
 
-        const appStateListener = AppState.addEventListener("change", handleAppStateChange);
+        const appStateListener = AppState.addEventListener('change', handleAppStateChange);
 
         return () => {
             unsubscribe();
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     },
     modalTitle: {
         fontSize: SF(20),
-        fontFamily: "Poppins-Bold",
+        fontFamily: 'Poppins-Bold',
         marginBottom: SH(10),
     },
     modalMessage: {
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     buttonText: {
         color: 'white',
         fontSize: SF(16),
-        fontFamily: "Poppins-Bold"
+        fontFamily: 'Poppins-Bold',
     },
 });
 

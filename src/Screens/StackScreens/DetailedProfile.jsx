@@ -2,21 +2,21 @@
 import {
   Text, View, Image, ImageBackground, TextInput, ScrollView, StatusBar, ActivityIndicator, FlatList,
   Modal, Alert, KeyboardAvoidingView, SafeAreaView,
-  Platform
-} from 'react-native'
-import React, { useEffect, useState, useCallback } from 'react'
+  Platform,
+} from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
 import styles from '../StyleScreens/ProfileStyle';
 import { TouchableOpacity } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import {
   CREATE_PERSONAL_DETAILS, FREE_TRIAL, MATRIMONIALFETCH_PLAN,
-  PAID_URL, PAYMENT_VERIFICATION, RAZORPAY, UPDATE_PERSONAL_DETAILS, GET_BIODATA
+  PAID_URL, PAYMENT_VERIFICATION, RAZORPAY, UPDATE_PERSONAL_DETAILS, GET_BIODATA,
 } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useSelector } from 'react-redux';
-import moment from "moment";
+import moment from 'moment';
 import Globalstyles from '../../utils/GlobalCss';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -36,7 +36,7 @@ import {
   FamilyType, CookingStatus, DietHabit, smokingStatusData, DrinkingHabit, StateData, TobacooHabit, subCasteOptions,
   MyDisabilities, MyComplexionData,
   MotherOccupationData,
-  genderData
+  genderData,
 } from '../../DummyData/DropdownData';
 import { showMessage } from 'react-native-flash-message';
 
@@ -47,13 +47,13 @@ const DetailedProfile = ({ navigation, profileData }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const [stateInput, setStateInput] = useState("");
+  const [stateInput, setStateInput] = useState('');
   const [filteredStates, setFilteredStates] = useState([]);
   const [filteredCities, setFilteredCities] = useState([]);
-  const [cityInput, setCityInput] = useState("");
-  const [cityOrVillageInput, setCityOrVillageInput] = useState("");
+  const [cityInput, setCityInput] = useState('');
+  const [cityOrVillageInput, setCityOrVillageInput] = useState('');
   const [filteredCitiesOrVillages, setFilteredCitiesOrVillages] = useState([]);
-  const [selectedState, setSelectedState] = useState("");
+  const [selectedState, setSelectedState] = useState('');
   const [errors, setErrors] = useState({});
   // const MyprofileData = useSelector((state) => state.getBiodata);
   const [plans, setPlans] = useState([]);
@@ -66,7 +66,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
   const [TrialPlanId, setTrialPlanId] = useState(null);
   const [mybiodata, setMyBiodata] = useState({});
   const hasTrial = profile_data.serviceSubscriptions?.some(
-    (sub) => sub.subscriptionType === "Trial" && sub.serviceType === "Biodata"
+    (sub) => sub.subscriptionType === 'Trial' && sub.serviceType === 'Biodata'
   );
   const myBiodata = profileData?.personalDetails || mybiodata?.personalDetails;
 
@@ -119,15 +119,15 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
   useEffect(() => {
     getBiodata();
-    console.log("profile_data", JSON.stringify(profile_data));
-  }, [])
+    console.log('profile_data', JSON.stringify(profile_data));
+  }, []);
 
 
   const getBiodata = async () => {
     try {
-      setMyBiodata("")
+      setMyBiodata('');
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) throw new Error('No token found');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
         'Content-Type': 'application/json',
@@ -137,7 +137,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
       const response = await axios.get(GET_BIODATA, { headers });
       if (response.data) {
         const fetchedData = response.data.data;
-        console.log("My bio data in home page", fetchedData);
+        console.log('My bio data in home page', fetchedData);
         setMyBiodata(fetchedData);
         dispatch(setBioData(fetchedData));
       } else {
@@ -145,32 +145,32 @@ const DetailedProfile = ({ navigation, profileData }) => {
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error in creating personal detials :", errorMsg);
+      console.error('Error in creating personal detials :', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
     }
   };
 
-  // subscription part 
+  // subscription part
   const fetchPlans = async () => {
     try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       };
 
@@ -180,19 +180,19 @@ const DetailedProfile = ({ navigation, profileData }) => {
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("failed to fetch plans :", errorMsg);
+      console.error('failed to fetch plans :', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
     }
@@ -236,7 +236,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
       .then(image => {
         if (!image || !image.data) {
           console.error(`No image selected for ${field}`);
-          return; s
+          return; s;
         }
 
         const base64Image = `data:${image.mime};base64,${image.data}`;
@@ -361,13 +361,13 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
   const siblings = Array.from({ length: 10 }, (_, i) => ({
     value: i + 1,
-    label: `${i + 1} Sibling${i > 0 ? 's' : ''}`
+    label: `${i + 1} Sibling${i > 0 ? 's' : ''}`,
   }));
 
 
   const handleDateChange = (event, selectedDate) => {
     setShowDatePicker(false);
-    if (event.type === "set" && selectedDate) {
+    if (event.type === 'set' && selectedDate) {
       setBiodata((prevState) => ({
         ...prevState,
         dob: selectedDate,
@@ -376,15 +376,15 @@ const DetailedProfile = ({ navigation, profileData }) => {
   };
 
   const formatDate = (date) => {
-    if (!date) return "";
+    if (!date) {return '';}
 
     const validDate = new Date(date);
     if (isNaN(validDate)) {
-      return "";
+      return '';
     }
 
-    const day = validDate.getDate().toString().padStart(2, "0");
-    const month = (validDate.getMonth() + 1).toString().padStart(2, "0");
+    const day = validDate.getDate().toString().padStart(2, '0');
+    const month = (validDate.getMonth() + 1).toString().padStart(2, '0');
     const year = validDate.getFullYear();
 
     return `${day}/${month}/${year}`; // UI में "DD/MM/YYYY" दिखेगा
@@ -392,8 +392,8 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
   const convertToBase64 = async (imageUri) => {
     try {
-      if (!imageUri || imageUri.startsWith("data:image")) {
-        return imageUri.split(",")[1]; // ✅ Extract only Base64 part
+      if (!imageUri || imageUri.startsWith('data:image')) {
+        return imageUri.split(',')[1]; // ✅ Extract only Base64 part
       }
 
       const response = await fetch(imageUri);
@@ -402,66 +402,66 @@ const DetailedProfile = ({ navigation, profileData }) => {
       return new Promise((resolve) => {
         const reader = new FileReader();
         reader.onloadend = () => {
-          const base64String = reader.result.split(",")[1]; // ✅ Extract only Base64 data
+          const base64String = reader.result.split(',')[1]; // ✅ Extract only Base64 data
           resolve(base64String);
         };
         reader.readAsDataURL(blob);
       });
     } catch (error) {
-      console.error("Error converting image to Base64:", error);
+      console.error('Error converting image to Base64:', error);
       return imageUri; // ✅ Return original URI if error
     }
   };
 
   const constructPayload = async (biodata, isNew = false) => {
     const keys = [
-      "subCaste", "gender", "fullname", "dob", "placeofbirth", "maritalStatus",
-      "disabilities", "heightFeet", "weight", "timeOfBirth", "complexion",
-      "manglikStatus", "nadi", "gotraSelf", "gotraMother", "qualification",
-      "occupation", "annualIncome", "livingStatus", "currentCity", "aboutMe",
-      "profileCreatedBy", "fatherName", "fatherOccupation",
-      "motherName", "motherOccupation", "fatherIncomeAnnually",
-      "motherIncomeAnnually", "familyType", "siblings", "otherFamilyMemberInfo",
-      "contactNumber1", "contactNumber2", "state", "cityOrVillage",
-      "knowCooking", "dietaryHabit", "smokingHabit", "drinkingHabit",
-      "tobaccoHabits", "hobbies", "closeUpPhoto", "fullPhoto", "bestPhoto"
+      'subCaste', 'gender', 'fullname', 'dob', 'placeofbirth', 'maritalStatus',
+      'disabilities', 'heightFeet', 'weight', 'timeOfBirth', 'complexion',
+      'manglikStatus', 'nadi', 'gotraSelf', 'gotraMother', 'qualification',
+      'occupation', 'annualIncome', 'livingStatus', 'currentCity', 'aboutMe',
+      'profileCreatedBy', 'fatherName', 'fatherOccupation',
+      'motherName', 'motherOccupation', 'fatherIncomeAnnually',
+      'motherIncomeAnnually', 'familyType', 'siblings', 'otherFamilyMemberInfo',
+      'contactNumber1', 'contactNumber2', 'state', 'cityOrVillage',
+      'knowCooking', 'dietaryHabit', 'smokingHabit', 'drinkingHabit',
+      'tobaccoHabits', 'hobbies', 'closeUpPhoto', 'fullPhoto', 'bestPhoto',
     ];
 
     const payload = {};
 
     for (const key of keys) {
-      if (key === "dob") {
-        payload[key] = biodata[key] || "";
-      } else if (biodata[key] !== undefined && biodata[key] !== "") {
+      if (key === 'dob') {
+        payload[key] = biodata[key] || '';
+      } else if (biodata[key] !== undefined && biodata[key] !== '') {
         payload[key] = biodata[key];
       } else if (isNew) {
-        payload[key] = "";
+        payload[key] = '';
       }
     }
 
     try {
-      payload.closeUpPhoto = biodata.closeUpPhoto.startsWith("data:image")
+      payload.closeUpPhoto = biodata.closeUpPhoto.startsWith('data:image')
         ? biodata.closeUpPhoto
         : await convertToBase64(biodata.closeUpPhoto);
 
-      payload.fullPhoto = biodata.fullPhoto.startsWith("data:image")
+      payload.fullPhoto = biodata.fullPhoto.startsWith('data:image')
         ? biodata.fullPhoto
         : await convertToBase64(biodata.fullPhoto);
 
-      payload.bestPhoto = biodata.bestPhoto.startsWith("data:image")
+      payload.bestPhoto = biodata.bestPhoto.startsWith('data:image')
         ? biodata.bestPhoto
         : await convertToBase64(biodata.bestPhoto);
     } catch (error) {
-      console.error("Base64 Conversion Error:", error);
+      console.error('Base64 Conversion Error:', error);
     }
 
     return payload;
   };
 
   const OPTIONAL_FIELDS = [
-    "weight", "complexion", "nadi", "gotraSelf", "gotraMother", "aboutMe", "otherFamilyMemberInfo",
-    "knowCooking", "dietaryHabit", "smokingHabit", "drinkingHabit",
-    "tobaccoHabits", "hobbies", "fullPhoto", "bestPhoto"
+    'weight', 'complexion', 'nadi', 'gotraSelf', 'gotraMother', 'aboutMe', 'otherFamilyMemberInfo',
+    'knowCooking', 'dietaryHabit', 'smokingHabit', 'drinkingHabit',
+    'tobaccoHabits', 'hobbies', 'fullPhoto', 'bestPhoto',
   ];
 
   const validateForm = (biodata) => {
@@ -471,39 +471,39 @@ const DetailedProfile = ({ navigation, profileData }) => {
     const MANDATORY_FIELDS = allFields.filter(field => !OPTIONAL_FIELDS.includes(field));
 
     MANDATORY_FIELDS.forEach((field) => {
-      const value = String(biodata[field] || "").trim();
+      const value = String(biodata[field] || '').trim();
 
       if (!value) {
         errors[field] = `${field} is required`;
       } else {
         // Full Name Validation
-        if (field === "fullname") {
+        if (field === 'fullname') {
           if (!/^[A-Za-z\s]+$/.test(value)) {
-            errors.fullname = "Full name must contain only letters and spaces.";
+            errors.fullname = 'Full name must contain only letters and spaces.';
           } else if (value.length > 25) {
-            errors.fullname = "Full name cannot exceed 25 characters.";
+            errors.fullname = 'Full name cannot exceed 25 characters.';
           }
         }
-        if (field === "fatherName") {
+        if (field === 'fatherName') {
           if (!/^[A-Za-z\s]+$/.test(value)) {
-            errors.fatherName = "fatherName must contain only letters and spaces.";
+            errors.fatherName = 'fatherName must contain only letters and spaces.';
           } else if (value.length > 25) {
-            errors.fatherName = "fatherName cannot exceed 25 characters.";
+            errors.fatherName = 'fatherName cannot exceed 25 characters.';
           }
         }
-        if (field === "motherName") {
+        if (field === 'motherName') {
           if (!/^[A-Za-z\s]+$/.test(value)) {
-            errors.motherName = "motherName must contain only letters and spaces.";
+            errors.motherName = 'motherName must contain only letters and spaces.';
           } else if (value.length > 25) {
-            errors.motherName = "motherName cannot exceed 25 characters.";
+            errors.motherName = 'motherName cannot exceed 25 characters.';
           }
         }
 
         // DOB Validation
-        if (field === "dob") {
+        if (field === 'dob') {
           const birthDate = new Date(value);
           if (isNaN(birthDate.getTime())) {
-            errors.dob = "Enter a valid date of birth.";
+            errors.dob = 'Enter a valid date of birth.';
           } else {
             const today = new Date();
             let age = today.getFullYear() - birthDate.getFullYear();
@@ -514,15 +514,15 @@ const DetailedProfile = ({ navigation, profileData }) => {
             }
 
             if (age < 18) {
-              errors.dob = "Age must be 18 or older.";
+              errors.dob = 'Age must be 18 or older.';
             }
           }
         }
 
         // Contact Number Validation
-        if (field === "contactNumber1" || field === "contactNumber2") {
+        if (field === 'contactNumber1' || field === 'contactNumber2') {
           if (!/^\d{10}$/.test(value)) {
-            errors[field] = "Enter a valid 10-digit mobile number.";
+            errors[field] = 'Enter a valid 10-digit mobile number.';
           }
         }
       }
@@ -532,7 +532,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
   };
 
   const handleSave = async () => {
-    console.log("🟢 handleSave triggered");
+    console.log('🟢 handleSave triggered');
 
     try {
       setIsLoading(true);
@@ -540,34 +540,34 @@ const DetailedProfile = ({ navigation, profileData }) => {
       const isUpdating = Boolean(biodata?._id);
       if (!isUpdating) {
         const errors = validateForm(biodata);
-        console.log("🚀 Validation Errors:", errors);
+        console.log('🚀 Validation Errors:', errors);
 
         if (Object.keys(errors).length > 0) {
           showMessage({
-            message: "Please complete all mandatory sections before submitting.",
-            type: "danger",
+            message: 'Please complete all mandatory sections before submitting.',
+            type: 'danger',
             duration: 4000,
-            icon: "danger",
-            position: 'bottom'
+            icon: 'danger',
+            position: 'bottom',
           });
-          console.log("❌ Validation failed. Errors:", errors);
+          console.log('❌ Validation failed. Errors:', errors);
           setErrors(errors);
           setIsLoading(false);
           return;
         }
-        console.log("✅ Validation Passed. Proceeding...");
+        console.log('✅ Validation Passed. Proceeding...');
       }
 
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       };
 
       const payload = await constructPayload(biodata, !isUpdating);
-      console.log("📩 Constructed Payload:", payload);
+      console.log('📩 Constructed Payload:', payload);
 
       const apiCall = isUpdating ? axios.put : axios.post;
       const endpoint = isUpdating ? UPDATE_PERSONAL_DETAILS : CREATE_PERSONAL_DETAILS;
@@ -575,18 +575,18 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
       const response = await apiCall(endpoint, payload, { headers });
 
-      console.log("✅ API Response:", response.data);
+      console.log('✅ API Response:', response.data);
 
       if (response.status === 200 || response.data.status === true) {
         const successMessage = isUpdating
-          ? "Profile Updated Successfully!"
-          : "Detailed Profile Created Successfully!";
+          ? 'Profile Updated Successfully!'
+          : 'Detailed Profile Created Successfully!';
 
         showMessage({
           message: successMessage,
-          type: "success",
+          type: 'success',
           duarion: 7000,
-          icon: "success"
+          icon: 'success',
         });
 
         setBiodata((prev) => ({
@@ -598,51 +598,51 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
         setTimeout(() => {
           if (isUpdating) {
-            navigation.navigate("MainApp", {
-              screen: "Tabs",
+            navigation.navigate('MainApp', {
+              screen: 'Tabs',
               params: {
-                screen: "MyProfile",
+                screen: 'MyProfile',
               },
             });
           } else {
-            navigation.navigate("MainPartnerPrefrence");
+            navigation.navigate('MainPartnerPrefrence');
           }
         }, 5000);
 
         return;
       }
 
-      throw new Error(response.data.message || "Something went wrong");
+      throw new Error(response.data.message || 'Something went wrong');
 
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching biodata:", errorMsg);
+      console.error('Error fetching biodata:', errorMsg);
       Alert.alert(
-        "Continue",
+        'Continue',
         errorMsg,
         [
           {
-            text: "OK",
+            text: 'OK',
             onPress: () => {
-              if (errorMsg === "You do not have an active subscription for Biodata service.") {
+              if (errorMsg === 'You do not have an active subscription for Biodata service.') {
                 openModal();
               }
-            }
-          }
+            },
+          },
         ],
         { cancelable: true }
       );
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
     } finally {
@@ -653,20 +653,20 @@ const DetailedProfile = ({ navigation, profileData }) => {
   const handleFreeTrial = async (plan) => {
     try {
       setTrialLoading(true);
-      setTrialPlanId(plan._id)
+      setTrialPlanId(plan._id);
       const payload = {
         serviceType: plan.profileType,
         trialPeriod: String(plan.trialPeriod),
       };
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       };
 
-      console.log("payload", payload);
+      console.log('payload', payload);
 
       const response = await axios.post(
         FREE_TRIAL,
@@ -680,7 +680,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           response.data.message || `Trial started for ${plan.profileType}`,
           [
             {
-              text: "OK",
+              text: 'OK',
               onPress: () => {
                 setModalVisible(false);
                 handleSave();
@@ -701,33 +701,33 @@ const DetailedProfile = ({ navigation, profileData }) => {
         errorMessage,
         [
           {
-            text: "OK",
+            text: 'OK',
             onPress: () => {
-              if (errorMessage === "Trial already requested or activated for Biodata") {
+              if (errorMessage === 'Trial already requested or activated for Biodata') {
                 setModalVisible(false);
                 handleSave(); // ✅ Still proceed
               }
-            }
-          }
+            },
+          },
         ]
       );
     } finally {
       setTrialLoading(false);
-      setTrialPlanId(null)
+      setTrialPlanId(null);
     }
   };
 
   const handleBuyNow = async (plan) => {
     try {
-      setBuyLoading(true)
-      setBuyingPlanId(plan._id)
-      const token = await AsyncStorage.getItem("userToken");
-      const userId = await AsyncStorage.getItem("userId");
+      setBuyLoading(true);
+      setBuyingPlanId(plan._id);
+      const token = await AsyncStorage.getItem('userToken');
+      const userId = await AsyncStorage.getItem('userId');
 
-      if (!token || !userId) throw new Error("Missing user token or ID");
+      if (!token || !userId) {throw new Error('Missing user token or ID');}
 
       const headers = {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       };
 
@@ -737,13 +737,13 @@ const DetailedProfile = ({ navigation, profileData }) => {
       );
 
       const razorpayKey = keyResponse.data?.key;
-      if (!razorpayKey) throw new Error("Failed to fetch Razorpay Key");
+      if (!razorpayKey) {throw new Error('Failed to fetch Razorpay Key');}
 
       const payload = {
         userId,
-        profileType: plan.profileType
+        profileType: plan.profileType,
       };
-      console.log("📦 [Payload to /buy]:", payload);
+      console.log('📦 [Payload to /buy]:', payload);
 
       const orderResponse = await axios.post(
         PAID_URL,
@@ -751,7 +751,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
         { headers }
       );
 
-      console.log("🧾 [Order API Response]:", orderResponse.data);
+      console.log('🧾 [Order API Response]:', orderResponse.data);
 
       let orderId, amount, currency;
 
@@ -766,11 +766,11 @@ const DetailedProfile = ({ navigation, profileData }) => {
       else if (orderResponse.data?.razorpayOrderId) {
         orderId = orderResponse.data.razorpayOrderId;
         amount = orderResponse.data.services?.[0]?.amount * 100 || 50000;
-        currency = "INR";
+        currency = 'INR';
       }
 
       if (!orderId || !amount || !currency) {
-        throw new Error("Incomplete Razorpay order data received from server");
+        throw new Error('Incomplete Razorpay order data received from server');
       }
 
       const options = {
@@ -785,12 +785,12 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
       RazorpayCheckout.open(options)
         .then(async (paymentData) => {
-          console.log("💸 [Payment Success]:", paymentData);
+          console.log('💸 [Payment Success]:', paymentData);
 
           const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = paymentData;
 
           if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
-            Alert.alert("Error", "Missing payment details from Razorpay.");
+            Alert.alert('Error', 'Missing payment details from Razorpay.');
             return;
           }
 
@@ -800,7 +800,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
             razorpay_signature: razorpay_signature,
           };
 
-          console.log("📨 [Payload to /verifyPayment]:", verifyPayload);
+          console.log('📨 [Payload to /verifyPayment]:', verifyPayload);
 
           try {
             const verifyResponse = await axios.post(
@@ -809,15 +809,15 @@ const DetailedProfile = ({ navigation, profileData }) => {
               { headers }
             );
 
-            console.log("✅ [Verify Payment Response]:", verifyResponse.data);
+            console.log('✅ [Verify Payment Response]:', verifyResponse.data);
 
             if (verifyResponse.status === 200 || verifyResponse.data?.status) {
               Alert.alert(
-                "Success",
-                verifyResponse.data?.message || "Payment verified successfully!",
+                'Success',
+                verifyResponse.data?.message || 'Payment verified successfully!',
                 [
                   {
-                    text: "OK",
+                    text: 'OK',
                     onPress: () => {
                       setModalVisible(false);
                       setTimeout(() => {
@@ -829,29 +829,29 @@ const DetailedProfile = ({ navigation, profileData }) => {
               );
             }
             else {
-              Alert.alert("Warning", verifyResponse.data?.message || "Verification failed!");
+              Alert.alert('Warning', verifyResponse.data?.message || 'Verification failed!');
             }
 
           } catch (verifyError) {
-            console.error("❌ [Verification Error]:", verifyError.response?.data || verifyError.message);
-            Alert.alert("Error", "Payment done, but verification failed.");
+            console.error('❌ [Verification Error]:', verifyError.response?.data || verifyError.message);
+            Alert.alert('Error', 'Payment done, but verification failed.');
           }
         })
         .catch((error) => {
-          console.log("❌ [Payment Failed]:", error);
-          Alert.alert("Payment Failed", error.description || "Try again later.");
+          console.log('❌ [Payment Failed]:', error);
+          Alert.alert('Payment Failed', error.description || 'Try again later.');
         });
 
     } catch (error) {
-      const errorMsg = error?.response?.data?.message || error.message || "Please try again later.";
+      const errorMsg = error?.response?.data?.message || error.message || 'Please try again later.';
 
-      console.error("❌ [Error in buying subscription]:", error?.response?.data || error.message);
+      console.error('❌ [Error in buying subscription]:', error?.response?.data || error.message);
       Alert.alert(
-        "Subscription Info",
+        'Subscription Info',
         errorMsg
       );
-      setBuyLoading(false)
-      setBuyingPlanId(false)
+      setBuyLoading(false);
+      setBuyingPlanId(false);
     }
   };
 
@@ -863,17 +863,17 @@ const DetailedProfile = ({ navigation, profileData }) => {
   };
 
   return (
-    <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
+    <SafeAreaView style={Globalstyles.container}>
       <StatusBar
         barStyle="dark-content"
         backgroundColor="transparent"
         translucent
       />
-      <KeyboardAvoidingView
+      {/* <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
-      >
+      > */}
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
           <View style={Globalstyles.form} importantForAutofill="no" removeClippedSubviews={true}>
             <View style={styles.detail}>
@@ -889,7 +889,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 subCasteOptions.find(item => item.label === biodata?.subCaste)?.value || ''
               }
               editable={isEditing}
-              onChange={(text) => handleInputChange("subCaste", text.value)}
+              onChange={(text) => handleInputChange('subCaste', text.value)}
               placeholder="Select subCaste"
               placeholderStyle={{ color: '#E7E7E7' }}
               autoScroll={false}
@@ -922,9 +922,9 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 valueField="value"
                 value={biodata?.gender}
                 editable={isEditing}
-                onChange={(text) => handleInputChange("gender", text.value)}
+                onChange={(text) => handleInputChange('gender', text.value)}
                 placeholder="Select Gender"
-                placeholderStyle={{ color: "#E7E7E7" }}
+                placeholderStyle={{ color: '#E7E7E7' }}
               />
 
             </View>
@@ -935,13 +935,13 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 style={[
                   Globalstyles.input,
                   !isEditing && styles.readOnly,
-                  errors.fullname && styles.errorInput
+                  errors.fullname && styles.errorInput,
                 ]}
                 value={biodata?.fullname}
                 editable={isEditing}
                 onChangeText={(text) => {
                   const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
-                  handleInputChange("fullname", filteredText);
+                  handleInputChange('fullname', filteredText);
                 }}
                 placeholder="Enter Your Full Name"
                 placeholderTextColor={Colors.gray}
@@ -964,10 +964,10 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 style={[
                   Globalstyles.input, errors.dob && styles.errorInput,
                   {
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between"
-                  }
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  },
                 ]}
               >
                 <TouchableOpacity
@@ -977,7 +977,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
                 >
                   <Text style={[styles.dateText]}>
-                    {biodata?.dob ? formatDate(biodata.dob) : "Select Your Date"}
+                    {biodata?.dob ? formatDate(biodata.dob) : 'Select Your Date'}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -993,10 +993,10 @@ const DetailedProfile = ({ navigation, profileData }) => {
                   themeVariant="light"
                   onChange={(event, selectedDate) => {
                     setShowDatePicker(false);
-                    if (event.type === "set" && selectedDate) {
+                    if (event.type === 'set' && selectedDate) {
                       setBiodata((prev) => ({
                         ...prev,
-                        dob: moment(selectedDate).format("YYYY-MM-DD"),
+                        dob: moment(selectedDate).format('YYYY-MM-DD'),
                       }));
                     }
                   }}
@@ -1018,14 +1018,14 @@ const DetailedProfile = ({ navigation, profileData }) => {
                   style={[
                     Globalstyles.input, errors.dob && styles.errorInput,
                     {
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    },
                   ]}
                 >
                   <Text style={styles.dateText}>
-                    {biodata?.timeOfBirth ? biodata.timeOfBirth : "HH:MM AM/PM"}
+                    {biodata?.timeOfBirth ? biodata.timeOfBirth : 'HH:MM AM/PM'}
                   </Text>
                 </View>
               </TouchableOpacity>
@@ -1046,10 +1046,10 @@ const DetailedProfile = ({ navigation, profileData }) => {
                   is24Hour={false}
                   onChange={(event, selectedTime) => {
                     setShowTimePicker(false);
-                    if (event.type === "set" && selectedTime) {
+                    if (event.type === 'set' && selectedTime) {
                       const hours = selectedTime.getHours();
                       const minutes = selectedTime.getMinutes();
-                      const formattedTime = moment({ hour: hours, minute: minutes }).format("hh:mm A");
+                      const formattedTime = moment({ hour: hours, minute: minutes }).format('hh:mm A');
 
                       setBiodata((prev) => ({
                         ...prev,
@@ -1069,10 +1069,10 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 value={biodata?.placeofbirth}
                 editable={isEditing}
                 placeholderTextColor={Colors.gray}
-                placeholder='Enter Your Birth Place'
+                placeholder="Enter Your Birth Place"
                 onChangeText={(text) => {
                   const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
-                  handleInputChange("placeofbirth", filteredText);
+                  handleInputChange('placeofbirth', filteredText);
                 }}
                 autoComplete="off"
                 textContentType="none"
@@ -1090,7 +1090,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 valueField="value"
                 value={biodata?.maritalStatus}
                 editable={isEditing}
-                onChange={(text) => handleInputChange("maritalStatus", text.value)}
+                onChange={(text) => handleInputChange('maritalStatus', text.value)}
                 placeholder="Select marital status"
                 placeholderStyle={{ color: '#E7E7E7' }}
                 autoScroll={false}
@@ -1108,7 +1108,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 valueField="value"
                 value={biodata?.disabilities}
                 editable={isEditing}
-                onChange={(text) => handleInputChange("disabilities", text.value)}
+                onChange={(text) => handleInputChange('disabilities', text.value)}
                 placeholder="Select disability"
                 placeholderStyle={{ color: '#E7E7E7' }}
               />
@@ -1123,7 +1123,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 valueField="value"
                 value={biodata?.heightFeet}
                 editable={isEditing}
-                onChange={(text) => handleInputChange("heightFeet", text.value)}
+                onChange={(text) => handleInputChange('heightFeet', text.value)}
                 placeholder="Height"
                 placeholderStyle={{ color: '#E7E7E7' }}
                 autoScroll={false}
@@ -1140,7 +1140,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 valueField="value"
                 value={biodata?.weight}
                 editable={isEditing}
-                onChange={(text) => handleInputChange("weight", text.value)}
+                onChange={(text) => handleInputChange('weight', text.value)}
                 placeholder="Weight"
                 placeholderStyle={{ color: '#E7E7E7' }}
                 autoScroll={false}
@@ -1156,7 +1156,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 valueField="value"
                 value={biodata?.complexion}
                 editable={isEditing}
-                onChange={(text) => handleInputChange("complexion", text.value)}
+                onChange={(text) => handleInputChange('complexion', text.value)}
                 placeholder="Select Complexion"
                 placeholderStyle={{ color: '#E7E7E7' }}
                 autoScroll={false}
@@ -1172,7 +1172,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 valueField="value"
                 value={biodata?.manglikStatus}
                 editable={isEditing}
-                onChange={(text) => handleInputChange("manglikStatus", text.value)}
+                onChange={(text) => handleInputChange('manglikStatus', text.value)}
                 placeholder="Select status"
                 placeholderStyle={{ color: '#E7E7E7' }}
                 autoScroll={false}
@@ -1187,10 +1187,10 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 value={biodata?.nadi}
                 editable={isEditing}
                 placeholderTextColor={Colors.gray}
-                placeholder='Enter Your Nadi'
+                placeholder="Enter Your Nadi"
                 onChangeText={(text) => {
                   const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
-                  handleInputChange("nadi", filteredText);
+                  handleInputChange('nadi', filteredText);
                 }}
                 autoComplete="off"
                 textContentType="none"
@@ -1210,7 +1210,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 placeholder={'Enter Your Self Gotra'}
                 onChangeText={(text) => {
                   const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
-                  handleInputChange("gotraSelf", filteredText);
+                  handleInputChange('gotraSelf', filteredText);
                 }}
                 autoComplete="off"
                 textContentType="none"
@@ -1230,7 +1230,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 placeholder={'Enter Your Mother Gotra'}
                 onChangeText={(text) => {
                   const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
-                  handleInputChange("gotraMother", filteredText);
+                  handleInputChange('gotraMother', filteredText);
                 }}
                 autoComplete="off"
                 textContentType="none"
@@ -1249,7 +1249,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 valueField="value"
                 value={biodata?.qualification}
                 editable={isEditing}
-                onChange={(text) => handleInputChange("qualification", text.value)}
+                onChange={(text) => handleInputChange('qualification', text.value)}
                 placeholder="Select Qualification"
                 disabled={!isEditing}
                 placeholderStyle={{ color: '#E7E7E7' }}
@@ -1269,7 +1269,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                   OccupationData.find(item => item.label === biodata?.occupation)?.value || ''
                 }
                 editable={isEditing}
-                onChange={(text) => handleInputChange("occupation", text.value)}
+                onChange={(text) => handleInputChange('occupation', text.value)}
                 placeholder="Select occupation"
                 disabled={!isEditing}
                 placeholderStyle={{ color: '#E7E7E7' }}
@@ -1289,7 +1289,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                   Income.find(item => item.label === biodata?.annualIncome)?.value || ''
                 }
                 editable={isEditing}
-                onChange={(text) => handleInputChange("annualIncome", text.value)}
+                onChange={(text) => handleInputChange('annualIncome', text.value)}
                 placeholder="Select Income"
                 disabled={!isEditing}
                 placeholderStyle={{ color: '#E7E7E7' }}
@@ -1309,7 +1309,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                   LivingData.find(item => item.label === biodata?.livingStatus)?.value || ''
                 }
                 editable={isEditing}
-                onChange={(text) => handleInputChange("livingStatus", text.value)}
+                onChange={(text) => handleInputChange('livingStatus', text.value)}
                 placeholder="Select Status"
                 disabled={!isEditing}
                 placeholderStyle={{ color: '#E7E7E7' }}
@@ -1356,7 +1356,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 numberOfLines={6}
                 value={biodata?.aboutMe}
                 editable={isEditing}
-                onChangeText={(text) => handleInputChange("aboutMe", text)}
+                onChangeText={(text) => handleInputChange('aboutMe', text)}
                 placeholder="Write about yourself..."
                 placeholderTextColor={Colors.gray}
                 textAlignVertical="top"
@@ -1380,7 +1380,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                   ProfileCreatedData.find(item => item.label === biodata?.profileCreatedBy)?.value || ''
                 }
                 editable={isEditing}
-                onChange={(text) => handleInputChange("profileCreatedBy", text.value)}
+                onChange={(text) => handleInputChange('profileCreatedBy', text.value)}
                 placeholder="Select Person"
                 disabled={!isEditing}
                 placeholderStyle={{ color: '#E7E7E7' }}
@@ -1397,10 +1397,10 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 value={biodata?.fatherName}
                 editable={isEditing}
                 placeholderTextColor={Colors.gray}
-                placeholder='Enter Your Father Name'
+                placeholder="Enter Your Father Name"
                 onChangeText={(text) => {
                   const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
-                  handleInputChange("fatherName", filteredText);
+                  handleInputChange('fatherName', filteredText);
                 }}
                 autoComplete="off"
                 textContentType="none"
@@ -1418,10 +1418,10 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 value={biodata?.motherName}
                 editable={isEditing}
                 placeholderTextColor={Colors.gray}
-                placeholder='Enter Your Mother Name'
+                placeholder="Enter Your Mother Name"
                 onChangeText={(text) => {
                   const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
-                  handleInputChange("motherName", filteredText);
+                  handleInputChange('motherName', filteredText);
                 }}
                 autoComplete="off"
                 textContentType="none"
@@ -1443,7 +1443,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                   MotherOccupationData.find(item => item.label === biodata?.fatherOccupation)?.value || ''
                 }
                 editable={isEditing}
-                onChange={(text) => handleInputChange("fatherOccupation", text.value)}
+                onChange={(text) => handleInputChange('fatherOccupation', text.value)}
                 placeholder="Select Occupation"
                 disabled={!isEditing}
                 placeholderStyle={{ color: '#E7E7E7' }}
@@ -1463,7 +1463,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                   Income.find(item => item.label === biodata?.fatherIncomeAnnually)?.value || ''
                 }
                 editable={isEditing}
-                onChange={(text) => handleInputChange("fatherIncomeAnnually", text.value)}
+                onChange={(text) => handleInputChange('fatherIncomeAnnually', text.value)}
                 placeholder="Select Income"
                 disabled={!isEditing}
                 placeholderStyle={{ color: '#E7E7E7' }}
@@ -1484,7 +1484,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                   MotherOccupationData.find(item => item.label === biodata?.motherOccupation)?.value || ''
                 }
                 editable={isEditing}
-                onChange={(text) => handleInputChange("motherOccupation", text.value)}
+                onChange={(text) => handleInputChange('motherOccupation', text.value)}
                 placeholder="Select Occupation"
                 disabled={!isEditing}
                 placeholderStyle={{ color: '#E7E7E7' }}
@@ -1504,7 +1504,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                   Income.find(item => item.label === biodata?.motherIncomeAnnually)?.value || ''
                 }
                 editable={isEditing}
-                onChange={(text) => handleInputChange("motherIncomeAnnually", text.value)}
+                onChange={(text) => handleInputChange('motherIncomeAnnually', text.value)}
                 placeholder="Select Income"
                 disabled={!isEditing}
                 placeholderStyle={{ color: '#E7E7E7' }}
@@ -1525,7 +1525,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                   FamilyType.find(item => item.label === biodata?.familyType)?.value || ''
                 }
                 editable={isEditing}
-                onChange={(text) => handleInputChange("familyType", text.value)}
+                onChange={(text) => handleInputChange('familyType', text.value)}
                 placeholder="Select Type"
                 disabled={!isEditing}
                 placeholderStyle={{ color: '#E7E7E7' }}
@@ -1543,7 +1543,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 valueField="value"
                 value={siblings.find((item) => item.value == biodata?.siblings)?.value || null}
                 editable={isEditing}
-                onChange={(text) => handleInputChange("siblings", String(text.value))}
+                onChange={(text) => handleInputChange('siblings', String(text.value))}
                 placeholder="Select Type"
                 disabled={!isEditing}
                 placeholderStyle={{ color: '#E7E7E7' }}
@@ -1557,12 +1557,12 @@ const DetailedProfile = ({ navigation, profileData }) => {
               <TextInput
                 style={[Globalstyles.input, !isEditing && styles.readOnly]}
                 value={biodata?.otherFamilyMemberInfo}
-                onChangeText={(text) => handleInputChange("otherFamilyMemberInfo", text)}
+                onChangeText={(text) => handleInputChange('otherFamilyMemberInfo', text)}
                 multiline={true}
                 numberOfLines={6}
                 editable={isEditing}
                 placeholderTextColor={Colors.gray}
-                placeholder='Enter Your Family Info.'
+                placeholder="Enter Your Family Info."
                 autoComplete="off"
                 textContentType="none"
                 importantForAutofill="no"
@@ -1582,13 +1582,13 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 value={biodata?.contactNumber1}
                 onChangeText={(text) => {
                   const cleanText = text.replace(/[^0-9]/g, '');
-                  handleInputChange("contactNumber1", cleanText);
+                  handleInputChange('contactNumber1', cleanText);
                 }}
                 keyboardType="phone-pad"
                 maxLength={10}
                 editable={isEditing}
                 placeholderTextColor={Colors.gray}
-                placeholder='Enter Your Contact No. 1'
+                placeholder="Enter Your Contact No. 1"
                 autoComplete="tel"
                 textContentType="telephoneNumber"
                 importantForAutofill="no"
@@ -1604,13 +1604,13 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 value={biodata?.contactNumber2}
                 onChangeText={(text) => {
                   const cleanText = text.replace(/[^0-9]/g, '');
-                  handleInputChange("contactNumber2", cleanText);
+                  handleInputChange('contactNumber2', cleanText);
                 }}
                 keyboardType="phone-pad"
                 maxLength={10}
                 editable={isEditing}
                 placeholderTextColor={Colors.gray}
-                placeholder='Enter Your Contact No. 2'
+                placeholder="Enter Your Contact No. 2"
                 autoComplete="tel-device"
                 textContentType="none"
                 importantForAutofill="no"
@@ -1694,7 +1694,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                   CookingStatus.find(item => item.label === biodata?.knowCooking)?.value || ''
                 }
                 editable={isEditing}
-                onChange={(text) => handleInputChange("knowCooking", text.value)}
+                onChange={(text) => handleInputChange('knowCooking', text.value)}
                 placeholder="Select Status"
                 disabled={!isEditing}
                 placeholderStyle={{ color: '#E7E7E7' }}
@@ -1713,7 +1713,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                   DietHabit.find(item => item.label === biodata?.dietaryHabit)?.value || ''
                 }
                 editable={isEditing}
-                onChange={(text) => handleInputChange("dietaryHabit", text.value)}
+                onChange={(text) => handleInputChange('dietaryHabit', text.value)}
                 placeholder="Select Habit"
                 disabled={!isEditing}
                 placeholderStyle={{ color: '#E7E7E7' }}
@@ -1732,7 +1732,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                   smokingStatusData.find(item => item.label === biodata?.smokingHabit)?.value || ''
                 }
                 editable={isEditing}
-                onChange={(text) => handleInputChange("smokingHabit", text.value)}
+                onChange={(text) => handleInputChange('smokingHabit', text.value)}
                 placeholder="Select Status"
                 disabled={!isEditing}
                 placeholderStyle={{ color: '#E7E7E7' }}
@@ -1751,7 +1751,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                   DrinkingHabit.find(item => item.label === biodata?.drinkingHabit)?.value || ''
                 }
                 editable={isEditing}
-                onChange={(text) => handleInputChange("drinkingHabit", text.value)}
+                onChange={(text) => handleInputChange('drinkingHabit', text.value)}
                 placeholder="Select Habit"
                 disabled={!isEditing}
                 placeholderStyle={{ color: '#E7E7E7' }}
@@ -1770,7 +1770,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                   TobacooHabit.find(item => item.label === biodata?.tobaccoHabits)?.value || ''
                 }
                 editable={isEditing}
-                onChange={(text) => handleInputChange("tobaccoHabits", text.value)}
+                onChange={(text) => handleInputChange('tobaccoHabits', text.value)}
                 placeholder="Select Habit"
                 disabled={!isEditing}
                 placeholderStyle={{ color: '#E7E7E7' }}
@@ -1784,12 +1784,12 @@ const DetailedProfile = ({ navigation, profileData }) => {
               <TextInput
                 style={[Globalstyles.input, !isEditing && styles.readOnly]}
                 value={biodata?.hobbies}
-                onChangeText={(text) => handleInputChange("hobbies", text)}
+                onChangeText={(text) => handleInputChange('hobbies', text)}
                 multiline={true}
                 numberOfLines={6}
                 editable={isEditing}
                 placeholderTextColor={Colors.gray}
-                placeholder='Enter Your Hobbies'
+                placeholder="Enter Your Hobbies"
                 autoComplete="off"
                 textContentType="none"
                 importantForAutofill="no"
@@ -1855,7 +1855,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                 <ActivityIndicator size="large" color={Colors.light} />
               ) : (
                 <Text style={styles.buttonText}>
-                  {biodata?._id ? "Submit" : "Continue"}
+                  {biodata?._id ? 'Submit' : 'Continue'}
                 </Text>
               )}
             </TouchableOpacity>
@@ -1871,7 +1871,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                               source={{ uri: plan.photoUrl }}
                               style={styles.planImage}
                               resizeMode="cover"
-                              onError={(e) => console.log("Image load error:", e.nativeEvent.error)}
+                              onError={(e) => console.log('Image load error:', e.nativeEvent.error)}
                             />
                           ) : null}
                           <View style={styles.cardContent}>
@@ -1929,9 +1929,9 @@ const DetailedProfile = ({ navigation, profileData }) => {
             </Modal>
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
+      {/* </KeyboardAvoidingView> */}
     </SafeAreaView>
-  )
-}
+  );
+};
 
-export default DetailedProfile
+export default DetailedProfile;

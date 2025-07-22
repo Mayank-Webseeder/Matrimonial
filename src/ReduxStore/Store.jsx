@@ -1,4 +1,4 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore } from '@reduxjs/toolkit';
 import authSlice from '../ReduxStore/Slices/authSlice';
 import profileSlice from '../ReduxStore/Slices/ProfileSlice';
 import GetAllBiodataSlice from '../ReduxStore/Slices/GetAllBiodataSlice';
@@ -13,7 +13,7 @@ const store = configureStore({
     getAllBiodata:GetAllBiodataSlice,
     getBiodata:BioDataSlice,
     activist:ActivistSlice,
-    GetAllNotification:NotificationReducer
+    GetAllNotification:NotificationReducer,
   },
 });
 

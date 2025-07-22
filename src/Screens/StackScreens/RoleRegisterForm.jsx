@@ -51,11 +51,11 @@ const RoleRegisterForm = ({ navigation }) => {
         facebookUrl: '',
         youtubeUrl: '',
         instagramUrl: '',
-        whatsapp: ''
+        whatsapp: '',
     });
 
     useEffect(() => {
-        console.log("profileData:", JSON.stringify(profileData, null, 2));
+        console.log('profileData:', JSON.stringify(profileData, null, 2));
         fetchProfilesDetails();
     }, []);
 
@@ -68,59 +68,59 @@ const RoleRegisterForm = ({ navigation }) => {
 
             // ✅ **Select first TRUE category (Only Pandit, Jyotish, Kathavachak)**
             let profileType = null;
-            if (profileData.isPandit) profileType = "Pandit";
-            else if (profileData.isJyotish) profileType = "Jyotish";
-            else if (profileData.isKathavachak) profileType = "Kathavachak";
+            if (profileData.isPandit) {profileType = 'Pandit';}
+            else if (profileData.isJyotish) {profileType = 'Jyotish';}
+            else if (profileData.isKathavachak) {profileType = 'Kathavachak';}
 
             if (!profileType) {
-                console.log("❌ No valid profileType found.");
+                console.log('❌ No valid profileType found.');
                 setIsLoading(false);
                 return;
             }
 
             const apiUrl = `${PROFILE_TYPE}/${profileType}`;
 
-            console.log("API Request:");
-            console.log("URL:", apiUrl);
-            console.log("Headers:", { Authorization: `Bearer ${token}` });
+            console.log('API Request:');
+            console.log('URL:', apiUrl);
+            console.log('Headers:', { Authorization: `Bearer ${token}` });
 
             const response = await axios.get(apiUrl, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
-            console.log("Full API Response:", JSON.stringify(response.data));
+            console.log('Full API Response:', JSON.stringify(response.data));
 
             // ✅ **Filter out Activist profiles**
-            if (response.data?.data?.profileType === "Activist") {
-                console.log("❌ Skipping Activist Profile");
+            if (response.data?.data?.profileType === 'Activist') {
+                console.log('❌ Skipping Activist Profile');
                 setIsLoading(false);
                 return;
             }
 
             setFetchProfileDetails(response.data.data);
-            console.log("Selected Profile Data:", response.data.data);
+            console.log('Selected Profile Data:', response.data.data);
 
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
             if (error.response) {
             } else if (error.request) {
-                console.error("No Response Received:", error.request);
+                console.error('No Response Received:', error.request);
             } else {
-                console.error("Error Message:", error.message);
+                console.error('Error Message:', error.message);
             }
-            console.error("Error fetching biodata:", errorMsg);
+            console.error('Error fetching biodata:', errorMsg);
 
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
         } finally {
@@ -129,7 +129,7 @@ const RoleRegisterForm = ({ navigation }) => {
     };
 
     useEffect(() => {
-        console.log("profileData:", JSON.stringify(profileData, null, 2));
+        console.log('profileData:', JSON.stringify(profileData, null, 2));
         fetchProfilesDetails();
     }, []);
 
@@ -184,7 +184,7 @@ const RoleRegisterForm = ({ navigation }) => {
             });
 
             if (!image.data) {
-                console.error("Base64 data missing!");
+                console.error('Base64 data missing!');
                 return;
             }
 
@@ -196,7 +196,7 @@ const RoleRegisterForm = ({ navigation }) => {
             }));
 
         } catch (err) {
-            console.log("Profile Photo Picker Error:", err);
+            console.log('Profile Photo Picker Error:', err);
         }
     };
 
@@ -211,7 +211,7 @@ const RoleRegisterForm = ({ navigation }) => {
             });
 
             if (!images || images.length === 0) {
-                console.error("No images selected!");
+                console.error('No images selected!');
                 return;
             }
 
@@ -228,19 +228,19 @@ const RoleRegisterForm = ({ navigation }) => {
             });
 
         } catch (err) {
-            console.log("Additional Photos Picker Error:", err);
+            console.log('Additional Photos Picker Error:', err);
         }
     };
 
     const OPTIONAL_FIELDS = [
-        "residentialAddress", "additionalPhotos", "experience", "websiteUrl",
-        "facebookUrl", "youtubeUrl", "instagramUrl", "whatsapp", "description", "aadharNo"
+        'residentialAddress', 'additionalPhotos', 'experience', 'websiteUrl',
+        'facebookUrl', 'youtubeUrl', 'instagramUrl', 'whatsapp', 'description', 'aadharNo',
     ];
 
     const validateForm = (data) => {
         let errors = {};
 
-        if (!data) return errors; // Ensure data exists to avoid undefined errors
+        if (!data) {return errors;} // Ensure data exists to avoid undefined errors
 
         const allFields = Object.keys(data);
 
@@ -248,7 +248,7 @@ const RoleRegisterForm = ({ navigation }) => {
         const MANDATORY_FIELDS = allFields.filter(field => !OPTIONAL_FIELDS.includes(field));
 
         MANDATORY_FIELDS.forEach((field) => {
-            if (!data[field] || String(data[field]).trim() === "") {
+            if (!data[field] || String(data[field]).trim() === '') {
                 errors[field] = `${field} is required`;
             }
         });
@@ -258,38 +258,38 @@ const RoleRegisterForm = ({ navigation }) => {
 
     const handleSubmit = async () => {
         try {
-            console.log("Submitting...");
+            console.log('Submitting...');
             setIsLoading(true);
-            console.log("Loader Started...");
+            console.log('Loader Started...');
 
             const roleApiMapping = {
                 Pandit: CREATE_PANDIT,
                 Jyotish: CREATE_JYOTISH,
-                Kathavachak: CREATE_KATHAVACHAK
+                Kathavachak: CREATE_KATHAVACHAK,
             };
 
             const commonPayload = {
                 mobileNo: RoleRegisterData?.mobileNo || fetchProfileDetails?.mobileNo,
-                residentialAddress: RoleRegisterData?.residentialAddress || fetchProfileDetails?.residentialAddress || "",
-                aadharNo: RoleRegisterData?.aadharNo || fetchProfileDetails?.aadharNo || "",
+                residentialAddress: RoleRegisterData?.residentialAddress || fetchProfileDetails?.residentialAddress || '',
+                aadharNo: RoleRegisterData?.aadharNo || fetchProfileDetails?.aadharNo || '',
                 fullName: RoleRegisterData?.fullName || fetchProfileDetails?.fullName,
                 state: RoleRegisterData?.state || fetchProfileDetails?.state,
                 city: RoleRegisterData?.city || fetchProfileDetails?.city,
                 subCaste: RoleRegisterData?.subCaste || fetchProfileDetails?.subCaste,
                 profilePhoto: RoleRegisterData?.profilePhoto,
                 additionalPhotos: RoleRegisterData?.additionalPhotos,
-                experience: RoleRegisterData?.experience ? String(RoleRegisterData.experience) : "",
-                description: RoleRegisterData?.description || fetchProfileDetails?.description || "",
+                experience: RoleRegisterData?.experience ? String(RoleRegisterData.experience) : '',
+                description: RoleRegisterData?.description || fetchProfileDetails?.description || '',
                 websiteUrl: RoleRegisterData?.websiteUrl,
                 facebookUrl: RoleRegisterData?.facebookUrl,
                 youtubeUrl: RoleRegisterData?.youtubeUrl,
                 instagramUrl: RoleRegisterData?.instagramUrl,
                 whatsapp: RoleRegisterData?.whatsapp,
-                status: "pending"
+                status: 'pending',
             };
 
             const errors = validateForm(commonPayload);
-            console.log("Validation Errors:", errors);
+            console.log('Validation Errors:', errors);
 
             if (Object.keys(errors).length > 0) {
                 setErrors(errors);
@@ -297,19 +297,19 @@ const RoleRegisterForm = ({ navigation }) => {
                 return;
             }
 
-            const token = await AsyncStorage.getItem("userToken");
-            if (!token) throw new Error("Authorization token is missing.");
-            console.log("Token found:", token);
+            const token = await AsyncStorage.getItem('userToken');
+            if (!token) {throw new Error('Authorization token is missing.');}
+            console.log('Token found:', token);
 
             const headers = {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             };
 
             if (!selectedRoles || selectedRoles.length === 0) {
-                throw new Error("No roles selected!");
+                throw new Error('No roles selected!');
             }
-            console.log("Selected Roles:", selectedRoles);
+            console.log('Selected Roles:', selectedRoles);
 
             // ✅ Use Promise.all() to wait for all requests
             const requests = selectedRoles.map(async (role) => {
@@ -333,8 +333,8 @@ const RoleRegisterForm = ({ navigation }) => {
                     type: 'success',
                     message: 'Success!',
                     description: `Successfully registered for ${role}.`,
-                    icon: "success",
-                    duarion: 5000
+                    icon: 'success',
+                    duarion: 5000,
                 });
             });
 
@@ -342,38 +342,38 @@ const RoleRegisterForm = ({ navigation }) => {
             await Promise.all(requests);
 
             // ✅ Navigate only after all requests are successful
-            console.log("All roles registered successfully! Navigating...");
+            console.log('All roles registered successfully! Navigating...');
             await AsyncStorage.removeItem('RoleRegisterData');
 
             setTimeout(() => {
-                navigation.navigate("MainApp");
+                navigation.navigate('MainApp');
             }, 2000);
 
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error fetching biodata:", errorMsg);
+            console.error('Error fetching biodata:', errorMsg);
             showMessage({
                 type: 'danger',
                 message: errorMsg || 'Something went wrong!',
-                icon: "danger",
-                duarion: 5000
+                icon: 'danger',
+                duarion: 5000,
             });
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
 
         } finally {
-            console.log("Loader Stopped!");
+            console.log('Loader Stopped!');
             setIsLoading(false);
         }
     };
@@ -490,11 +490,11 @@ const RoleRegisterForm = ({ navigation }) => {
             setRoleRegisterData((prev) => ({ ...prev, [type]: tempUrlData[type] }));
         } else {
             showMessage({
-                type: "info",
-                message: "Invalid URL",
-                description: `Please enter a valid ${type.replace("Url", "")} link.`,
-                icon: "info",
-                duarion: 5000
+                type: 'info',
+                message: 'Invalid URL',
+                description: `Please enter a valid ${type.replace('Url', '')} link.`,
+                icon: 'info',
+                duarion: 5000,
             });
         }
     };
@@ -504,7 +504,7 @@ const RoleRegisterForm = ({ navigation }) => {
         <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
             <View style={Globalstyles.header}>
-                <View style={{ flexDirection: 'row', alignItems: "center" }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
@@ -514,7 +514,8 @@ const RoleRegisterForm = ({ navigation }) => {
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
-                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+                // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+                >
 
                 <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + SH(10), flexGrow: 1 }}
                     showsVerticalScrollIndicator={false}
@@ -525,7 +526,7 @@ const RoleRegisterForm = ({ navigation }) => {
                         <TextInput style={Globalstyles.input}
                             value={RoleRegisterData?.fullName || fetchProfileDetails?.fullName || ''}
                             onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, fullName: text }))}
-                            placeholder='Enter Your Full Name'
+                            placeholder="Enter Your Full Name"
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
                             textContentType="none"
@@ -605,7 +606,7 @@ const RoleRegisterForm = ({ navigation }) => {
                         <TextInput style={Globalstyles.input}
                             value={RoleRegisterData?.residentialAddress || fetchProfileDetails?.residentialAddress || ''}
                             onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, residentialAddress: text }))}
-                            placeholder='Enter Your Area'
+                            placeholder="Enter Your Area"
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
                             textContentType="none"
@@ -616,7 +617,7 @@ const RoleRegisterForm = ({ navigation }) => {
                         <TextInput style={Globalstyles.input}
                             value={RoleRegisterData?.aadharNo || fetchProfileDetails?.aadharNo || ''}
                             onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, aadharNo: text }))}
-                            placeholder='Enter Your Aadhar No.'
+                            placeholder="Enter Your Aadhar No."
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
                             textContentType="none"
@@ -692,7 +693,7 @@ const RoleRegisterForm = ({ navigation }) => {
                                 labelField="label"
                                 valueField="value"
                                 value={RoleRegisterData?.experience}
-                                onChange={(text) => handleInputChange("experience", text.value)}
+                                onChange={(text) => handleInputChange('experience', text.value)}
                                 placeholder="Select Experience"
                                 placeholderStyle={{ color: '#E7E7E7' }}
                             />
@@ -716,7 +717,7 @@ const RoleRegisterForm = ({ navigation }) => {
                         <Text style={Globalstyles.title}>Add Description</Text>
                         <TextInput style={Globalstyles.textInput} value={RoleRegisterData.description || fetchProfileDetails?.description || ''}
                             onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, description: text }))}
-                            textAlignVertical='top' placeholder="Add Your Description"
+                            textAlignVertical="top" placeholder="Add Your Description"
                             placeholderTextColor={Colors.gray} multiline={true}
                             autoComplete="off"
                             textContentType="none"
@@ -734,24 +735,28 @@ const RoleRegisterForm = ({ navigation }) => {
 
                         {/* Display Selected Photos */}
                         {RoleRegisterData?.additionalPhotos?.length > 0 && (
-                            <View style={styles.photosContainer}>
-                                <Text style={styles.label}>Uploaded Photos:</Text>
-                                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                        {RoleRegisterData?.additionalPhotos.map((photo, index) => (
-                                            <Image key={index} source={{ uri: photo }} style={styles.photo} />
-                                        ))}
-                                    </View>
-                                </ScrollView>
-                            </View>
-                        )}
+                         <View style={styles.photosContainer}>
+                           <Text style={styles.label}>Uploaded Photos:</Text>
+
+                           <FlatList
+                             data={RoleRegisterData.additionalPhotos}
+                             keyExtractor={(item, index) => index.toString()}
+                             horizontal
+                             showsHorizontalScrollIndicator={false}
+                             renderItem={({ item }) => (
+                               <Image source={{ uri: item }} style={styles.photo} />
+                             )}
+                             contentContainerStyle={{ flexDirection: 'row', alignItems: 'center' }}
+                           />
+                         </View>
+                       )}
 
                         <Text style={Globalstyles.title}>Website Link</Text>
                         <TextInput
                             style={Globalstyles.input}
                             value={tempUrlData.websiteUrl || RoleRegisterData.websiteUrl}
-                            onChangeText={(text) => validateAndSetUrl(text, "websiteUrl")}
-                            onBlur={() => handleBlur("websiteUrl")}
+                            onChangeText={(text) => validateAndSetUrl(text, 'websiteUrl')}
+                            onBlur={() => handleBlur('websiteUrl')}
                             placeholder="Give Your Website Link"
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
@@ -763,8 +768,8 @@ const RoleRegisterForm = ({ navigation }) => {
                         <TextInput
                             style={Globalstyles.input}
                             value={tempUrlData.youtubeUrl || RoleRegisterData.youtubeUrl}
-                            onChangeText={(text) => validateAndSetUrl(text, "youtubeUrl")}
-                            onBlur={() => handleBlur("youtubeUrl")}
+                            onChangeText={(text) => validateAndSetUrl(text, 'youtubeUrl')}
+                            onBlur={() => handleBlur('youtubeUrl')}
                             placeholder="Give Your Youtube Link"
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
@@ -776,8 +781,8 @@ const RoleRegisterForm = ({ navigation }) => {
                         <TextInput
                             style={Globalstyles.input}
                             value={tempUrlData.whatsapp || RoleRegisterData.whatsapp}
-                            onChangeText={(text) => validateAndSetUrl(text, "whatsapp")}
-                            onBlur={() => handleBlur("whatsapp")}
+                            onChangeText={(text) => validateAndSetUrl(text, 'whatsapp')}
+                            onBlur={() => handleBlur('whatsapp')}
                             placeholder="Give Your Whatsapp Link"
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
@@ -789,8 +794,8 @@ const RoleRegisterForm = ({ navigation }) => {
                         <TextInput
                             style={Globalstyles.input}
                             value={tempUrlData.facebookUrl || RoleRegisterData.facebookUrl}
-                            onChangeText={(text) => validateAndSetUrl(text, "facebookUrl")}
-                            onBlur={() => handleBlur("facebookUrl")}
+                            onChangeText={(text) => validateAndSetUrl(text, 'facebookUrl')}
+                            onBlur={() => handleBlur('facebookUrl')}
                             placeholder="Give Your Facebook Link"
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
@@ -802,8 +807,8 @@ const RoleRegisterForm = ({ navigation }) => {
                         <TextInput
                             style={Globalstyles.input}
                             value={tempUrlData.instagramUrl || RoleRegisterData.instagramUrl}
-                            onChangeText={(text) => validateAndSetUrl(text, "instagramUrl")}
-                            onBlur={() => handleBlur("instagramUrl")}
+                            onChangeText={(text) => validateAndSetUrl(text, 'instagramUrl')}
+                            onBlur={() => handleBlur('instagramUrl')}
                             placeholder="Give Your Instagram Link"
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"

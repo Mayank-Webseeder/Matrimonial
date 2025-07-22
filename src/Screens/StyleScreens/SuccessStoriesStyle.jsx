@@ -1,12 +1,12 @@
-import { StyleSheet } from "react-native";
-import { SH, SW, SF } from "../../utils/Dimensions";
-import Colors from "../../utils/Colors";
+import { StyleSheet } from 'react-native';
+import { SH, SW, SF } from '../../utils/Dimensions';
+import Colors from '../../utils/Colors';
 
 const styles = StyleSheet.create({
   righticons: {
     flexDirection: 'row',
-    alignItems: "center",
-    marginRight: SW(10)
+    alignItems: 'center',
+    marginRight: SW(10),
   },
   postText: {
     fontSize: SF(13),
@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
     padding: SW(5),
     paddingHorizontal: SW(15),
     borderRadius: 5,
-    marginHorizontal: SW(5)
+    marginHorizontal: SW(5),
   },
   storyCard: {
     backgroundColor: '#fff',
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: SW(12),
-    paddingLeft:SW(5)
+    paddingLeft:SW(5),
   },
   avatar: {
     width: SW(42),
@@ -84,35 +84,35 @@ const styles = StyleSheet.create({
   },
 
   textContainer: {
-    marginTop: SW(10)
+    marginTop: SW(10),
   },
   storyName: {
     fontSize: SF(15),
-    fontFamily: "Poppins-Bold",
+    fontFamily: 'Poppins-Bold',
     marginLeft: SW(10),
-    marginTop: SH(10)
+    marginTop: SH(10),
   },
   storyDescription: {
     fontSize: SF(13),
-    fontFamily: "Poppins-Regular"
+    fontFamily: 'Poppins-Regular',
   },
   ratingContainer: {
     flexDirection: 'row',
     marginTop: SH(5),
   },
   noDataContainer: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     marginTop: SH(20),
   },
   noDataText: {
     fontSize: SF(16),
-    color: "gray",
-    fontWeight: "bold",
+    color: 'gray',
+    fontWeight: 'bold',
   },
   uploadedImage: {
-    width: SW(100), height: SH(100), borderRadius: 10
+    width: SW(100), height: SH(100), borderRadius: 10,
   },
-})
+});
 
-export default styles
+export default styles;

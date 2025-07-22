@@ -14,7 +14,7 @@ import ImageCropPicker from 'react-native-image-crop-picker';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector } from 'react-redux';
 import RazorpayCheckout from 'react-native-razorpay';
-import { showMessage } from "react-native-flash-message";
+import { showMessage } from 'react-native-flash-message';
 import { launchImageLibrary } from 'react-native-image-picker';
 // import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -36,7 +36,7 @@ const PanditRegister = ({ navigation }) => {
     const ProfileData = useSelector((state) => state.profile);
     const profileData = ProfileData?.profiledata || {};
     const hasTrial = profileData.serviceSubscriptions?.some(
-        (sub) => sub.subscriptionType === "Trial" && sub.serviceType === "Pandit"
+        (sub) => sub.subscriptionType === 'Trial' && sub.serviceType === 'Pandit'
     );
     const [fetchProfileDetails, setFetchProfileDetails] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -64,7 +64,7 @@ const PanditRegister = ({ navigation }) => {
         facebookUrl: '',
         youtubeUrl: '',
         instagramUrl: '',
-        whatsapp: ''
+        whatsapp: '',
     });
 
     const [tempUrlData, setTempUrlData] = useState({});
@@ -75,11 +75,11 @@ const PanditRegister = ({ navigation }) => {
 
     const fetchPlans = async () => {
         try {
-            const token = await AsyncStorage.getItem("userToken");
-            if (!token) throw new Error("No token found");
+            const token = await AsyncStorage.getItem('userToken');
+            if (!token) {throw new Error('No token found');}
 
             const headers = {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             };
 
@@ -102,55 +102,55 @@ const PanditRegister = ({ navigation }) => {
             setIsLoading(true);
             const token = await AsyncStorage.getItem('userToken');
             let profileType = null;
-            if (profileData.isPandit) profileType = "Pandit";
-            else if (profileData.isJyotish) profileType = "Jyotish";
-            else if (profileData.isKathavachak) profileType = "Kathavachak";
+            if (profileData.isPandit) {profileType = 'Pandit';}
+            else if (profileData.isJyotish) {profileType = 'Jyotish';}
+            else if (profileData.isKathavachak) {profileType = 'Kathavachak';}
             if (!profileType) {
-                console.log("❌ No valid profileType found.");
+                console.log('❌ No valid profileType found.');
                 setIsLoading(false);
                 return;
             }
             const apiUrl = `${PROFILE_TYPE}/${profileType}`;
-            console.log("API Request:");
-            console.log("URL:", apiUrl);
-            console.log("Headers:", { Authorization: `Bearer ${token}` });
+            console.log('API Request:');
+            console.log('URL:', apiUrl);
+            console.log('Headers:', { Authorization: `Bearer ${token}` });
 
             const response = await axios.get(apiUrl, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
-            console.log("Full API Response:", JSON.stringify(response.data));
-            if (response.data?.data?.profileType === "Activist") {
-                console.log("❌ Skipping Activist Profile");
+            console.log('Full API Response:', JSON.stringify(response.data));
+            if (response.data?.data?.profileType === 'Activist') {
+                console.log('❌ Skipping Activist Profile');
                 setIsLoading(false);
                 return;
             }
             setFetchProfileDetails(response.data.data);
-            console.log("Selected Profile Data:", response.data.data);
+            console.log('Selected Profile Data:', response.data.data);
 
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error fetching biodata:", errorMsg);
+            console.error('Error fetching biodata:', errorMsg);
 
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
 
             if (error.response) {
             } else if (error.request) {
-                console.error("No Response Received:", error.request);
+                console.error('No Response Received:', error.request);
             } else {
-                console.error("Error Message:", error.message);
+                console.error('Error Message:', error.message);
             }
         } finally {
             setIsLoading(false);
@@ -158,7 +158,7 @@ const PanditRegister = ({ navigation }) => {
     };
 
     useEffect(() => {
-        console.log("profileData:", JSON.stringify(profileData, null, 2));
+        console.log('profileData:', JSON.stringify(profileData, null, 2));
         fetchProfilesDetails();
     }, []);
 
@@ -166,14 +166,14 @@ const PanditRegister = ({ navigation }) => {
         if (fetchProfileDetails) {
             setRoleRegisterData(prev => ({
                 ...prev,
-                mobileNo: fetchProfileDetails.mobileNo || "",
-                fullName: fetchProfileDetails.fullName || "",
-                state: fetchProfileDetails.state || "",
-                city: fetchProfileDetails.city || "",
-                subCaste: fetchProfileDetails.subCaste || "",
-                aadharNo: fetchProfileDetails.aadharNo || "",
-                residentialAddress: fetchProfileDetails.residentialAddress || "",
-                description: fetchProfileDetails.description || "",
+                mobileNo: fetchProfileDetails.mobileNo || '',
+                fullName: fetchProfileDetails.fullName || '',
+                state: fetchProfileDetails.state || '',
+                city: fetchProfileDetails.city || '',
+                subCaste: fetchProfileDetails.subCaste || '',
+                aadharNo: fetchProfileDetails.aadharNo || '',
+                residentialAddress: fetchProfileDetails.residentialAddress || '',
+                description: fetchProfileDetails.description || '',
             }));
         }
     }, [fetchProfileDetails]);
@@ -236,7 +236,7 @@ const PanditRegister = ({ navigation }) => {
             });
 
             if (!image.data) {
-                console.error("Base64 data missing!");
+                console.error('Base64 data missing!');
                 return;
             }
 
@@ -248,13 +248,13 @@ const PanditRegister = ({ navigation }) => {
             }));
 
         } catch (err) {
-            console.log("Profile Photo Picker Error:", err);
+            console.log('Profile Photo Picker Error:', err);
         }
     };
 
     const handleAdditionalPhotosPick = () => {
         launchImageLibrary(pickerOpts, (response) => {
-            if (response.didCancel) return;
+            if (response.didCancel) {return;}
             if (response.errorCode) {
                 console.log('ImagePicker Error:', response.errorMessage);
                 return;
@@ -282,12 +282,12 @@ const PanditRegister = ({ navigation }) => {
     const validateForm = (data, checked, servicesOptions) => {
         let errors = {};
 
-        if (!data) return errors;
+        if (!data) {return errors;}
 
         const allFields = Object.keys(data);
         const OPTIONAL_FIELDS = [
-            "residentialAddress", "additionalPhotos", "experience", "websiteUrl",
-            "facebookUrl", "youtubeUrl", "instagramUrl", "whatsapp", "description", "aadharNo"
+            'residentialAddress', 'additionalPhotos', 'experience', 'websiteUrl',
+            'facebookUrl', 'youtubeUrl', 'instagramUrl', 'whatsapp', 'description', 'aadharNo',
         ];
         const MANDATORY_FIELDS = allFields.filter(field => !OPTIONAL_FIELDS.includes(field));
 
@@ -305,15 +305,15 @@ const PanditRegister = ({ navigation }) => {
         };
 
         MANDATORY_FIELDS.forEach((field) => {
-            const value = String(data[field] || "").trim();
+            const value = String(data[field] || '').trim();
             if (!value) {
                 errors[field] = `${field} is required.`;
                 return;
             }
-            if (field === "mobileNo" && !/^\d{10}$/.test(value)) {
-                errors[field] = "Enter a valid 10-digit mobile number.";
+            if (field === 'mobileNo' && !/^\d{10}$/.test(value)) {
+                errors[field] = 'Enter a valid 10-digit mobile number.';
             }
-            if (field === "fullName") {
+            if (field === 'fullName') {
                 if (!/^[A-Za-z\s]+$/.test(value)) {
                     errors[field] = `${field} must contain only letters and spaces.`;
                 } else if (value.length > 30) {
@@ -322,13 +322,13 @@ const PanditRegister = ({ navigation }) => {
             }
         });
 
-        const urlFields = ["websiteUrl", "facebookUrl", "youtubeUrl", "instagramUrl", "whatsapp"];
+        const urlFields = ['websiteUrl', 'facebookUrl', 'youtubeUrl', 'instagramUrl', 'whatsapp'];
         const validUrlValues = {};
 
         urlFields.forEach((field) => {
-            const value = String(data[field] || "").trim();
+            const value = String(data[field] || '').trim();
             const pattern = urlPatterns[field];
-            const label = field.replace("Url", "");
+            const label = field.replace('Url', '');
 
             if (value) {
                 if (!pattern.test(value)) {
@@ -344,7 +344,7 @@ const PanditRegister = ({ navigation }) => {
         Object.entries(validUrlValues).forEach(([field, value]) => {
             if (seenUrls.has(value)) {
                 if (!errors[field]) {
-                    errors[field] = `This URL is already used in another field.`;
+                    errors[field] = 'This URL is already used in another field.';
                 }
             } else {
                 seenUrls.add(value);
@@ -352,10 +352,10 @@ const PanditRegister = ({ navigation }) => {
         });
 
         const selectedServices = Object.keys(checked).filter(
-            service => servicesOptions["Pandit"].some(opt => opt.value === service) && checked[service]
+            service => servicesOptions.Pandit.some(opt => opt.value === service) && checked[service]
         );
         if (selectedServices.length === 0) {
-            errors["panditServices"] = "Please select at least one service.";
+            errors.panditServices = 'Please select at least one service.';
         }
 
         return errors;
@@ -364,15 +364,15 @@ const PanditRegister = ({ navigation }) => {
 
     const handleSubmit = async () => {
         try {
-            console.log("Submitting Pandit...");
+            console.log('Submitting Pandit...');
             setIsLoading(true);
 
-            const token = await AsyncStorage.getItem("userToken");
-            if (!token) throw new Error("Authorization token is missing.");
-            console.log("Token found:", token);
+            const token = await AsyncStorage.getItem('userToken');
+            if (!token) {throw new Error('Authorization token is missing.');}
+            console.log('Token found:', token);
 
             const headers = {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             };
 
@@ -386,28 +386,28 @@ const PanditRegister = ({ navigation }) => {
                 subCaste: RoleRegisterData.subCaste,
                 profilePhoto: RoleRegisterData.profilePhoto,
                 additionalPhotos: RoleRegisterData.additionalPhotos,
-                experience: RoleRegisterData.experience ? String(RoleRegisterData.experience) : "",
+                experience: RoleRegisterData.experience ? String(RoleRegisterData.experience) : '',
                 description: RoleRegisterData.description,
                 websiteUrl: RoleRegisterData.websiteUrl,
                 facebookUrl: RoleRegisterData.facebookUrl,
                 youtubeUrl: RoleRegisterData.youtubeUrl,
                 instagramUrl: RoleRegisterData.instagramUrl,
                 whatsapp: RoleRegisterData.whatsapp,
-                status: "pending",
+                status: 'pending',
             };
 
             const mergedPayload = { ...commonPayload, ...tempUrlData };
             const errors = validateForm(mergedPayload, checked, servicesOptions);
-            console.log("mergedPayload:", JSON.stringify(mergedPayload));
-            console.log("Validation Errors:", errors);
+            console.log('mergedPayload:', JSON.stringify(mergedPayload));
+            console.log('Validation Errors:', errors);
             if (Object.keys(errors).length > 0) {
                 setErrors(errors);
                 showMessage({
-                    message: "Please complete all mandatory sections before submitting.",
-                    type: "danger",
+                    message: 'Please complete all mandatory sections before submitting.',
+                    type: 'danger',
                     duration: 4000,
-                    icon: "danger",
-                    position: 'bottom'
+                    icon: 'danger',
+                    position: 'bottom',
                 });
                 setIsLoading(false);
                 return;
@@ -417,55 +417,55 @@ const PanditRegister = ({ navigation }) => {
                 ...commonPayload,
                 ...tempUrlData,
                 panditServices: Object.keys(checked).filter(service =>
-                    servicesOptions["Pandit"].some(option => option.value === service) && checked[service]
+                    servicesOptions.Pandit.some(option => option.value === service) && checked[service]
                 ),
             };
 
-            console.log("payload", JSON.stringify(payload));
+            console.log('payload', JSON.stringify(payload));
 
             const response = await axios.post(CREATE_PANDIT, payload, { headers });
-            console.log("Response:", JSON.stringify(response.data));
+            console.log('Response:', JSON.stringify(response.data));
 
             showMessage({
-                message: "Success!",
-                description: response.data?.message || "Registered as Pandit. Your approval request has been sent.",
-                type: "success",
-                icon: "success",
+                message: 'Success!',
+                description: response.data?.message || 'Registered as Pandit. Your approval request has been sent.',
+                type: 'success',
+                icon: 'success',
                 duration: 5000,
             });
 
-            await AsyncStorage.removeItem("RoleRegisterData");
+            await AsyncStorage.removeItem('RoleRegisterData');
 
             setTimeout(() => {
-                navigation.navigate("MainApp");
+                navigation.navigate('MainApp');
             }, 3000);
 
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error fetching biodata:", errorMsg);
-            Alert.alert("Please Wait", errorMsg);
+            console.error('Error fetching biodata:', errorMsg);
+            Alert.alert('Please Wait', errorMsg);
 
-            if (errorMsg.includes("valid Pandit subscription")) {
+            if (errorMsg.includes('valid Pandit subscription')) {
                 setTimeout(() => {
                     openModal();
                 }, 1000);
             }
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
 
         } finally {
-            console.log("Loader Stopped!");
+            console.log('Loader Stopped!');
             setIsLoading(false);
         }
     };
@@ -474,20 +474,20 @@ const PanditRegister = ({ navigation }) => {
     const handleFreeTrial = async (plan) => {
         try {
             setTrialLoading(true);
-            setTrialPlanId(plan._id)
+            setTrialPlanId(plan._id);
             const payload = {
                 serviceType: plan.profileType,
                 trialPeriod: String(plan.trialPeriod),
             };
-            const token = await AsyncStorage.getItem("userToken");
-            if (!token) throw new Error("No token found");
+            const token = await AsyncStorage.getItem('userToken');
+            if (!token) {throw new Error('No token found');}
 
             const headers = {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             };
 
-            console.log("payload", payload);
+            console.log('payload', payload);
 
             const response = await axios.post(
                 FREE_TRIAL,
@@ -501,7 +501,7 @@ const PanditRegister = ({ navigation }) => {
                     response.data.message || `Trial started for ${plan.profileType}`,
                     [
                         {
-                            text: "OK",
+                            text: 'OK',
                             onPress: () => {
                                 setModalVisible(false);
                                 handleSubmit();
@@ -522,33 +522,33 @@ const PanditRegister = ({ navigation }) => {
                 errorMessage,
                 [
                     {
-                        text: "OK",
+                        text: 'OK',
                         onPress: () => {
-                            if (errorMessage === "Trial already requested or activated for Biodata") {
+                            if (errorMessage === 'Trial already requested or activated for Biodata') {
                                 setModalVisible(false);
                                 handleSubmit();
                             }
-                        }
-                    }
+                        },
+                    },
                 ]
             );
         } finally {
             setTrialLoading(false);
-            setTrialPlanId(null)
+            setTrialPlanId(null);
         }
     };
 
     const handleBuyNow = async (plan) => {
         try {
-            setBuyLoading(true)
-            setBuyingPlanId(plan._id)
-            const token = await AsyncStorage.getItem("userToken");
-            const userId = await AsyncStorage.getItem("userId");
+            setBuyLoading(true);
+            setBuyingPlanId(plan._id);
+            const token = await AsyncStorage.getItem('userToken');
+            const userId = await AsyncStorage.getItem('userId');
 
-            if (!token || !userId) throw new Error("Missing user token or ID");
+            if (!token || !userId) {throw new Error('Missing user token or ID');}
 
             const headers = {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             };
 
@@ -558,13 +558,13 @@ const PanditRegister = ({ navigation }) => {
             );
 
             const razorpayKey = keyResponse.data?.key;
-            if (!razorpayKey) throw new Error("Failed to fetch Razorpay Key");
+            if (!razorpayKey) {throw new Error('Failed to fetch Razorpay Key');}
 
             const payload = {
                 userId,
-                profileType: plan.profileType
+                profileType: plan.profileType,
             };
-            console.log("📦 [Payload to /buy]:", payload);
+            console.log('📦 [Payload to /buy]:', payload);
 
             const orderResponse = await axios.post(
                 PAID_URL,
@@ -572,7 +572,7 @@ const PanditRegister = ({ navigation }) => {
                 { headers }
             );
 
-            console.log("🧾 [Order API Response]:", orderResponse.data);
+            console.log('🧾 [Order API Response]:', orderResponse.data);
 
             let orderId, amount, currency;
 
@@ -587,11 +587,11 @@ const PanditRegister = ({ navigation }) => {
             else if (orderResponse.data?.razorpayOrderId) {
                 orderId = orderResponse.data.razorpayOrderId;
                 amount = orderResponse.data.services?.[0]?.amount * 100 || 50000;
-                currency = "INR";
+                currency = 'INR';
             }
 
             if (!orderId || !amount || !currency) {
-                throw new Error("Incomplete Razorpay order data received from server");
+                throw new Error('Incomplete Razorpay order data received from server');
             }
 
             const options = {
@@ -607,12 +607,12 @@ const PanditRegister = ({ navigation }) => {
 
             RazorpayCheckout.open(options)
                 .then(async (paymentData) => {
-                    console.log("💸 [Payment Success]:", paymentData);
+                    console.log('💸 [Payment Success]:', paymentData);
 
                     const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = paymentData;
 
                     if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
-                        Alert.alert("Error", "Missing payment details from Razorpay.");
+                        Alert.alert('Error', 'Missing payment details from Razorpay.');
                         return;
                     }
 
@@ -622,7 +622,7 @@ const PanditRegister = ({ navigation }) => {
                         razorpay_signature: razorpay_signature,
                     };
 
-                    console.log("📨 [Payload to /verifyPayment]:", verifyPayload);
+                    console.log('📨 [Payload to /verifyPayment]:', verifyPayload);
 
                     try {
                         const verifyResponse = await axios.post(
@@ -631,15 +631,15 @@ const PanditRegister = ({ navigation }) => {
                             { headers }
                         );
 
-                        console.log("✅ [Verify Payment Response]:", verifyResponse.data);
+                        console.log('✅ [Verify Payment Response]:', verifyResponse.data);
 
                         if (verifyResponse.status === 200 || verifyResponse.data?.status) {
                             Alert.alert(
-                                "Success",
-                                verifyResponse.data?.message || "Payment verified successfully!",
+                                'Success',
+                                verifyResponse.data?.message || 'Payment verified successfully!',
                                 [
                                     {
-                                        text: "OK",
+                                        text: 'OK',
                                         onPress: () => {
                                             setModalVisible(false);
                                             setTimeout(() => {
@@ -651,41 +651,41 @@ const PanditRegister = ({ navigation }) => {
                             );
                         }
                         else {
-                            Alert.alert("danger", verifyResponse.data?.message || "Verification failed!");
+                            Alert.alert('danger', verifyResponse.data?.message || 'Verification failed!');
                         }
 
                     } catch (verifyError) {
-                        console.error("❌ [Verification Error]:", verifyError.response?.data || verifyError.message);
-                        Alert.alert("Error", "Payment done, but verification failed.");
+                        console.error('❌ [Verification Error]:', verifyError.response?.data || verifyError.message);
+                        Alert.alert('Error', 'Payment done, but verification failed.');
                     }
                 })
                 .catch((error) => {
-                    console.log("❌ [Payment Failed]:", error);
-                    Alert.alert("Payment Failed", error.description || "Try again later.");
+                    console.log('❌ [Payment Failed]:', error);
+                    Alert.alert('Payment Failed', error.description || 'Try again later.');
                 });
 
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("❌ [Error in buying subscription]:", errorMsg);
+            console.error('❌ [Error in buying subscription]:', errorMsg);
             Alert.alert(
-                "Subscription Info",
+                'Subscription Info',
                 errorMsg
             );
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
-            setBuyLoading(false)
-            setBuyingPlanId(false)
+            setBuyLoading(false);
+            setBuyingPlanId(false);
         }
     };
 
@@ -754,10 +754,10 @@ const PanditRegister = ({ navigation }) => {
 
 
     return (
-        <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
+        <SafeAreaView style={Globalstyles.container}>
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
             <View style={Globalstyles.header}>
-                <View style={{ flexDirection: 'row', alignItems: "center" }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
@@ -768,9 +768,9 @@ const PanditRegister = ({ navigation }) => {
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
-                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+            // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
             >
-                <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: insets.bottom + SH(10), flexGrow: 1 }}>
+                <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
                     <View style={Globalstyles.form} importantForAutofill="no" removeClippedSubviews={true}>
                         <Text style={Globalstyles.title}>Name <Entypo name={'star'} color={'red'} size={12} /></Text>
                         <TextInput style={[Globalstyles.input, errors.fullName && styles.errorInput]}
@@ -779,12 +779,12 @@ const PanditRegister = ({ navigation }) => {
                                 const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
                                 setRoleRegisterData((prev) => ({ ...prev, fullName: filteredText }));
                             }}
-                            placeholder='Enter Your Full Name'
+                            placeholder="Enter Your Full Name"
                             placeholderTextColor={Colors.gray}
                             autoCorrect={false}
-                            autoCapitalize='none'
-                            keyboardType='default'
-                            importantForAutofill='no'
+                            autoCapitalize="none"
+                            keyboardType="default"
+                            importantForAutofill="no"
                             textContentType="none"
                         />
                         {errors.fullName && <Text style={styles.errorText}>{errors.fullName}</Text>}
@@ -874,7 +874,7 @@ const PanditRegister = ({ navigation }) => {
                         <TextInput style={[Globalstyles.input]}
                             value={RoleRegisterData?.residentialAddress}
                             onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, residentialAddress: text }))}
-                            placeholder='Enter Your Area'
+                            placeholder="Enter Your Area"
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
                             textContentType="none"
@@ -920,7 +920,7 @@ const PanditRegister = ({ navigation }) => {
                             labelField="label"
                             valueField="value"
                             value={RoleRegisterData?.subCaste}
-                            onChange={(text) => handleInputChange("subCaste", text.value)}
+                            onChange={(text) => handleInputChange('subCaste', text.value)}
                             placeholder="Select Your subCaste"
                             placeholderStyle={{ color: '#E7E7E7' }}
                             autoScroll={false}
@@ -966,7 +966,7 @@ const PanditRegister = ({ navigation }) => {
                                 labelField="label"
                                 valueField="value"
                                 value={RoleRegisterData?.experience}
-                                onChange={(text) => handleInputChange("experience", text.value)}
+                                onChange={(text) => handleInputChange('experience', text.value)}
                                 placeholder="Select Experience"
                                 placeholderStyle={{ color: '#E7E7E7' }}
                                 autoScroll={false}
@@ -994,7 +994,7 @@ const PanditRegister = ({ navigation }) => {
                         <Text style={Globalstyles.title}>Add Description</Text>
                         <TextInput style={Globalstyles.textInput} value={RoleRegisterData.description}
                             onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, description: text }))}
-                            textAlignVertical='top' placeholder="Add Your Description"
+                            textAlignVertical="top" placeholder="Add Your Description"
                             placeholderTextColor={Colors.gray} multiline={true}
                             autoComplete="off"
                             textContentType="none"
@@ -1014,22 +1014,25 @@ const PanditRegister = ({ navigation }) => {
                         {/* Display Selected Photos */}
                         {RoleRegisterData?.additionalPhotos?.length > 0 && (
                             <View style={styles.photosContainer}>
-                                <Text style={styles.label}>Uploaded Photos:</Text>
-                                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                        {RoleRegisterData?.additionalPhotos.map((photo, index) => (
-                                            <Image key={index} source={{ uri: photo }} style={styles.photo} />
-                                        ))}
-                                    </View>
-                                </ScrollView>
+                                <FlatList
+                                    data={RoleRegisterData.additionalPhotos}
+                                    keyExtractor={(item, index) => index.toString()}
+                                    horizontal
+                                    showsHorizontalScrollIndicator={false}
+                                    renderItem={({ item }) => (
+                                        <Image source={{ uri: item }} style={styles.photo} />
+                                    )}
+                                    contentContainerStyle={{ flexDirection: 'row', alignItems: 'center' }}
+                                />
                             </View>
                         )}
+
 
                         <Text style={Globalstyles.title}>Website Link</Text>
                         <TextInput
                             style={[Globalstyles.input, errors.websiteUrl && styles.errorInput]}
                             value={tempUrlData.websiteUrl || RoleRegisterData.websiteUrl}
-                            onChangeText={(text) => validateAndSetUrl(text, "websiteUrl")}
+                            onChangeText={(text) => validateAndSetUrl(text, 'websiteUrl')}
                             placeholder="Give Your Website Link"
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
@@ -1044,7 +1047,7 @@ const PanditRegister = ({ navigation }) => {
                         <TextInput
                             style={[Globalstyles.input, errors.youtubeUrl && styles.errorInput]}
                             value={tempUrlData.youtubeUrl || RoleRegisterData.youtubeUrl}
-                            onChangeText={(text) => validateAndSetUrl(text, "youtubeUrl")}
+                            onChangeText={(text) => validateAndSetUrl(text, 'youtubeUrl')}
                             placeholder="Give Your Youtube Link"
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
@@ -1059,7 +1062,7 @@ const PanditRegister = ({ navigation }) => {
                         <TextInput
                             style={[Globalstyles.input, errors.whatsapp && styles.errorInput]}
                             value={tempUrlData.whatsapp || RoleRegisterData.whatsapp}
-                            onChangeText={(text) => validateAndSetUrl(text, "whatsapp")}
+                            onChangeText={(text) => validateAndSetUrl(text, 'whatsapp')}
                             placeholder="Give Your Whatsapp Link"
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
@@ -1074,7 +1077,7 @@ const PanditRegister = ({ navigation }) => {
                         <TextInput
                             style={[Globalstyles.input, errors.facebookUrl && styles.errorInput]}
                             value={tempUrlData.facebookUrl || RoleRegisterData.facebookUrl}
-                            onChangeText={(text) => validateAndSetUrl(text, "facebookUrl")}
+                            onChangeText={(text) => validateAndSetUrl(text, 'facebookUrl')}
                             placeholder="Give Your Facebook Link"
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
@@ -1089,7 +1092,7 @@ const PanditRegister = ({ navigation }) => {
                         <TextInput
                             style={[Globalstyles.input, errors.instagramUrl && styles.errorInput]}
                             value={tempUrlData.instagramUrl || RoleRegisterData.instagramUrl}
-                            onChangeText={(text) => validateAndSetUrl(text, "instagramUrl")}
+                            onChangeText={(text) => validateAndSetUrl(text, 'instagramUrl')}
                             placeholder="Give Your Instagram Link"
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
@@ -1124,7 +1127,7 @@ const PanditRegister = ({ navigation }) => {
                                                             source={{ uri: plan.photoUrl }}
                                                             style={styles.planImage}
                                                             resizeMode="cover"
-                                                            onError={(e) => console.log("Image load error:", e.nativeEvent.error)}
+                                                            onError={(e) => console.log('Image load error:', e.nativeEvent.error)}
                                                         />
                                                     ) : null}
                                                     <View style={styles.cardContent}>

@@ -12,7 +12,7 @@ const ViewEntityImages = ({ navigation, route }) => {
 
     // Determine which entity details are available
     const entityDetails = panditDetails || jyotishDetails || kathavachakDetails;
-    const entityType = panditDetails ? "Pandit" : jyotishDetails ? "Jyotish" : "Kathavachak";
+    const entityType = panditDetails ? 'Pandit' : jyotishDetails ? 'Jyotish' : 'Kathavachak';
 
     const [selectedImage, setSelectedImage] = useState([]);
     const [isImageVisible, setImageVisible] = useState(false);
@@ -24,7 +24,7 @@ const ViewEntityImages = ({ navigation, route }) => {
         }
     };
 
-    console.log("Entity Details:", entityDetails);
+    console.log('Entity Details:', entityDetails);
 
     const [imageAspectRatios, setImageAspectRatios] = useState([]);
 
@@ -53,11 +53,11 @@ const ViewEntityImages = ({ navigation, route }) => {
 
             {/* Header */}
             <View style={Globalstyles.header}>
-                <View style={{ flexDirection: 'row', alignItems: "center" }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
-                    <Text style={Globalstyles.headerText}>{entityDetails?.fullName || "Profile"}</Text>
+                    <Text style={Globalstyles.headerText}>{entityDetails?.fullName || 'Profile'}</Text>
                 </View>
             </View>
 
@@ -76,8 +76,8 @@ const ViewEntityImages = ({ navigation, route }) => {
 
 
                         <View style={styles.postTextContainer}>
-                            <Text style={styles.Text}>{entityDetails?.fullName || "N/A"}</Text>
-                            <Text style={styles.Text}>{entityDetails?.city || "City Unknown"} || {entityDetails?.subCaste || "SubCaste Unknown"}</Text>
+                            <Text style={styles.Text}>{entityDetails?.fullName || 'N/A'}</Text>
+                            <Text style={styles.Text}>{entityDetails?.city || 'City Unknown'} || {entityDetails?.subCaste || 'SubCaste Unknown'}</Text>
                             <Text style={styles.Text}>{entityType}</Text>
                         </View>
                     </View>
@@ -88,7 +88,7 @@ const ViewEntityImages = ({ navigation, route }) => {
                                     source={typeof image === 'string' ? { uri: image } : image}
                                     style={[
                                         styles.image,
-                                        { aspectRatio: imageAspectRatios[index] || 1 }
+                                        { aspectRatio: imageAspectRatios[index] || 1 },
                                     ]}
                                     resizeMode="contain"
                                 />

@@ -1,6 +1,6 @@
-import { StyleSheet } from "react-native";
-import { SH, SW, SF } from "../../utils/Dimensions";
-import Colors from "../../utils/Colors";
+import { StyleSheet } from 'react-native';
+import { SH, SW, SF } from '../../utils/Dimensions';
+import Colors from '../../utils/Colors';
 
 const styles = StyleSheet.create({
   emptyContainer: {
@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: SF(20),
-    fontFamily: "Poppins-Bold",
+    fontFamily: 'Poppins-Bold',
     color: '#555',
     marginBottom: SH(8),
   },
@@ -27,32 +27,32 @@ const styles = StyleSheet.create({
   },
   righticons: {
     flexDirection: 'row',
-    alignItems: "center"
+    alignItems: 'center',
   },
   image: {
     width: SW(60),
     height: SH(60),
-    resizeMode: "cover",
-    borderRadius: 50
+    resizeMode: 'cover',
+    borderRadius: 50,
   },
   searchContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between"
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   Filterheader: {
-    display: "flex", flexDirection: "row", justifyContent: "space-between"
+    display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
   }
   ,
   searchbar: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: Colors.gray,
     marginHorizontal: SW(10),
     borderRadius: 50,
     paddingHorizontal: SW(10),
     width: SW(350),
-    justifyContent: "space-between"
+    justifyContent: 'space-between',
   },
   card: {
     backgroundColor: Colors.light,
@@ -62,9 +62,9 @@ const styles = StyleSheet.create({
     marginVertical: SH(6),
     paddingHorizontal: SW(10),
     paddingVertical: SH(7),
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -73,28 +73,28 @@ const styles = StyleSheet.create({
   },
   cardLeft: {
     flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginRight: SW(10),
   },
   text: {
-    fontFamily: "Poppins-Bold",
-    fontSize: SF(15)
+    fontFamily: 'Poppins-Bold',
+    fontSize: SF(15),
   },
   smalltext: {
-    fontFamily: "Poppins-Regular",
-    fontSize: SF(12)
+    fontFamily: 'Poppins-Regular',
+    fontSize: SF(12),
   },
   IDText: {
-    fontFamily: "Poppins-Bold",
+    fontFamily: 'Poppins-Bold',
     fontSize: SF(12),
-    alignSelf: "fleax-end",
-    paddingHorizontal: SW(5)
+    alignSelf: 'fleax-end',
+    paddingHorizontal: SW(5),
   },
   ButtonContainer: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between"
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   button: {
     paddingHorizontal: SW(10),
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     marginVertical: SH(10),
     borderRadius: 8,
     marginHorizontal: SW(6),
-    backgroundColor: Colors.theme_color
+    backgroundColor: Colors.theme_color,
   },
   Button: {
     backgroundColor: Colors.theme_color,
@@ -115,23 +115,23 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: Colors.light,
-    fontFamily: "Poppins-Regular",
+    fontFamily: 'Poppins-Regular',
     fontSize: SF(13),
   },
   mainContainer: {
     marginTop: SH(70),
-    flex: 1
+    flex: 1,
   },
   searchIcon: {
-    marginHorizontal: SW(10)
+    marginHorizontal: SW(10),
   },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    width: SW(470)
+    width: SW(470),
   },
   ActivistListData: {
-    marginTop: SH(70)
+    marginTop: SH(70),
   },
   modalContent: {
     backgroundColor: 'white',
@@ -151,13 +151,13 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginHorizontal: SW(20),
     marginVertical: SH(20),
-    borderRadius: 50
+    borderRadius: 50,
   },
   applyButtonText: {
-    fontFamily: "Poppins-Medium",
+    fontFamily: 'Poppins-Medium',
     color: Colors.light,
-    textAlign: "center",
-    fontSize: SF(17)
+    textAlign: 'center',
+    fontSize: SF(17),
   },
   circle: {
     width: SW(50),
@@ -168,17 +168,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   crossButton: {
-    justifyContent: "center",
-    alignItems: "center",
-    position: "absolute",
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
     top: SH(300),
-    left: SW(150)
+    left: SW(150),
   },
   label: {
     fontSize: SF(13),
     marginBottom: SH(5),
-    fontFamily: "Poppins-Medium"
-  }
+    fontFamily: 'Poppins-Medium',
+  },
 
 });
 

@@ -1,6 +1,6 @@
-import { StyleSheet } from "react-native";
-import { SH, SW, SF } from "../../utils/Dimensions";
-import Colors from "../../utils/Colors";
+import { StyleSheet } from 'react-native';
+import { SH, SW, SF } from '../../utils/Dimensions';
+import Colors from '../../utils/Colors';
 
 const styles = StyleSheet.create({
     disabledButton: {
@@ -9,10 +9,10 @@ const styles = StyleSheet.create({
     },
     righticons: {
         flexDirection: 'row',
-        alignItems: "center"
+        alignItems: 'center',
     },
     Imagecontainer: {
-        marginVertical: SH(10)
+        marginVertical: SH(10),
     },
     button: {
         backgroundColor: Colors.theme_color,
@@ -20,13 +20,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: SW(15),
         marginRight: SW(10),
         justifyContent: 'center',
-        paddingVertical: SH(1)
+        paddingVertical: SH(1),
     },
     buttonText: {
         color: Colors.light,
         fontSize: SF(13),
         fontFamily: 'Poppins-Regular',
-        textAlign: "center"
+        textAlign: 'center',
     },
     card: {
         backgroundColor: '#fff',
@@ -49,10 +49,10 @@ const styles = StyleSheet.create({
         borderRadius: 30,
     },
     cardheader: {
-        display: "flex",
+        display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: "space-between"
+        justifyContent: 'space-between',
     },
     image1: {
         width: SW(165),
@@ -70,13 +70,13 @@ const styles = StyleSheet.create({
         color: '#777',
         fontSize: SF(13),
         marginTop: SH(10),
-        marginLeft: SW(14)
+        marginLeft: SW(14),
     },
     captionText: {
         marginHorizontal: SW(7),
         fontSize: SF(12),
         fontFamily: 'Poppins-Regular',
-        marginVertical: SH(10)
+        marginVertical: SH(10),
     },
     name: {
         fontSize: SF(13),
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingHorizontal: SW(10),
-        paddingVertical: SH(3)
+        paddingVertical: SH(3),
     },
     likeShare: {
         flexDirection: 'row',
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
         color: Colors.dark,
         marginVertical: SH(5),
         marginHorizontal: SW(10),
-        fontFamily: "Poppins-Regular",
+        fontFamily: 'Poppins-Regular',
     },
     bannerImage: {
         width: '100%',
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
         marginVertical: SH(10),
         justifyContent: 'center',
         alignItems: 'center',
-        marginHorizontal: SW(100)
+        marginHorizontal: SW(100),
     },
     loadMoreText: {
         color: Colors.light,
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     },
     sheetHeader: {
         fontSize: SF(18),
-        fontFamily: "Poppins-Bold",
+        fontFamily: 'Poppins-Bold',
         color: Colors.dark,
     },
     emptyContainer: {
@@ -179,14 +179,14 @@ const styles = StyleSheet.create({
     },
     userName: {
         fontSize: SF(12),
-        fontFamily: "Poppins-Bold",
+        fontFamily: 'Poppins-Bold',
         color: Colors.black,
         marginRight: SW(8),
     },
     commentTime: {
         fontSize: SF(12),
-        color: "gray",
-        fontFamily: "Poppins-Regular"
+        color: 'gray',
+        fontFamily: 'Poppins-Regular',
     },
     commentText: {
         fontSize: SF(13),
@@ -195,101 +195,101 @@ const styles = StyleSheet.create({
     },
     bottomSheetContent: {
         flex: 1,
-        backgroundColor: "#fff",
+        backgroundColor: '#fff',
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         paddingHorizontal: SW(16),
         paddingTop: SH(10),
     },
     headerContainer: {
-        display:"flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
+        display:'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         marginBottom: SH(10),
     },
     sheetHeader: {
         fontSize: SF(18),
-        fontFamily: "poppins-Bold"
+        fontFamily: 'poppins-Bold',
     },
     fixedCommentInputContainer: {
-        position: "absolute",
+        position: 'absolute',
         bottom: 0,
         left: 0,
         right: 0,
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "#fff",
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#fff',
         paddingVertical: SH(10),
         paddingHorizontal: SW(16),
         borderTopWidth: 1,
-        borderColor: "#ddd",
+        borderColor: '#ddd',
     },
     input: {
         flex: 1,
         borderWidth: 1,
-        borderColor: "#ddd",
+        borderColor: '#ddd',
         borderRadius: 25,
         paddingHorizontal: SW(15),
         paddingVertical: SH(8),
-        backgroundColor: "#f9f9f9",
+        backgroundColor: '#f9f9f9',
     },
     postButton: {
         marginLeft: SW(10),
-        backgroundColor: "#007bff",
+        backgroundColor: '#007bff',
         paddingVertical: SH(8),
         paddingHorizontal: SW(15),
         borderRadius: 25,
     },
     postButtonText: {
-        color: "#fff",
-        fontWeight: "bold",
+        color: '#fff',
+        fontWeight: 'bold',
     }, fixedCommentInputContainer: {
-        position: "absolute",
+        position: 'absolute',
         bottom: 0,
         left: 0,
         right: 0,
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "#fff",
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#fff',
         paddingVertical: SH(10),
         paddingHorizontal: SW(16),
         borderTopWidth: 1,
-        borderColor: "#ddd",
+        borderColor: '#ddd',
     },
     commentInputContainer: {
-        flexDirection: "row",
-        alignItems: "center",
+        flexDirection: 'row',
+        alignItems: 'center',
         borderTopWidth: 1,
-        borderTopColor: "#ddd",
+        borderTopColor: '#ddd',
         paddingVertical: SH(10),
     },
     input: {
         flex: 1,
         borderWidth: 1,
-        borderColor: "#ddd",
+        borderColor: '#ddd',
         borderRadius: 20,
         paddingVertical: SH(10),
         paddingHorizontal: SW(10),
         marginRight: SW(10),
     },
     postButton: {
-        backgroundColor: "#007bff",
+        backgroundColor: '#007bff',
         paddingVertical: SH(8),
         paddingHorizontal: SW(15),
         borderRadius: 20,
     },
     postButtonText: {
-        color: "#fff",
-        fontFamily: "Poppins-Bold"
+        color: '#fff',
+        fontFamily: 'Poppins-Bold',
     },
     modalOverlay: {
         flex: 1,
-        backgroundColor: "rgba(0,0,0,0.3)",
+        backgroundColor: 'rgba(0,0,0,0.3)',
     },
     modalContent: {
-        position: "absolute",
-        backgroundColor: "white",
+        position: 'absolute',
+        backgroundColor: 'white',
         paddingHorizontal: SW(15),
         paddingVertical: SH(10),
         borderRadius: 10,
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
     },
     optionText: {
         fontSize: SF(13),
-        fontFamily: "Poppins-Regular"
+        fontFamily: 'Poppins-Regular',
     },
     emptyContainer: {
         alignItems: 'center',
@@ -311,12 +311,12 @@ const styles = StyleSheet.create({
     },
     emptyText: {
         fontSize: SF(15),
-        color: "gray",
+        color: 'gray',
         fontFamily: 'Poppins-Regular',
     },
     bottomContainer: {
-        paddingBottom: SH(50)
-    }
+        paddingBottom: SH(50),
+    },
 });
 
 export default styles;

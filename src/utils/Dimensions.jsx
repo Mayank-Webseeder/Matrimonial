@@ -1,5 +1,5 @@
-import {Dimensions,PixelRatio,Text,TextInput,Platform,} from 'react-native';
-import {heightPercentageToDP as hp,widthPercentageToDP as wp,} from 'react-native-responsive-screen';
+import {Dimensions,PixelRatio,Text,TextInput,Platform} from 'react-native';
+import {heightPercentageToDP as hp,widthPercentageToDP as wp} from 'react-native-responsive-screen';
 
 export const SCREEN_WIDTH = Dimensions.get('window').width;
 export const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -20,11 +20,11 @@ export const widthPercent = (percent) => wp(percent);
 
 export const fontPercent = (percent) => hp(percent);
 
-if (Text.defaultProps == null) Text.defaultProps = {};
-if (TextInput.defaultProps == null) TextInput.defaultProps = {};
+if (Text.defaultProps == null) {Text.defaultProps = {};}
+if (TextInput.defaultProps == null) {TextInput.defaultProps = {};}
 Text.defaultProps.allowFontScaling = false;
 TextInput.defaultProps.allowFontScaling = false;
 
 export const logFontScale = () => {
-  console.log("📏 Font Scale: ", PixelRatio.getFontScale());
+  console.log('📏 Font Scale: ', PixelRatio.getFontScale());
 };

@@ -14,7 +14,7 @@ import Globalstyles from '../../utils/GlobalCss';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { BOTTOM_KATHAVACHAK_ADVERDISE_WINDOW, DeepLink, KATHAVACHAK_DESCRIPTION, SAVED_PROFILES } from '../../utils/BaseUrl';
-import moment from "moment";
+import moment from 'moment';
 import { useSelector } from 'react-redux';
 import { CommonActions, useFocusEffect } from '@react-navigation/native';
 import ImageViewer from 'react-native-image-zoom-viewer';
@@ -67,7 +67,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
-                if (fromScreen === "Kathavachak") {
+                if (fromScreen === 'Kathavachak') {
                     navigation.goBack();
                 } else {
                     navigation.dispatch(
@@ -100,18 +100,18 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
     useFocusEffect(
         useCallback(() => {
             fetchkathavachakProfile();
-            console.log("myRatings", JSON.stringify(myRatings));
+            console.log('myRatings', JSON.stringify(myRatings));
         }, [])
     );
 
     const fetchkathavachakProfile = async () => {
-        setLoading(true)
+        setLoading(true);
         if (!finalId) {
             showMessage({
-                type: "danger",
-                message: "Kathavachak ID not found!",
-                icon: "danger",
-                duarion: 5000
+                type: 'danger',
+                message: 'Kathavachak ID not found!',
+                icon: 'danger',
+                duarion: 5000,
             });
             return;
         }
@@ -119,21 +119,21 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
         const token = await AsyncStorage.getItem('userToken');
         if (!token) {
             showMessage({
-                type: "danger",
-                message: "Authentication Error",
-                description: "No token found. Please log in again.",
-                duration: 5000
+                type: 'danger',
+                message: 'Authentication Error',
+                description: 'No token found. Please log in again.',
+                duration: 5000,
             });
 
             navigation.reset({
                 index: 0,
-                routes: [{ name: "AuthStack" }],
+                routes: [{ name: 'AuthStack' }],
             });
             return;
         }
 
         try {
-            setLoading(true)
+            setLoading(true);
             const response = await axios.get(`${KATHAVACHAK_DESCRIPTION}/${finalId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -141,38 +141,38 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
             });
 
             if (response.status === 200 && response.data.status === true) {
-                console.log("response.data.data", JSON.stringify(response.data.data));
+                console.log('response.data.data', JSON.stringify(response.data.data));
                 setProfileData(response.data.data);
                 setMyRatings(response.data.data.ratings.filter(rating => rating.userId._id === my_id));
                 setOtherRatings(response.data.data.ratings.filter(rating => rating.userId._id !== my_id));
             } else {
                 showMessage({
-                    type: "danger",
-                    message: "No Profile Found",
-                    description: response.data.message || "Something went wrong!",
-                    icon: "danger"
+                    type: 'danger',
+                    message: 'No Profile Found',
+                    description: response.data.message || 'Something went wrong!',
+                    icon: 'danger',
                 });
             }
         } catch (error) {
-            setLoading(false)
+            setLoading(false);
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error fetching kathavachak detials :", errorMsg);
+            console.error('Error fetching kathavachak detials :', errorMsg);
             showMessage({
-                type: "danger",
+                type: 'danger',
                 message: errorMsg,
-                description: "Failed to load profile data",
+                description: 'Failed to load profile data',
             });
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
         } finally {
@@ -188,12 +188,12 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
 
 
     useEffect(() => {
-        if (slider.length === 0) return;
+        if (slider.length === 0) {return;}
 
         const currentSlide = slider[currentIndex];
         const durationInSeconds = Number(currentSlide?.duration) || 4;
         const durationInMilliseconds = durationInSeconds * 1000;
-        console.log("durationInSeconds", durationInSeconds);
+        console.log('durationInSeconds', durationInSeconds);
         const timeout = setTimeout(() => {
             const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
             setCurrentIndex(nextIndex);
@@ -207,7 +207,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
     const Advertisement_window = async () => {
         try {
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) throw new Error('No token found');
+            if (!token) {throw new Error('No token found');}
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -218,7 +218,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
 
             if (response.data) {
                 const fetchedData = response.data.data;
-                console.log("fetchedData", JSON.stringify(fetchedData));
+                console.log('fetchedData', JSON.stringify(fetchedData));
 
                 const fullSliderData = fetchedData.flatMap((item) =>
                     item.media.map((mediaItem) => ({
@@ -233,25 +233,25 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                 );
 
                 setSlider(fullSliderData);
-                console.log("Slider Data:", fullSliderData);
+                console.log('Slider Data:', fullSliderData);
             } else {
                 setSlider([]);
             }
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error fetching advertisement:", errorMsg);
+            console.error('Error fetching advertisement:', errorMsg);
 
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
         } finally {
@@ -263,10 +263,10 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
     const savedProfiles = async () => {
         if (!finalId) {
             showMessage({
-                type: "danger",
-                message: "User ID not found!",
-                icon: "danger",
-                duarion: 5000
+                type: 'danger',
+                message: 'User ID not found!',
+                icon: 'danger',
+                duarion: 5000,
             });
             return;
         }
@@ -274,56 +274,56 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
         setIsSaved((prev) => !prev);
 
         try {
-            const token = await AsyncStorage.getItem("userToken");
-            if (!token) throw new Error("No token found");
+            const token = await AsyncStorage.getItem('userToken');
+            if (!token) {throw new Error('No token found');}
 
             const headers = {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             };
 
-            console.log("API Request:", `${SAVED_PROFILES}/${finalId}`);
+            console.log('API Request:', `${SAVED_PROFILES}/${finalId}`);
 
             const response = await axios.post(`${SAVED_PROFILES}/${finalId}`, {}, { headers });
 
-            console.log("Response Data:", response?.data);
+            console.log('Response Data:', response?.data);
 
             if (response.status === 200 && response.data.status === true) {
                 showMessage({
-                    type: "success",
-                    message: response.data.message || "Profile saved successfully!",
-                    icon: "success",
-                    duarion: 7000
+                    type: 'success',
+                    message: response.data.message || 'Profile saved successfully!',
+                    icon: 'success',
+                    duarion: 7000,
                 });
 
                 // ✅ API response ke hisaab se state update karo
-                setIsSaved(response.data.message.includes("saved successfully"));
+                setIsSaved(response.data.message.includes('saved successfully'));
             } else {
-                throw new Error(response.data.message || "Something went wrong");
+                throw new Error(response.data.message || 'Something went wrong');
             }
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error fetching biodata:", errorMsg);
+            console.error('Error fetching biodata:', errorMsg);
             setIsSaved((prev) => !prev);
 
             showMessage({
-                type: "danger",
+                type: 'danger',
                 message: errorMsg,
-                icon: "danger",
-                duarion: 7000
+                icon: 'danger',
+                duarion: 7000,
             });
 
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
         }
@@ -333,7 +333,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
         if (url) {
             Linking.openURL(url);
         } else {
-            Alert.alert("Not Available", `${platform} link is not available.`);
+            Alert.alert('Not Available', `${platform} link is not available.`);
         }
     };
 
@@ -379,28 +379,28 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
 
     const handleShare = async () => {
         const profileId = profileData?._id;
-        const profileType = "kathavachak-detail";
+        const profileType = 'kathavachak-detail';
 
-        console.log("profileId", profileId);
+        console.log('profileId', profileId);
 
         try {
-            if (!profileId) throw new Error("Missing profile ID");
+            if (!profileId) {throw new Error('Missing profile ID');}
 
             const directLink = `${DeepLink}/${profileType}/${profileId}`;
-            console.log("directLink", directLink);
+            console.log('directLink', directLink);
 
             await Share.share({
-                message: `Check this profile in Brahmin Milan app:\n${directLink}`
+                message: `Check this profile in Brahmin Milan app:\n${directLink}`,
             });
         } catch (error) {
-            console.error("Sharing failed:", error?.message || error);
+            console.error('Sharing failed:', error?.message || error);
         }
     };
 
 
     if (Loading) {
         return (
-            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <ActivityIndicator size="large" color={Colors.theme_color} />
             </View>
         );
@@ -417,7 +417,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                 <View style={{ flexDirection: 'row' }}>
                     <TouchableOpacity
                         onPress={() => {
-                            if (fromScreen === "Kathavachak") {
+                            if (fromScreen === 'Kathavachak') {
                                 navigation.goBack();
                             } else {
                                 navigation.dispatch(
@@ -452,18 +452,18 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                         {notificationCount > 0 && (
                             <View
                                 style={{
-                                    position: "absolute",
+                                    position: 'absolute',
                                     right: -5,
                                     top: -5,
                                     width: SW(16),
                                     height: SW(16),
                                     borderRadius: SW(16) / 2,
-                                    backgroundColor: "red",
-                                    justifyContent: "center",
-                                    alignItems: "center",
+                                    backgroundColor: 'red',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
                                 }}
                             >
-                                <Text style={{ color: 'white', fontSize: SF(9), fontFamily: "Poppins-Bold" }}>
+                                <Text style={{ color: 'white', fontSize: SF(9), fontFamily: 'Poppins-Bold' }}>
                                     {notificationCount}
                                 </Text>
                             </View>
@@ -488,7 +488,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                                     imageUrls={[
                                         profileData?.profilePhoto
                                             ? { url: profileData.profilePhoto }
-                                            : { url: Image.resolveAssetSource(require('../../Images/NoImage.png')).uri }
+                                            : { url: Image.resolveAssetSource(require('../../Images/NoImage.png')).uri },
                                     ]}
                                     index={0}
                                     onSwipeDown={() => setVisible(false)}
@@ -505,7 +505,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                             <Text style={styles.name} numberOfLines={2}>{profileData?.fullName}</Text>
 
                             <View style={styles.FlexContainer}>
-                                <Text style={[styles.city, { fontFamily: "Poppins-Bold" }]}>{profileData?.city}</Text>
+                                <Text style={[styles.city, { fontFamily: 'Poppins-Bold' }]}>{profileData?.city}</Text>
                                 <Text style={styles.city}>{profileData?.state}</Text>
                             </View>
 
@@ -524,7 +524,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                                     readonly
                                 />
                                 <Text style={styles.rating}>
-                                    {profileData?.ratings?.length > 0 ? `${profileData.ratings.length} Reviews` : "No Ratings Yet"}
+                                    {profileData?.ratings?.length > 0 ? `${profileData.ratings.length} Reviews` : 'No Ratings Yet'}
                                 </Text>
                             </View>
                         </View>
@@ -543,12 +543,12 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                                 disabled={my_id === profileData?.userId} // ✅ Disable button for self
                             >
                                 <FontAwesome
-                                    name={Save ? "bookmark" : "bookmark-o"}
+                                    name={Save ? 'bookmark' : 'bookmark-o'}
                                     size={19}
                                     color={my_id === profileData?.userId ? Colors.gray : Colors.dark} // ✅ Gray if disabled
                                 />
                                 <Text style={[styles.iconText, my_id === profileData?.userId && styles.disabledText]}>
-                                    {Save ? "Saved" : "Save"}
+                                    {Save ? 'Saved' : 'Save'}
                                 </Text>
                             </TouchableOpacity>
 
@@ -615,11 +615,11 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                                             onPress={() => navigation.navigate('PostReview', {
                                                 kathavachak_id: finalId,
                                                 entityType: profileType,
-                                                myReview: myRatings.length > 0 ? myRatings[0] : null
+                                                myReview: myRatings.length > 0 ? myRatings[0] : null,
                                             })}
                                         >
                                             <Text style={styles.postReviewText}>
-                                                {myRatings.length > 0 ? "Edit Review" : "Post Review"}
+                                                {myRatings.length > 0 ? 'Edit Review' : 'Post Review'}
                                             </Text>
                                         </TouchableOpacity>
                                     )
@@ -638,10 +638,10 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                                 </View>
                                 <View>
                                     <Text style={styles.reviewDate}>
-                                        {moment(myRatings.createdAt).format("DD-MM-YYYY")}
+                                        {moment(myRatings.createdAt).format('DD-MM-YYYY')}
                                     </Text>
                                     <Text style={styles.reviewDate}>
-                                        {moment(myRatings.createdAt).format("hh:mm A")}
+                                        {moment(myRatings.createdAt).format('hh:mm A')}
                                     </Text>
 
                                 </View>
@@ -659,25 +659,25 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                         </View>
                     )}
                     <View>
-                        <Text style={[styles.sectionTitle, { textAlign: "center" }]}>Reviews</Text>
+                        <Text style={[styles.sectionTitle, { textAlign: 'center' }]}>Reviews</Text>
 
                         {otherRatings?.length > 0 ? (
                             <>
                                 {otherRatings?.slice(0, 3).map((review, index) => (
                                     <View key={review._id || index} style={styles.reviewContainer}>
-                                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                             <View>
                                                 <Image
                                                     source={review?.userId?.photoUrl[0]
                                                         ? { uri: review.userId.photoUrl[0] }
-                                                        : require("../../Images/NoImage.png")
+                                                        : require('../../Images/NoImage.png')
                                                     }
                                                     style={{ width: SW(50), height: SH(50), borderRadius: 50 }}
                                                     resizeMode="cover"
                                                 />
                                             </View>
                                             <View style={{ flex: 1, marginHorizontal: SW(10) }}>
-                                                <Text style={styles.reviewName}>{review?.userId?.username || "Unknown"}</Text>
+                                                <Text style={styles.reviewName}>{review?.userId?.username || 'Unknown'}</Text>
                                                 <View style={styles.reviewRating}>
                                                     <Rating
                                                         type="star"
@@ -690,12 +690,12 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                                                 <Text style={styles.reviewText}>{review?.review}</Text>
 
                                             </View>
-                                            <View style={{ alignSelf: "flex-start" }}>
+                                            <View style={{ alignSelf: 'flex-start' }}>
                                                 <Text style={styles.reviewDate}>
-                                                    {moment(review.createdAt).format("DD-MM-YYYY")}
+                                                    {moment(review.createdAt).format('DD-MM-YYYY')}
                                                 </Text>
                                                 <Text style={styles.reviewDate}>
-                                                    {moment(review.createdAt).format("hh:mm A")}
+                                                    {moment(review.createdAt).format('hh:mm A')}
                                                 </Text>
 
                                             </View>
@@ -724,23 +724,23 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                         {renderImages(images)}
                     </View>
                     <View style={styles.socialIcons}>
-                        <TouchableOpacity onPress={() => profileData?.websiteUrl ? openLink(profileData.websiteUrl, "Website") : showMessages("Website link not available")}>
+                        <TouchableOpacity onPress={() => profileData?.websiteUrl ? openLink(profileData.websiteUrl, 'Website') : showMessages('Website link not available')}>
                             <Image source={require('../../Images/website.png')} style={styles.websiteIcon} />
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => profileData?.youtubeUrl ? openLink(profileData.youtubeUrl, "YouTube") : showMessages("YouTube link not available")}>
+                        <TouchableOpacity onPress={() => profileData?.youtubeUrl ? openLink(profileData.youtubeUrl, 'YouTube') : showMessages('YouTube link not available')}>
                             <MaterialCommunityIcons name="youtube" size={30} color="#FF0000" />
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => profileData?.whatsapp ? openLink(profileData.whatsapp, "WhatsApp") : showMessages("WhatsApp link not available")}>
+                        <TouchableOpacity onPress={() => profileData?.whatsapp ? openLink(profileData.whatsapp, 'WhatsApp') : showMessages('WhatsApp link not available')}>
                             <FontAwesome5 name="whatsapp" size={30} color="#25D366" />
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => profileData?.facebookUrl ? openLink(profileData.facebookUrl, "Facebook") : showMessages("Facebook link not available")}>
+                        <TouchableOpacity onPress={() => profileData?.facebookUrl ? openLink(profileData.facebookUrl, 'Facebook') : showMessages('Facebook link not available')}>
                             <FontAwesome5 name="facebook" size={30} color="#3b5998" />
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => profileData?.instagramUrl ? openLink(profileData.instagramUrl, "Instagram") : showMessages("Instagram link not available")}>
+                        <TouchableOpacity onPress={() => profileData?.instagramUrl ? openLink(profileData.instagramUrl, 'Instagram') : showMessages('Instagram link not available')}>
                             <FontAwesome5 name="instagram" size={30} color="#E4405F" />
                         </TouchableOpacity>
                     </View>
@@ -755,7 +755,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                                     const handlePress = () => {
                                         if (item.hyperlink) {
                                             Linking.openURL(item.hyperlink).catch(err =>
-                                                console.error("Failed to open URL:", err)
+                                                console.error('Failed to open URL:', err)
                                             );
                                         }
                                     };
@@ -764,7 +764,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                                         <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                                             <Image
                                                 source={{ uri: item.image }}
-                                                style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
+                                                style={{ width: '100%', height: SH(180), resizeMode: 'contain' }}
                                             />
                                         </TouchableOpacity>
                                     );

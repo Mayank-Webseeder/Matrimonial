@@ -34,25 +34,25 @@ const MyUploadedCommittees = ({ navigation, route }) => {
     const handleDelete = async (id) => {
         try {
             setIsLoading(true);
-            const token = await AsyncStorage.getItem("userToken");
-            if (!token) throw new Error("Authorization token is missing");
+            const token = await AsyncStorage.getItem('userToken');
+            if (!token) {throw new Error('Authorization token is missing');}
 
             const headers = {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             };
 
-            console.log("🔹 Headers:", headers);
+            console.log('🔹 Headers:', headers);
             const response = await axios.delete(`${DELETE_COMMITTEE}/${id}`, { headers });
 
-            console.log("✅ Delete Response:", response.data);
+            console.log('✅ Delete Response:', response.data);
 
             if (response.status === 200 || response.data.status === true) {
                 showMessage({
-                    type: "success",
-                    message: "Committee deleted successfully!",
-                    icon: "success",
-                    duarion: 7000
+                    type: 'success',
+                    message: 'Committee deleted successfully!',
+                    icon: 'success',
+                    duarion: 7000,
                 });
 
                 setModalVisible(false);
@@ -63,33 +63,33 @@ const MyUploadedCommittees = ({ navigation, route }) => {
                         screen: 'Committee',
                     });
                 } else {
-                    console.warn("⚠️ Navigation is not available");
+                    console.warn('⚠️ Navigation is not available');
                 }
 
                 return;
             }
 
-            throw new Error(response.data.message || "Failed to delete committee.");
+            throw new Error(response.data.message || 'Failed to delete committee.');
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error fetching biodata:", errorMsg);
+            console.error('Error fetching biodata:', errorMsg);
             showMessage({
-                type: "danger",
+                type: 'danger',
                 message: errorMsg,
-                icon: "danger",
-                duarion: 7000
+                icon: 'danger',
+                duarion: 7000,
             });
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
         } finally {
@@ -177,9 +177,9 @@ const MyUploadedCommittees = ({ navigation, route }) => {
                                     try {
                                         await handleDelete(selectedItem?._id);
                                         setModalVisible(false);
-                                        console.log("🗑️ Committee Deleted:", selectedItem?._id);
+                                        console.log('🗑️ Committee Deleted:', selectedItem?._id);
                                     } catch (error) {
-                                        console.error("🚨 Error deleting committee:", error);
+                                        console.error('🚨 Error deleting committee:', error);
                                     }
                                 }}
                             >
@@ -197,7 +197,7 @@ const MyUploadedCommittees = ({ navigation, route }) => {
         <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
             <View style={Globalstyles.header}>
-                <View style={{ flexDirection: 'row', alignItems: "center" }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>

@@ -10,7 +10,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { SW, SH, SF } from '../../utils/Dimensions';
 import Globalstyles from '../../utils/GlobalCss';
 import moment from 'moment';
-import RBSheet from "react-native-raw-bottom-sheet";
+import RBSheet from 'react-native-raw-bottom-sheet';
 import { DELETE_EVENT, COMMENTPOST, LIKEPOST, BASE_URL } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -30,10 +30,10 @@ const LikeCommentEventPost = ({ navigation, route }) => {
     const [refreshing, setRefreshing] = useState(false);
     const [myeventpost, setMyeventpost] = useState([]);
     const [commentData, setCommentData] = useState({});
-    const [selectedPostId, setSelectedPostId] = useState(null)
+    const [selectedPostId, setSelectedPostId] = useState(null);
     const [IsLoading, setIsLoading] = useState(false);
     const MyActivistProfile = useSelector((state) => state.activist.activist_data);
-    const [myComment, setMyComment] = useState("");
+    const [myComment, setMyComment] = useState('');
     const [likeData, setLikeData] = useState({});
     const [LikeLoading, setLikeLoading] = useState(false);
     const [commentLoading, setCommentLoading] = useState(false);
@@ -58,7 +58,7 @@ const LikeCommentEventPost = ({ navigation, route }) => {
     );
     useEffect(() => {
         fetchPostData();
-    }, [])
+    }, []);
 
     useFocusEffect(
         React.useCallback(() => {
@@ -84,10 +84,10 @@ const LikeCommentEventPost = ({ navigation, route }) => {
             setMyeventpost([]);
             setErrorMessage('');
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) throw new Error('No token found');
+            if (!token) {throw new Error('No token found');}
 
             const { id } = route?.params || {};
-            if (!id) throw new Error('No ID provided');
+            if (!id) {throw new Error('No ID provided');}
 
             const headers = { Authorization: `Bearer ${token}` };
             const url = `https://api-matrimonial.webseeder.tech/api/v1/event/getEventPostById/${id}`;
@@ -96,28 +96,28 @@ const LikeCommentEventPost = ({ navigation, route }) => {
 
             if (response.status === 200 && response.data.status === true) {
                 const postData = response.data.data;
-                console.log("postData", JSON.stringify(postData));
+                console.log('postData', JSON.stringify(postData));
                 if (postData.length === 0) {
-                    setErrorMessage("Event post not found.");
+                    setErrorMessage('Event post not found.');
                 }
                 setMyeventpost(Array.isArray(postData) ? postData : [postData]);
             }
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error fetching post data", errorMsg);
+            console.error('Error fetching post data', errorMsg);
             setErrorMessage(errorMsg);
 
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
         }
@@ -127,11 +127,11 @@ const LikeCommentEventPost = ({ navigation, route }) => {
 
     const handleShare = async () => {
         showMessage({
-            type: "info",
-            message: "Info",
-            message: "Under development",
-            icon: "info",
-            duarion: 5000
+            type: 'info',
+            message: 'Info',
+            message: 'Under development',
+            icon: 'info',
+            duarion: 5000,
         });
     };
 
@@ -142,7 +142,7 @@ const LikeCommentEventPost = ({ navigation, route }) => {
         const diffInHours = currentTime.diff(eventTime, 'hours');
 
         if (diffInMinutes < 0) {
-            return "Just now";
+            return 'Just now';
         } else if (diffInMinutes < 60) {
             return `${diffInMinutes} minutes ago`;
         } else if (diffInHours >= 24) {
@@ -161,18 +161,18 @@ const LikeCommentEventPost = ({ navigation, route }) => {
     const LIKE = async (postId, initialLikesCount) => {
         try {
             setLikeLoading(true);
-            const token = await AsyncStorage.getItem("userToken");
-            if (!token) throw new Error("No token found");
+            const token = await AsyncStorage.getItem('userToken');
+            if (!token) {throw new Error('No token found');}
 
             const headers = {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             };
 
             setLikeData((prevState) => {
                 const prevLikeData = prevState[postId] || {
                     isLiked: false,
-                    likesCount: initialLikesCount
+                    likesCount: initialLikesCount,
                 };
 
                 return {
@@ -190,18 +190,18 @@ const LikeCommentEventPost = ({ navigation, route }) => {
             const response = await axios.post(LIKEPOST, { postId }, { headers });
 
             if (!(response.status === 200 && response.data.status === true)) {
-                throw new Error(response.data.message || "Failed to like event.");
+                throw new Error(response.data.message || 'Failed to like event.');
             }
 
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error on doing like:", errorMsg);
+            console.error('Error on doing like:', errorMsg);
 
             // Reverse the like state on error
             setLikeData((prevState) => {
                 const prevLikeData = prevState[postId] || {
                     isLiked: false,
-                    likesCount: initialLikesCount
+                    likesCount: initialLikesCount,
                 };
 
                 return {
@@ -217,24 +217,24 @@ const LikeCommentEventPost = ({ navigation, route }) => {
             });
 
             showMessage({
-                type: "danger",
-                message: "Error",
-                message: errorMsg || "Failed to like event. Please try again!",
-                icon: "danger",
-                duarion: 5000
+                type: 'danger',
+                message: 'Error',
+                message: errorMsg || 'Failed to like event. Please try again!',
+                icon: 'danger',
+                duarion: 5000,
             });
 
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
 
@@ -246,11 +246,11 @@ const LikeCommentEventPost = ({ navigation, route }) => {
     const COMMENT = async (postId) => {
         try {
             setCommentLoading(true);
-            const token = await AsyncStorage.getItem("userToken");
-            if (!token) throw new Error("No token found");
+            const token = await AsyncStorage.getItem('userToken');
+            if (!token) {throw new Error('No token found');}
 
             const headers = {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             };
 
@@ -263,47 +263,47 @@ const LikeCommentEventPost = ({ navigation, route }) => {
 
             if (response.status === 200 && response.data.status === true) {
                 const fetchedData = response.data;
-                console.log("Updated comments:", JSON.stringify(fetchedData.comments));
+                console.log('Updated comments:', JSON.stringify(fetchedData.comments));
 
-                setMyComment("");
+                setMyComment('');
 
                 showMessage({
-                    type: "success",
-                    message: "Success",
-                    message: fetchedData.message || "Comment added successfully!",
+                    type: 'success',
+                    message: 'Success',
+                    message: fetchedData.message || 'Comment added successfully!',
                     duarion: 5000,
                     onHide: () => {
                         navigation.reset({
                             index: 0,
-                            routes: [{ name: "EventNews" }],
+                            routes: [{ name: 'EventNews' }],
                         });
-                    }
+                    },
                 });
 
             } else if (response.status === 400) {
-                throw new Error(response.data.message || "Invalid request.");
+                throw new Error(response.data.message || 'Invalid request.');
             }
 
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error adding comment:", errorMsg);
+            console.error('Error adding comment:', errorMsg);
             showMessage({
-                type: "danger",
-                message: errorMsg || "Failed to add comment. Please try again!",
-                icon: "danger",
-                duarion: 5000
+                type: 'danger',
+                message: errorMsg || 'Failed to add comment. Please try again!',
+                icon: 'danger',
+                duarion: 5000,
             });
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
         } finally {
@@ -312,19 +312,19 @@ const LikeCommentEventPost = ({ navigation, route }) => {
     };
 
     const DELETE_COMMENT = async (postId, commentId) => {
-        console.log("postId", postId, "commentId", commentId);
+        console.log('postId', postId, 'commentId', commentId);
         try {
             setdeletecommentLoading(true);
-            const token = await AsyncStorage.getItem("userToken");
+            const token = await AsyncStorage.getItem('userToken');
 
-            if (!token) throw new Error("No token found");
+            if (!token) {throw new Error('No token found');}
 
             const headers = {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             };
 
-            console.log("headers", headers);
+            console.log('headers', headers);
 
             const response = await axios.delete(
                 `${BASE_URL}/event/${postId}/delete-comment/${commentId}`,
@@ -332,41 +332,41 @@ const LikeCommentEventPost = ({ navigation, route }) => {
             );
 
             if (response.data) {
-                console.log("Updated comments:", JSON.stringify(response.data.comments));
+                console.log('Updated comments:', JSON.stringify(response.data.comments));
 
                 setCommentData((prevComments) =>
                     prevComments.filter((comment) => comment._id !== commentId)
                 );
 
                 showMessage({
-                    type: "success",
-                    message: "Success",
-                    message: "Comment deleted successfully!",
-                    position: "top",
-                    duarion: 5000
+                    type: 'success',
+                    message: 'Success',
+                    message: 'Comment deleted successfully!',
+                    position: 'top',
+                    duarion: 5000,
                 });
             }
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error deleting comment :", errorMsg);
+            console.error('Error deleting comment :', errorMsg);
             showMessage({
-                type: "danger",
-                message: "Error",
-                message: errorMsg || "Failed to delete comment. Please try again!",
-                icon: "danger",
-                duarion: 5000
+                type: 'danger',
+                message: 'Error',
+                message: errorMsg || 'Failed to delete comment. Please try again!',
+                icon: 'danger',
+                duarion: 5000,
             });
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
         } finally {
@@ -376,32 +376,32 @@ const LikeCommentEventPost = ({ navigation, route }) => {
 
 
     const DELETE_EVENT_POST = async (postId) => {
-        console.log("🗑️ Deleting Post ID:", postId);
+        console.log('🗑️ Deleting Post ID:', postId);
 
         try {
             setIsLoading(true);
-            const token = await AsyncStorage.getItem("userToken");
+            const token = await AsyncStorage.getItem('userToken');
 
-            if (!token) throw new Error("No token found");
+            if (!token) {throw new Error('No token found');}
 
             const headers = {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             };
 
-            console.log("🔹 Headers:", headers);
+            console.log('🔹 Headers:', headers);
 
             const response = await axios.delete(`${DELETE_EVENT}/${postId}`, { headers });
 
-            console.log("✅ Delete Response:", response.data);
+            console.log('✅ Delete Response:', response.data);
 
             if (response.status === 200 && response.data.status === true) {
                 showMessage({
-                    type: "success",
-                    message: "Success",
-                    message: "Event post deleted successfully!",
-                    icon: "success",
-                    duarion: 5000
+                    type: 'success',
+                    message: 'Success',
+                    message: 'Event post deleted successfully!',
+                    icon: 'success',
+                    duarion: 5000,
                 });
 
                 // ✅ Close modal if used
@@ -409,35 +409,35 @@ const LikeCommentEventPost = ({ navigation, route }) => {
 
                 // ✅ Ensure navigation is available before using it
                 if (navigation && navigation.replace) {
-                    navigation.replace("ViewMyEventPost");
+                    navigation.replace('ViewMyEventPost');
                 } else {
-                    console.warn("⚠️ Navigation is not available");
+                    console.warn('⚠️ Navigation is not available');
                 }
 
                 return;
             }
 
-            throw new Error(response.data.message || "Failed to delete event post.");
+            throw new Error(response.data.message || 'Failed to delete event post.');
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error deleting event:", errorMsg);
+            console.error('Error deleting event:', errorMsg);
             showMessage({
-                type: "danger",
-                message: "Error",
+                type: 'danger',
+                message: 'Error',
                 message: errorMsg,
-                duarion: 5000
+                duarion: 5000,
             });
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
         } finally {
@@ -447,8 +447,8 @@ const LikeCommentEventPost = ({ navigation, route }) => {
 
 
     const openBottomSheet = (postId, comments) => {
-        console.log("commentData", commentData);
-        console.log("postId", postId);
+        console.log('commentData', commentData);
+        console.log('postId', postId);
         setSelectedPostId(postId);
         setCommentData(comments);
         if (sheetRef.current) {
@@ -462,9 +462,9 @@ const LikeCommentEventPost = ({ navigation, route }) => {
         }
         navigation.reset({
             index: 0,
-            routes: [{ name: "EventNews" }],
+            routes: [{ name: 'EventNews' }],
         });
-    }
+    };
 
     const showModal = (event, item) => {
         event.stopPropagation(); // Stop event bubbling
@@ -553,7 +553,7 @@ const LikeCommentEventPost = ({ navigation, route }) => {
         return (
             <View style={styles.card}>
                 <View style={styles.cardheader}>
-                    <View style={{ display: "flex", flexDirection: 'row', alignItems: 'center' }}>
+                    <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                         <View>
                             <Image source={{ uri: MyActivistProfile?.profilePhoto }} style={styles.EventheaderImage} />
                         </View>
@@ -567,7 +567,7 @@ const LikeCommentEventPost = ({ navigation, route }) => {
                             <Text style={styles.date_time}>{formatDateTime(item.createdAt)}</Text>
                         </View>
                     </View>
-                    <View style={{ position: "relative" }}>
+                    <View style={{ position: 'relative' }}>
                         {/* Three-dot button */}
                         <TouchableOpacity onPress={(event) => showModal(event, item)}>
                             <Entypo name="dots-three-vertical" size={20} color="black" />
@@ -595,7 +595,7 @@ const LikeCommentEventPost = ({ navigation, route }) => {
                                         style={styles.modalOption}
                                         onPress={() => {
                                             setModalVisible(false);
-                                            navigation.navigate("UpdateEventPost", { eventData: modalData });
+                                            navigation.navigate('UpdateEventPost', { eventData: modalData });
                                         }}
                                     >
                                         <Text style={styles.optionText}>Update Event</Text>
@@ -608,14 +608,14 @@ const LikeCommentEventPost = ({ navigation, route }) => {
                                             try {
                                                 await DELETE_EVENT_POST(modalData?._id);
                                                 setModalVisible(false);
-                                                console.log("Event Deleted: ", modalData?._id);
+                                                console.log('Event Deleted: ', modalData?._id);
                                             } catch (error) {
-                                                console.error("Error deleting event:", error);
+                                                console.error('Error deleting event:', error);
                                             }
                                         }}
 
                                     >
-                                        <Text style={[styles.optionText, { color: "red" }]}>
+                                        <Text style={[styles.optionText, { color: 'red' }]}>
                                             Delete Event
                                         </Text>
                                     </TouchableOpacity>
@@ -636,9 +636,9 @@ const LikeCommentEventPost = ({ navigation, route }) => {
                         onPress={() => LIKE(item._id, item.likes.length)}
                     >
                         <AntDesign
-                            name={likeData[item._id]?.isLiked ? "heart" : "hearto"}
+                            name={likeData[item._id]?.isLiked ? 'heart' : 'hearto'}
                             size={20}
-                            color={likeData[item._id]?.isLiked ? "red" : Colors.dark}
+                            color={likeData[item._id]?.isLiked ? 'red' : Colors.dark}
                         />
                         <Text style={styles.shareText}>{likeData[item._id]?.likesCount ?? item.likes.length} Likes</Text>
                     </TouchableOpacity>
@@ -663,7 +663,7 @@ const LikeCommentEventPost = ({ navigation, route }) => {
                     closeOnPressMask={true}
                     customStyles={{
                         container: styles.bottomSheet,
-                        draggableIcon: { backgroundColor: "#000" }
+                        draggableIcon: { backgroundColor: '#000' },
                     }}
                 >
                     <View style={styles.bottomSheetContent}>
@@ -695,7 +695,7 @@ const LikeCommentEventPost = ({ navigation, route }) => {
 
                                     <View style={styles.commentDetails}>
                                         <View style={styles.nameTimeRow}>
-                                            <Text style={styles.userName}>{item?.user?.username || "Unknown"}</Text>
+                                            <Text style={styles.userName}>{item?.user?.username || 'Unknown'}</Text>
                                             <Text style={styles.commentTime}>{GetTimeAgo(item?.date)}</Text>
                                         </View>
                                         <Text style={styles.commentText}>{item?.comment}</Text>
@@ -706,7 +706,7 @@ const LikeCommentEventPost = ({ navigation, route }) => {
                                             disabled={deletecommentLoading}
                                         >
                                             {deletecommentLoading ? (
-                                                <Text style={{ color: Colors.theme_color, fontSize: SF(13), fontFamily: "Poppins-Regular" }}>Deleting...</Text>
+                                                <Text style={{ color: Colors.theme_color, fontSize: SF(13), fontFamily: 'Poppins-Regular' }}>Deleting...</Text>
                                             ) : (
                                                 <Entypo name={'cross'} color={Colors.theme_color} size={17} />
                                             )}
@@ -728,10 +728,10 @@ const LikeCommentEventPost = ({ navigation, route }) => {
                             <TouchableOpacity
                                 style={styles.postButton}
                                 onPress={() => COMMENT(selectedPostId)}
-                                disabled={commentLoading || !Boolean(myComment.trim())}
+                                disabled={commentLoading || !myComment.trim()}
                             >
                                 <Text style={styles.postButtonText}>
-                                    {commentLoading ? "Posting..." : "Post"}
+                                    {commentLoading ? 'Posting...' : 'Post'}
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -751,7 +751,7 @@ const LikeCommentEventPost = ({ navigation, route }) => {
                 translucent
             />
             <View style={Globalstyles.header}>
-                <View style={{ flexDirection: 'row', alignItems: "center" }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableOpacity
                         onPress={() => {
                             navigation.dispatch(
@@ -800,17 +800,17 @@ const LikeCommentEventPost = ({ navigation, route }) => {
                                     color={Colors.theme_color}
                                     style={{ marginBottom: SH(10) }}
                                 />
-                                <Text style={[styles.emptyText, { fontFamily: "POppins-Bold", fontSize: SF(16) }]}>
-                                    {errorMessage || "No Event & News Posted Yet"}
+                                <Text style={[styles.emptyText, { fontFamily: 'POppins-Bold', fontSize: SF(16) }]}>
+                                    {errorMessage || 'No Event & News Posted Yet'}
                                 </Text>
                                 <Text style={{
                                     color: 'gray',
                                     textAlign: 'center',
                                     marginTop: SH(5),
                                     paddingHorizontal: SW(20),
-                                    fontFamily: "POppins-Medium"
+                                    fontFamily: 'POppins-Medium',
                                 }}>
-                                    {errorMessage ? "" : "Events or news uploaded by Activists will be shown here."}
+                                    {errorMessage ? '' : 'Events or news uploaded by Activists will be shown here.'}
                                 </Text>
                             </View>
                         }

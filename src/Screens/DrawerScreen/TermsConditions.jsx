@@ -1,6 +1,5 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, SafeAreaView, Image } from 'react-native';
 import React from 'react';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Globalstyles from '../../utils/GlobalCss';
 import { DrawerActions } from '@react-navigation/native';
 import { SF, SH, SW } from '../../utils/Dimensions';
@@ -12,7 +11,7 @@ const TermsConditions = ({ navigation }) => {
     return (
         <SafeAreaView style={[Globalstyles.container, { paddingBottom: SH(20) }]} edges={['top', 'bottom']}>
             <View style={Globalstyles.header}>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
                         <Image source={require('../../Images/menu.png')} style={{ width: SW(30), height: SH(30) }} />
                     </TouchableOpacity>
@@ -192,7 +191,7 @@ const styles = StyleSheet.create({
     },
     heading: {
         fontSize: SF(15),
-        fontFamily: "Poppins-Bold",
+        fontFamily: 'Poppins-Bold',
         marginBottom: SH(16),
         color: Colors.theme_color,
     },

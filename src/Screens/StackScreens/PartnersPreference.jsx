@@ -1,5 +1,5 @@
-import { Text, View, TextInput, ScrollView, StatusBar, ActivityIndicator, FlatList, KeyboardAvoidingView, Platform } from 'react-native'
-import React, { useState, useEffect, useCallback } from 'react'
+import { Text, View, TextInput, ScrollView, StatusBar, ActivityIndicator, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/PartnerPreferenceStyle';
 import { TouchableOpacity } from 'react-native';
@@ -20,7 +20,7 @@ import {
     PartnerOccupationData, FamilyTypeData,
     FamilyFinancialStatusData, PartnersLiveinData, BodyStructureData, ComplexionData, PartnerQualificationData, PartnerDietHabit, Disabilities, subCasteOptions,
     PartnermaritalStatusData, PartnersmokingStatusData, PartnerDrinkingHabit, PartnerManglikStatusData, PartnerFamliyIncome, Income, CityData, StateData,
-    PartnersubCasteOptions
+    PartnersubCasteOptions,
 } from '../../DummyData/DropdownData';
 import { showMessage } from 'react-native-flash-message';
 import { SH } from '../../utils/Dimensions';
@@ -45,9 +45,9 @@ const PartnersPreference = ({ navigation, profileData }) => {
     const profile_data = ProfileData?.profiledata || {};
 
     const myPartnerPreferences = profileData?.partnerPreferences || mybiodata?.partnerPreferences;
-    const activeTabName = isBiodataExpired || isBiodataEmpty ? "Matrimonial" : "BioData";
+    const activeTabName = isBiodataExpired || isBiodataEmpty ? 'Matrimonial' : 'BioData';
     const isBiodataExpired = profile_data?.serviceSubscriptions?.some(
-        (sub) => sub.serviceType === "Biodata" && sub.status === "Expired"
+        (sub) => sub.serviceType === 'Biodata' && sub.status === 'Expired'
     );
 
     const isBiodataEmpty = Object.keys(MyprofileData?.Biodata || {}).length === 0;
@@ -81,15 +81,15 @@ const PartnersPreference = ({ navigation, profileData }) => {
 
     useEffect(() => {
         getBiodata();
-        console.log("mybiodata", JSON.stringify(mybiodata));
-    }, [])
+        console.log('mybiodata', JSON.stringify(mybiodata));
+    }, []);
 
 
     const getBiodata = async () => {
         try {
-            setMyBiodata("")
+            setMyBiodata('');
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) throw new Error('No token found');
+            if (!token) {throw new Error('No token found');}
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -99,7 +99,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
             const response = await axios.get(GET_BIODATA, { headers });
             if (response.data) {
                 const fetchedData = response.data.data;
-                console.log("My bio data in home page", fetchedData);
+                console.log('My bio data in home page', fetchedData);
                 setMyBiodata(fetchedData);
                 dispatch(setBioData(fetchedData));
             } else {
@@ -107,19 +107,19 @@ const PartnersPreference = ({ navigation, profileData }) => {
             }
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error fetching biodata:", errorMsg);
+            console.error('Error fetching biodata:', errorMsg);
 
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
         }
@@ -206,11 +206,11 @@ const PartnersPreference = ({ navigation, profileData }) => {
     const handleSave = async () => {
         try {
             setLoading(true);
-            const token = await AsyncStorage.getItem("userToken");
-            if (!token) throw new Error("No token found");
+            const token = await AsyncStorage.getItem('userToken');
+            if (!token) {throw new Error('No token found');}
 
             const headers = {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             };
 
@@ -230,29 +230,29 @@ const PartnersPreference = ({ navigation, profileData }) => {
                 }
             } else {
                 payload = {
-                    partnerSubCaste: biodata?.partnerSubCaste || "",
-                    partnerMinAge: biodata?.partnerMinAge || "",
-                    partnerMaxAge: biodata?.partnerMaxAge || "",
-                    partnerMinHeightFeet: biodata?.partnerMinHeightFeet || "",
-                    partnerMaxHeightFeet: biodata?.partnerMaxHeightFeet || "",
-                    partnerMaritalStatus: biodata.partnerMaritalStatus || "",
-                    partnerIncome: biodata?.partnerIncome || "",
-                    partnerOccupation: biodata?.partnerOccupation || "",
-                    partnerQualification: biodata?.partnerQualification || "",
-                    partnerDisabilities: biodata?.partnerDisabilities || "",
-                    partnerManglikStatus: biodata?.partnerManglikStatus || "",
-                    partnersLivingStatus: biodata?.partnersLivingStatus || "",
-                    partnerState: biodata?.partnerState || "",
-                    partnerCity: biodata?.partnerCity || "",
-                    partnerBodyStructure: biodata?.partnerBodyStructure || "",
-                    partnerComplexion: biodata?.partnerComplexion || "",
-                    partnerDietaryHabits: biodata?.partnerDietaryHabits || "",
-                    partnerSmokingHabits: biodata?.partnerSmokingHabits || "",
-                    partnerDrinkingHabits: biodata?.partnerDrinkingHabits || "",
-                    partnerFamilyType: biodata?.partnerFamilyType || "",
-                    partnerFamilyFinancialStatus: biodata?.partnerFamilyFinancialStatus || "",
-                    partnerFamilyIncome: biodata?.partnerFamilyIncome || "",
-                    partnerExpectations: biodata?.partnerExpectations || "",
+                    partnerSubCaste: biodata?.partnerSubCaste || '',
+                    partnerMinAge: biodata?.partnerMinAge || '',
+                    partnerMaxAge: biodata?.partnerMaxAge || '',
+                    partnerMinHeightFeet: biodata?.partnerMinHeightFeet || '',
+                    partnerMaxHeightFeet: biodata?.partnerMaxHeightFeet || '',
+                    partnerMaritalStatus: biodata.partnerMaritalStatus || '',
+                    partnerIncome: biodata?.partnerIncome || '',
+                    partnerOccupation: biodata?.partnerOccupation || '',
+                    partnerQualification: biodata?.partnerQualification || '',
+                    partnerDisabilities: biodata?.partnerDisabilities || '',
+                    partnerManglikStatus: biodata?.partnerManglikStatus || '',
+                    partnersLivingStatus: biodata?.partnersLivingStatus || '',
+                    partnerState: biodata?.partnerState || '',
+                    partnerCity: biodata?.partnerCity || '',
+                    partnerBodyStructure: biodata?.partnerBodyStructure || '',
+                    partnerComplexion: biodata?.partnerComplexion || '',
+                    partnerDietaryHabits: biodata?.partnerDietaryHabits || '',
+                    partnerSmokingHabits: biodata?.partnerSmokingHabits || '',
+                    partnerDrinkingHabits: biodata?.partnerDrinkingHabits || '',
+                    partnerFamilyType: biodata?.partnerFamilyType || '',
+                    partnerFamilyFinancialStatus: biodata?.partnerFamilyFinancialStatus || '',
+                    partnerFamilyIncome: biodata?.partnerFamilyIncome || '',
+                    partnerExpectations: biodata?.partnerExpectations || '',
                 };
             }
 
@@ -263,14 +263,14 @@ const PartnersPreference = ({ navigation, profileData }) => {
 
             if (response.status === 200 && response.data.status === true) {
                 const successMessage = isUpdating
-                    ? "Partner Preferences Updated Successfully!"
-                    : "Partner Preferences Created Successfully!";
+                    ? 'Partner Preferences Updated Successfully!'
+                    : 'Partner Preferences Created Successfully!';
 
                 showMessage({
                     message: successMessage,
                     type: 'success',
                     duration: 5000,
-                    icon: "success"
+                    icon: 'success',
                 });
 
                 if (!isUpdating && response.data._id) {
@@ -280,8 +280,8 @@ const PartnersPreference = ({ navigation, profileData }) => {
                 setIsEditing(false);
 
                 setTimeout(() => {
-                    navigation.navigate("MainApp", {
-                        screen: "Tabs",
+                    navigation.navigate('MainApp', {
+                        screen: 'Tabs',
                         params: {
                             screen: activeTabName,
                         },
@@ -291,20 +291,20 @@ const PartnersPreference = ({ navigation, profileData }) => {
                 return;
             }
 
-            throw new Error(response.data.message || "Something went wrong");
+            throw new Error(response.data.message || 'Something went wrong');
         } catch (error) {
-            console.error("🚨 API Error:", error.response?.data || error.message);
+            console.error('🚨 API Error:', error.response?.data || error.message);
 
-            let errorMessage = "Something went wrong!";
+            let errorMessage = 'Something went wrong!';
             if (error.response?.status === 400) {
-                errorMessage = error.response.data?.message || "Bad request.";
+                errorMessage = error.response.data?.message || 'Bad request.';
             }
 
             showMessage({
                 message: errorMessage,
                 type: 'danger',
                 icon: 'danger',
-                duration: 5000
+                duration: 5000,
             });
         } finally {
             setLoading(false);
@@ -321,7 +321,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
             />
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                style={{ flex: 1 ,marginTop:-SH(20)}}
+                style={{ flex: 1, marginTop: -SH(20) }}
                 keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
                 <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
                     <Text style={styles.Formtitle}>Set Your Preference </Text>
@@ -696,12 +696,12 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                 multiline={true} numberOfLines={6}
                                 value={biodata?.partnerExpectations}
                                 editable={isEditing}
-                                placeholder='Type Your Expectations'
+                                placeholder="Type Your Expectations"
                                 placeholderTextColor={Colors.gray}
                                 onChangeText={(text) =>
                                     setBiodata({ ...biodata, partnerExpectations: text })
                                 }
-                                textAlignVertical='top'
+                                textAlignVertical="top"
                                 autoComplete="off"
                                 textContentType="none" />
                             {
@@ -717,7 +717,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
                 </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>
-    )
-}
+    );
+};
 
-export default PartnersPreference
+export default PartnersPreference;

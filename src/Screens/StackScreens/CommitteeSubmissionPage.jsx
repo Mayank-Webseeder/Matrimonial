@@ -28,7 +28,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
         city: '',
         area: '',
         photoUrl: '',
-        mobileNo: ''
+        mobileNo: '',
     });
 
     const handleInputChange = (field, value) => {
@@ -91,33 +91,33 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                 }));
             })
             .catch(error => {
-                if (error.code !== "E_PICKER_CANCELLED") {
-                    console.error("Image Picking Error:", error);
+                if (error.code !== 'E_PICKER_CANCELLED') {
+                    console.error('Image Picking Error:', error);
                 }
             });
     };
 
     const constructCommitteePayload = async (CommitteeData, isNew = false) => {
         const keys = [
-            'committeeTitle', 'presidentName', 'subCaste', 'city', 'area', 'photoUrl', 'mobileNo'
+            'committeeTitle', 'presidentName', 'subCaste', 'city', 'area', 'photoUrl', 'mobileNo',
         ];
 
         const payload = {};
         for (const key of keys) {
-            if (CommitteeData[key] !== undefined && CommitteeData[key] !== "") {
+            if (CommitteeData[key] !== undefined && CommitteeData[key] !== '') {
                 payload[key] = CommitteeData[key];
             } else if (isNew) {
-                payload[key] = "";
+                payload[key] = '';
             }
         }
 
         if (payload.dob) {
-            const parsedDate = moment(payload.dob.split("T")[0], "YYYY-MM-DD", true);
+            const parsedDate = moment(payload.dob.split('T')[0], 'YYYY-MM-DD', true);
             if (parsedDate.isValid()) {
-                payload.dob = parsedDate.format("DD/MM/YYYY");
+                payload.dob = parsedDate.format('DD/MM/YYYY');
             } else {
-                console.error("Invalid DOB format received:", payload.dob);
-                throw new Error("Invalid DOB format. Expected format is DD/MM/YYYY.");
+                console.error('Invalid DOB format received:', payload.dob);
+                throw new Error('Invalid DOB format. Expected format is DD/MM/YYYY.');
             }
         }
 
@@ -125,9 +125,9 @@ const CommitteeSubmissionPage = ({ navigation }) => {
             try {
                 payload.photoUrl = await convertToBase64(CommitteeData?.photoUrl);
 
-                console.log("Converted Base64 Image:", payload?.photoUrl);
+                console.log('Converted Base64 Image:', payload?.photoUrl);
             } catch (error) {
-                console.error("Base64 Conversion Error:", error);
+                console.error('Base64 Conversion Error:', error);
             }
         }
 
@@ -137,29 +137,29 @@ const CommitteeSubmissionPage = ({ navigation }) => {
     const validateFields = () => {
         const newErrors = {};
         if (!CommitteeData.mobileNo) {
-            newErrors.mobileNo = "Mobile number is required.";
+            newErrors.mobileNo = 'Mobile number is required.';
         } else if (!/^\d{10}$/.test(CommitteeData?.mobileNo)) {
-            newErrors.mobileNo = "Enter a valid 10-digit mobile number.";
+            newErrors.mobileNo = 'Enter a valid 10-digit mobile number.';
         }
         if (!CommitteeData.presidentName) {
-            newErrors.presidentName = "presidentName is required.";
+            newErrors.presidentName = 'presidentName is required.';
         } else if (!/^[A-Za-z\s]+$/.test(CommitteeData?.presidentName)) {
-            newErrors.presidentName = "DharmspresidentName must contain only letters.";
+            newErrors.presidentName = 'DharmspresidentName must contain only letters.';
         } else if (CommitteeData.presidentName.length > 30) {
-            newErrors.presidentName = "presidentName Name cannot exceed 30 characters.";
+            newErrors.presidentName = 'presidentName Name cannot exceed 30 characters.';
         }
         if (!CommitteeData.committeeTitle) {
-            newErrors.committeeTitle = "committeeTitle is required.";
+            newErrors.committeeTitle = 'committeeTitle is required.';
         } else if (!/^[A-Za-z\s]+$/.test(CommitteeData?.committeeTitle)) {
-            newErrors.committeeTitle = "committeeTitle must contain only letters.";
+            newErrors.committeeTitle = 'committeeTitle must contain only letters.';
         } else if (CommitteeData?.committeeTitle.length > 30) {
-            newErrors.committeeTitle = "committeeTitle Name cannot exceed 30 characters.";
+            newErrors.committeeTitle = 'committeeTitle Name cannot exceed 30 characters.';
         }
         if (!CommitteeData?.city?.trim()) {
-            newErrors.city = "City is required.";
+            newErrors.city = 'City is required.';
         }
         if (!CommitteeData?.subCaste?.trim()) {
-            newErrors.subCaste = "Sub caste is required.";
+            newErrors.subCaste = 'Sub caste is required.';
         }
         setErrors(newErrors);
 
@@ -169,63 +169,63 @@ const CommitteeSubmissionPage = ({ navigation }) => {
 
     const handleCommitteeSave = async () => {
         try {
-            if (!validateFields()) return;
+            if (!validateFields()) {return;}
             setIsLoading(true);
 
-            const token = await AsyncStorage.getItem("userToken");
+            const token = await AsyncStorage.getItem('userToken');
             if (!token) {
-                showMessage({ type: "danger", message: "Error", description: "Authorization token is missing.", duarion: 5000 });
+                showMessage({ type: 'danger', message: 'Error', description: 'Authorization token is missing.', duarion: 5000 });
                 return;
             }
 
             const payload = await constructCommitteePayload(CommitteeData, true);
-            console.log("🚀 Constructed Payload:", JSON.stringify(payload));
+            console.log('🚀 Constructed Payload:', JSON.stringify(payload));
 
             const headers = {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
             };
 
             const response = await axios.post(CREATE_COMMITTEE, payload, { headers });
 
-            console.log("✅ API Response:", JSON.stringify(response.data));
+            console.log('✅ API Response:', JSON.stringify(response.data));
 
             if (response.status === 200 || response.data.status === true) {
                 showMessage({
-                    type: "success",
-                    message: "Committee Created Successfully",
-                    description: response.data.message || "Your committee profile has been saved!",
+                    type: 'success',
+                    message: 'Committee Created Successfully',
+                    description: response.data.message || 'Your committee profile has been saved!',
                     duarion: 7000,
-                    icon: "success",
+                    icon: 'success',
                 });
                 navigation.navigate('MainApp', {
                     screen: 'Committee',
                 });
             } else {
                 showMessage({
-                    type: "danger",
-                    message: "Error",
-                    description: response.data?.message || "Failed to save committee.",
-                    icon: "danger",
-                    duarion: 9000
+                    type: 'danger',
+                    message: 'Error',
+                    description: response.data?.message || 'Failed to save committee.',
+                    icon: 'danger',
+                    duarion: 9000,
                 });
             }
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error fetching biodata:", errorMsg);
-            showMessage({ type: "danger", message: "Error", description: errorMsg, icon: "danger", duarion: 5000 });
+            console.error('Error fetching biodata:', errorMsg);
+            showMessage({ type: 'danger', message: 'Error', description: errorMsg, icon: 'danger', duarion: 5000 });
 
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
         } finally {
@@ -241,7 +241,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                 translucent
             />
             <View style={Globalstyles.header}>
-                <View style={{ flexDirection: 'row', alignItems: "center" }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons
                             name="arrow-back-ios-new"
@@ -256,7 +256,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
                 keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
-                <ScrollView contentContainerStyle={[Globalstyles.form, { paddingBottom: insets.bottom + SH(65), flexGrow: 1 }]} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+                <ScrollView contentContainerStyle={[Globalstyles.form, { paddingBottom: insets.bottom + SH(10), flexGrow: 1 }]} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
                     <View>
                         <Text style={styles.title}>Upload Committee Details</Text>
 
@@ -317,7 +317,7 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                             labelField="label"
                             valueField="value"
                             value={CommitteeData?.subCaste}
-                            onChange={(text) => handleInputChange("subCaste", text.value)}
+                            onChange={(text) => handleInputChange('subCaste', text.value)}
                             placeholder="Select Your subCaste"
                             placeholderStyle={{ color: '#E7E7E7' }}
                             autoScroll={false}
@@ -378,10 +378,10 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                             <Text style={styles.errorText}>{errors.area}</Text>
                         )}
 
-                        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginVertical: SH(10) }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: SH(10) }}>
                             <Text style={Globalstyles.title}>Upload President Image</Text>
                             <TouchableOpacity style={styles.uploadButton} onPress={handleImagePick}>
-                                <Text style={styles.uploadButtonText}>{CommitteeData.photoUrl ? "Change Image" : "Upload Image"}</Text>
+                                <Text style={styles.uploadButtonText}>{CommitteeData.photoUrl ? 'Change Image' : 'Upload Image'}</Text>
                             </TouchableOpacity>
                         </View>
                         {CommitteeData.photoUrl ? (
@@ -438,13 +438,13 @@ const styles = StyleSheet.create({
     errorText: {
         color: 'red',
         fontSize: SF(13),
-        fontFamily: "Poppins-Regular"
+        fontFamily: 'Poppins-Regular',
     },
     container: {
         flex: 1,
         backgroundColor: Colors.light,
         paddingTop: SH(25),
-        paddingHorizontal: SW(6)
+        paddingHorizontal: SW(6),
     },
     header: {
         flexDirection: 'row',
@@ -457,17 +457,17 @@ const styles = StyleSheet.create({
     headerText: {
         color: Colors.theme_color,
         fontSize: SF(15),
-        fontFamily: "Poppins-Regular",
+        fontFamily: 'Poppins-Regular',
     },
     title: {
         fontSize: SF(15),
-        fontFamily: "Poppins-Medium",
+        fontFamily: 'Poppins-Medium',
         color: Colors.theme_color,
         marginBottom: SH(20),
     },
     label: {
         fontSize: SF(13),
-        fontFamily: "Poppins-Medium",
+        fontFamily: 'Poppins-Medium',
         color: Colors.dark,
         marginBottom: SH(5),
     },
@@ -475,11 +475,11 @@ const styles = StyleSheet.create({
         marginVertical: SH(10),
         width: SW(70),
         height: SH(70),
-        borderRadius: 10
+        borderRadius: 10,
     },
     imageName: {
         color: Colors.dark,
-        fontFamily: "Poppins-Regular",
+        fontFamily: 'Poppins-Regular',
         fontSize: SF(11),
     },
     uploadButton: {
@@ -487,11 +487,11 @@ const styles = StyleSheet.create({
         paddingVertical: SW(5),
         borderRadius: 5,
         alignItems: 'center',
-        paddingHorizontal: SW(7)
+        paddingHorizontal: SW(7),
     },
     uploadButtonText: {
         color: Colors.light,
-        fontFamily: "Poppins-Medium",
+        fontFamily: 'Poppins-Medium',
         fontSize: SF(12),
     },
     imagePreview: {
@@ -506,13 +506,13 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         alignItems: 'center',
         marginTop: SH(20),
-        marginBottom: SH(80)
+        marginBottom: SH(80),
     },
     submitButtonText: {
         color: Colors.light,
         fontSize: SF(15),
         fontWeight: 'Poppins-Bold',
-        textTransform: "capitalize"
+        textTransform: 'capitalize',
     },
     contentContainer: {
         margin: SW(15),

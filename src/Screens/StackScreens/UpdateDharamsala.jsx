@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, SafeAreaView, ScrollView, StatusBar, FlatList, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, StatusBar, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
 import Colors from '../../utils/Colors';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -10,14 +10,11 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import { UPDATE_DHARAMSALA } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import _ from "lodash";
+import _ from 'lodash';
 import { showMessage } from 'react-native-flash-message';
 import { Dropdown } from 'react-native-element-dropdown';
-// import { SafeAreaView } from 'react-native-safe-area-context';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const UpdateDharamsala = ({ navigation, route }) => {
-    const insets = useSafeAreaInsets();
     const { DharmshalaData } = route.params || {};
     const [cityInput, setCityInput] = useState('');
     const [filteredCities, setFilteredCities] = useState([]);
@@ -29,11 +26,11 @@ const UpdateDharamsala = ({ navigation, route }) => {
         city: '',
         description: '',
         images: [],
-        mobileNo: ''
+        mobileNo: '',
     });
 
     useEffect(() => {
-        DharmshalaData
+        DharmshalaData;
         if (DharmshalaData) {
             setDharamsalaData(prev => ({
                 ...prev,
@@ -42,7 +39,7 @@ const UpdateDharamsala = ({ navigation, route }) => {
                 subCaste: DharmshalaData?.subCaste || '',
                 city: DharmshalaData?.city || '',
                 images: DharmshalaData?.images || [],
-                mobileNo: DharmshalaData?.mobileNo || ''
+                mobileNo: DharmshalaData?.mobileNo || '',
             }));
 
             if (DharmshalaData.photoUrl) {
@@ -92,44 +89,40 @@ const UpdateDharamsala = ({ navigation, route }) => {
 
     const handleImageUpload = () => {
         ImageCropPicker.openPicker({
-            multiple: false,
+            multiple: true,
+            cropping: false,
             width: 1000,
             height: 1000,
-            cropping: true,
-            freeStyleCropEnabled: true,
-            cropperToolbarTitle: 'Crop Image',
-            cropperCircleOverlay: false,
-            includeBase64: true,
             compressImageQuality: 1,
             mediaType: 'photo',
+            maxFiles: 4,
         })
             .then((images) => {
                 if (images.length > 4) {
-                    alert("You can only upload up to 4 Dharamsala photos.");
+                    alert('You can only upload up to 4 Dharamsala photos.');
                     return;
                 }
 
-                // Purani images hatane ke liye sirf nayi images set karenge
                 const newImages = images.map(img => ({ uri: img.path }));
 
                 setDharamsalaData((prev) => ({
                     ...prev,
-                    images: newImages, // Purani images hata kar sirf nayi wali rakh rahe hain
+                    images: newImages,
                 }));
             })
             .catch((err) => {
-                console.log("Crop Picker Error:", err);
+                console.log('Crop Picker Error:', err);
             });
     };
 
 
     const convertToBase64 = async (images) => {
         try {
-            console.log("Converting images to Base64:", images);
+            console.log('Converting images to Base64:', images);
 
             const base64Images = await Promise.all(
                 images.map(async (image) => {
-                    if (!image.uri) return null;
+                    if (!image.uri) {return null;}
 
                     try {
                         const response = await fetch(image.uri);
@@ -144,7 +137,7 @@ const UpdateDharamsala = ({ navigation, route }) => {
                             reader.readAsDataURL(blob);
                         });
                     } catch (fetchError) {
-                        console.error("Error fetching image for Base64 conversion:", fetchError);
+                        console.error('Error fetching image for Base64 conversion:', fetchError);
                         return null;
                     }
                 })
@@ -152,7 +145,7 @@ const UpdateDharamsala = ({ navigation, route }) => {
 
             return base64Images.filter(Boolean); // Remove null values
         } catch (error) {
-            console.error("Error converting image to Base64:", error);
+            console.error('Error converting image to Base64:', error);
             return [];
         }
     };
@@ -160,21 +153,21 @@ const UpdateDharamsala = ({ navigation, route }) => {
 
     const constructDharamsalaPayload = async (DharamsalaData) => {
         try {
-            console.log("Constructing payload with data:", DharamsalaData);
+            console.log('Constructing payload with data:', DharamsalaData);
 
             const payload = { ...DharamsalaData };
 
             if (DharamsalaData.images.length > 0) {
-                console.log("Processing images for payload...");
+                console.log('Processing images for payload...');
 
                 // Separate existing Cloudinary images (URLs), Base64 images, and new images
-                const existingUrls = DharamsalaData.images.filter(img => typeof img === "string" && img.startsWith("http"));
-                const existingBase64Images = DharamsalaData.images.filter(img => typeof img === "string" && img.startsWith("data:image/"));
+                const existingUrls = DharamsalaData.images.filter(img => typeof img === 'string' && img.startsWith('http'));
+                const existingBase64Images = DharamsalaData.images.filter(img => typeof img === 'string' && img.startsWith('data:image/'));
                 const newImages = DharamsalaData.images.filter(img => img.uri); // New images to convert
 
-                console.log("Existing URLs:", existingUrls);
-                console.log("Existing Base64 Images:", existingBase64Images);
-                console.log("New images to convert:", newImages);
+                console.log('Existing URLs:', existingUrls);
+                console.log('Existing Base64 Images:', existingBase64Images);
+                console.log('New images to convert:', newImages);
 
                 let base64Images = await convertToBase64(newImages);
 
@@ -184,12 +177,12 @@ const UpdateDharamsala = ({ navigation, route }) => {
                 // Merge all images
                 payload.images = [...existingBase64Images, ...base64Images, ...cloudinaryBase64];
 
-                console.log("Final images for payload:", payload.images);
+                console.log('Final images for payload:', payload.images);
             }
 
             return payload;
         } catch (error) {
-            console.error("Error in constructDharamsalaPayload:", error);
+            console.error('Error in constructDharamsalaPayload:', error);
             return {};
         }
     };
@@ -200,23 +193,23 @@ const UpdateDharamsala = ({ navigation, route }) => {
         setIsLoading(true);
 
         try {
-            console.log("Fetching user token...");
-            const token = await AsyncStorage.getItem("userToken");
+            console.log('Fetching user token...');
+            const token = await AsyncStorage.getItem('userToken');
 
             if (!token) {
                 showMessage({
-                    type: "danger",
-                    message: "Authorization Error",
-                    description: "Token is missing! Please login again.",
-                    duarion: 5000
+                    type: 'danger',
+                    message: 'Authorization Error',
+                    description: 'Token is missing! Please login again.',
+                    duarion: 5000,
                 });
                 setIsLoading(false);
                 return;
             }
 
-            console.log("Token found, constructing payload...");
+            console.log('Token found, constructing payload...');
             const updatedData = await constructDharamsalaPayload(DharamsalaData);
-            console.log("Payload to be sent:", updatedData); // Debugging
+            console.log('Payload to be sent:', updatedData); // Debugging
 
             console.log(`Sending PATCH request to ${UPDATE_DHARAMSALA}/${DharmshalaData._id}`);
             const response = await axios.patch(
@@ -225,19 +218,19 @@ const UpdateDharamsala = ({ navigation, route }) => {
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
+                        'Content-Type': 'application/json',
                     },
                 }
             );
 
-            console.log("Response from API:", response.data);
+            console.log('Response from API:', response.data);
 
             showMessage({
-                type: "success",
-                message: "Success",
-                description: "Dharamsala Updated Successfully! 🎉",
-                icon: "success",
-                duarion: 5000
+                type: 'success',
+                message: 'Success',
+                description: 'Dharamsala Updated Successfully! 🎉',
+                icon: 'success',
+                duarion: 5000,
             });
 
             setTimeout(() => {
@@ -247,25 +240,25 @@ const UpdateDharamsala = ({ navigation, route }) => {
             }, 1000);
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error fetching biodata:", errorMsg);
+            console.error('Error fetching biodata:', errorMsg);
             showMessage({
-                type: "danger",
-                message: "Update Failed",
+                type: 'danger',
+                message: 'Update Failed',
                 description: errorMsg,
-                icon: "danger",
-                duarion: 5000
+                icon: 'danger',
+                duarion: 5000,
             });
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
         } finally {
@@ -276,7 +269,7 @@ const UpdateDharamsala = ({ navigation, route }) => {
 
 
     return (
-        <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
+        <SafeAreaView style={Globalstyles.container}>
             <StatusBar
                 barStyle="dark-content"
                 backgroundColor="transparent"
@@ -295,137 +288,131 @@ const UpdateDharamsala = ({ navigation, route }) => {
                 </View>
 
             </View>
-            <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                style={{ flex: 1 }}
-                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
-                <ScrollView contentContainerStyle={[Globalstyles.form,{paddingBottom: insets.bottom + SH(10), flexGrow: 1}]} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-                    <View>
-                        <Text style={styles.title}>Upload Your Dharamsala Details</Text>
+            <View style={Globalstyles.form}>
+                <Text style={styles.title}>Upload Your Dharamsala Details</Text>
 
-                        <Text style={Globalstyles.title}>Dharamsala Name <Entypo name={'star'} color={'red'} size={12} /></Text>
-                        <TextInput
-                            style={Globalstyles.input}
-                            placeholder="Enter Dharamsala Name"
-                            value={DharamsalaData.dharmshalaName}
-                            onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, dharmshalaName: text }))}
-                            placeholderTextColor={Colors.gray}
-                            autoComplete="off"
-                            textContentType="dharmshalaName"
-                            importantForAutofill="no"
-                            autoCorrect={false}
-                        />
+                <Text style={Globalstyles.title}>Dharamsala Name <Entypo name={'star'} color={'red'} size={12} /></Text>
+                <TextInput
+                    style={Globalstyles.input}
+                    placeholder="Enter Dharamsala Name"
+                    value={DharamsalaData.dharmshalaName}
+                    onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, dharmshalaName: text }))}
+                    placeholderTextColor={Colors.gray}
+                    autoComplete="off"
+                    textContentType="dharmshalaName"
+                    importantForAutofill="no"
+                    autoCorrect={false}
+                />
 
-                        <Text style={Globalstyles.title}>Sub-Caste Name <Entypo name={'star'} color={'red'} size={12} /></Text>
-                        <Dropdown
-                            style={[
-                                Globalstyles.input,
-                            ]}
-                            data={subCasteOptions}
-                            labelField="label"
-                            valueField="value"
-                            value={DharamsalaData?.subCaste}
-                            onChange={(text) => handleInputChange("subCaste", text.value)}
-                            placeholder="Select Your subCaste"
-                            placeholderStyle={{ color: '#E7E7E7' }}
-                            autoScroll={false}
-                            showsVerticalScrollIndicator={false}
-                        />
+                <Text style={Globalstyles.title}>Sub-Caste Name <Entypo name={'star'} color={'red'} size={12} /></Text>
+                <Dropdown
+                    style={[
+                        Globalstyles.input,
+                    ]}
+                    data={subCasteOptions}
+                    labelField="label"
+                    valueField="value"
+                    value={DharamsalaData?.subCaste}
+                    onChange={(text) => handleInputChange('subCaste', text.value)}
+                    placeholder="Select Your subCaste"
+                    placeholderStyle={{ color: '#E7E7E7' }}
+                    autoScroll={false}
+                    showsVerticalScrollIndicator={false}
+                />
 
-                        <Text style={Globalstyles.title}>City <Entypo name={'star'} color={'red'} size={12} /></Text>
-                        <TextInput
-                            style={Globalstyles.input}
-                            value={DharamsalaData?.city}
-                            onChangeText={handleCityInputChange}
-                            placeholder="Enter your city"
-                            placeholderTextColor={Colors.gray}
-                            autoComplete="off"
-                            textContentType="city"
-                            importantForAutofill="no"
-                            autoCorrect={false}
-                        />
-                        {filteredCities.length > 0 && cityInput ? (
-                            <FlatList
-                                data={filteredCities.slice(0, 5)}
-                                scrollEnabled={false}
-                                keyExtractor={(item, index) => index.toString()}
-                                renderItem={({ item }) => (
-                                    <TouchableOpacity onPress={() => handleCitySelect(item)}>
-                                        <Text style={Globalstyles.listItem}>{item}</Text>
-                                    </TouchableOpacity>
-                                )}
-                                style={Globalstyles.suggestions}
-                            />
-                        ) : null}
-
-                        <Text style={Globalstyles.title}>Contact <Entypo name={'star'} color={'red'} size={12} /></Text>
-                        <TextInput
-                            style={Globalstyles.input}
-                            placeholder="Enter Person's Contact No."
-                            keyboardType='phone-pad'
-                            maxLength={10}
-                            placeholderTextColor={Colors.gray}
-                            value={DharamsalaData.mobileNo} onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, mobileNo: text }))}
-                            autoComplete="off"
-                            textContentType="mobileNo"
-                            importantForAutofill="no"
-                            autoCorrect={false}
-                        />
-
-                        <Text style={Globalstyles.title}>Description (Optional)</Text>
-                        <TextInput
-                            style={[Globalstyles.input, styles.textArea]}
-                            placeholder="Enter Description"
-                            placeholderTextColor={Colors.gray}
-                            value={DharamsalaData.description} onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, description: text }))}
-                            multiline={true}
-                            autoComplete="off"
-                            textContentType="description"
-                            importantForAutofill="no"
-                            autoCorrect={false}
-                        />
-                        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                            <Text style={Globalstyles.title}>
-                                Upload Images (Max Limit 4) <Entypo name={"star"} color={"red"} size={12} />
-                            </Text>
-                            <TouchableOpacity style={styles.uploadButton} onPress={handleImageUpload}>
-                                <Text style={styles.uploadButtonText}>
-                                    {DharamsalaData.images?.length > 0 ? "Change Image" : "Upload Image"}
-                                </Text>
+                <Text style={Globalstyles.title}>City <Entypo name={'star'} color={'red'} size={12} /></Text>
+                <TextInput
+                    style={Globalstyles.input}
+                    value={DharamsalaData?.city}
+                    onChangeText={handleCityInputChange}
+                    placeholder="Enter your city"
+                    placeholderTextColor={Colors.gray}
+                    autoComplete="off"
+                    textContentType="city"
+                    importantForAutofill="no"
+                    autoCorrect={false}
+                />
+                {filteredCities.length > 0 && cityInput ? (
+                    <FlatList
+                        data={filteredCities.slice(0, 5)}
+                        scrollEnabled={false}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity onPress={() => handleCitySelect(item)}>
+                                <Text style={Globalstyles.listItem}>{item}</Text>
                             </TouchableOpacity>
-                        </View>
-
-                        {DharamsalaData.images?.length > 0 && (
-                            <View style={styles.imagePreview}>
-                                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                        {DharamsalaData.images.map((photo, index) => (
-                                            <Image
-                                                key={index}
-                                                source={{ uri: photo?.uri || photo }}
-                                                style={styles.photo}
-                                            />
-                                        ))}
-                                    </View>
-                                </ScrollView>
-                            </View>
                         )}
+                        style={Globalstyles.suggestions}
+                    />
+                ) : null}
 
+                <Text style={Globalstyles.title}>Contact <Entypo name={'star'} color={'red'} size={12} /></Text>
+                <TextInput
+                    style={Globalstyles.input}
+                    placeholder="Enter Person's Contact No."
+                    keyboardType="phone-pad"
+                    maxLength={10}
+                    placeholderTextColor={Colors.gray}
+                    value={DharamsalaData.mobileNo} onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, mobileNo: text }))}
+                    autoComplete="off"
+                    textContentType="mobileNo"
+                    importantForAutofill="no"
+                    autoCorrect={false}
+                />
 
-                        <TouchableOpacity
-                            style={styles.submitButton}
-                            onPress={handleUpdateDharamSala}
-                            disabled={isLoading}
-                        >
-                            {isLoading ? (
-                                <ActivityIndicator size="large" color={Colors.light} />
-                            ) : (
-                                <Text style={styles.submitButtonText}>Submit</Text>
+                <Text style={Globalstyles.title}>Description (Optional)</Text>
+                <TextInput
+                    style={[Globalstyles.input, styles.textArea]}
+                    placeholder="Enter Description"
+                    placeholderTextColor={Colors.gray}
+                    value={DharamsalaData.description} onChangeText={(text) => setDharamsalaData((prev) => ({ ...prev, description: text }))}
+                    multiline={true}
+                    autoComplete="off"
+                    textContentType="description"
+                    importantForAutofill="no"
+                    autoCorrect={false}
+                />
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Text style={Globalstyles.title}>
+                        Upload Images (Max Limit 4) <Entypo name={'star'} color={'red'} size={12} />
+                    </Text>
+                    <TouchableOpacity style={styles.uploadButton} onPress={handleImageUpload}>
+                        <Text style={styles.uploadButtonText}>
+                            {DharamsalaData.images?.length > 0 ? 'Change Image' : 'Upload Image'}
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+
+                {DharamsalaData.images?.length > 0 && (
+                    <View style={styles.imagePreview}>
+                        <FlatList
+                            data={DharamsalaData.images}
+                            keyExtractor={(item, index) => index.toString()}
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            renderItem={({ item }) => (
+                                <Image
+                                    source={{ uri: item?.uri || item }}
+                                    style={styles.photo}
+                                />
                             )}
-                        </TouchableOpacity>
+                        />
                     </View>
-                </ScrollView>
-            </KeyboardAvoidingView>
+                )}
+
+
+                <TouchableOpacity
+                    style={styles.submitButton}
+                    onPress={handleUpdateDharamSala}
+                    disabled={isLoading}
+                >
+                    {isLoading ? (
+                        <ActivityIndicator size="large" color={Colors.light} />
+                    ) : (
+                        <Text style={styles.submitButtonText}>Submit</Text>
+                    )}
+                </TouchableOpacity>
+            </View>
         </SafeAreaView>
     );
 };
@@ -434,7 +421,7 @@ const styles = StyleSheet.create({
 
     title: {
         fontSize: SF(15),
-        fontFamily: "Poppins-Medium",
+        fontFamily: 'Poppins-Medium',
         color: Colors.theme_color,
         marginBottom: SH(20),
 
@@ -449,12 +436,12 @@ const styles = StyleSheet.create({
         paddingVertical: SW(5),
         borderRadius: 5,
         alignItems: 'center',
-        paddingHorizontal: SW(7)
+        paddingHorizontal: SW(7),
     },
     uploadButtonText: {
         color: Colors.light,
-        fontFamily: "poppins-Medium",
-        fontSize: SF(13)
+        fontFamily: 'poppins-Medium',
+        fontSize: SF(13),
     },
     imagePreview: {
         width: '100%',
@@ -475,18 +462,18 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         alignItems: 'center',
         marginTop: SH(20),
-        marginBottom: SH(80)
+        marginBottom: SH(80),
     },
     submitButtonText: {
         color: Colors.light,
         fontSize: SF(15),
         fontWeight: 'Poppins-Bold',
-        textTransform: "capitalize"
+        textTransform: 'capitalize',
     },
     contentContainer: {
         margin: SW(15),
-        marginTop: 0
-    }
+        marginTop: 0,
+    },
 });
 
 export default UpdateDharamsala;

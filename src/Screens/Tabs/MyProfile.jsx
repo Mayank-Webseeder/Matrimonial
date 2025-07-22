@@ -6,7 +6,7 @@ import styles from '../StyleScreens/MyProfileStyle';
 import { TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { useSelector } from 'react-redux';
-import moment from "moment";
+import moment from 'moment';
 import Globalstyles from '../../utils/GlobalCss';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import ImageCropPicker from 'react-native-image-crop-picker';
@@ -36,7 +36,7 @@ const MyProfile = ({ navigation }) => {
     const image = profileData?.photoUrl?.[0];
     const [isLoading, setIsLoading] = useState(false);
     // console.log("profileData", profileData);
-    const formattedDate = moment(profileData.dob).format("DD/MM/YYYY");
+    const formattedDate = moment(profileData.dob).format('DD/MM/YYYY');
     const [isImageViewVisible, setImageViewVisible] = useState(false);
 
     const images = [
@@ -54,35 +54,35 @@ const MyProfile = ({ navigation }) => {
     const fetchProfile = async () => {
         setProfileLoading(true);
         try {
-            const token = await AsyncStorage.getItem("userToken");
-            if (!token) throw new Error("No token found");
+            const token = await AsyncStorage.getItem('userToken');
+            if (!token) {throw new Error('No token found');}
 
             const headers = {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             };
 
-            console.log("headers in profile", headers);
+            console.log('headers in profile', headers);
             const res = await axios.get(PROFILE_ENDPOINT, { headers });
-            console.log("API Response:", JSON.stringify(res.data));
+            console.log('API Response:', JSON.stringify(res.data));
 
             setProfileData(res.data.data); // ✅ State update karo
             dispatch(setProfiledata(res.data.data)); // Redux update karo
 
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error fetching myprofile:", errorMsg);
+            console.error('Error fetching myprofile:', errorMsg);
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
         } finally {
@@ -94,18 +94,18 @@ const MyProfile = ({ navigation }) => {
         setSelectedButton(profileType);
 
         const keyMap = {
-            Biodata: "isMatrimonial",
-            Jyotish: "isJyotish",
-            Kathavachak: "isKathavachak",
-            Pandit: "isPandit",
-            Activist: "isActivist",
+            Biodata: 'isMatrimonial',
+            Jyotish: 'isJyotish',
+            Kathavachak: 'isKathavachak',
+            Pandit: 'isPandit',
+            Activist: 'isActivist',
         };
 
         const registrationScreens = {
-            Biodata: "MatrimonyPage",
-            Jyotish: "JyotishRegister",
-            Kathavachak: "KathavachakRegister",
-            Pandit: "PanditRegister",
+            Biodata: 'MatrimonyPage',
+            Jyotish: 'JyotishRegister',
+            Kathavachak: 'KathavachakRegister',
+            Pandit: 'PanditRegister',
         };
 
         const isRegistered = profileData?.[keyMap[profileType]];
@@ -115,16 +115,16 @@ const MyProfile = ({ navigation }) => {
             if (screen) {
                 navigation.navigate(screen, { profileType });
             } else {
-                navigation.navigate("RoleRegisterForm", { profileType });
+                navigation.navigate('RoleRegisterForm', { profileType });
             }
             return;
         }
 
-        if (profileType !== "Biodata") {
+        if (profileType !== 'Biodata') {
             await fetchProfilesDetails(profileType);
         }
 
-        navigation.navigate("ProfileDetail", { profileType });
+        navigation.navigate('ProfileDetail', { profileType });
     };
 
 
@@ -140,23 +140,23 @@ const MyProfile = ({ navigation }) => {
                 }
             );
 
-            console.log("Fetched Data:", response.data.data);
+            console.log('Fetched Data:', response.data.data);
             setFetchProfileDetails(response.data.data);
             setLoading(false);
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error fetching profile:", errorMsg);
+            console.error('Error fetching profile:', errorMsg);
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
             setLoading(false);
@@ -164,7 +164,7 @@ const MyProfile = ({ navigation }) => {
     };
 
     const capitalizeFirstLetter = (text) => {
-        return text ? text.charAt(0).toUpperCase() + text.slice(1) : "Unknown";
+        return text ? text.charAt(0).toUpperCase() + text.slice(1) : 'Unknown';
     };
 
     useEffect(() => {
@@ -174,17 +174,17 @@ const MyProfile = ({ navigation }) => {
                     const granted = await PermissionsAndroid.request(
                         PermissionsAndroid.PERMISSIONS.CAMERA,
                         {
-                            title: "Camera Permission",
-                            message: "This app needs camera access to take photos.",
-                            buttonNeutral: "Ask Me Later",
-                            buttonNegative: "Cancel",
-                            buttonPositive: "OK",
+                            title: 'Camera Permission',
+                            message: 'This app needs camera access to take photos.',
+                            buttonNeutral: 'Ask Me Later',
+                            buttonNegative: 'Cancel',
+                            buttonPositive: 'OK',
                         }
                     );
                     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                        console.log("Camera permission granted");
+                        console.log('Camera permission granted');
                     } else {
-                        console.log("Camera permission denied");
+                        console.log('Camera permission denied');
                     }
                 } catch (err) {
                     console.warn(err);
@@ -198,60 +198,60 @@ const MyProfile = ({ navigation }) => {
     const handleDeleteImage = async () => {
         try {
             setIsLoading(true);
-            const token = await AsyncStorage.getItem("userToken");
+            const token = await AsyncStorage.getItem('userToken');
 
             if (!token) {
                 showMessage({
-                    type: "danger",
-                    message: "Authorization token is missing.",
+                    type: 'danger',
+                    message: 'Authorization token is missing.',
                 });
                 return;
             }
 
             const headers = {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             };
 
             const response = await axios.delete(DELETE_PROFILE_PHOTO, { headers });
 
             if (response.status === 200 && response.data.status === true) {
-                console.log(" delete response", JSON.stringify(response.data));
+                console.log(' delete response', JSON.stringify(response.data));
                 showMessage({
-                    type: "success",
-                    message: "Profile Photo Deleted Successfully",
-                    description: response.data.message || "Your profile photo has been removed.",
-                    icon: "success"
+                    type: 'success',
+                    message: 'Profile Photo Deleted Successfully',
+                    description: response.data.message || 'Your profile photo has been removed.',
+                    icon: 'success',
                 });
                 navigation.reset({
                     index: 0,
                     routes: [{ name: 'MyProfile' }],
                 });
-                setModalVisible(false)
+                setModalVisible(false);
             } else {
-                throw new Error(response.data.message || "Failed to delete profile photo.");
+                throw new Error(response.data.message || 'Failed to delete profile photo.');
             }
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error fetching female biodata:", errorMsg);
+            console.error('Error fetching female biodata:', errorMsg);
 
             showMessage({
-                type: "danger",
+                type: 'danger',
                 message: errorMsg,
-                icon: "danger"
+                icon: 'danger',
             });
 
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
         } finally {
@@ -293,58 +293,58 @@ const MyProfile = ({ navigation }) => {
     };
 
     const upload_profile_image = async (base64Data) => {
-        console.log("Base64 Image Data:", base64Data);
+        console.log('Base64 Image Data:', base64Data);
         try {
-            const token = await AsyncStorage.getItem("userToken");
-            if (!token) throw new Error("Authorization token is missing.");
+            const token = await AsyncStorage.getItem('userToken');
+            if (!token) {throw new Error('Authorization token is missing.');}
 
             const headers = {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             };
 
             const response = await axios.put(UPLOAD_PROFILE_PHOTO, { photoUrl: base64Data }, { headers });
-            console.log("Profile image updated successfully:", response.data);
+            console.log('Profile image updated successfully:', response.data);
             const message = response?.data?.message;
 
-            if (message === "Profile image updated successfully.") {
+            if (message === 'Profile image updated successfully.') {
                 showMessage({
-                    message: "Profile Updated!",
-                    description: "Your image has been successfully uploaded.",
-                    type: "success",
+                    message: 'Profile Updated!',
+                    description: 'Your image has been successfully uploaded.',
+                    type: 'success',
                     duration: 3000,
-                    icon: "success"
+                    icon: 'success',
                 });
-                navigation.navigate("MainApp", {
-                    screen: "Tabs",
+                navigation.navigate('MainApp', {
+                    screen: 'Tabs',
                     params: {
-                        screen: "MyProfile",
+                        screen: 'MyProfile',
                     },
                 });
             }
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error fetching biodata:", errorMsg);
+            console.error('Error fetching biodata:', errorMsg);
 
             showMessage({
-                message: "Upload Failed!",
+                message: 'Upload Failed!',
                 description: errorMsg,
-                type: "danger",
+                type: 'danger',
                 duration: 3000,
-                icon: "danger"
+                icon: 'danger',
             });
 
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
         } finally {
@@ -383,7 +383,7 @@ const MyProfile = ({ navigation }) => {
 
     if (ProfileLoading) {
         return (
-            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <ActivityIndicator size="large" color={Colors.theme_color} />
             </View>
         );
@@ -439,12 +439,12 @@ const MyProfile = ({ navigation }) => {
                         </Modal>
                     )}
                     <View style={styles.profileButtons}>
-                        <View style={{ flexDirection: "row", alignItems: "center" }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Text
                                 style={styles.editText}
                                 onPress={() => !isLoading && setModalVisible(true)}
                             >
-                                {isLoading ? "Uploading..." : "Upload Photo"}
+                                {isLoading ? 'Uploading...' : 'Upload Photo'}
                             </Text>
                         </View>
                         <Text style={styles.editText} onPress={() => navigation.navigate('UpdateProfile')}>Update Profile</Text>
@@ -473,19 +473,19 @@ const MyProfile = ({ navigation }) => {
                                 </TouchableOpacity>
 
                                 <TouchableOpacity style={styles.IconsButton} onPress={() => handlePress('Pandit')}>
-                                    <FontAwesome5 name={profileData.isPandit ? "user" : "user-plus"} color={Colors.theme_color} size={25} style={styles.icon} />
+                                    <FontAwesome5 name={profileData.isPandit ? 'user' : 'user-plus'} color={Colors.theme_color} size={25} style={styles.icon} />
                                     <Text style={styles.logotext}>{profileData.isPandit ? 'My Pandit Profile' : 'Register as Pandit'}</Text>
                                 </TouchableOpacity>
                             </View>
                             {/* Second Row */}
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: SH(10) }}>
                                 <TouchableOpacity style={styles.IconsButton} onPress={() => handlePress('Jyotish')}>
-                                    <FontAwesome5 name={profileData.isJyotish ? "user" : "user-plus"} color={Colors.theme_color} size={25} style={styles.icon} />
+                                    <FontAwesome5 name={profileData.isJyotish ? 'user' : 'user-plus'} color={Colors.theme_color} size={25} style={styles.icon} />
                                     <Text style={styles.logotext}>{profileData.isJyotish ? 'My Jyotish Profile' : 'Register as Jyotish'}</Text>
                                 </TouchableOpacity>
 
                                 <TouchableOpacity style={styles.IconsButton} onPress={() => handlePress('Kathavachak')}>
-                                    <FontAwesome5 name={profileData.isKathavachak ? "user" : "user-plus"} color={Colors.theme_color} size={25} style={styles.icon} />
+                                    <FontAwesome5 name={profileData.isKathavachak ? 'user' : 'user-plus'} color={Colors.theme_color} size={25} style={styles.icon} />
                                     <Text style={styles.logotext}>{profileData.isKathavachak ? 'My Kathavachak Profile' : 'Register as Kathavachak'}</Text>
                                 </TouchableOpacity>
                             </View>
@@ -502,7 +502,7 @@ const MyProfile = ({ navigation }) => {
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+                        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                             <TouchableOpacity
                                 onPress={() => setModalVisible(false)}
                             >
@@ -516,12 +516,12 @@ const MyProfile = ({ navigation }) => {
                                 <MaterialIcons name={'delete'} size={30} color={'red'} />
                             </TouchableOpacity>
                         </View>
-                        <View style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
+                        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                             <TouchableOpacity
                                 onPress={handleImageUpload}
                                 style={styles.gallery}
                             >
-                                <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                                <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                                     <MaterialIcons name={'add-a-photo'} size={20} color={Colors.theme_color} />
                                     <Text style={styles.Gallerytext}>Gallery</Text>
                                 </View>
@@ -531,7 +531,7 @@ const MyProfile = ({ navigation }) => {
                                 onPress={handleCameraCapture}
                                 style={styles.gallery}
                             >
-                                <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                                <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                                     <MaterialIcons name={'camera-alt'} size={20} color={Colors.theme_color} />
                                     <Text style={styles.Gallerytext}>Camera</Text>
                                 </View>

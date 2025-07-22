@@ -5,7 +5,7 @@ import SpInAppUpdates, { IAUUpdateKind } from 'sp-react-native-in-app-updates';
 const UpdateCheck = () => {
   useEffect(() => {
     const checkUpdate = async () => {
-      if (__DEV__) return; 
+      if (__DEV__) {return;}
 
       if (Platform.OS === 'android') {
         const inAppUpdates = new SpInAppUpdates(true);

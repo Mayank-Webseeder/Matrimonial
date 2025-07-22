@@ -1,11 +1,11 @@
-import { StyleSheet } from "react-native";
-import Colors from "../../utils/Colors";
-import { SW, SH, SF } from "../../utils/Dimensions";
+import { StyleSheet } from 'react-native';
+import Colors from '../../utils/Colors';
+import { SW, SH, SF } from '../../utils/Dimensions';
 
 const styles = StyleSheet.create({
     optionsContainer: {
         marginHorizontal: SW(50),
-        marginVertical:SH(50)
+        marginVertical:SH(50),
     },
     optionButton: {
         backgroundColor: Colors.light_theme,
@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
         marginBottom: SH(15),
         borderRadius: 5,
         borderColor:Colors.theme_color,
-        borderWidth:1
+        borderWidth:1,
     },
     optionText: {
         color: Colors.theme_color,
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
         marginHorizontal: SW(10),
         marginVertical:SH(25),
         color: Colors.theme_color,
-        textAlign: "center"
+        textAlign: 'center',
     },
     modalOverlay: {
         flex: 1,
@@ -41,14 +41,14 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.white,
         borderRadius: 10,
         alignItems: 'center',
-        marginTop:SH(65)
+        marginTop:SH(65),
     },
     modalText: {
         fontSize: SF(16),
         color: Colors.theme_color,
         marginBottom: SH(20),
         textAlign: 'center',
-        fontFamily: "Poppins-Regular"
+        fontFamily: 'Poppins-Regular',
     },
     modalButtons: {
         flexDirection: 'row',
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     modalButtonText: {
         color: Colors.light,
         fontSize: SF(15),
-        fontFamily: "Poppins-Regular",
+        fontFamily: 'Poppins-Regular',
     },
 });
 

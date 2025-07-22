@@ -13,7 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { GET_ACTIVIST, GET_ACTIVIST_PROFILES } from '../../utils/BaseUrl';
 import { DrawerActions, useFocusEffect } from '@react-navigation/native';
-import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import { useSelector } from 'react-redux';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { resetsetActivistdata, setActivistdata } from '../../ReduxStore/Slices/ActivistSlice';
@@ -48,7 +48,7 @@ const Activist = ({ navigation }) => {
     if (imageUri) {
       setSelectedImage([{ url: imageUri }]); // ✅ no props
       setImageVisible(true);
-      console.log("selectedImage", JSON.stringify([{ url: imageUri }]));
+      console.log('selectedImage', JSON.stringify([{ url: imageUri }]));
     }
   };
 
@@ -86,11 +86,11 @@ const Activist = ({ navigation }) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      console.log("MyActivistProfile", MyActivistProfile);
+      console.log('MyActivistProfile', MyActivistProfile);
       setLocality('');
       setSubcaste('');
       setError(null);
-      fetchActivistData("all");
+      fetchActivistData('all');
       getActivistProfile();
     }, [])
   );
@@ -102,7 +102,7 @@ const Activist = ({ navigation }) => {
       setLocality('');
       setSubcaste('');
       setError(null);
-      fetchActivistData("all");
+      fetchActivistData('all');
       getActivistProfile();
     }, 2000);
   }, []);
@@ -114,7 +114,7 @@ const Activist = ({ navigation }) => {
       setIsLoading(true);
 
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) throw new Error('No token found');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
         'Content-Type': 'application/json',
@@ -122,7 +122,7 @@ const Activist = ({ navigation }) => {
       };
 
       const response = await axios.get(GET_ACTIVIST, { headers });
-      console.log("Activist data", JSON.stringify(response.data));
+      console.log('Activist data', JSON.stringify(response.data));
 
       if (response.data && response.data.data) {
         const fetchedData = response.data.data;
@@ -134,19 +134,19 @@ const Activist = ({ navigation }) => {
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching activist data:", errorMsg);
+      console.error('Error fetching activist data:', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
       if (error.response && error.response.status === 400) {
@@ -158,30 +158,30 @@ const Activist = ({ navigation }) => {
   };
 
 
-  const fetchActivistData = async (filterType = "search") => {
+  const fetchActivistData = async (filterType = 'search') => {
     try {
       setLoading(true);
       setActivistData([]);
       setError(null);
 
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       };
 
       let queryParams = [];
 
-      if (filterType === "search") {
+      if (filterType === 'search') {
         const cleanedLocality = locality.trim();
         const cleanedSubCaste = subcaste.trim();
 
-        if (cleanedLocality) queryParams.push(`locality=${encodeURIComponent(cleanedLocality.toLowerCase())}`);
-        if (cleanedSubCaste) queryParams.push(`subCaste=${encodeURIComponent(cleanedSubCaste.toLowerCase())}`);
+        if (cleanedLocality) {queryParams.push(`locality=${encodeURIComponent(cleanedLocality.toLowerCase())}`);}
+        if (cleanedSubCaste) {queryParams.push(`subCaste=${encodeURIComponent(cleanedSubCaste.toLowerCase())}`);}
 
-      } else if (filterType === "modal") {
+      } else if (filterType === 'modal') {
         const cleanedModalLocality = modalLocality.trim();
         const cleanedModalSubCaste = subcaste.trim();
 
@@ -195,38 +195,38 @@ const Activist = ({ navigation }) => {
         }
       }
 
-      const url = queryParams.length > 0 ? `${GET_ACTIVIST_PROFILES}?${queryParams.join("&")}` : GET_ACTIVIST_PROFILES;
+      const url = queryParams.length > 0 ? `${GET_ACTIVIST_PROFILES}?${queryParams.join('&')}` : GET_ACTIVIST_PROFILES;
 
-      console.log("Fetching Data from:", url);
+      console.log('Fetching Data from:', url);
 
       const response = await axios.get(url, { headers });
 
-      console.log("Response Data:", JSON.stringify(response.data.data));
+      console.log('Response Data:', JSON.stringify(response.data.data));
 
       if (response.data && response.data.data.length > 0) {
         setActivistData(response.data.data);
       } else {
         setActivistData([]);
-        setError("No activist profiles found.");
+        setError('No activist profiles found.');
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching activist data:", errorMsg);
+      console.error('Error fetching activist data:', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
-      setError(errorMsg || "Failed to fetch data. Please try again.");
+      setError(errorMsg || 'Failed to fetch data. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -240,17 +240,17 @@ const Activist = ({ navigation }) => {
   const handleCloseFilter = () => {
     setModalVisible(false);
     setActivistData([]);
-    fetchActivistData("modal");
+    fetchActivistData('modal');
   };
 
   const resetFilter = () => {
     setLocality('');
     setModalLocality('');
     setSubcaste('');
-    fetchActivistData("all");
-  }
+    fetchActivistData('all');
+  };
   const handleInputChange = (field, value) => {
-    if (field === "subCaste") {
+    if (field === 'subCaste') {
       setSubcaste(value);
     }
   };
@@ -259,7 +259,7 @@ const Activist = ({ navigation }) => {
     <SkeletonPlaceholder>
       <View style={{ margin: SH(20) }}>
         {[1, 2, 3, 4].map((_, index) => (
-          <View key={index} style={{ flexDirection: "row", marginBottom: SH(20) }}>
+          <View key={index} style={{ flexDirection: 'row', marginBottom: SH(20) }}>
             <View style={{ width: SW(80), height: SH(80), borderRadius: 40, marginRight: SW(10) }} />
             <View>
               <View style={{ width: SW(150), height: SH(20), borderRadius: 4 }} />
@@ -308,7 +308,7 @@ const Activist = ({ navigation }) => {
             {item?.fullname && <Text style={styles.text}>{item.fullname}</Text>}
             {item?.subCaste && <Text style={styles.smalltext}>{item.subCaste}</Text>}
 
-            <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: 'center' }}>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
               {item?.city && <Text style={styles.smalltext}>{item.city}</Text>}
               {item?.activistId && <Text style={styles.IDText}>Id: {item.activistId}</Text>}
             </View>
@@ -327,7 +327,7 @@ const Activist = ({ navigation }) => {
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View>
         <View style={Globalstyles.header}>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
               <Image source={require('../../Images/menu.png')} style={{ width: SW(30), height: SH(30) }} />
             </TouchableOpacity>
@@ -342,18 +342,18 @@ const Activist = ({ navigation }) => {
             {notificationCount > 0 && (
               <View
                 style={{
-                  position: "absolute",
+                  position: 'absolute',
                   right: -5,
                   top: -5,
                   width: SW(16),
                   height: SW(16),
                   borderRadius: SW(16) / 2,
-                  backgroundColor: "red",
-                  justifyContent: "center",
-                  alignItems: "center",
+                  backgroundColor: 'red',
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}
               >
-                <Text style={{ color: 'white', fontSize: SF(9), fontFamily: "Poppins-Bold" }}>
+                <Text style={{ color: 'white', fontSize: SF(9), fontFamily: 'Poppins-Bold' }}>
                   {notificationCount}
                 </Text>
               </View>
@@ -364,12 +364,12 @@ const Activist = ({ navigation }) => {
           <View style={styles.searchContainer}>
             <View style={styles.searchbar}>
               <TextInput
-                placeholder='Search in Your City'
+                placeholder="Search in Your City"
                 placeholderTextColor="gray"
                 value={locality}
                 onChangeText={(text) => {
                   setLocality(text);
-                  fetchActivistData("search");
+                  fetchActivistData('search');
                 }}
               />
 
@@ -387,7 +387,7 @@ const Activist = ({ navigation }) => {
                   }}
                 />
               ) : (
-                <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchActivistData("search")} />
+                <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchActivistData('search')} />
               )}
             </View>
           </View>
@@ -401,7 +401,7 @@ const Activist = ({ navigation }) => {
               onPress={() => navigation.navigate('ActivistForm')}
             >
               <Text style={styles.buttonText}>
-                {Object.keys(MyActivistProfile).length > 0 ? "Update Profile" : "Be an Activist"}
+                {Object.keys(MyActivistProfile).length > 0 ? 'Update Profile' : 'Be an Activist'}
               </Text>
             </TouchableOpacity>
 
@@ -409,7 +409,7 @@ const Activist = ({ navigation }) => {
         </View>
       </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{
-        paddingBottom: insets.bottom + SH(10), flexGrow: 1
+        paddingBottom: insets.bottom + SH(10), flexGrow: 1,
       }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -475,7 +475,7 @@ const Activist = ({ navigation }) => {
                         labelField="label"
                         valueField="value"
                         value={subcaste}
-                        onChange={(text) => handleInputChange("subCaste", text.value)}
+                        onChange={(text) => handleInputChange('subCaste', text.value)}
                         placeholder="Select Your subCaste"
                         placeholderStyle={{ color: '#E7E7E7' }}
                         autoScroll={false}

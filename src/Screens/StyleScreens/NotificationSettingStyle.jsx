@@ -1,6 +1,6 @@
-import { StyleSheet } from "react-native";
-import Colors from "../../utils/Colors";
-import { SH, SW, SF } from "../../utils/Dimensions";
+import { StyleSheet } from 'react-native';
+import Colors from '../../utils/Colors';
+import { SH, SW, SF } from '../../utils/Dimensions';
 
 const styles = StyleSheet.create({
  toggleRow: {
@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
 },
 
 toggleTextContainer: {
-  flex: 1, 
+  flex: 1,
   paddingRight: SW(10),
 },
 

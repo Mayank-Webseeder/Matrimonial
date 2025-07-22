@@ -14,7 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SF, SH, SW } from '../../utils/Dimensions';
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 import { showMessage } from 'react-native-flash-message';
-const { width, height } = Dimensions.get("window");
+const { width, height } = Dimensions.get('window');
 import { useSelector } from 'react-redux';
 import { CommonActions, useFocusEffect } from '@react-navigation/native';
 import ImageViewer from 'react-native-image-zoom-viewer';
@@ -30,8 +30,8 @@ const DharamsalaDetail = ({ navigation, route }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showFullText, setShowFullText] = useState(false);
   const [Save, setIsSaved] = useState(initialSavedState || false);
-  const description = dharamsalaData?.description || "No description available.";
-  const truncatedDescription = description.slice(0, 300) + "...";
+  const description = dharamsalaData?.description || 'No description available.';
+  const truncatedDescription = description.slice(0, 300) + '...';
   const [modalVisible, setModalVisible] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
@@ -40,9 +40,9 @@ const DharamsalaDetail = ({ navigation, route }) => {
     (dharamsalaData?.images?.length ? dharamsalaData.images.map(img => ({ uri: img })) : []);
   const [slider, setSlider] = useState([]);
   const [Loading, setLoading] = useState(false);
-  const dharmshalaName = dharamsalaData?.dharmshalaName ?? "Unnamed";
-  const subCaste = dharamsalaData?.subCaste ?? "Not specified";
-  const city = dharamsalaData?.city ?? "Unknown";
+  const dharmshalaName = dharamsalaData?.dharmshalaName ?? 'Unnamed';
+  const subCaste = dharamsalaData?.subCaste ?? 'Not specified';
+  const city = dharamsalaData?.city ?? 'Unknown';
   const fromScreen = route.params?.fromScreen;
   const [galleryIndex, setGalleryIndex] = useState(0);
   const [adIndex, setAdIndex] = useState(0);
@@ -54,15 +54,15 @@ const DharamsalaDetail = ({ navigation, route }) => {
 
   useEffect(() => {
     fetchDharamsalaProfile();
-    console.log("dharamsalaData", dharamsalaData);
-    console.log("profileId", profileId);
-  }, [])
+    console.log('dharamsalaData', dharamsalaData);
+    console.log('profileId', profileId);
+  }, []);
 
 
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        if (fromScreen === "Dharmshala") {
+        if (fromScreen === 'Dharmshala') {
           navigation.goBack();
         } else {
           navigation.dispatch(
@@ -96,12 +96,12 @@ const DharamsalaDetail = ({ navigation, route }) => {
 
     if (!profileId) {
       showMessage({
-        type: "danger",
-        message: "Dharamsala ID not found!",
-        icon: "danger",
-        duration: 5000
+        type: 'danger',
+        message: 'Dharamsala ID not found!',
+        icon: 'danger',
+        duration: 5000,
       });
-      console.error("[fetchDharamsalaProfile] ❌ No valid ID provided. _id:", _id, " | id:", id);
+      console.error('[fetchDharamsalaProfile] ❌ No valid ID provided. _id:', _id, ' | id:', id);
       setLoading(false);
       return;
     }
@@ -109,23 +109,23 @@ const DharamsalaDetail = ({ navigation, route }) => {
     const token = await AsyncStorage.getItem('userToken');
     if (!token) {
       showMessage({
-        type: "danger",
-        message: "Authentication Error",
-        description: "No token found. Please log in again.",
-        duration: 5000
+        type: 'danger',
+        message: 'Authentication Error',
+        description: 'No token found. Please log in again.',
+        duration: 5000,
       });
 
       navigation.reset({
         index: 0,
-        routes: [{ name: "AuthStack" }],
+        routes: [{ name: 'AuthStack' }],
       });
       return;
     }
 
     const url = `${VIEW_DHARAMSALA}/${profileId}`;
-    console.log("[fetchDharamsalaProfile] ✅ Fetching data...");
-    console.log("🔗 URL:", url);
-    console.log("🔐 Token:", token.substring(0, 20) + "...");
+    console.log('[fetchDharamsalaProfile] ✅ Fetching data...');
+    console.log('🔗 URL:', url);
+    console.log('🔐 Token:', token.substring(0, 20) + '...');
 
     try {
       const response = await axios.get(url, {
@@ -134,43 +134,43 @@ const DharamsalaDetail = ({ navigation, route }) => {
         },
       });
 
-      console.log("📦 Raw API Response:", JSON.stringify(response.data, null, 2));
+      console.log('📦 Raw API Response:', JSON.stringify(response.data, null, 2));
 
       if (response.data.status) {
-        console.log("✅ Profile Fetched:", response.data.data);
+        console.log('✅ Profile Fetched:', response.data.data);
         SetDharamsalaData(response.data.data);
       } else {
         showMessage({
-          type: "danger",
-          message: "No Profile Found",
-          description: response.data.message || "Something went wrong!",
-          duration: 5000
+          type: 'danger',
+          message: 'No Profile Found',
+          description: response.data.message || 'Something went wrong!',
+          duration: 5000,
         });
-        console.warn("⚠️ API returned false status:", response.data.message);
+        console.warn('⚠️ API returned false status:', response.data.message);
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("❌ Error fetching profile:", errorMsg);
+      console.error('❌ Error fetching profile:', errorMsg);
 
       showMessage({
-        type: "danger",
+        type: 'danger',
         message: errorMsg,
-        description: "Failed to load profile data",
-        duration: 5000
+        description: 'Failed to load profile data',
+        duration: 5000,
       });
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        console.warn("⚠️ Session expired, clearing token...");
-        await AsyncStorage.removeItem("userToken");
+        console.warn('⚠️ Session expired, clearing token...');
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
     } finally {
@@ -181,7 +181,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
 
 
   useEffect(() => {
-    if (!formattedImages || formattedImages.length === 0) return;
+    if (!formattedImages || formattedImages.length === 0) {return;}
 
     const duration = (formattedImages[galleryIndex]?.duration || 5) * 1000;
 
@@ -202,7 +202,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
 
 
   useEffect(() => {
-    if (slider.length === 0) return;
+    if (slider.length === 0) {return;}
 
     const duration = (slider[adIndex]?.duration || 5) * 1000;
 
@@ -226,7 +226,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
   const Advertisement_window = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) throw new Error('No token found');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
         'Content-Type': 'application/json',
@@ -237,7 +237,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
 
       if (response.data) {
         const fetchedData = response.data.data;
-        console.log("fetchedData", JSON.stringify(fetchedData));
+        console.log('fetchedData', JSON.stringify(fetchedData));
 
         const fullSliderData = fetchedData.flatMap((item) =>
           item.media.map((mediaItem) => ({
@@ -252,25 +252,25 @@ const DharamsalaDetail = ({ navigation, route }) => {
         );
 
         setSlider(fullSliderData);
-        console.log("Slider Data:", fullSliderData);
+        console.log('Slider Data:', fullSliderData);
       } else {
         setSlider([]);
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching advertisement:", errorMsg);
+      console.error('Error fetching advertisement:', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
     }
@@ -288,24 +288,24 @@ const DharamsalaDetail = ({ navigation, route }) => {
 
   const handleShare = async () => {
     try {
-      if (!profileId) throw new Error("Missing profile ID");
+      if (!profileId) {throw new Error('Missing profile ID');}
 
       const directLink = `${DeepLink}/dharamsala-detial/${profileId}`;
 
       await Share.share({
-        message: `Check this profile in Brahmin Milan app:\n${directLink}`
+        message: `Check this profile in Brahmin Milan app:\n${directLink}`,
       });
     } catch (error) {
-      console.error("Sharing failed:", error?.message || error);
+      console.error('Sharing failed:', error?.message || error);
     }
   };
 
   const savedProfiles = async () => {
     if (!profileId) {
       showMessage({
-        type: "danger",
-        message: "Error",
-        description: "User ID not found!",
+        type: 'danger',
+        message: 'Error',
+        description: 'User ID not found!',
       });
       return;
     }
@@ -313,64 +313,64 @@ const DharamsalaDetail = ({ navigation, route }) => {
     setIsSaved((prev) => !prev);
 
     try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       };
 
-      console.log("API Request:", `${SAVED_PROFILES}/${profileId}`);
+      console.log('API Request:', `${SAVED_PROFILES}/${profileId}`);
 
       const response = await axios.post(`${SAVED_PROFILES}/${profileId}`, {}, { headers });
 
-      console.log("Response Data:", response?.data);
+      console.log('Response Data:', response?.data);
       if (response.status === 200 && response.data.status === true) {
         showMessage({
-          type: "success",
-          message: "Success",
-          description: response.data.message || "Profile saved successfully!",
+          type: 'success',
+          message: 'Success',
+          description: response.data.message || 'Profile saved successfully!',
         });
-        setIsSaved(response.data.message.toLowerCase().includes("saved successfully"));
+        setIsSaved(response.data.message.toLowerCase().includes('saved successfully'));
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching biodata:", errorMsg);
+      console.error('Error fetching biodata:', errorMsg);
       setIsSaved((prev) => !prev);
 
       showMessage({
-        type: "danger",
-        message: "Error",
-        description: errorMsg || "Something went wrong!",
-        icon: "danger"
+        type: 'danger',
+        message: 'Error',
+        description: errorMsg || 'Something went wrong!',
+        icon: 'danger',
       });
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
     }
   };
 
   return (
-    <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
+    <SafeAreaView style={Globalstyles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
 
       {/* Header */}
       <View style={Globalstyles.header}>
-        <View style={{ flexDirection: 'row', alignItems: "center" }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity
             onPress={() => {
-              if (fromScreen === "Dharmshala") {
+              if (fromScreen === 'Dharmshala') {
                 navigation.goBack();
               } else {
                 navigation.dispatch(
@@ -406,18 +406,18 @@ const DharamsalaDetail = ({ navigation, route }) => {
             {notificationCount > 0 && (
               <View
                 style={{
-                  position: "absolute",
+                  position: 'absolute',
                   right: -5,
                   top: -5,
                   width: SW(16),
                   height: SW(16),
                   borderRadius: SW(16) / 2,
-                  backgroundColor: "red",
-                  justifyContent: "center",
-                  alignItems: "center",
+                  backgroundColor: 'red',
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}
               >
-                <Text style={{ color: 'white', fontSize: SF(9), fontFamily: "Poppins-Bold" }}>
+                <Text style={{ color: 'white', fontSize: SF(9), fontFamily: 'Poppins-Bold' }}>
                   {notificationCount}
                 </Text>
               </View>
@@ -425,7 +425,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
           </TouchableOpacity>
         </View>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(10), flexGrow: 1}}>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View>
           <View style={styles.sliderContainer}>
             <AppIntroSlider
@@ -449,16 +449,16 @@ const DharamsalaDetail = ({ navigation, route }) => {
                 saveToLocalByLongPress={false}
                 renderIndicator={(currentIndex, allSize) => (
                   <View style={{
-                    position: "absolute",
+                    position: 'absolute',
                     top: SH(30),
-                    alignSelf: "center",
-                    backgroundColor: "rgba(0,0,0,0.6)",
+                    alignSelf: 'center',
+                    backgroundColor: 'rgba(0,0,0,0.6)',
                     paddingHorizontal: SW(8),
                     borderRadius: 5,
                     paddingVertical: SH(8),
-                    zIndex: 999
+                    zIndex: 999,
                   }}>
-                    <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>
+                    <Text style={{ color: 'white', fontSize: SF(16), fontWeight: 'bold' }}>
                       {currentIndex} / {allSize}
                     </Text>
                   </View>
@@ -479,8 +479,8 @@ const DharamsalaDetail = ({ navigation, route }) => {
           {/* Dharamsala Details */}
           <View style={styles.textContainer}>
             <View style={styles.TextView}>
-              <Text style={[Globalstyles.title, { fontFamily: "Poppins-Bold" }]}>{dharmshalaName || 'NA'}</Text>
-              <Text style={styles.Text}>{subCaste || "N/A"}</Text>
+              <Text style={[Globalstyles.title, { fontFamily: 'Poppins-Bold' }]}>{dharmshalaName || 'NA'}</Text>
+              <Text style={styles.Text}>{subCaste || 'N/A'}</Text>
               <Text style={styles.smalltext}>{city || 'NA'}</Text>
             </View>
 
@@ -504,11 +504,11 @@ const DharamsalaDetail = ({ navigation, route }) => {
           <View style={styles.sharecontainer}>
             <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
               <FontAwesome
-                name={Save ? "bookmark" : "bookmark-o"}
+                name={Save ? 'bookmark' : 'bookmark-o'}
                 size={19}
                 color={Colors.dark}
               />
-              <Text style={styles.iconText}>{Save ? "Saved" : "Save"}</Text>
+              <Text style={styles.iconText}>{Save ? 'Saved' : 'Save'}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
@@ -532,7 +532,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
                 const handlePress = () => {
                   if (item.hyperlink) {
                     Linking.openURL(item.hyperlink).catch(err =>
-                      console.error("Failed to open URL:", err)
+                      console.error('Failed to open URL:', err)
                     );
                   }
                 };
@@ -541,7 +541,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
                   <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                     <Image
                       source={{ uri: item.image }}
-                      style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
+                      style={{ width: '100%', height: SH(180), resizeMode: 'contain' }}
                     />
                   </TouchableOpacity>
                 );

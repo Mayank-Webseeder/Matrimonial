@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { Text, View, Switch, TouchableOpacity, SafeAreaView, StatusBar, ToastAndroid,Image } from "react-native";
-import Colors from "../../utils/Colors";
-import styles from "../StyleScreens/NotificationSettingStyle";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import Globalstyles from "../../utils/GlobalCss";
-import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { EVENT_NEWS_NOTIFICATION_HANDLE_API, CONNECTION_REQUEST_HANDLE_API } from "../../utils/BaseUrl";
-import { useSelector } from "react-redux";
-import { DrawerActions } from "@react-navigation/native";
-import { showMessage } from "react-native-flash-message";
-import { SH,SW } from "../../utils/Dimensions";
+import React, { useState, useEffect } from 'react';
+import { Text, View, Switch, TouchableOpacity, SafeAreaView, StatusBar,Image } from 'react-native';
+import Colors from '../../utils/Colors';
+import styles from '../StyleScreens/NotificationSettingStyle';
+import Globalstyles from '../../utils/GlobalCss';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { EVENT_NEWS_NOTIFICATION_HANDLE_API, CONNECTION_REQUEST_HANDLE_API } from '../../utils/BaseUrl';
+import { useSelector } from 'react-redux';
+import { DrawerActions } from '@react-navigation/native';
+import { showMessage } from 'react-native-flash-message';
+import { SH,SW } from '../../utils/Dimensions';
 
 const NotificationSettings = ({ navigation }) => {
   const ProfileData = useSelector((state) => state.profile);
@@ -22,9 +21,9 @@ const NotificationSettings = ({ navigation }) => {
   const [loadingNewsEvents, setLoadingNewsEvents] = useState(false);
 
   useEffect(() => {
-    console.log("ProfileData", ProfileData);
-    console.log("connReqNotification", profileInterest);
-    console.log("eventPostNotification", newsEvents);
+    console.log('ProfileData', ProfileData);
+    console.log('connReqNotification', profileInterest);
+    console.log('eventPostNotification', newsEvents);
   }, []);
 
   const updateProfileInterestNotification = async () => {
@@ -33,47 +32,47 @@ const NotificationSettings = ({ navigation }) => {
 
     try {
       setLoadingProfileInterest(true);
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {throw new Error('No token found');}
 
       const headers = { Authorization: `Bearer ${token}` };
       const response = await axios.patch(CONNECTION_REQUEST_HANDLE_API, {}, { headers });
 
       if (response.status === 200 && response.data.status) {
         showMessage({
-          type: "success",
-          message: "Success",
-          description: response.data.message || "Setting updated successfully!",
-          icon:"success",
-          duration: 5000
+          type: 'success',
+          message: 'Success',
+          description: response.data.message || 'Setting updated successfully!',
+          icon:'success',
+          duration: 5000,
         });
       } else {
-        throw new Error(response.data.message || "Something went wrong!");
+        throw new Error(response.data.message || 'Something went wrong!');
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error updating profile interest notification:", errorMsg);
+      console.error('Error updating profile interest notification:', errorMsg);
       setProfileInterest(!newState); // Revert UI if API fails
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
-      } 
+      }
 
       showMessage({
-        type: "danger",
-        message: "Error",
+        type: 'danger',
+        message: 'Error',
         description: errorMsg,
-        icon:"danger",
-        duration: 5000
+        icon:'danger',
+        duration: 5000,
       });
     } finally {
       setLoadingProfileInterest(false);
@@ -86,46 +85,46 @@ const NotificationSettings = ({ navigation }) => {
 
     try {
       setLoadingNewsEvents(true);
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {throw new Error('No token found');}
 
       const headers = { Authorization: `Bearer ${token}` };
       const response = await axios.patch(EVENT_NEWS_NOTIFICATION_HANDLE_API, {}, { headers });
 
       if (response.status === 200 && response.data.status === true) {
         showMessage({
-          type: "success",
-          message: "Success",
-          description: response.data.message || "Notification updated successfully!",
-          icon:"success",duration: 5000
+          type: 'success',
+          message: 'Success',
+          description: response.data.message || 'Notification updated successfully!',
+          icon:'success',duration: 5000,
         });
       } else {
-        throw new Error(response.data.message || "Something went wrong!");
+        throw new Error(response.data.message || 'Something went wrong!');
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error updating news/events notification:", errorMsg);
+      console.error('Error updating news/events notification:', errorMsg);
       setNewsEvents(!newState);
       showMessage({
-        type: "danger",
-        message: "Error",
+        type: 'danger',
+        message: 'Error',
         description: errorMsg,
-        icon:"danger",
+        icon:'danger',
         duration: 5000,
       });
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
-      } 
+      }
     } finally {
       setLoadingNewsEvents(false);
     }
@@ -137,7 +136,7 @@ const NotificationSettings = ({ navigation }) => {
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
 
       <View style={Globalstyles.header}>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
             <Image source={require('../../Images/menu.png')} style={{width: SW(30),height: SH(30)}} />
           </TouchableOpacity>

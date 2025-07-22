@@ -2,7 +2,6 @@ import { Text, View, TouchableOpacity, Image, FlatList, SafeAreaView, StatusBar,
 import React, { useState, useEffect, useCallback } from 'react';
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import styles from '../StyleScreens/SuccessStoriesStyle';
 import Globalstyles from '../../utils/GlobalCss';
@@ -36,35 +35,35 @@ const SuccessStories = ({ navigation }) => {
 
   const fetchSuccessStories = async () => {
     try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       };
 
       const res = await axios.get(SUCESS_STORIES, { headers });
-      console.log("sucess story data ", JSON.stringify(res.data.data))
+      console.log('sucess story data ', JSON.stringify(res.data.data));
       const filteredStories = res.data.data.filter(
         story => story.groomDetails !== null && story.brideDetails !== null
       );
       setStories(filteredStories);
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching success story:", errorMsg);
+      console.error('Error fetching success story:', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
     }
@@ -73,7 +72,7 @@ const SuccessStories = ({ navigation }) => {
   const fetchMySuccessStory = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) throw new Error('No token found');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
         'Content-Type': 'application/json',
@@ -88,19 +87,19 @@ const SuccessStories = ({ navigation }) => {
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching my success story:", errorMsg);
+      console.error('Error fetching my success story:', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
       setMyStory(null);
@@ -168,7 +167,7 @@ const SuccessStories = ({ navigation }) => {
           <Image
             source={{ uri: item?.photoUrl }}
             style={{
-              width: "100%",
+              width: '100%',
               height: undefined,
               aspectRatio: 1,
             }}
@@ -223,18 +222,18 @@ const SuccessStories = ({ navigation }) => {
             {notificationCount > 0 && (
               <View
                 style={{
-                  position: "absolute",
+                  position: 'absolute',
                   right: -5,
                   top: -5,
                   width: SW(16),
                   height: SW(16),
                   borderRadius: SW(16) / 2,
-                  backgroundColor: "red",
-                  justifyContent: "center",
-                  alignItems: "center",
+                  backgroundColor: 'red',
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}
               >
-                <Text style={{ color: 'white', fontSize: SF(9), fontFamily: "Poppins-Bold" }}>
+                <Text style={{ color: 'white', fontSize: SF(9), fontFamily: 'Poppins-Bold' }}>
                   {notificationCount}
                 </Text>
               </View>
@@ -252,7 +251,7 @@ const SuccessStories = ({ navigation }) => {
             })
           }
         >
-          <Text style={[styles.postText, { alignSelf: "flex-end" }]}>View Your Story</Text>
+          <Text style={[styles.postText, { alignSelf: 'flex-end' }]}>View Your Story</Text>
         </TouchableOpacity>
       )}
 
@@ -263,7 +262,7 @@ const SuccessStories = ({ navigation }) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingBottom: insets.bottom + SH(10),
-          flexGrow: 1, 
+          flexGrow: 1,
         }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -276,7 +275,7 @@ const SuccessStories = ({ navigation }) => {
               color={Colors.theme_color}
               style={{ marginBottom: SH(10) }}
             />
-            <Text style={[styles.noDataText, { fontFamily: "POppins-Bold", fontSize: SF(16) }]}>
+            <Text style={[styles.noDataText, { fontFamily: 'POppins-Bold', fontSize: SF(16) }]}>
               No success stories yet
             </Text>
             <Text style={{
@@ -284,7 +283,7 @@ const SuccessStories = ({ navigation }) => {
               textAlign: 'center',
               marginTop: SH(5),
               paddingHorizontal: SW(20),
-              fontFamily: "POppins-Medium"
+              fontFamily: 'POppins-Medium',
             }}>
               Once couples share their stories, they will be displayed here to inspire others.
             </Text>

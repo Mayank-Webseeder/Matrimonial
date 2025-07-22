@@ -1,10 +1,10 @@
-// deeplinking url for sharing app is 
-export const DeepLink="https://profile.brahminmilan.in/app/profile";
+// deeplinking url for sharing app is
+export const DeepLink = 'https://profile.brahminmilan.in/app/profile';
 
-// for show the image 
-const PHOTO_URL = "https://api-matrimonial.webseeder.tech"
+// for show the image
+const PHOTO_URL = 'https://api-matrimonial.webseeder.tech';
 
-const BASE_URL = "https://api-matrimonial.webseeder.tech/api/v1";
+const BASE_URL = 'https://api-matrimonial.webseeder.tech/api/v1';
 // const BASE_URL = "https://matrimonial-backend-oikh.onrender.com/api/v1";
 // auth api's
 const SIGNUP_ENDPOINT = `${BASE_URL}/user/signUp`;
@@ -15,7 +15,7 @@ const FORGOT_PASSWORD_OTP = `${BASE_URL}/user/sendResetOTP`;
 const CHANGE_PASSWORD = `${BASE_URL}/user/changePassword`;
 const FEEDBACK = `${BASE_URL}/user/create-feedback`;
 
-// report 
+// report
 const REPORT = `${BASE_URL}/report/createReport`;
 
 // profile's apis
@@ -122,7 +122,7 @@ const UPDATE_EVENT_NEWS = `${BASE_URL}/event/updateEventPost`;
 const LIKEPOST = `${BASE_URL}/event/like`;
 const COMMENTPOST = `${BASE_URL}/event/comment`;
 const DELETE_EVENT = `${BASE_URL}/event/delete-eventPost`;
-const VIEW_LIKE_COMMENT_EVENTNEWS = `${BASE_URL}/event/getEventPostById`
+const VIEW_LIKE_COMMENT_EVENTNEWS = `${BASE_URL}/event/getEventPostById`;
 
 // advertise with us
 const ADVERTISE_WITH_US = `${BASE_URL}/user/advertise-WithUs`;
@@ -154,7 +154,7 @@ const FREE_TRIAL = `${BASE_URL}/subscription/setTrial`;
 const PAYMENT_VERIFICATION = `${BASE_URL}/subscription/verifyPayment`;
 const PAID_URL = `${BASE_URL}/subscription/buy`;
 const SUBSCRIPTION_HISTORY = `${BASE_URL}/subscription/history`;
-const FREE_TRIAL_HISTORY = `${BASE_URL}/subscription/trialHistory`
+const FREE_TRIAL_HISTORY = `${BASE_URL}/subscription/trialHistory`;
 // Advertise Windows
 
 // Base types without sections
@@ -323,5 +323,5 @@ export {
     BOTTOM_DHARMSHALA_ADVERDISE_WINDOW,
     TOP_EVENT_NEWS_ADVERDISE_WINDOW,
     BOTTOM_EVENT_NEWS_ADVERDISE_WINDOW,
-    VIEW_LIKE_COMMENT_EVENTNEWS
-}
+    VIEW_LIKE_COMMENT_EVENTNEWS,
+};

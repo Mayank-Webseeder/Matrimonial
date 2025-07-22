@@ -40,7 +40,7 @@ const MySuccessStory = ({ navigation, route }) => {
   const fetchMySuccessStory = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) throw new Error('No token found');
+      if (!token) {throw new Error('No token found');}
 
       const res = await axios.get(MY_SUCCESS_STORY, {
         headers: {
@@ -58,16 +58,16 @@ const MySuccessStory = ({ navigation, route }) => {
       const errorMsg = error.response?.data?.message || error.message;
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
       setMyStory(null);
@@ -104,7 +104,7 @@ const MySuccessStory = ({ navigation, route }) => {
           onPress: async () => {
             try {
               const token = await AsyncStorage.getItem('userToken');
-              if (!token) throw new Error('No token');
+              if (!token) {throw new Error('No token');}
 
               const url = `${DELETE_SUCCESS_STORY}/${story._id}`;
 
@@ -116,19 +116,19 @@ const MySuccessStory = ({ navigation, route }) => {
               navigation.goBack();
             } catch (error) {
               const errorMsg = error.response?.data?.message || error.message;
-              console.error("Error fetching biodata:", errorMsg);
+              console.error('Error fetching biodata:', errorMsg);
 
               const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
               ];
 
               if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                   index: 0,
-                  routes: [{ name: "AuthStack" }],
+                  routes: [{ name: 'AuthStack' }],
                 });
               }
               Alert.alert('Error', 'Could not delete. Try again.');

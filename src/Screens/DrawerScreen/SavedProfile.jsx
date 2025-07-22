@@ -1,25 +1,24 @@
-import { View, Text, TouchableOpacity, FlatList, ScrollView, Image, SafeAreaView, StatusBar, ActivityIndicator, RefreshControl, Alert } from "react-native";
-import React, { useState, useRef, useCallback } from "react";
-import AntDesign from "react-native-vector-icons/AntDesign";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import styles from "../StyleScreens/SavedProfileStyle";
-import Colors from "../../utils/Colors";
-import HeadingWithViewAll from "../../Components/HeadingWithViewAll";
-import Globalstyles from "../../utils/GlobalCss";
-import { DELETE_SAVED_PROFILE, GET_SAVED__PROFILES } from "../../utils/BaseUrl";
+import { View, Text, TouchableOpacity, FlatList, ScrollView, Image, SafeAreaView, StatusBar, ActivityIndicator, RefreshControl, Alert } from 'react-native';
+import React, { useState, useRef, useCallback } from 'react';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import styles from '../StyleScreens/SavedProfileStyle';
+import Colors from '../../utils/Colors';
+import HeadingWithViewAll from '../../Components/HeadingWithViewAll';
+import Globalstyles from '../../utils/GlobalCss';
+import { DELETE_SAVED_PROFILE, GET_SAVED__PROFILES } from '../../utils/BaseUrl';
 import { DrawerActions, useFocusEffect } from '@react-navigation/native';
-import { useSelector } from "react-redux";
+import { useSelector } from 'react-redux';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { SH, SF, SW } from "../../utils/Dimensions";
-import { showMessage } from "react-native-flash-message";
+import { SH, SF, SW } from '../../utils/Dimensions';
+import { showMessage } from 'react-native-flash-message';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const SavedProfile = ({ navigation }) => {
   const insets = useSafeAreaInsets();
   const flatListRef = useRef(null);
-  const [activeCategory, setActiveCategory] = useState("Biodata");
+  const [activeCategory, setActiveCategory] = useState('Biodata');
   const [savedProfiles, setSavedProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const MyprofileData = useSelector((state) => state.getBiodata);
@@ -47,15 +46,15 @@ const SavedProfile = ({ navigation }) => {
       setLoading(true);
       setSavedProfiles([]);
 
-      const token = await AsyncStorage.getItem("userToken");
+      const token = await AsyncStorage.getItem('userToken');
       if (!token) {
-        throw new Error("No token found");
+        throw new Error('No token found');
       }
 
       const headers = { Authorization: `Bearer ${token}` };
       const response = await axios.get(GET_SAVED__PROFILES, { headers });
 
-      console.log("Fetched saved profiles:", JSON.stringify(response.data?.savedProfiles));
+      console.log('Fetched saved profiles:', JSON.stringify(response.data?.savedProfiles));
 
       setSavedProfiles(response.data?.savedProfiles || []);
 
@@ -63,23 +62,23 @@ const SavedProfile = ({ navigation }) => {
         flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
       }, 100);
     } catch (error) {
-      console.error("Error fetching saved profiles:", error?.response?.data || error);
+      console.error('Error fetching saved profiles:', error?.response?.data || error);
     } finally {
       setLoading(false);
     }
   };
 
   const DeleteSaveProfile = async (_id) => {
-    if (!_id || deletingId === _id) return;
+    if (!_id || deletingId === _id) {return;}
 
     setDeletingId(_id);
     try {
       setLoading(true);
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found. Please log in again.");
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {throw new Error('No token found. Please log in again.');}
 
       const headers = {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       };
 
@@ -87,40 +86,40 @@ const SavedProfile = ({ navigation }) => {
 
       if (response?.status === 200 && response?.data?.status === true) {
         showMessage({
-          type: "success",
-          message: "Success",
-          description: "Saved profile deleted successfully!",
-          icon: "success",
+          type: 'success',
+          message: 'Success',
+          description: 'Saved profile deleted successfully!',
+          icon: 'success',
           duration: 5000,
         });
 
         setSavedProfiles(prev => prev.filter(p => p._id !== _id));
       } else {
-        throw new Error(response?.data?.message || "Something went wrong!");
+        throw new Error(response?.data?.message || 'Something went wrong!');
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching biodata:", errorMsg);
+      console.error('Error fetching biodata:', errorMsg);
 
       showMessage({
-        type: "danger",
-        message: "Error",
-        description: errorMsg || "Delete failed",
-        icon: "danger",
-        duration: 5000
+        type: 'danger',
+        message: 'Error',
+        description: errorMsg || 'Delete failed',
+        icon: 'danger',
+        duration: 5000,
       });
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
     } finally {
@@ -133,7 +132,7 @@ const SavedProfile = ({ navigation }) => {
   const getFilteredData = () => {
     const validProfiles = savedProfiles.filter((item) => item?.saveProfile !== null) || {};
 
-    if (["Biodata", "Pandit", "Jyotish", "Kathavachak", "Dharmshala", "Committee"].includes(activeCategory)) {
+    if (['Biodata', 'Pandit', 'Jyotish', 'Kathavachak', 'Dharmshala', 'Committee'].includes(activeCategory)) {
       const filteredProfiles = validProfiles.filter((item) => item?.profileType === activeCategory);
       return filteredProfiles.length > 0 ? filteredProfiles : null;
     } else {
@@ -150,49 +149,49 @@ const SavedProfile = ({ navigation }) => {
       <View style={styles.card}>
         <TouchableOpacity style={styles.detailsContainer}
           onPress={() => {
-            if (profileType === "Biodata" && isBiodataEmpty) {
-              Alert.alert("Create Biodata", "Please create biodata to see full information of this profile.");
+            if (profileType === 'Biodata' && isBiodataEmpty) {
+              Alert.alert('Create Biodata', 'Please create biodata to see full information of this profile.');
               return;
             }
-            if (profileType === "Biodata") {
-              if (saveProfile?.connectionStatus === "received") {
-                navigation.navigate("IntrestReceivedProfilePage", {
+            if (profileType === 'Biodata') {
+              if (saveProfile?.connectionStatus === 'received') {
+                navigation.navigate('IntrestReceivedProfilePage', {
                   userId: saveProfile?.userId,
                   isSaved: true,
                 });
               } else if (!partnerPreferences) {
-                navigation.navigate("ShortMatrimonialProfile", {
+                navigation.navigate('ShortMatrimonialProfile', {
                   userDetails: saveProfile,
                   isSaved: true,
                 });
               } else {
-                navigation.navigate("MatrimonyPeopleProfile", {
+                navigation.navigate('MatrimonyPeopleProfile', {
                   userDetails: saveProfile,
                   userId: saveProfile?.userId,
                   isSaved: true,
                 });
               }
             }
-            else if (profileType === "Pandit") {
-              navigation.navigate("PanditDetailPage", { pandit_id: saveProfile._id, isSaved: true });
-            } else if (profileType === "Jyotish") {
-              navigation.navigate("JyotishDetailsPage", { jyotish_id: saveProfile._id, isSaved: true });
-            } else if (profileType === "Kathavachak") {
-              navigation.navigate("KathavachakDetailsPage", { kathavachak_id: saveProfile._id, isSaved: true });
-            } else if (profileType === "Dharmshala") {
-              navigation.navigate("DharamsalaDetail", { DharamsalaData: saveProfile, isSaved: true, _id: saveProfile._id });
+            else if (profileType === 'Pandit') {
+              navigation.navigate('PanditDetailPage', { pandit_id: saveProfile._id, isSaved: true });
+            } else if (profileType === 'Jyotish') {
+              navigation.navigate('JyotishDetailsPage', { jyotish_id: saveProfile._id, isSaved: true });
+            } else if (profileType === 'Kathavachak') {
+              navigation.navigate('KathavachakDetailsPage', { kathavachak_id: saveProfile._id, isSaved: true });
+            } else if (profileType === 'Dharmshala') {
+              navigation.navigate('DharamsalaDetail', { DharamsalaData: saveProfile, isSaved: true, _id: saveProfile._id });
             }
           }}>
-          {profileType === "Biodata" && (
+          {profileType === 'Biodata' && (
             <>
               <Image
                 source={
-                  saveProfile?.personalDetails?.closeUpPhoto && saveProfile?.personalDetails?.closeUpPhoto.startsWith("http")
+                  saveProfile?.personalDetails?.closeUpPhoto && saveProfile?.personalDetails?.closeUpPhoto.startsWith('http')
                     ? { uri: saveProfile?.personalDetails?.closeUpPhoto }
-                    : require("../../Images/NoImage.png")
+                    : require('../../Images/NoImage.png')
                 }
                 blurRadius={
-                  saveProfile?.requestStatus === "accepted"
+                  saveProfile?.requestStatus === 'accepted'
                     ? 0
                     : saveProfile?.isBlur
                       ? 10
@@ -202,86 +201,86 @@ const SavedProfile = ({ navigation }) => {
               />
               <View style={styles.detailscontent}>
                 <Text style={styles.name} numberOfLines={1}>
-                  {saveProfile?.personalDetails?.fullname || "NA"}
+                  {saveProfile?.personalDetails?.fullname || 'NA'}
                 </Text>
                 <Text style={styles.text} numberOfLines={1}>
-                  City: {saveProfile?.personalDetails?.cityOrVillage || "NA"}
+                  City: {saveProfile?.personalDetails?.cityOrVillage || 'NA'}
                 </Text>
                 <Text style={styles.text}>
                   Age:
                   {saveProfile?.personalDetails?.dob && !isNaN(new Date(saveProfile?.personalDetails?.dob).getTime())
                     ? ` ${new Date().getFullYear() - new Date(saveProfile?.personalDetails?.dob).getFullYear()} Years`
-                    : " NA"}
+                    : ' NA'}
                 </Text>
                 <Text style={styles.text} numberOfLines={1}>
-                  Sub Caste: {saveProfile?.personalDetails?.subCaste || "NA"}
+                  Sub Caste: {saveProfile?.personalDetails?.subCaste || 'NA'}
                 </Text>
               </View>
             </>
           )}
 
 
-          {["Pandit", "Jyotish", "Kathavachak"].includes(profileType) && (
+          {['Pandit', 'Jyotish', 'Kathavachak'].includes(profileType) && (
             <>
               <Image
                 source={
-                  saveProfile?.profilePhoto && saveProfile.profilePhoto.startsWith("http")
+                  saveProfile?.profilePhoto && saveProfile.profilePhoto.startsWith('http')
                     ? { uri: saveProfile?.profilePhoto }
-                    : require("../../Images/NoImage.png")
+                    : require('../../Images/NoImage.png')
                 }
                 style={styles.image}
               />
               <View style={styles.detailscontent}>
                 <Text style={styles.name} numberOfLines={1}>
-                  {saveProfile?.fullName || "NA"}
+                  {saveProfile?.fullName || 'NA'}
                 </Text>
                 <Text style={styles.text} numberOfLines={1}>
-                  City: {saveProfile?.city || "NA"}
+                  City: {saveProfile?.city || 'NA'}
                 </Text>
                 <Text style={styles.text}>
-                  Experience: {saveProfile?.experience || "NA"}
+                  Experience: {saveProfile?.experience || 'NA'}
                 </Text>
                 <Text style={styles.text} numberOfLines={1}>
-                  Area: {saveProfile?.area || "NA"}
+                  Area: {saveProfile?.area || 'NA'}
                 </Text>
               </View>
             </>
           )}
 
 
-          {profileType === "Dharmshala" && (
+          {profileType === 'Dharmshala' && (
             <>
               <Image
                 source={
-                  saveProfile?.images?.[0] && saveProfile.images[0].startsWith("http")
+                  saveProfile?.images?.[0] && saveProfile.images[0].startsWith('http')
                     ? { uri: saveProfile.images[0] }
-                    : require("../../Images/NoImage.png")
+                    : require('../../Images/NoImage.png')
                 }
                 style={styles.image}
               />
               <View style={styles.detailscontent}>
-                <Text style={styles.name} numberOfLines={1}>{saveProfile?.dharmshalaName || "NA"}</Text>
-                <Text style={styles.text} numberOfLines={1}>City: {saveProfile?.city || "NA"}</Text>
-                <Text style={styles.text} numberOfLines={1}>Sub Caste: {saveProfile?.subCaste || "NA"}</Text>
+                <Text style={styles.name} numberOfLines={1}>{saveProfile?.dharmshalaName || 'NA'}</Text>
+                <Text style={styles.text} numberOfLines={1}>City: {saveProfile?.city || 'NA'}</Text>
+                <Text style={styles.text} numberOfLines={1}>Sub Caste: {saveProfile?.subCaste || 'NA'}</Text>
               </View>
             </>
           )}
 
-          {profileType === "Committee" && (
+          {profileType === 'Committee' && (
             <>
               <Image
                 source={
-                  saveProfile?.photoUrl && saveProfile.photoUrl.startsWith("http")
+                  saveProfile?.photoUrl && saveProfile.photoUrl.startsWith('http')
                     ? { uri: saveProfile.photoUrl }
-                    : require("../../Images/NoImage.png")
+                    : require('../../Images/NoImage.png')
                 }
                 style={styles.image}
               />
               <View style={styles.detailscontent}>
-                <Text style={styles.name} numberOfLines={1}>{saveProfile?.committeeTitle || "NA"}</Text>
-                <Text style={styles.text} numberOfLines={1}>{saveProfile?.presidentName || "NA"}</Text>
-                <Text style={styles.text} numberOfLines={1}>City: {saveProfile?.city || "NA"}</Text>
-                <Text style={styles.text} numberOfLines={1}>Sub Caste: {saveProfile?.subCaste || "NA"}</Text>
+                <Text style={styles.name} numberOfLines={1}>{saveProfile?.committeeTitle || 'NA'}</Text>
+                <Text style={styles.text} numberOfLines={1}>{saveProfile?.presidentName || 'NA'}</Text>
+                <Text style={styles.text} numberOfLines={1}>City: {saveProfile?.city || 'NA'}</Text>
+                <Text style={styles.text} numberOfLines={1}>Sub Caste: {saveProfile?.subCaste || 'NA'}</Text>
               </View>
             </>
           )}
@@ -289,10 +288,10 @@ const SavedProfile = ({ navigation }) => {
         <Text
           style={[styles.unsaveText, deletingId === saveProfile?._id && { opacity: 0.5 }]}
           onPress={() => {
-            if (!deletingId) DeleteSaveProfile(saveProfile?._id);
+            if (!deletingId) {DeleteSaveProfile(saveProfile?._id);}
           }}
         >
-          {deletingId === saveProfile?._id ? "Removing..." : "Remove"}
+          {deletingId === saveProfile?._id ? 'Removing...' : 'Remove'}
         </Text>
       </View>
     );
@@ -303,7 +302,7 @@ const SavedProfile = ({ navigation }) => {
       <View style={styles.loaderContainer}>
         <ActivityIndicator size="large" color={Colors.theme_color} />
       </View>
-    ) : null
+    ) : null;
   }
 
   return (
@@ -311,7 +310,7 @@ const SavedProfile = ({ navigation }) => {
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View>
         <View style={Globalstyles.header}>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
               <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
             </TouchableOpacity>
@@ -327,18 +326,18 @@ const SavedProfile = ({ navigation }) => {
               {notificationCount > 0 && (
                 <View
                   style={{
-                    position: "absolute",
+                    position: 'absolute',
                     right: -5,
                     top: -5,
                     width: SW(16),
                     height: SW(16),
                     borderRadius: SW(16) / 2,
-                    backgroundColor: "red",
-                    justifyContent: "center",
-                    alignItems: "center",
+                    backgroundColor: 'red',
+                    justifyContent: 'center',
+                    alignItems: 'center',
                   }}
                 >
-                  <Text style={{ color: 'white', fontSize: SF(9), fontFamily: "Poppins-Bold" }}>
+                  <Text style={{ color: 'white', fontSize: SF(9), fontFamily: 'Poppins-Bold' }}>
                     {notificationCount}
                   </Text>
                 </View>
@@ -346,30 +345,33 @@ const SavedProfile = ({ navigation }) => {
             </TouchableOpacity>
           </View>
         </View>
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-  <View style={{ flexDirection: 'row' }}>
-    <View style={styles.tabContainer}>
-      {["Biodata", "Pandit", "Jyotish", "Kathavachak", "Dharmshala", "Committee"].map((category, index) => (
-        <TouchableOpacity
-          key={index}
-          style={[styles.tabButton, activeCategory === category && styles.activeTab]}
-          onPress={() => {
-            setActiveCategory(category);
-            setTimeout(() => {
-              flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
-            }, 100);
-          }}
-        >
-          <Text style={[styles.tabText, activeCategory === category && styles.activeTabText]}>{category}</Text>
-        </TouchableOpacity>
-      ))}
-    </View>
-  </View>
-</ScrollView>
+        <FlatList
+          data={['Biodata', 'Pandit', 'Jyotish', 'Kathavachak', 'Dharmshala', 'Committee']}
+          keyExtractor={(item, index) => index.toString()}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={[styles.tabContainer]}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={[styles.tabButton, activeCategory === item && styles.activeTab]}
+              onPress={() => {
+                setActiveCategory(item);
+                setTimeout(() => {
+                  flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+                }, 100);
+              }}
+            >
+              <Text style={[styles.tabText, activeCategory === item && styles.activeTabText]}>
+                {item}
+              </Text>
+            </TouchableOpacity>
+          )}
+        />
+
 
         <HeadingWithViewAll heading={`${activeCategory} SAVED PROFILES`} />
 
-        {loading && ["Biodata", "Pandit", "Jyotish", "Kathavachak", "Dharmshala", "Committee"].includes(activeCategory) ? (
+        {loading && ['Biodata', 'Pandit', 'Jyotish', 'Kathavachak', 'Dharmshala', 'Committee'].includes(activeCategory) ? (
           <ActivityIndicator size="large" color={Colors.theme_color} style={{ marginTop: 20 }} />
         ) : getFilteredData() === null ? (
           <View style={styles.noDataContainer}>
@@ -379,10 +381,10 @@ const SavedProfile = ({ navigation }) => {
               color={Colors.theme_color}
               style={{ marginBottom: SH(10) }}
             />
-            <Text style={[styles.noDataText, { fontFamily: "POppins-Bold", fontSize: SF(16) }]}>
+            <Text style={[styles.noDataText, { fontFamily: 'POppins-Bold', fontSize: SF(16) }]}>
               No {activeCategory} profiles saved yet
             </Text>
-            <Text style={{ color: 'gray', textAlign: 'center', marginTop: SH(5), paddingHorizontal: SW(20), fontFamily: "POppins-Medium" }}>
+            <Text style={{ color: 'gray', textAlign: 'center', marginTop: SH(5), paddingHorizontal: SW(20), fontFamily: 'POppins-Medium' }}>
               Your saved profiles will appear here. You can easily revisit them anytime!
             </Text>
           </View>
@@ -394,7 +396,7 @@ const SavedProfile = ({ navigation }) => {
             keyExtractor={(item) => (item.id ? item.id.toString() : item._id.toString())}
             numColumns={2}
             columnWrapperStyle={styles.row}
-            contentContainerStyle={[styles.ProfileContainer,{paddingBottom: insets.bottom + SH(10), flexGrow: 1}]}
+            contentContainerStyle={[styles.ProfileContainer, { paddingBottom: insets.bottom + SH(10), flexGrow: 1 }]}
             showsVerticalScrollIndicator={false}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

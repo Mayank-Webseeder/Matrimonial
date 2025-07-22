@@ -1,15 +1,15 @@
-import { StyleSheet } from "react-native";
-import { SH, SW, SF } from "../../utils/Dimensions";
-import Colors from "../../utils/Colors";
+import { StyleSheet } from 'react-native';
+import { SH, SW, SF } from '../../utils/Dimensions';
+import Colors from '../../utils/Colors';
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
     image: {
-        width: "100%",
-        height: "105%",
-        resizeMode: "contain",
+        width: '100%',
+        height: '105%',
+        resizeMode: 'contain',
     },
     contentContainer: {
         flex: 1,
@@ -28,17 +28,17 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: SF(24),
-        fontFamily: "Poppins-Bold",
+        fontFamily: 'Poppins-Bold',
         color: Colors.theme_color,
         marginVertical: SH(2),
         marginLeft: 0,
-        textAlign: "center"
+        textAlign: 'center',
     },
     dateText: {
         flex: 1,
         fontSize: SF(16),
-        color:"gray",
-        paddingVertical: SH(7)
+        color:'gray',
+        paddingVertical: SH(7),
     },
     arrow: {
         marginLeft: SW(10),
@@ -50,23 +50,23 @@ const styles = StyleSheet.create({
         paddingVertical: SH(5),
         borderRadius: 50,
         marginTop: SH(20),
-        width: "100%",
-        marginBottom: SH(25)
+        width: '100%',
+        marginBottom: SH(25),
     },
     otpButton: {
         paddingHorizontal: SW(5),
         paddingVertical: SH(5),
-        paddingRight: SW(10)
+        paddingRight: SW(10),
     },
     otpButtonText: {
         color: Colors.theme_color,
-        fontFamily: "Poppins-Bold",
+        fontFamily: 'Poppins-Bold',
         fontSize: SF(13),
     },
     buttonText: {
-        textAlign: "center",
+        textAlign: 'center',
         color: Colors.light,
-        fontFamily: "Poppins-Bold",
+        fontFamily: 'Poppins-Bold',
         fontSize: SF(17),
     },
 
@@ -79,12 +79,12 @@ const styles = StyleSheet.create({
     backArrow: {
         marginHorizontal: SW(14),
         marginVertical: SH(30),
-        marginHorizontal: SW(15)
+        marginHorizontal: SW(15),
     },
     errorText: {
         color: 'red',
         fontSize: SF(13),
-        fontFamily: "Poppins-Regular"
+        fontFamily: 'Poppins-Regular',
     },
     imageContainer: {
         alignItems: 'center',
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
         borderRadius: 75,
     },
     imagePlaceholder: {
-        color: "gray",
+        color: 'gray',
         fontSize: SF(15),
         textDecorationLine: 'underline',
     },
@@ -111,8 +111,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         color: Colors.dark,
         marginBottom: SH(10),
-        flexDirection: "row",
-        alignItems: "center",
+        flexDirection: 'row',
+        alignItems: 'center',
         borderRadius: 5,
     },
     passwordInput: {

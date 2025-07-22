@@ -5,7 +5,7 @@ import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/PhotoGallleryStyle';
 import { useSelector } from 'react-redux';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
+import { SH } from '../../utils/Dimensions';
 const PhotoGallery = () => {
     const insets = useSafeAreaInsets();
     const MyprofileData = useSelector((state) => state.getBiodata);

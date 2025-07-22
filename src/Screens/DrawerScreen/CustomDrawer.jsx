@@ -12,7 +12,6 @@ import { resetsetActivistdata } from '../../ReduxStore/Slices/ActivistSlice';
 import { resetAllBiodata } from '../../ReduxStore/Slices/GetAllBiodataSlice';
 import { reseAllNotification } from '../../ReduxStore/Slices/GetAllNotificationSlice';
 import { resetProfiledata } from '../../ReduxStore/Slices/ProfileSlice';
-import { showMessage } from 'react-native-flash-message';
 
 const CustomDrawer = (props) => {
   const dispatch = useDispatch();
@@ -25,15 +24,15 @@ const CustomDrawer = (props) => {
   const name = ProfileData?.profiledata?.username || 'userName';
   const Id = ProfileData?.profiledata?.userId || 'user id';
   const isBiodataExpired = ProfileData?.profiledata?.serviceSubscriptions?.some(
-    (sub) => sub.serviceType === "Biodata" && sub.status === "Expired"
+    (sub) => sub.serviceType === 'Biodata' && sub.status === 'Expired'
   );
   const showPartnersPreference = isMatrimonial || isBiodataExpired;
   const showInterestedProfile = isMatrimonial && !isBiodataExpired;
 
 
   useEffect(() => {
-    console.log("isBiodataExpired", isBiodataExpired);
-  }, [])
+    console.log('isBiodataExpired', isBiodataExpired);
+  }, []);
 
   const menuItems = [
     ...(showPartnersPreference
@@ -85,10 +84,10 @@ const CustomDrawer = (props) => {
     try {
 
       await AsyncStorage.multiRemove([
-        "userToken",
-        "userId",
-        "profileInterest",
-        "newsEvents",
+        'userToken',
+        'userId',
+        'profileInterest',
+        'newsEvents',
       ]);
 
       dispatch(resetProfiledata());
@@ -100,13 +99,13 @@ const CustomDrawer = (props) => {
       setTimeout(() => {
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
-        console.log("✅ Logged out successfully");
+        console.log('✅ Logged out successfully');
       }, 100);
 
     } catch (error) {
-      console.error("❌ Error during logout:", error);
+      console.error('❌ Error during logout:', error);
     }
   };
 
@@ -114,8 +113,8 @@ const CustomDrawer = (props) => {
     setOpenDropdown((prev) => (prev === dropdown ? null : dropdown));
   };
 
-  const TAB_SCREENS = ["Home", "Pandit", "Matrimonial", "BioData", "EventNews", "MyProfile"];
-  const DRAWER_SCREENS = ["MainPartnerPrefrence", "Interested Profile", "Saved Profile", "Dharmshala", "Committee", "Activist", "AdvertiseWithUs", "SuccessStories", "FeedBack", "SubscriptionHistory", "AboutUs", "PrivacyPolicy", "TermsConditions", "SubscriptionPolicy"];
+  const TAB_SCREENS = ['Home', 'Pandit', 'Matrimonial', 'BioData', 'EventNews', 'MyProfile'];
+  const DRAWER_SCREENS = ['MainPartnerPrefrence', 'Interested Profile', 'Saved Profile', 'Dharmshala', 'Committee', 'Activist', 'AdvertiseWithUs', 'SuccessStories', 'FeedBack', 'SubscriptionHistory', 'AboutUs', 'PrivacyPolicy', 'TermsConditions', 'SubscriptionPolicy'];
 
   const handleNavigation = (screen) => {
     setOpenDropdown(null);
@@ -126,8 +125,8 @@ const CustomDrawer = (props) => {
     }
 
     if (TAB_SCREENS.includes(screen)) {
-      navigation.navigate("MainApp", {
-        screen: "Tabs",
+      navigation.navigate('MainApp', {
+        screen: 'Tabs',
         params: { screen },
       });
     }
@@ -178,7 +177,7 @@ const CustomDrawer = (props) => {
 
       />
       <View style={styles.header}>
-        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-evenly", width: "100%" }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%' }}>
 
           {/* Profile Image on the Left */}
           <Image
@@ -189,10 +188,10 @@ const CustomDrawer = (props) => {
             <Text style={styles.name}>{name}</Text>
             <Text style={styles.idText}>ID Number: {Id}</Text>
           </View>
-          <TouchableOpacity onPress={() => navigation.navigate("MainApp", {
-            screen: "Tabs",
+          <TouchableOpacity onPress={() => navigation.navigate('MainApp', {
+            screen: 'Tabs',
             params: {
-              screen: "MyProfile",
+              screen: 'MyProfile',
             },
           })}>
             <AntDesign name="edit" size={20} color={Colors.theme_color} />
@@ -362,15 +361,15 @@ const styles = StyleSheet.create({
     paddingVertical: SH(10),
     borderBottomWidth: 0,
     position: 'relative',
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
     paddingHorizontal: SW(10),
-    marginLeft: -SW(10)
+    marginLeft: -SW(10),
   },
   profileImage: {
     width: SW(40),
     height: SH(40),
     borderRadius: 20,
-    resizeMode: "cover",
+    resizeMode: 'cover',
   },
   name: {
     fontSize: SF(13),
@@ -408,7 +407,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light_theme,
     marginVertical: SH(6),
     borderBottomColor: '#dbc5cd',
-    borderBottomWidth: 1
+    borderBottomWidth: 1,
   },
   subOptionText: {
     fontSize: SF(13),
@@ -416,8 +415,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
   },
   logoutContainer: {
-    display: "flex",
-    flexDirection: "row",
+    display: 'flex',
+    flexDirection: 'row',
     marginVertical: SH(20),
     marginHorizontal: SW(10),
   },
@@ -482,7 +481,7 @@ const styles = StyleSheet.create({
     fontSize: SF(13),
     color: Colors.light,
     textAlign: 'center',
-  }
+  },
 });
 
 export default CustomDrawer;

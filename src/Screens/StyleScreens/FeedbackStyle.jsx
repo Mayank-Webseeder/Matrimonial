@@ -1,12 +1,12 @@
-import { StyleSheet } from "react-native";
-import { SH, SW, SF } from "../../utils/Dimensions";
-import Colors from "../../utils/Colors";
+import { StyleSheet } from 'react-native';
+import { SH, SW, SF } from '../../utils/Dimensions';
+import Colors from '../../utils/Colors';
 
 const styles = StyleSheet.create({
 
   Text: {
     fontSize: SF(22),
-    fontFamily: "Poppins-Bold",
+    fontFamily: 'Poppins-Bold',
     color: Colors.theme_color,
     textAlign: 'center',
     marginBottom: SH(5),
@@ -14,9 +14,9 @@ const styles = StyleSheet.create({
 
   description: {
     fontSize: SF(14),
-    color: "gray",
-    fontFamily: "Poppins-Regular",
-    textAlign: "center",
+    color: 'gray',
+    fontFamily: 'Poppins-Regular',
+    textAlign: 'center',
     marginTop: SH(10),
 
   },
@@ -49,25 +49,25 @@ const styles = StyleSheet.create({
   submitText: {
     color: 'white',
     fontSize: SF(15),
-    fontFamily: "Poppins-Medium"
+    fontFamily: 'Poppins-Medium',
   },
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: SH(10),
-    justifyContent: "center"
+    justifyContent: 'center',
   },
   star: {
     marginHorizontal: SW(3),
   },
   menuIcon: {
     width: SW(30),
-    height: SH(30)
+    height: SH(30),
   },
   feedBackContainer: {
     paddingHorizontal: SW(10),
-    paddingVertical: SH(10)
-  }
+    paddingVertical: SH(10),
+  },
 
 });
 

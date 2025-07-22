@@ -5,12 +5,12 @@ import styles from '../StyleScreens/IntrestedProfileStyle';
 import Colors from '../../utils/Colors';
 import Globalstyles from '../../utils/GlobalCss';
 import axios from 'axios';
-import { DELETE_SEND_REQUEST, RECEIVER_REQUESTS, SENDER_REQUESTS } from '../../utils/BaseUrl';
+import {RECEIVER_REQUESTS, SENDER_REQUESTS } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import profileImage from '../../Images/NoImage.png';
 import { useFocusEffect } from '@react-navigation/native';
 import { SF, SH, SW } from '../../utils/Dimensions';
-import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -32,32 +32,32 @@ const IntrestedProfile = ({ navigation }) => {
 
   const fetchData = async (url, setData) => {
     try {
-      setData([])
+      setData([]);
       setIsLoading(true);
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) throw new Error('No token found');
+      if (!token) {throw new Error('No token found');}
 
       const headers = { 'Authorization': `Bearer ${token}` };
       const response = await axios.get(url, { headers });
-      console.log("response.data.data", JSON.stringify(response.data.data));
+      console.log('response.data.data', JSON.stringify(response.data.data));
       setData(response.data.data || []);
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching data:", errorMsg);
-  
+      console.error('Error fetching data:', errorMsg);
+
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
-  
+
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
-      } 
+      }
     } finally {
       setIsLoading(false);
     }
@@ -74,7 +74,7 @@ const IntrestedProfile = ({ navigation }) => {
     <SkeletonPlaceholder>
       <View style={{ margin: SH(20) }}>
         {[...Array(4)].map((_, index) => (
-          <View key={index} style={{ flexDirection: "row", marginBottom: SH(20) }}>
+          <View key={index} style={{ flexDirection: 'row', marginBottom: SH(20) }}>
             <View style={{ width: SW(80), height: SH(80), borderRadius: 40, marginRight: SW(10) }} />
             <View>
               <View style={{ width: SW(150), height: SH(20), borderRadius: 4 }} />
@@ -97,7 +97,7 @@ const IntrestedProfile = ({ navigation }) => {
       <TouchableOpacity
         style={styles.card}
         onPress={() => {
-          console.log("userData", userData);
+          console.log('userData', userData);
 
           if (isSent) {
             const formattedUserData = {
@@ -107,7 +107,7 @@ const IntrestedProfile = ({ navigation }) => {
               isBlur: item?.toUserBioData?.isBlur,
             };
 
-            navigation.navigate("MatrimonyPeopleProfile", {
+            navigation.navigate('MatrimonyPeopleProfile', {
               // userDetails: formattedUserData,
               userId: formattedUserData?.userId,
               // isSaved: formattedUserData?.isSaved,
@@ -117,7 +117,7 @@ const IntrestedProfile = ({ navigation }) => {
               // requestId:item?.requestId
             });
           } else {
-            navigation.navigate("IntrestReceivedProfilePage", {
+            navigation.navigate('IntrestReceivedProfilePage', {
               userId: userData?.userId,
               // biodata: userData,
               // requestId: item?.requestId,
@@ -156,7 +156,7 @@ const IntrestedProfile = ({ navigation }) => {
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color={Colors.theme_color} />
       </View>
     );
@@ -167,7 +167,7 @@ const IntrestedProfile = ({ navigation }) => {
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
 
       <View style={Globalstyles.header}>
-        <View style={{ flexDirection: 'row', alignItems: "center" }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons name={'arrow-back-ios-new'} size={25} color={Colors.theme_color} />
           </TouchableOpacity>
@@ -196,7 +196,7 @@ const IntrestedProfile = ({ navigation }) => {
         }
         ListEmptyComponent={
           isLoading ? renderSkeleton() : (
-            <View style={{ alignItems: "center", marginTop: SH(50) }}>
+            <View style={{ alignItems: 'center', marginTop: SH(50) }}>
               {
                 activeButton === 1 ? (
                   <MaterialCommunityIcons
@@ -212,10 +212,10 @@ const IntrestedProfile = ({ navigation }) => {
                   />
                 )
               }
-              <Text style={[styles.noDataText, { fontFamily: "Poppins-Medium", fontSize: SF(17) }]}>
+              <Text style={[styles.noDataText, { fontFamily: 'Poppins-Medium', fontSize: SF(17) }]}>
                 {activeButton === 1 ? 'No Interests Sent' : 'No Interests Received'}
               </Text>
-              <Text style={{ color: 'gray', textAlign: 'center', paddingHorizontal: SH(20), fontFamily: "Poppins-Medium" }}>
+              <Text style={{ color: 'gray', textAlign: 'center', paddingHorizontal: SH(20), fontFamily: 'Poppins-Medium' }}>
                 {activeButton === 1
                   ? "Profiles you've shown interest in will appear here."
                   : "You'll see profiles here who are interested in you."}

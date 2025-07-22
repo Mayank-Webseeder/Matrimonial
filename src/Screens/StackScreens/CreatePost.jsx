@@ -1,5 +1,5 @@
-import { Text, View, TouchableOpacity, Image, TextInput, StatusBar, ScrollView, ActivityIndicator, SafeAreaView } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import { Text, View, TouchableOpacity, Image, TextInput, StatusBar, ScrollView, ActivityIndicator, SafeAreaView, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from '../StyleScreens/CreatePostStyle';
@@ -15,14 +15,14 @@ import { launchImageLibrary } from 'react-native-image-picker';
 
 const CreatePost = ({ navigation, route }) => {
     const MyActivistProfile = useSelector((state) => state.activist.activist_data);
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("")
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
     const [photos, setPhotos] = useState([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        console.log("MyActivistProfile", MyActivistProfile)
-    })
+        console.log('MyActivistProfile', MyActivistProfile);
+    });
 
     const pickerOptions = {
         selectionLimit: 4,
@@ -35,7 +35,7 @@ const CreatePost = ({ navigation, route }) => {
 
     const handleImageUpload = () => {
         launchImageLibrary(pickerOptions, (response) => {
-            if (response.didCancel) return;
+            if (response.didCancel) {return;}
             if (response.errorCode) {
                 console.log('ImagePicker Error:', response.errorMessage);
                 return;
@@ -52,15 +52,15 @@ const CreatePost = ({ navigation, route }) => {
         try {
             setLoading(true);
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) throw new Error('No token found');
+            if (!token) {throw new Error('No token found');}
 
             const payload = {
                 title: title,
                 description: description,
-                images: photos
+                images: photos,
             };
 
-            console.log("Payload:", payload);
+            console.log('Payload:', payload);
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -72,44 +72,44 @@ const CreatePost = ({ navigation, route }) => {
             console.log('Submitting event news to:', API_URL);
 
             const response = await axios.post(API_URL, payload, { headers });
-            console.log("Event response:", JSON.stringify(response.data));
+            console.log('Event response:', JSON.stringify(response.data));
 
             if (response.status === 200 && response.data.status === true) {
                 showMessage({
                     type: 'success',
                     message: 'Success',
                     description: response.data.message || 'Your event has been created successfully!',
-                    duarion: 7000
+                    duarion: 7000,
                 });
-                navigation.navigate("MainApp", {
-                    screen: "Tabs",
-                    params: { screen: "EventNews" }
+                navigation.navigate('MainApp', {
+                    screen: 'Tabs',
+                    params: { screen: 'EventNews' },
                 });
             } else {
-                throw new Error(response.data.message || "Unexpected response from server");
+                throw new Error(response.data.message || 'Unexpected response from server');
             }
 
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error fetching eventnews :", errorMsg);
+            console.error('Error fetching eventnews :', errorMsg);
             showMessage({
                 type: 'danger',
                 message: 'Error',
                 description: errorMsg,
-                icon: "danger",
-                duarion: 7000
+                icon: 'danger',
+                duarion: 7000,
             });
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
 
@@ -127,11 +127,11 @@ const CreatePost = ({ navigation, route }) => {
             />
 
             <View style={Globalstyles.header}>
-                <View style={{ flexDirection: 'row', alignItems: "center" }}>
-                    <TouchableOpacity onPress={() => navigation.navigate("MainApp", {
-                        screen: "Tabs",
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <TouchableOpacity onPress={() => navigation.navigate('MainApp', {
+                        screen: 'Tabs',
                         params: {
-                            screen: "EventNews",
+                            screen: 'EventNews',
                         },
                     })}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
@@ -174,21 +174,23 @@ const CreatePost = ({ navigation, route }) => {
                     {/* <AntDesign name={'videocamera'} size={25} color={Colors.theme_color} /> */}
                 </View>
             </View>
-            {photos.length > 0 && (
+            {Array.isArray(photos) && photos.length > 0 && (
                 <View style={styles.photosContainer}>
                     <Text style={Globalstyles.title}>Uploaded Photos:</Text>
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            {photos.map((photo, index) => (
-                                <Image
-                                    key={index}
-                                    source={{ uri: `data:image/png;base64,${photo}` }}
-                                    style={styles.photo}
-                                    onError={(e) => console.log("Image Load Error:", e.nativeEvent.error)}
-                                />
-                            ))}
-                        </View>
-                    </ScrollView>
+                    <FlatList
+                        data={photos}
+                        keyExtractor={(_, index) => index.toString()}
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        renderItem={({ item }) => (
+                            <Image
+                                source={{ uri: `data:image/png;base64,${item}` }}
+                                style={styles.photo}
+                                onError={(e) => console.log('Image Load Error:', e.nativeEvent.error)}
+                            />
+                        )}
+                        contentContainerStyle={{ alignItems: 'center' }}
+                    />
                 </View>
             )}
 
@@ -204,7 +206,7 @@ const CreatePost = ({ navigation, route }) => {
                 )}
             </TouchableOpacity>
         </SafeAreaView>
-    )
-}
+    );
+};
 
-export default CreatePost
+export default CreatePost;

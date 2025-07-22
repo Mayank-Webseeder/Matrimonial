@@ -1,11 +1,11 @@
-import { StyleSheet } from "react-native";
-import { SH, SW, SF } from "../../utils/Dimensions";
+import { StyleSheet } from 'react-native';
+import { SH, SW, SF } from '../../utils/Dimensions';
 const styles = StyleSheet.create({
 
   FlexContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between"
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   section: {
     marginBottom: SH(15),
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     paddingVertical: SH(10),
   },
   reviewRating: {
-    alignSelf: "flex-start"
+    alignSelf: 'flex-start',
   },
   reviewName: {
     fontSize: SF(12),
@@ -43,10 +43,10 @@ const styles = StyleSheet.create({
   },
   reviewText: {
     fontSize: SF(11),
-    fontFamily: "Poppins-Regular",
-    flexWrap: "wrap",
+    fontFamily: 'Poppins-Regular',
+    flexWrap: 'wrap',
     flexShrink: 1,
-    width: "100%",
+    width: '100%',
   },
 });
 export default styles;

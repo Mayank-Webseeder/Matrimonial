@@ -46,12 +46,12 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: SF(18),
-        fontFamily: "Poppins-Bold",
+        fontFamily: 'Poppins-Bold',
         marginBottom: SH(5),
     },
     description: {
         fontSize: SF(15),
         color: '#333',
-        fontFamily: "Poppins-Regular"
+        fontFamily: 'Poppins-Regular',
     },
 });

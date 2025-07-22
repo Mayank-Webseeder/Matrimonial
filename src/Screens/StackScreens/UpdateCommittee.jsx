@@ -7,7 +7,7 @@ import Globalstyles from '../../utils/GlobalCss';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { SH, SW, SF } from '../../utils/Dimensions'
+import { SH, SW, SF } from '../../utils/Dimensions';
 import { UPDATE_COMMITTEE } from '../../utils/BaseUrl';
 import { CityData, subCasteOptions } from '../../DummyData/DropdownData';
 import { showMessage } from 'react-native-flash-message';
@@ -29,7 +29,7 @@ const UpdateCommittee = ({ navigation, route }) => {
         city: '',
         area: '',
         photoUrl: '',
-        mobileNo: ''
+        mobileNo: '',
     });
 
     const handleCityInputChange = (text) => {
@@ -71,28 +71,28 @@ const UpdateCommittee = ({ navigation, route }) => {
     // Function to Convert Image to Base64
     const convertToBase64 = async (imageUri) => {
         try {
-            if (!imageUri) return null;
-            if (imageUri.startsWith("data:image")) {
+            if (!imageUri) {return null;}
+            if (imageUri.startsWith('data:image')) {
                 return imageUri;
             }
 
             const response = await fetch(imageUri);
             const blob = await response.blob();
-            const mimeType = blob.type || "image/jpeg";
+            const mimeType = blob.type || 'image/jpeg';
 
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onloadend = () => {
                     if (reader.result) {
-                        resolve(`data:${mimeType};base64,${reader.result.split(",")[1]}`);
+                        resolve(`data:${mimeType};base64,${reader.result.split(',')[1]}`);
                     } else {
-                        reject("Error reading Base64 data.");
+                        reject('Error reading Base64 data.');
                     }
                 };
                 reader.readAsDataURL(blob);
             });
         } catch (error) {
-            console.error("Error converting image to Base64:", error);
+            console.error('Error converting image to Base64:', error);
             return null;
         }
     };
@@ -107,7 +107,7 @@ const UpdateCommittee = ({ navigation, route }) => {
                 subCaste: committeeData?.subCaste || '',
                 city: committeeData?.city || '',
                 area: committeeData?.area || '',
-                mobileNo: committeeData?.mobileNo || ''
+                mobileNo: committeeData?.mobileNo || '',
             }));
 
             // Convert Existing Image to Base64
@@ -142,11 +142,11 @@ const UpdateCommittee = ({ navigation, route }) => {
             .then(image => {
                 const base64Image = `data:${image.mime};base64,${image.data}`;
                 setCommitteeData(prev => ({ ...prev, photoUrl: base64Image }));
-                console.log("Base64 Image Selected:", base64Image);
+                console.log('Base64 Image Selected:', base64Image);
             })
             .catch(error => {
-                if (error.code !== "E_PICKER_CANCELLED") {
-                    console.error("Image Picking Error:", error);
+                if (error.code !== 'E_PICKER_CANCELLED') {
+                    console.error('Image Picking Error:', error);
                 }
             });
     };
@@ -154,53 +154,53 @@ const UpdateCommittee = ({ navigation, route }) => {
     const handleCommitteeUpdate = async () => {
         try {
             setIsLoading(true);
-            const token = await AsyncStorage.getItem("userToken");
+            const token = await AsyncStorage.getItem('userToken');
 
             if (!token) {
-                showMessage({ type: "danger", message: "Authorization token is missing.", duration: 5000 });
+                showMessage({ type: 'danger', message: 'Authorization token is missing.', duration: 5000 });
                 return;
             }
 
             const payload = { ...CommitteeData };
 
-            if (!payload.photoUrl?.startsWith("data:image/")) {
+            if (!payload.photoUrl?.startsWith('data:image/')) {
                 delete payload.photoUrl;
             }
 
             const apiUrl = `${UPDATE_COMMITTEE}/${committeeData._id}`;
-            console.log("API URL being hit:", apiUrl);
-            console.log("Payload being sent:", JSON.stringify(payload, null, 2));
+            console.log('API URL being hit:', apiUrl);
+            console.log('Payload being sent:', JSON.stringify(payload, null, 2));
 
             const headers = {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             };
 
             const response = await axios.patch(apiUrl, payload, { headers });
 
             if (response.status === 200) {
-                console.log("response", JSON.stringify(response.data));
-                showMessage({ type: "success", message: "Committee Updated Successfully", icon: "success" });
+                console.log('response', JSON.stringify(response.data));
+                showMessage({ type: 'success', message: 'Committee Updated Successfully', icon: 'success' });
                 navigation.navigate('MainApp', {
                     screen: 'Committee',
                 });
             }
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error updating committee:", errorMsg);
-            showMessage({ type: "danger", message: errorMsg, icon: "danger", duration: 5000 });
+            console.error('Error updating committee:', errorMsg);
+            showMessage({ type: 'danger', message: errorMsg, icon: 'danger', duration: 5000 });
 
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
         } finally {
@@ -213,7 +213,7 @@ const UpdateCommittee = ({ navigation, route }) => {
         <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
             <View style={Globalstyles.header}>
-                <View style={{ flexDirection: 'row', alignItems: "center" }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
@@ -260,7 +260,7 @@ const UpdateCommittee = ({ navigation, route }) => {
                             labelField="label"
                             valueField="value"
                             value={CommitteeData?.subCaste}
-                            onChange={(text) => handleInputChange("subCaste", text.value)}
+                            onChange={(text) => handleInputChange('subCaste', text.value)}
                             placeholder="Select Your subCaste"
                             placeholderStyle={{ color: '#E7E7E7' }}
                             autoScroll={false}
@@ -301,10 +301,10 @@ const UpdateCommittee = ({ navigation, route }) => {
                             textContentType="none"
                         />
 
-                        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginVertical: SH(10) }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: SH(10) }}>
                             <Text style={Globalstyles.title}>Upload President Image</Text>
                             <TouchableOpacity style={styles.uploadButton} onPress={handleImagePick}>
-                                <Text style={styles.uploadButtonText}>{CommitteeData.photoUrl ? "Change Image" : "Upload Image"}</Text>
+                                <Text style={styles.uploadButtonText}>{CommitteeData.photoUrl ? 'Change Image' : 'Upload Image'}</Text>
                             </TouchableOpacity>
                         </View>
                         {CommitteeData?.photoUrl ? (
@@ -318,7 +318,7 @@ const UpdateCommittee = ({ navigation, route }) => {
                         <TextInput
                             style={Globalstyles.input}
                             placeholder="Enter contact number"
-                            keyboardType='phone-pad'
+                            keyboardType="phone-pad"
                             maxLength={10}
                             placeholderTextColor={Colors.gray}
                             autoComplete="off"
@@ -338,15 +338,15 @@ const UpdateCommittee = ({ navigation, route }) => {
 const styles = StyleSheet.create({
     title: {
         fontSize: SF(15),
-        fontFamily: "Poppins-Medium",
+        fontFamily: 'Poppins-Medium',
         color: Colors.theme_color,
         marginBottom: SH(20),
     },
-    uploadButton: { backgroundColor: Colors.theme_color, paddingHorizontal: SW(5), borderRadius: 5, alignItems: 'center', alignSelf: "flex-end", paddingVertical: SH(2) },
-    uploadButtonText: { color: Colors.light, fontSize: SF(11), fontFamily: "Poppins-Medium", textAlign: "center" },
+    uploadButton: { backgroundColor: Colors.theme_color, paddingHorizontal: SW(5), borderRadius: 5, alignItems: 'center', alignSelf: 'flex-end', paddingVertical: SH(2) },
+    uploadButtonText: { color: Colors.light, fontSize: SF(11), fontFamily: 'Poppins-Medium', textAlign: 'center' },
     imagePreviewContainer: { width: SW(70), height: SH(70), borderRadius: 10, marginVertical: SH(10) },
     submitButton: { backgroundColor: Colors.theme_color, paddingVertical: SH(5), borderRadius: 5, alignItems: 'center', marginTop: SH(20) },
-    submitButtonText: { color: Colors.light, fontSize: SF(15), fontWeight: 'Poppins-Bold', textTransform: "capitalize" }
+    submitButtonText: { color: Colors.light, fontSize: SF(15), fontWeight: 'Poppins-Bold', textTransform: 'capitalize' },
 });
 
 export default UpdateCommittee;

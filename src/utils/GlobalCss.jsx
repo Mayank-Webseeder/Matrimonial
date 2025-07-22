@@ -1,12 +1,12 @@
-import { Platform, StyleSheet } from "react-native";
-import { SH, SW, SF } from "./Dimensions";
-import Colors from "./Colors";
+import { Platform, StyleSheet } from 'react-native';
+import { SH, SW, SF } from './Dimensions';
+import Colors from './Colors';
 
 const Globalstyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.light,
-    paddingHorizontal: SW(5)
+    paddingHorizontal: SW(5),
   },
   header: {
     flexDirection: 'row',
@@ -16,19 +16,19 @@ const Globalstyles = StyleSheet.create({
     marginVertical: SH(35),
     marginBottom: SH(5),
     backgroundColor: '#f5edf0',
-    paddingHorizontal: SW(5)
+    paddingHorizontal: SW(5),
   },
   headerText: {
     color: Colors.theme_color,
     fontSize: SF(15),
-    fontFamily: "Poppins-Regular",
+    fontFamily: 'Poppins-Regular',
     marginHorizontal: SW(10),
   },
   suggestions: {
     padding: SW(10),
     backgroundColor: Colors.light,
     borderRadius: 8,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 3.84,
@@ -36,9 +36,9 @@ const Globalstyles = StyleSheet.create({
     marginVertical: SH(5),
   },
   listItem: {
-    fontFamily: "Poppins-Medium",
+    fontFamily: 'Poppins-Medium',
     fontSize: SF(14),
-    padding: SW(5)
+    padding: SW(5),
   },
   input: {
     borderColor: '#ccc',
@@ -48,7 +48,7 @@ const Globalstyles = StyleSheet.create({
     paddingVertical: SH(12),
     borderRadius: 5,
     color: Colors.dark,
-    letterSpacing: 0, textAlign: "left"
+    letterSpacing: 0, textAlign: 'left',
   },
   textInput: {
     height: SH(100),
@@ -57,10 +57,10 @@ const Globalstyles = StyleSheet.create({
     marginBottom: SH(5),
     paddingHorizontal: SW(10),
     borderRadius: 5,
-    color: Colors.dark
+    color: Colors.dark,
   },
   title: {
-    fontFamily: "Poppins-Medium",
+    fontFamily: 'Poppins-Medium',
     fontSize: SF(15),
   },
   form: {
@@ -75,9 +75,9 @@ const Globalstyles = StyleSheet.create({
   },
   input1: {
     color: Colors.dark,
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center"
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   inputContainer: {
      // borderColor: Colors.theme_color,
@@ -90,20 +90,20 @@ const Globalstyles = StyleSheet.create({
         borderWidth: 1,
         color: Colors.dark,
         marginBottom: SH(10),
-        flexDirection: "row",
-        alignItems: "center",
+        flexDirection: 'row',
+        alignItems: 'center',
         borderRadius: 5,
     // paddingVertical: SH(7),
   },
   bottomImage: {
     paddingBottom: SH(30),
-    paddingTop: SH(10)
+    paddingTop: SH(10),
   },
   sliderContainer: {
-    marginBottom: SH(10)
+    marginBottom: SH(10),
   },
   sliderImage: {
-    width: "100%",
+    width: '100%',
     height: SH(180),
     resizeMode: 'cover',
   },
@@ -113,14 +113,14 @@ const Globalstyles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: '#ccc',
     marginHorizontal: SH(2),
-    marginTop: SW(100)
+    marginTop: SW(100),
   },
   activeDot: {
     width: SW(25),
     height: SH(5),
     borderRadius: 4,
     backgroundColor: Colors.theme_color,
-    marginTop: SW(100)
+    marginTop: SW(100),
   },
   dropdown: {
     borderColor: '#ccc',
@@ -129,11 +129,11 @@ const Globalstyles = StyleSheet.create({
     paddingHorizontal: SW(10),
     borderRadius: 5,
     color: Colors.dark,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
 
-})
+});
 
 export default Globalstyles;

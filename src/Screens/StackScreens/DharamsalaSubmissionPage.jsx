@@ -10,7 +10,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import { CREATE_DHARAMSALA } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import _ from "lodash";
+import _ from 'lodash';
 import { showMessage } from 'react-native-flash-message';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { Dropdown } from 'react-native-element-dropdown';
@@ -31,7 +31,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
         city: '',
         description: '',
         images: [],
-        mobileNo: ''
+        mobileNo: '',
     });
 
     const showToast = _.debounce((type, message, description, icon) => {
@@ -40,7 +40,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
             message,
             description,
             duarion: 7000,
-            icon
+            icon,
         });
     }, 7000);
 
@@ -90,7 +90,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
 
     const handleImageUpload = () => {
         launchImageLibrary(pickerOptions, (response) => {
-            if (response.didCancel) return;
+            if (response.didCancel) {return;}
             if (response.errorCode) {
                 console.log('ImagePicker Error:', response.errorMessage);
                 return;
@@ -109,7 +109,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
         try {
             const base64Images = await Promise.all(
                 images.map(async (image) => {
-                    if (!image.uri) return null;
+                    if (!image.uri) {return null;}
 
                     const response = await fetch(image.uri);
                     const blob = await response.blob();
@@ -124,26 +124,26 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
 
             return base64Images.filter(Boolean); // Remove any null values
         } catch (error) {
-            console.error("Error converting image to Base64:", error);
+            console.error('Error converting image to Base64:', error);
             return [];
         }
     };
 
     const constructDharamsalaPayload = async (DharamsalaData, isNew = false) => {
-        const keys = ["dharmshalaName", "subCaste", "city", "description", "images", "mobileNo"];
+        const keys = ['dharmshalaName', 'subCaste', 'city', 'description', 'images', 'mobileNo'];
         const payload = {};
 
         for (const key of keys) {
-            if (DharamsalaData[key] !== undefined && DharamsalaData[key] !== "") {
+            if (DharamsalaData[key] !== undefined && DharamsalaData[key] !== '') {
                 payload[key] = DharamsalaData[key];
             } else if (isNew) {
-                payload[key] = "";
+                payload[key] = '';
             }
         }
 
         if (DharamsalaData.images.length > 0) {
             payload.images = await convertToBase64(DharamsalaData.images);
-            console.log("Converted Base64 Images:", payload.images);
+            console.log('Converted Base64 Images:', payload.images);
         }
 
         return payload;
@@ -152,25 +152,25 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
     const validateFields = () => {
         const newErrors = {};
         if (!DharamsalaData.mobileNo) {
-            newErrors.mobileNo = "Mobile number is required.";
+            newErrors.mobileNo = 'Mobile number is required.';
         } else if (!/^\d{10}$/.test(DharamsalaData.mobileNo)) {
-            newErrors.mobileNo = "Enter a valid 10-digit mobile number.";
+            newErrors.mobileNo = 'Enter a valid 10-digit mobile number.';
         }
         if (!DharamsalaData.dharmshalaName) {
-            newErrors.dharmshalaName = "Dharmshala Name is required.";
+            newErrors.dharmshalaName = 'Dharmshala Name is required.';
         } else if (!/^[A-Za-z\s]+$/.test(DharamsalaData.dharmshalaName)) {
-            newErrors.dharmshalaName = "Dharmshala Name must contain only letters.";
+            newErrors.dharmshalaName = 'Dharmshala Name must contain only letters.';
         } else if (DharamsalaData.dharmshalaName.length > 50) {
-            newErrors.dharmshalaName = "Dharmshala Name cannot exceed 50 characters.";
+            newErrors.dharmshalaName = 'Dharmshala Name cannot exceed 50 characters.';
         }
         if (!DharamsalaData.city?.trim()) {
-            newErrors.city = "City is required.";
+            newErrors.city = 'City is required.';
         }
         if (!DharamsalaData.subCaste?.trim()) {
-            newErrors.subCaste = "Sub caste is required.";
+            newErrors.subCaste = 'Sub caste is required.';
         }
         if (!DharamsalaData.images || DharamsalaData.images.length === 0) {
-            newErrors.images = "At least one image is required.";
+            newErrors.images = 'At least one image is required.';
         }
 
         setErrors(newErrors);
@@ -181,56 +181,56 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
 
     const handleCreateDharamSala = async () => {
         try {
-            if (!validateFields()) return;
+            if (!validateFields()) {return;}
             setIsLoading(true);
-            const token = await AsyncStorage.getItem("userToken");
+            const token = await AsyncStorage.getItem('userToken');
 
             if (!token) {
-                showToast("danger", "Error", "Authorization token is missing.");
+                showToast('danger', 'Error', 'Authorization token is missing.');
                 return;
             }
 
             const headers = {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             };
 
             const payload = await constructDharamsalaPayload(DharamsalaData);
-            console.log("Payload:", payload);
+            console.log('Payload:', payload);
 
             const response = await axios.post(CREATE_DHARAMSALA, payload, { headers });
-            console.log("Dharamsala create response:", JSON.stringify(response.data));
+            console.log('Dharamsala create response:', JSON.stringify(response.data));
 
             if (response.status === 200 && response.data.status === true) {
-                console.log("Created Data:", JSON.stringify(response.data.data));
+                console.log('Created Data:', JSON.stringify(response.data.data));
 
                 showToast(
-                    "success",
-                    "Dharamsala Created Successfully",
-                    response.data.message || "Your changes have been saved!",
-                    "success"
+                    'success',
+                    'Dharamsala Created Successfully',
+                    response.data.message || 'Your changes have been saved!',
+                    'success'
                 );
                 navigation.navigate('MainApp', {
                     screen: 'Dharmshala',
                 });
             } else {
-                throw new Error(response.data.message || "Something went wrong");
+                throw new Error(response.data.message || 'Something went wrong');
             }
         } catch (error) {
-            const errorMsg = error.response?.data?.message || error.message; c
-            console.error("Error fetching biodata:", errorMsg);
-            showToast("danger", "Error", errorMsg, "danger");
+            const errorMsg = error.response?.data?.message || error.message; c;
+            console.error('Error fetching biodata:', errorMsg);
+            showToast('danger', 'Error', errorMsg, 'danger');
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
         } finally {
@@ -261,7 +261,8 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
-                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+                // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+                >
                 <ScrollView contentContainerStyle={[Globalstyles.form, { paddingBottom: insets.bottom + SH(10), flexGrow: 1 }]} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
                     <View>
                         <Text style={styles.title}>Upload Your Dharamsala Details</Text>
@@ -300,7 +301,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                             labelField="label"
                             valueField="value"
                             value={DharamsalaData?.subCaste}
-                            onChange={(text) => handleInputChange("subCaste", text.value)}
+                            onChange={(text) => handleInputChange('subCaste', text.value)}
                             placeholder="Select Your subCaste"
                             placeholderStyle={{ color: '#E7E7E7' }}
                             autoScroll={false}
@@ -366,7 +367,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                         <Text style={Globalstyles.title}>Description</Text>
                         <TextInput
                             style={[
-                                Globalstyles.input, styles.textArea
+                                Globalstyles.input, styles.textArea,
                             ]}
                             placeholder="Enter Description"
                             placeholderTextColor={Colors.gray}
@@ -377,32 +378,35 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                             importantForAutofill="no"
                             autoCorrect={false}
                         />
-                        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                             <Text style={Globalstyles.title}>
-                                Upload Images (Max Limit 4) <Entypo name={"star"} color={"red"} size={12} />
+                                Upload Images (Max Limit 4) <Entypo name={'star'} color={'red'} size={12} />
                             </Text>
                             <TouchableOpacity style={styles.uploadButton} onPress={handleImageUpload}>
                                 <Text style={styles.uploadButtonText}>
-                                    {DharamsalaData.images?.length > 0 ? "Change Image" : "Upload Image"}
+                                    {DharamsalaData.images?.length > 0 ? 'Change Image' : 'Upload Image'}
                                 </Text>
                             </TouchableOpacity>
                         </View>
 
-                        {DharamsalaData.images?.length > 0 && (
-                            <View style={styles.imagePreview}>
-                                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                        {DharamsalaData.images.map((photo, index) => (
-                                            <Image
-                                                key={index}
-                                                source={{ uri: photo?.uri || photo }}
-                                                style={styles.photo}
-                                            />
-                                        ))}
-                                    </View>
-                                </ScrollView>
-                            </View>
-                        )}
+                       {DharamsalaData.images?.length > 0 && (
+  <View style={styles.imagePreview}>
+    <FlatList
+      data={DharamsalaData.images}
+      keyExtractor={(item, index) => index.toString()}
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      renderItem={({ item }) => (
+        <Image
+          source={{ uri: item?.uri || item }}
+          style={styles.photo}
+        />
+      )}
+      contentContainerStyle={{ flexDirection: 'row', alignItems: 'center' }}
+    />
+  </View>
+)}
+
                         {errors.images && (
                             <Text style={styles.errorText}>{errors.images}</Text>
                         )}
@@ -429,11 +433,11 @@ const styles = StyleSheet.create({
     errorText: {
         color: 'red',
         fontSize: SF(13),
-        fontFamily: "Poppins-Regular"
+        fontFamily: 'Poppins-Regular',
     },
     title: {
         fontSize: SF(15),
-        fontFamily: "Poppins-Medium",
+        fontFamily: 'Poppins-Medium',
         color: Colors.theme_color,
         marginBottom: SH(20),
 
@@ -448,12 +452,12 @@ const styles = StyleSheet.create({
         paddingVertical: SW(5),
         borderRadius: 5,
         alignItems: 'center',
-        paddingHorizontal: SW(7)
+        paddingHorizontal: SW(7),
     },
     uploadButtonText: {
         color: Colors.light,
-        fontFamily: "poppins-Medium",
-        fontSize: SF(13)
+        fontFamily: 'poppins-Medium',
+        fontSize: SF(13),
     },
     imagePreview: {
         width: '100%',
@@ -474,17 +478,17 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         alignItems: 'center',
         marginTop: SH(20),
-        marginBottom: SH(80)
+        marginBottom: SH(80),
     },
     submitButtonText: {
         color: Colors.light,
         fontSize: SF(15),
         fontWeight: 'Poppins-Bold',
-        textTransform: "capitalize"
+        textTransform: 'capitalize',
     },
     contentContainer: {
         margin: SW(15),
-        marginTop: 0
+        marginTop: 0,
     },
     errorInput: {
         borderColor: 'red',

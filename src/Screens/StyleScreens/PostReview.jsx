@@ -1,12 +1,12 @@
-import { StyleSheet } from "react-native";
-import Colors from "../../utils/Colors";
-import { SH, SW, SF } from "../../utils/Dimensions";
+import { StyleSheet } from 'react-native';
+import Colors from '../../utils/Colors';
+import { SH, SW, SF } from '../../utils/Dimensions';
 
 const styles = StyleSheet.create({
-  
+
     label: {
         fontSize: SF(16),
-        fontFamily: "Poppins-Bold",
+        fontFamily: 'Poppins-Bold',
         color: Colors.dark,
         marginBottom: SH(10),
     },
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         marginVertical: SH(20),
-        marginLeft:-SW(160)
+        marginLeft:-SW(160),
     },
     submitButton: {
         backgroundColor: Colors.theme_color,
@@ -35,17 +35,17 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         alignItems: 'center',
         marginVertical: SH(20),
-        marginHorizontal: SW(20)
+        marginHorizontal: SW(20),
     },
     submitButtonText: {
         color: Colors.light,
         fontSize: SF(14),
-        fontFamily: "Poppins-Bold"
+        fontFamily: 'Poppins-Bold',
     },
     contentContainer: {
         marginHorizontal: SW(10),
-        marginVertical: SH(20)
-    }
+        marginVertical: SH(20),
+    },
 });
 
 export default styles;

@@ -32,32 +32,32 @@ const PostSuccessStories = ({ navigation }) => {
         const newErrors = {};
 
         if (!gromname?.trim()) {
-            newErrors.gromname = "Groom name is required.";
+            newErrors.gromname = 'Groom name is required.';
         } else if (!/^[A-Za-z\s]+$/.test(gromname)) {
-            newErrors.groomName = "Groom name must contain only letters.";
+            newErrors.groomName = 'Groom name must contain only letters.';
         }
 
         if (!groomBiodataId?.trim()) {
-            newErrors.groomBiodataId = "Groom BioData ID is required.";
+            newErrors.groomBiodataId = 'Groom BioData ID is required.';
         }
 
         if (!bridename?.trim()) {
-            newErrors.bridename = "Bride name is required.";
+            newErrors.bridename = 'Bride name is required.';
         } else if (!/^[A-Za-z\s]+$/.test(bridename)) {
-            newErrors.bridename = "Bride name must contain only letters.";
+            newErrors.bridename = 'Bride name must contain only letters.';
         }
 
         if (!brideBiodataId?.trim()) {
-            newErrors.brideBiodataId = "Bride BioData ID is required.";
+            newErrors.brideBiodataId = 'Bride BioData ID is required.';
         }
 
         if (!comment) {
-            newErrors.comment = "Your thought is required.";
+            newErrors.comment = 'Your thought is required.';
         }
         if (!rating) {
-            newErrors.rating = "Rating is required.";
+            newErrors.rating = 'Rating is required.';
         } else if (isNaN(rating) || rating < 1 || rating > 5) {
-            newErrors.rating = "Rating must be between 1 and 5.";
+            newErrors.rating = 'Rating must be between 1 and 5.';
         }
 
         setErrors(newErrors); // If you're using a state to display field errors
@@ -66,11 +66,11 @@ const PostSuccessStories = ({ navigation }) => {
 
 
     const handleSubmit = async () => {
-        if (!validateFields()) return;
+        if (!validateFields()) {return;}
         try {
             setIsSubmitting(true);
             const token = await AsyncStorage.getItem('userToken'); // ✅ Fetch Token
-            if (!token) throw new Error('No token found');
+            if (!token) {throw new Error('No token found');}
 
             const payload = {
                 groomName: gromname,
@@ -88,7 +88,7 @@ const PostSuccessStories = ({ navigation }) => {
             };
 
             console.log('Payload:', payload);
-            console.log("headers", headers);
+            console.log('headers', headers);
 
             const response = await axios.post(
                 POST_SUCESS_sTORY,
@@ -96,7 +96,7 @@ const PostSuccessStories = ({ navigation }) => {
                 { headers }
             );
 
-            console.log("✅ Success Story Response:", JSON.stringify(response.data));
+            console.log('✅ Success Story Response:', JSON.stringify(response.data));
 
             if (response.status === 200 && response.data.status === true) {
                 Alert.alert(
@@ -106,34 +106,34 @@ const PostSuccessStories = ({ navigation }) => {
                         {
                             text: 'OK',
                             onPress: () => navigation.goBack(),
-                        }
+                        },
                     ],
                     { cancelable: false }
                 );
             } else {
-                throw new Error(response.data.message || "Something went wrong!");
+                throw new Error(response.data.message || 'Something went wrong!');
             }
 
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error("Error failed to post story:", errorMsg);
+            console.error('Error failed to post story:', errorMsg);
             showMessage({
                 type: 'danger',
                 message: errorMsg,
-                icon: "danger",
-                duarion: 5000
+                icon: 'danger',
+                duarion: 5000,
             });
             const sessionExpiredMessages = [
-                "User does not Exist....!Please login again",
-                "Invalid token. Please login again",
-                "Token has expired. Please login again"
+                'User does not Exist....!Please login again',
+                'Invalid token. Please login again',
+                'Token has expired. Please login again',
             ];
 
             if (sessionExpiredMessages.includes(errorMsg)) {
-                await AsyncStorage.removeItem("userToken");
+                await AsyncStorage.removeItem('userToken');
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: "AuthStack" }],
+                    routes: [{ name: 'AuthStack' }],
                 });
             }
             setIsSubmitting(true);
@@ -189,7 +189,7 @@ const PostSuccessStories = ({ navigation }) => {
                 translucent
             />
             <View style={Globalstyles.header}>
-                <View style={{ flexDirection: 'row', alignItems: "center" }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
@@ -304,7 +304,7 @@ const PostSuccessStories = ({ navigation }) => {
                             multiline={true}
                             value={comment}
                             onChangeText={setComment}
-                            placeholderTextColor={Colors.gray} textAlignVertical='top'
+                            placeholderTextColor={Colors.gray} textAlignVertical="top"
                             autoComplete="off"
                             textContentType="none"
                             importantForAutofill="no"
@@ -350,7 +350,7 @@ const styles = StyleSheet.create({
 
     Text: {
         fontSize: SF(24),
-        fontFamily: "Poppins-Bold",
+        fontFamily: 'Poppins-Bold',
         color: Colors.theme_color,
     },
 
@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
         fontSize: SF(13),
         color: Colors.theme_color,
         marginBottom: SH(10),
-        fontFamily: "Poppins-Bold"
+        fontFamily: 'Poppins-Bold',
     },
     submitButton: {
         backgroundColor: Colors.theme_color,
@@ -370,19 +370,19 @@ const styles = StyleSheet.create({
     submitText: {
         color: 'white',
         fontSize: SF(15),
-        fontFamily: "Poppins-Bold"
+        fontFamily: 'Poppins-Bold',
     },
     ratingContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: SH(10)
+        marginBottom: SH(10),
     },
     star: {
         marginHorizontal: SW(3),
     },
     menuIcon: {
         width: SW(30),
-        height: SH(30)
+        height: SH(30),
     },
     uploadButton: {
         borderWidth: 1,
@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
     },
     uploadText: {
         color: Colors.theme_color,
-        textAlign: "center"
+        textAlign: 'center',
     },
     photosContainer: {
         paddingVertical: SH(10),
@@ -403,6 +403,6 @@ const styles = StyleSheet.create({
     errorText: {
         color: 'red',
         fontSize: SF(13),
-        fontFamily: "Poppins-Regular"
+        fontFamily: 'Poppins-Regular',
     },
-})
+});

@@ -1,6 +1,6 @@
-import { StyleSheet } from "react-native";
-import { SH, SW, SF } from "../../utils/Dimensions";
-import Colors from "../../utils/Colors";
+import { StyleSheet } from 'react-native';
+import { SH, SW, SF } from '../../utils/Dimensions';
+import Colors from '../../utils/Colors';
 
 const styles = StyleSheet.create({
   Text: {
@@ -8,15 +8,15 @@ const styles = StyleSheet.create({
     color: Colors.theme_color,
     marginHorizontal: SW(20),
     marginTop: SW(30),
-    fontFamily: "Poppins-Regular"
+    fontFamily: 'Poppins-Regular',
   },
   inputContainer: {
     marginHorizontal: SW(20),
-    marginVertical: SH(20)
+    marginVertical: SH(20),
   },
   passwordField: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     borderRadius: 5,
     marginBottom: SH(15),
     paddingHorizontal: SW(15),
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
   },
 
   eyeIcon: {
-    position: "absolute",
+    position: 'absolute',
     right: SW(15),
   },
   errorText: {
@@ -51,8 +51,8 @@ const styles = StyleSheet.create({
   optionText: {
     color: Colors.light,
     fontSize: SF(15),
-    fontFamily: "Poppins-Regular",
-    textAlign: "center"
+    fontFamily: 'Poppins-Regular',
+    textAlign: 'center',
   },
   modalContainer: {
     flex: 1,
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
   modalButtonText: {
     color: Colors.light,
     fontSize: SF(15),
-    fontFamily: "Poppins-Bold"
+    fontFamily: 'Poppins-Bold',
   },
 });
 

@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Alert, ActivityIndicator, Image } from 'react-native'
-import React, { useCallback, useState } from 'react'
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Alert, ActivityIndicator, Image } from 'react-native';
+import React, { useCallback, useState } from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Globalstyles from '../../utils/GlobalCss';
 import { useFocusEffect } from '@react-navigation/native';
@@ -15,7 +15,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 const BuySubscription = ({ navigation, route }) => {
   const insets = useSafeAreaInsets();
   const { serviceType } = route.params || {};
-  console.log("Service Type:", serviceType);
+  console.log('Service Type:', serviceType);
   const [buyLoading, setBuyLoading] = useState(false);
   const [plans, setPlans] = useState([]);
   const [buyingPlanId, setBuyingPlanId] = useState(null);
@@ -30,55 +30,55 @@ const BuySubscription = ({ navigation, route }) => {
 
   const fetchPlans = async () => {
     try {
-      setPlansLoading(true)
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+      setPlansLoading(true);
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       };
 
       const response = await axios.get(`${FETCH_PLANS}/${serviceType}`, { headers });
       if (response.data?.status) {
-        console.log("plans", JSON.stringify(response.data.plans));
+        console.log('plans', JSON.stringify(response.data.plans));
         setPlans(response.data.plans);
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("failed to fetch plans :", errorMsg);
+      console.error('failed to fetch plans :', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
-      setPlansLoading(false)
+      setPlansLoading(false);
     }
     finally {
-      setPlansLoading(false)
+      setPlansLoading(false);
     }
   };
 
   const handleBuyNow = async (plan) => {
     try {
-      setBuyLoading(true)
+      setBuyLoading(true);
       setBuyingPlanId(plan._id);
-      const token = await AsyncStorage.getItem("userToken");
-      const userId = await AsyncStorage.getItem("userId");
+      const token = await AsyncStorage.getItem('userToken');
+      const userId = await AsyncStorage.getItem('userId');
 
-      if (!token || !userId) throw new Error("Missing user token or ID");
+      if (!token || !userId) {throw new Error('Missing user token or ID');}
 
       const headers = {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       };
 
@@ -88,13 +88,13 @@ const BuySubscription = ({ navigation, route }) => {
       );
 
       const razorpayKey = keyResponse.data?.key;
-      if (!razorpayKey) throw new Error("Failed to fetch Razorpay Key");
+      if (!razorpayKey) {throw new Error('Failed to fetch Razorpay Key');}
 
       const payload = {
         userId,
-        profileType: plan.profileType
+        profileType: plan.profileType,
       };
-      console.log("📦 [Payload to /buy]:", payload);
+      console.log('📦 [Payload to /buy]:', payload);
 
       const orderResponse = await axios.post(
         PAID_URL,
@@ -102,7 +102,7 @@ const BuySubscription = ({ navigation, route }) => {
         { headers }
       );
 
-      console.log("🧾 [Order API Response]:", orderResponse.data);
+      console.log('🧾 [Order API Response]:', orderResponse.data);
 
       let orderId, amount, currency;
 
@@ -117,11 +117,11 @@ const BuySubscription = ({ navigation, route }) => {
       else if (orderResponse.data?.razorpayOrderId) {
         orderId = orderResponse.data.razorpayOrderId;
         amount = orderResponse.data.services?.[0]?.amount * 100 || 50000;
-        currency = "INR";
+        currency = 'INR';
       }
 
       if (!orderId || !amount || !currency) {
-        throw new Error("Incomplete Razorpay order data received from server");
+        throw new Error('Incomplete Razorpay order data received from server');
       }
 
       const options = {
@@ -136,12 +136,12 @@ const BuySubscription = ({ navigation, route }) => {
 
       RazorpayCheckout.open(options)
         .then(async (paymentData) => {
-          console.log("💸 [Payment Success]:", paymentData);
+          console.log('💸 [Payment Success]:', paymentData);
 
           const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = paymentData;
 
           if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
-            Alert.alert("Error", "Missing payment details from Razorpay.");
+            Alert.alert('Error', 'Missing payment details from Razorpay.');
             return;
           }
 
@@ -151,7 +151,7 @@ const BuySubscription = ({ navigation, route }) => {
             razorpay_signature: razorpay_signature,
           };
 
-          console.log("📨 [Payload to /verifyPayment]:", verifyPayload);
+          console.log('📨 [Payload to /verifyPayment]:', verifyPayload);
 
           try {
             const verifyResponse = await axios.post(
@@ -160,63 +160,63 @@ const BuySubscription = ({ navigation, route }) => {
               { headers }
             );
 
-            console.log("✅ [Verify Payment Response]:", verifyResponse.data);
+            console.log('✅ [Verify Payment Response]:', verifyResponse.data);
 
             if (verifyResponse.status === 200 || verifyResponse.data?.status) {
-              Alert.alert("Success",
-                verifyResponse.data?.message || "Payment verified successfully!", [
+              Alert.alert('Success',
+                verifyResponse.data?.message || 'Payment verified successfully!', [
                 {
-                  text: "OK",
+                  text: 'OK',
                   onPress: () => {
-                    navigation.navigate("MainApp", {
-                      screen: "Tabs",
+                    navigation.navigate('MainApp', {
+                      screen: 'Tabs',
                       params: {
-                        screen: "MyProfile",
+                        screen: 'MyProfile',
                       },
                     });
                   },
                 },
               ]);
             } else {
-              Alert.alert("Warning", verifyResponse.data?.message || "Verification failed!");
+              Alert.alert('Warning', verifyResponse.data?.message || 'Verification failed!');
             }
 
           } catch (verifyError) {
-            console.error("❌ [Verification Error]:", verifyError.response?.data || verifyError.message);
-            Alert.alert("Error", "Payment done, but verification failed.");
+            console.error('❌ [Verification Error]:', verifyError.response?.data || verifyError.message);
+            Alert.alert('Error', 'Payment done, but verification failed.');
           }
         })
         .catch((error) => {
-          console.log("❌ [Payment Failed]:", error);
-          Alert.alert("Payment Failed", error.description || "Try again later.");
+          console.log('❌ [Payment Failed]:', error);
+          Alert.alert('Payment Failed', error.description || 'Try again later.');
         });
 
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("❌ [Error in buying subscription]:", errorMsg);
+      console.error('❌ [Error in buying subscription]:', errorMsg);
       Alert.alert(
-        "Subscription Info",
+        'Subscription Info',
         errorMsg
       );
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
-      setBuyLoading(false)
+      setBuyLoading(false);
       setBuyingPlanId(null);
     }
     finally {
-      setBuyLoading(false)
+      setBuyLoading(false);
       navigation.reset({
         index: 0,
         routes: [{ name: 'MainApp' }],
@@ -235,17 +235,17 @@ const BuySubscription = ({ navigation, route }) => {
   return (
     <View style={Globalstyles.container} edges={['top', 'bottom']}>
       <View style={Globalstyles.header}>
-        <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
-          <Text style={[Globalstyles.headerText, { textAlign: "left" }]}>Buy Subscription</Text>
+          <Text style={[Globalstyles.headerText, { textAlign: 'left' }]}>Buy Subscription</Text>
         </View>
       </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(10), flexGrow: 1 }}>
         <View style={styles.cardContainer}>
           {plansLoading ? (
-            <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: SH(20) }}>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: SH(20) }}>
               <ActivityIndicator size="large" color={Colors.theme_color} />
             </View>
           ) : (
@@ -256,7 +256,7 @@ const BuySubscription = ({ navigation, route }) => {
                     source={{ uri: plan.photoUrl }}
                     style={styles.planImage}
                     resizeMode="cover"
-                    onError={(e) => console.log("Image load error:", e.nativeEvent.error)}
+                    onError={(e) => console.log('Image load error:', e.nativeEvent.error)}
                   />
                 ) : null}
 
@@ -292,7 +292,7 @@ const BuySubscription = ({ navigation, route }) => {
                     onPress={() => handleBuyNow(plan)}
                   >
                     <Text style={styles.buyButtonText}>
-                      {buyingPlanId === plan._id ? "Buying..." : "Active Now"}
+                      {buyingPlanId === plan._id ? 'Buying...' : 'Active Now'}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -303,10 +303,10 @@ const BuySubscription = ({ navigation, route }) => {
         </View>
       </ScrollView>
     </View>
-  )
-}
+  );
+};
 
-export default BuySubscription
+export default BuySubscription;
 
 const styles = StyleSheet.create({
   cardContainer: {
@@ -317,20 +317,20 @@ const styles = StyleSheet.create({
     paddingBottom: SH(20),
   },
   card: {
-    width: "95%",
+    width: '95%',
     backgroundColor: Colors.light,
     borderRadius: 12,
     margin: SW(10),
-    overflow: "hidden",
-    shadowColor: "#000",
+    overflow: 'hidden',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 4,
   },
   planImage: {
-    width: "100%",
-    height: SH(200)
+    width: '100%',
+    height: SH(200),
   },
   cardContent: {
     paddingHorizontal: SW(12),
@@ -338,32 +338,32 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: SF(16),
-    fontFamily: "Inter-Bold",
+    fontFamily: 'Inter-Bold',
     color: Colors.theme_color,
     marginBottom: SH(4),
   },
   Text: {
     fontSize: SF(13),
-    color: "#000",
-    fontFamily: "Poppins-Regular"
+    color: '#000',
+    fontFamily: 'Poppins-Regular',
   },
   description: {
     fontSize: SF(12),
     marginTop: SH(6),
-    color: "#666",
-    fontFamily: "Poppins-Regular"
+    color: '#666',
+    fontFamily: 'Poppins-Regular',
   },
   buyButton: {
     backgroundColor: Colors.theme_color,
     paddingVertical: SH(8),
     marginTop: SH(10),
     borderRadius: 8,
-    alignItems: "center",
+    alignItems: 'center',
   },
   buyButtonText: {
-    color: "#fff",
+    color: '#fff',
     fontSize: SF(14),
-    fontWeight: "600",
+    fontWeight: '600',
   },
   closeButton: {
     // backgroundColor:Colors.theme_color,
@@ -375,8 +375,8 @@ const styles = StyleSheet.create({
   },
   closeText: {
     color: Colors.theme_color,
-    fontFamily: "Poppins-Bold",
-    fontSize: SF(13)
+    fontFamily: 'Poppins-Bold',
+    fontSize: SF(13),
   },
   buttonRow: {
     flexDirection: 'row',
@@ -391,13 +391,13 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: SW(5),
     alignItems: 'center',
-    marginVertical: SH(10)
+    marginVertical: SH(10),
   },
   buyButtonText: {
     color: 'white',
-    fontFamily: "Poppins-Bold",
-    textAlign: "center",
-    fontSize: SF(14)
+    fontFamily: 'Poppins-Bold',
+    textAlign: 'center',
+    fontSize: SF(14),
   },
   trialButton: {
     backgroundColor: '#666266',
@@ -410,11 +410,11 @@ const styles = StyleSheet.create({
   },
   trialText: {
     color: 'white',
-    fontFamily: "Poppins-Bold",
-    textAlign: "center",
-    fontSize: SF(15)
+    fontFamily: 'Poppins-Bold',
+    textAlign: 'center',
+    fontSize: SF(15),
   },
   buttonRowAligned: {
     marginTop: SH(10),
   },
-})
+});

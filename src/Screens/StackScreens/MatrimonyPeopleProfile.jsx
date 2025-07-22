@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import {
   View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator, Share, Switch,
-  Modal, Dimensions
+  Modal, Dimensions,
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -11,8 +11,8 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Colors from '../../utils/Colors';
 import styles from '../StyleScreens/LocationStyle';
 import Globalstyles from '../../utils/GlobalCss';
-import { useFocusEffect, useRoute } from "@react-navigation/native";
-import moment from "moment";
+import { useFocusEffect, useRoute } from '@react-navigation/native';
+import moment from 'moment';
 import axios from 'axios';
 import { BOTTOM_BIODATA_ADVERTISE_WINDOW, DeepLink, DELETE_SEND_REQUEST, MATCHED_PROFILE, SAVED_PROFILES, SEND_REQUEST, VERIFY_PROFILE } from '../../utils/BaseUrl';
 import { useSelector } from 'react-redux';
@@ -64,14 +64,14 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
     : !!userData?.hideOptionalDetails;
   const isVisible = profileData?.isVisible;
   const isBlur = userData?.isBlur;
-  const isBlurCondition = status === "accepted" ? !isVisible : isBlur;
+  const isBlurCondition = status === 'accepted' ? !isVisible : isBlur;
   const [Save, setIsSaved] = useState(initialSavedState || false);
   const hasOtherDetails = personalDetails?.knowCooking || personalDetails?.dietaryHabit || personalDetails?.smokingHabit || personalDetails?.drinkingHabit || personalDetails?.tobaccoHabits || personalDetails?.hobbies;
 
   const formattedImages = [
     personalDetails?.closeUpPhoto,
     !hideOptionalDetails && personalDetails?.fullPhoto,
-    !hideOptionalDetails && personalDetails?.bestPhoto
+    !hideOptionalDetails && personalDetails?.bestPhoto,
   ]
     .filter(Boolean)
     .map((url) => ({ uri: url }));
@@ -82,22 +82,22 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
     const responseMessage = await VerifiedProfiles(Biodata_id);
 
-    if (responseMessage.includes("verified")) {
+    if (responseMessage.includes('verified')) {
       setIsSwitchOn(true);
-    } else if (responseMessage.includes("disapproved")) {
+    } else if (responseMessage.includes('disapproved')) {
       setIsSwitchOn(false);
     }
   };
 
 
   useEffect(() => {
-    console.log("formattedImages", formattedImages);
+    console.log('formattedImages', formattedImages);
     Advertisement_window();
   }, []);
 
 
   useEffect(() => {
-    if (!formattedImages || formattedImages.length === 0) return;
+    if (!formattedImages || formattedImages.length === 0) {return;}
 
     const bufferMs = 800;
     const duration = (formattedImages[currentIndex]?.duration || 4) * 1000 + bufferMs;
@@ -114,13 +114,13 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
 
   useEffect(() => {
-    if (slider.length === 0) return;
+    if (slider.length === 0) {return;}
 
     const currentSlide = slider[currentIndex];
     const durationInSeconds = Number(currentSlide?.duration) || 4;
     const bufferMs = 1000;
     const durationInMilliseconds = durationInSeconds * 1000 + bufferMs;
-    console.log("durationInSeconds", durationInSeconds);
+    console.log('durationInSeconds', durationInSeconds);
     const timeout = setTimeout(() => {
       const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
       setCurrentIndex(nextIndex);
@@ -137,15 +137,15 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) {
         showMessage({
-          type: "danger",
-          message: "Authentication Error",
-          description: "No token found. Please log in again.",
-          duration: 5000
+          type: 'danger',
+          message: 'Authentication Error',
+          description: 'No token found. Please log in again.',
+          duration: 5000,
         });
 
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
         return;
       }
@@ -159,7 +159,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
       if (response.data) {
         const fetchedData = response.data.data;
-        console.log("fetchedData", JSON.stringify(fetchedData));
+        console.log('fetchedData', JSON.stringify(fetchedData));
 
         const fullSliderData = fetchedData.flatMap((item) =>
           item.media.map((mediaItem) => ({
@@ -174,25 +174,25 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         );
 
         setSlider(fullSliderData);
-        console.log("Slider Data:", fullSliderData);
+        console.log('Slider Data:', fullSliderData);
       } else {
         setSlider([]);
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("failed to fetch plans :", errorMsg);
+      console.error('failed to fetch plans :', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
     }
@@ -201,77 +201,77 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const VerifiedProfiles = async (Biodata_id) => {
     if (!Biodata_id) {
       showMessage({
-        message: "Error: User ID not found!",
-        type: "danger",
-        icon: "danger",
-        duarion: 5000
+        message: 'Error: User ID not found!',
+        type: 'danger',
+        icon: 'danger',
+        duarion: 5000,
       });
-      return "";
+      return '';
     }
 
     try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       };
 
       const response = await axios.post(`${VERIFY_PROFILE}/${Biodata_id}`, {}, { headers });
 
-      console.log("Response Data:", JSON.stringify(response?.data));
+      console.log('Response Data:', JSON.stringify(response?.data));
 
-      const message = response?.data?.message || "";
-      if (message.toLowerCase().includes("verified")) {
+      const message = response?.data?.message || '';
+      if (message.toLowerCase().includes('verified')) {
         showMessage({
-          message: "Matrimonial Profile Approved ✅",
-          type: "success",
-          icon: "success",
-          duarion: 5000
+          message: 'Matrimonial Profile Approved ✅',
+          type: 'success',
+          icon: 'success',
+          duarion: 5000,
         });
       }
-      else if (message.toLowerCase().includes("disapproved")) {
+      else if (message.toLowerCase().includes('disapproved')) {
         showMessage({
-          message: "Matrimonial Profile Disapproved ❌",
-          type: "danger",
-          icon: "danger",
-          duarion: 5000
+          message: 'Matrimonial Profile Disapproved ❌',
+          type: 'danger',
+          icon: 'danger',
+          duarion: 5000,
         });
       }
       else {
         showMessage({
           message: message,
-          type: "success",
-          icon: "success",
-          duarion: 5000
+          type: 'success',
+          icon: 'success',
+          duarion: 5000,
         });
       }
 
       return message;
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching biodata:", errorMsg);
+      console.error('Error fetching biodata:', errorMsg);
       showMessage({
         message: errorMsg,
-        type: "danger",
-        icon: "danger",
-        duarion: 5000
+        type: 'danger',
+        icon: 'danger',
+        duarion: 5000,
       });
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
-      return "";
+      return '';
     }
   };
   const openImageViewer = (index) => {
@@ -304,7 +304,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       // console.log("userId:", userData?.userId);
       // console.log("userData?.personalDetails", userData?.personalDetails);
       if (profile_id) {
-        console.log("profile_id", profile_id);
+        console.log('profile_id', profile_id);
         fetchUserProfile(profile_id);
       }
     }, [profile_id, isBlur])
@@ -312,7 +312,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
   const fetchUserProfile = async (id) => {
     const token = await AsyncStorage.getItem('userToken');
-    if (!token) throw new Error('No token found');
+    if (!token) {throw new Error('No token found');}
 
     const headers = {
       'Content-Type': 'application/json',
@@ -322,7 +322,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
     try {
       setLoading(true);
       const response = await axios.get(`${MATCHED_PROFILE}/${id}`, { headers });
-      console.log("response", JSON.stringify(response.data));
+      console.log('response', JSON.stringify(response.data));
 
       if (response.data.status) {
         setUserData(response?.data?.targetUserBioData);
@@ -333,36 +333,36 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         setProfileData(null);
         setUserData(null);
         setLoading(false);
-        Alert.alert("Error", "User account has been deleted or no biodata available.");
+        Alert.alert('Error', 'User account has been deleted or no biodata available.');
       }
     } catch (error) {
-      console.error("❌ Error fetching profile");
+      console.error('❌ Error fetching profile');
 
       if (error.response) {
         const errorMsg = error.response?.data?.message || error.message;
-        console.error("Error fetching biodata:", errorMsg);
-        if (errorMsg === "Target user has not set any biodata or personal details.") {
+        console.error('Error fetching biodata:', errorMsg);
+        if (errorMsg === 'Target user has not set any biodata or personal details.') {
           setProfileData(null);
           setUserData(null);
           setLoading(false);
         }
       } else if (error.request) {
-        console.error("📡 No response received from server.");
-        console.error("Request Details:", error.request);
+        console.error('📡 No response received from server.');
+        console.error('Request Details:', error.request);
       } else {
-        console.error("⚠️ Error Message:", error.message);
+        console.error('⚠️ Error Message:', error.message);
       }
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
 
@@ -378,9 +378,9 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
     if (!userId) {
       showMessage({
-        type: "danger",
-        message: "Error",
-        description: "User ID not found!",
+        type: 'danger',
+        message: 'Error',
+        description: 'User ID not found!',
         duration: 5000,
       });
       setLoadingIntrest(false);
@@ -388,8 +388,8 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
     }
 
     try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
         'Content-Type': 'application/json',
@@ -402,33 +402,33 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         const newRequestId = response.data?.data?._id;
 
         setRequestId(newRequestId);
-        setStatus("pending");
+        setStatus('pending');
 
         showMessage({
-          type: "success",
-          message: "Success",
+          type: 'success',
+          message: 'Success',
           description: response.data.message,
           duration: 3000,
         });
       } else {
-        throw new Error("Unexpected response from server!");
+        throw new Error('Unexpected response from server!');
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       showMessage({
-        type: "danger",
-        message: "Error",
-        description: errorMsg || "Failed to send interest!",
+        type: 'danger',
+        message: 'Error',
+        description: errorMsg || 'Failed to send interest!',
       });
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
-        navigation.reset({ index: 0, routes: [{ name: "AuthStack" }] });
+        await AsyncStorage.removeItem('userToken');
+        navigation.reset({ index: 0, routes: [{ name: 'AuthStack' }] });
       }
     } finally {
       setLoadingIntrest(false);
@@ -437,11 +437,11 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
   const DeleteIntrest = async (requestId) => {
     setIntrestLoading(true);
-    if (!requestId) return;
+    if (!requestId) {return;}
 
     try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token found");
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
         'Content-Type': 'application/json',
@@ -455,29 +455,29 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         setStatus(null);
 
         showMessage({
-          type: "success",
-          message: "Interest removed successfully!",
+          type: 'success',
+          message: 'Interest removed successfully!',
           duration: 3000,
         });
       } else {
-        throw new Error(response.data.message || "Something went wrong");
+        throw new Error(response.data.message || 'Something went wrong');
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       showMessage({
-        type: "danger",
-        message: "Error",
+        type: 'danger',
+        message: 'Error',
         description: errorMsg,
       });
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
-        navigation.reset({ index: 0, routes: [{ name: "AuthStack" }] });
+        await AsyncStorage.removeItem('userToken');
+        navigation.reset({ index: 0, routes: [{ name: 'AuthStack' }] });
       }
     } finally {
       setIntrestLoading(false);
@@ -487,10 +487,10 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const savedProfiles = async () => {
     if (!_id) {
       showMessage({
-        message: "Error: User ID not found!",
-        type: "danger",
-        icon: "danger",
-        duarion: 5000
+        message: 'Error: User ID not found!',
+        type: 'danger',
+        icon: 'danger',
+        duarion: 5000,
       });
       return;
     }
@@ -498,81 +498,81 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
     setIsSaved((prev) => !prev);
 
     try {
-      const token = await AsyncStorage.getItem("userToken");
+      const token = await AsyncStorage.getItem('userToken');
       if (!token) {
-        throw new Error("No token found");
+        throw new Error('No token found');
       }
 
       const headers = {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       };
 
       const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
 
-      console.log("Response Data:", JSON.stringify(response?.data));
+      console.log('Response Data:', JSON.stringify(response?.data));
 
       if (response?.data?.message) {
         showMessage({
           message: response.data.message,
-          type: "success",
-          icon: "success",
-          duarion: 5000
+          type: 'success',
+          icon: 'success',
+          duarion: 5000,
         });
-        if (response.data.message === "Profile saved successfully.") {
+        if (response.data.message === 'Profile saved successfully.') {
           setIsSaved(true);
         } else {
           setIsSaved(false);
         }
       } else {
         showMessage({
-          message: "Something went wrong!",
-          type: "danger",
-          icon: "danger",
-          duarion: 5000
+          message: 'Something went wrong!',
+          type: 'danger',
+          icon: 'danger',
+          duarion: 5000,
         });
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching biodata:", errorMsg);
+      console.error('Error fetching biodata:', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
       showMessage({
         message: errorMsg,
-        type: "danger",
-        icon: "danger",
-        duarion: 5000
+        type: 'danger',
+        icon: 'danger',
+        duarion: 5000,
       });
     }
   };
 
   const shareProfiles = async () => {
-    const profileType = "Biodata";
+    const profileType = 'Biodata';
 
-    console.log("userId", userId);
+    console.log('userId', userId);
 
     try {
-      if (!userId) throw new Error("Missing profile ID");
+      if (!userId) {throw new Error('Missing profile ID');}
 
       const directLink = `${DeepLink}/${profileType}/${userId}`;
 
       await Share.share({
-        message: `Check this profile in Brahmin Milan app:\n${directLink}`
+        message: `Check this profile in Brahmin Milan app:\n${directLink}`,
       });
     } catch (error) {
-      console.error("Sharing failed:", error?.message || error);
+      console.error('Sharing failed:', error?.message || error);
     }
   };
 
@@ -583,16 +583,16 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const matchPercentage = totalCriteria > 0 ? Math.round((matchedCount / totalCriteria) * 100) : 0;
 
   const calculateAge = (dob) => {
-    if (!dob) return "N/A";
+    if (!dob) {return 'N/A';}
     const birthDate = moment(dob);
     const currentDate = moment();
-    return currentDate.diff(birthDate, "years");
+    return currentDate.diff(birthDate, 'years');
   };
 
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color={Colors.theme_color} />
       </View>
     );
@@ -611,18 +611,18 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   }
 
   const formattedHeight = personalDetails?.heightFeet
-    ?.replace(/\s*-\s*/, "")
-    ?.replace(/\s+/g, "");
+    ?.replace(/\s*-\s*/, '')
+    ?.replace(/\s+/g, '');
 
 
   return (
-    <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
+    <SafeAreaView style={Globalstyles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
-        <View style={{ flexDirection: 'row', alignItems: "center" }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => navigation.reset({
             index: 0,
-            routes: [{ name: "MainApp" }],
+            routes: [{ name: 'MainApp' }],
           })}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
@@ -638,18 +638,18 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             {notificationCount > 0 && (
               <View
                 style={{
-                  position: "absolute",
+                  position: 'absolute',
                   right: -5,
                   top: -5,
                   width: SW(16),
                   height: SW(16),
                   borderRadius: SW(16) / 2,
-                  backgroundColor: "red",
-                  justifyContent: "center",
-                  alignItems: "center",
+                  backgroundColor: 'red',
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}
               >
-                <Text style={{ color: 'white', fontSize: SF(9), fontFamily: "Poppins-Bold" }}>
+                <Text style={{ color: 'white', fontSize: SF(9), fontFamily: 'Poppins-Bold' }}>
                   {notificationCount}
                 </Text>
               </View>
@@ -658,7 +658,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
         </View>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(10), flexGrow: 1}}>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View>
           <View style={styles.sliderContainer}>
             <AppIntroSlider
@@ -684,16 +684,16 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                 saveToLocalByLongPress={false}
                 renderIndicator={(currentIndex, allSize) => (
                   <View style={{
-                    position: "absolute",
+                    position: 'absolute',
                     top: SH(30),
-                    alignSelf: "center",
-                    backgroundColor: "rgba(0,0,0,0.6)",
+                    alignSelf: 'center',
+                    backgroundColor: 'rgba(0,0,0,0.6)',
                     paddingHorizontal: SW(8),
                     borderRadius: 5,
                     paddingVertical: SH(8),
-                    zIndex: 999
+                    zIndex: 999,
                   }}>
-                    <Text style={{ color: "white", fontSize: SF(16), fontWeight: "bold" }}>
+                    <Text style={{ color: 'white', fontSize: SF(16), fontWeight: 'bold' }}>
                       {currentIndex} / {allSize}
                     </Text>
                   </View>
@@ -717,9 +717,9 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             <View style={styles.verifiedContainer}>
               {isVerified ? (
                 <>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: "flex-end" }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
                     <Image
-                      source={require("../../Images/verified.png")}
+                      source={require('../../Images/verified.png')}
                       style={styles.verifiedBadge}
                     />
                     <Text style={[styles.verifiedText, { paddingHorizontal: SW(5), paddingVertical: SH(3) }]}> Already Verified</Text>
@@ -729,8 +729,8 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                     <Switch
                       value={isSwitchOn}
                       onValueChange={handleToggle}
-                      thumbColor={isSwitchOn ? "#4CAF50" : "#767577"}
-                      trackColor={{ false: "#f4f3f4", true: "#4CAF50" }}
+                      thumbColor={isSwitchOn ? '#4CAF50' : '#767577'}
+                      trackColor={{ false: '#f4f3f4', true: '#4CAF50' }}
                     />
                   )}
                 </>
@@ -740,8 +740,8 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                   <Switch
                     value={isSwitchOn}
                     onValueChange={handleToggle}
-                    thumbColor={isSwitchOn ? "#4CAF50" : "#767577"}
-                    trackColor={{ false: "#f4f3f4", true: "#4CAF50" }}
+                    thumbColor={isSwitchOn ? '#4CAF50' : '#767577'}
+                    trackColor={{ false: '#f4f3f4', true: '#4CAF50' }}
                   />
                 </>
               )}
@@ -750,7 +750,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             isVerified && (
               <View style={[styles.verifiedContainer, { top: SH(320), left: SW(275), width: SW(80) }]}>
                 <Image
-                  source={require("../../Images/verified.png")}
+                  source={require('../../Images/verified.png')}
                   style={styles.verifiedBadge}
                 />
                 <Text style={styles.verifiedText}>Verified</Text>
@@ -760,7 +760,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
           <View style={styles.flexContainer}>
             <View style={styles.flex}>
               <Text style={styles.Idtext}>
-                {"ID NO. :-".toUpperCase()} {userData?.bioDataId}
+                {'ID NO. :-'.toUpperCase()} {userData?.bioDataId}
               </Text>
 
               {matchPercentage > 0 && (
@@ -772,15 +772,15 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             <View style={styles.sharecontainer}>
               <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles()}>
                 <FontAwesome
-                  name={Save ? "bookmark" : "bookmark-o"}
+                  name={Save ? 'bookmark' : 'bookmark-o'}
                   size={19}
                   color={Colors.theme_color}
                 />
-                <Text style={styles.iconText}>{Save ? "Saved" : "Save"}</Text>
+                <Text style={styles.iconText}>{Save ? 'Saved' : 'Save'}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.iconContainer} onPress={shareProfiles}>
-                <Feather name={"send"} size={19} color={Colors.theme_color} />
+                <Feather name={'send'} size={19} color={Colors.theme_color} />
                 <Text style={styles.iconText}>Share</Text>
               </TouchableOpacity>
 
@@ -788,8 +788,8 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                 style={styles.interestedButton}
                 onPress={requestId ? () => DeleteIntrest(requestId) : sendInterestRequest}
                 disabled={
-                  status === "accepted" ||
-                  status === "rejected" ||
+                  status === 'accepted' ||
+                  status === 'rejected' ||
                   (requestId ? intrestLoading : loadingIntrest)
                 }
               >
@@ -797,12 +797,12 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                   <ActivityIndicator size="small" color={Colors.theme_color} />
                 ) : (
                   <Text style={styles.buttonText}>
-                    {status === "accepted" || status === "rejected" ? (
+                    {status === 'accepted' || status === 'rejected' ? (
                       status.charAt(0).toUpperCase() + status.slice(1)
                     ) : requestId ? (
-                      "Cancel Interest"
+                      'Cancel Interest'
                     ) : (
-                      "Send Interest"
+                      'Send Interest'
                     )}
                   </Text>
                 )}
@@ -818,11 +818,11 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                 }}
                 disabled={hideContact} // Disable press functionality when hidden
               >
-                <MaterialIcons name={"call"} size={19} color={Colors.theme_color} />
+                <MaterialIcons name={'call'} size={19} color={Colors.theme_color} />
                 <Text style={styles.iconText}>Call</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ReportPage', { profileId: _id })}>
-                <MaterialIcons name={"error-outline"} size={20} color={Colors.theme_color} />
+                <MaterialIcons name={'error-outline'} size={20} color={Colors.theme_color} />
                 <Text style={styles.iconText}>Report</Text>
               </TouchableOpacity>
             </View>
@@ -848,9 +848,9 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             <View style={styles.rightContainer}>
               {/* Right-side details */}
               {personalDetails?.currentCity && <Text style={styles.text}>{personalDetails?.currentCity}</Text>}
-              {personalDetails?.occupation && <Text style={[styles.text, { textTransform: "none" }]}>{personalDetails?.occupation}</Text>}
-              {personalDetails?.annualIncome && <Text style={[styles.text, { textTransform: "none" }]}>{personalDetails?.annualIncome} </Text>}
-              {personalDetails?.qualification && <Text style={[styles.text, { textTransform: "none" }]}>{personalDetails?.qualification}</Text>}
+              {personalDetails?.occupation && <Text style={[styles.text, { textTransform: 'none' }]}>{personalDetails?.occupation}</Text>}
+              {personalDetails?.annualIncome && <Text style={[styles.text, { textTransform: 'none' }]}>{personalDetails?.annualIncome} </Text>}
+              {personalDetails?.qualification && <Text style={[styles.text, { textTransform: 'none' }]}>{personalDetails?.qualification}</Text>}
             </View>
           </View>
 
@@ -866,7 +866,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                 {/* Displaying Date of Birth and Time of Birth */}
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>DOB :</Text>
-                  <Text style={styles.infoValue}>{moment(personalDetails.dob).format("DD-MM-YYYY")} / Time: {personalDetails?.timeOfBirth}</Text>
+                  <Text style={styles.infoValue}>{moment(personalDetails.dob).format('DD-MM-YYYY')} / Time: {personalDetails?.timeOfBirth}</Text>
                 </View>
 
                 {/* Displaying Place of Birth */}
@@ -920,7 +920,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                   <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>About Me</Text>
                 </View>
 
-                {personalDetails?.aboutMe?.trim() !== "" && (
+                {personalDetails?.aboutMe?.trim() !== '' && (
                   <Text style={styles.text}>{personalDetails?.aboutMe}</Text>
                 )}
 
@@ -1142,11 +1142,11 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               {/* Comparison List */}
               {Object.keys(profileData?.comparisonResults).map((key, index) => (
                 <View key={index} style={styles.flexContainer5}>
-                  <Text style={styles.label}>{key.replace(/([A-Z])/g, " $1").trim()}</Text>
+                  <Text style={styles.label}>{key.replace(/([A-Z])/g, ' $1').trim()}</Text>
                   {profileData.comparisonResults[key] ? (
-                    <MaterialIcons name={"check"} style={[styles.icon, styles.checkIcon]} />
+                    <MaterialIcons name={'check'} style={[styles.icon, styles.checkIcon]} />
                   ) : (
-                    <MaterialIcons name={"close"} style={[styles.icon, styles.crossIcon]} />
+                    <MaterialIcons name={'close'} style={[styles.icon, styles.crossIcon]} />
                   )}
                 </View>
               ))}
@@ -1167,7 +1167,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                 const handlePress = () => {
                   if (item.hyperlink) {
                     Linking.openURL(item.hyperlink).catch(err =>
-                      console.error("Failed to open URL:", err)
+                      console.error('Failed to open URL:', err)
                     );
                   }
                 };
@@ -1176,7 +1176,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                   <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                     <Image
                       source={{ uri: item.image }}
-                      style={{ width: "100%", height: SH(180), resizeMode: 'contain' }}
+                      style={{ width: '100%', height: SH(180), resizeMode: 'contain' }}
                     />
                   </TouchableOpacity>
                 );

@@ -1,10 +1,9 @@
-import { Text, View, TextInput, TouchableOpacity, Image, StatusBar, ActivityIndicator,KeyboardAvoidingView,SafeAreaView } from 'react-native'
-import React, { useState } from 'react'
+import { Text, View, TextInput, TouchableOpacity, Image, StatusBar, ActivityIndicator,SafeAreaView } from 'react-native';
+import React, { useState } from 'react';
 import styles from '../StyleScreens/FeedbackStyle';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { DrawerActions } from '@react-navigation/native';
 import Globalstyles from '../../utils/GlobalCss';
-import Colors from '../../utils/Colors';
 import { FEEDBACK } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -19,9 +18,9 @@ const FeedBack = ({ navigation }) => {
 
   const handleSubmit = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       const token = await AsyncStorage.getItem('userToken'); // ✅ Fetch Token
-      if (!token) throw new Error('No token found');
+      if (!token) {throw new Error('No token found');}
 
       const payload = {
         rating: rating,
@@ -36,55 +35,55 @@ const FeedBack = ({ navigation }) => {
       console.log('Payload:', payload);
 
       const response = await axios.post(FEEDBACK, payload, { headers });
-      console.log("✅ Feedback Response:", JSON.stringify(response.data));
+      console.log('✅ Feedback Response:', JSON.stringify(response.data));
 
       if (response.status === 200) {
         showMessage({
           type: 'success',
           message: 'Success',
           description: response.data.message || 'Your Feedback has been submitted successfully!',
-          icon: "success",
-          duration: 5000
+          icon: 'success',
+          duration: 5000,
         });
         setTimeout(() => {
           navigation.reset({
             index: 0,
-            routes: [{ name: "MainApp" }],
+            routes: [{ name: 'MainApp' }],
           });
         }, 2000);
 
       } else {
-        throw new Error(response.data.message || "Something went wrong!");
+        throw new Error(response.data.message || 'Something went wrong!');
       }
 
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error("Error fetching biodata:", errorMsg);
+      console.error('Error fetching biodata:', errorMsg);
 
       const sessionExpiredMessages = [
-        "User does not Exist....!Please login again",
-        "Invalid token. Please login again",
-        "Token has expired. Please login again"
+        'User does not Exist....!Please login again',
+        'Invalid token. Please login again',
+        'Token has expired. Please login again',
       ];
 
       if (sessionExpiredMessages.includes(errorMsg)) {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem('userToken');
         navigation.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: 'AuthStack' }],
         });
       }
       showMessage({
         type: 'danger',
         message: 'Error',
         description: errorMsg,
-        icon: "danger",
-        duration: 5000
+        icon: 'danger',
+        duration: 5000,
       });
-      setLoading(false)
+      setLoading(false);
     }
     finally {
-      setLoading
+      setLoading;
     }
   };
 
@@ -115,7 +114,7 @@ const FeedBack = ({ navigation }) => {
         translucent
       />
       <View style={Globalstyles.header}>
-        <View style={{ flexDirection: 'row', alignItems: "center" }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
             <Image source={require('../../Images/menu.png')} style={styles.menuIcon} />
           </TouchableOpacity>
@@ -137,7 +136,7 @@ const FeedBack = ({ navigation }) => {
             multiline
             value={comment}
             onChangeText={setComment}
-            placeholderTextColor={"gray"}
+            placeholderTextColor={'gray'}
           />
         </View>
         <TouchableOpacity
@@ -154,7 +153,7 @@ const FeedBack = ({ navigation }) => {
 
       </View>
     </SafeAreaView>
-  )
-}
+  );
+};
 
-export default FeedBack
+export default FeedBack;

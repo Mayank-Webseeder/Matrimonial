@@ -56,7 +56,7 @@ const MainPartnerPrefrence = ({ navigation }) => {
     };
 
     return (
-        <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
+        <SafeAreaView style={Globalstyles.container}>
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
             <View style={Globalstyles.header}>
                 <View style={styles.headerContainer}>
@@ -66,10 +66,6 @@ const MainPartnerPrefrence = ({ navigation }) => {
                     <Text style={Globalstyles.headerText}>{profileData?.profiledata?.username || 'NA'} Profile</Text>
                 </View>
             </View>
-            {/* <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                style={{ flex: 1 }}
-                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}> */}
             <ScrollView contentContainerStyle={[styles.container]} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
                 <View>
 
@@ -164,7 +160,6 @@ const MainPartnerPrefrence = ({ navigation }) => {
                     </View>
                 </View>
             </ScrollView>
-            {/* </KeyboardAvoidingView> */}
         </SafeAreaView>
     );
 };

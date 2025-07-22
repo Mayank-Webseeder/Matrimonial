@@ -322,7 +322,8 @@ const PartnersPreference = ({ navigation, profileData }) => {
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1, marginTop: -SH(20) }}
-                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+                // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+                >
                 <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
                     <Text style={styles.Formtitle}>Set Your Preference </Text>
                     <View style={[Globalstyles.form]}>

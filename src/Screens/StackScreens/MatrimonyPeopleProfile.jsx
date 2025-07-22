@@ -660,7 +660,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <View>
-          <View style={styles.sliderContainer}>
+          <View style={Globalstyles.sliderContainer}>
             <AppIntroSlider
               ref={topSliderRef}
               data={formattedImages}

@@ -100,7 +100,7 @@ const Kathavachak = ({ navigation, route }) => {
 
 
   useEffect(() => {
-    if (slider.length === 0) {return;}
+    if (slider.length === 0) { return; }
 
     const currentSlide = slider[currentIndex];
     const durationInSeconds = Number(currentSlide?.duration) || 4;
@@ -139,7 +139,7 @@ const Kathavachak = ({ navigation, route }) => {
   const Advertisement_window = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -193,7 +193,7 @@ const Kathavachak = ({ navigation, route }) => {
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -206,10 +206,10 @@ const Kathavachak = ({ navigation, route }) => {
         queryParams.push(`locality=${encodeURIComponent(locality.trim().toLowerCase())}`);
       }
       else if (filterType === 'modal') {
-        if (modalLocality?.trim()) {queryParams.push(`locality=${encodeURIComponent(modalLocality.trim().toLowerCase())}`);}
-        if (services?.trim()) {queryParams.push(`services=${encodeURIComponent(services.trim())}`);}
-        if (rating?.trim()) {queryParams.push(`rating=${encodeURIComponent(rating.trim())}`);}
-        if (experience?.trim()) {queryParams.push(`experience=${encodeURIComponent(experience.trim())}`);}
+        if (modalLocality?.trim()) { queryParams.push(`locality=${encodeURIComponent(modalLocality.trim().toLowerCase())}`); }
+        if (services?.trim()) { queryParams.push(`services=${encodeURIComponent(services.trim())}`); }
+        if (rating?.trim()) { queryParams.push(`rating=${encodeURIComponent(rating.trim())}`); }
+        if (experience?.trim()) { queryParams.push(`experience=${encodeURIComponent(experience.trim())}`); }
       }
       // ⚡️ Construct URL only with valid params
       const url = queryParams.length > 0
@@ -336,7 +336,7 @@ const Kathavachak = ({ navigation, route }) => {
     console.log('profileId:', profileId);
 
     try {
-      if (!profileId) {throw new Error('Missing profile ID');}
+      if (!profileId) { throw new Error('Missing profile ID'); }
 
       const directLink = `${DeepLink}/${profileType}/${profileId}`;
 
@@ -531,9 +531,7 @@ const Kathavachak = ({ navigation, route }) => {
           )}
         </View>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{
-        paddingBottom: insets.bottom,
-      }} refreshControl={
+      <ScrollView showsVerticalScrollIndicator={false} refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }>
         <View>

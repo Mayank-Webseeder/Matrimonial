@@ -122,7 +122,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   }, [profile_id]);
 
   useEffect(() => {
-    if (!formattedImages || formattedImages.length === 0) {return;}
+    if (!formattedImages || formattedImages.length === 0) { return; }
 
     const duration = (formattedImages[currentIndex]?.duration || 2) * 1000;
 
@@ -138,7 +138,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
 
 
   useEffect(() => {
-    if (slider.length === 0) {return;}
+    if (slider.length === 0) { return; }
 
     const currentSlide = slider[currentIndex];
     const durationInSeconds = currentSlide?.duration || 2;
@@ -219,7 +219,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
 
   const fetchUserProfile = async (id) => {
     const token = await AsyncStorage.getItem('userToken');
-    if (!token) {throw new Error('No token found');}
+    if (!token) { throw new Error('No token found'); }
 
     const headers = {
       'Content-Type': 'application/json',
@@ -284,7 +284,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
 
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -331,7 +331,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   // Accept Connection Request
   const acceptConnectionRequest = async (requestId) => {
     setLoadingAccept(true);
-    if (!requestId) {return;}
+    if (!requestId) { return; }
 
     console.log('✅ Accepting request for userId:', requestId);
 
@@ -403,7 +403,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
   // Reject Connection Request
   const rejectConnectionRequest = async (requestId) => {
     setLoadingDecline(true);
-    if (!requestId) {return;}
+    if (!requestId) { return; }
 
     console.log('❌ Rejecting request for userId:', requestId);
 
@@ -472,7 +472,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
     console.log('userId', userId);
 
     try {
-      if (!userId) {throw new Error('Missing profile ID');}
+      if (!userId) { throw new Error('Missing profile ID'); }
 
       const directLink = `${DeepLink}/${profileType}/${userId}`;
 

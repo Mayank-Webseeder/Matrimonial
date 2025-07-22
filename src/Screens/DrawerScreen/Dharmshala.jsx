@@ -637,7 +637,7 @@ const Dharmshala = ({ route }) => {
       }>
         <View>
           {/* Image Slider */}
-          <View style={styles.sliderContainer}>
+          <View style={Globalstyles.sliderContainer}>
             <AppIntroSlider
               ref={sliderRef}
               data={slider}
@@ -663,8 +663,8 @@ const Dharmshala = ({ route }) => {
               }}
               showNextButton={false}
               showDoneButton={false}
-              dotStyle={styles.dot}
-              activeDotStyle={styles.activeDot}
+              dotStyle={Globalstyles.dot}
+              activeDotStyle={Globalstyles.activeDot}
             />
           </View>
 

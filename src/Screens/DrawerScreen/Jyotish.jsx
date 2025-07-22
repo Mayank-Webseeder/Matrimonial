@@ -594,9 +594,7 @@ const Jyotish = ({ navigation, route }) => {
           )}
         </View>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{
-        paddingBottom: insets.bottom,
-      }} refreshControl={
+      <ScrollView showsVerticalScrollIndicator={false} refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }>
         <View>

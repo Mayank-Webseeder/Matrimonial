@@ -125,7 +125,7 @@ const AdvertiseWithUs = ({ navigation }) => {
     };
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: Colors.light }} edges={['top', 'bottom']}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: Colors.light }}>
             {/* Header */}
             <View style={Globalstyles.header}>
                 <View style={styles.headerContainer}>

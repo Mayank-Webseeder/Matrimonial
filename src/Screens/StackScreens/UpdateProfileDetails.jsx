@@ -510,7 +510,8 @@ const UpdateProfileDetails = ({ navigation, route }) => {
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
-                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+                // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+                >
                 <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
                     <View style={Globalstyles.form}>
                         <Text style={Globalstyles.title}>Name</Text>

@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     alignItems: 'center',
     flexDirection: 'row',
-    marginRight:SW(65),
+    marginRight: SW(65),
   },
   rating: {
     flexDirection: 'row',
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
   },
   Button: {
-    backgroundColor:'green',
+    backgroundColor: 'green',
     paddingHorizontal: SH(15),
     paddingVertical: SH(3),
     borderRadius: 8,
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: 'Poppins-Medium',
     fontSize: SF(11),
-    marginHorizontal:SW(2),
+    marginHorizontal: SW(2),
   },
   name: {
     fontFamily: 'Poppins-Bold',
@@ -149,6 +149,7 @@ const styles = StyleSheet.create({
   },
   panditListData: {
     marginVertical: SH(10),
+    marginTop:SH(6),
   },
   leftContainer: {
     marginVertical: SH(10),

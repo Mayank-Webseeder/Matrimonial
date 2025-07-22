@@ -762,7 +762,7 @@ const KathavachakRegister = ({ navigation }) => {
     };
 
     return (
-        <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
+        <SafeAreaView style={Globalstyles.container}>
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
             <View style={Globalstyles.header}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -778,7 +778,7 @@ const KathavachakRegister = ({ navigation }) => {
                 style={{ flex: 1 }}
             // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
             >
-                <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: insets.bottom + SH(10), flexGrow: 1 }}>
+                <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1 }}>
                     <View style={Globalstyles.form} importantForAutofill="no" removeClippedSubviews={true}>
                         {/* <Text style={styles.editText}>Edit Details</Text> */}
                         <Text style={Globalstyles.title}>Name <Entypo name={'star'} color={'red'} size={12} /></Text>

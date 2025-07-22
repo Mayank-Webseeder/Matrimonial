@@ -20,7 +20,7 @@ const AboutUs = ({ navigation }) => {
                     <Text style={Globalstyles.headerText}>About Us</Text>
                 </View>
             </View>
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={[styles.content,{paddingBottom: insets.bottom, flexGrow: 1}]}>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={[styles.content,{ paddingBottom: insets.bottom, flexGrow: 1}]}>
                 <View>
                     <Text style={styles.heading}>हमारे बारे में</Text>
                     <Text style={styles.text}>ब्राह्मण मिलन ऐप में आपका स्वागत है, "Brahmin Milan" Appwin Info Tech द्वारा विकसित एक मोबाइल ऐप है, जिसका उद्देश्य ब्राह्मण समुदाय को तकनीक के माध्यम से एकजुट और सशक्त बनाना है। यह ऐप ब्राह्मण समाज की विशेष आवश्यकताओं को पूरा करने के लिए डिज़ाइन किया गया है।</Text>

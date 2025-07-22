@@ -60,7 +60,7 @@ const Register = ({ navigation }) => {
         checkOtpTime();
 
         return () => {
-            if (timerRef.current) {clearInterval(timerRef.current);}
+            if (timerRef.current) { clearInterval(timerRef.current); }
         };
     }, []);
 
@@ -140,8 +140,8 @@ const Register = ({ navigation }) => {
             }
         }
 
-        if (!cityInput.trim()) {newErrors.selectedCity = 'City is required.';}
-        if (!gender) {newErrors.gender = 'Gender is required.';}
+        if (!cityInput.trim()) { newErrors.selectedCity = 'City is required.'; }
+        if (!gender) { newErrors.gender = 'Gender is required.'; }
 
         const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
         if (!password) {
@@ -177,7 +177,7 @@ const Register = ({ navigation }) => {
     const otpValidityDuration = 60;
 
     const startOtpCountdown = (duration) => {
-        if (timerRef.current) {clearInterval(timerRef.current);}
+        if (timerRef.current) { clearInterval(timerRef.current); }
 
         timerRef.current = setInterval(() => {
             setOtpTimer(prev => {
@@ -378,13 +378,14 @@ const Register = ({ navigation }) => {
                     color={Colors.light}
                     onPress={() => navigation.navigate('Splash')}
                 />
-                {/* <KeyboardAvoidingView
+                <KeyboardAvoidingView
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                     style={{ flex: 1 }}
-                    keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}> */}
+                // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+                >
                     <ScrollView style={styles.contentContainer} contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
                         showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-                        <View>
+                        <View style={{ flex: 1 }}>
                             <Text style={styles.text}>Sign Up</Text>
 
                             <View style={Globalstyles.form}>
@@ -487,7 +488,7 @@ const Register = ({ navigation }) => {
                                             setSelectedCity(cityInput);
                                             setFilteredCities([]);
                                         }}
-                                     />
+                                    />
                                 )}
 
 
@@ -657,7 +658,7 @@ const Register = ({ navigation }) => {
                             </Pressable>
                         </View>
                     </ScrollView>
-                {/* </KeyboardAvoidingView> */}
+                </KeyboardAvoidingView>
             </ImageBackground>
         </SafeAreaView>
     );

@@ -945,7 +945,7 @@ const EventNews = ({ navigation }) => {
             </TouchableOpacity>
           )}
 
-          <View style={[Globalstyles.bottomImage, { paddingBottom: SH(10) }]}>
+          <View style={[Globalstyles.bottomImage]}>
             <AppIntroSlider
               ref={sliderRef}
               data={slider}

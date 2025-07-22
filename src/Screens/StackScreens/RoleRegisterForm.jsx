@@ -517,7 +517,7 @@ const RoleRegisterForm = ({ navigation }) => {
                 // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
                 >
 
-                <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + SH(10), flexGrow: 1 }}
+                <ScrollView contentContainerStyle={{ flexGrow: 1 }}
                     showsVerticalScrollIndicator={false}
                     keyboardShouldPersistTaps="handled">
                     <View style={Globalstyles.form}>

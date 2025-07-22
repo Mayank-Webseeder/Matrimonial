@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-Regular',
     },
     bottomContainer: {
-        paddingBottom: SH(50),
+        paddingBottom: SH(5),
     },
 });
 

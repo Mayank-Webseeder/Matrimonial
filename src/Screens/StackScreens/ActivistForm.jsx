@@ -403,9 +403,9 @@ export default function ActivistForm({ navigation }) {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+        // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
       >
-        <ScrollView contentContainerStyle={[Globalstyles.form, { paddingBottom: insets.bottom + SH(10), flexGrow: 1 }]} showsVerticalScrollIndicator={false} removeClippedSubviews={true} keyboardShouldPersistTaps="handled">
+        <ScrollView contentContainerStyle={[Globalstyles.form, {  flexGrow: 1 }]} showsVerticalScrollIndicator={false} removeClippedSubviews={true} keyboardShouldPersistTaps="handled">
           <Text style={Globalstyles.title}>Full Name <Entypo name={'star'} color={'red'} size={12} /></Text>
           <TextInput style={[Globalstyles.input, errors.fullname && styles.errorInput]}
             placeholder="Enter your Full Name"

@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
     },
     sliderContainer: {
         marginBottom: SH(30),
-        marginTop: SH(10),
+        marginTop:0,
     },
     sliderImage: {
         width: '100%',
@@ -100,19 +100,19 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     name: {
-        fontSize: SF(14),
+        fontSize: SF(13),
         fontFamily: 'Poppins-Bold',
         color: '#333',
          textTransform:'capitalize',
     },
     city: {
-        fontSize: SF(14),
+        fontSize: SF(13),
         fontFamily: 'Poppins-Regular',
         color: '#555',
          textTransform:'capitalize',
     },
     text: {
-        fontSize: SF(13),
+        fontSize: SF(12),
         fontFamily: 'Poppins-Regular',
         color: '#555',
          textTransform:'capitalize',

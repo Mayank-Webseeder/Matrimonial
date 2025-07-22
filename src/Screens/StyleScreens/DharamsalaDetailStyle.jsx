@@ -75,13 +75,13 @@ const styles = StyleSheet.create({
     marginLeft: SW(4),
   },
   Button: {
-    backgroundColor:'green',
-    justifyContent:'center',
+    backgroundColor: 'green',
+    justifyContent: 'center',
     paddingVertical: SH(5),
     borderRadius: 8,
     alignItems: 'center',
     marginLeft: SW(10),
-    paddingHorizontal:SW(15),
+    paddingHorizontal: SW(15),
     flexDirection: 'row',
   },
   buttonText: {
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: SF(13),
-    marginBottom:SH(3),
+    marginBottom: SH(3),
     color: Colors.dark,
     fontFamily: 'Poppins-Bold',
   },
@@ -130,9 +130,8 @@ const styles = StyleSheet.create({
     marginTop: SH(5),
     fontFamily: 'Poppins-Bold',
   },
-  Bottomimage:{
-    marginVertical:SH(10),
-    paddingBottom:SH(15),
+  Bottomimage: {
+    marginVertical: SH(10)
   },
 
 });

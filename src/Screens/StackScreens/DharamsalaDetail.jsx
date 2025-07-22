@@ -364,8 +364,6 @@ const DharamsalaDetail = ({ navigation, route }) => {
   return (
     <SafeAreaView style={Globalstyles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
-
-      {/* Header */}
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity

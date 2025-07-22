@@ -632,7 +632,7 @@ const Committee = ({ navigation, route }) => {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }>
         <View>
-          <View style={styles.sliderContainer}>
+          <View style={Globalstyles.sliderContainer}>
             <AppIntroSlider
               ref={sliderRef}
               data={slider}

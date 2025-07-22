@@ -64,7 +64,7 @@ const BioData = ({ navigation }) => {
       setAllprofiles({});
       setIsLoading(true);
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -104,7 +104,7 @@ const BioData = ({ navigation }) => {
     }
   };
   useEffect(() => {
-    if (Topslider.length === 0) {return;}
+    if (Topslider.length === 0) { return; }
 
     const currentSlideTop = Topslider[currentIndexTop];
     const durationInSecondsTop = Number(currentSlideTop?.duration) || 4;
@@ -123,7 +123,7 @@ const BioData = ({ navigation }) => {
 
 
   useEffect(() => {
-    if (Bottomslider.length === 0) {return;}
+    if (Bottomslider.length === 0) { return; }
 
     const currentSlideBottom = Bottomslider[currentIndexBottom];
     const durationInSecondsBottom = Number(currentSlideBottom?.duration) || 4;
@@ -143,7 +143,7 @@ const BioData = ({ navigation }) => {
   const Top_Advertisement_window = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -197,7 +197,7 @@ const BioData = ({ navigation }) => {
   const Bottom_Advertisement_window = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -286,7 +286,7 @@ const BioData = ({ navigation }) => {
 
 
   const calculateAge = (dob) => {
-    if (!dob) {return 'N/A';}
+    if (!dob) { return 'N/A'; }
     const birthDate = moment(dob);
     const currentDate = moment();
     return currentDate.diff(birthDate, 'years');
@@ -377,20 +377,23 @@ const BioData = ({ navigation }) => {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }>
         <View>
-          <View style={styles.sliderContainer}>
+          <View style={Globalstyles.sliderContainer}>
             <AppIntroSlider
               ref={sliderRefTop}
               data={Topslider}
               renderItem={renderItem}
               showNextButton={false}
               showDoneButton={false}
-              dotStyle={Globalstyles.dot}
-              activeDotStyle={Globalstyles.activeDot}
+              dotStyle={Topslider.length > 1 ? Globalstyles.dot : { width: 0, height: 0 , marginTop:0 }}
+              activeDotStyle={Topslider.length > 1 ? Globalstyles.activeDot : { width: 0, height: 0 , marginTop:0 }}
+              renderPagination={(activeIndex) => {
+                if (Topslider.length <= 1) return null;
+                return null;
+              }}
             />
           </View>
-
           {MatrimonialData.length > 0 ? (
-            <View style={{ marginVertical: SH(5) }}>
+            <View style={{ marginVertical: SH(5) ,marginTop:0 }}>
               <HeadingWithViewAll heading={'Your Preferenced Profiles'} headingStyle={{ color: Colors.theme_color }} />
 
               <FlatList

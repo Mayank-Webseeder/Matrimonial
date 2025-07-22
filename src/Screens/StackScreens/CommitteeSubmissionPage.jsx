@@ -255,8 +255,9 @@ const CommitteeSubmissionPage = ({ navigation }) => {
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
-                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
-                <ScrollView contentContainerStyle={[Globalstyles.form, { paddingBottom: insets.bottom + SH(10), flexGrow: 1 }]} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+                // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+                >
+                <ScrollView contentContainerStyle={[Globalstyles.form, { flexGrow: 1 }]} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
                     <View>
                         <Text style={styles.title}>Upload Committee Details</Text>
 

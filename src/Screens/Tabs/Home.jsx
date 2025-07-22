@@ -97,7 +97,7 @@ const Home = ({ navigation }) => {
 
 
   useEffect(() => {
-    if (Topslider.length === 0) {return;}
+    if (Topslider.length === 0) { return; }
 
     const currentSlideTop = Topslider[currentIndexTop];
     const durationInSecondsTop = Number(currentSlideTop?.duration) || 4;
@@ -117,7 +117,7 @@ const Home = ({ navigation }) => {
 
 
   useEffect(() => {
-    if (Bottomslider.length === 0) {return;}
+    if (Bottomslider.length === 0) { return; }
 
     const currentSlideBottom = Bottomslider[currentIndexBottom];
     const durationInSecondsBottom = Number(currentSlideBottom?.duration) || 4;
@@ -155,7 +155,7 @@ const Home = ({ navigation }) => {
       setIsLoading(true);
       setNotificationData({});
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -201,7 +201,7 @@ const Home = ({ navigation }) => {
     setProfileData({});
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -240,7 +240,7 @@ const Home = ({ navigation }) => {
       setLoading(true);
       setMybiodata('');
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -284,7 +284,7 @@ const Home = ({ navigation }) => {
   const Top_Advertisement_window = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -338,7 +338,7 @@ const Home = ({ navigation }) => {
   const Bottom_Advertisement_window = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -395,7 +395,7 @@ const Home = ({ navigation }) => {
       setIsLoading(true);
 
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -440,7 +440,7 @@ const Home = ({ navigation }) => {
 
   const handleNavigateToProfile = (item) => {
     console.log('item?.connectionStatus', item?.connectionStatus);
-    if (!navigation.isFocused()) {return;}
+    if (!navigation.isFocused()) { return; }
 
     if (!isBiodataMissing || isBiodataExpired) {
       console.log('Navigating to ShortMatrimonialProfile because Biodata is missing or expired');
@@ -470,7 +470,7 @@ const Home = ({ navigation }) => {
       setLoading(true);
       setallBiodata('');
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -605,7 +605,7 @@ const Home = ({ navigation }) => {
                         <View style={{ position: 'relative' }}>
                           <Video
                             source={{ uri: item.image }}
-                            style={{ width: '100%', height: SH(200)}}
+                            style={{ width: '100%', height: SH(200) }}
                             resizeMode="contain"
                             repeat
                             muted={isMuted}
@@ -621,8 +621,8 @@ const Home = ({ navigation }) => {
                               right: SW(20),
                               backgroundColor: 'rgba(0,0,0,0.5)',
                               borderRadius: 20,
-                              paddingHorizontal:SW(8),
-                              paddingVertical:SH(8),
+                              paddingHorizontal: SW(8),
+                              paddingVertical: SH(8),
                             }}
                           >
                             <Ionicons
@@ -650,7 +650,7 @@ const Home = ({ navigation }) => {
                 })}
               />
             </View>
-            <View style={{marginTop:-SH(10)}}>
+            <View style={{ marginTop: -SH(10) }}>
               <HeadingWithViewAll
                 heading="MATRIMONY"
                 showViewAll={true}
@@ -755,8 +755,8 @@ const Home = ({ navigation }) => {
                     <TouchableOpacity
                       style={styles.CategoryContainer}
                       onPress={() => {
-                        if (item.screen) {navigation.navigate(item.screen);}
-                        else {console.warn('Screen not specified');}
+                        if (item.screen) { navigation.navigate(item.screen); }
+                        else { console.warn('Screen not specified'); }
                       }}
                     >
                       <Image source={item.image} style={styles.images} />
@@ -787,7 +787,7 @@ const Home = ({ navigation }) => {
                     <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                       <Image
                         source={{ uri: item.image }}
-                        style={{ width, height, resizeMode: 'cover' }}
+                        style={{ width, height, resizeMode: 'contain' }}
                       />
                     </TouchableOpacity>
                   );

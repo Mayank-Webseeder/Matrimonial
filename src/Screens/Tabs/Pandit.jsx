@@ -137,10 +137,10 @@ const Pandit = ({ navigation, route }) => {
         queryParams.push(`locality=${encodeURIComponent(locality.trim().toLowerCase())}`);
       }
       else if (filterType === 'modal') {
-        if (modalLocality?.trim()) {queryParams.push(`locality=${encodeURIComponent(modalLocality.trim().toLowerCase())}`);}
-        if (services?.trim()) {queryParams.push(`services=${encodeURIComponent(services.trim())}`);}
-        if (rating?.trim()) {queryParams.push(`rating=${encodeURIComponent(rating.trim())}`);}
-        if (experience?.trim()) {queryParams.push(`experience=${encodeURIComponent(experience.trim())}`);}
+        if (modalLocality?.trim()) { queryParams.push(`locality=${encodeURIComponent(modalLocality.trim().toLowerCase())}`); }
+        if (services?.trim()) { queryParams.push(`services=${encodeURIComponent(services.trim())}`); }
+        if (rating?.trim()) { queryParams.push(`rating=${encodeURIComponent(rating.trim())}`); }
+        if (experience?.trim()) { queryParams.push(`experience=${encodeURIComponent(experience.trim())}`); }
       }
 
       const url = queryParams.length > 0
@@ -184,7 +184,7 @@ const Pandit = ({ navigation, route }) => {
 
 
   useEffect(() => {
-    if (slider.length === 0) {return;}
+    if (slider.length === 0) { return; }
 
     const currentSlide = slider[currentIndex];
     const durationInSeconds = Number(currentSlide?.duration) || 4;
@@ -203,7 +203,7 @@ const Pandit = ({ navigation, route }) => {
   const Top_Advertisement_window = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -330,7 +330,7 @@ const Pandit = ({ navigation, route }) => {
     console.log('profileId:', profileId);
 
     try {
-      if (!profileId) {throw new Error('Missing profile ID');}
+      if (!profileId) { throw new Error('Missing profile ID'); }
 
       const directLink = `${DeepLink}/${profileType}/${profileId}`;
 
@@ -373,16 +373,10 @@ const Pandit = ({ navigation, route }) => {
         <View style={styles.cardData}>
           {item.profilePhoto ? (
             <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
-              <Image
-                source={{ uri: item.profilePhoto }}
-                style={styles.image}
-              />
+              <Image source={{ uri: item.profilePhoto }} style={styles.image} />
             </TouchableOpacity>
           ) : (
-            <Image
-              source={require('../../Images/NoImage.png')}
-              style={styles.image}
-            />
+            <Image source={require('../../Images/NoImage.png')} style={styles.image} />
           )}
 
           <Modal visible={isImageVisible} transparent={true} onRequestClose={() => setImageVisible(false)}>
@@ -397,7 +391,7 @@ const Pandit = ({ navigation, route }) => {
             />
           </Modal>
 
-          <View>
+          <View style={{ flex: 1, marginLeft: SW(10) }}>
             <View>
               <Pressable style={styles.leftContainer}
                 onPress={() => {

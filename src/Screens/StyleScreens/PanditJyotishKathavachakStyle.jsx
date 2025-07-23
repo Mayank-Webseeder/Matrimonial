@@ -72,19 +72,15 @@ const styles = StyleSheet.create({
   icon: {
     marginBottom: SW(10),
   },
-  sharecontainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#fff',
-    // marginHorizontal: SW(10),
-    marginTop: -SH(5),
-  },
   iconContainer: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    marginRight: SW(65),
-  },
+  marginHorizontal:SW(20),
+},
+sharecontainer: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginTop: SH(8),
+},
   rating: {
     flexDirection: 'row',
   },
@@ -134,6 +130,7 @@ const styles = StyleSheet.create({
     marginVertical: SH(7),
     marginBottom: SH(3),
     paddingVertical: SH(3),
+    paddingBottom:SH(10)
   },
   cardData: {
     flexDirection: 'row',

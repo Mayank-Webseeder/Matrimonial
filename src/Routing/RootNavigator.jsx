@@ -227,7 +227,6 @@ function MyTabs({ route }) {
   const insets = useSafeAreaInsets();
 
 
-
   return (
     <Tab.Navigator
       initialRouteName={initialRoute}

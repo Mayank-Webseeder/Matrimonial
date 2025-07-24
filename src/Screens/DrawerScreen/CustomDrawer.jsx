@@ -78,36 +78,34 @@ const CustomDrawer = (props) => {
     { title: 'Change Password', screen: 'ChangePassword' },
   ];
 
-  const handleLogout = async () => {
-    console.log('🔒 Logging out...');
+ const handleLogout = async () => {
+  console.log('Logging out...');
 
-    try {
+  try {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'AuthStack' }],
+    });
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    await AsyncStorage.multiRemove([
+      'userToken',
+      'userId',
+      'profileInterest',
+      'newsEvents',
+    ]);
 
-      await AsyncStorage.multiRemove([
-        'userToken',
-        'userId',
-        'profileInterest',
-        'newsEvents',
-      ]);
+    dispatch(resetProfiledata());
+    dispatch(resetBioData());
+    dispatch(resetsetActivistdata());
+    dispatch(resetAllBiodata());
+    dispatch(reseAllNotification());
 
-      dispatch(resetProfiledata());
-      dispatch(resetBioData());
-      dispatch(resetsetActivistdata());
-      dispatch(resetAllBiodata());
-      dispatch(reseAllNotification());
+    console.log('Logged out successfully');
+  } catch (error) {
+    console.error('Error during logout:', error);
+  }
+};
 
-      setTimeout(() => {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'AuthStack' }],
-        });
-        console.log('✅ Logged out successfully');
-      }, 100);
-
-    } catch (error) {
-      console.error('❌ Error during logout:', error);
-    }
-  };
 
   const handleDropdownToggle = (dropdown) => {
     setOpenDropdown((prev) => (prev === dropdown ? null : dropdown));

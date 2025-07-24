@@ -383,49 +383,50 @@ const Jyotish = ({ navigation, route }) => {
               renderIndicator={() => null}
             />
           </Modal>
+
           <View style={{ flex: 1, marginLeft: SW(10) }}>
-            <Pressable
-              style={styles.leftContainer}
-              onPress={() => {
-                if (isExpired) {
-                  showMessage({
-                    message: 'Subscription Required',
-                    description: "This Jyotish's profile is currently unavailable. Please subscribe to access it.",
-                    type: 'info',
-                    icon: 'info',
-                    duration: 3000,
-                  });
-                  navigation.navigate('BuySubscription', { serviceType: 'Jyotish' });
-                } else {
-                  navigation.navigate('JyotishDetailsPage', {
-                    jyotish_id: item._id || id,
-                    isSaved,
-                    fromScreen: 'Jyotish',
-                  });
-                }
-              }}
-            >
-              <Text style={styles.name}>{item?.fullName}</Text>
-              <Text style={styles.text}>ID: {item?.jyotishId}</Text>
-              <View style={styles.rating}>
-                <Rating type="star" ratingCount={5} imageSize={15} startingValue={rating} readonly />
-              </View>
-              <Text style={[styles.text, { fontFamily: 'Poppins-Bold' }]}>
-                {item?.city}
-                <Text style={[styles.text, { fontFamily: 'Poppins-Regular' }]}>
-                  {` , ${item?.state}`}
-                </Text>
-              </Text>
-              <Text style={styles.text} numberOfLines={1}>
-                {item?.residentialAddress}
-              </Text>
-            </Pressable>
+            <View>
+              <Pressable style={styles.leftContainer}
+                onPress={() => {
+                  if (isExpired) {
+                    showMessage({
+                      message: 'Subscription Required',
+                      description: "This Jyotish's profile is currently unavailable. Please subscribe to access it.",
+                      type: 'info',
+                      icon: 'info',
+                      duration: 3000,
+                    });
+                    navigation.navigate('BuySubscription', { serviceType: 'Jyotish' });
+                  } else {
+                    navigation.navigate('JyotishDetailsPage', {
+                      jyotish_id: item._id || id,
+                      isSaved,
+                      fromScreen: 'Jyotish',
+                    });
+                  }
+                }}
+              >
+                <Text style={styles.name}>{item?.fullName}</Text>
+                <Text style={styles.text}>ID: {item?.jyotishId}</Text>
+                <View style={styles.rating}>
+                  <Rating type="star" ratingCount={5} imageSize={15} startingValue={rating} readonly />
+                </View>
+                <View>
+                  <Text style={[styles.text, { fontFamily: 'Poppins-Bold' }]}>
+                    {item?.city}
+                    <Text style={[styles.text, { fontFamily: 'Poppins-Regular' }]}>
+                      {` , ${item?.state}`}
+                    </Text>
+                  </Text>
+                </View>
+                <Text style={styles.text} numberOfLines={1}>{item?.residentialAddress}</Text>
+              </Pressable>
+            </View>
             <View style={styles.sharecontainer}>
               <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
                 <MaterialIcons name="call" size={17} color={Colors.light} />
               </TouchableOpacity>
-
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginRight: SW(10) }}>
                 <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id || id)}>
                   <FontAwesome
                     name={item.isSaved ? 'bookmark' : 'bookmark-o'}
@@ -433,8 +434,10 @@ const Jyotish = ({ navigation, route }) => {
                     color={Colors.dark}
                   />
                 </TouchableOpacity>
-
-                <TouchableOpacity style={styles.iconContainer} onPress={() => shareProfile(item._id || id)}>
+                <TouchableOpacity
+                  style={styles.iconContainer}
+                  onPress={() => shareProfile(item._id || id)}
+                >
                   <Feather name="send" size={18} color={Colors.dark} />
                 </TouchableOpacity>
               </View>

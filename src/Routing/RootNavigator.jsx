@@ -407,20 +407,19 @@ const RootNavigator = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [initialRoute, setInitialRoute] = useState(null);
 
-  useEffect(() => {
-    const checkUserToken = async () => {
-      const token = await AsyncStorage.getItem('userToken');
-      const userId = await AsyncStorage.getItem('userId');
-      console.log('Token in root file:', token);
+ useEffect(() => {
+  const checkUserToken = async () => {
+    await new Promise((res) => setTimeout(res, 100));
 
-      setInitialRoute(token ? 'AppStack' : 'AuthStack');
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 3000);
-    };
+    const token = await AsyncStorage.getItem('userToken');
+    console.log('🔐 Token in RootNavigator:', token);
 
-    checkUserToken();
-  }, []);
+    setInitialRoute(token ? 'AppStack' : 'AuthStack');
+    setIsLoading(false);
+  };
+
+  checkUserToken();
+}, []);
 
 
 

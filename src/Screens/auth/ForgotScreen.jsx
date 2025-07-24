@@ -129,9 +129,7 @@ const ForgotScreen = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                style={{ flex: 1 }}
-            >
+            <KeyboardAvoidingView style={{ flex: 1 }}>
                 <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
                     <View>
                         <ImageBackground

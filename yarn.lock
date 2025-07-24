@@ -2101,9 +2101,9 @@
     "@types/node" "*"
 
 "@types/node@*":
-  version "24.0.15"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-24.0.15.tgz#f34fbc973e7d64217106e0c59ed8761e6b51381e"
-  integrity sha512-oaeTSbCef7U/z7rDeJA138xpG3NuKc64/rZ2qmUFkFJmnMsAPaluIifqyWd8hSSMxyP9oie3dLAqYPblag9KgA==
+  version "24.1.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-24.1.0.tgz#0993f7dc31ab5cc402d112315b463e383d68a49c"
+  integrity sha512-ut5FthK5moxFKH2T1CUOC6ctR67rQRvvHdFLCD2Ql6KXmMuCrjsSsRI9UsLCm9M18BMwClv4pn327UvB7eeO1w==
   dependencies:
     undici-types "~7.8.0"
 
@@ -2565,12 +2565,12 @@ available-typed-arrays@^1.0.7:
     possible-typed-array-names "^1.0.0"
 
 axios@^1.10.0, axios@^1.7.9:
-  version "1.10.0"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-1.10.0.tgz#af320aee8632eaf2a400b6a1979fa75856f38d54"
-  integrity sha512-/1xYAC4MP/HEG+3duIhFr4ZQXR4sQXOIe+o6sdqzeykGLx6Upp/1p8MHqhINOvGeP7xyNHe7tsiJByc4SSVUxw==
+  version "1.11.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-1.11.0.tgz#c2ec219e35e414c025b2095e8b8280278478fdb6"
+  integrity sha512-1Lx3WLFQWm3ooKDYZD1eXmoGO9fxYQjrycfHFC8P0sCfQVXyROp0p9PFWBehewBOdCwHc+f/b8I0fMto5eSfwA==
   dependencies:
     follow-redirects "^1.15.6"
-    form-data "^4.0.0"
+    form-data "^4.0.4"
     proxy-from-env "^1.1.0"
 
 babel-code-frame@^6.26.0:
@@ -3786,9 +3786,9 @@ ee-first@1.1.1:
   integrity sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==
 
 electron-to-chromium@^1.5.173:
-  version "1.5.189"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.189.tgz#a5c41d2e5c64e2e6cd11bdf4eeeebc1ec8601e08"
-  integrity sha512-y9D1ntS1ruO/pZ/V2FtLE+JXLQe28XoRpZ7QCCo0T8LdQladzdcOVQZH/IWLVJvCw12OGMb6hYOeOAjntCmJRQ==
+  version "1.5.190"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.190.tgz#f0ac8be182291a45e8154dbb12f18d2b2318e4ac"
+  integrity sha512-k4McmnB2091YIsdCgkS0fMVMPOJgxl93ltFzaryXqwip1AaxeDqKCGLxkXODDA5Ab/D+tV5EL5+aTx76RvLRxw==
 
 emittery@^0.13.1:
   version "0.13.1"
@@ -4379,9 +4379,9 @@ flow-enums-runtime@^0.0.6:
   integrity sha512-3PYnM29RFXwvAN6Pc/scUfkI7RwhQ/xqyLUyPNlXUp9S40zI8nup9tUSrTLSVnWGBN38FNiGWbwZOB6uR4OGdw==
 
 flow-parser@0.*:
-  version "0.276.0"
-  resolved "https://registry.yarnpkg.com/flow-parser/-/flow-parser-0.276.0.tgz#9a880f1c85674f77543215711a2e45bce9b30342"
-  integrity sha512-rHZzn3I1Hc6L+XCTHe4miH9mEW4+CozvGghVLwE5xHasf2nchq2GJonUowRihuOx6NsJO8pGD+5XdIDH1iLgNg==
+  version "0.277.0"
+  resolved "https://registry.yarnpkg.com/flow-parser/-/flow-parser-0.277.0.tgz#9ce94bce4b4849e546f1359744f39842f4b2a64f"
+  integrity sha512-VSmZNRzdayHfb1st+A6cyhqRJfdHy6pEq7p3AET8E3p59D2YFj91n+gjALFR2CuLrGmZM6VR+x/L8OrV+vmwvw==
 
 follow-redirects@^1.15.6:
   version "1.15.9"
@@ -4403,7 +4403,7 @@ foreground-child@^3.3.1:
     cross-spawn "^7.0.6"
     signal-exit "^4.0.1"
 
-form-data@^4.0.0:
+form-data@^4.0.4:
   version "4.0.4"
   resolved "https://registry.yarnpkg.com/form-data/-/form-data-4.0.4.tgz#784cdcce0669a9d68e94d11ac4eea98088edd2c4"
   integrity sha512-KrGhL9Q4zjj0kiUt5OO4Mr/A/jlI2jDYs5eHBpYHPcBEVSiipAvn2Ko2HnPe20rmcuuvMHNdZFp+4IlGTMF0Ow==
@@ -6868,9 +6868,9 @@ react-native-paper@^5.13.0:
     use-latest-callback "^0.2.3"
 
 react-native-permissions@^5.2.4:
-  version "5.4.1"
-  resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-5.4.1.tgz#b147e5901f2f5d847b367f2ba6e60378ebcee90c"
-  integrity sha512-MTou5DVn8IADr7OQjYePJzcxrVNEeODBvSpB8XOt5qBI9ui3HduSBn/KTNZECH/Ph2Y20OnZBMqe6Wp9IryrgQ==
+  version "5.4.2"
+  resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-5.4.2.tgz#206c0e440cff2ce047514995457bd73a9924fd8b"
+  integrity sha512-XNMoG1fxrB9q73MLn/ZfTaP7pS8qPu0KWypbeFKVTvoR+JJ3O7uedMOTH/mts9bTG+GKhShOoZ+k0CR63q9jwA==
 
 react-native-photo-manipulator@^1.9.2:
   version "1.9.2"
@@ -6953,9 +6953,9 @@ react-native-swiper@^1.6.0:
     prop-types "^15.5.10"
 
 react-native-vector-icons@^10.2.0:
-  version "10.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-10.2.0.tgz#f438f2ca16f7d6be658fd6ec8f0d2b7e2132b91c"
-  integrity sha512-n5HGcxUuVaTf9QJPs/W22xQpC2Z9u0nb0KgLPnVltP8vdUvOp6+R26gF55kilP/fV4eL4vsAHUqUjewppJMBOQ==
+  version "10.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-10.3.0.tgz#de440f2627a2ed1079ce3b99d5b9d4f86894df28"
+  integrity sha512-IFQ0RE57819hOUdFvgK4FowM5aMXg7C7XKsuGLevqXkkIJatc3QopN0wYrb2IrzUgmdpfP+QVIbI3S6h7M0btw==
   dependencies:
     prop-types "^15.7.2"
     yargs "^16.1.1"

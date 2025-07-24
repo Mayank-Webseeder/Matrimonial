@@ -367,22 +367,21 @@ const Register = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.container} >
-            <ImageBackground
-                source={require('../../Images/Signup.png')}
-                style={styles.image}
+            <KeyboardAvoidingView
+                style={{ flex: 1 }}
+            // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
             >
-                <AntDesign
-                    name={'arrowleft'}
-                    size={25}
-                    style={styles.backArrow}
-                    color={Colors.light}
-                    onPress={() => navigation.navigate('Splash')}
-                />
-                <KeyboardAvoidingView
-                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                    style={{ flex: 1 }}
-                // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+                <ImageBackground
+                    source={require('../../Images/Signup.png')}
+                    style={styles.image}
                 >
+                    <AntDesign
+                        name={'arrowleft'}
+                        size={25}
+                        style={styles.backArrow}
+                        color={Colors.light}
+                        onPress={() => navigation.navigate('Splash')}
+                    />
                     <ScrollView style={styles.contentContainer} contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
                         showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
                         <View style={{ flex: 1 }}>
@@ -658,8 +657,8 @@ const Register = ({ navigation }) => {
                             </Pressable>
                         </View>
                     </ScrollView>
-                </KeyboardAvoidingView>
-            </ImageBackground>
+                </ImageBackground>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     );
 };

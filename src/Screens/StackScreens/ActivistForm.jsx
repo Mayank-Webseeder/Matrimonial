@@ -163,7 +163,7 @@ export default function ActivistForm({ navigation }) {
 
   const convertToBase64 = async (imageUri) => {
     try {
-      if (!imageUri) {return null;}
+      if (!imageUri) { return null; }
       if (imageUri.startsWith('data:image')) {
         return imageUri;
       }
@@ -403,269 +403,271 @@ export default function ActivistForm({ navigation }) {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
-        // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+      // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
       >
-        <ScrollView contentContainerStyle={[Globalstyles.form, {  flexGrow: 1 }]} showsVerticalScrollIndicator={false} removeClippedSubviews={true} keyboardShouldPersistTaps="handled">
-          <Text style={Globalstyles.title}>Full Name <Entypo name={'star'} color={'red'} size={12} /></Text>
-          <TextInput style={[Globalstyles.input, errors.fullname && styles.errorInput]}
-            placeholder="Enter your Full Name"
-            value={ActivistData.fullname}
-            onChangeText={(text) => {
-              const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
-              setActivistData((prev) => ({ ...prev, fullname: filteredText }));
-            }}
-            placeholderTextColor={Colors.gray}
-            autoComplete="off"
-            textContentType="none"
-            importantForAutofill="no"
-            autoCorrect={false}
-          />
-          {errors?.fullname && (
-            <Text style={styles.errorText}>
-              {errors.fullname}
-            </Text>
-          )}
-          <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
-          <Dropdown
-            style={[Globalstyles.input, !isEditing && styles.readOnly, errors.subCaste && styles.errorInput]}
-            data={subCasteOptions}
-            labelField="label"
-            valueField="value"
-            value={ActivistData?.subCaste}
-            editable={isEditing}
-            onChange={(item) => handleInputChange('subCaste', item.value)}
-            placeholder="Select subCaste"
-            placeholderStyle={{ color: '#E7E7E7' }}
-            autoScroll={false}
-            showsVerticalScrollIndicator={false}
-            autoCorrect={false}
-          />
-
-          {errors?.subCaste && (
-            <Text style={styles.errorText}>
-              {errors.subCaste}
-            </Text>
-          )}
-
+        <ScrollView contentContainerStyle={[Globalstyles.form, { flexGrow: 1 }]} showsVerticalScrollIndicator={false} removeClippedSubviews={true} keyboardShouldPersistTaps="handled">
           <View>
-            <Text style={Globalstyles.title}>
-              Date of Birth <Entypo name={'star'} color={'red'} size={12} />
-            </Text>
-
-            <TouchableOpacity
-              onPress={() => isEditing && setShowDatePicker(true)}
-              activeOpacity={0.8}
-            >
-              <View style={[
-                Globalstyles.inputContainer, errors.dob && styles.errorInput,
-                {
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                },
-              ]}>
-                <Text style={styles.dateText}>
-                  {ActivistData?.dob
-                    ? moment(ActivistData.dob, 'YYYY-MM-DD').format('DD/MM/YYYY')
-                    : 'Select Your Date'}
-                </Text>
-              </View>
-            </TouchableOpacity>
-
-            {showDatePicker && (
-              <DateTimePicker
-                value={
-                  ActivistData?.dob
-                    ? new Date(ActivistData.dob)
-                    : new Date(2000, 0, 1)
-                }
-                mode="date"
-                display="default"
-                maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))}
-                themeVariant="light"
-                onChange={(event, selectedDate) => {
-                  setShowDatePicker(false);
-                  if (event.type === 'set' && selectedDate) {
-                    setActivistData((prevState) => ({
-                      ...prevState,
-                      dob: moment(selectedDate).format('YYYY-MM-DD'),
-                    }));
-                  }
-                }}
-              />
+            <Text style={Globalstyles.title}>Full Name <Entypo name={'star'} color={'red'} size={12} /></Text>
+            <TextInput style={[Globalstyles.input, errors.fullname && styles.errorInput]}
+              placeholder="Enter your Full Name"
+              value={ActivistData.fullname}
+              onChangeText={(text) => {
+                const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+                setActivistData((prev) => ({ ...prev, fullname: filteredText }));
+              }}
+              placeholderTextColor={Colors.gray}
+              autoComplete="off"
+              textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
+            />
+            {errors?.fullname && (
+              <Text style={styles.errorText}>
+                {errors.fullname}
+              </Text>
             )}
-          </View>
-
-          {errors?.dob && (
-            <Text style={styles.errorText}>
-              {errors.dob}
-            </Text>
-          )}
-
-          {/* State Dropdown */}
-          <Text style={Globalstyles.title}>State <Entypo name={'star'} color={'red'} size={12} /></Text>
-          <TextInput
-            style={[Globalstyles.input, errors.state && styles.errorInput]}
-            value={ActivistData?.state} // `biodata?.state` ki jagah `stateInput` use karein
-            onChangeText={handleStateInputChange}
-            placeholder="Type your State"
-            placeholderTextColor={Colors.gray}
-            autoComplete="off"
-            textContentType="none"
-            importantForAutofill="no"
-            autoCorrect={false}
-          />
-
-          {filteredStates.length > 0 ? (
-            <FlatList
-              data={filteredStates.slice(0, 5)}
-              scrollEnabled={false}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item }) => (
-                <TouchableOpacity onPress={() => handleStateSelect(item)}>
-                  <Text style={Globalstyles.listItem}>{item}</Text>
-                </TouchableOpacity>
-              )}
-              style={Globalstyles.suggestions}
+            <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
+            <Dropdown
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.subCaste && styles.errorInput]}
+              data={subCasteOptions}
+              labelField="label"
+              valueField="value"
+              value={ActivistData?.subCaste}
+              editable={isEditing}
+              onChange={(item) => handleInputChange('subCaste', item.value)}
+              placeholder="Select subCaste"
+              placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
+              autoCorrect={false}
             />
-          ) : null}
 
-          {errors?.state && (
-            <Text style={styles.errorText}>
-              {errors.state}
-            </Text>
-          )}
+            {errors?.subCaste && (
+              <Text style={styles.errorText}>
+                {errors.subCaste}
+              </Text>
+            )}
 
-          {/* City/Village Input */}
-          <Text style={Globalstyles.title}>City/Village <Entypo name={'star'} color={'red'} size={12} /></Text>
-          <TextInput
-            style={[Globalstyles.input, errors.city && styles.errorInput]}
-            value={ActivistData?.city}
-            onChangeText={handleCityInputChange}
-            placeholder="Enter your city"
-            placeholderTextColor={Colors.gray}
-            autoComplete="off"
-            textContentType="none"
-            importantForAutofill="no"
-            autoCorrect={false}
-          />
-          {filteredCities.length > 0 && cityInput ? (
-            <FlatList
-              data={filteredCities.slice(0, 5)}
-              scrollEnabled={false}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item }) => (
-                <TouchableOpacity onPress={() => handleCitySelect(item)}>
-                  <Text style={Globalstyles.listItem}>{item}</Text>
-                </TouchableOpacity>
+            <View>
+              <Text style={Globalstyles.title}>
+                Date of Birth <Entypo name={'star'} color={'red'} size={12} />
+              </Text>
+
+              <TouchableOpacity
+                onPress={() => isEditing && setShowDatePicker(true)}
+                activeOpacity={0.8}
+              >
+                <View style={[
+                  Globalstyles.inputContainer, errors.dob && styles.errorInput,
+                  {
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  },
+                ]}>
+                  <Text style={styles.dateText}>
+                    {ActivistData?.dob
+                      ? moment(ActivistData.dob, 'YYYY-MM-DD').format('DD/MM/YYYY')
+                      : 'Select Your Date'}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+
+              {showDatePicker && (
+                <DateTimePicker
+                  value={
+                    ActivistData?.dob
+                      ? new Date(ActivistData.dob)
+                      : new Date(2000, 0, 1)
+                  }
+                  mode="date"
+                  display="default"
+                  maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))}
+                  themeVariant="light"
+                  onChange={(event, selectedDate) => {
+                    setShowDatePicker(false);
+                    if (event.type === 'set' && selectedDate) {
+                      setActivistData((prevState) => ({
+                        ...prevState,
+                        dob: moment(selectedDate).format('YYYY-MM-DD'),
+                      }));
+                    }
+                  }}
+                />
               )}
-              style={Globalstyles.suggestions}
+            </View>
+
+            {errors?.dob && (
+              <Text style={styles.errorText}>
+                {errors.dob}
+              </Text>
+            )}
+
+            {/* State Dropdown */}
+            <Text style={Globalstyles.title}>State <Entypo name={'star'} color={'red'} size={12} /></Text>
+            <TextInput
+              style={[Globalstyles.input, errors.state && styles.errorInput]}
+              value={ActivistData?.state} // `biodata?.state` ki jagah `stateInput` use karein
+              onChangeText={handleStateInputChange}
+              placeholder="Type your State"
+              placeholderTextColor={Colors.gray}
+              autoComplete="off"
+              textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
             />
-          ) : null}
 
-          {errors?.city && (
-            <Text style={styles.errorText}>
-              {errors.city}
-            </Text>
-          )}
-          <Text style={Globalstyles.title}>Contact <Entypo name={'star'} color={'red'} size={12} /></Text>
-          <TextInput
-            style={[Globalstyles.input, errors.mobileNo && styles.errorInput]}
-            placeholder="Enter contact number"
-            keyboardType="phone-pad"
-            maxLength={10}
-            placeholderTextColor={Colors.gray}
-            value={ActivistData.mobileNo} onChangeText={(text) => setActivistData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
-            autoComplete="off"
-            textContentType="none"
-            importantForAutofill="no"
-            autoCorrect={false}
-          />
-          {errors?.mobileNo && (
-            <Text style={styles.errorText}>
-              {errors.mobileNo}
-            </Text>
-          )}
-          <Text style={Globalstyles.title}>
-            Known Activist ID No.
-          </Text>
-          <TextInput
-            style={Globalstyles.input}
-            placeholder="Enter Activist ID (eg., Me AA0001)"
-            value={ActivistData.knownActivistId}
-            onChangeText={(text) =>
-              setActivistData({ ...ActivistData, knownActivistId: text })
-            }
-            placeholderTextColor={Colors.gray}
-            autoComplete="off"
-            textContentType="none"
-            importantForAutofill="no"
-            autoCorrect={false}
-          />
-          <Text style={Globalstyles.title}>Are you engaged with any Brahmin committee? </Text>
-          <View style={styles.radioGroup}>
-            <TouchableOpacity
-              style={[
-                styles.radioButton,
-                ActivistData.engagedWithCommittee === 'Yes' && styles.radioSelected,
-              ]}
-              onPress={() =>
-                setActivistData((prev) => ({
-                  ...prev,
-                  engagedWithCommittee: 'Yes',
-                }))
-              }
-            >
-              <Text style={styles.radioText}>Yes</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.radioButton,
-                ActivistData.engagedWithCommittee === 'No' && styles.radioSelected,
-              ]}
-              onPress={() =>
-                setActivistData((prev) => ({
-                  ...prev,
-                  engagedWithCommittee: 'No',
-                }))
-              }
-            >
-              <Text style={styles.radioText}>No</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Profile Picture Upload */}
-          <View>
-            <Text>Profile Picture <Entypo name={'star'} color={'red'} size={12} /></Text>
-            <TouchableOpacity style={styles.uploadButton} onPress={handleImagePick}>
-              <Text>{ActivistData.profilePhoto ? 'Change Image' : 'Upload Image'}</Text>
-            </TouchableOpacity>
-
-            {ActivistData.profilePhoto ? (
-              <Image
-                source={{ uri: ActivistData.profilePhoto }}
-                style={styles.imagePreviewContainer}
+            {filteredStates.length > 0 ? (
+              <FlatList
+                data={filteredStates.slice(0, 5)}
+                scrollEnabled={false}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) => (
+                  <TouchableOpacity onPress={() => handleStateSelect(item)}>
+                    <Text style={Globalstyles.listItem}>{item}</Text>
+                  </TouchableOpacity>
+                )}
+                style={Globalstyles.suggestions}
               />
             ) : null}
-          </View>
 
-          {errors?.profilePhoto && (
-            <Text style={styles.errorText}>
-              {errors.profilePhoto}
-            </Text>
-          )}
-
-          <TouchableOpacity
-            style={[styles.submitButton, isLoading && { opacity: 0.7 }]}
-            onPress={handleActivistSave}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <ActivityIndicator size="large" color="#fff" />
-            ) : (
-              <Text style={styles.submitText}>Submit</Text>
+            {errors?.state && (
+              <Text style={styles.errorText}>
+                {errors.state}
+              </Text>
             )}
-          </TouchableOpacity>
+
+            {/* City/Village Input */}
+            <Text style={Globalstyles.title}>City/Village <Entypo name={'star'} color={'red'} size={12} /></Text>
+            <TextInput
+              style={[Globalstyles.input, errors.city && styles.errorInput]}
+              value={ActivistData?.city}
+              onChangeText={handleCityInputChange}
+              placeholder="Enter your city"
+              placeholderTextColor={Colors.gray}
+              autoComplete="off"
+              textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
+            />
+            {filteredCities.length > 0 && cityInput ? (
+              <FlatList
+                data={filteredCities.slice(0, 5)}
+                scrollEnabled={false}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) => (
+                  <TouchableOpacity onPress={() => handleCitySelect(item)}>
+                    <Text style={Globalstyles.listItem}>{item}</Text>
+                  </TouchableOpacity>
+                )}
+                style={Globalstyles.suggestions}
+              />
+            ) : null}
+
+            {errors?.city && (
+              <Text style={styles.errorText}>
+                {errors.city}
+              </Text>
+            )}
+            <Text style={Globalstyles.title}>Contact <Entypo name={'star'} color={'red'} size={12} /></Text>
+            <TextInput
+              style={[Globalstyles.input, errors.mobileNo && styles.errorInput]}
+              placeholder="Enter contact number"
+              keyboardType="phone-pad"
+              maxLength={10}
+              placeholderTextColor={Colors.gray}
+              value={ActivistData.mobileNo} onChangeText={(text) => setActivistData((prev) => ({ ...prev, mobileNo: text.replace(/[^0-9]/g, '') }))}
+              autoComplete="off"
+              textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
+            />
+            {errors?.mobileNo && (
+              <Text style={styles.errorText}>
+                {errors.mobileNo}
+              </Text>
+            )}
+            <Text style={Globalstyles.title}>
+              Known Activist ID No.
+            </Text>
+            <TextInput
+              style={Globalstyles.input}
+              placeholder="Enter Activist ID (eg., Me AA0001)"
+              value={ActivistData.knownActivistId}
+              onChangeText={(text) =>
+                setActivistData({ ...ActivistData, knownActivistId: text })
+              }
+              placeholderTextColor={Colors.gray}
+              autoComplete="off"
+              textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
+            />
+            <Text style={Globalstyles.title}>Are you engaged with any Brahmin committee? </Text>
+            <View style={styles.radioGroup}>
+              <TouchableOpacity
+                style={[
+                  styles.radioButton,
+                  ActivistData.engagedWithCommittee === 'Yes' && styles.radioSelected,
+                ]}
+                onPress={() =>
+                  setActivistData((prev) => ({
+                    ...prev,
+                    engagedWithCommittee: 'Yes',
+                  }))
+                }
+              >
+                <Text style={styles.radioText}>Yes</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.radioButton,
+                  ActivistData.engagedWithCommittee === 'No' && styles.radioSelected,
+                ]}
+                onPress={() =>
+                  setActivistData((prev) => ({
+                    ...prev,
+                    engagedWithCommittee: 'No',
+                  }))
+                }
+              >
+                <Text style={styles.radioText}>No</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Profile Picture Upload */}
+            <View>
+              <Text>Profile Picture <Entypo name={'star'} color={'red'} size={12} /></Text>
+              <TouchableOpacity style={styles.uploadButton} onPress={handleImagePick}>
+                <Text>{ActivistData.profilePhoto ? 'Change Image' : 'Upload Image'}</Text>
+              </TouchableOpacity>
+
+              {ActivistData.profilePhoto ? (
+                <Image
+                  source={{ uri: ActivistData.profilePhoto }}
+                  style={styles.imagePreviewContainer}
+                />
+              ) : null}
+            </View>
+
+            {errors?.profilePhoto && (
+              <Text style={styles.errorText}>
+                {errors.profilePhoto}
+              </Text>
+            )}
+
+            <TouchableOpacity
+              style={[styles.submitButton, isLoading && { opacity: 0.7 }]}
+              onPress={handleActivistSave}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <ActivityIndicator size="large" color="#fff" />
+              ) : (
+                <Text style={styles.submitText}>Submit</Text>
+              )}
+            </TouchableOpacity>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

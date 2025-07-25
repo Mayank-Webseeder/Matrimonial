@@ -24,8 +24,8 @@ const Matrimonial = ({ navigation }) => {
   const gender = MyprofileData?.Biodata?.gender || null;
 
   const [activeButton, setActiveButton] = useState(() => {
-    if (gender?.toLowerCase() === 'male') {return 1;}
-    if (gender?.toLowerCase() === 'female') {return 2;}
+    if (gender?.toLowerCase() === 'male') { return 1; }
+    if (gender?.toLowerCase() === 'female') { return 2; }
     return 1;
   });
 
@@ -83,7 +83,7 @@ const Matrimonial = ({ navigation }) => {
 
 
   useEffect(() => {
-    if (slider.length === 0) {return;}
+    if (slider.length === 0) { return; }
 
     const currentSlide = slider[currentIndex];
     const durationInSeconds = Number(currentSlide?.duration) || 4;
@@ -104,7 +104,7 @@ const Matrimonial = ({ navigation }) => {
   const Advertisement_window = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -155,8 +155,8 @@ const Matrimonial = ({ navigation }) => {
   };
 
   useEffect(() => {
-    if (activeButton === 1) {fetchGirlsFilterData();}
-    else if (activeButton === 2) {fetchBoysFilterData();}
+    if (activeButton === 1) { fetchGirlsFilterData(); }
+    else if (activeButton === 2) { fetchBoysFilterData(); }
   }, [activeButton]);
 
 
@@ -198,8 +198,8 @@ const Matrimonial = ({ navigation }) => {
   };
 
   useEffect(() => {
-    if (activeButton === 1) {fetchGirlsFilterData();}
-    else if (activeButton === 2) {fetchBoysFilterData();}
+    if (activeButton === 1) { fetchGirlsFilterData(); }
+    else if (activeButton === 2) { fetchBoysFilterData(); }
   }, [activeButton]);
 
   const fetchBoysFilterData = async () => {
@@ -207,7 +207,7 @@ const Matrimonial = ({ navigation }) => {
       setboysProfiles([]);
       setProfileLoading(true);
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
       const res = await axios.get(MALE_FILTER_API, { headers });
@@ -242,7 +242,7 @@ const Matrimonial = ({ navigation }) => {
       setgirlsProfiles([]);
       setProfileLoading(true);
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
       const res = await axios.get(FEMALE_FILTER_API, { headers });
@@ -277,7 +277,7 @@ const Matrimonial = ({ navigation }) => {
     console.log('profileId', profileId);
 
     try {
-      if (!profileId) {throw new Error('Missing profile ID');}
+      if (!profileId) { throw new Error('Missing profile ID'); }
 
       const directLink = `${DeepLink}/${profileType}/${profileId}`;
 
@@ -337,7 +337,7 @@ const Matrimonial = ({ navigation }) => {
 
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -608,7 +608,7 @@ const Matrimonial = ({ navigation }) => {
             value={searchQuery}
             onChangeText={(text) => {
               setSearchQuery(text);
-              if (!searchMode) {setSearchMode(true);}
+              if (!searchMode) { setSearchMode(true); }
             }}
             autoFocus
             placeholderTextColor={Colors.gray}

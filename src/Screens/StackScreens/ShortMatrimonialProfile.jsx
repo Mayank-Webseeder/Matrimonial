@@ -209,7 +209,7 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
         console.log('profileId', profileId);
 
         try {
-            if (!profileId) {throw new Error('Missing profile ID');}
+            if (!profileId) { throw new Error('Missing profile ID'); }
 
             const directLink = `${DeepLink}/${profileType}/${profileId}`;
 

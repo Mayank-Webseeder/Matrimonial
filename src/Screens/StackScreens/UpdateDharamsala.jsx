@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, StatusBar, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, StatusBar, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
 import Colors from '../../utils/Colors';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -122,7 +122,7 @@ const UpdateDharamsala = ({ navigation, route }) => {
 
             const base64Images = await Promise.all(
                 images.map(async (image) => {
-                    if (!image.uri) {return null;}
+                    if (!image.uri) { return null; }
 
                     try {
                         const response = await fetch(image.uri);
@@ -388,13 +388,15 @@ const UpdateDharamsala = ({ navigation, route }) => {
                         <FlatList
                             data={DharamsalaData.images}
                             keyExtractor={(item, index) => index.toString()}
-                            horizontal
+                            horizontal={true}
                             showsHorizontalScrollIndicator={false}
                             renderItem={({ item }) => (
-                                <Image
-                                    source={{ uri: item?.uri || item }}
-                                    style={styles.photo}
-                                />
+                                <View>
+                                    <Image
+                                        source={{ uri: item?.uri || item }}
+                                        style={styles.photo}
+                                    />
+                                </View>
                             )}
                         />
                     </View>

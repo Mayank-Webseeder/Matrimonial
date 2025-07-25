@@ -68,9 +68,9 @@ const RoleRegisterForm = ({ navigation }) => {
 
             // ✅ **Select first TRUE category (Only Pandit, Jyotish, Kathavachak)**
             let profileType = null;
-            if (profileData.isPandit) {profileType = 'Pandit';}
-            else if (profileData.isJyotish) {profileType = 'Jyotish';}
-            else if (profileData.isKathavachak) {profileType = 'Kathavachak';}
+            if (profileData.isPandit) { profileType = 'Pandit'; }
+            else if (profileData.isJyotish) { profileType = 'Jyotish'; }
+            else if (profileData.isKathavachak) { profileType = 'Kathavachak'; }
 
             if (!profileType) {
                 console.log('❌ No valid profileType found.');
@@ -166,7 +166,7 @@ const RoleRegisterForm = ({ navigation }) => {
     const handleProfilePhotoPick = async () => {
         try {
             const image = await ImageCropPicker.openPicker({
-                multiple:false,
+                multiple: false,
                 width: 1000,
                 height: 1000,
                 cropping: true,
@@ -240,7 +240,7 @@ const RoleRegisterForm = ({ navigation }) => {
     const validateForm = (data) => {
         let errors = {};
 
-        if (!data) {return errors;} // Ensure data exists to avoid undefined errors
+        if (!data) { return errors; } // Ensure data exists to avoid undefined errors
 
         const allFields = Object.keys(data);
 
@@ -298,7 +298,7 @@ const RoleRegisterForm = ({ navigation }) => {
             }
 
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('Authorization token is missing.');}
+            if (!token) { throw new Error('Authorization token is missing.'); }
             console.log('Token found:', token);
 
             const headers = {
@@ -514,8 +514,8 @@ const RoleRegisterForm = ({ navigation }) => {
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
-                // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
-                >
+            // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+            >
 
                 <ScrollView contentContainerStyle={{ flexGrow: 1 }}
                     showsVerticalScrollIndicator={false}
@@ -585,6 +585,7 @@ const RoleRegisterForm = ({ navigation }) => {
                             autoComplete="off"
                             textContentType="none"
                             importantForAutofill="no"
+                            autoCorrect={false}
                         />
                         {errors.city && <Text style={styles.errorText}>{errors.city}</Text>}
                         {filteredCities.length > 0 && cityInput ? (
@@ -611,6 +612,7 @@ const RoleRegisterForm = ({ navigation }) => {
                             autoComplete="off"
                             textContentType="none"
                             importantForAutofill="no"
+                            autoCorrect={false}
                         />
 
                         <Text style={Globalstyles.title}>Aadhar No. </Text>
@@ -622,6 +624,7 @@ const RoleRegisterForm = ({ navigation }) => {
                             autoComplete="off"
                             textContentType="none"
                             importantForAutofill="no"
+                            autoCorrect={false}
                         />
 
                         <Text style={Globalstyles.title}>Sub Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
@@ -634,6 +637,7 @@ const RoleRegisterForm = ({ navigation }) => {
                             autoComplete="off"
                             textContentType="none"
                             importantForAutofill="no"
+                            autoCorrect={false}
                         />
                         {errors.subCaste && <Text style={styles.errorText}>{errors.subCaste}</Text>}
 
@@ -722,6 +726,7 @@ const RoleRegisterForm = ({ navigation }) => {
                             autoComplete="off"
                             textContentType="none"
                             importantForAutofill="no"
+                            autoCorrect={false}
                         />
 
                         <View style={styles.photopickContainer}>
@@ -735,21 +740,23 @@ const RoleRegisterForm = ({ navigation }) => {
 
                         {/* Display Selected Photos */}
                         {RoleRegisterData?.additionalPhotos?.length > 0 && (
-                         <View style={styles.photosContainer}>
-                           <Text style={styles.label}>Uploaded Photos:</Text>
+                            <View style={styles.photosContainer}>
+                                <Text style={styles.label}>Uploaded Photos:</Text>
 
-                           <FlatList
-                             data={RoleRegisterData.additionalPhotos}
-                             keyExtractor={(item, index) => index.toString()}
-                             horizontal
-                             showsHorizontalScrollIndicator={false}
-                             renderItem={({ item }) => (
-                               <Image source={{ uri: item }} style={styles.photo} />
-                             )}
-                             contentContainerStyle={{ flexDirection: 'row', alignItems: 'center' }}
-                           />
-                         </View>
-                       )}
+                                <FlatList
+                                    data={RoleRegisterData.additionalPhotos}
+                                    keyExtractor={(item, index) => index.toString()}
+                                    horizontal={true}
+                                    showsHorizontalScrollIndicator={false}
+                                    renderItem={({ item }) => (
+                                        <View>
+                                            <Image source={{ uri: item }} style={styles.photo} />
+                                        </View>
+                                    )}
+                                    contentContainerStyle={{ flexDirection: 'row', alignItems: 'center' }}
+                                />
+                            </View>
+                        )}
 
                         <Text style={Globalstyles.title}>Website Link</Text>
                         <TextInput
@@ -762,6 +769,7 @@ const RoleRegisterForm = ({ navigation }) => {
                             autoComplete="off"
                             textContentType="none"
                             importantForAutofill="no"
+                            autoCorrect={false}
                         />
 
                         <Text style={Globalstyles.title}>Youtube Link</Text>
@@ -775,6 +783,7 @@ const RoleRegisterForm = ({ navigation }) => {
                             autoComplete="off"
                             textContentType="none"
                             importantForAutofill="no"
+                            autoCorrect={false}
                         />
 
                         <Text style={Globalstyles.title}>Whatsapp Link</Text>
@@ -788,6 +797,7 @@ const RoleRegisterForm = ({ navigation }) => {
                             autoComplete="off"
                             textContentType="none"
                             importantForAutofill="no"
+                            autoCorrect={false}
                         />
 
                         <Text style={Globalstyles.title}>Facebook Link</Text>
@@ -801,6 +811,7 @@ const RoleRegisterForm = ({ navigation }) => {
                             autoComplete="off"
                             textContentType="none"
                             importantForAutofill="no"
+                            autoCorrect={false}
                         />
 
                         <Text style={Globalstyles.title}>Instagram Link</Text>
@@ -814,6 +825,7 @@ const RoleRegisterForm = ({ navigation }) => {
                             autoComplete="off"
                             textContentType="none"
                             importantForAutofill="no"
+                            autoCorrect={false}
                         />
                         <TouchableOpacity
                             style={styles.button}

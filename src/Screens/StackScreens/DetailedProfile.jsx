@@ -127,7 +127,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
     try {
       setMyBiodata('');
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -167,7 +167,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
   const fetchPlans = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -376,7 +376,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
   };
 
   const formatDate = (date) => {
-    if (!date) {return '';}
+    if (!date) { return ''; }
 
     const validDate = new Date(date);
     if (isNaN(validDate)) {
@@ -559,7 +559,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
       }
 
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -659,7 +659,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
         trialPeriod: String(plan.trialPeriod),
       };
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -724,7 +724,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
       const token = await AsyncStorage.getItem('userToken');
       const userId = await AsyncStorage.getItem('userId');
 
-      if (!token || !userId) {throw new Error('Missing user token or ID');}
+      if (!token || !userId) { throw new Error('Missing user token or ID'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -737,7 +737,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
       );
 
       const razorpayKey = keyResponse.data?.key;
-      if (!razorpayKey) {throw new Error('Failed to fetch Razorpay Key');}
+      if (!razorpayKey) { throw new Error('Failed to fetch Razorpay Key'); }
 
       const payload = {
         userId,
@@ -874,32 +874,32 @@ const DetailedProfile = ({ navigation, profileData }) => {
         style={{ flex: 1 }}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
       > */}
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-          <View style={Globalstyles.form} importantForAutofill="no" removeClippedSubviews={true}>
-            <View style={styles.detail}>
-              <Text style={styles.Formtitle}>Create Biodata</Text>
-            </View>
-            <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
-            <Dropdown
-              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.subCaste && styles.errorInput]}
-              data={subCasteOptions}
-              labelField="label"
-              valueField="value"
-              value={
-                subCasteOptions.find(item => item.label === biodata?.subCaste)?.value || ''
-              }
-              editable={isEditing}
-              onChange={(text) => handleInputChange('subCaste', text.value)}
-              placeholder="Select subCaste"
-              placeholderStyle={{ color: '#E7E7E7' }}
-              autoScroll={false}
-              showsVerticalScrollIndicator={false}
-            />
-            {errors.subCaste && (
-              <Text style={styles.errorText}>{errors.subCaste}</Text>
-            )}
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+        <View style={Globalstyles.form} importantForAutofill="no" removeClippedSubviews={true}>
+          <View style={styles.detail}>
+            <Text style={styles.Formtitle}>Create Biodata</Text>
+          </View>
+          <Text style={Globalstyles.title}>Sub-Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
+          <Dropdown
+            style={[Globalstyles.input, !isEditing && styles.readOnly, errors.subCaste && styles.errorInput]}
+            data={subCasteOptions}
+            labelField="label"
+            valueField="value"
+            value={
+              subCasteOptions.find(item => item.label === biodata?.subCaste)?.value || ''
+            }
+            editable={isEditing}
+            onChange={(text) => handleInputChange('subCaste', text.value)}
+            placeholder="Select subCaste"
+            placeholderStyle={{ color: '#E7E7E7' }}
+            autoScroll={false}
+            showsVerticalScrollIndicator={false}
+          />
+          {errors.subCaste && (
+            <Text style={styles.errorText}>{errors.subCaste}</Text>
+          )}
 
-            {/* {filteredSubCaste.length > 0 ? (
+          {/* {filteredSubCaste.length > 0 ? (
             <FlatList
               data={filteredSubCaste.slice(0, 5)}
               scrollEnabled={false}
@@ -913,53 +913,107 @@ const DetailedProfile = ({ navigation, profileData }) => {
             />
           ) : null} */}
 
-            <View>
-              <Text style={Globalstyles.title}>Gender <Entypo name={'star'} color={'red'} size={12} /> </Text>
-              <Dropdown
-                style={[Globalstyles.input, !isEditing && styles.readOnly, errors.gender && styles.errorInput]}
-                data={genderData}
-                labelField="label"
-                valueField="value"
-                value={biodata?.gender}
-                editable={isEditing}
-                onChange={(text) => handleInputChange('gender', text.value)}
-                placeholder="Select Gender"
-                placeholderStyle={{ color: '#E7E7E7' }}
-              />
+          <View>
+            <Text style={Globalstyles.title}>Gender <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Dropdown
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.gender && styles.errorInput]}
+              data={genderData}
+              labelField="label"
+              valueField="value"
+              value={biodata?.gender}
+              editable={isEditing}
+              onChange={(text) => handleInputChange('gender', text.value)}
+              placeholder="Select Gender"
+              placeholderStyle={{ color: '#E7E7E7' }}
+            />
 
+          </View>
+
+          <View>
+            <Text style={Globalstyles.title}>Full Name <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <TextInput
+              style={[
+                Globalstyles.input,
+                !isEditing && styles.readOnly,
+                errors.fullname && styles.errorInput,
+              ]}
+              value={biodata?.fullname}
+              editable={isEditing}
+              onChangeText={(text) => {
+                const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+                handleInputChange('fullname', filteredText);
+              }}
+              placeholder="Enter Your Full Name"
+              placeholderTextColor={Colors.gray}
+              autoComplete="off"
+              textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
+              keyboardType="default"
+              contextMenuHidden={true}
+            />
+
+            {errors.fullname && <Text style={styles.errorText}>{errors.fullname}</Text>}
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>
+              Date of Birth <Entypo name="star" color="red" size={12} />
+            </Text>
+
+            <View
+              style={[
+                Globalstyles.input, errors.dob && styles.errorInput,
+                {
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                },
+              ]}
+            >
+              <TouchableOpacity
+                style={{ flex: 1 }}
+                onPress={() => isEditing && setShowDatePicker(true)}
+                activeOpacity={0.8}
+
+              >
+                <Text style={[styles.dateText]}>
+                  {biodata?.dob ? formatDate(biodata.dob) : 'Select Your Date'}
+                </Text>
+              </TouchableOpacity>
             </View>
 
-            <View>
-              <Text style={Globalstyles.title}>Full Name <Entypo name={'star'} color={'red'} size={12} /> </Text>
-              <TextInput
-                style={[
-                  Globalstyles.input,
-                  !isEditing && styles.readOnly,
-                  errors.fullname && styles.errorInput,
-                ]}
-                value={biodata?.fullname}
-                editable={isEditing}
-                onChangeText={(text) => {
-                  const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
-                  handleInputChange('fullname', filteredText);
+            {errors.dob && <Text style={styles.errorText}>{errors.dob}</Text>}
+
+            {showDatePicker && (
+              <DateTimePicker
+                value={biodata?.dob ? new Date(biodata?.dob) : new Date(2000, 0, 1)}
+                mode="date"
+                display="default"
+                maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))}
+                themeVariant="light"
+                onChange={(event, selectedDate) => {
+                  setShowDatePicker(false);
+                  if (event.type === 'set' && selectedDate) {
+                    setBiodata((prev) => ({
+                      ...prev,
+                      dob: moment(selectedDate).format('YYYY-MM-DD'),
+                    }));
+                  }
                 }}
-                placeholder="Enter Your Full Name"
-                placeholderTextColor={Colors.gray}
-                autoComplete="off"
-                textContentType="none"
-                importantForAutofill="no"
-                autoCorrect={false}
-                keyboardType="default"
-                contextMenuHidden={true}
               />
+            )}
 
-              {errors.fullname && <Text style={styles.errorText}>{errors.fullname}</Text>}
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>
-                Date of Birth <Entypo name="star" color="red" size={12} />
-              </Text>
+          </View>
 
+          <View>
+            <Text style={Globalstyles.title}>
+              Time of Birth <Entypo name={'star'} color={'red'} size={12} />
+            </Text>
+
+            <TouchableOpacity
+              onPress={() => isEditing && setShowTimePicker(true)}
+              activeOpacity={0.8}
+            >
               <View
                 style={[
                   Globalstyles.input, errors.dob && styles.errorInput,
@@ -970,965 +1024,911 @@ const DetailedProfile = ({ navigation, profileData }) => {
                   },
                 ]}
               >
-                <TouchableOpacity
-                  style={{ flex: 1 }}
-                  onPress={() => isEditing && setShowDatePicker(true)}
-                  activeOpacity={0.8}
-
-                >
-                  <Text style={[styles.dateText]}>
-                    {biodata?.dob ? formatDate(biodata.dob) : 'Select Your Date'}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-
-              {errors.dob && <Text style={styles.errorText}>{errors.dob}</Text>}
-
-              {showDatePicker && (
-                <DateTimePicker
-                  value={biodata?.dob ? new Date(biodata?.dob) : new Date(2000, 0, 1)}
-                  mode="date"
-                  display="default"
-                  maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))}
-                  themeVariant="light"
-                  onChange={(event, selectedDate) => {
-                    setShowDatePicker(false);
-                    if (event.type === 'set' && selectedDate) {
-                      setBiodata((prev) => ({
-                        ...prev,
-                        dob: moment(selectedDate).format('YYYY-MM-DD'),
-                      }));
-                    }
-                  }}
-                />
-              )}
-
-            </View>
-
-            <View>
-              <Text style={Globalstyles.title}>
-                Time of Birth <Entypo name={'star'} color={'red'} size={12} />
-              </Text>
-
-              <TouchableOpacity
-                onPress={() => isEditing && setShowTimePicker(true)}
-                activeOpacity={0.8}
-              >
-                <View
-                  style={[
-                    Globalstyles.input, errors.dob && styles.errorInput,
-                    {
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                    },
-                  ]}
-                >
-                  <Text style={styles.dateText}>
-                    {biodata?.timeOfBirth ? biodata.timeOfBirth : 'HH:MM AM/PM'}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-
-              {errors.timeOfBirth && (
-                <Text style={styles.errorText}>{errors.timeOfBirth}</Text>
-              )}
-
-              {showTimePicker && (
-                <DateTimePicker
-                  value={
-                    biodata?.timeOfBirth
-                      ? new Date(`1970-01-01T${biodata.timeOfBirth}:00`)
-                      : new Date()
-                  }
-                  mode="time"
-                  display="spinner"
-                  is24Hour={false}
-                  onChange={(event, selectedTime) => {
-                    setShowTimePicker(false);
-                    if (event.type === 'set' && selectedTime) {
-                      const hours = selectedTime.getHours();
-                      const minutes = selectedTime.getMinutes();
-                      const formattedTime = moment({ hour: hours, minute: minutes }).format('hh:mm A');
-
-                      setBiodata((prev) => ({
-                        ...prev,
-                        timeOfBirth: formattedTime,
-                      }));
-                    }
-                  }}
-                  themeVariant="light"
-                />
-              )}
-
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Place of Birth <Entypo name={'star'} color={'red'} size={12} /> </Text>
-              <TextInput
-                style={[Globalstyles.input, !isEditing && styles.readOnly, errors.placeofbirth && styles.errorInput]}
-                value={biodata?.placeofbirth}
-                editable={isEditing}
-                placeholderTextColor={Colors.gray}
-                placeholder="Enter Your Birth Place"
-                onChangeText={(text) => {
-                  const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
-                  handleInputChange('placeofbirth', filteredText);
-                }}
-                autoComplete="off"
-                textContentType="none"
-                importantForAutofill="no"
-                autoCorrect={false}
-              />
-              {errors.placeofbirth && <Text style={styles.errorText}>{errors.placeofbirth}</Text>}
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Marital Status <Entypo name={'star'} color={'red'} size={12} /> </Text>
-              <Dropdown
-                style={[Globalstyles.input, !isEditing && styles.readOnly, errors.maritalStatus && styles.errorInput]}
-                data={maritalStatusData}
-                labelField="label"
-                valueField="value"
-                value={biodata?.maritalStatus}
-                editable={isEditing}
-                onChange={(text) => handleInputChange('maritalStatus', text.value)}
-                placeholder="Select marital status"
-                placeholderStyle={{ color: '#E7E7E7' }}
-                autoScroll={false}
-                showsVerticalScrollIndicator={false}
-              />
-            </View>
-            {errors.maritalStatus && <Text style={styles.errorText}>{errors.maritalStatus}</Text>}
-            <View>
-              <Text style={Globalstyles.title}>
-                Disabilities (physical, mental, etc.) <Entypo name={'star'} color={'red'} size={12} /> </Text>
-              <Dropdown
-                style={[Globalstyles.input, !isEditing && styles.readOnly, errors.disabilities && styles.errorInput]}
-                data={MyDisabilities}
-                labelField="label"
-                valueField="value"
-                value={biodata?.disabilities}
-                editable={isEditing}
-                onChange={(text) => handleInputChange('disabilities', text.value)}
-                placeholder="Select disability"
-                placeholderStyle={{ color: '#E7E7E7' }}
-              />
-              {errors.disabilities && <Text style={styles.errorText}>{errors.disabilities}</Text>}
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Height <Entypo name={'star'} color={'red'} size={12} /> </Text>
-              <Dropdown
-                style={[Globalstyles.input, !isEditing && styles.readOnly, errors.heightFeet && styles.errorInput]}
-                data={heightData}
-                labelField="label"
-                valueField="value"
-                value={biodata?.heightFeet}
-                editable={isEditing}
-                onChange={(text) => handleInputChange('heightFeet', text.value)}
-                placeholder="Height"
-                placeholderStyle={{ color: '#E7E7E7' }}
-                autoScroll={false}
-                showsVerticalScrollIndicator={false}
-              />
-            </View>
-            {errors.heightFeet && <Text style={styles.errorText}>{errors.heightFeet}</Text>}
-            <View>
-              <Text style={Globalstyles.title}>Weight (in kg) </Text>
-              <Dropdown
-                style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                data={weightData}
-                labelField="label"
-                valueField="value"
-                value={biodata?.weight}
-                editable={isEditing}
-                onChange={(text) => handleInputChange('weight', text.value)}
-                placeholder="Weight"
-                placeholderStyle={{ color: '#E7E7E7' }}
-                autoScroll={false}
-                showsVerticalScrollIndicator={false}
-              />
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Complexion</Text>
-              <Dropdown
-                style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                data={MyComplexionData}
-                labelField="label"
-                valueField="value"
-                value={biodata?.complexion}
-                editable={isEditing}
-                onChange={(text) => handleInputChange('complexion', text.value)}
-                placeholder="Select Complexion"
-                placeholderStyle={{ color: '#E7E7E7' }}
-                autoScroll={false}
-                showsVerticalScrollIndicator={false}
-              />
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Manglik Status <Entypo name={'star'} color={'red'} size={12} /> </Text>
-              <Dropdown
-                style={[Globalstyles.input, !isEditing && styles.readOnly, errors.manglikStatus && styles.errorInput]}
-                data={ManglikStatusData}
-                labelField="label"
-                valueField="value"
-                value={biodata?.manglikStatus}
-                editable={isEditing}
-                onChange={(text) => handleInputChange('manglikStatus', text.value)}
-                placeholder="Select status"
-                placeholderStyle={{ color: '#E7E7E7' }}
-                autoScroll={false}
-                showsVerticalScrollIndicator={false}
-              />
-              {errors.manglikStatus && <Text style={styles.errorText}>{errors.manglikStatus}</Text>}
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Nadi</Text>
-              <TextInput
-                style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                value={biodata?.nadi}
-                editable={isEditing}
-                placeholderTextColor={Colors.gray}
-                placeholder="Enter Your Nadi"
-                onChangeText={(text) => {
-                  const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
-                  handleInputChange('nadi', filteredText);
-                }}
-                autoComplete="off"
-                textContentType="none"
-                importantForAutofill="no"
-                autoCorrect={false}
-                keyboardType="default"
-                contextMenuHidden={true}
-              />
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Self Gotra</Text>
-              <TextInput
-                style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                value={biodata?.gotraSelf}
-                editable={isEditing}
-                placeholderTextColor={Colors.gray}
-                placeholder={'Enter Your Self Gotra'}
-                onChangeText={(text) => {
-                  const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
-                  handleInputChange('gotraSelf', filteredText);
-                }}
-                autoComplete="off"
-                textContentType="none"
-                importantForAutofill="no"
-                autoCorrect={false}
-                keyboardType="default"
-                contextMenuHidden={true}
-              />
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Mother Gotra</Text>
-              <TextInput
-                style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                value={biodata?.gotraMother}
-                editable={isEditing}
-                placeholderTextColor={Colors.gray}
-                placeholder={'Enter Your Mother Gotra'}
-                onChangeText={(text) => {
-                  const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
-                  handleInputChange('gotraMother', filteredText);
-                }}
-                autoComplete="off"
-                textContentType="none"
-                importantForAutofill="no"
-                autoCorrect={false}
-                keyboardType="default"
-                contextMenuHidden={true}
-              />
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Qualification <Entypo name={'star'} color={'red'} size={12} /> </Text>
-              <Dropdown
-                style={[Globalstyles.input, !isEditing && styles.readOnly, errors.qualification && styles.errorInput]}
-                data={QualificationData}
-                labelField="label"
-                valueField="value"
-                value={biodata?.qualification}
-                editable={isEditing}
-                onChange={(text) => handleInputChange('qualification', text.value)}
-                placeholder="Select Qualification"
-                disabled={!isEditing}
-                placeholderStyle={{ color: '#E7E7E7' }}
-                autoScroll={false}
-                showsVerticalScrollIndicator={false}
-              />
-              {errors.qualification && <Text style={styles.errorText}>{errors.qualification}</Text>}
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Occupation <Entypo name={'star'} color={'red'} size={12} /> </Text>
-              <Dropdown
-                style={[Globalstyles.input, !isEditing && styles.readOnly, errors.occupation && styles.errorInput]}
-                data={OccupationData}
-                labelField="label"
-                valueField="value"
-                value={
-                  OccupationData.find(item => item.label === biodata?.occupation)?.value || ''
-                }
-                editable={isEditing}
-                onChange={(text) => handleInputChange('occupation', text.value)}
-                placeholder="Select occupation"
-                disabled={!isEditing}
-                placeholderStyle={{ color: '#E7E7E7' }}
-                autoScroll={false}
-                showsVerticalScrollIndicator={false}
-              />
-              {errors.occupation && <Text style={styles.errorText}>{errors.occupation}</Text>}
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Income (Annually) <Entypo name={'star'} color={'red'} size={12} /> </Text>
-              <Dropdown
-                style={[Globalstyles.input, !isEditing && styles.readOnly, errors.annualIncome && styles.errorInput]}
-                data={Income}
-                labelField="label"
-                valueField="value"
-                value={
-                  Income.find(item => item.label === biodata?.annualIncome)?.value || ''
-                }
-                editable={isEditing}
-                onChange={(text) => handleInputChange('annualIncome', text.value)}
-                placeholder="Select Income"
-                disabled={!isEditing}
-                placeholderStyle={{ color: '#E7E7E7' }}
-                autoScroll={false}
-                showsVerticalScrollIndicator={false}
-              />
-              {errors.annualIncome && <Text style={styles.errorText}>{errors.annualIncome}</Text>}
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Are you living with Family <Entypo name={'star'} color={'red'} size={12} /> </Text>
-              <Dropdown
-                style={[Globalstyles.input, !isEditing && styles.readOnly, errors.livingStatus && styles.errorInput]}
-                data={LivingData}
-                labelField="label"
-                valueField="value"
-                value={
-                  LivingData.find(item => item.label === biodata?.livingStatus)?.value || ''
-                }
-                editable={isEditing}
-                onChange={(text) => handleInputChange('livingStatus', text.value)}
-                placeholder="Select Status"
-                disabled={!isEditing}
-                placeholderStyle={{ color: '#E7E7E7' }}
-                autoScroll={false}
-                showsVerticalScrollIndicator={false}
-              />
-              {errors.livingStatus && <Text style={styles.errorText}>{errors.livingStatus}</Text>}
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Which city do you currently live in? <Entypo name={'star'} color={'red'} size={12} /> </Text>
-              <TextInput
-                style={[Globalstyles.input, errors.currentCity && styles.errorInput]}
-                value={biodata?.currentCity}
-                onChangeText={handleCityInputChange}
-                placeholder="Enter your city"
-                placeholderTextColor={Colors.gray}
-                autoComplete="off"
-                textContentType="none"
-                importantForAutofill="no"
-                autoCorrect={false}
-                keyboardType="default"
-                contextMenuHidden={true}
-              />
-              {errors.currentCity && <Text style={styles.errorText}>{errors.currentCity}</Text>}
-              {filteredCities.length > 0 && cityInput ? (
-                <FlatList
-                  data={filteredCities.slice(0, 5)}
-                  scrollEnabled={false}
-                  keyExtractor={(item, index) => index.toString()}
-                  renderItem={({ item }) => (
-                    <TouchableOpacity onPress={() => handleCitySelect(item)}>
-                      <Text style={Globalstyles.listItem}>{item}</Text>
-                    </TouchableOpacity>
-                  )}
-                  style={Globalstyles.suggestions}
-                />
-              ) : null}
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>About Me </Text>
-              <TextInput
-                style={[Globalstyles.textInput, !isEditing && styles.readOnly]}
-                multiline={true}
-                numberOfLines={6}
-                value={biodata?.aboutMe}
-                editable={isEditing}
-                onChangeText={(text) => handleInputChange('aboutMe', text)}
-                placeholder="Write about yourself..."
-                placeholderTextColor={Colors.gray}
-                textAlignVertical="top"
-                autoComplete="off"
-                textContentType="none"
-                importantForAutofill="no"
-                autoCorrect={false}
-                keyboardType="default"
-                contextMenuHidden={true}
-              />
-            </View>
-
-            <View>
-              <Text style={Globalstyles.title}>Profile created by <Entypo name={'star'} color={'red'} size={12} /> </Text>
-              <Dropdown
-                style={[Globalstyles.input, !isEditing && styles.readOnly, errors.profileCreatedBy && styles.errorInput]}
-                data={ProfileCreatedData}
-                labelField="label"
-                valueField="value"
-                value={
-                  ProfileCreatedData.find(item => item.label === biodata?.profileCreatedBy)?.value || ''
-                }
-                editable={isEditing}
-                onChange={(text) => handleInputChange('profileCreatedBy', text.value)}
-                placeholder="Select Person"
-                disabled={!isEditing}
-                placeholderStyle={{ color: '#E7E7E7' }}
-                autoScroll={false}
-                showsVerticalScrollIndicator={false}
-              />
-              {errors.profileCreatedBy && <Text style={styles.errorText}>{errors.profileCreatedBy}</Text>}
-            </View>
-            <Text style={styles.headText}>Family details </Text>
-            <View>
-              <Text style={Globalstyles.title}>Father Full Name <Entypo name={'star'} color={'red'} size={12} /> </Text>
-              <TextInput
-                style={[Globalstyles.input, !isEditing && styles.readOnly, errors.fatherName && styles.errorInput]}
-                value={biodata?.fatherName}
-                editable={isEditing}
-                placeholderTextColor={Colors.gray}
-                placeholder="Enter Your Father Name"
-                onChangeText={(text) => {
-                  const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
-                  handleInputChange('fatherName', filteredText);
-                }}
-                autoComplete="off"
-                textContentType="none"
-                importantForAutofill="no"
-                autoCorrect={false}
-                keyboardType="default"
-                contextMenuHidden={true}
-              />
-              {errors.fatherName && <Text style={styles.errorText}>{errors.fatherName}</Text>}
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Mother Full Name <Entypo name={'star'} color={'red'} size={12} /> </Text>
-              <TextInput
-                style={[Globalstyles.input, !isEditing && styles.readOnly, errors.motherName && styles.errorInput]}
-                value={biodata?.motherName}
-                editable={isEditing}
-                placeholderTextColor={Colors.gray}
-                placeholder="Enter Your Mother Name"
-                onChangeText={(text) => {
-                  const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
-                  handleInputChange('motherName', filteredText);
-                }}
-                autoComplete="off"
-                textContentType="none"
-                importantForAutofill="no"
-                autoCorrect={false}
-                keyboardType="default"
-                contextMenuHidden={true}
-              />
-              {errors.motherName && <Text style={styles.errorText}>{errors.motherName}</Text>}
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Father Occupation <Entypo name={'star'} color={'red'} size={12} /> </Text>
-              <Dropdown
-                style={[Globalstyles.input, !isEditing && styles.readOnly, errors.fatherOccupation && styles.errorInput]}
-                data={MotherOccupationData}
-                labelField="label"
-                valueField="value"
-                value={
-                  MotherOccupationData.find(item => item.label === biodata?.fatherOccupation)?.value || ''
-                }
-                editable={isEditing}
-                onChange={(text) => handleInputChange('fatherOccupation', text.value)}
-                placeholder="Select Occupation"
-                disabled={!isEditing}
-                placeholderStyle={{ color: '#E7E7E7' }}
-                autoScroll={false}
-                showsVerticalScrollIndicator={false}
-              />
-              {errors.fatherOccupation && <Text style={styles.errorText}>{errors.fatherOccupation}</Text>}
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Father Income (Annually) <Entypo name={'star'} color={'red'} size={12} /> </Text>
-              <Dropdown
-                style={[Globalstyles.input, !isEditing && styles.readOnly, errors.fatherIncomeAnnually && styles.errorInput]}
-                data={Income}
-                labelField="label"
-                valueField="value"
-                value={
-                  Income.find(item => item.label === biodata?.fatherIncomeAnnually)?.value || ''
-                }
-                editable={isEditing}
-                onChange={(text) => handleInputChange('fatherIncomeAnnually', text.value)}
-                placeholder="Select Income"
-                disabled={!isEditing}
-                placeholderStyle={{ color: '#E7E7E7' }}
-                autoScroll={false}
-                showsVerticalScrollIndicator={false}
-              />
-              {errors.fatherIncomeAnnually && <Text style={styles.errorText}>{errors.fatherIncomeAnnually}</Text>}
-
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Mother Occupation <Entypo name={'star'} color={'red'} size={12} /> </Text>
-              <Dropdown
-                style={[Globalstyles.input, !isEditing && styles.readOnly, errors.motherOccupation && styles.errorInput]}
-                data={MotherOccupationData}
-                labelField="label"
-                valueField="value"
-                value={
-                  MotherOccupationData.find(item => item.label === biodata?.motherOccupation)?.value || ''
-                }
-                editable={isEditing}
-                onChange={(text) => handleInputChange('motherOccupation', text.value)}
-                placeholder="Select Occupation"
-                disabled={!isEditing}
-                placeholderStyle={{ color: '#E7E7E7' }}
-                autoScroll={false}
-                showsVerticalScrollIndicator={false}
-              />
-              {errors.motherOccupation && <Text style={styles.errorText}>{errors.motherOccupation}</Text>}
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Mother Income (Annually) <Entypo name={'star'} color={'red'} size={12} /> </Text>
-              <Dropdown
-                style={[Globalstyles.input, !isEditing && styles.readOnly, errors.motherIncomeAnnually && styles.errorInput]}
-                data={Income}
-                labelField="label"
-                valueField="value"
-                value={
-                  Income.find(item => item.label === biodata?.motherIncomeAnnually)?.value || ''
-                }
-                editable={isEditing}
-                onChange={(text) => handleInputChange('motherIncomeAnnually', text.value)}
-                placeholder="Select Income"
-                disabled={!isEditing}
-                placeholderStyle={{ color: '#E7E7E7' }}
-                autoScroll={false}
-                showsVerticalScrollIndicator={false}
-              />
-              {errors.motherIncomeAnnually && <Text style={styles.errorText}>{errors.motherIncomeAnnually}</Text>}
-            </View>
-
-            <View>
-              <Text style={Globalstyles.title}>Family Type <Entypo name={'star'} color={'red'} size={12} /> </Text>
-              <Dropdown
-                style={[Globalstyles.input, !isEditing && styles.readOnly, errors.familyType && styles.errorInput]}
-                data={FamilyType}
-                labelField="label"
-                valueField="value"
-                value={
-                  FamilyType.find(item => item.label === biodata?.familyType)?.value || ''
-                }
-                editable={isEditing}
-                onChange={(text) => handleInputChange('familyType', text.value)}
-                placeholder="Select Type"
-                disabled={!isEditing}
-                placeholderStyle={{ color: '#E7E7E7' }}
-                autoScroll={false}
-                showsVerticalScrollIndicator={false}
-              />
-              {errors.familyType && <Text style={styles.errorText}>{errors.familyType}</Text>}
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Siblings <Entypo name={'star'} color={'red'} size={12} /> </Text>
-              <Dropdown
-                style={[Globalstyles.input, !isEditing && styles.readOnly, errors.siblings && styles.errorInput]}
-                data={siblings}
-                labelField="label"
-                valueField="value"
-                value={siblings.find((item) => item.value == biodata?.siblings)?.value || null}
-                editable={isEditing}
-                onChange={(text) => handleInputChange('siblings', String(text.value))}
-                placeholder="Select Type"
-                disabled={!isEditing}
-                placeholderStyle={{ color: '#E7E7E7' }}
-                autoScroll={false}
-                showsVerticalScrollIndicator={false}
-              />
-              {errors.siblings && <Text style={styles.errorText}>{errors.siblings}</Text>}
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Any family member info. </Text>
-              <TextInput
-                style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                value={biodata?.otherFamilyMemberInfo}
-                onChangeText={(text) => handleInputChange('otherFamilyMemberInfo', text)}
-                multiline={true}
-                numberOfLines={6}
-                editable={isEditing}
-                placeholderTextColor={Colors.gray}
-                placeholder="Enter Your Family Info."
-                autoComplete="off"
-                textContentType="none"
-                importantForAutofill="no"
-                autoCorrect={false}
-                keyboardType="default"
-                contextMenuHidden={true}
-              />
-            </View>
-            <View>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={Globalstyles.title}>Contact No. 1 </Text>
-                <MaterialIcons name="call" color="#000" size={15} style={{ paddingVertical: SW(5) }} />
-                <Entypo name="star" color="red" size={12} />
-              </View>
-              <TextInput
-                style={[Globalstyles.input, !isEditing && styles.readOnly, errors.contactNumber1 && styles.errorInput]}
-                value={biodata?.contactNumber1}
-                onChangeText={(text) => {
-                  const cleanText = text.replace(/[^0-9]/g, '');
-                  handleInputChange('contactNumber1', cleanText);
-                }}
-                keyboardType="phone-pad"
-                maxLength={10}
-                editable={isEditing}
-                placeholderTextColor={Colors.gray}
-                placeholder="Enter Your Contact No. 1"
-                autoComplete="tel"
-                textContentType="telephoneNumber"
-                importantForAutofill="no"
-                autoCorrect={false}
-                contextMenuHidden={true}
-              />
-              {errors.contactNumber1 && <Text style={styles.errorText}>{errors.contactNumber1}</Text>}
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Contact No. 2 <Entypo name={'star'} color={'red'} size={12} /> </Text>
-              <TextInput
-                style={[Globalstyles.input, !isEditing && styles.readOnly, errors.contactNumber2 && styles.errorInput]}
-                value={biodata?.contactNumber2}
-                onChangeText={(text) => {
-                  const cleanText = text.replace(/[^0-9]/g, '');
-                  handleInputChange('contactNumber2', cleanText);
-                }}
-                keyboardType="phone-pad"
-                maxLength={10}
-                editable={isEditing}
-                placeholderTextColor={Colors.gray}
-                placeholder="Enter Your Contact No. 2"
-                autoComplete="tel-device"
-                textContentType="none"
-                importantForAutofill="no"
-                autoCorrect={false}
-                contextMenuHidden={true}
-              />
-              {errors.contactNumber2 && <Text style={styles.errorText}>{errors.contactNumber2}</Text>}
-            </View>
-            <View>
-              <Text style={styles.headText}> Address</Text>
-
-              <Text style={Globalstyles.title}>State <Entypo name={'star'} color={'red'} size={12} /></Text>
-              <TextInput
-                style={[Globalstyles.input, errors.state && styles.errorInput]}
-                value={biodata?.state} // `biodata?.state` ki jagah `stateInput` use karein
-                onChangeText={handleStateInputChange}
-                placeholder="Type your State"
-                placeholderTextColor={Colors.gray}
-                autoComplete="off"
-                textContentType="none"
-                importantForAutofill="no"
-                autoCorrect={false}
-                keyboardType="default"
-                contextMenuHidden={true}
-              />
-              {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
-              {filteredStates.length > 0 ? (
-                <FlatList
-                  data={filteredStates.slice(0, 5)}
-                  scrollEnabled={false}
-                  keyExtractor={(item, index) => index.toString()}
-                  renderItem={({ item }) => (
-                    <TouchableOpacity onPress={() => handleStateSelect(item)}>
-                      <Text style={Globalstyles.listItem}>{item}</Text>
-                    </TouchableOpacity>
-                  )}
-                  style={Globalstyles.suggestions}
-                />
-              ) : null}
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>City/Village <Entypo name={'star'} color={'red'} size={12} /> </Text>
-              <TextInput
-                style={[Globalstyles.input, errors.cityOrVillage && styles.errorInput]}
-                value={biodata?.cityOrVillage}
-                onChangeText={handleCityOrVillageInputChange}
-                placeholder="Type your city/village"
-                placeholderTextColor={Colors.gray}
-                autoComplete="off"
-                textContentType="none"
-                importantForAutofill="no"
-                autoCorrect={false}
-                keyboardType="default"
-                contextMenuHidden={true}
-              />
-              {errors.cityOrVillage && <Text style={styles.errorText}>{errors.cityOrVillage}</Text>}
-              {filteredCitiesOrVillages.length > 0 && cityOrVillageInput ? (
-                <FlatList
-                  data={filteredCitiesOrVillages.slice(0, 5)}
-                  scrollEnabled={false}
-                  keyExtractor={(item, index) => index.toString()}
-                  renderItem={({ item }) => (
-                    <TouchableOpacity onPress={() => handleCityOrVillageSelect(item)}>
-                      <Text style={Globalstyles.listItem}>{item}</Text>
-                    </TouchableOpacity>
-                  )}
-                  style={Globalstyles.suggestions}
-                />
-              ) : null}
-
-            </View>
-            <Text style={styles.headText}>Other Personal Detail</Text>
-            <View>
-              <Text style={Globalstyles.title}>Do you know cooking</Text>
-              <Dropdown
-                style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                data={CookingStatus}
-                labelField="label"
-                valueField="value"
-                value={
-                  CookingStatus.find(item => item.label === biodata?.knowCooking)?.value || ''
-                }
-                editable={isEditing}
-                onChange={(text) => handleInputChange('knowCooking', text.value)}
-                placeholder="Select Status"
-                disabled={!isEditing}
-                placeholderStyle={{ color: '#E7E7E7' }}
-                autoScroll={false}
-                showsVerticalScrollIndicator={false}
-              />
-            </View>
-            <View>
-              <Text style={Globalstyles.title}> Dietary Habits  </Text>
-              <Dropdown
-                style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                data={DietHabit}
-                labelField="label"
-                valueField="value"
-                value={
-                  DietHabit.find(item => item.label === biodata?.dietaryHabit)?.value || ''
-                }
-                editable={isEditing}
-                onChange={(text) => handleInputChange('dietaryHabit', text.value)}
-                placeholder="Select Habit"
-                disabled={!isEditing}
-                placeholderStyle={{ color: '#E7E7E7' }}
-                autoScroll={false}
-                showsVerticalScrollIndicator={false}
-              />
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Smoking Habits  </Text>
-              <Dropdown
-                style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                data={smokingStatusData}
-                labelField="label"
-                valueField="value"
-                value={
-                  smokingStatusData.find(item => item.label === biodata?.smokingHabit)?.value || ''
-                }
-                editable={isEditing}
-                onChange={(text) => handleInputChange('smokingHabit', text.value)}
-                placeholder="Select Status"
-                disabled={!isEditing}
-                placeholderStyle={{ color: '#E7E7E7' }}
-                autoScroll={false}
-                showsVerticalScrollIndicator={false}
-              />
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Drinking Habits </Text>
-              <Dropdown
-                style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                data={DrinkingHabit}
-                labelField="label"
-                valueField="value"
-                value={
-                  DrinkingHabit.find(item => item.label === biodata?.drinkingHabit)?.value || ''
-                }
-                editable={isEditing}
-                onChange={(text) => handleInputChange('drinkingHabit', text.value)}
-                placeholder="Select Habit"
-                disabled={!isEditing}
-                placeholderStyle={{ color: '#E7E7E7' }}
-                autoScroll={false}
-                showsVerticalScrollIndicator={false}
-              />
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Tabacoo Habits </Text>
-              <Dropdown
-                style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                data={TobacooHabit}
-                labelField="label"
-                valueField="value"
-                value={
-                  TobacooHabit.find(item => item.label === biodata?.tobaccoHabits)?.value || ''
-                }
-                editable={isEditing}
-                onChange={(text) => handleInputChange('tobaccoHabits', text.value)}
-                placeholder="Select Habit"
-                disabled={!isEditing}
-                placeholderStyle={{ color: '#E7E7E7' }}
-                autoScroll={false}
-                showsVerticalScrollIndicator={false}
-              />
-
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Your Hobbies  </Text>
-              <TextInput
-                style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                value={biodata?.hobbies}
-                onChangeText={(text) => handleInputChange('hobbies', text)}
-                multiline={true}
-                numberOfLines={6}
-                editable={isEditing}
-                placeholderTextColor={Colors.gray}
-                placeholder="Enter Your Hobbies"
-                autoComplete="off"
-                textContentType="none"
-                importantForAutofill="no"
-                autoCorrect={false}
-                autoScroll={false}
-                showsVerticalScrollIndicator={false}
-                keyboardType="default"
-                contextMenuHidden={true}
-              />
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Upload Your One Closeup Image <Entypo name={'star'} color={'red'} size={12} /> </Text>
-              <View style={[Globalstyles.input, errors.closeUpPhoto && styles.errorInput]}>
-                <TouchableOpacity onPress={() => handleImageSelection('closeUpPhoto')}>
-                  {biodata?.closeUpPhoto ? (
-                    <Image
-                      source={{ uri: biodata?.closeUpPhoto }}
-                      style={styles.selectedImage}
-                    />
-                  ) : (
-                    <Text style={styles.imagePlaceholder}>Upload One Closeup Image</Text>
-                  )}
-                </TouchableOpacity>
-              </View>
-              {errors.closeUpPhoto && <Text style={styles.errorText}>{errors.closeUpPhoto}</Text>}
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Upload Your One Full Image</Text>
-              <View style={Globalstyles.input}>
-                <TouchableOpacity onPress={() => handleImageSelection('fullPhoto')}>
-                  {biodata?.fullPhoto ? (
-                    <Image
-                      source={{ uri: biodata?.fullPhoto }}
-                      style={styles.selectedImage}
-                    />
-                  ) : (
-                    <Text style={styles.imagePlaceholder}>Upload One Full Image</Text>
-                  )}
-                </TouchableOpacity>
-              </View>
-            </View>
-            <View>
-              <Text style={Globalstyles.title}>Upload Your One Best Image </Text>
-              <View style={Globalstyles.input}>
-                <TouchableOpacity onPress={() => handleImageSelection('bestPhoto')}>
-                  {biodata?.bestPhoto ? (
-                    <Image
-                      source={{ uri: biodata?.bestPhoto }}
-                      style={styles.selectedImage}
-                    />
-                  ) : (
-                    <Text style={styles.imagePlaceholder}>Upload One Full Image</Text>
-                  )}
-                </TouchableOpacity>
-              </View>
-            </View>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleSave}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <ActivityIndicator size="large" color={Colors.light} />
-              ) : (
-                <Text style={styles.buttonText}>
-                  {biodata?._id ? 'Submit' : 'Continue'}
+                <Text style={styles.dateText}>
+                  {biodata?.timeOfBirth ? biodata.timeOfBirth : 'HH:MM AM/PM'}
                 </Text>
-              )}
+              </View>
             </TouchableOpacity>
-            <Modal visible={modalVisible} animationType="slide" transparent={true}>
-              <View style={styles.modalOverlay}>
-                <View style={styles.modalContent}>
-                  <ScrollView showsVerticalScrollIndicator={false}>
-                    <View style={styles.cardContainer}>
-                      {plans.map((plan) => (
-                        <View key={plan._id} style={styles.card}>
-                          {plan.photoUrl ? (
-                            <Image
-                              source={{ uri: plan.photoUrl }}
-                              style={styles.planImage}
-                              resizeMode="cover"
-                              onError={(e) => console.log('Image load error:', e.nativeEvent.error)}
-                            />
+
+            {errors.timeOfBirth && (
+              <Text style={styles.errorText}>{errors.timeOfBirth}</Text>
+            )}
+
+            {showTimePicker && (
+              <DateTimePicker
+                value={
+                  biodata?.timeOfBirth
+                    ? new Date(`1970-01-01T${biodata.timeOfBirth}:00`)
+                    : new Date()
+                }
+                mode="time"
+                display="spinner"
+                is24Hour={false}
+                onChange={(event, selectedTime) => {
+                  setShowTimePicker(false);
+                  if (event.type === 'set' && selectedTime) {
+                    const hours = selectedTime.getHours();
+                    const minutes = selectedTime.getMinutes();
+                    const formattedTime = moment({ hour: hours, minute: minutes }).format('hh:mm A');
+
+                    setBiodata((prev) => ({
+                      ...prev,
+                      timeOfBirth: formattedTime,
+                    }));
+                  }
+                }}
+                themeVariant="light"
+              />
+            )}
+
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Place of Birth <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <TextInput
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.placeofbirth && styles.errorInput]}
+              value={biodata?.placeofbirth}
+              editable={isEditing}
+              placeholderTextColor={Colors.gray}
+              placeholder="Enter Your Birth Place"
+              onChangeText={(text) => {
+                const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+                handleInputChange('placeofbirth', filteredText);
+              }}
+              autoComplete="off"
+              textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
+            />
+            {errors.placeofbirth && <Text style={styles.errorText}>{errors.placeofbirth}</Text>}
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Marital Status <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Dropdown
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.maritalStatus && styles.errorInput]}
+              data={maritalStatusData}
+              labelField="label"
+              valueField="value"
+              value={biodata?.maritalStatus}
+              editable={isEditing}
+              onChange={(text) => handleInputChange('maritalStatus', text.value)}
+              placeholder="Select marital status"
+              placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
+            />
+          </View>
+          {errors.maritalStatus && <Text style={styles.errorText}>{errors.maritalStatus}</Text>}
+          <View>
+            <Text style={Globalstyles.title}>
+              Disabilities (physical, mental, etc.) <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Dropdown
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.disabilities && styles.errorInput]}
+              data={MyDisabilities}
+              labelField="label"
+              valueField="value"
+              value={biodata?.disabilities}
+              editable={isEditing}
+              onChange={(text) => handleInputChange('disabilities', text.value)}
+              placeholder="Select disability"
+              placeholderStyle={{ color: '#E7E7E7' }}
+            />
+            {errors.disabilities && <Text style={styles.errorText}>{errors.disabilities}</Text>}
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Height <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Dropdown
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.heightFeet && styles.errorInput]}
+              data={heightData}
+              labelField="label"
+              valueField="value"
+              value={biodata?.heightFeet}
+              editable={isEditing}
+              onChange={(text) => handleInputChange('heightFeet', text.value)}
+              placeholder="Height"
+              placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
+            />
+          </View>
+          {errors.heightFeet && <Text style={styles.errorText}>{errors.heightFeet}</Text>}
+          <View>
+            <Text style={Globalstyles.title}>Weight (in kg) </Text>
+            <Dropdown
+              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              data={weightData}
+              labelField="label"
+              valueField="value"
+              value={biodata?.weight}
+              editable={isEditing}
+              onChange={(text) => handleInputChange('weight', text.value)}
+              placeholder="Weight"
+              placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
+            />
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Complexion</Text>
+            <Dropdown
+              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              data={MyComplexionData}
+              labelField="label"
+              valueField="value"
+              value={biodata?.complexion}
+              editable={isEditing}
+              onChange={(text) => handleInputChange('complexion', text.value)}
+              placeholder="Select Complexion"
+              placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
+            />
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Manglik Status <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Dropdown
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.manglikStatus && styles.errorInput]}
+              data={ManglikStatusData}
+              labelField="label"
+              valueField="value"
+              value={biodata?.manglikStatus}
+              editable={isEditing}
+              onChange={(text) => handleInputChange('manglikStatus', text.value)}
+              placeholder="Select status"
+              placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
+            />
+            {errors.manglikStatus && <Text style={styles.errorText}>{errors.manglikStatus}</Text>}
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Nadi</Text>
+            <TextInput
+              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              value={biodata?.nadi}
+              editable={isEditing}
+              placeholderTextColor={Colors.gray}
+              placeholder="Enter Your Nadi"
+              onChangeText={(text) => {
+                const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+                handleInputChange('nadi', filteredText);
+              }}
+              autoComplete="off"
+              textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
+              keyboardType="default"
+              contextMenuHidden={true}
+            />
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Self Gotra</Text>
+            <TextInput
+              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              value={biodata?.gotraSelf}
+              editable={isEditing}
+              placeholderTextColor={Colors.gray}
+              placeholder={'Enter Your Self Gotra'}
+              onChangeText={(text) => {
+                const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+                handleInputChange('gotraSelf', filteredText);
+              }}
+              autoComplete="off"
+              textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
+              keyboardType="default"
+              contextMenuHidden={true}
+            />
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Mother Gotra</Text>
+            <TextInput
+              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              value={biodata?.gotraMother}
+              editable={isEditing}
+              placeholderTextColor={Colors.gray}
+              placeholder={'Enter Your Mother Gotra'}
+              onChangeText={(text) => {
+                const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+                handleInputChange('gotraMother', filteredText);
+              }}
+              autoComplete="off"
+              textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
+              keyboardType="default"
+              contextMenuHidden={true}
+            />
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Qualification <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Dropdown
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.qualification && styles.errorInput]}
+              data={QualificationData}
+              labelField="label"
+              valueField="value"
+              value={biodata?.qualification}
+              editable={isEditing}
+              onChange={(text) => handleInputChange('qualification', text.value)}
+              placeholder="Select Qualification"
+              disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
+            />
+            {errors.qualification && <Text style={styles.errorText}>{errors.qualification}</Text>}
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Occupation <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Dropdown
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.occupation && styles.errorInput]}
+              data={OccupationData}
+              labelField="label"
+              valueField="value"
+              value={
+                OccupationData.find(item => item.label === biodata?.occupation)?.value || ''
+              }
+              editable={isEditing}
+              onChange={(text) => handleInputChange('occupation', text.value)}
+              placeholder="Select occupation"
+              disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
+            />
+            {errors.occupation && <Text style={styles.errorText}>{errors.occupation}</Text>}
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Income (Annually) <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Dropdown
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.annualIncome && styles.errorInput]}
+              data={Income}
+              labelField="label"
+              valueField="value"
+              value={
+                Income.find(item => item.label === biodata?.annualIncome)?.value || ''
+              }
+              editable={isEditing}
+              onChange={(text) => handleInputChange('annualIncome', text.value)}
+              placeholder="Select Income"
+              disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
+            />
+            {errors.annualIncome && <Text style={styles.errorText}>{errors.annualIncome}</Text>}
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Are you living with Family <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Dropdown
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.livingStatus && styles.errorInput]}
+              data={LivingData}
+              labelField="label"
+              valueField="value"
+              value={
+                LivingData.find(item => item.label === biodata?.livingStatus)?.value || ''
+              }
+              editable={isEditing}
+              onChange={(text) => handleInputChange('livingStatus', text.value)}
+              placeholder="Select Status"
+              disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
+            />
+            {errors.livingStatus && <Text style={styles.errorText}>{errors.livingStatus}</Text>}
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Which city do you currently live in? <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <TextInput
+              style={[Globalstyles.input, errors.currentCity && styles.errorInput]}
+              value={biodata?.currentCity}
+              onChangeText={handleCityInputChange}
+              placeholder="Enter your city"
+              placeholderTextColor={Colors.gray}
+              autoComplete="off"
+              textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
+              keyboardType="default"
+              contextMenuHidden={true}
+            />
+            {errors.currentCity && <Text style={styles.errorText}>{errors.currentCity}</Text>}
+            {filteredCities.length > 0 && cityInput ? (
+              <FlatList
+                data={filteredCities.slice(0, 5)}
+                scrollEnabled={false}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) => (
+                  <TouchableOpacity onPress={() => handleCitySelect(item)}>
+                    <Text style={Globalstyles.listItem}>{item}</Text>
+                  </TouchableOpacity>
+                )}
+                style={Globalstyles.suggestions}
+              />
+            ) : null}
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>About Me </Text>
+            <TextInput
+              style={[Globalstyles.textInput, !isEditing && styles.readOnly]}
+              multiline={true}
+              numberOfLines={6}
+              value={biodata?.aboutMe}
+              editable={isEditing}
+              onChangeText={(text) => handleInputChange('aboutMe', text)}
+              placeholder="Write about yourself..."
+              placeholderTextColor={Colors.gray}
+              textAlignVertical="top"
+              autoComplete="off"
+              textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
+              keyboardType="default"
+              contextMenuHidden={true}
+            />
+          </View>
+
+          <View>
+            <Text style={Globalstyles.title}>Profile created by <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Dropdown
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.profileCreatedBy && styles.errorInput]}
+              data={ProfileCreatedData}
+              labelField="label"
+              valueField="value"
+              value={
+                ProfileCreatedData.find(item => item.label === biodata?.profileCreatedBy)?.value || ''
+              }
+              editable={isEditing}
+              onChange={(text) => handleInputChange('profileCreatedBy', text.value)}
+              placeholder="Select Person"
+              disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
+            />
+            {errors.profileCreatedBy && <Text style={styles.errorText}>{errors.profileCreatedBy}</Text>}
+          </View>
+          <Text style={styles.headText}>Family details </Text>
+          <View>
+            <Text style={Globalstyles.title}>Father Full Name <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <TextInput
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.fatherName && styles.errorInput]}
+              value={biodata?.fatherName}
+              editable={isEditing}
+              placeholderTextColor={Colors.gray}
+              placeholder="Enter Your Father Name"
+              onChangeText={(text) => {
+                const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+                handleInputChange('fatherName', filteredText);
+              }}
+              autoComplete="off"
+              textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
+              keyboardType="default"
+              contextMenuHidden={true}
+            />
+            {errors.fatherName && <Text style={styles.errorText}>{errors.fatherName}</Text>}
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Mother Full Name <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <TextInput
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.motherName && styles.errorInput]}
+              value={biodata?.motherName}
+              editable={isEditing}
+              placeholderTextColor={Colors.gray}
+              placeholder="Enter Your Mother Name"
+              onChangeText={(text) => {
+                const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+                handleInputChange('motherName', filteredText);
+              }}
+              autoComplete="off"
+              textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
+              keyboardType="default"
+              contextMenuHidden={true}
+            />
+            {errors.motherName && <Text style={styles.errorText}>{errors.motherName}</Text>}
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Father Occupation <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Dropdown
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.fatherOccupation && styles.errorInput]}
+              data={MotherOccupationData}
+              labelField="label"
+              valueField="value"
+              value={
+                MotherOccupationData.find(item => item.label === biodata?.fatherOccupation)?.value || ''
+              }
+              editable={isEditing}
+              onChange={(text) => handleInputChange('fatherOccupation', text.value)}
+              placeholder="Select Occupation"
+              disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
+            />
+            {errors.fatherOccupation && <Text style={styles.errorText}>{errors.fatherOccupation}</Text>}
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Father Income (Annually) <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Dropdown
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.fatherIncomeAnnually && styles.errorInput]}
+              data={Income}
+              labelField="label"
+              valueField="value"
+              value={
+                Income.find(item => item.label === biodata?.fatherIncomeAnnually)?.value || ''
+              }
+              editable={isEditing}
+              onChange={(text) => handleInputChange('fatherIncomeAnnually', text.value)}
+              placeholder="Select Income"
+              disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
+            />
+            {errors.fatherIncomeAnnually && <Text style={styles.errorText}>{errors.fatherIncomeAnnually}</Text>}
+
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Mother Occupation <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Dropdown
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.motherOccupation && styles.errorInput]}
+              data={MotherOccupationData}
+              labelField="label"
+              valueField="value"
+              value={
+                MotherOccupationData.find(item => item.label === biodata?.motherOccupation)?.value || ''
+              }
+              editable={isEditing}
+              onChange={(text) => handleInputChange('motherOccupation', text.value)}
+              placeholder="Select Occupation"
+              disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
+            />
+            {errors.motherOccupation && <Text style={styles.errorText}>{errors.motherOccupation}</Text>}
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Mother Income (Annually) <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Dropdown
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.motherIncomeAnnually && styles.errorInput]}
+              data={Income}
+              labelField="label"
+              valueField="value"
+              value={
+                Income.find(item => item.label === biodata?.motherIncomeAnnually)?.value || ''
+              }
+              editable={isEditing}
+              onChange={(text) => handleInputChange('motherIncomeAnnually', text.value)}
+              placeholder="Select Income"
+              disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
+            />
+            {errors.motherIncomeAnnually && <Text style={styles.errorText}>{errors.motherIncomeAnnually}</Text>}
+          </View>
+
+          <View>
+            <Text style={Globalstyles.title}>Family Type <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Dropdown
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.familyType && styles.errorInput]}
+              data={FamilyType}
+              labelField="label"
+              valueField="value"
+              value={
+                FamilyType.find(item => item.label === biodata?.familyType)?.value || ''
+              }
+              editable={isEditing}
+              onChange={(text) => handleInputChange('familyType', text.value)}
+              placeholder="Select Type"
+              disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
+            />
+            {errors.familyType && <Text style={styles.errorText}>{errors.familyType}</Text>}
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Siblings <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Dropdown
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.siblings && styles.errorInput]}
+              data={siblings}
+              labelField="label"
+              valueField="value"
+              value={siblings.find((item) => item.value == biodata?.siblings)?.value || null}
+              editable={isEditing}
+              onChange={(text) => handleInputChange('siblings', String(text.value))}
+              placeholder="Select Type"
+              disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
+            />
+            {errors.siblings && <Text style={styles.errorText}>{errors.siblings}</Text>}
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Any family member info. </Text>
+            <TextInput
+              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              value={biodata?.otherFamilyMemberInfo}
+              onChangeText={(text) => handleInputChange('otherFamilyMemberInfo', text)}
+              multiline={true}
+              numberOfLines={6}
+              editable={isEditing}
+              placeholderTextColor={Colors.gray}
+              placeholder="Enter Your Family Info."
+              autoComplete="off"
+              textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
+              keyboardType="default"
+              contextMenuHidden={true}
+            />
+          </View>
+          <View>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={Globalstyles.title}>Contact No. 1 </Text>
+              <MaterialIcons name="call" color="#000" size={15} style={{ paddingVertical: SW(5) }} />
+              <Entypo name="star" color="red" size={12} />
+            </View>
+            <TextInput
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.contactNumber1 && styles.errorInput]}
+              value={biodata?.contactNumber1}
+              onChangeText={(text) => {
+                const cleanText = text.replace(/[^0-9]/g, '');
+                handleInputChange('contactNumber1', cleanText);
+              }}
+              keyboardType="phone-pad"
+              maxLength={10}
+              editable={isEditing}
+              placeholderTextColor={Colors.gray}
+              placeholder="Enter Your Contact No. 1"
+              autoComplete="tel"
+              textContentType="telephoneNumber"
+              importantForAutofill="no"
+              autoCorrect={false}
+              contextMenuHidden={true}
+            />
+            {errors.contactNumber1 && <Text style={styles.errorText}>{errors.contactNumber1}</Text>}
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Contact No. 2 <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <TextInput
+              style={[Globalstyles.input, !isEditing && styles.readOnly, errors.contactNumber2 && styles.errorInput]}
+              value={biodata?.contactNumber2}
+              onChangeText={(text) => {
+                const cleanText = text.replace(/[^0-9]/g, '');
+                handleInputChange('contactNumber2', cleanText);
+              }}
+              keyboardType="phone-pad"
+              maxLength={10}
+              editable={isEditing}
+              placeholderTextColor={Colors.gray}
+              placeholder="Enter Your Contact No. 2"
+              autoComplete="tel-device"
+              textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
+              contextMenuHidden={true}
+            />
+            {errors.contactNumber2 && <Text style={styles.errorText}>{errors.contactNumber2}</Text>}
+          </View>
+          <View>
+            <Text style={styles.headText}> Address</Text>
+
+            <Text style={Globalstyles.title}>State <Entypo name={'star'} color={'red'} size={12} /></Text>
+            <TextInput
+              style={[Globalstyles.input, errors.state && styles.errorInput]}
+              value={biodata?.state} // `biodata?.state` ki jagah `stateInput` use karein
+              onChangeText={handleStateInputChange}
+              placeholder="Type your State"
+              placeholderTextColor={Colors.gray}
+              autoComplete="off"
+              textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
+              keyboardType="default"
+              contextMenuHidden={true}
+            />
+            {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
+            {filteredStates.length > 0 ? (
+              <FlatList
+                data={filteredStates.slice(0, 5)}
+                scrollEnabled={false}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) => (
+                  <TouchableOpacity onPress={() => handleStateSelect(item)}>
+                    <Text style={Globalstyles.listItem}>{item}</Text>
+                  </TouchableOpacity>
+                )}
+                style={Globalstyles.suggestions}
+              />
+            ) : null}
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>City/Village <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <TextInput
+              style={[Globalstyles.input, errors.cityOrVillage && styles.errorInput]}
+              value={biodata?.cityOrVillage}
+              onChangeText={handleCityOrVillageInputChange}
+              placeholder="Type your city/village"
+              placeholderTextColor={Colors.gray}
+              autoComplete="off"
+              textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
+              keyboardType="default"
+              contextMenuHidden={true}
+            />
+            {errors.cityOrVillage && <Text style={styles.errorText}>{errors.cityOrVillage}</Text>}
+            {filteredCitiesOrVillages.length > 0 && cityOrVillageInput ? (
+              <FlatList
+                data={filteredCitiesOrVillages.slice(0, 5)}
+                scrollEnabled={false}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) => (
+                  <TouchableOpacity onPress={() => handleCityOrVillageSelect(item)}>
+                    <Text style={Globalstyles.listItem}>{item}</Text>
+                  </TouchableOpacity>
+                )}
+                style={Globalstyles.suggestions}
+              />
+            ) : null}
+
+          </View>
+          <Text style={styles.headText}>Other Personal Detail</Text>
+          <View>
+            <Text style={Globalstyles.title}>Do you know cooking</Text>
+            <Dropdown
+              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              data={CookingStatus}
+              labelField="label"
+              valueField="value"
+              value={
+                CookingStatus.find(item => item.label === biodata?.knowCooking)?.value || ''
+              }
+              editable={isEditing}
+              onChange={(text) => handleInputChange('knowCooking', text.value)}
+              placeholder="Select Status"
+              disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
+            />
+          </View>
+          <View>
+            <Text style={Globalstyles.title}> Dietary Habits  </Text>
+            <Dropdown
+              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              data={DietHabit}
+              labelField="label"
+              valueField="value"
+              value={
+                DietHabit.find(item => item.label === biodata?.dietaryHabit)?.value || ''
+              }
+              editable={isEditing}
+              onChange={(text) => handleInputChange('dietaryHabit', text.value)}
+              placeholder="Select Habit"
+              disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
+            />
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Smoking Habits  </Text>
+            <Dropdown
+              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              data={smokingStatusData}
+              labelField="label"
+              valueField="value"
+              value={
+                smokingStatusData.find(item => item.label === biodata?.smokingHabit)?.value || ''
+              }
+              editable={isEditing}
+              onChange={(text) => handleInputChange('smokingHabit', text.value)}
+              placeholder="Select Status"
+              disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
+            />
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Drinking Habits </Text>
+            <Dropdown
+              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              data={DrinkingHabit}
+              labelField="label"
+              valueField="value"
+              value={
+                DrinkingHabit.find(item => item.label === biodata?.drinkingHabit)?.value || ''
+              }
+              editable={isEditing}
+              onChange={(text) => handleInputChange('drinkingHabit', text.value)}
+              placeholder="Select Habit"
+              disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
+            />
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Tabacoo Habits </Text>
+            <Dropdown
+              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              data={TobacooHabit}
+              labelField="label"
+              valueField="value"
+              value={
+                TobacooHabit.find(item => item.label === biodata?.tobaccoHabits)?.value || ''
+              }
+              editable={isEditing}
+              onChange={(text) => handleInputChange('tobaccoHabits', text.value)}
+              placeholder="Select Habit"
+              disabled={!isEditing}
+              placeholderStyle={{ color: '#E7E7E7' }}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
+            />
+
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Your Hobbies  </Text>
+            <TextInput
+              style={[Globalstyles.input, !isEditing && styles.readOnly]}
+              value={biodata?.hobbies}
+              onChangeText={(text) => handleInputChange('hobbies', text)}
+              multiline={true}
+              numberOfLines={6}
+              editable={isEditing}
+              placeholderTextColor={Colors.gray}
+              placeholder="Enter Your Hobbies"
+              autoComplete="off"
+              textContentType="none"
+              importantForAutofill="no"
+              autoCorrect={false}
+              autoScroll={false}
+              showsVerticalScrollIndicator={false}
+              keyboardType="default"
+              contextMenuHidden={true}
+            />
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Upload Your One Closeup Image <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <View style={[Globalstyles.input, errors.closeUpPhoto && styles.errorInput]}>
+              <TouchableOpacity onPress={() => handleImageSelection('closeUpPhoto')}>
+                {biodata?.closeUpPhoto ? (
+                  <Image
+                    source={{ uri: biodata?.closeUpPhoto }}
+                    style={styles.selectedImage}
+                  />
+                ) : (
+                  <Text style={styles.imagePlaceholder}>Upload One Closeup Image</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+            {errors.closeUpPhoto && <Text style={styles.errorText}>{errors.closeUpPhoto}</Text>}
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Upload Your One Full Image</Text>
+            <View style={Globalstyles.input}>
+              <TouchableOpacity onPress={() => handleImageSelection('fullPhoto')}>
+                {biodata?.fullPhoto ? (
+                  <Image
+                    source={{ uri: biodata?.fullPhoto }}
+                    style={styles.selectedImage}
+                  />
+                ) : (
+                  <Text style={styles.imagePlaceholder}>Upload One Full Image</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View>
+            <Text style={Globalstyles.title}>Upload Your One Best Image </Text>
+            <View style={Globalstyles.input}>
+              <TouchableOpacity onPress={() => handleImageSelection('bestPhoto')}>
+                {biodata?.bestPhoto ? (
+                  <Image
+                    source={{ uri: biodata?.bestPhoto }}
+                    style={styles.selectedImage}
+                  />
+                ) : (
+                  <Text style={styles.imagePlaceholder}>Upload One Full Image</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleSave}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <ActivityIndicator size="large" color={Colors.light} />
+            ) : (
+              <Text style={styles.buttonText}>
+                {biodata?._id ? 'Submit' : 'Continue'}
+              </Text>
+            )}
+          </TouchableOpacity>
+          <Modal visible={modalVisible} animationType="slide" transparent={true}>
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalContent}>
+                <ScrollView showsVerticalScrollIndicator={false}>
+                  <View style={styles.cardContainer}>
+                    {plans.map((plan) => (
+                      <View key={plan._id} style={styles.card}>
+                        {plan.photoUrl ? (
+                          <Image
+                            source={{ uri: plan.photoUrl }}
+                            style={styles.planImage}
+                            resizeMode="cover"
+                            onError={(e) => console.log('Image load error:', e.nativeEvent.error)}
+                          />
+                        ) : null}
+                        <View style={styles.cardContent}>
+                          {plan.trialPeriod ? (
+                            <Text style={styles.Text}>
+                              <Text style={styles.boldLabel}>Trial Period: </Text>
+                              {plan.trialPeriod} days
+                            </Text>
                           ) : null}
-                          <View style={styles.cardContent}>
-                            {plan.trialPeriod ? (
-                              <Text style={styles.Text}>
-                                <Text style={styles.boldLabel}>Trial Period: </Text>
-                                {plan.trialPeriod} days
-                              </Text>
+
+                          {plan.duration ? (
+                            <Text style={styles.Text}>
+                              <Text style={styles.boldLabel}>Duration: </Text>
+                              {plan.duration} months
+                            </Text>
+                          ) : null}
+
+                          {plan.amount ? (
+                            <Text style={styles.Text}>
+                              <Text style={styles.boldLabel}>Amount: </Text>
+                              ₹{plan.amount}
+                            </Text>
+                          ) : null}
+
+                          <View style={{ flex: 1, justifyContent: 'space-between' }}>
+                            {plan.description ? (
+                              <Text style={styles.description}>{plan.description}</Text>
                             ) : null}
 
-                            {plan.duration ? (
-                              <Text style={styles.Text}>
-                                <Text style={styles.boldLabel}>Duration: </Text>
-                                {plan.duration} months
-                              </Text>
-                            ) : null}
-
-                            {plan.amount ? (
-                              <Text style={styles.Text}>
-                                <Text style={styles.boldLabel}>Amount: </Text>
-                                ₹{plan.amount}
-                              </Text>
-                            ) : null}
-
-                            <View style={{ flex: 1, justifyContent: 'space-between' }}>
-                              {plan.description ? (
-                                <Text style={styles.description}>{plan.description}</Text>
-                              ) : null}
-
-                              <View style={styles.buttonRowAligned}>
-                                {!hasTrial && (
-                                  <TouchableOpacity style={styles.trialButton} onPress={() => handleFreeTrial(plan)}>
-                                    <Text style={styles.trialText}>
-                                      {TrialPlanId === plan._id ? 'Starting...' : 'Start Free Trial'}
-                                    </Text>
-                                  </TouchableOpacity>
-                                )}
-                                <TouchableOpacity style={styles.buyButton} onPress={() => handleBuyNow(plan)}>
-                                  <Text style={styles.buyButtonText}>
-                                    {buyingPlanId === plan._id ? 'Buying...' : 'Buy Now'}
+                            <View style={styles.buttonRowAligned}>
+                              {!hasTrial && (
+                                <TouchableOpacity style={styles.trialButton} onPress={() => handleFreeTrial(plan)}>
+                                  <Text style={styles.trialText}>
+                                    {TrialPlanId === plan._id ? 'Starting...' : 'Start Free Trial'}
                                   </Text>
                                 </TouchableOpacity>
-                              </View>
+                              )}
+                              <TouchableOpacity style={styles.buyButton} onPress={() => handleBuyNow(plan)}>
+                                <Text style={styles.buyButtonText}>
+                                  {buyingPlanId === plan._id ? 'Buying...' : 'Buy Now'}
+                                </Text>
+                              </TouchableOpacity>
                             </View>
                           </View>
                         </View>
-                      ))}
-                    </View>
-                  </ScrollView>
-                  <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
-                    <Text style={styles.closeText}>Close</Text>
-                  </TouchableOpacity>
-                </View>
+                      </View>
+                    ))}
+                  </View>
+                </ScrollView>
+                <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
+                  <Text style={styles.closeText}>Close</Text>
+                </TouchableOpacity>
               </View>
-            </Modal>
-          </View>
-        </ScrollView>
+            </View>
+          </Modal>
+        </View>
+      </ScrollView>
       {/* </KeyboardAvoidingView> */}
     </SafeAreaView>
   );

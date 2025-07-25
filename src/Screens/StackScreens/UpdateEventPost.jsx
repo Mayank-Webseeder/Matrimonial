@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, Image, TextInput, SafeAreaView, StatusBar, ScrollView, ActivityIndicator, FlatList } from 'react-native';
+import { Text, View, TouchableOpacity, Image, TextInput, SafeAreaView, StatusBar, ActivityIndicator, FlatList } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -35,7 +35,7 @@ const UpdateEventPost = ({ navigation, route }) => {
 
     const handleImageUpload = () => {
         launchImageLibrary(pickerOptions, (response) => {
-            if (response.didCancel) {return;}
+            if (response.didCancel) { return; }
 
             if (response.errorCode) {
                 console.log('ImagePicker Error:', response.errorMessage);
@@ -60,7 +60,7 @@ const UpdateEventPost = ({ navigation, route }) => {
 
     const convertToBase64 = async (imageUri) => {
         try {
-            if (!imageUri) {return null;}
+            if (!imageUri) { return null; }
 
             // If already in Base64 format, return directly ✅
             if (imageUri.startsWith('data:image')) {
@@ -96,7 +96,7 @@ const UpdateEventPost = ({ navigation, route }) => {
             setLoading(true);
 
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('No token found');}
+            if (!token) { throw new Error('No token found'); }
 
             if (!eventData?._id) {
                 throw new Error('Event ID is missing, update cannot proceed.');
@@ -237,13 +237,15 @@ const UpdateEventPost = ({ navigation, route }) => {
                     <FlatList
                         data={photos.length > 0 ? photos : eventData?.images || []}
                         keyExtractor={(_, index) => index.toString()}
-                        horizontal
+                        horizontal={true}
                         showsHorizontalScrollIndicator={false}
                         renderItem={({ item }) => (
-                            <Image
-                                source={{ uri: item }}
-                                style={styles.photo}
-                            />
+                            <View>
+                                <Image
+                                    source={{ uri: item }}
+                                    style={styles.photo}
+                                />
+                            </View>
                         )}
                         contentContainerStyle={{ alignItems: 'center' }}
                     />

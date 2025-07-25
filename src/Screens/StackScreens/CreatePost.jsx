@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, Image, TextInput, StatusBar, ScrollView, ActivityIndicator, SafeAreaView, FlatList } from 'react-native';
+import { Text, View, TouchableOpacity, Image, TextInput, StatusBar, ActivityIndicator, SafeAreaView, FlatList } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -35,7 +35,7 @@ const CreatePost = ({ navigation, route }) => {
 
     const handleImageUpload = () => {
         launchImageLibrary(pickerOptions, (response) => {
-            if (response.didCancel) {return;}
+            if (response.didCancel) { return; }
             if (response.errorCode) {
                 console.log('ImagePicker Error:', response.errorMessage);
                 return;
@@ -52,7 +52,7 @@ const CreatePost = ({ navigation, route }) => {
         try {
             setLoading(true);
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('No token found');}
+            if (!token) { throw new Error('No token found'); }
 
             const payload = {
                 title: title,
@@ -180,14 +180,16 @@ const CreatePost = ({ navigation, route }) => {
                     <FlatList
                         data={photos}
                         keyExtractor={(_, index) => index.toString()}
-                        horizontal
+                        horizontal={true}
                         showsHorizontalScrollIndicator={false}
                         renderItem={({ item }) => (
-                            <Image
-                                source={{ uri: `data:image/png;base64,${item}` }}
-                                style={styles.photo}
-                                onError={(e) => console.log('Image Load Error:', e.nativeEvent.error)}
-                            />
+                            <View>
+                                <Image
+                                    source={{ uri: `data:image/png;base64,${item}` }}
+                                    style={styles.photo}
+                                    onError={(e) => console.log('Image Load Error:', e.nativeEvent.error)}
+                                />
+                            </View>
                         )}
                         contentContainerStyle={{ alignItems: 'center' }}
                     />

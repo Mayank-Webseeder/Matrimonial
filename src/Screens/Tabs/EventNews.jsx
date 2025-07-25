@@ -109,7 +109,7 @@ const EventNews = ({ navigation }) => {
     console.log('profileId:', profileId);
 
     try {
-      if (!profileId) {throw new Error('Missing profile ID');}
+      if (!profileId) { throw new Error('Missing profile ID'); }
 
       const directLink = `${DeepLink}/${profileType}/${profileId}`;
 
@@ -145,14 +145,14 @@ const EventNews = ({ navigation }) => {
   };
 
 
- useFocusEffect(
-  useCallback(() => {
-    fetchPostData();
-    GetEventNews();
-    Advertisement_window();
-    setPage(1);
-  }, [route?.params?.refresh]) // <-- triggers again when refresh param changes
-);
+  useFocusEffect(
+    useCallback(() => {
+      fetchPostData();
+      GetEventNews();
+      Advertisement_window();
+      setPage(1);
+    }, [route?.params?.refresh]) // <-- triggers again when refresh param changes
+  );
 
   useEffect(() => {
     fetchPostData();
@@ -161,7 +161,7 @@ const EventNews = ({ navigation }) => {
 
 
   useEffect(() => {
-    if (slider.length === 0) {return;}
+    if (slider.length === 0) { return; }
 
     const currentSlide = slider[currentIndex];
     const durationInSeconds = currentSlide?.duration || 4;
@@ -180,7 +180,7 @@ const EventNews = ({ navigation }) => {
   const Advertisement_window = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -234,7 +234,7 @@ const EventNews = ({ navigation }) => {
     try {
       setLikeLoading(true);
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -293,7 +293,7 @@ const EventNews = ({ navigation }) => {
     try {
       setCommentLoading(true);
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -366,7 +366,7 @@ const EventNews = ({ navigation }) => {
       setDeletingCommentId(commentId);
 
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -434,7 +434,7 @@ const EventNews = ({ navigation }) => {
     try {
       setMyeventpost([]);
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = { Authorization: `Bearer ${token}` };
       const response = await axios.get(VIEW_EVENT, { headers });
@@ -469,7 +469,7 @@ const EventNews = ({ navigation }) => {
       setEventData([]);
       setIsLoading(true);
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -551,17 +551,17 @@ const EventNews = ({ navigation }) => {
     if (sheetRef.current) {
       sheetRef.current.close();
     }
-   navigation.navigate('MainApp', {
-  screen: 'Tabs',
-  params: {
-    screen: 'EventNews',
-    params: { refresh: Date.now() }, // pass a dynamic param
-  },
-});
+    navigation.navigate('MainApp', {
+      screen: 'Tabs',
+      params: {
+        screen: 'EventNews',
+        params: { refresh: Date.now() }, // pass a dynamic param
+      },
+    });
   };
 
   const renderImages = (images, item) => {
-    if (images.length === 0) {return null;}
+    if (images.length === 0) { return null; }
 
     const openImageViewer = (index) => {
       console.log('📷 Opening viewer for images:', images);
@@ -919,7 +919,7 @@ const EventNews = ({ navigation }) => {
             data={postId ? eventdata : getPostsForPage()}
             renderItem={renderItem}
             keyExtractor={(item) => item._id}
-            scrollEnabled={true}
+            scrollEnabled={false}
             nestedScrollEnabled={true}
             showsVerticalScrollIndicator={false}
             ListEmptyComponent={

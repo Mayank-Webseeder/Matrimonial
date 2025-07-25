@@ -89,7 +89,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
         try {
             setMyBiodata('');
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('No token found');}
+            if (!token) { throw new Error('No token found'); }
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -207,7 +207,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
         try {
             setLoading(true);
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('No token found');}
+            if (!token) { throw new Error('No token found'); }
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -320,28 +320,29 @@ const PartnersPreference = ({ navigation, profileData }) => {
                 translucent
             />
             <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                // behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1, marginTop: -SH(20) }}
-                // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
-                >
+            // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+            >
                 <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-                    <Text style={styles.Formtitle}>Set Your Preference </Text>
-                    <View style={[Globalstyles.form]}>
-                        <Text style={Globalstyles.title}>Sub-Caste  </Text>
-                        <Dropdown
-                            style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                            data={PartnersubCasteOptions}
-                            labelField="label"
-                            valueField="value"
-                            value={biodata?.partnerSubCaste}
-                            editable={isEditing}
-                            onChange={(item) => setBiodata({ ...biodata, partnerSubCaste: item.value })}
-                            placeholder="Select subCaste"
-                            placeholderStyle={{ color: '#E7E7E7' }}
-                            autoScroll={false}
-                            showsVerticalScrollIndicator={false}
-                        />
-                        {/* <TextInput
+                    <View style={{ flex: 1 }} >
+                        <Text style={styles.Formtitle}>Set Your Preference </Text>
+                        <View style={[Globalstyles.form]}>
+                            <Text style={Globalstyles.title}>Sub-Caste  </Text>
+                            <Dropdown
+                                style={[Globalstyles.input, !isEditing && styles.readOnly]}
+                                data={PartnersubCasteOptions}
+                                labelField="label"
+                                valueField="value"
+                                value={biodata?.partnerSubCaste}
+                                editable={isEditing}
+                                onChange={(item) => setBiodata({ ...biodata, partnerSubCaste: item.value })}
+                                placeholder="Select subCaste"
+                                placeholderStyle={{ color: '#E7E7E7' }}
+                                autoScroll={false}
+                                showsVerticalScrollIndicator={false}
+                            />
+                            {/* <TextInput
                         style={Globalstyles.input}
                         value={biodata?.partnerSubCaste}
                         onChangeText={handleSubCasteInputChange}
@@ -364,162 +365,162 @@ const PartnersPreference = ({ navigation, profileData }) => {
                         />
                     ) : null} */}
 
-                        <Text style={Globalstyles.title}>Age Criteria  </Text>
-                        <View style={styles.row}>
-                            <Dropdown
-                                style={[styles.dropdown, !isEditing && styles.readOnly]}
-                                data={ageData}
-                                labelField="label"
-                                valueField="value"
-                                value={biodata?.partnerMinAge}
-                                editable={isEditing}
-                                onChange={(item) => setBiodata({ ...biodata, partnerMinAge: item.value })}
-                                placeholder="Min Age"
-                                placeholderStyle={{ color: '#E7E7E7' }}
-                                autoScroll={false}
-                                showsVerticalScrollIndicator={false}
+                            <Text style={Globalstyles.title}>Age Criteria  </Text>
+                            <View style={styles.row}>
+                                <Dropdown
+                                    style={[styles.dropdown, !isEditing && styles.readOnly]}
+                                    data={ageData}
+                                    labelField="label"
+                                    valueField="value"
+                                    value={biodata?.partnerMinAge}
+                                    editable={isEditing}
+                                    onChange={(item) => setBiodata({ ...biodata, partnerMinAge: item.value })}
+                                    placeholder="Min Age"
+                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                    autoScroll={false}
+                                    showsVerticalScrollIndicator={false}
 
-                            />
-                            <Dropdown
-                                style={[styles.dropdown, !isEditing && styles.readOnly]}
-                                data={ageData}
-                                labelField="label"
-                                valueField="value"
-                                value={biodata?.partnerMaxAge}
-                                editable={isEditing}
-                                onChange={(item) => setBiodata({ ...biodata, partnerMaxAge: item.value })}
-                                placeholder="Max Age"
-                                placeholderStyle={{ color: '#E7E7E7' }}
-                                autoScroll={false}
-                                showsVerticalScrollIndicator={false}
-                            />
-                        </View>
-                        <Text style={Globalstyles.title}>Height Criteria  </Text>
-                        <View style={styles.row}>
-                            <Dropdown
-                                style={[styles.dropdown, !isEditing && styles.readOnly]}
-                                data={heightData}
-                                labelField="label"
-                                valueField="value"
-                                value={biodata?.partnerMinHeightFeet}
-                                editable={isEditing}
-                                onChange={(item) => {
-                                    setBiodata({
-                                        ...biodata,
-                                        partnerMinHeightFeet: item.value,
-                                    });
-                                }}
-                                placeholder="Min Height"
-                                placeholderStyle={{ color: '#E7E7E7' }}
-                                autoScroll={false}
-                                showsVerticalScrollIndicator={false}
-                            />
-                            <Dropdown
-                                style={[styles.dropdown, !isEditing && styles.readOnly]}
-                                data={heightData}
-                                labelField="label"
-                                valueField="value"
-                                value={biodata?.partnerMaxHeightFeet}
-                                editable={isEditing}
-                                onChange={(item) => {
-                                    setBiodata({
-                                        ...biodata,
-                                        partnerMaxHeightFeet: item.value,
-                                    });
-                                }}
-                                placeholder="Max Height"
-                                placeholderStyle={{ color: '#E7E7E7' }}
-                                autoScroll={false}
-                                showsVerticalScrollIndicator={false}
-                            />
-                        </View>
-                        <View>
-                            <Text style={Globalstyles.title}>Partner Marital Status  </Text>
-                            <Dropdown
-                                style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                                data={PartnermaritalStatusData}
-                                labelField="label"
-                                valueField="value"
-                                value={biodata?.partnerMaritalStatus}
-                                editable={isEditing}
-                                onChange={(item) => setBiodata({ ...biodata, partnerMaritalStatus: item.value })}
-                                placeholder="Select status"
-                                placeholderStyle={{ color: '#E7E7E7' }}
-                                autoScroll={false}
-                                showsVerticalScrollIndicator={false}
-                            />
-                            <Text style={Globalstyles.title}>Income Range (in INR)  </Text>
-                            <Dropdown
-                                style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                                data={PartnerFamliyIncome}
-                                labelField="label"
-                                valueField="value"
-                                value={biodata?.partnerIncome}
-                                editable={isEditing}
-                                onChange={(item) => setBiodata({ ...biodata, partnerIncome: item.value })}
-                                placeholder="Income"
-                                placeholderStyle={{ color: '#E7E7E7' }}
-                                autoScroll={false}
-                                showsVerticalScrollIndicator={false}
-                            />
-                            <Text style={Globalstyles.title}>Occupation </Text>
-                            <Dropdown
-                                style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                                data={PartnerOccupationData}
-                                labelField="label"
-                                valueField="value"
-                                value={biodata?.partnerOccupation}
-                                editable={isEditing}
-                                onChange={(item) => setBiodata({ ...biodata, partnerOccupation: item.value })}
-                                placeholder="Select occupdation"
-                                placeholderStyle={{ color: '#E7E7E7' }}
-                                autoScroll={false}
-                                showsVerticalScrollIndicator={false}
-                            />
+                                />
+                                <Dropdown
+                                    style={[styles.dropdown, !isEditing && styles.readOnly]}
+                                    data={ageData}
+                                    labelField="label"
+                                    valueField="value"
+                                    value={biodata?.partnerMaxAge}
+                                    editable={isEditing}
+                                    onChange={(item) => setBiodata({ ...biodata, partnerMaxAge: item.value })}
+                                    placeholder="Max Age"
+                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                    autoScroll={false}
+                                    showsVerticalScrollIndicator={false}
+                                />
+                            </View>
+                            <Text style={Globalstyles.title}>Height Criteria  </Text>
+                            <View style={styles.row}>
+                                <Dropdown
+                                    style={[styles.dropdown, !isEditing && styles.readOnly]}
+                                    data={heightData}
+                                    labelField="label"
+                                    valueField="value"
+                                    value={biodata?.partnerMinHeightFeet}
+                                    editable={isEditing}
+                                    onChange={(item) => {
+                                        setBiodata({
+                                            ...biodata,
+                                            partnerMinHeightFeet: item.value,
+                                        });
+                                    }}
+                                    placeholder="Min Height"
+                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                    autoScroll={false}
+                                    showsVerticalScrollIndicator={false}
+                                />
+                                <Dropdown
+                                    style={[styles.dropdown, !isEditing && styles.readOnly]}
+                                    data={heightData}
+                                    labelField="label"
+                                    valueField="value"
+                                    value={biodata?.partnerMaxHeightFeet}
+                                    editable={isEditing}
+                                    onChange={(item) => {
+                                        setBiodata({
+                                            ...biodata,
+                                            partnerMaxHeightFeet: item.value,
+                                        });
+                                    }}
+                                    placeholder="Max Height"
+                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                    autoScroll={false}
+                                    showsVerticalScrollIndicator={false}
+                                />
+                            </View>
+                            <View>
+                                <Text style={Globalstyles.title}>Partner Marital Status  </Text>
+                                <Dropdown
+                                    style={[Globalstyles.input, !isEditing && styles.readOnly]}
+                                    data={PartnermaritalStatusData}
+                                    labelField="label"
+                                    valueField="value"
+                                    value={biodata?.partnerMaritalStatus}
+                                    editable={isEditing}
+                                    onChange={(item) => setBiodata({ ...biodata, partnerMaritalStatus: item.value })}
+                                    placeholder="Select status"
+                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                    autoScroll={false}
+                                    showsVerticalScrollIndicator={false}
+                                />
+                                <Text style={Globalstyles.title}>Income Range (in INR)  </Text>
+                                <Dropdown
+                                    style={[Globalstyles.input, !isEditing && styles.readOnly]}
+                                    data={PartnerFamliyIncome}
+                                    labelField="label"
+                                    valueField="value"
+                                    value={biodata?.partnerIncome}
+                                    editable={isEditing}
+                                    onChange={(item) => setBiodata({ ...biodata, partnerIncome: item.value })}
+                                    placeholder="Income"
+                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                    autoScroll={false}
+                                    showsVerticalScrollIndicator={false}
+                                />
+                                <Text style={Globalstyles.title}>Occupation </Text>
+                                <Dropdown
+                                    style={[Globalstyles.input, !isEditing && styles.readOnly]}
+                                    data={PartnerOccupationData}
+                                    labelField="label"
+                                    valueField="value"
+                                    value={biodata?.partnerOccupation}
+                                    editable={isEditing}
+                                    onChange={(item) => setBiodata({ ...biodata, partnerOccupation: item.value })}
+                                    placeholder="Select occupdation"
+                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                    autoScroll={false}
+                                    showsVerticalScrollIndicator={false}
+                                />
 
-                            <Text style={styles.inputHeading}>Qualification  </Text>
-                            <Dropdown
-                                style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                                data={PartnerQualificationData}
-                                labelField="label"
-                                valueField="value"
-                                value={biodata?.partnerQualification}
-                                editable={isEditing}
-                                onChange={(item) => setBiodata({ ...biodata, partnerQualification: item.value })}
-                                placeholder="Select Qualification"
-                                placeholderStyle={{ color: '#E7E7E7' }}
-                                autoScroll={false}
-                                showsVerticalScrollIndicator={false}
-                            />
-                            <Text style={Globalstyles.title}>Disabilities (Physical/Mental)  </Text>
-                            <Dropdown
-                                style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                                data={Disabilities}
-                                labelField="label"
-                                valueField="value"
-                                value={biodata?.partnerDisabilities}
-                                editable={isEditing}
-                                onChange={(item) => setBiodata({ ...biodata, partnerDisabilities: item.value })}
-                                placeholder="Select disability"
-                                placeholderStyle={{ color: '#E7E7E7' }}
-                                autoScroll={false}
-                                showsVerticalScrollIndicator={false}
-                            />
-                            <Text style={Globalstyles.title}>Manglik Status  </Text>
-                            <Dropdown
-                                style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                                data={PartnerManglikStatusData}
-                                labelField="label"
-                                valueField="value"
-                                value={biodata?.partnerManglikStatus}
-                                editable={isEditing}
-                                onChange={(item) => setBiodata({ ...biodata, partnerManglikStatus: item.value })}
-                                placeholder="Select status"
-                                placeholderStyle={{ color: '#E7E7E7' }}
-                                autoScroll={false}
-                                showsVerticalScrollIndicator={false}
-                            />
-                            {/* <Text style={Globalstyles.title}>Partners Livein  </Text>
+                                <Text style={styles.inputHeading}>Qualification  </Text>
+                                <Dropdown
+                                    style={[Globalstyles.input, !isEditing && styles.readOnly]}
+                                    data={PartnerQualificationData}
+                                    labelField="label"
+                                    valueField="value"
+                                    value={biodata?.partnerQualification}
+                                    editable={isEditing}
+                                    onChange={(item) => setBiodata({ ...biodata, partnerQualification: item.value })}
+                                    placeholder="Select Qualification"
+                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                    autoScroll={false}
+                                    showsVerticalScrollIndicator={false}
+                                />
+                                <Text style={Globalstyles.title}>Disabilities (Physical/Mental)  </Text>
+                                <Dropdown
+                                    style={[Globalstyles.input, !isEditing && styles.readOnly]}
+                                    data={Disabilities}
+                                    labelField="label"
+                                    valueField="value"
+                                    value={biodata?.partnerDisabilities}
+                                    editable={isEditing}
+                                    onChange={(item) => setBiodata({ ...biodata, partnerDisabilities: item.value })}
+                                    placeholder="Select disability"
+                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                    autoScroll={false}
+                                    showsVerticalScrollIndicator={false}
+                                />
+                                <Text style={Globalstyles.title}>Manglik Status  </Text>
+                                <Dropdown
+                                    style={[Globalstyles.input, !isEditing && styles.readOnly]}
+                                    data={PartnerManglikStatusData}
+                                    labelField="label"
+                                    valueField="value"
+                                    value={biodata?.partnerManglikStatus}
+                                    editable={isEditing}
+                                    onChange={(item) => setBiodata({ ...biodata, partnerManglikStatus: item.value })}
+                                    placeholder="Select status"
+                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                    autoScroll={false}
+                                    showsVerticalScrollIndicator={false}
+                                />
+                                {/* <Text style={Globalstyles.title}>Partners Livein  </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={PartnersLiveinData}
@@ -533,56 +534,56 @@ const PartnersPreference = ({ navigation, profileData }) => {
                             autoScroll={false}
                             showsVerticalScrollIndicator={false}
                         /> */}
-                            <Text style={[Globalstyles.title, { color: Colors.theme_color }]}>Locality</Text>
-                            <Text style={Globalstyles.title}>State  </Text>
-                            <TextInput
-                                style={Globalstyles.input}
-                                value={biodata?.partnerState}
-                                onChangeText={handleStateInputChange}
-                                placeholder="Type your State"
-                                placeholderTextColor={Colors.gray}
-                                autoComplete="off"
-                                textContentType="none"
-                                importantForAutofill="no"
-                            />
-                            {filteredStates.length > 0 && stateInput ? (
-                                <FlatList
-                                    data={filteredStates.slice(0, 5)}
-                                    scrollEnabled={false}
-                                    keyExtractor={(item, index) => index.toString()}
-                                    renderItem={({ item }) => (
-                                        <TouchableOpacity onPress={() => handleStateSelect(item)}>
-                                            <Text style={Globalstyles.listItem}>{item}</Text>
-                                        </TouchableOpacity>
-                                    )}
-                                    style={Globalstyles.suggestions}
+                                <Text style={[Globalstyles.title, { color: Colors.theme_color }]}>Locality</Text>
+                                <Text style={Globalstyles.title}>State  </Text>
+                                <TextInput
+                                    style={Globalstyles.input}
+                                    value={biodata?.partnerState}
+                                    onChangeText={handleStateInputChange}
+                                    placeholder="Type your State"
+                                    placeholderTextColor={Colors.gray}
+                                    autoComplete="off"
+                                    textContentType="none"
+                                    importantForAutofill="no"
                                 />
-                            ) : null}
-                            <Text style={Globalstyles.title}>City / Village   </Text>
-                            <TextInput
-                                style={Globalstyles.input}
-                                value={biodata?.partnerCity}
-                                onChangeText={handleCityInputChange}
-                                placeholder="Type your city/village"
-                                placeholderTextColor={Colors.gray}
-                                autoComplete="off"
-                                textContentType="none"
-                                importantForAutofill="no"
-                            />
-                            {filteredCities.length > 0 && cityInput ? (
-                                <FlatList
-                                    data={filteredCities.slice(0, 5)}
-                                    scrollEnabled={false}
-                                    keyExtractor={(item, index) => index.toString()}
-                                    renderItem={({ item }) => (
-                                        <TouchableOpacity onPress={() => handleCitySelect(item)}>
-                                            <Text style={Globalstyles.listItem}>{item}</Text>
-                                        </TouchableOpacity>
-                                    )}
-                                    style={Globalstyles.suggestions}
+                                {filteredStates.length > 0 && stateInput ? (
+                                    <FlatList
+                                        data={filteredStates.slice(0, 5)}
+                                        scrollEnabled={false}
+                                        keyExtractor={(item, index) => index.toString()}
+                                        renderItem={({ item }) => (
+                                            <TouchableOpacity onPress={() => handleStateSelect(item)}>
+                                                <Text style={Globalstyles.listItem}>{item}</Text>
+                                            </TouchableOpacity>
+                                        )}
+                                        style={Globalstyles.suggestions}
+                                    />
+                                ) : null}
+                                <Text style={Globalstyles.title}>City / Village   </Text>
+                                <TextInput
+                                    style={Globalstyles.input}
+                                    value={biodata?.partnerCity}
+                                    onChangeText={handleCityInputChange}
+                                    placeholder="Type your city/village"
+                                    placeholderTextColor={Colors.gray}
+                                    autoComplete="off"
+                                    textContentType="none"
+                                    importantForAutofill="no"
                                 />
-                            ) : null}
-                            {/* <Text style={Globalstyles.title}>Partners body Structure  </Text>
+                                {filteredCities.length > 0 && cityInput ? (
+                                    <FlatList
+                                        data={filteredCities.slice(0, 5)}
+                                        scrollEnabled={false}
+                                        keyExtractor={(item, index) => index.toString()}
+                                        renderItem={({ item }) => (
+                                            <TouchableOpacity onPress={() => handleCitySelect(item)}>
+                                                <Text style={Globalstyles.listItem}>{item}</Text>
+                                            </TouchableOpacity>
+                                        )}
+                                        style={Globalstyles.suggestions}
+                                    />
+                                ) : null}
+                                {/* <Text style={Globalstyles.title}>Partners body Structure  </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={BodyStructureData}
@@ -595,76 +596,76 @@ const PartnersPreference = ({ navigation, profileData }) => {
                             autoScroll={false}
                             showsVerticalScrollIndicator={false}
                         /> */}
-                            <Text style={Globalstyles.title}>Complexion  </Text>
-                            <Dropdown
-                                style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                                data={ComplexionData}
-                                labelField="label"
-                                valueField="value"
-                                value={biodata?.partnerComplexion}
-                                editable={isEditing}
-                                onChange={(item) => setBiodata({ ...biodata, partnerComplexion: item.value })}
-                                placeholder="Select Complexion"
-                                placeholderStyle={{ color: '#E7E7E7' }}
-                                autoScroll={false}
-                                showsVerticalScrollIndicator={false}
-                            />
-                            <Text style={Globalstyles.title}>Partner Dietary Habits  </Text>
-                            <Dropdown
-                                style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                                data={PartnerDietHabit}
-                                labelField="label"
-                                valueField="value"
-                                value={biodata?.partnerDietaryHabits}
-                                editable={isEditing}
-                                onChange={(item) => setBiodata({ ...biodata, partnerDietaryHabits: item.value })}
-                                placeholder="Select Diet"
-                                placeholderStyle={{ color: '#E7E7E7' }}
-                                autoScroll={false}
-                                showsVerticalScrollIndicator={false}
-                            />
-                            <Text style={Globalstyles.title}>Smoking Habits  </Text>
-                            <Dropdown
-                                style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                                data={PartnersmokingStatusData}
-                                labelField="label"
-                                valueField="value"
-                                value={biodata?.partnerSmokingHabits}
-                                editable={isEditing}
-                                onChange={(item) => setBiodata({ ...biodata, partnerSmokingHabits: item.value })}
-                                placeholder="Select smoking"
-                                placeholderStyle={{ color: '#E7E7E7' }}
-                                autoScroll={false}
-                                showsVerticalScrollIndicator={false}
-                            />
-                            <Text style={Globalstyles.title}>Drinking Habits  </Text>
-                            <Dropdown
-                                style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                                data={PartnerDrinkingHabit}
-                                labelField="label"
-                                valueField="value"
-                                value={biodata?.partnerDrinkingHabits}
-                                editable={isEditing}
-                                onChange={(item) => setBiodata({ ...biodata, partnerDrinkingHabits: item.value })}
-                                placeholder="Select Habit"
-                                placeholderStyle={{ color: '#E7E7E7' }}
-                                autoScroll={false}
-                                showsVerticalScrollIndicator={false}
-                            />
-                            <Text style={Globalstyles.title}>Family Type  </Text>
-                            <Dropdown
-                                style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                                data={FamilyTypeData}
-                                labelField="label"
-                                valueField="value"
-                                placeholder="Select Family Type"
-                                placeholderStyle={{ color: '#E7E7E7' }}
-                                value={biodata?.partnerFamilyType}
-                                editable={isEditing}
-                                onChange={(item) => setBiodata({ ...biodata, partnerFamilyType: item.value })}
-                                autoScroll={false}
-                                showsVerticalScrollIndicator={false} />
-                            {/* <Text style={Globalstyles.title}>Family Financial Status  </Text>
+                                <Text style={Globalstyles.title}>Complexion  </Text>
+                                <Dropdown
+                                    style={[Globalstyles.input, !isEditing && styles.readOnly]}
+                                    data={ComplexionData}
+                                    labelField="label"
+                                    valueField="value"
+                                    value={biodata?.partnerComplexion}
+                                    editable={isEditing}
+                                    onChange={(item) => setBiodata({ ...biodata, partnerComplexion: item.value })}
+                                    placeholder="Select Complexion"
+                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                    autoScroll={false}
+                                    showsVerticalScrollIndicator={false}
+                                />
+                                <Text style={Globalstyles.title}>Partner Dietary Habits  </Text>
+                                <Dropdown
+                                    style={[Globalstyles.input, !isEditing && styles.readOnly]}
+                                    data={PartnerDietHabit}
+                                    labelField="label"
+                                    valueField="value"
+                                    value={biodata?.partnerDietaryHabits}
+                                    editable={isEditing}
+                                    onChange={(item) => setBiodata({ ...biodata, partnerDietaryHabits: item.value })}
+                                    placeholder="Select Diet"
+                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                    autoScroll={false}
+                                    showsVerticalScrollIndicator={false}
+                                />
+                                <Text style={Globalstyles.title}>Smoking Habits  </Text>
+                                <Dropdown
+                                    style={[Globalstyles.input, !isEditing && styles.readOnly]}
+                                    data={PartnersmokingStatusData}
+                                    labelField="label"
+                                    valueField="value"
+                                    value={biodata?.partnerSmokingHabits}
+                                    editable={isEditing}
+                                    onChange={(item) => setBiodata({ ...biodata, partnerSmokingHabits: item.value })}
+                                    placeholder="Select smoking"
+                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                    autoScroll={false}
+                                    showsVerticalScrollIndicator={false}
+                                />
+                                <Text style={Globalstyles.title}>Drinking Habits  </Text>
+                                <Dropdown
+                                    style={[Globalstyles.input, !isEditing && styles.readOnly]}
+                                    data={PartnerDrinkingHabit}
+                                    labelField="label"
+                                    valueField="value"
+                                    value={biodata?.partnerDrinkingHabits}
+                                    editable={isEditing}
+                                    onChange={(item) => setBiodata({ ...biodata, partnerDrinkingHabits: item.value })}
+                                    placeholder="Select Habit"
+                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                    autoScroll={false}
+                                    showsVerticalScrollIndicator={false}
+                                />
+                                <Text style={Globalstyles.title}>Family Type  </Text>
+                                <Dropdown
+                                    style={[Globalstyles.input, !isEditing && styles.readOnly]}
+                                    data={FamilyTypeData}
+                                    labelField="label"
+                                    valueField="value"
+                                    placeholder="Select Family Type"
+                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                    value={biodata?.partnerFamilyType}
+                                    editable={isEditing}
+                                    onChange={(item) => setBiodata({ ...biodata, partnerFamilyType: item.value })}
+                                    autoScroll={false}
+                                    showsVerticalScrollIndicator={false} />
+                                {/* <Text style={Globalstyles.title}>Family Financial Status  </Text>
                         <Dropdown
                             style={[Globalstyles.input, !isEditing && styles.readOnly]}
                             data={FamilyFinancialStatusData}
@@ -678,7 +679,7 @@ const PartnersPreference = ({ navigation, profileData }) => {
                             autoScroll={false}
                             showsVerticalScrollIndicator={false}
                         /> */}
-                            {/* <Text style={Globalstyles.title}>Family Income  </Text>
+                                {/* <Text style={Globalstyles.title}>Family Income  </Text>
                         <Dropdown
                             style={Globalstyles.input}
                             data={PartnerFamliyIncome}
@@ -692,27 +693,28 @@ const PartnersPreference = ({ navigation, profileData }) => {
                             autoScroll={false}
                             showsVerticalScrollIndicator={false}
                         /> */}
-                            <Text style={Globalstyles.title}>Expectations from Partner  </Text>
-                            <TextInput style={Globalstyles.textInput}
-                                multiline={true} numberOfLines={6}
-                                value={biodata?.partnerExpectations}
-                                editable={isEditing}
-                                placeholder="Type Your Expectations"
-                                placeholderTextColor={Colors.gray}
-                                onChangeText={(text) =>
-                                    setBiodata({ ...biodata, partnerExpectations: text })
+                                <Text style={Globalstyles.title}>Expectations from Partner  </Text>
+                                <TextInput style={Globalstyles.textInput}
+                                    multiline={true} numberOfLines={6}
+                                    value={biodata?.partnerExpectations}
+                                    editable={isEditing}
+                                    placeholder="Type Your Expectations"
+                                    placeholderTextColor={Colors.gray}
+                                    onChangeText={(text) =>
+                                        setBiodata({ ...biodata, partnerExpectations: text })
+                                    }
+                                    textAlignVertical="top"
+                                    autoComplete="off"
+                                    textContentType="none" />
+                                {
+                                    loading ?
+                                        <ActivityIndicator size="large" color={Colors.theme_color} />
+                                        :
+                                        <TouchableOpacity style={styles.button} onPress={handleSave} disabled={loading}>
+                                            <Text style={styles.buttonText}>Submit</Text>
+                                        </TouchableOpacity>
                                 }
-                                textAlignVertical="top"
-                                autoComplete="off"
-                                textContentType="none" />
-                            {
-                                loading ?
-                                    <ActivityIndicator size="large" color={Colors.theme_color} />
-                                    :
-                                    <TouchableOpacity style={styles.button} onPress={handleSave} disabled={loading}>
-                                        <Text style={styles.buttonText}>Submit</Text>
-                                    </TouchableOpacity>
-                            }
+                            </View>
                         </View>
                     </View>
                 </ScrollView>

@@ -24,7 +24,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 const kathavachakDetailsPage = ({ navigation, item, route }) => {
-      const insets = useSafeAreaInsets();
+    const insets = useSafeAreaInsets();
     const sliderRef = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [slider, setSlider] = useState([]);
@@ -188,7 +188,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
 
 
     useEffect(() => {
-        if (slider.length === 0) {return;}
+        if (slider.length === 0) { return; }
 
         const currentSlide = slider[currentIndex];
         const durationInSeconds = Number(currentSlide?.duration) || 4;
@@ -207,7 +207,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
     const Advertisement_window = async () => {
         try {
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('No token found');}
+            if (!token) { throw new Error('No token found'); }
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -275,7 +275,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
 
         try {
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('No token found');}
+            if (!token) { throw new Error('No token found'); }
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -384,7 +384,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
         console.log('profileId', profileId);
 
         try {
-            if (!profileId) {throw new Error('Missing profile ID');}
+            if (!profileId) { throw new Error('Missing profile ID'); }
 
             const directLink = `${DeepLink}/${profileType}/${profileId}`;
             console.log('directLink', directLink);
@@ -471,7 +471,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                     </TouchableOpacity>
                 </View>
             </View>
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(10), flexGrow: 1}}>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: insets.bottom + SH(10), flexGrow: 1 }}>
                 <View>
                     <View style={styles.profileSection}>
                         <TouchableOpacity onPress={() => setVisible(true)}>

@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, FlatList, ScrollView, Image, SafeAreaView, StatusBar, ActivityIndicator, RefreshControl, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, Image, SafeAreaView, StatusBar, ActivityIndicator, RefreshControl, Alert } from 'react-native';
 import React, { useState, useRef, useCallback } from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import axios from 'axios';
@@ -69,13 +69,13 @@ const SavedProfile = ({ navigation }) => {
   };
 
   const DeleteSaveProfile = async (_id) => {
-    if (!_id || deletingId === _id) {return;}
+    if (!_id || deletingId === _id) { return; }
 
     setDeletingId(_id);
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found. Please log in again.');}
+      if (!token) { throw new Error('No token found. Please log in again.'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -288,7 +288,7 @@ const SavedProfile = ({ navigation }) => {
         <Text
           style={[styles.unsaveText, deletingId === saveProfile?._id && { opacity: 0.5 }]}
           onPress={() => {
-            if (!deletingId) {DeleteSaveProfile(saveProfile?._id);}
+            if (!deletingId) { DeleteSaveProfile(saveProfile?._id); }
           }}
         >
           {deletingId === saveProfile?._id ? 'Removing...' : 'Remove'}
@@ -348,23 +348,25 @@ const SavedProfile = ({ navigation }) => {
         <FlatList
           data={['Biodata', 'Pandit', 'Jyotish', 'Kathavachak', 'Dharmshala', 'Committee']}
           keyExtractor={(item, index) => index.toString()}
-          horizontal
+          horizontal={true}
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={[styles.tabContainer]}
           renderItem={({ item }) => (
-            <TouchableOpacity
-              style={[styles.tabButton, activeCategory === item && styles.activeTab]}
-              onPress={() => {
-                setActiveCategory(item);
-                setTimeout(() => {
-                  flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
-                }, 100);
-              }}
-            >
-              <Text style={[styles.tabText, activeCategory === item && styles.activeTabText]}>
-                {item}
-              </Text>
-            </TouchableOpacity>
+            <View>
+              <TouchableOpacity
+                style={[styles.tabButton, activeCategory === item && styles.activeTab]}
+                onPress={() => {
+                  setActiveCategory(item);
+                  setTimeout(() => {
+                    flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+                  }, 100);
+                }}
+              >
+                <Text style={[styles.tabText, activeCategory === item && styles.activeTabText]}>
+                  {item}
+                </Text>
+              </TouchableOpacity>
+            </View>
           )}
         />
 

@@ -74,7 +74,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
     const [checked, setChecked] = useState({});
 
     useEffect(() => {
-        if (!profileData || !profileType || !servicesOptions[profileType]) {return;}
+        if (!profileData || !profileType || !servicesOptions[profileType]) { return; }
 
         console.log('✅ Updating checked services...');
 
@@ -153,7 +153,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
 
     const convertToBase64 = async (imageUri) => {
         try {
-            if (!imageUri) {return null;}
+            if (!imageUri) { return null; }
             if (imageUri.startsWith('data:image')) {
                 return imageUri;
             }
@@ -230,7 +230,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
 
     const handleAdditionalPhotosPick = () => {
         launchImageLibrary(pickerOpts, (response) => {
-            if (response.didCancel) {return;}
+            if (response.didCancel) { return; }
             if (response.errorCode) {
                 console.log('ImagePicker Error:', response.errorMessage);
                 return;
@@ -264,7 +264,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
     const validateForm = (data) => {
         let errors = {};
 
-        if (!data) {return errors;}
+        if (!data) { return errors; }
 
         const allFields = Object.keys(data);
         const MANDATORY_FIELDS = allFields.filter(field => !OPTIONAL_FIELDS.includes(field));
@@ -355,7 +355,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
 
         try {
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('Authorization token is missing.');}
+            if (!token) { throw new Error('Authorization token is missing.'); }
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -510,8 +510,8 @@ const UpdateProfileDetails = ({ navigation, route }) => {
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
-                // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
-                >
+            // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+            >
                 <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
                     <View style={Globalstyles.form}>
                         <Text style={Globalstyles.title}>Name</Text>
@@ -726,10 +726,12 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                                 <FlatList
                                     data={RoleRegisterData.additionalPhotos}
                                     keyExtractor={(item, index) => index.toString()}
-                                    horizontal
+                                    horizontal={true}
                                     showsHorizontalScrollIndicator={false}
                                     renderItem={({ item }) => (
-                                        <Image source={{ uri: item }} style={styles.photo} />
+                                        <View>
+                                            <Image source={{ uri: item }} style={styles.photo} />
+                                        </View>
                                     )}
                                     contentContainerStyle={{ flexDirection: 'row', alignItems: 'center' }}
                                 />

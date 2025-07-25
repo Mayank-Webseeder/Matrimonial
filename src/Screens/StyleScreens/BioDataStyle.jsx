@@ -3,6 +3,10 @@ import { SH, SW, SF } from '../../utils/Dimensions';
 import Colors from '../../utils/Colors';
 
 const styles = StyleSheet.create({
+    cardWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
     righticons: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -13,7 +17,7 @@ const styles = StyleSheet.create({
     },
     sliderContainer: {
         marginBottom: SH(30),
-        marginTop:0,
+        marginTop: 0,
     },
     sliderImage: {
         width: '100%',
@@ -47,7 +51,7 @@ const styles = StyleSheet.create({
         paddingVertical: SH(5),
         borderRadius: 5,
         color: Colors.theme_color,
-        textTransform:'capitalize',
+        textTransform: 'capitalize',
     },
     viewAll: {
         marginHorizontal: SW(10),
@@ -60,7 +64,7 @@ const styles = StyleSheet.create({
         color: Colors.theme_color,
         fontFamily: 'Poppins-Bold',
         textAlign: 'center',
-        textTransform:'capitalize',
+        textTransform: 'capitalize',
 
     },
     card: {
@@ -103,26 +107,26 @@ const styles = StyleSheet.create({
         fontSize: SF(13),
         fontFamily: 'Poppins-Bold',
         color: '#333',
-         textTransform:'capitalize',
+        textTransform: 'capitalize',
     },
     city: {
         fontSize: SF(13),
         fontFamily: 'Poppins-Regular',
         color: '#555',
-         textTransform:'capitalize',
+        textTransform: 'capitalize',
     },
     text: {
         fontSize: SF(12),
         fontFamily: 'Poppins-Regular',
         color: '#555',
-         textTransform:'capitalize',
+        textTransform: 'capitalize',
     },
     subcaste: {
         fontSize: SF(13),
         fontFamily: 'Poppins-Regular',
         color: '#555',
         marginTop: 5,
-         textTransform:'capitalize',
+        textTransform: 'capitalize',
     },
     Sliderimage: {
         width: '100%',

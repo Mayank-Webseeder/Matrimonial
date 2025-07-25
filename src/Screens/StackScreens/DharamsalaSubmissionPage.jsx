@@ -90,7 +90,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
 
     const handleImageUpload = () => {
         launchImageLibrary(pickerOptions, (response) => {
-            if (response.didCancel) {return;}
+            if (response.didCancel) { return; }
             if (response.errorCode) {
                 console.log('ImagePicker Error:', response.errorMessage);
                 return;
@@ -109,7 +109,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
         try {
             const base64Images = await Promise.all(
                 images.map(async (image) => {
-                    if (!image.uri) {return null;}
+                    if (!image.uri) { return null; }
 
                     const response = await fetch(image.uri);
                     const blob = await response.blob();
@@ -181,7 +181,7 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
 
     const handleCreateDharamSala = async () => {
         try {
-            if (!validateFields()) {return;}
+            if (!validateFields()) { return; }
             setIsLoading(true);
             const token = await AsyncStorage.getItem('userToken');
 
@@ -261,8 +261,8 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
-                // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
-                >
+            // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+            >
                 <ScrollView contentContainerStyle={[Globalstyles.form, { paddingBottom: insets.bottom + SH(10), flexGrow: 1 }]} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
                     <View>
                         <Text style={styles.title}>Upload Your Dharamsala Details</Text>
@@ -389,23 +389,25 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                             </TouchableOpacity>
                         </View>
 
-                       {DharamsalaData.images?.length > 0 && (
-  <View style={styles.imagePreview}>
-    <FlatList
-      data={DharamsalaData.images}
-      keyExtractor={(item, index) => index.toString()}
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      renderItem={({ item }) => (
-        <Image
-          source={{ uri: item?.uri || item }}
-          style={styles.photo}
-        />
-      )}
-      contentContainerStyle={{ flexDirection: 'row', alignItems: 'center' }}
-    />
-  </View>
-)}
+                        {DharamsalaData.images?.length > 0 && (
+                            <View style={styles.imagePreview}>
+                                <FlatList
+                                    data={DharamsalaData.images}
+                                    keyExtractor={(item, index) => index.toString()}
+                                    horizontal={true}
+                                    showsHorizontalScrollIndicator={false}
+                                    renderItem={({ item }) => (
+                                        <View>
+                                            <Image
+                                                source={{ uri: item?.uri || item }}
+                                                style={styles.photo}
+                                            />
+                                        </View>
+                                    )}
+                                    contentContainerStyle={{ flexDirection: 'row', alignItems: 'center' }}
+                                />
+                            </View>
+                        )}
 
                         {errors.images && (
                             <Text style={styles.errorText}>{errors.images}</Text>

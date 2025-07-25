@@ -97,11 +97,11 @@ const CustomDrawer = (props) => {
       dispatch(reseAllNotification());
 
       console.log('🔄 Resetting navigation to AuthStack...');
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'AuthStack' }],
-      });
-      console.log('✅ Navigation reset done');
+      
+      setTimeout(() => {
+        navigation.navigate('AuthStack');
+        console.log('✅ Logged out successfully');
+      }, 100);
 
     } catch (error) {
       console.error('❌ Error during logout:', error);

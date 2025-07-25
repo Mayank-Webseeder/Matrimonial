@@ -71,7 +71,7 @@ const UpdateCommittee = ({ navigation, route }) => {
     // Function to Convert Image to Base64
     const convertToBase64 = async (imageUri) => {
         try {
-            if (!imageUri) {return null;}
+            if (!imageUri) { return null; }
             if (imageUri.startsWith('data:image')) {
                 return imageUri;
             }
@@ -223,8 +223,8 @@ const UpdateCommittee = ({ navigation, route }) => {
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
-                // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
-                >
+            // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+            >
                 <ScrollView contentContainerStyle={[Globalstyles.form, { flexGrow: 1 }]} showsVerticalScrollIndicator={false}
                     keyboardShouldPersistTaps="handled">
                     <View>

@@ -24,7 +24,7 @@ const SubscriptionHistory = ({ navigation }) => {
             setIsLoading(true);
             setSubscriptionData([]);
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('No token found');}
+            if (!token) { throw new Error('No token found'); }
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -168,27 +168,30 @@ const SubscriptionHistory = ({ navigation }) => {
                         { paddingLeft: SW(10), paddingRight: SW(10) },
                     ]}
                 >
-                    {tabs.map((tab) => (
-                        <TouchableOpacity
-                            key={tab}
-                            style={[
-                                styles.tabButton,
-                                activeTab === tab && styles.activeTabButton,
-                            ]}
-                            onPress={() => setActiveTab(tab)}
-                        >
-                            <Text
+                    <View style={{ flexDirection: 'row', gap: SW(10) }}>
+                        {tabs.map((tab) => (
+                            <TouchableOpacity
+                                key={tab}
                                 style={[
-                                    styles.tabText,
-                                    activeTab === tab && styles.activeTabText,
+                                    styles.tabButton,
+                                    activeTab === tab && styles.activeTabButton,
                                 ]}
+                                onPress={() => setActiveTab(tab)}
                             >
-                                {tab}
-                            </Text>
-                        </TouchableOpacity>
-                    ))}
+                                <Text
+                                    style={[
+                                        styles.tabText,
+                                        activeTab === tab && styles.activeTabText,
+                                    ]}
+                                >
+                                    {tab}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
                 </ScrollView>
             </View>
+
             <View>
                 <FlatList
                     data={filteredData}

@@ -60,7 +60,7 @@ const ProfileDetail = ({ route, navigation }) => {
     };
 
     useEffect(() => {
-        if (!formattedImages || formattedImages.length === 0 || !topSliderRef.current) {return;}
+        if (!formattedImages || formattedImages.length === 0 || !topSliderRef.current) { return; }
 
         const duration = (formattedImages[currentIndex]?.duration || 4) * 1000;
 
@@ -257,7 +257,7 @@ const ProfileDetail = ({ route, navigation }) => {
     }
 
     const calculateAge = (dob) => {
-        if (!dob) {return 'N/A';}
+        if (!dob) { return 'N/A'; }
         const birthDate = moment(dob);
         const currentDate = moment();
         return currentDate.diff(birthDate, 'years');
@@ -367,7 +367,7 @@ const ProfileDetail = ({ route, navigation }) => {
 
     const getDatesForService = (trialData, serviceType) => {
         const trial = trialData.find(t => t.serviceType.toLowerCase() === serviceType.toLowerCase());
-        if (!trial) {return null;}
+        if (!trial) { return null; }
         return {
             startDate: moment(trial.startDate).format('DD MMM YYYY'),
             endDate: moment(trial.endDate).format('DD MMM YYYY'),
@@ -383,7 +383,7 @@ const ProfileDetail = ({ route, navigation }) => {
     return (
         <View style={Globalstyles.container} edges={['top', 'bottom']}>
             <View style={Globalstyles.header}>
-                <View style={{ flexDirection: 'row',alignItems: 'center' }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableOpacity
                         onPress={() => navigation.navigate('MainApp')}
                     >

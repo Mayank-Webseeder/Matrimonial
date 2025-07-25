@@ -55,7 +55,7 @@ const MyProfile = ({ navigation }) => {
         setProfileLoading(true);
         try {
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('No token found');}
+            if (!token) { throw new Error('No token found'); }
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -296,7 +296,7 @@ const MyProfile = ({ navigation }) => {
         console.log('Base64 Image Data:', base64Data);
         try {
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('Authorization token is missing.');}
+            if (!token) { throw new Error('Authorization token is missing.'); }
 
             const headers = {
                 'Content-Type': 'application/json',

@@ -76,7 +76,7 @@ const JyotishRegister = ({ navigation }) => {
     const fetchPlans = async () => {
         try {
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('No token found');}
+            if (!token) { throw new Error('No token found'); }
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -121,9 +121,9 @@ const JyotishRegister = ({ navigation }) => {
 
             // ✅ **Select first TRUE category (Only Pandit, Jyotish, Kathavachak)**
             let profileType = null;
-            if (profileData.isPandit) {profileType = 'Pandit';}
-            else if (profileData.isJyotish) {profileType = 'Jyotish';}
-            else if (profileData.isKathavachak) {profileType = 'Kathavachak';}
+            if (profileData.isPandit) { profileType = 'Pandit'; }
+            else if (profileData.isJyotish) { profileType = 'Jyotish'; }
+            else if (profileData.isKathavachak) { profileType = 'Kathavachak'; }
 
             if (!profileType) {
                 console.log('❌ No valid profileType found.');
@@ -284,7 +284,7 @@ const JyotishRegister = ({ navigation }) => {
 
     const handleAdditionalPhotosPick = () => {
         launchImageLibrary(pickerOpts, (response) => {
-            if (response.didCancel) {return;}
+            if (response.didCancel) { return; }
             if (response.errorCode) {
                 console.log('ImagePicker Error:', response.errorMessage);
                 return;
@@ -312,7 +312,7 @@ const JyotishRegister = ({ navigation }) => {
     const validateForm = (data, checked, servicesOptions) => {
         let errors = {};
 
-        if (!data) {return errors;}
+        if (!data) { return errors; }
 
         const allFields = Object.keys(data);
         const OPTIONAL_FIELDS = [
@@ -400,7 +400,7 @@ const JyotishRegister = ({ navigation }) => {
             setIsLoading(true);
 
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('Authorization token is missing.');}
+            if (!token) { throw new Error('Authorization token is missing.'); }
             console.log('Token found:', token);
 
             const headers = {
@@ -505,7 +505,7 @@ const JyotishRegister = ({ navigation }) => {
                 trialPeriod: String(plan.trialPeriod),
             };
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('No token found');}
+            if (!token) { throw new Error('No token found'); }
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -570,7 +570,7 @@ const JyotishRegister = ({ navigation }) => {
             const token = await AsyncStorage.getItem('userToken');
             const userId = await AsyncStorage.getItem('userId');
 
-            if (!token || !userId) {throw new Error('Missing user token or ID');}
+            if (!token || !userId) { throw new Error('Missing user token or ID'); }
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -583,7 +583,7 @@ const JyotishRegister = ({ navigation }) => {
             );
 
             const razorpayKey = keyResponse.data?.key;
-            if (!razorpayKey) {throw new Error('Failed to fetch Razorpay Key');}
+            if (!razorpayKey) { throw new Error('Failed to fetch Razorpay Key'); }
 
             const payload = {
                 userId,
@@ -1041,10 +1041,12 @@ const JyotishRegister = ({ navigation }) => {
                                 <FlatList
                                     data={RoleRegisterData.additionalPhotos}
                                     keyExtractor={(item, index) => index.toString()}
-                                    horizontal
+                                    horizontal={true}
                                     showsHorizontalScrollIndicator={false}
                                     renderItem={({ item }) => (
-                                        <Image source={{ uri: item }} style={styles.photo} />
+                                        <View>
+                                            <Image source={{ uri: item }} style={styles.photo} />
+                                        </View>
                                     )}
                                     contentContainerStyle={{ flexDirection: 'row', alignItems: 'center' }}
                                 />

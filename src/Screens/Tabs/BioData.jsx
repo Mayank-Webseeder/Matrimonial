@@ -303,7 +303,7 @@ const BioData = ({ navigation }) => {
     const isBlurCondition = status === 'accepted' ? !isVisible : isBlur;
 
     return (
-      <View>
+      <View style={styles.cardWrapper}>
         <TouchableOpacity style={styles.card} onPress={() => handleNavigateToProfile(item)}>
           <Image style={styles.image} source={{ uri: item?.personalDetails?.closeUpPhoto }}
             blurRadius={isBlurCondition ? 5 : 0} />
@@ -325,6 +325,7 @@ const BioData = ({ navigation }) => {
       </View>
     );
   };
+
 
   if (isLoading) {
     return (
@@ -384,8 +385,8 @@ const BioData = ({ navigation }) => {
               renderItem={renderItem}
               showNextButton={false}
               showDoneButton={false}
-              dotStyle={Topslider.length > 1 ? Globalstyles.dot : { width: 0, height: 0 , marginTop:0 }}
-              activeDotStyle={Topslider.length > 1 ? Globalstyles.activeDot : { width: 0, height: 0 , marginTop:0 }}
+              dotStyle={Topslider.length > 1 ? Globalstyles.dot : { width: 0, height: 0, marginTop: 0 }}
+              activeDotStyle={Topslider.length > 1 ? Globalstyles.activeDot : { width: 0, height: 0, marginTop: 0 }}
               renderPagination={(activeIndex) => {
                 if (Topslider.length <= 1) return null;
                 return null;
@@ -393,7 +394,7 @@ const BioData = ({ navigation }) => {
             />
           </View>
           {MatrimonialData.length > 0 ? (
-            <View style={{ marginVertical: SH(5) ,marginTop:0 }}>
+            <View style={{ marginVertical: SH(5), marginTop: 0 }}>
               <HeadingWithViewAll heading={'Your Preferenced Profiles'} headingStyle={{ color: Colors.theme_color }} />
 
               <FlatList

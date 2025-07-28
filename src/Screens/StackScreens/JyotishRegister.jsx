@@ -587,9 +587,10 @@ const JyotishRegister = ({ navigation }) => {
 
             const payload = {
                 userId,
-                profileType: plan.profileType,
+                profileType: plan?.profileType,
+                planId: plan?._id
             };
-            console.log('📦 [Payload to /buy]:', payload);
+            console.log(' [Payload to /buy]:', payload);
 
             const orderResponse = await axios.post(
                 PAID_URL,
@@ -601,14 +602,12 @@ const JyotishRegister = ({ navigation }) => {
 
             let orderId, amount, currency;
 
-            // Case 1: New order created
             if (orderResponse.data?.razorpayOrder) {
                 const razorpayOrder = orderResponse.data.razorpayOrder;
                 orderId = razorpayOrder.id;
                 amount = razorpayOrder.amount;
                 currency = razorpayOrder.currency;
             }
-            // Case 2: Old subscription exists (and message says 'Subscription created...')
             else if (orderResponse.data?.razorpayOrderId) {
                 orderId = orderResponse.data.razorpayOrderId;
                 amount = orderResponse.data.services?.[0]?.amount * 100 || 50000;
@@ -631,7 +630,7 @@ const JyotishRegister = ({ navigation }) => {
 
             RazorpayCheckout.open(options)
                 .then(async (paymentData) => {
-                    console.log('💸 [Payment Success]:', paymentData);
+                    console.log(' [Payment Success]:', paymentData);
 
                     const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = paymentData;
 
@@ -646,7 +645,7 @@ const JyotishRegister = ({ navigation }) => {
                         razorpay_signature: razorpay_signature,
                     };
 
-                    console.log('📨 [Payload to /verifyPayment]:', verifyPayload);
+                    console.log(' [Payload to /verifyPayment]:', verifyPayload);
 
                     try {
                         const verifyResponse = await axios.post(
@@ -655,7 +654,7 @@ const JyotishRegister = ({ navigation }) => {
                             { headers }
                         );
 
-                        console.log('✅ [Verify Payment Response]:', verifyResponse.data);
+                        console.log(' [Verify Payment Response]:', verifyResponse.data);
 
                         if (verifyResponse.status === 200 || verifyResponse.data?.status) {
                             Alert.alert(
@@ -679,19 +678,22 @@ const JyotishRegister = ({ navigation }) => {
                         }
 
                     } catch (verifyError) {
-                        console.error('❌ [Verification Error]:', verifyError.response?.data || verifyError.message);
-                        Alert.alert('Error', 'Payment done, but verification failed.');
+                        console.error(' [Verification Error]:', verifyError.response?.data || verifyError.message);
+                        Alert.alert('verification failed', 'Payment done, but verification failed.');
                     }
                 })
                 .catch((error) => {
-                    console.log('❌ [Payment Failed]:', error);
-                    Alert.alert('Payment Failed', error.description || 'Try again later.');
+                    console.log(' [Payment Failed]:', error);
+                    Alert.alert(
+                        'Payment Failed',
+                        'Your payment could not be processed at the moment. No amount was deducted. Please try again.'
+                    );
                 });
 
         } catch (error) {
             const errorMsg = error?.response?.data?.message || error.message || 'Please try again later.';
 
-            console.error('❌ [Error in buying subscription]:', error?.response?.data || error.message);
+            console.error(' [Error in buying subscription]:', error?.response?.data || error.message);
             Alert.alert(
                 'Subscription Info',
                 errorMsg

@@ -584,7 +584,8 @@ const KathavachakRegister = ({ navigation }) => {
 
             const payload = {
                 userId,
-                profileType: plan.profileType,
+                profileType: plan?.profileType,
+                planId: plan?._id
             };
             console.log('📦 [Payload to /buy]:', payload);
 
@@ -677,12 +678,15 @@ const KathavachakRegister = ({ navigation }) => {
 
                     } catch (verifyError) {
                         console.error('❌ [Verification Error]:', verifyError.response?.data || verifyError.message);
-                        Alert.alert('Error', 'Payment done, but verification failed.');
+                        Alert.alert('verification failed', 'Payment done, but verification failed.');
                     }
                 })
                 .catch((error) => {
                     console.log('❌ [Payment Failed]:', error);
-                    Alert.alert('Payment Failed', error.description || 'Try again later.');
+                    Alert.alert(
+                        'Payment Failed',
+                        'Your payment could not be processed at the moment. No amount was deducted. Please try again.'
+                    );
                 });
 
         } catch (error) {

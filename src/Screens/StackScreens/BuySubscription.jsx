@@ -32,7 +32,7 @@ const BuySubscription = ({ navigation, route }) => {
     try {
       setPlansLoading(true);
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -75,7 +75,7 @@ const BuySubscription = ({ navigation, route }) => {
       const token = await AsyncStorage.getItem('userToken');
       const userId = await AsyncStorage.getItem('userId');
 
-      if (!token || !userId) {throw new Error('Missing user token or ID');}
+      if (!token || !userId) { throw new Error('Missing user token or ID'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -88,11 +88,13 @@ const BuySubscription = ({ navigation, route }) => {
       );
 
       const razorpayKey = keyResponse.data?.key;
-      if (!razorpayKey) {throw new Error('Failed to fetch Razorpay Key');}
+      if (!razorpayKey) { throw new Error('Failed to fetch Razorpay Key'); }
 
       const payload = {
         userId,
-        profileType: plan.profileType,
+        profileType: plan?.profileType,
+        planId: plan?._id
+
       };
       console.log('📦 [Payload to /buy]:', payload);
 
@@ -106,14 +108,13 @@ const BuySubscription = ({ navigation, route }) => {
 
       let orderId, amount, currency;
 
-      // Case 1: New order created
       if (orderResponse.data?.razorpayOrder) {
         const razorpayOrder = orderResponse.data.razorpayOrder;
         orderId = razorpayOrder.id;
         amount = razorpayOrder.amount;
         currency = razorpayOrder.currency;
       }
-      // Case 2: Old subscription exists (and message says 'Subscription created...')
+
       else if (orderResponse.data?.razorpayOrderId) {
         orderId = orderResponse.data.razorpayOrderId;
         amount = orderResponse.data.services?.[0]?.amount * 100 || 50000;
@@ -136,7 +137,7 @@ const BuySubscription = ({ navigation, route }) => {
 
       RazorpayCheckout.open(options)
         .then(async (paymentData) => {
-          console.log('💸 [Payment Success]:', paymentData);
+          console.log('[Payment Success]:', paymentData);
 
           const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = paymentData;
 
@@ -160,7 +161,7 @@ const BuySubscription = ({ navigation, route }) => {
               { headers }
             );
 
-            console.log('✅ [Verify Payment Response]:', verifyResponse.data);
+            console.log('[Verify Payment Response]:', verifyResponse.data);
 
             if (verifyResponse.status === 200 || verifyResponse.data?.status) {
               Alert.alert('Success',
@@ -183,17 +184,20 @@ const BuySubscription = ({ navigation, route }) => {
 
           } catch (verifyError) {
             console.error('❌ [Verification Error]:', verifyError.response?.data || verifyError.message);
-            Alert.alert('Error', 'Payment done, but verification failed.');
+            Alert.alert('verification failed', 'Payment done, but verification failed.');
           }
         })
         .catch((error) => {
-          console.log('❌ [Payment Failed]:', error);
-          Alert.alert('Payment Failed', error.description || 'Try again later.');
+          console.log('[Payment Failed]:', error);
+          Alert.alert(
+            'Payment Failed',
+            'Your payment could not be processed at the moment. No amount was deducted. Please try again.'
+          );
         });
 
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error('❌ [Error in buying subscription]:', errorMsg);
+      console.error('[Error in buying subscription]:', errorMsg);
       Alert.alert(
         'Subscription Info',
         errorMsg
@@ -242,7 +246,7 @@ const BuySubscription = ({ navigation, route }) => {
           <Text style={[Globalstyles.headerText, { textAlign: 'left' }]}>Buy Subscription</Text>
         </View>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(10), flexGrow: 1 }}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: insets.bottom + SH(10), flexGrow: 1 }}>
         <View style={styles.cardContainer}>
           {plansLoading ? (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: SH(20) }}>
@@ -299,7 +303,6 @@ const BuySubscription = ({ navigation, route }) => {
               </View>
             ))
           )}
-
         </View>
       </ScrollView>
     </View>

@@ -35,7 +35,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
         state: profileData?.state || '',
         city: profileData?.city || '',
         aadharNo: profileData?.aadharNo || '',
-        subCaste: profileData?.subCaste || '',
+        // subCaste: profileData?.subCaste || '',
         profilePhoto: profileData?.profilePhoto || '',
         additionalPhotos: profileData?.additionalPhotos || [],
         experience: profileData?.experience || '',
@@ -391,7 +391,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                 aadharNo: RoleRegisterData.aadharNo,
                 state: RoleRegisterData.state,
                 city: RoleRegisterData.city,
-                subCaste: RoleRegisterData.subCaste,
+                // subCaste: RoleRegisterData.subCaste,
                 profilePhoto: profilePhotoBase64,
                 additionalPhotos: additionalPhotosBase64,
                 experience: RoleRegisterData.experience,
@@ -620,7 +620,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                             autoCorrect={false}
                         />
 
-                        <Text style={Globalstyles.title}>Aadhar No. </Text>
+                        {/* <Text style={Globalstyles.title}>Aadhar No. </Text>
                         <TextInput
                             style={Globalstyles.input}
                             value={RoleRegisterData?.aadharNo}
@@ -640,9 +640,9 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                             textContentType="none"
                             inputMode="numeric"
                             autoCapitalize="none"
-                        />
+                        /> */}
 
-                        <Text style={Globalstyles.title}>Sub Caste</Text>
+                        {/* <Text style={Globalstyles.title}>Sub Caste</Text>
                         <Dropdown
                             style={[Globalstyles.input]}
                             data={subCasteOptions}
@@ -655,7 +655,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                             autoScroll={false}
                             showsVerticalScrollIndicator={false}
                             autoCorrect={false}
-                        />
+                        /> */}
                         <View>
                             <Text style={styles.servicesLabel}>{profileData.profileType} Services</Text>
                             {servicesOptions[profileData.profileType]?.map(service => (

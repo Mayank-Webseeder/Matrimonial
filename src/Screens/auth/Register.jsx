@@ -123,37 +123,16 @@ const Register = ({ navigation }) => {
             newErrors.fullName = 'Name cannot exceed 30 characters.';
         }
 
-        if (!selectedDate) {
-            newErrors.selectedDate = 'Date of Birth is required.';
-        } else {
-            const today = new Date();
-            const birthDate = new Date(selectedDate);
-            let age = today.getFullYear() - birthDate.getFullYear();
-            const m = today.getMonth() - birthDate.getMonth();
-
-            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-                age--;
-            }
-
-            if (age < 18) {
-                newErrors.selectedDate = 'Your age is below 18';
-            }
+        if (!cityInput.trim()) {
+            newErrors.selectedCity = 'City is required.';
         }
 
-        if (!cityInput.trim()) { newErrors.selectedCity = 'City is required.'; }
-        if (!gender) { newErrors.gender = 'Gender is required.'; }
+        if (!gender) {
+            newErrors.gender = 'Gender is required.';
+        }
 
-        const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
         if (!password) {
             newErrors.password = 'Password is required.';
-        } else if (!strongPasswordRegex.test(password)) {
-            newErrors.password = 'Password must be at least 8 characters long, contain one uppercase letter, one number, and one special character.';
-        }
-
-        if (!confirmPassword) {
-            newErrors.confirmPassword = 'Confirm Password is required.';
-        } else if (password !== confirmPassword) {
-            newErrors.confirmPassword = 'Passwords do not match.';
         }
 
         if (!otp) {
@@ -168,6 +147,7 @@ const Register = ({ navigation }) => {
             newErrors,
         };
     };
+
 
     const formattedDate = selectedDate
         ? `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, '0')}-${selectedDate.getDate().toString().padStart(2, '0')}`
@@ -217,13 +197,11 @@ const Register = ({ navigation }) => {
                     icon: 'success',
                     duration: 5000,
                 });
-
-                // Save timestamp to AsyncStorage
                 const currentTimestamp = Date.now();
                 await AsyncStorage.setItem('otpSentAt', currentTimestamp.toString());
 
                 setOtpTimer(otpValidityDuration);
-                startOtpCountdown(otpValidityDuration); // start countdown
+                startOtpCountdown(otpValidityDuration);
             } else {
                 throw new Error(response.data.message || 'OTP request failed');
             }
@@ -406,7 +384,7 @@ const Register = ({ navigation }) => {
                                 {errors.fullName && (
                                     <Text style={styles.errorText}>{errors.fullName}</Text>
                                 )}
-                                <View>
+                                {/* <View>
                                     <Text style={Globalstyles.title}>
                                         Date of Birth <Entypo name="star" color="red" size={12} />
                                     </Text>
@@ -446,7 +424,7 @@ const Register = ({ navigation }) => {
                                         maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))}
                                         themeVariant="light"
                                     />
-                                )}
+                                )} */}
 
 
                                 {/* City */}
@@ -543,7 +521,7 @@ const Register = ({ navigation }) => {
                                 </View>
 
                                 {/* Confirm Password */}
-                                <View>
+                                {/* <View>
                                     <Text style={Globalstyles.title}>Confirm Password <Entypo name={'star'} color={'red'} size={12} /> </Text>
                                     <View style={styles.passwordContainer}>
                                         <TextInput
@@ -570,13 +548,13 @@ const Register = ({ navigation }) => {
                                     {errors.confirmPassword && (
                                         <Text style={styles.errorText}>{errors.confirmPassword}</Text>
                                     )}
-                                </View>
-                                <Text style={Globalstyles.title}>Upload Your Profile Image</Text>
+                                </View> */}
+                                {/* <Text style={Globalstyles.title}>Upload Your Profile Image</Text>
                                 <View style={Globalstyles.input}>
                                     <TouchableOpacity onPress={handleImageUpload}>
                                         <Text style={styles.imagePlaceholder}>{selectedImageName}</Text>
                                     </TouchableOpacity>
-                                </View>
+                                </View> */}
 
                                 {/* Mobile Number */}
                                 <Text style={Globalstyles.title}>Mobile Number <Entypo name={'star'} color={'red'} size={12} /></Text>
@@ -617,9 +595,6 @@ const Register = ({ navigation }) => {
                                             </Text>
                                         )}
                                     </TouchableOpacity>
-
-
-
 
                                 </View>
                                 {errors.mobileNumber && (

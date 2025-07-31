@@ -93,7 +93,7 @@ const Login = ({ navigation }) => {
                     },
                 });
             } else {
-                console.log('❌ Login failed: Invalid credentials.');
+                console.log('Login failed: Invalid credentials.');
                 showMessage({
                     type: 'danger',
                     message: 'Login Failed',
@@ -107,7 +107,7 @@ const Login = ({ navigation }) => {
             console.error('🚨 Login Error:', error);
 
             if (error.response?.status === 400) {
-                console.error('❌ Unauthorized:', error.response.data);
+                console.error('Unauthorized:', error.response.data);
                 showMessage({
                     type: 'error',
                     message: 'Unauthorized',

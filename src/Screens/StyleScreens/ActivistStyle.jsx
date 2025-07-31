@@ -40,7 +40,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   Filterheader: {
-    display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
+    width:"100%",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   }
   ,
   searchbar: {

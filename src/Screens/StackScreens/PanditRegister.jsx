@@ -170,7 +170,7 @@ const PanditRegister = ({ navigation }) => {
                 fullName: fetchProfileDetails.fullName || '',
                 state: fetchProfileDetails.state || '',
                 city: fetchProfileDetails.city || '',
-                subCaste: fetchProfileDetails.subCaste || '',
+                // subCaste: fetchProfileDetails.subCaste || '',
                 aadharNo: fetchProfileDetails.aadharNo || '',
                 residentialAddress: fetchProfileDetails.residentialAddress || '',
                 description: fetchProfileDetails.description || '',
@@ -383,7 +383,7 @@ const PanditRegister = ({ navigation }) => {
                 fullName: RoleRegisterData.fullName,
                 state: RoleRegisterData.state,
                 city: RoleRegisterData.city,
-                subCaste: RoleRegisterData.subCaste,
+                // subCaste: RoleRegisterData.subCaste,
                 profilePhoto: RoleRegisterData.profilePhoto,
                 additionalPhotos: RoleRegisterData.additionalPhotos,
                 experience: RoleRegisterData.experience ? String(RoleRegisterData.experience) : '',
@@ -886,7 +886,7 @@ const PanditRegister = ({ navigation }) => {
                             autoCorrect={false}
                         />
 
-                        <Text style={Globalstyles.title}>Aadhar No. </Text>
+                        {/* <Text style={Globalstyles.title}>Aadhar No. </Text>
                         <TextInput
                             style={Globalstyles.input}
                             value={RoleRegisterData?.aadharNo}
@@ -906,9 +906,9 @@ const PanditRegister = ({ navigation }) => {
                             textContentType="none"
                             inputMode="numeric"
                             autoCapitalize="none"
-                        />
+                        /> */}
 
-                        <Text style={Globalstyles.title}>Sub Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
+                        {/* <Text style={Globalstyles.title}>Sub Caste <Entypo name={'star'} color={'red'} size={12} /></Text> */}
                         {/* <TextInput
                         style={Globalstyles.input}
                         value={RoleRegisterData?.subCaste} // `myBiodata?.subCaste` ki jagah `subCasteInput` use karein
@@ -918,7 +918,7 @@ const PanditRegister = ({ navigation }) => {
                         autoComplete="off"
                         textContentType="none"
                     /> */}
-                        <Dropdown
+                        {/* <Dropdown
                             style={[Globalstyles.input, errors.subCaste && styles.errorInput]}
                             data={subCasteOptions}
                             labelField="label"
@@ -931,7 +931,7 @@ const PanditRegister = ({ navigation }) => {
                             showsVerticalScrollIndicator={false}
                             autoCorrect={false}
                         />
-                        {errors.subCaste && <Text style={styles.errorText}>{errors.subCaste}</Text>}
+                        {errors.subCaste && <Text style={styles.errorText}>{errors.subCaste}</Text>} */}
                         <Text style={Globalstyles.title}>Select Pandit Services <Entypo name={'star'} color={'red'} size={12} /></Text>
                         <View style={[styles.checkboxContainer, errors.selectedRoles && styles.errorInput]}>
                             {roleOptions.map(role => (

@@ -357,27 +357,27 @@ const Kathavachak = ({ navigation, route }) => {
     const isSaved = item.isSaved || null;
     return (
       <View style={styles.card}>
-  <View style={styles.cardData}>
+        <View style={styles.cardData}>
           {item.profilePhoto ? (
-      <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
-        <Image source={{ uri: item.profilePhoto }} style={styles.image} />
-      </TouchableOpacity>
-    ) : (
-      <Image source={require('../../Images/NoImage.png')} style={styles.image} />
-    )}
+            <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
+              <Image source={{ uri: item.profilePhoto }} style={styles.image} />
+            </TouchableOpacity>
+          ) : (
+            <Image source={require('../../Images/NoImage.png')} style={styles.image} />
+          )}
 
-         <Modal visible={isImageVisible} transparent={true} onRequestClose={() => setImageVisible(false)}>
-               <ImageViewer
-                 imageUrls={selectedImage}
-                 enableSwipeDown={true}
-                 onSwipeDown={() => setImageVisible(false)}
-                 onCancel={() => setImageVisible(false)}
-                 enablePreload={true}
-                 saveToLocalByLongPress={false}
-                 renderIndicator={() => null}
-               />
-             </Modal>
-         <View style={{ flex: 1, marginLeft:SW(10) }}>
+          <Modal visible={isImageVisible} transparent={true} onRequestClose={() => setImageVisible(false)}>
+            <ImageViewer
+              imageUrls={selectedImage}
+              enableSwipeDown={true}
+              onSwipeDown={() => setImageVisible(false)}
+              onCancel={() => setImageVisible(false)}
+              enablePreload={true}
+              saveToLocalByLongPress={false}
+              renderIndicator={() => null}
+            />
+          </Modal>
+          <View style={{ flex: 1, marginLeft: SW(10) }}>
             <Pressable style={styles.leftContainer}
               onPress={() => {
                 if (isExpired) {

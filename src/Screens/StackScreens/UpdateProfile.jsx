@@ -235,9 +235,8 @@ const styles = StyleSheet.create({
   },
 
   dateText: {
-    fontSize: 14,
+    fontSize:SF(14),
     color: Colors.dark_gray,
-    paddingTop: SH(8),
   },
   genderContainer: {
     flexDirection: 'row',

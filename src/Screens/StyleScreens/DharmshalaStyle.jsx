@@ -253,7 +253,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
   },
   Filterheader:{
-    display:'flex',flexDirection:'row',justifyContent:'space-between',
+    width:"100%",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
 
 });

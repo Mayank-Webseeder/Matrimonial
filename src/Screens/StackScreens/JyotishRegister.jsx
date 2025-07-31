@@ -197,7 +197,7 @@ const JyotishRegister = ({ navigation }) => {
                 fullName: fetchProfileDetails.fullName || '',
                 state: fetchProfileDetails.state || '',
                 city: fetchProfileDetails.city || '',
-                subCaste: fetchProfileDetails.subCaste || '',
+                // subCaste: fetchProfileDetails.subCaste || '',
                 aadharNo: fetchProfileDetails.aadharNo || '',
                 residentialAddress: fetchProfileDetails.residentialAddress || '',
                 description: fetchProfileDetails.description || '',
@@ -415,7 +415,7 @@ const JyotishRegister = ({ navigation }) => {
                 fullName: RoleRegisterData.fullName,
                 state: RoleRegisterData.state,
                 city: RoleRegisterData.city,
-                subCaste: RoleRegisterData.subCaste,
+                // subCaste: RoleRegisterData.subCaste,
                 profilePhoto: RoleRegisterData.profilePhoto,
                 additionalPhotos: RoleRegisterData.additionalPhotos,
                 experience: RoleRegisterData.experience ? String(RoleRegisterData.experience) : '',
@@ -895,7 +895,7 @@ const JyotishRegister = ({ navigation }) => {
                             autoCorrect={false}
                         />
 
-                        <Text style={Globalstyles.title}>Aadhar No. </Text>
+                        {/* <Text style={Globalstyles.title}>Aadhar No. </Text>
                         <TextInput
                             style={Globalstyles.input}
                             value={RoleRegisterData?.aadharNo}
@@ -915,10 +915,10 @@ const JyotishRegister = ({ navigation }) => {
                             textContentType="none"
                             inputMode="numeric"
                             autoCapitalize="none"
-                        />
+                        /> */}
 
 
-                        <Text style={Globalstyles.title}>Sub Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
+                        {/* <Text style={Globalstyles.title}>Sub Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
                         <Dropdown
                             style={[Globalstyles.input, errors.subCaste && styles.errorInput]}
                             data={subCasteOptions}
@@ -931,7 +931,7 @@ const JyotishRegister = ({ navigation }) => {
                             autoScroll={false}
                             showsVerticalScrollIndicator={false}
                         />
-                        {errors.subCaste && <Text style={styles.errorText}>{errors.subCaste}</Text>}
+                        {errors.subCaste && <Text style={styles.errorText}>{errors.subCaste}</Text>} */}
 
                         {/* Agar user type karega toh list dikhegi */}
                         {/* {filteredSubCaste.length > 0 ? (

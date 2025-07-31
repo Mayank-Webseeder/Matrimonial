@@ -1,12 +1,8 @@
 import React from 'react';
-import { Text, View, ImageBackground, TouchableOpacity, StatusBar, SafeAreaView, Linking } from 'react-native';
+import { Text, View, ImageBackground, TouchableOpacity, StatusBar, SafeAreaView } from 'react-native';
 import styles from './StyleScreens/SplashStyle';
 
 const Splash = ({ navigation }) => {
-    const HandleLogin = () => {
-        navigation.navigate('Login');
-    };
-
     return (
         <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
             <StatusBar
@@ -14,32 +10,29 @@ const Splash = ({ navigation }) => {
                 backgroundColor="transparent"
                 translucent
             />
-            <View>
-                <ImageBackground
-                    source={require('../Images/Splash.png')}
-                    style={styles.image}
-                >
+            <ImageBackground
+                source={require('../Images/Splash.png')}
+                style={styles.image}
+            >
+                <View style={styles.contentWrapper}>
                     <Text style={styles.text}>
                         Let’s meet new people around you
                     </Text>
 
-                    <TouchableOpacity style={styles.button} onPress={HandleLogin}>
-                        <Text style={styles.buttonText}>Login</Text>
-                    </TouchableOpacity>
+                    <View style={styles.buttonRow}>
+                        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Login')}>
+                            <Text style={styles.buttonText}>Login</Text>
+                        </TouchableOpacity>
 
-                    <View style={styles.signUpTextContainer}>
-                        <Text style={styles.signuptext}>
-                            Don’t have an account?
-                        </Text>
-                        <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-                            <Text style={styles.boldSignupText}>Signup</Text>
+                        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Register')}>
+                            <Text style={styles.buttonText}>Signup</Text>
                         </TouchableOpacity>
                     </View>
-                    {/* <Text style={styles.linkText} onPress={handlePress}>
-                        Privacy Policy
-                    </Text> */}
-                </ImageBackground>
-            </View>
+                     <Text style={styles.signuptext}>
+                          Don't have an account ? Then signup first
+                        </Text>
+                </View>
+            </ImageBackground>
         </SafeAreaView>
     );
 };

@@ -402,14 +402,14 @@ const DetailedProfile = ({ navigation, profileData }) => {
       return new Promise((resolve) => {
         const reader = new FileReader();
         reader.onloadend = () => {
-          const base64String = reader.result.split(',')[1]; // ✅ Extract only Base64 data
+          const base64String = reader.result.split(',')[1]; 
           resolve(base64String);
         };
         reader.readAsDataURL(blob);
       });
     } catch (error) {
       console.error('Error converting image to Base64:', error);
-      return imageUri; // ✅ Return original URI if error
+      return imageUri; 
     }
   };
 
@@ -458,11 +458,12 @@ const DetailedProfile = ({ navigation, profileData }) => {
     return payload;
   };
 
-  const OPTIONAL_FIELDS = [
-    'weight', 'complexion', 'nadi', 'gotraSelf', 'gotraMother', 'aboutMe', 'otherFamilyMemberInfo',
-    'knowCooking', 'dietaryHabit', 'smokingHabit', 'drinkingHabit',
-    'tobaccoHabits', 'hobbies', 'fullPhoto', 'bestPhoto',
-  ];
+ const OPTIONAL_FIELDS = [
+  'weight', 'complexion', 'nadi', 'gotraSelf', 'gotraMother', 'aboutMe', 'otherFamilyMemberInfo',
+  'knowCooking', 'dietaryHabit', 'smokingHabit', 'drinkingHabit',
+  'tobaccoHabits', 'hobbies', 'fullPhoto', 'bestPhoto',
+  'contactNumber2', 'disabilities', 'livingStatus', 'manglikStatus', 'motherIncomeAnnually', 'profileCreatedBy',
+];
 
   const validateForm = (biodata) => {
     let errors = {};
@@ -476,7 +477,6 @@ const DetailedProfile = ({ navigation, profileData }) => {
       if (!value) {
         errors[field] = `${field} is required`;
       } else {
-        // Full Name Validation
         if (field === 'fullname') {
           if (!/^[A-Za-z\s]+$/.test(value)) {
             errors.fullname = 'Full name must contain only letters and spaces.';
@@ -484,22 +484,31 @@ const DetailedProfile = ({ navigation, profileData }) => {
             errors.fullname = 'Full name cannot exceed 25 characters.';
           }
         }
+
         if (field === 'fatherName') {
           if (!/^[A-Za-z\s]+$/.test(value)) {
-            errors.fatherName = 'fatherName must contain only letters and spaces.';
+            errors.fatherName = 'Father name must contain only letters and spaces.';
           } else if (value.length > 25) {
-            errors.fatherName = 'fatherName cannot exceed 25 characters.';
-          }
-        }
-        if (field === 'motherName') {
-          if (!/^[A-Za-z\s]+$/.test(value)) {
-            errors.motherName = 'motherName must contain only letters and spaces.';
-          } else if (value.length > 25) {
-            errors.motherName = 'motherName cannot exceed 25 characters.';
+            errors.fatherName = 'Father name cannot exceed 25 characters.';
           }
         }
 
-        // DOB Validation
+        if (field === 'motherName') {
+          if (!/^[A-Za-z\s]+$/.test(value)) {
+            errors.motherName = 'Mother name must contain only letters and spaces.';
+          } else if (value.length > 25) {
+            errors.motherName = 'Mother name cannot exceed 25 characters.';
+          }
+        }
+
+        if (field === 'motherOccupation') {
+          if (!/^[A-Za-z\s]+$/.test(value)) {
+            errors.motherOccupation = 'Occupation must contain only letters and spaces.';
+          } else if (value.length > 30) {
+            errors.motherOccupation = 'Occupation cannot exceed 30 characters.';
+          }
+        }
+
         if (field === 'dob') {
           const birthDate = new Date(value);
           if (isNaN(birthDate.getTime())) {
@@ -508,19 +517,16 @@ const DetailedProfile = ({ navigation, profileData }) => {
             const today = new Date();
             let age = today.getFullYear() - birthDate.getFullYear();
             const m = today.getMonth() - birthDate.getMonth();
-
             if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
               age--;
             }
-
             if (age < 18) {
               errors.dob = 'Age must be 18 or older.';
             }
           }
         }
 
-        // Contact Number Validation
-        if (field === 'contactNumber1' || field === 'contactNumber2') {
+        if (field === 'contactNumber1') {
           if (!/^\d{10}$/.test(value)) {
             errors[field] = 'Enter a valid 10-digit mobile number.';
           }
@@ -530,6 +536,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
     return errors;
   };
+
 
   const handleSave = async () => {
     console.log('🟢 handleSave triggered');
@@ -1104,7 +1111,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           {errors.maritalStatus && <Text style={styles.errorText}>{errors.maritalStatus}</Text>}
           <View>
             <Text style={Globalstyles.title}>
-              Disabilities (physical, mental, etc.) <Entypo name={'star'} color={'red'} size={12} /> </Text>
+              Disabilities (physical, mental, etc.)</Text>
             <Dropdown
               style={[Globalstyles.input, !isEditing && styles.readOnly, errors.disabilities && styles.errorInput]}
               data={MyDisabilities}
@@ -1168,7 +1175,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
             />
           </View>
           <View>
-            <Text style={Globalstyles.title}>Manglik Status <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Text style={Globalstyles.title}>Manglik Status</Text>
             <Dropdown
               style={[Globalstyles.input, !isEditing && styles.readOnly, errors.manglikStatus && styles.errorInput]}
               data={ManglikStatusData}
@@ -1184,7 +1191,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
             />
             {errors.manglikStatus && <Text style={styles.errorText}>{errors.manglikStatus}</Text>}
           </View>
-          <View>
+          {/* <View>
             <Text style={Globalstyles.title}>Nadi</Text>
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly]}
@@ -1243,7 +1250,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               keyboardType="default"
               contextMenuHidden={true}
             />
-          </View>
+          </View> */}
           <View>
             <Text style={Globalstyles.title}>Qualification <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
@@ -1302,7 +1309,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
             />
             {errors.annualIncome && <Text style={styles.errorText}>{errors.annualIncome}</Text>}
           </View>
-          <View>
+          {/* <View>
             <Text style={Globalstyles.title}>Are you living with Family <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
               style={[Globalstyles.input, !isEditing && styles.readOnly, errors.livingStatus && styles.errorInput]}
@@ -1321,7 +1328,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               showsVerticalScrollIndicator={false}
             />
             {errors.livingStatus && <Text style={styles.errorText}>{errors.livingStatus}</Text>}
-          </View>
+          </View> */}
           <View>
             <Text style={Globalstyles.title}>Which city do you currently live in? <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <TextInput
@@ -1374,7 +1381,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           </View>
 
           <View>
-            <Text style={Globalstyles.title}>Profile created by <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Text style={Globalstyles.title}>Profile created by </Text>
             <Dropdown
               style={[Globalstyles.input, !isEditing && styles.readOnly, errors.profileCreatedBy && styles.errorInput]}
               data={ProfileCreatedData}
@@ -1416,7 +1423,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
             {errors.fatherName && <Text style={styles.errorText}>{errors.fatherName}</Text>}
           </View>
           <View>
-            <Text style={Globalstyles.title}>Mother Full Name <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Text style={Globalstyles.title}>Mother Full Name </Text>
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly, errors.motherName && styles.errorInput]}
               value={biodata?.motherName}
@@ -1457,7 +1464,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
             {errors.fatherOccupation && <Text style={styles.errorText}>{errors.fatherOccupation}</Text>}
           </View>
           <View>
-            <Text style={Globalstyles.title}>Father Income (Annually) <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Text style={Globalstyles.title}>Family Income (Annually) <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
               style={[Globalstyles.input, !isEditing && styles.readOnly, errors.fatherIncomeAnnually && styles.errorInput]}
               data={Income}
@@ -1478,7 +1485,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
 
           </View>
           <View>
-            <Text style={Globalstyles.title}>Mother Occupation <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Text style={Globalstyles.title}>Mother Occupation</Text>
             <Dropdown
               style={[Globalstyles.input, !isEditing && styles.readOnly, errors.motherOccupation && styles.errorInput]}
               data={MotherOccupationData}
@@ -1497,7 +1504,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
             />
             {errors.motherOccupation && <Text style={styles.errorText}>{errors.motherOccupation}</Text>}
           </View>
-          <View>
+          {/* <View>
             <Text style={Globalstyles.title}>Mother Income (Annually) <Entypo name={'star'} color={'red'} size={12} /> </Text>
             <Dropdown
               style={[Globalstyles.input, !isEditing && styles.readOnly, errors.motherIncomeAnnually && styles.errorInput]}
@@ -1516,7 +1523,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               showsVerticalScrollIndicator={false}
             />
             {errors.motherIncomeAnnually && <Text style={styles.errorText}>{errors.motherIncomeAnnually}</Text>}
-          </View>
+          </View> */}
 
           <View>
             <Text style={Globalstyles.title}>Family Type <Entypo name={'star'} color={'red'} size={12} /> </Text>
@@ -1602,7 +1609,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
             {errors.contactNumber1 && <Text style={styles.errorText}>{errors.contactNumber1}</Text>}
           </View>
           <View>
-            <Text style={Globalstyles.title}>Contact No. 2 <Entypo name={'star'} color={'red'} size={12} /> </Text>
+            <Text style={Globalstyles.title}>Contact No. 2</Text>
             <TextInput
               style={[Globalstyles.input, !isEditing && styles.readOnly, errors.contactNumber2 && styles.errorInput]}
               value={biodata?.contactNumber2}

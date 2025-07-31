@@ -18,7 +18,8 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-Bold',
         color: Colors.dark,
         textAlign: 'center',
-        margin: SW(75),
+        marginHorizontal: SW(75),
+        marginVertical: SH(70),
         paddingTop: SH(350),
     },
 
@@ -29,32 +30,39 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: SH(10),
     },
-
-    signuptext: {
-        fontFamily: 'Poppins-Regular',
-        fontSize: SF(15),
-        color: Colors.dark,
-    },
-
     boldSignupText: {
         fontFamily: 'Poppins-Bold',
         fontSize: SF(15),
         color: Colors.dark,
         marginLeft: SW(7),
     },
-    button: {
-        backgroundColor: Colors.theme_color,
-        padding: SW(7),
+    buttonRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         marginHorizontal: SW(30),
+        marginTop: SH(10),
+    },
+    button: {
+        flex: 1, // Makes both buttons occupy equal width
+        backgroundColor: Colors.theme_color,
+        paddingVertical: SH(12),
         borderRadius: 50,
-
+        marginHorizontal: SW(5),
+        alignItems: 'center', // Center text inside
     },
     buttonText: {
-        textAlign: 'center',
         color: Colors.light,
-        fontFamily: 'Poppins-Bold',
-        fontSize: SF(20),
+        fontFamily: 'Poppins-Medium',
+        fontSize: SF(16),
     },
+    signuptext: {
+        textAlign: 'center',
+        fontFamily: 'Poppins-Regular',
+        fontSize: SF(14),
+        color: Colors.dark,
+        marginTop: SH(20),
+    },
+
     linkText: {
         color: Colors.theme_color,
         textDecorationLine: 'underline',

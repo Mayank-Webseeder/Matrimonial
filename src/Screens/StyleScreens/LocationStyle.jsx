@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
 
   rightContainer: {
     width: '48%',
-    paddingTop: SH(37),
+    paddingTop: SH(22),
     paddingLeft: SW(5),
     alignSelf: 'flex-start',
   },
@@ -167,6 +167,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#fff',
     width: '99%',
+    marginTop:SH(8)
   },
   flex: {
     flexDirection: 'row',

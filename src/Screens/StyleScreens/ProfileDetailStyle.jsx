@@ -103,14 +103,14 @@ const styles = StyleSheet.create({
 
   rightContainer: {
     width: '48%',
-    paddingTop: SH(37),
+    paddingTop: SH(22),
     paddingLeft: SW(5),
     alignSelf: 'flex-start',
   },
 
   HeadingText: {
     fontSize: SF(15),
-    fontFamily: 'Poppins-Regular',
+    fontFamily: 'Poppins-Bold',
     textTransform: 'capitalize',
     lineHeight: SF(18),
     paddingTop: SH(2),

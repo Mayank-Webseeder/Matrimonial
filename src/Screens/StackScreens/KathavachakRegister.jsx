@@ -152,7 +152,7 @@ const KathavachakRegister = ({ navigation }) => {
                 fullName: fetchProfileDetails.fullName || '',
                 state: fetchProfileDetails.state || '',
                 city: fetchProfileDetails.city || '',
-                subCaste: fetchProfileDetails.subCaste || '',
+                // subCaste: fetchProfileDetails.subCaste || '',
                 aadharNo: fetchProfileDetails.aadharNo || '',
                 residentialAddress: fetchProfileDetails.residentialAddress || '',
                 description: fetchProfileDetails.description || '',
@@ -413,7 +413,7 @@ const KathavachakRegister = ({ navigation }) => {
                 fullName: RoleRegisterData.fullName,
                 state: RoleRegisterData.state,
                 city: RoleRegisterData.city,
-                subCaste: RoleRegisterData.subCaste,
+                // subCaste: RoleRegisterData.subCaste,
                 profilePhoto: RoleRegisterData.profilePhoto,
                 additionalPhotos: RoleRegisterData.additionalPhotos,
                 experience: RoleRegisterData.experience ? String(RoleRegisterData.experience) : '',
@@ -477,7 +477,7 @@ const KathavachakRegister = ({ navigation }) => {
                 error?.message ||
                 'Something went wrong!';
 
-            console.error('❌ Error:', errorMessage);
+            console.error('Error:', errorMessage);
 
             Alert.alert('Please Wait', errorMessage);
 
@@ -893,7 +893,7 @@ const KathavachakRegister = ({ navigation }) => {
                             importantForAutofill="no"
                             autoCorrect={false}
                         />
-                        <Text style={Globalstyles.title}>Aadhar No. </Text>
+                        {/* <Text style={Globalstyles.title}>Aadhar No. </Text>
                         <TextInput
                             style={Globalstyles.input}
                             value={RoleRegisterData?.aadharNo}
@@ -913,9 +913,9 @@ const KathavachakRegister = ({ navigation }) => {
                             textContentType="none"
                             inputMode="numeric"
                             autoCapitalize="none"
-                        />
+                        /> */}
 
-                        <Text style={Globalstyles.title}>Sub Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
+                        {/* <Text style={Globalstyles.title}>Sub Caste <Entypo name={'star'} color={'red'} size={12} /></Text>
 
                         <Dropdown
                             style={[Globalstyles.input, errors.subCaste && styles.errorInput]}
@@ -929,7 +929,7 @@ const KathavachakRegister = ({ navigation }) => {
                             autoScroll={false}
                             showsVerticalScrollIndicator={false}
                         />
-                        {errors.subCaste && <Text style={styles.errorText}>{errors.subCaste}</Text>}
+                        {errors.subCaste && <Text style={styles.errorText}>{errors.subCaste}</Text>} */}
 
                         {/* Role Selection with Checkboxes */}
                         <Text style={Globalstyles.title}>Select Kathavachak Services <Entypo name={'star'} color={'red'} size={12} /></Text>

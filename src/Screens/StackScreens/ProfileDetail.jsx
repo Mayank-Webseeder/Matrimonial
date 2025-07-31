@@ -502,9 +502,9 @@ const ProfileDetail = ({ route, navigation }) => {
                                             {profileData?.personalDetails?.maritalStatus && (
                                                 <Text style={styles.text}>{profileData.personalDetails.maritalStatus}</Text>
                                             )}
-                                            {profileData?.personalDetails?.manglikStatus && (
+                                            {/* {profileData?.personalDetails?.manglikStatus && (
                                                 <Text style={styles.text}>{profileData.personalDetails.manglikStatus}</Text>
-                                            )}
+                                            )} */}
                                             {profileData?.personalDetails?.disabilities && (
                                                 <Text style={styles.text}>Disability: {profileData.personalDetails.disabilities}</Text>
                                             )}
@@ -553,19 +553,19 @@ const ProfileDetail = ({ route, navigation }) => {
 
                                                 {/* Optional Details for Horoscope */}
                                                 <View>
-                                                    {personalDetails?.nadi && (
+                                                    {/* {personalDetails?.nadi && (
                                                         <View style={styles.infoRow}>
                                                             <Text style={styles.infoLabel}>Nadi :</Text>
                                                             <Text style={styles.infoValue}>{personalDetails?.nadi}</Text>
                                                         </View>
-                                                    )}
+                                                    )} */}
 
-                                                    {personalDetails?.gotraSelf && (
+                                                    {/* {personalDetails?.gotraSelf && (
                                                         <View style={styles.infoRow}>
                                                             <Text style={styles.infoLabel}>Gotra (Self) :</Text>
                                                             <Text style={styles.infoValue}>{personalDetails?.gotraSelf}</Text>
                                                         </View>
-                                                    )}
+                                                    )} */}
 
                                                     {personalDetails?.manglikStatus && (
                                                         <View style={styles.infoRow}>
@@ -581,12 +581,12 @@ const ProfileDetail = ({ route, navigation }) => {
                                                         </View>
                                                     )}
 
-                                                    {personalDetails?.gotraMother && (
+                                                    {/* {personalDetails?.gotraMother && (
                                                         <View style={styles.infoRow}>
                                                             <Text style={styles.infoLabel}>Gotra (Mother) :</Text>
                                                             <Text style={styles.infoValue}>{personalDetails?.gotraMother}</Text>
                                                         </View>
-                                                    )}
+                                                    )} */}
                                                 </View>
                                             </View>
                                         </View>
@@ -625,14 +625,14 @@ const ProfileDetail = ({ route, navigation }) => {
                                             )}
                                         </View>
 
-                                        <View style={styles.infoRow}>
+                                        {/* <View style={styles.infoRow}>
                                             {personalDetails?.livingStatus && (
                                                 <>
                                                     <Text style={styles.infoLabel}>Living with family :</Text>
                                                     <Text style={styles.infoValue}>{personalDetails?.livingStatus}</Text>
                                                 </>
                                             )}
-                                        </View>
+                                        </View> */}
                                     </View>
                                 </View>
                             </View>
@@ -666,7 +666,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                     )}
                                     {personalDetails?.fatherIncomeAnnually && (
                                         <View style={styles.infoRow}>
-                                            <Text style={styles.infoLabel}>Father Income :</Text>
+                                            <Text style={styles.infoLabel}>Family Income :</Text>
                                             <Text style={styles.infoValue}>{personalDetails?.fatherIncomeAnnually}</Text>
                                         </View>
                                     )}
@@ -676,12 +676,12 @@ const ProfileDetail = ({ route, navigation }) => {
                                             <Text style={styles.infoValue}>{personalDetails?.motherOccupation}</Text>
                                         </View>
                                     )}
-                                    {personalDetails?.motherIncomeAnnually && (
+                                    {/* {personalDetails?.motherIncomeAnnually && (
                                         <View style={styles.infoRow}>
                                             <Text style={styles.infoLabel}>Mother’s Income :</Text>
                                             <Text style={styles.infoValue}>{personalDetails?.motherIncomeAnnually}</Text>
                                         </View>
-                                    )}
+                                    )} */}
                                     {personalDetails?.siblings && (
                                         <View style={styles.infoRow}>
                                             <Text style={styles.infoLabel}>Siblings :</Text>

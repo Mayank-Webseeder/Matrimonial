@@ -134,7 +134,7 @@ const MainPartnerPrefrence = ({ navigation }) => {
                             <Text style={styles.logotext}>Partner Preference</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity
+                        {/* <TouchableOpacity
                             style={styles.IconsButton}
                             onPress={() => handlePress('PhotoGallery')}
                         >
@@ -151,7 +151,7 @@ const MainPartnerPrefrence = ({ navigation }) => {
                                 />
                             </View>
                             <Text style={styles.logotext}>Photo Gallery</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                     </View>
 
                     {/* Render Active Component */}

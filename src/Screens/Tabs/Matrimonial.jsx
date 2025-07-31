@@ -64,18 +64,18 @@ const Matrimonial = ({ navigation }) => {
   );
 
 
-  useFocusEffect(
-    useCallback(() => {
-      const onBackPress = () => {
-        navigation.openDrawer();
-        return true;
-      };
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     const onBackPress = () => {
+  //       navigation.openDrawer();
+  //       return true;
+  //     };
 
-      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+  //     BackHandler.addEventListener('hardwareBackPress', onBackPress);
 
-      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-    }, [navigation])
-  );
+  //     return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+  //   }, [navigation])
+  // );
 
   useEffect(() => {
     Advertisement_window();

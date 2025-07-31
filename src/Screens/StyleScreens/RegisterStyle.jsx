@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     dateText: {
         flex: 1,
         fontSize: SF(16),
-        color:'gray',
+        color: 'gray',
         paddingVertical: SH(7),
     },
     arrow: {
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: SW(5),
         paddingVertical: SH(5),
         borderRadius: 50,
-        marginTop: SH(20),
+        marginTop: SH(15),
         width: '100%',
         marginBottom: SH(25),
     },

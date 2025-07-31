@@ -5,6 +5,7 @@ import Colors from '../../utils/Colors';
 const styles = StyleSheet.create({
 
   Filterheader: {
+    width:"100%",
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -73,14 +74,14 @@ const styles = StyleSheet.create({
     marginBottom: SW(10),
   },
   iconContainer: {
-  marginHorizontal:SW(20),
-},
-sharecontainer: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginTop: SH(8),
-},
+    marginHorizontal: SW(20),
+  },
+  sharecontainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop:SH(10)
+  },
   rating: {
     flexDirection: 'row',
   },
@@ -111,7 +112,7 @@ sharecontainer: {
   },
   image: {
     width: SW(110),
-    height: SH(120),
+    height: SH(110),
     resizeMode: 'cover',
     marginHorizontal: SW(10),
     marginVertical: SH(10),
@@ -130,7 +131,7 @@ sharecontainer: {
     marginVertical: SH(7),
     marginBottom: SH(3),
     paddingVertical: SH(3),
-    paddingBottom:SH(10)
+    paddingBottom: SH(10)
   },
   cardData: {
     flexDirection: 'row',
@@ -146,10 +147,11 @@ sharecontainer: {
   },
   panditListData: {
     marginVertical: SH(10),
-    marginTop:SH(6),
+    marginTop: SH(6),
   },
   leftContainer: {
     marginVertical: SH(10),
+    marginBottom: 0,
     width: '80%',
   },
   searchContainer: {

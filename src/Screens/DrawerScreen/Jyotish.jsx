@@ -383,45 +383,64 @@ const Jyotish = ({ navigation, route }) => {
               renderIndicator={() => null}
             />
           </Modal>
-
           <View style={{ flex: 1, marginLeft: SW(10) }}>
-            <View>
-              <Pressable style={styles.leftContainer}
-                onPress={() => {
-                  if (isExpired) {
-                    showMessage({
-                      message: 'Subscription Required',
-                      description: "This Jyotish's profile is currently unavailable. Please subscribe to access it.",
-                      type: 'info',
-                      icon: 'info',
-                      duration: 3000,
-                    });
-                    navigation.navigate('BuySubscription', { serviceType: 'Jyotish' });
-                  } else {
-                    navigation.navigate('JyotishDetailsPage', {
-                      jyotish_id: item._id || id,
-                      isSaved,
-                      fromScreen: 'Jyotish',
-                    });
-                  }
-                }}
-              >
-                <Text style={styles.name}>{item?.fullName}</Text>
-                <Text style={styles.text}>ID: {item?.jyotishId}</Text>
+            <Pressable style={styles.leftContainer}
+              onPress={() => {
+                if (isExpired) {
+                  showMessage({
+                    message: 'Subscription Required',
+                    description: "This Jyotish's profile is currently unavailable. Please subscribe to access it.",
+                    type: 'info',
+                    icon: 'info',
+                    duration: 3000,
+                  });
+                  navigation.navigate('BuySubscription', { serviceType: 'Jyotish' });
+                } else {
+                  navigation.navigate('JyotishDetailsPage', {
+                    jyotish_id: item._id || id,
+                    isSaved,
+                    fromScreen: 'Jyotish',
+                  });
+                }
+              }}
+
+            >
+              {item?.fullName && (
+                <Text style={styles.name}>{item.fullName}</Text>
+              )}
+
+              {item?.panditId && (
+                <Text style={styles.text}>ID : {item.panditId}</Text>
+              )}
+
+              {typeof rating === 'number' && (
                 <View style={styles.rating}>
-                  <Rating type="star" ratingCount={5} imageSize={15} startingValue={rating} readonly />
+                  <Rating
+                    type="star"
+                    ratingCount={5}
+                    imageSize={15}
+                    startingValue={rating}
+                    readonly
+                  />
                 </View>
-                <View>
-                  <Text style={[styles.text, { fontFamily: 'Poppins-Bold' }]}>
-                    {item?.city}
-                    <Text style={[styles.text, { fontFamily: 'Poppins-Regular' }]}>
-                      {` , ${item?.state}`}
-                    </Text>
+              )}
+
+              <View>
+                <Text style={[styles.text, { fontFamily: 'Poppins-Bold' }]}>
+                  {item?.city}
+                  <Text style={[styles.text, { fontFamily: 'Poppins-Regular' }]}>
+                    {` , ${item?.state}`}
                   </Text>
-                </View>
-                <Text style={styles.text} numberOfLines={1}>{item?.residentialAddress}</Text>
-              </Pressable>
-            </View>
+                </Text>
+              </View>
+
+              {item?.residentialAddress && (
+                <Text style={styles.text} numberOfLines={1}>
+                  {item.residentialAddress}
+                </Text>
+              )}
+
+            </Pressable>
             <View style={styles.sharecontainer}>
               <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
                 <MaterialIcons name="call" size={17} color={Colors.light} />
@@ -434,10 +453,7 @@ const Jyotish = ({ navigation, route }) => {
                     color={Colors.dark}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.iconContainer}
-                  onPress={() => shareProfile(item._id || id)}
-                >
+                <TouchableOpacity style={styles.iconContainer} onPress={() => shareProfile(item._id || id)}>
                   <Feather name="send" size={18} color={Colors.dark} />
                 </TouchableOpacity>
               </View>
@@ -445,7 +461,6 @@ const Jyotish = ({ navigation, route }) => {
           </View>
         </View>
       </View>
-
     );
   };
 

@@ -36,7 +36,10 @@ const MyProfile = ({ navigation }) => {
     const image = profileData?.photoUrl?.[0];
     const [isLoading, setIsLoading] = useState(false);
     // console.log("profileData", profileData);
-    const formattedDate = moment(profileData.dob).format('DD/MM/YYYY');
+    const formattedDate = profileData.dob
+        ? moment(profileData.dob).format('DD/MM/YYYY')
+        : '';
+        
     const [isImageViewVisible, setImageViewVisible] = useState(false);
 
     const images = [
@@ -50,6 +53,10 @@ const MyProfile = ({ navigation }) => {
             fetchProfile();
         }, [])
     );
+
+    useEffect(() => {
+        console.log("profileData.dob", profileData.dob)
+    }, [])
 
     const fetchProfile = async () => {
         setProfileLoading(true);
@@ -456,7 +463,11 @@ const MyProfile = ({ navigation }) => {
                                 <View style={styles.userData}>
                                     <Text style={styles.text}>User ID:  {profileData.userId || 'NA'}</Text>
                                     <Text style={styles.text}>{capitalizeFirstLetter(profileData.username || 'NA')}</Text>
-                                    <Text style={styles.text}>DOB: {formattedDate || 'NA'}</Text>
+                                    {profileData.dob && (
+                                        <Text style={styles.text}>
+                                            DOB: {moment(profileData.dob).format('DD/MM/YYYY')}
+                                        </Text>
+                                    )}
                                     <Text style={styles.text}>City: {capitalizeFirstLetter(profileData.city || 'NA')}</Text>
                                 </View>
                                 <View style={styles.userData}>

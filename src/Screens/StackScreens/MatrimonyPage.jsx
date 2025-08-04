@@ -25,7 +25,10 @@ const MatrimonyPage = ({ navigation, route }) => {
     console.log('profileData in myprofile', profileData);
     const image = profile_Data?.profiledata?.photoUrl?.[0];
     console.log('image', image);
-    const formattedDate = moment(profile_Data?.profiledata?.dob).format('DD/MM/YYYY');
+    const formattedDate = profile_Data?.profiledata?.dob
+        ? moment(profile_Data?.profiledata?.dob).format('DD/MM/YYYY')
+        : '';
+    // const formattedDate = moment(profile_Data?.profiledata?.dob).format('DD/MM/YYYY');
     const MyprofileData = useSelector((state) => state.getBiodata);
     const [biodataAvailable, setBiodataAvailable] = useState(false);
     const [visible, setVisible] = useState(false);
@@ -90,7 +93,11 @@ const MatrimonyPage = ({ navigation, route }) => {
                         <View style={styles.userDeatil}>
                             <View>
                                 <Text style={styles.text}>{capitalizeFirstLetter(profile_Data?.profiledata?.username || 'NA')}</Text>
-                                <Text style={styles.text}>DOB: {formattedDate || 'NA'}</Text>
+                                {profile_Data?.profiledata?.dob && (
+                                    <Text style={styles.text}>
+                                        DOB: {moment(profile_Data?.profiledata?.dob).format('DD/MM/YYYY')}
+                                    </Text>
+                                )}
                                 <Text style={styles.text}>City: {capitalizeFirstLetter(profile_Data?.profiledata?.city || 'NA')}</Text>
                             </View>
                             <View>

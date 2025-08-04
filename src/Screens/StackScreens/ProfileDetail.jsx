@@ -1057,11 +1057,17 @@ const ProfileDetail = ({ route, navigation }) => {
                                                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                                             <View>
                                                                 <Image
-                                                                    source={review?.userId?.photoUrl[0]
-                                                                        ? { uri: review?.userId?.photoUrl[0] }
-                                                                        : require('../../Images/NoImage.png') // Fallback image
+                                                                    source={
+                                                                        Array.isArray(review?.userId?.photoUrl) && review.userId.photoUrl.length > 0
+                                                                            ? { uri: review.userId.photoUrl[0] }
+                                                                            : require('../../Images/NoImage.png')
                                                                     }
-                                                                    style={{ width: SW(50), height: SH(50), borderRadius: 50 }}
+                                                                    style={{
+                                                                        width: SW(50),
+                                                                        height: SW(50),
+                                                                        borderRadius: SW(25),
+                                                                        marginRight: SW(10),
+                                                                    }}
                                                                     resizeMode="cover"
                                                                 />
                                                             </View>
@@ -1303,11 +1309,17 @@ const ProfileDetail = ({ route, navigation }) => {
                                                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                                             <View>
                                                                 <Image
-                                                                    source={review?.userId?.photoUrl[0]
-                                                                        ? { uri: review?.userId?.photoUrl[0] }
-                                                                        : require('../../Images/NoImage.png') // Fallback image
+                                                                    source={
+                                                                        Array.isArray(review?.userId?.photoUrl) && review.userId.photoUrl.length > 0
+                                                                            ? { uri: review.userId.photoUrl[0] }
+                                                                            : require('../../Images/NoImage.png')
                                                                     }
-                                                                    style={{ width: SW(50), height: SH(50), borderRadius: 50 }}
+                                                                    style={{
+                                                                        width: SW(50),
+                                                                        height: SW(50),
+                                                                        borderRadius: SW(25),
+                                                                        marginRight: SW(10),
+                                                                    }}
                                                                     resizeMode="cover"
                                                                 />
                                                             </View>
@@ -1545,11 +1557,17 @@ const ProfileDetail = ({ route, navigation }) => {
                                                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                                             <View>
                                                                 <Image
-                                                                    source={review?.userId?.photoUrl[0]
-                                                                        ? { uri: review?.userId?.photoUrl[0] }
-                                                                        : require('../../Images/NoImage.png') // Fallback image
+                                                                    source={
+                                                                        Array.isArray(review?.userId?.photoUrl) && review.userId.photoUrl.length > 0
+                                                                            ? { uri: review.userId.photoUrl[0] }
+                                                                            : require('../../Images/NoImage.png')
                                                                     }
-                                                                    style={{ width: SW(50), height: SH(50), borderRadius: 50 }}
+                                                                    style={{
+                                                                        width: SW(50),
+                                                                        height: SW(50),
+                                                                        borderRadius: SW(25),
+                                                                        marginRight: SW(10),
+                                                                    }}
                                                                     resizeMode="cover"
                                                                 />
                                                             </View>

@@ -412,7 +412,7 @@ const RootNavigator = () => {
     await new Promise((res) => setTimeout(res, 100)); 
 
     const token = await AsyncStorage.getItem('userToken');
-    console.log('🔐 Token in RootNavigator:', token);
+    console.log('Token in RootNavigator:', token);
 
     setInitialRoute(token ? 'AppStack' : 'AuthStack');
     setIsLoading(false);

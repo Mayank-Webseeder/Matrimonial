@@ -17,13 +17,13 @@ import { launchImageLibrary } from 'react-native-image-picker';
 // import { SafeAreaView } from 'react-native-safe-area-context';
 
 const UpdateProfileDetails = ({ navigation, route }) => {
-    const [stateInput, setStateInput] = useState('');
     const [cityInput, setCityInput] = useState('');
-    const [filteredStates, setFilteredStates] = useState([]);
     const [filteredCities, setFilteredCities] = useState([]);
-    const [selectedState, setSelectedState] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const { profileData, profileType } = route.params || {};
+   const [selectedState, setSelectedState] = useState(profileData?.state || null);
+    const [isFocus, setIsFocus] = useState(false);
+
     console.log('profileData', JSON.stringify(profileData));
     const [errors, setErrors] = useState({});
 
@@ -88,33 +88,15 @@ const UpdateProfileDetails = ({ navigation, route }) => {
     }, [profileData]);
 
 
-    const handleStateInputChange = (text) => {
-        const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
-        setStateInput(filteredText);
-
-        if (filteredText) {
-            const filtered = StateData.filter((item) =>
-                item?.label?.toLowerCase().includes(text.toLowerCase())
-            ).map(item => item.label);
-            setFilteredStates(filtered);
-        } else {
-            setFilteredStates([]);
-        }
-
-        setRoleRegisterData(PrevRoleRegisterData => ({
-            ...PrevRoleRegisterData,
-            state: filteredText,
-        }));
-    };
-
     const handleStateSelect = (item) => {
-        setStateInput(item);
-        setSelectedState(item);
-        setRoleRegisterData((PrevRoleRegisterData) => ({
-            ...PrevRoleRegisterData,
-            state: item,
+        setSelectedState(item.value);
+        setRoleRegisterData((prev) => ({
+            ...prev,
+            state: item.value,
         }));
-        setFilteredStates([]);
+        if (errors.state) {
+            setErrors((prev) => ({ ...prev, state: null }));
+        }
     };
 
     const handleCityInputChange = (text) => {
@@ -291,13 +273,13 @@ const UpdateProfileDetails = ({ navigation, route }) => {
             if (field === 'mobileNo' && !/^\d{10}$/.test(value)) {
                 errors[field] = 'Enter a valid 10-digit mobile number.';
             }
-            if (field === 'fullName') {
-                if (!/^[A-Za-z\s]+$/.test(value)) {
-                    errors[field] = `${field} must contain only letters and spaces.`;
-                } else if (value.length > 30) {
-                    errors[field] = `${field} cannot exceed 30 characters.`;
-                }
-            }
+            // if (field === 'fullName') {
+            //     if (!/^[A-Za-z\s]+$/.test(value)) {
+            //         errors[field] = `${field} must contain only letters and spaces.`;
+            //     } else if (value.length > 30) {
+            //         errors[field] = `${field} cannot exceed 30 characters.`;
+            //     }
+            // }
         });
 
         const urlFields = ['websiteUrl', 'facebookUrl', 'youtubeUrl', 'instagramUrl', 'whatsapp'];
@@ -518,8 +500,8 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                         <TextInput style={Globalstyles.input}
                             value={RoleRegisterData.fullName}
                             onChangeText={(text) => {
-                                const cleanText = text.replace(/[^A-Za-z\s]/g, '');
-                                setRoleRegisterData((prev) => ({ ...prev, fullName: cleanText }));
+                                // const cleanText = text.replace(/[^A-Za-z\s]/g, '');
+                                setRoleRegisterData((prev) => ({ ...prev, fullName: text }));
                             }}
                             placeholder="Enter Your Full Name"
                             placeholderTextColor={Colors.gray}
@@ -555,31 +537,29 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                         <Text style={[Globalstyles.title, { color: Colors.theme_color }]}>Address</Text>
 
                         <Text style={Globalstyles.title}>State</Text>
-                        <TextInput
-                            style={Globalstyles.input}
-                            value={RoleRegisterData?.state} // `biodata?.state` ki jagah `stateInput` use karein
-                            onChangeText={handleStateInputChange}
-                            placeholder="Type your State"
-                            placeholderTextColor={Colors.gray}
-                            autoComplete="off"
-                            textContentType="none"
-                            importantForAutofill="no"
-                            autoCorrect={false}
+                        <Dropdown
+                            style={[
+                                Globalstyles.input,
+                                errors.state && styles.errorInput,
+                                isFocus && { borderColor: Colors.primary }
+                            ]}
+                            placeholderStyle={{ color: Colors.gray }}
+                            selectedTextStyle={{ color: '#000' }}
+                            data={StateData.map((item) => ({ label: item.label, value: item.label }))}
+                            maxHeight={300}
+                            labelField="label"
+                            valueField="value"
+                            placeholder={!isFocus ? 'Select your State' : '...'}
+                            search
+                            searchPlaceholder="Search state..."
+                            value={selectedState}
+                            onFocus={() => setIsFocus(true)}
+                            onBlur={() => setIsFocus(false)}
+                            onChange={handleStateSelect}
                         />
 
-                        {filteredStates.length > 0 ? (
-                            <FlatList
-                                data={filteredStates.slice(0, 5)}
-                                scrollEnabled={false}
-                                keyExtractor={(item, index) => index.toString()}
-                                renderItem={({ item }) => (
-                                    <TouchableOpacity onPress={() => handleStateSelect(item)}>
-                                        <Text style={Globalstyles.listItem}>{item}</Text>
-                                    </TouchableOpacity>
-                                )}
-                                style={Globalstyles.suggestions}
-                            />
-                        ) : null}
+                        {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
+
 
                         <Text style={Globalstyles.title}>Village / City</Text>
                         <TextInput

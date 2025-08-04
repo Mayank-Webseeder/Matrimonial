@@ -643,19 +643,20 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                                     <View key={review._id || index} style={styles.reviewContainer}>
                                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                             <View>
-                                                <Image
-                                                    source={review?.userId?.photoUrl[0]
-                                                        ? { uri: review.userId.photoUrl[0] }
-                                                        : require('../../Images/NoImage.png')
-                                                    }
-                                                    style={{
-                                                        width: SW(50),
-                                                        height: SW(50),
-                                                        borderRadius: SW(25),
-                                                        marginRight: SW(10),
-                                                    }}
-                                                    resizeMode="cover"
-                                                />
+                                            <Image
+  source={
+    Array.isArray(review?.userId?.photoUrl) && review.userId.photoUrl.length > 0
+      ? { uri: review.userId.photoUrl[0] }
+      : require('../../Images/NoImage.png')
+  }
+  style={{
+    width: SW(50),
+    height: SW(50),
+    borderRadius: SW(25),
+    marginRight: SW(10),
+  }}
+  resizeMode="cover"
+/>
                                             </View>
                                             <View style={{ flex: 1, marginHorizontal: SW(10) }}>
                                                 <Text style={styles.reviewName}>{review?.userId?.username || 'Unknown'}</Text>

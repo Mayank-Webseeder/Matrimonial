@@ -149,9 +149,9 @@ const Register = ({ navigation }) => {
     };
 
 
-    const formattedDate = selectedDate
-        ? `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, '0')}-${selectedDate.getDate().toString().padStart(2, '0')}`
-        : null;
+    // const formattedDate = selectedDate
+    //     ? `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, '0')}-${selectedDate.getDate().toString().padStart(2, '0')}`
+    //     : null;
 
 
     const otpValidityDuration = 60;
@@ -225,7 +225,7 @@ const Register = ({ navigation }) => {
 
         const payload = {
             username: fullName.trim(),
-            dob: formattedDate,
+            dob:null,
             city: selectedCity || cityInput.trim(),
             gender: gender,
             password: password.trim(),
@@ -324,24 +324,24 @@ const Register = ({ navigation }) => {
     };
 
 
-    const handleDateChange = (event, date) => {
-        if (event.type === 'dismissed') {
-            setShowDatePicker(false);
-            return;
-        }
+    // const handleDateChange = (event, date) => {
+    //     if (event.type === 'dismissed') {
+    //         setShowDatePicker(false);
+    //         return;
+    //     }
 
-        if (date && date !== selectedDate) {
-            setSelectedDate(date);
-        }
-        setShowDatePicker(false);
-    };
+    //     if (date && date !== selectedDate) {
+    //         setSelectedDate(date);
+    //     }
+    //     setShowDatePicker(false);
+    // };
 
-    const formatDate = (date) => {
-        const day = date.getDate().toString().padStart(2, '0');
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-    };
+    // const formatDate = (date) => {
+    //     const day = date.getDate().toString().padStart(2, '0');
+    //     const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    //     const year = date.getFullYear();
+    //     return `${day}/${month}/${year}`;
+    // };
 
     return (
         <SafeAreaView style={styles.container} >

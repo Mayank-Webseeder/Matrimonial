@@ -21,7 +21,6 @@ import { SH } from '../../utils/Dimensions';
 
 const KathavachakRegister = ({ navigation }) => {
     const insets = useSafeAreaInsets();
-    const [stateInput, setStateInput] = useState('');
     const [cityInput, setCityInput] = useState('');
     const [selectedRoles, setSelectedRoles] = useState([]);
     const [checked, setChecked] = useState({});
@@ -30,7 +29,6 @@ const KathavachakRegister = ({ navigation }) => {
     const [filteredStates, setFilteredStates] = useState([]);
     const [filteredCities, setFilteredCities] = useState([]);
     const [filteredSubCaste, setFilteredSubCaste] = useState([]);
-    const [selectedState, setSelectedState] = useState('');
     const ProfileData = useSelector((state) => state.profile);
     const profileData = ProfileData?.profiledata || {};
     const hasTrial = profileData.serviceSubscriptions?.some(
@@ -45,6 +43,8 @@ const KathavachakRegister = ({ navigation }) => {
     const [TrialPlanId, setTrialPlanId] = useState(null);
     const [plans, setPlans] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
+    const [selectedState, setSelectedState] = useState(null);
+    const [isFocus, setIsFocus] = useState(false);
     const [RoleRegisterData, setRoleRegisterData] = useState({
         mobileNo: '',
         fullName: '',
@@ -152,15 +152,16 @@ const KathavachakRegister = ({ navigation }) => {
                 fullName: fetchProfileDetails.fullName || '',
                 state: fetchProfileDetails.state || '',
                 city: fetchProfileDetails.city || '',
-                // subCaste: fetchProfileDetails.subCaste || '',
                 aadharNo: fetchProfileDetails.aadharNo || '',
                 residentialAddress: fetchProfileDetails.residentialAddress || '',
                 description: fetchProfileDetails.description || '',
             }));
+            if (fetchProfileDetails.state) {
+                setSelectedState(fetchProfileDetails.state);
+            }
         }
     }, [fetchProfileDetails]);
-
-
+    
 
     const fetchPlans = async () => {
         try {
@@ -337,12 +338,8 @@ const KathavachakRegister = ({ navigation }) => {
             if (field === 'mobileNo' && !/^\d{10}$/.test(value)) {
                 errors[field] = 'Enter a valid 10-digit mobile number.';
             }
-            if (field === 'fullName') {
-                if (!/^[A-Za-z\s]+$/.test(value)) {
-                    errors[field] = `${field} must contain only letters and spaces.`;
-                } else if (value.length > 30) {
-                    errors[field] = `${field} cannot exceed 30 characters.`;
-                }
+            if (!data.state || !StateData.some(s => s.label === data.state)) {
+                errors.state = 'Please select a valid state.';
             }
         });
 
@@ -702,33 +699,17 @@ const KathavachakRegister = ({ navigation }) => {
         }
     };
 
-    const handleStateInputChange = (text) => {
-        const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
-        setStateInput(filteredText);
-
-        if (filteredText) {
-            const filtered = StateData.filter((item) =>
-                item?.label?.toLowerCase().includes(text.toLowerCase())
-            ).map(item => item.label);
-            setFilteredStates(filtered);
-        } else {
-            setFilteredStates([]);
-        }
-
-        setRoleRegisterData(PrevRoleRegisterData => ({
-            ...PrevRoleRegisterData,
-            state: filteredText,
-        }));
-    };
-
     const handleStateSelect = (item) => {
-        setStateInput(item);
-        setSelectedState(item);
-        setRoleRegisterData((PrevRoleRegisterData) => ({
-            ...PrevRoleRegisterData,
-            state: item,
+        setSelectedState(item.value);
+        setRoleRegisterData((prev) => ({
+            ...prev,
+            state: item.value,
         }));
-        setFilteredStates([]);
+
+        // Optionally clear error
+        if (errors.state) {
+            setErrors((prev) => ({ ...prev, state: null }));
+        }
     };
 
     const handleCityInputChange = (text) => {
@@ -789,8 +770,8 @@ const KathavachakRegister = ({ navigation }) => {
                         <TextInput style={[Globalstyles.input, errors.fullName && styles.errorInput]}
                             value={RoleRegisterData?.fullName}
                             onChangeText={(text) => {
-                                const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
-                                setRoleRegisterData((prev) => ({ ...prev, fullName: filteredText }));
+                                // const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
+                                setRoleRegisterData((prev) => ({ ...prev, fullName: text }));
                             }}
                             placeholder="Enter Your Full Name"
                             placeholderTextColor={Colors.gray}
@@ -827,32 +808,29 @@ const KathavachakRegister = ({ navigation }) => {
                         <Text style={[Globalstyles.title, { color: Colors.theme_color }]}>Address</Text>
 
                         <Text style={Globalstyles.title}>State <Entypo name={'star'} color={'red'} size={12} /></Text>
-                        <TextInput
-                            style={[Globalstyles.input, errors.state && styles.errorInput]}
-                            value={RoleRegisterData?.state} // `biodata?.state` ki jagah `stateInput` use karein
-                            onChangeText={handleStateInputChange}
-                            placeholder="Type your State"
-                            placeholderTextColor={Colors.gray}
-                            autoComplete="off"
-                            textContentType="none"
-                            importantForAutofill="no"
-                            autoCorrect={false}
+                        <Dropdown
+                            style={[
+                                Globalstyles.input,
+                                errors.state && styles.errorInput,
+                                isFocus && { borderColor: Colors.primary }
+                            ]}
+                            placeholderStyle={{ color: Colors.gray }}
+                            selectedTextStyle={{ color: '#000' }}
+                            data={StateData.map((item) => ({ label: item.label, value: item.label }))}
+                            maxHeight={300}
+                            labelField="label"
+                            valueField="value"
+                            placeholder={!isFocus ? 'Select your State' : '...'}
+                            search
+                            searchPlaceholder="Search state..."
+                            value={selectedState}
+                            onFocus={() => setIsFocus(true)}
+                            onBlur={() => setIsFocus(false)}
+                            onChange={handleStateSelect}
                         />
+
                         {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
 
-                        {filteredStates.length > 0 ? (
-                            <FlatList
-                                data={filteredStates.slice(0, 5)}
-                                scrollEnabled={false}
-                                keyExtractor={(item, index) => index.toString()}
-                                renderItem={({ item }) => (
-                                    <TouchableOpacity onPress={() => handleStateSelect(item)}>
-                                        <Text style={Globalstyles.listItem}>{item}</Text>
-                                    </TouchableOpacity>
-                                )}
-                                style={Globalstyles.suggestions}
-                            />
-                        ) : null}
 
                         <Text style={Globalstyles.title}>Village / City <Entypo name={'star'} color={'red'} size={12} /></Text>
                         <TextInput

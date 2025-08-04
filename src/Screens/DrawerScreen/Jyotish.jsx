@@ -409,8 +409,8 @@ const Jyotish = ({ navigation, route }) => {
                 <Text style={styles.name}>{item.fullName}</Text>
               )}
 
-              {item?.panditId && (
-                <Text style={styles.text}>ID : {item.panditId}</Text>
+              {item?.jyotishId && (
+                <Text style={styles.text}>ID : {item.jyotishId}</Text>
               )}
 
               {typeof rating === 'number' && (

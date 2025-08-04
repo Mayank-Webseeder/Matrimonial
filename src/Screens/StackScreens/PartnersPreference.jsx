@@ -29,13 +29,10 @@ const PartnersPreference = ({ navigation, profileData }) => {
     const insets = useSafeAreaInsets();
     const dispatch = useDispatch();
     const [isEditing, setIsEditing] = useState(true);
-    const [stateInput, setStateInput] = useState('');
     const [subCasteInput, setSubCasteInput] = useState('');
-    const [filteredStates, setFilteredStates] = useState([]);
     const [filteredCities, setFilteredCities] = useState([]);
     const [filteredSubCaste, setFilteredSubCaste] = useState([]);
     const [cityInput, setCityInput] = useState('');
-    const [selectedState, setSelectedState] = useState('');
     const [originalBiodata, setOriginalBiodata] = useState({});
     const [selectedSubCaste, setSelectedSubCaste] = useState('');
     const [loading, setLoading] = useState(false);
@@ -43,6 +40,9 @@ const PartnersPreference = ({ navigation, profileData }) => {
     const [mybiodata, setMyBiodata] = useState({});
     const ProfileData = useSelector((state) => state.profile);
     const profile_data = ProfileData?.profiledata || {};
+    const [selectedState, setSelectedState] = useState(null);
+    const [isFocus, setIsFocus] = useState(false);
+
 
     const myPartnerPreferences = profileData?.partnerPreferences || mybiodata?.partnerPreferences;
     const activeTabName = isBiodataExpired || isBiodataEmpty ? 'Matrimonial' : 'BioData';
@@ -132,35 +132,20 @@ const PartnersPreference = ({ navigation, profileData }) => {
                 ...prev,
                 ...myPartnerPreferences,
             }));
+            if (myPartnerPreferences.partnerState) {
+                setSelectedState(myPartnerPreferences.partnerState);
+            }
         }
     }, [myPartnerPreferences]);
 
-    const handleStateInputChange = (text) => {
-        const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
-        setStateInput(filteredText);
-        if (filteredText) {
-            const filtered = StateData.filter((item) =>
-                item?.label?.toLowerCase().includes(text.toLowerCase())
-            ).map(item => item.label);
-            setFilteredStates(filtered);
-        } else {
-            setFilteredStates([]);
-        }
-        setBiodata(prevState => ({
-            ...prevState,
-            partnerState: filteredText,
-        }));
-    };
 
-    // Handle state selection to update both the input field and biodata.partnerState
     const handleStateSelect = (item) => {
-        setStateInput(item);
-        setSelectedState(item);
-        setBiodata(prevBiodata => ({
-            ...prevBiodata,
-            partnerState: item, // Correct key
+        setSelectedState(item.value);
+        setBiodata((prev) => ({
+            ...prev,
+            partnerState: item.value,
         }));
-        setFilteredStates([]);
+
     };
 
     const handleCityInputChange = (text) => {
@@ -536,29 +521,26 @@ const PartnersPreference = ({ navigation, profileData }) => {
                         /> */}
                                 <Text style={[Globalstyles.title, { color: Colors.theme_color }]}>Locality</Text>
                                 <Text style={Globalstyles.title}>State  </Text>
-                                <TextInput
-                                    style={Globalstyles.input}
-                                    value={biodata?.partnerState}
-                                    onChangeText={handleStateInputChange}
-                                    placeholder="Type your State"
-                                    placeholderTextColor={Colors.gray}
-                                    autoComplete="off"
-                                    textContentType="none"
-                                    importantForAutofill="no"
+                                <Dropdown
+                                    style={[
+                                        Globalstyles.input,
+                                        isFocus && { borderColor: Colors.primary }
+                                    ]}
+                                    placeholderStyle={{ color: Colors.gray }}
+                                    selectedTextStyle={{ color: '#000' }}
+                                    data={StateData.map((item) => ({ label: item.label, value: item.label }))}
+                                    maxHeight={300}
+                                    labelField="label"
+                                    valueField="value"
+                                    placeholder={!isFocus ? 'Select your State' : '...'}
+                                    search
+                                    searchPlaceholder="Search state..."
+                                    value={selectedState}
+                                    onFocus={() => setIsFocus(true)}
+                                    onBlur={() => setIsFocus(false)}
+                                    onChange={handleStateSelect}
                                 />
-                                {filteredStates.length > 0 && stateInput ? (
-                                    <FlatList
-                                        data={filteredStates.slice(0, 5)}
-                                        scrollEnabled={false}
-                                        keyExtractor={(item, index) => index.toString()}
-                                        renderItem={({ item }) => (
-                                            <TouchableOpacity onPress={() => handleStateSelect(item)}>
-                                                <Text style={Globalstyles.listItem}>{item}</Text>
-                                            </TouchableOpacity>
-                                        )}
-                                        style={Globalstyles.suggestions}
-                                    />
-                                ) : null}
+
                                 <Text style={Globalstyles.title}>City / Village   </Text>
                                 <TextInput
                                     style={Globalstyles.input}

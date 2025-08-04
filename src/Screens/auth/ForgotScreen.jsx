@@ -70,6 +70,7 @@ const ForgotScreen = ({ navigation }) => {
             console.error('OTP Error:', error);
 
             if (error.response?.status === 400) {
+                console.log("error.response.data.message ",error.response.data.message )
                 showMessage({ type: 'danger', message: 'Invalid Request', description: error.response.data.message || 'Mobile number is required', duration: 5000 });
             } else {
                 showMessage({ type: 'danger', message: 'OTP Failed', description: error.message || 'Failed to send OTP. Try again.', icon: 'danger', duration: 5000 });

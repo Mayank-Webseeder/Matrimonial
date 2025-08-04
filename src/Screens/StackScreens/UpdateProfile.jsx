@@ -22,7 +22,7 @@ const UpdateProfile = ({ navigation }) => {
   const profileData = ProfileData?.profiledata || {};
   const [username, setUsername] = useState(profileData.username || '');
   const [mobileNo, setMobileNo] = useState(profileData.mobileNo || '');
-  const [dob, setDob] = useState(profileData.dob ? new Date(profileData.dob) : new Date());
+ const [dob, setDob] = useState(profileData.dob ? new Date(profileData.dob) : null);
   const [gender, setGender] = useState(profileData.gender || '');
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -115,13 +115,13 @@ const UpdateProfile = ({ navigation }) => {
     }
   };
 
-  const handleDateChange = (event, selectedDate) => {
-    setShowDatePicker(false);
-    if (event.type === 'set' && selectedDate) {
-      const formattedDate = moment(selectedDate).format('YYYY-MM-DD');
-      setDob(formattedDate);
-    }
-  };
+const handleDateChange = (event, selectedDate) => {
+  setShowDatePicker(false);
+  if (selectedDate) {
+    setDob(selectedDate);
+  }
+};
+
   return (
     <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
@@ -155,19 +155,21 @@ const UpdateProfile = ({ navigation }) => {
         /> */}
 
           <Text style={Globalstyles.title}>Date of Birth</Text>
-          <TouchableOpacity onPress={() => setShowDatePicker(true)} style={Globalstyles.input}>
-            <Text style={styles.dateText}>{moment(dob).format('DD MMMM YYYY')}</Text>
-          </TouchableOpacity>
-          {showDatePicker && (
-            <DateTimePicker
-              value={dob ? new Date(dob) : new Date(2000, 0, 1)}
-              mode="date"
-              display="default"
-              maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))}
-              onChange={handleDateChange}
-              themeVariant="light"
-            />
-          )}
+         <TouchableOpacity onPress={() => setShowDatePicker(true)} style={Globalstyles.input}>
+  <Text style={styles.dateText}>
+    {dob ? moment(dob).format('DD MMMM YYYY') : 'Select Date of Birth'}
+  </Text>
+</TouchableOpacity>
+       {showDatePicker && (
+  <DateTimePicker
+    value={dob ? new Date(dob) : new Date(2000, 0, 1)} // fallback to Jan 1, 2000
+    mode="date"
+    display="default"
+    maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))}
+    onChange={handleDateChange}
+    themeVariant="light"
+  />
+)}
           <Text style={Globalstyles.title}>City</Text>
           <TextInput
             style={Globalstyles.input}

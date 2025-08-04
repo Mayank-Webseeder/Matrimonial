@@ -22,7 +22,9 @@ const MainPartnerPrefrence = ({ navigation }) => {
     console.log('profileData in myprofile', profileData);
     const image = profileData?.profiledata?.photoUrl?.[0];
     console.log('image', image);
-    const formattedDate = moment(profileData?.profiledata?.dob).format('DD/MM/YYYY');
+    const formattedDate = profileData?.profiledata?.dob
+        ? moment(profileData?.profiledata?.dob).format('DD/MM/YYYY')
+        : '';
     const MyprofileData = useSelector((state) => state.getBiodata);
     const [biodataAvailable, setBiodataAvailable] = useState(false);
     const [visible, setVisible] = useState(false);
@@ -83,7 +85,11 @@ const MainPartnerPrefrence = ({ navigation }) => {
                         <View style={styles.userDeatil}>
                             <View>
                                 <Text style={styles.text}>{capitalizeFirstLetter(profileData?.profiledata?.username || 'NA')}</Text>
-                                <Text style={styles.text}>DOB: {formattedDate || 'NA'}</Text>
+                                {profileData?.profiledata?.dob && (
+                                    <Text style={styles.text}>
+                                        DOB: {moment(profileData?.profiledata?.dob).format('DD/MM/YYYY')}
+                                    </Text>
+                                )}
                                 <Text style={styles.text}>City: {capitalizeFirstLetter(profileData?.profiledata?.city || 'NA')}</Text>
                             </View>
                             <View>

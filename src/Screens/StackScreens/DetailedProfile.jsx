@@ -47,13 +47,10 @@ const DetailedProfile = ({ navigation, profileData }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const [stateInput, setStateInput] = useState('');
-  const [filteredStates, setFilteredStates] = useState([]);
   const [filteredCities, setFilteredCities] = useState([]);
   const [cityInput, setCityInput] = useState('');
   const [cityOrVillageInput, setCityOrVillageInput] = useState('');
   const [filteredCitiesOrVillages, setFilteredCitiesOrVillages] = useState([]);
-  const [selectedState, setSelectedState] = useState('');
   const [errors, setErrors] = useState({});
   // const MyprofileData = useSelector((state) => state.getBiodata);
   const [plans, setPlans] = useState([]);
@@ -65,6 +62,9 @@ const DetailedProfile = ({ navigation, profileData }) => {
   const [buyingPlanId, setBuyingPlanId] = useState(null);
   const [TrialPlanId, setTrialPlanId] = useState(null);
   const [mybiodata, setMyBiodata] = useState({});
+  const [selectedState, setSelectedState] = useState(null);
+  const [isFocus, setIsFocus] = useState(false);
+
   const hasTrial = profile_data.serviceSubscriptions?.some(
     (sub) => sub.subscriptionType === 'Trial' && sub.serviceType === 'Biodata'
   );
@@ -203,17 +203,23 @@ const DetailedProfile = ({ navigation, profileData }) => {
     setModalVisible(true);
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      if (myBiodata) {
-        setBiodata((prev) => ({
-          ...prev,
-          ...myBiodata,
-          gender: profileData?.gender || mybiodata?.gender,
-        }));
+ useFocusEffect(
+  useCallback(() => {
+    if (myBiodata) {
+      const gender = profileData?.gender || myBiodata?.gender;
+      const state = myBiodata?.state;
+
+      setBiodata((prev) => ({
+        ...prev,
+        ...myBiodata,
+        gender,
+      }));
+      if (state) {
+        setSelectedState(state);
       }
-    }, [myBiodata, profileData?.gender])
-  );
+    }
+  }, [myBiodata, profileData?.gender])
+);
 
 
   const handleImageSelection = (field) => {
@@ -256,35 +262,15 @@ const DetailedProfile = ({ navigation, profileData }) => {
       });
   };
 
-  const handleStateInputChange = (text) => {
-    const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
-
-    setStateInput(filteredText);
-
-    if (filteredText) {
-      const filtered = StateData.filter((item) =>
-        item?.label?.toLowerCase().includes(filteredText.toLowerCase())
-      ).map(item => item.label);
-      setFilteredStates(filtered);
-    } else {
-      setFilteredStates([]);
-    }
-
-    setBiodata(prevState => ({
-      ...prevState,
-      state: filteredText,
-    }));
-  };
-
-
   const handleStateSelect = (item) => {
-    setStateInput(item);
-    setSelectedState(item);
-    setBiodata((prevBiodata) => ({
-      ...prevBiodata,
-      state: item,
+    setSelectedState(item.value);
+    setBiodata((prev) => ({
+      ...prev,
+      state: item.value,
     }));
-    setFilteredStates([]);
+    if (errors.state) {
+      setErrors((prev) => ({ ...prev, state: null }));
+    }
   };
 
   const handleCityInputChange = (text) => {
@@ -364,17 +350,6 @@ const DetailedProfile = ({ navigation, profileData }) => {
     label: `${i + 1} Sibling${i > 0 ? 's' : ''}`,
   }));
 
-
-  const handleDateChange = (event, selectedDate) => {
-    setShowDatePicker(false);
-    if (event.type === 'set' && selectedDate) {
-      setBiodata((prevState) => ({
-        ...prevState,
-        dob: selectedDate,
-      }));
-    }
-  };
-
   const formatDate = (date) => {
     if (!date) { return ''; }
 
@@ -402,14 +377,14 @@ const DetailedProfile = ({ navigation, profileData }) => {
       return new Promise((resolve) => {
         const reader = new FileReader();
         reader.onloadend = () => {
-          const base64String = reader.result.split(',')[1]; 
+          const base64String = reader.result.split(',')[1];
           resolve(base64String);
         };
         reader.readAsDataURL(blob);
       });
     } catch (error) {
       console.error('Error converting image to Base64:', error);
-      return imageUri; 
+      return imageUri;
     }
   };
 
@@ -458,12 +433,12 @@ const DetailedProfile = ({ navigation, profileData }) => {
     return payload;
   };
 
- const OPTIONAL_FIELDS = [
-  'weight', 'complexion', 'nadi', 'gotraSelf', 'gotraMother', 'aboutMe', 'otherFamilyMemberInfo',
-  'knowCooking', 'dietaryHabit', 'smokingHabit', 'drinkingHabit',
-  'tobaccoHabits', 'hobbies', 'fullPhoto', 'bestPhoto',
-  'contactNumber2', 'disabilities', 'livingStatus', 'manglikStatus', 'motherIncomeAnnually', 'profileCreatedBy',
-];
+  const OPTIONAL_FIELDS = [
+    'weight', 'complexion', 'nadi', 'gotraSelf', 'gotraMother', 'aboutMe', 'otherFamilyMemberInfo',
+    'knowCooking', 'dietaryHabit', 'smokingHabit', 'drinkingHabit',
+    'tobaccoHabits', 'hobbies', 'fullPhoto', 'bestPhoto',
+    'contactNumber2', 'disabilities', 'livingStatus', 'manglikStatus', 'motherIncomeAnnually', 'profileCreatedBy',
+  ];
 
   const validateForm = (biodata) => {
     let errors = {};
@@ -531,6 +506,10 @@ const DetailedProfile = ({ navigation, profileData }) => {
             errors[field] = 'Enter a valid 10-digit mobile number.';
           }
         }
+        if (!biodata.state || !StateData.some(s => s.label === biodata.state)) {
+          errors.state = 'Please select a valid state.';
+        }
+
       }
     });
 
@@ -1634,33 +1613,29 @@ const DetailedProfile = ({ navigation, profileData }) => {
             <Text style={styles.headText}> Address</Text>
 
             <Text style={Globalstyles.title}>State <Entypo name={'star'} color={'red'} size={12} /></Text>
-            <TextInput
-              style={[Globalstyles.input, errors.state && styles.errorInput]}
-              value={biodata?.state} // `biodata?.state` ki jagah `stateInput` use karein
-              onChangeText={handleStateInputChange}
-              placeholder="Type your State"
-              placeholderTextColor={Colors.gray}
-              autoComplete="off"
-              textContentType="none"
-              importantForAutofill="no"
-              autoCorrect={false}
-              keyboardType="default"
-              contextMenuHidden={true}
+            <Dropdown
+              style={[
+                Globalstyles.input,
+                errors.state && styles.errorInput,
+                isFocus && { borderColor: Colors.primary }
+              ]}
+              placeholderStyle={{ color: Colors.gray }}
+              selectedTextStyle={{ color: '#000' }}
+              data={StateData.map((item) => ({ label: item.label, value: item.label }))}
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder={!isFocus ? 'Select your State' : '...'}
+              search
+              searchPlaceholder="Search state..."
+              value={selectedState}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              onChange={handleStateSelect}
             />
+
             {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
-            {filteredStates.length > 0 ? (
-              <FlatList
-                data={filteredStates.slice(0, 5)}
-                scrollEnabled={false}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => (
-                  <TouchableOpacity onPress={() => handleStateSelect(item)}>
-                    <Text style={Globalstyles.listItem}>{item}</Text>
-                  </TouchableOpacity>
-                )}
-                style={Globalstyles.suggestions}
-              />
-            ) : null}
+
           </View>
           <View>
             <Text style={Globalstyles.title}>City/Village <Entypo name={'star'} color={'red'} size={12} /> </Text>

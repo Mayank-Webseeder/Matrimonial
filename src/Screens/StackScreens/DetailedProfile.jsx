@@ -203,23 +203,23 @@ const DetailedProfile = ({ navigation, profileData }) => {
     setModalVisible(true);
   };
 
- useFocusEffect(
-  useCallback(() => {
-    if (myBiodata) {
-      const gender = profileData?.gender || myBiodata?.gender;
-      const state = myBiodata?.state;
+  useFocusEffect(
+    useCallback(() => {
+      if (myBiodata) {
+        const gender = profileData?.gender || myBiodata?.gender;
+        const state = myBiodata?.state;
 
-      setBiodata((prev) => ({
-        ...prev,
-        ...myBiodata,
-        gender,
-      }));
-      if (state) {
-        setSelectedState(state);
+        setBiodata((prev) => ({
+          ...prev,
+          ...myBiodata,
+          gender,
+        }));
+        if (state) {
+          setSelectedState(state);
+        }
       }
-    }
-  }, [myBiodata, profileData?.gender])
-);
+    }, [myBiodata, profileData?.gender])
+  );
 
 
   const handleImageSelection = (field) => {
@@ -407,13 +407,12 @@ const DetailedProfile = ({ navigation, profileData }) => {
     for (const key of keys) {
       if (key === 'dob') {
         payload[key] = biodata[key] || '';
-      } else if (biodata[key] !== undefined && biodata[key] !== '') {
+      } else if (biodata[key] !== undefined && biodata[key] !== null) {
         payload[key] = biodata[key];
-      } else if (isNew) {
+      } else {
         payload[key] = '';
       }
     }
-
     try {
       payload.closeUpPhoto = biodata.closeUpPhoto.startsWith('data:image')
         ? biodata.closeUpPhoto

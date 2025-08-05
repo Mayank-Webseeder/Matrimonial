@@ -816,7 +816,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                     Linking.openURL('tel:' + personalDetails?.contactNumber1);
                   }
                 }}
-                disabled={hideContact} // Disable press functionality when hidden
+                disabled={hideContact} 
               >
                 <MaterialIcons name={'call'} size={19} color={Colors.theme_color} />
                 <Text style={styles.iconText}>Call</Text>

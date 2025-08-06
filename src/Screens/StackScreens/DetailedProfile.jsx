@@ -407,12 +407,13 @@ const DetailedProfile = ({ navigation, profileData }) => {
     for (const key of keys) {
       if (key === 'dob') {
         payload[key] = biodata[key] || '';
-      } else if (biodata[key] !== undefined && biodata[key] !== null) {
+      } else if (biodata[key] !== undefined && biodata[key] !== '') {
         payload[key] = biodata[key];
-      } else {
+      } else if (isNew) {
         payload[key] = '';
       }
     }
+
     try {
       payload.closeUpPhoto = biodata.closeUpPhoto.startsWith('data:image')
         ? biodata.closeUpPhoto

@@ -45,6 +45,20 @@ const Kathavachak = ({ navigation, route }) => {
   const ProfileData = useSelector((state) => state.profile);
   const profile_data = ProfileData?.profiledata || {};
   const [slider, setSlider] = useState([]);
+  const [lastFilterType, setLastFilterType] = useState('all');
+
+  useEffect(() => {
+    KathavachakDataAPI('all');
+    Advertisement_window();
+  }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      Advertisement_window();
+      KathavachakDataAPI(lastFilterType)
+    }, [lastFilterType])
+  );
+
 
   const openImageViewer = (imageUri) => {
     if (imageUri) {
@@ -70,18 +84,6 @@ const Kathavachak = ({ navigation, route }) => {
     setServices('');
     KathavachakDataAPI();
   };
-
-  useEffect(() => {
-    KathavachakDataAPI('all');
-    Advertisement_window();
-  }, []);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      Advertisement_window();
-    }, [])
-  );
-
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -116,15 +118,17 @@ const Kathavachak = ({ navigation, route }) => {
     return () => clearTimeout(timeout);
   }, [currentIndex, slider]);
 
-
-
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'MainApp' }],
-        });
+        if (navigation.canGoBack()) {
+          navigation.goBack();
+        } else {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'MainApp' }],
+          });
+        }
         return true;
       };
 
@@ -191,6 +195,7 @@ const Kathavachak = ({ navigation, route }) => {
 
   const KathavachakDataAPI = async (filterType = 'search') => {
     try {
+      setLastFilterType(filterType);
       setLoading(true);
       const token = await AsyncStorage.getItem('userToken');
       if (!token) { throw new Error('No token found'); }
@@ -461,10 +466,18 @@ const Kathavachak = ({ navigation, route }) => {
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
         <View style={styles.headerContainer}>
-          <TouchableOpacity onPress={() => navigation.reset({
-            index: 0,
-            routes: [{ name: 'MainApp' }],
-          })}>
+          <TouchableOpacity
+            onPress={() => {
+              if (navigation.canGoBack()) {
+                navigation.goBack();
+              } else {
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'MainApp' }],
+                });
+              }
+            }}
+          >
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>Kathavachak</Text>

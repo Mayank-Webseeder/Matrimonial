@@ -46,6 +46,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
         : require('../../Images/NoImage.png');
     const validSlides = slider.filter(item => !!item.image);
     const fromScreen = route.params?.fromScreen;
+    console.log("fromScreen", fromScreen);
 
 
     const [modalVisible, setModalVisible] = useState(false);
@@ -63,7 +64,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
-                if (fromScreen === 'Pandit') {
+                if (navigation.canGoBack()) {
                     navigation.goBack();
                 } else {
                     navigation.reset({
@@ -93,8 +94,9 @@ const PanditDetailPage = ({ navigation, item, route }) => {
             return () => {
                 BackHandler.removeEventListener('hardwareBackPress', onBackPress);
             };
-        }, [navigation, fromScreen])
+        }, [navigation])
     );
+
 
     useFocusEffect(
         useCallback(() => {
@@ -394,7 +396,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 <View style={{ flexDirection: 'row' }}>
                     <TouchableOpacity
                         onPress={() => {
-                            if (fromScreen === 'Pandit') {
+                            if (navigation.canGoBack()) {
                                 navigation.goBack();
                             } else {
                                 navigation.reset({
@@ -420,6 +422,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                     >
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
+
 
                     <Text style={Globalstyles.headerText}>{profileData?.fullName}</Text>
                 </View>

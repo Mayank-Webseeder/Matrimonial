@@ -22,6 +22,7 @@ import { showMessage } from 'react-native-flash-message';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { BackHandler } from 'react-native';
 
 const MatrimonyPeopleProfile = ({ navigation }) => {
   const insets = useSafeAreaInsets();
@@ -129,6 +130,29 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
     return () => clearTimeout(timeout);
   }, [currentIndex, slider]);
+
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        if (navigation.canGoBack()) {
+          navigation.goBack();
+        } else {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'MainApp' }],
+          });
+        }
+        return true;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => {
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+      };
+    }, [navigation])
+  );
 
 
 
@@ -620,10 +644,18 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <TouchableOpacity onPress={() => navigation.reset({
-            index: 0,
-            routes: [{ name: 'MainApp' }],
-          })}>
+          <TouchableOpacity
+            onPress={() => {
+              if (navigation.canGoBack()) {
+                navigation.goBack();
+              } else {
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'MainApp' }],
+                });
+              }
+            }}
+          >
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>{personalDetails?.fullname}</Text>
@@ -816,7 +848,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                     Linking.openURL('tel:' + personalDetails?.contactNumber1);
                   }
                 }}
-                disabled={hideContact} 
+                disabled={hideContact}
               >
                 <MaterialIcons name={'call'} size={19} color={Colors.theme_color} />
                 <Text style={styles.iconText}>Call</Text>

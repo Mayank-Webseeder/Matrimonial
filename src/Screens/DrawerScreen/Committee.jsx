@@ -22,7 +22,6 @@ import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import { SW } from '../../utils/Dimensions';
 import _ from 'lodash';
 import { showMessage } from 'react-native-flash-message';
-import { CommonActions } from '@react-navigation/native';
 import { Dropdown } from 'react-native-element-dropdown';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -127,7 +126,7 @@ const Committee = ({ navigation, route }) => {
       setError(null);
 
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -140,8 +139,8 @@ const Committee = ({ navigation, route }) => {
         const cleanedLocality = locality.trim();
         const cleanedSubCaste = subcaste.trim();
 
-        if (cleanedLocality) {queryParams.push(`locality=${encodeURIComponent(cleanedLocality.toLowerCase())}`);}
-        if (cleanedSubCaste) {queryParams.push(`subCaste=${encodeURIComponent(cleanedSubCaste.toLowerCase())}`);}
+        if (cleanedLocality) { queryParams.push(`locality=${encodeURIComponent(cleanedLocality.toLowerCase())}`); }
+        if (cleanedSubCaste) { queryParams.push(`subCaste=${encodeURIComponent(cleanedSubCaste.toLowerCase())}`); }
       } else if (filterType === 'modal') {
         const cleanedModalLocality = modalLocality.trim();
         const cleanedModalSubCaste = subcaste.trim();
@@ -196,7 +195,7 @@ const Committee = ({ navigation, route }) => {
   const Advertisement_window = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -271,20 +270,23 @@ const Committee = ({ navigation, route }) => {
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        navigation.dispatch(
-          CommonActions.reset({
+        if (navigation.canGoBack()) {
+          navigation.goBack();
+        } else {
+          navigation.reset({
             index: 0,
             routes: [{ name: 'MainApp' }],
-          })
-        );
+          });
+        }
         return true;
       };
 
       BackHandler.addEventListener('hardwareBackPress', onBackPress);
 
-      return () =>
+      return () => {
         BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-    }, [])
+      };
+    }, [navigation])
   );
 
 
@@ -308,7 +310,7 @@ const Committee = ({ navigation, route }) => {
 
 
   useEffect(() => {
-    if (slider.length === 0) {return;}
+    if (slider.length === 0) { return; }
 
     const currentSlide = slider[currentIndex];
     const durationInSeconds = Number(currentSlide?.duration) || 4;
@@ -429,7 +431,7 @@ const Committee = ({ navigation, route }) => {
     console.log('profileId:', profileId);
 
     try {
-      if (!profileId) {throw new Error('Missing profile ID');}
+      if (!profileId) { throw new Error('Missing profile ID'); }
 
       const directLink = `${DeepLink}/${profileType}/${profileId}`;
 
@@ -538,12 +540,14 @@ const Committee = ({ navigation, route }) => {
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity
             onPress={() => {
-              navigation.dispatch(
-                CommonActions.reset({
+              if (navigation.canGoBack()) {
+                navigation.goBack();
+              } else {
+                navigation.reset({
                   index: 0,
                   routes: [{ name: 'MainApp' }],
-                })
-              );
+                });
+              }
             }}
           >
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />

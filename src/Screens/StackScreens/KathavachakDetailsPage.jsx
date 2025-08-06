@@ -67,23 +67,21 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
-                if (fromScreen === 'Kathavachak') {
+                if (navigation.canGoBack()) {
                     navigation.goBack();
                 } else {
-                    navigation.dispatch(
-                        CommonActions.reset({
-                            index: 0,
-                            routes: [
-                                {
-                                    name: 'MainApp',
-                                    state: {
-                                        index: 0,
-                                        routes: [{ name: 'Kathavachak' }],
-                                    },
+                    navigation.reset({
+                        index: 0,
+                        routes: [
+                            {
+                                name: 'MainApp',
+                                state: {
+                                    index: 0,
+                                    routes: [{ name: 'Kathavachak' }],
                                 },
-                            ],
-                        })
-                    );
+                            },
+                        ],
+                    })
                 }
                 return true;
             };
@@ -417,23 +415,21 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                 <View style={{ flexDirection: 'row' }}>
                     <TouchableOpacity
                         onPress={() => {
-                            if (fromScreen === 'Kathavachak') {
+                            if (navigation.canGoBack()) {
                                 navigation.goBack();
                             } else {
-                                navigation.dispatch(
-                                    CommonActions.reset({
-                                        index: 0,
-                                        routes: [
-                                            {
-                                                name: 'MainApp',
-                                                state: {
-                                                    index: 0,
-                                                    routes: [{ name: 'Kathavachak' }],
-                                                },
+                                navigation.reset({
+                                    index: 0,
+                                    routes: [
+                                        {
+                                            name: 'MainApp',
+                                            state: {
+                                                index: 0,
+                                                routes: [{ name: 'Kathavachak' }],
                                             },
-                                        ],
-                                    })
-                                );
+                                        },
+                                    ],
+                                })
                             }
                         }}
                     >

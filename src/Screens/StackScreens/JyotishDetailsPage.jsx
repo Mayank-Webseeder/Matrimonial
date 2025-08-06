@@ -23,7 +23,7 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const jyotishDetailsPage = ({ navigation, item, route }) => {
-     const insets = useSafeAreaInsets();
+    const insets = useSafeAreaInsets();
     const sliderRef = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [slider, setSlider] = useState([]);
@@ -64,23 +64,22 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
-                if (fromScreen === 'Jyotish') {
+                if (navigation.canGoBack()) {
                     navigation.goBack();
                 } else {
-                    navigation.dispatch(
-                        CommonActions.reset({
-                            index: 0,
-                            routes: [
-                                {
-                                    name: 'MainApp',
-                                    state: {
-                                        index: 0,
-                                        routes: [{ name: 'Jyotish' }],
-                                    },
+                    navigation.reset({
+                        index: 0,
+                        routes: [
+                            {
+                                name: 'MainApp',
+                                state: {
+                                    index: 0,
+                                    routes: [{ name: 'Jyotish' }],
                                 },
-                            ],
-                        })
-                    );
+                            },
+                        ],
+                    })
+
                 }
                 return true;
             };
@@ -186,7 +185,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
 
 
     useEffect(() => {
-        if (slider.length === 0) {return;}
+        if (slider.length === 0) { return; }
 
         const currentSlide = slider[currentIndex];
         const durationInSeconds = Number(currentSlide?.duration) || 4;
@@ -204,7 +203,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
     const Advertisement_window = async () => {
         try {
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('No token found');}
+            if (!token) { throw new Error('No token found'); }
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -256,7 +255,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
 
         try {
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('No token found');}
+            if (!token) { throw new Error('No token found'); }
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -358,7 +357,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
         console.log('profileId', profileId);
 
         try {
-            if (!profileId) {throw new Error('Missing profile ID');}
+            if (!profileId) { throw new Error('Missing profile ID'); }
 
             const directLink = `${DeepLink}/${profileType}/${profileId}`;
 
@@ -389,23 +388,23 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                 <View style={{ flexDirection: 'row' }}>
                     <TouchableOpacity
                         onPress={() => {
-                            if (fromScreen === 'Jyotish') {
+                            if (navigation.canGoBack()) {
                                 navigation.goBack();
                             } else {
-                                navigation.dispatch(
-                                    CommonActions.reset({
-                                        index: 0,
-                                        routes: [
-                                            {
-                                                name: 'MainApp',
-                                                state: {
-                                                    index: 0,
-                                                    routes: [{ name: 'Jyotish' }],
-                                                },
+
+                                navigation.reset({
+                                    index: 0,
+                                    routes: [
+                                        {
+                                            name: 'MainApp',
+                                            state: {
+                                                index: 0,
+                                                routes: [{ name: 'Jyotish' }],
                                             },
-                                        ],
-                                    })
-                                );
+                                        },
+                                    ],
+                                })
+
                             }
                         }}
                     >
@@ -444,7 +443,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                     </TouchableOpacity>
                 </View>
             </View>
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(10), flexGrow: 1}}>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: insets.bottom + SH(10), flexGrow: 1 }}>
                 <View>
                     <View style={styles.profileSection}>
                         <TouchableOpacity onPress={() => setVisible(true)}>
@@ -643,20 +642,20 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                                     <View key={review._id || index} style={styles.reviewContainer}>
                                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                             <View>
-                                            <Image
-  source={
-    Array.isArray(review?.userId?.photoUrl) && review.userId.photoUrl.length > 0
-      ? { uri: review.userId.photoUrl[0] }
-      : require('../../Images/NoImage.png')
-  }
-  style={{
-    width: SW(50),
-    height: SW(50),
-    borderRadius: SW(25),
-    marginRight: SW(10),
-  }}
-  resizeMode="cover"
-/>
+                                                <Image
+                                                    source={
+                                                        Array.isArray(review?.userId?.photoUrl) && review.userId.photoUrl.length > 0
+                                                            ? { uri: review.userId.photoUrl[0] }
+                                                            : require('../../Images/NoImage.png')
+                                                    }
+                                                    style={{
+                                                        width: SW(50),
+                                                        height: SW(50),
+                                                        borderRadius: SW(25),
+                                                        marginRight: SW(10),
+                                                    }}
+                                                    resizeMode="cover"
+                                                />
                                             </View>
                                             <View style={{ flex: 1, marginHorizontal: SW(10) }}>
                                                 <Text style={styles.reviewName}>{review?.userId?.username || 'Unknown'}</Text>

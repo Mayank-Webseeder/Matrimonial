@@ -45,11 +45,13 @@ const Jyotish = ({ navigation, route }) => {
   const profile_data = ProfileData?.profiledata || {};
   const [refreshing, setRefreshing] = useState(false);
   const [slider, setSlider] = useState([]);
+  const [lastFilterType, setLastFilterType] = useState('all');
 
   useFocusEffect(
     React.useCallback(() => {
       Advertisement_window();
-    }, [])
+      JyotishDataAPI(lastFilterType)
+    }, [lastFilterType])
   );
 
 
@@ -100,10 +102,14 @@ const Jyotish = ({ navigation, route }) => {
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'MainApp' }],
-        });
+        if (navigation.canGoBack()) {
+          navigation.goBack();
+        } else {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'MainApp' }],
+          });
+        }
         return true;
       };
 
@@ -189,6 +195,7 @@ const Jyotish = ({ navigation, route }) => {
 
 
   const JyotishDataAPI = async (filterType = 'search') => {
+    setLastFilterType(filterType);
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem('userToken');
@@ -470,10 +477,18 @@ const Jyotish = ({ navigation, route }) => {
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
         <View style={styles.headerContainer}>
-          <TouchableOpacity onPress={() => navigation.reset({
-            index: 0,
-            routes: [{ name: 'MainApp' }],
-          })}>
+          <TouchableOpacity
+            onPress={() => {
+              if (navigation.canGoBack()) {
+                navigation.goBack();
+              } else {
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'MainApp' }],
+                });
+              }
+            }}
+          >
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>Jyotish</Text>

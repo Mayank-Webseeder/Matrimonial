@@ -21,7 +21,7 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const DharamsalaDetail = ({ navigation, route }) => {
-  const insets = useSafeAreaInsets();
+   const insets = useSafeAreaInsets();
   const { _id, isSaved: initialSavedState, id } = route.params;
   const profileId = _id || id;
   const [dharamsalaData, SetDharamsalaData] = useState('');
@@ -62,21 +62,23 @@ const DharamsalaDetail = ({ navigation, route }) => {
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        if (navigation.canGoBack()) {
+        if (fromScreen === 'Dharmshala') {
           navigation.goBack();
         } else {
-          navigation.reset({
-            index: 0,
-            routes: [
-              {
-                name: 'MainApp',
-                state: {
-                  index: 0,
-                  routes: [{ name: 'Dharmshala' }],
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [
+                {
+                  name: 'MainApp',
+                  state: {
+                    index: 0,
+                    routes: [{ name: 'Dharmshala' }],
+                  },
                 },
-              },
-            ],
-          })
+              ],
+            })
+          );
         }
         return true;
       };
@@ -179,7 +181,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
 
 
   useEffect(() => {
-    if (!formattedImages || formattedImages.length === 0) { return; }
+    if (!formattedImages || formattedImages.length === 0) {return;}
 
     const duration = (formattedImages[galleryIndex]?.duration || 5) * 1000;
 
@@ -200,7 +202,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
 
 
   useEffect(() => {
-    if (slider.length === 0) { return; }
+    if (slider.length === 0) {return;}
 
     const duration = (slider[adIndex]?.duration || 5) * 1000;
 
@@ -224,7 +226,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
   const Advertisement_window = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) { throw new Error('No token found'); }
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
         'Content-Type': 'application/json',
@@ -286,7 +288,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
 
   const handleShare = async () => {
     try {
-      if (!profileId) { throw new Error('Missing profile ID'); }
+      if (!profileId) {throw new Error('Missing profile ID');}
 
       const directLink = `${DeepLink}/dharamsala-detial/${profileId}`;
 
@@ -312,7 +314,7 @@ const DharamsalaDetail = ({ navigation, route }) => {
 
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) { throw new Error('No token found'); }
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
         'Content-Type': 'application/json',
@@ -366,21 +368,23 @@ const DharamsalaDetail = ({ navigation, route }) => {
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity
             onPress={() => {
-              if (navigation.canGoBack()) {
+              if (fromScreen === 'Dharmshala') {
                 navigation.goBack();
               } else {
-                navigation.reset({
-                  index: 0,
-                  routes: [
-                    {
-                      name: 'MainApp',
-                      state: {
-                        index: 0,
-                        routes: [{ name: 'Dharmshala' }],
+                navigation.dispatch(
+                  CommonActions.reset({
+                    index: 0,
+                    routes: [
+                      {
+                        name: 'MainApp',
+                        state: {
+                          index: 0,
+                          routes: [{ name: 'Dharmshala' }],
+                        },
                       },
-                    },
-                  ],
-                })
+                    ],
+                  })
+                );
               }
             }}
           >

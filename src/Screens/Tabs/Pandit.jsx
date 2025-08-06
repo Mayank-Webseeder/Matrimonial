@@ -50,19 +50,12 @@ const Pandit = ({ navigation, route }) => {
   const profile_data = ProfileData?.profiledata || {};
   const [refreshing, setRefreshing] = useState(false);
   const [slider, setSlider] = useState([]);
-  const [lastFilterType, setLastFilterType] = useState('all');
 
- useFocusEffect(
-  React.useCallback(() => {
-    Top_Advertisement_window();
-    fetchPanditData(lastFilterType); 
-  }, [lastFilterType])
-);
-
-    useEffect(() => {
-    fetchPanditData(lastFilterType); 
-    Top_Advertisement_window();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      Top_Advertisement_window();
+    }, [])
+  );
 
 
   const onRefresh = React.useCallback(() => {
@@ -107,14 +100,10 @@ const Pandit = ({ navigation, route }) => {
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        if (navigation.canGoBack()) {
-          navigation.goBack();
-        } else {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'MainApp' }],
-          });
-        }
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'MainApp' }],
+        });
         return true;
       };
 
@@ -126,9 +115,7 @@ const Pandit = ({ navigation, route }) => {
     }, [navigation])
   );
 
-
   const fetchPanditData = async (filterType = 'search') => {
-    setLastFilterType(filterType); 
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem('userToken');
@@ -150,10 +137,10 @@ const Pandit = ({ navigation, route }) => {
         queryParams.push(`locality=${encodeURIComponent(locality.trim().toLowerCase())}`);
       }
       else if (filterType === 'modal') {
-        if (modalLocality?.trim()) { queryParams.push(`locality=${encodeURIComponent(modalLocality.trim().toLowerCase())}`); }
-        if (services?.trim()) { queryParams.push(`services=${encodeURIComponent(services.trim())}`); }
-        if (rating?.trim()) { queryParams.push(`rating=${encodeURIComponent(rating.trim())}`); }
-        if (experience?.trim()) { queryParams.push(`experience=${encodeURIComponent(experience.trim())}`); }
+        if (modalLocality?.trim()) {queryParams.push(`locality=${encodeURIComponent(modalLocality.trim().toLowerCase())}`);}
+        if (services?.trim()) {queryParams.push(`services=${encodeURIComponent(services.trim())}`);}
+        if (rating?.trim()) {queryParams.push(`rating=${encodeURIComponent(rating.trim())}`);}
+        if (experience?.trim()) {queryParams.push(`experience=${encodeURIComponent(experience.trim())}`);}
       }
 
       const url = queryParams.length > 0
@@ -189,8 +176,15 @@ const Pandit = ({ navigation, route }) => {
     }
   };
 
+
   useEffect(() => {
-    if (slider.length === 0) { return; }
+    fetchPanditData('all');
+    Top_Advertisement_window();
+  }, []);
+
+
+  useEffect(() => {
+    if (slider.length === 0) {return;}
 
     const currentSlide = slider[currentIndex];
     const durationInSeconds = Number(currentSlide?.duration) || 4;
@@ -209,7 +203,7 @@ const Pandit = ({ navigation, route }) => {
   const Top_Advertisement_window = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) { throw new Error('No token found'); }
+      if (!token) {throw new Error('No token found');}
 
       const headers = {
         'Content-Type': 'application/json',
@@ -336,7 +330,7 @@ const Pandit = ({ navigation, route }) => {
     console.log('profileId:', profileId);
 
     try {
-      if (!profileId) { throw new Error('Missing profile ID'); }
+      if (!profileId) {throw new Error('Missing profile ID');}
 
       const directLink = `${DeepLink}/${profileType}/${profileId}`;
 
@@ -379,10 +373,16 @@ const Pandit = ({ navigation, route }) => {
         <View style={styles.cardData}>
           {item.profilePhoto ? (
             <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
-              <Image source={{ uri: item.profilePhoto }} style={styles.image} />
+              <Image
+                source={{ uri: item.profilePhoto }}
+                style={styles.image}
+              />
             </TouchableOpacity>
           ) : (
-            <Image source={require('../../Images/NoImage.png')} style={styles.image} />
+            <Image
+              source={require('../../Images/NoImage.png')}
+              style={styles.image}
+            />
           )}
 
           <Modal visible={isImageVisible} transparent={true} onRequestClose={() => setImageVisible(false)}>
@@ -396,63 +396,44 @@ const Pandit = ({ navigation, route }) => {
               renderIndicator={() => null}
             />
           </Modal>
-          <View style={{ flex: 1, marginLeft: SW(10) }}>
-            <Pressable style={styles.leftContainer}
-              onPress={() => {
-                if (isExpired) {
-                  showMessage({
-                    message: 'Subscription Required',
-                    description: "This Pandit's profile is currently unavailable. Please subscribe to access it.",
-                    type: 'info',
-                    icon: 'info',
-                    duration: 3000,
-                  });
-                  navigation.navigate('BuySubscription', { serviceType: 'Pandit' });
-                } else {
-                  navigation.navigate('PanditDetailPage', {
-                    pandit_id: item._id || id,
-                    isSaved: isSaved,
-                    fromScreen: 'Pandit',
-                  });
-                }
-              }}
-            >
-              {item?.fullName && (
-                <Text style={styles.name}>{item.fullName}</Text>
-              )}
 
-              {item?.panditId && (
-                <Text style={styles.text}>ID : {item.panditId}</Text>
-              )}
-
-              {typeof rating === 'number' && (
+          <View>
+            <View>
+              <Pressable style={styles.leftContainer}
+                onPress={() => {
+                  if (isExpired) {
+                    showMessage({
+                      message: 'Subscription Required',
+                      description: "This Pandit's profile is currently unavailable. Please subscribe to access it.",
+                      type: 'info',
+                      icon: 'info',
+                      duration: 3000,
+                    });
+                    navigation.navigate('BuySubscription', { serviceType: 'Pandit' });
+                  } else {
+                    navigation.navigate('PanditDetailPage', {
+                      pandit_id: item._id || id,
+                      isSaved: isSaved,
+                      fromScreen: 'Pandit',
+                    });
+                  }
+                }}>
+                <Text style={styles.name}>{item?.fullName}</Text>
+                <Text style={styles.text}>ID: {item?.panditId}</Text>
                 <View style={styles.rating}>
-                  <Rating
-                    type="star"
-                    ratingCount={5}
-                    imageSize={15}
-                    startingValue={rating}
-                    readonly
-                  />
+                  <Rating type="star" ratingCount={5} imageSize={15} startingValue={rating} readonly />
                 </View>
-              )}
-
-              <View>
-                <Text style={[styles.text, { fontFamily: 'Poppins-Bold' }]}>
-                  {item?.city}
-                  <Text style={[styles.text, { fontFamily: 'Poppins-Regular' }]}>
-                    {` , ${item?.state}`}
+                <View>
+                  <Text style={[styles.text, { fontFamily: 'Poppins-Bold' }]}>
+                    {item?.city}
+                    <Text style={[styles.text, { fontFamily: 'Poppins-Regular' }]}>
+                      {` , ${item?.state}`}
+                    </Text>
                   </Text>
-                </Text>
-              </View>
-
-              {item?.residentialAddress && (
-                <Text style={styles.text} numberOfLines={1}>
-                  {item.residentialAddress}
-                </Text>
-              )}
-
-            </Pressable>
+                </View>
+                <Text style={styles.text} numberOfLines={1}>{item?.residentialAddress}</Text>
+              </Pressable>
+            </View>
             <View style={styles.sharecontainer}>
               <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
                 <MaterialIcons name="call" size={17} color={Colors.light} />
@@ -465,7 +446,10 @@ const Pandit = ({ navigation, route }) => {
                     color={Colors.dark}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.iconContainer} onPress={() => shareProfile(item._id || id)}>
+                <TouchableOpacity
+                  style={styles.iconContainer}
+                  onPress={() => shareProfile(item._id || id)}
+                >
                   <Feather name="send" size={18} color={Colors.dark} />
                 </TouchableOpacity>
               </View>
@@ -482,18 +466,10 @@ const Pandit = ({ navigation, route }) => {
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
         <View style={styles.headerContainer}>
-          <TouchableOpacity
-            onPress={() => {
-              if (navigation.canGoBack()) {
-                navigation.goBack();
-              } else {
-                navigation.reset({
-                  index: 0,
-                  routes: [{ name: 'MainApp' }],
-                });
-              }
-            }}
-          >
+          <TouchableOpacity onPress={() => navigation.reset({
+            index: 0,
+            routes: [{ name: 'MainApp' }],
+          })}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>Pandit</Text>

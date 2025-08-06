@@ -45,20 +45,6 @@ const Kathavachak = ({ navigation, route }) => {
   const ProfileData = useSelector((state) => state.profile);
   const profile_data = ProfileData?.profiledata || {};
   const [slider, setSlider] = useState([]);
-  const [lastFilterType, setLastFilterType] = useState('all');
-
-  useEffect(() => {
-    KathavachakDataAPI('all');
-    Advertisement_window();
-  }, []);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      Advertisement_window();
-      KathavachakDataAPI(lastFilterType)
-    }, [lastFilterType])
-  );
-
 
   const openImageViewer = (imageUri) => {
     if (imageUri) {
@@ -84,6 +70,18 @@ const Kathavachak = ({ navigation, route }) => {
     setServices('');
     KathavachakDataAPI();
   };
+
+  useEffect(() => {
+    KathavachakDataAPI('all');
+    Advertisement_window();
+  }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      Advertisement_window();
+    }, [])
+  );
+
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -118,17 +116,15 @@ const Kathavachak = ({ navigation, route }) => {
     return () => clearTimeout(timeout);
   }, [currentIndex, slider]);
 
+
+
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        if (navigation.canGoBack()) {
-          navigation.goBack();
-        } else {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'MainApp' }],
-          });
-        }
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'MainApp' }],
+        });
         return true;
       };
 
@@ -195,7 +191,6 @@ const Kathavachak = ({ navigation, route }) => {
 
   const KathavachakDataAPI = async (filterType = 'search') => {
     try {
-      setLastFilterType(filterType);
       setLoading(true);
       const token = await AsyncStorage.getItem('userToken');
       if (!token) { throw new Error('No token found'); }
@@ -365,10 +360,16 @@ const Kathavachak = ({ navigation, route }) => {
         <View style={styles.cardData}>
           {item.profilePhoto ? (
             <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
-              <Image source={{ uri: item.profilePhoto }} style={styles.image} />
+              <Image
+                source={{ uri: item.profilePhoto }}
+                style={styles.image}
+              />
             </TouchableOpacity>
           ) : (
-            <Image source={require('../../Images/NoImage.png')} style={styles.image} />
+            <Image
+              source={require('../../Images/NoImage.png')}
+              style={styles.image}
+            />
           )}
 
           <Modal visible={isImageVisible} transparent={true} onRequestClose={() => setImageVisible(false)}>
@@ -382,7 +383,7 @@ const Kathavachak = ({ navigation, route }) => {
               renderIndicator={() => null}
             />
           </Modal>
-          <View style={{ flex: 1, marginLeft: SW(10) }}>
+          <View>
             <Pressable style={styles.leftContainer}
               onPress={() => {
                 if (isExpired) {
@@ -466,18 +467,10 @@ const Kathavachak = ({ navigation, route }) => {
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
         <View style={styles.headerContainer}>
-          <TouchableOpacity
-            onPress={() => {
-              if (navigation.canGoBack()) {
-                navigation.goBack();
-              } else {
-                navigation.reset({
-                  index: 0,
-                  routes: [{ name: 'MainApp' }],
-                });
-              }
-            }}
-          >
+          <TouchableOpacity onPress={() => navigation.reset({
+            index: 0,
+            routes: [{ name: 'MainApp' }],
+          })}>
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>Kathavachak</Text>

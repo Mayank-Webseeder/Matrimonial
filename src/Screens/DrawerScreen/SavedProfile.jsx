@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, FlatList, Image, SafeAreaView, StatusBar, ActivityIndicator, RefreshControl, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, ScrollView, Image, SafeAreaView, StatusBar, ActivityIndicator, RefreshControl, Alert } from 'react-native';
 import React, { useState, useRef, useCallback } from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import axios from 'axios';
@@ -69,13 +69,13 @@ const SavedProfile = ({ navigation }) => {
   };
 
   const DeleteSaveProfile = async (_id) => {
-    if (!_id || deletingId === _id) { return; }
+    if (!_id || deletingId === _id) {return;}
 
     setDeletingId(_id);
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) { throw new Error('No token found. Please log in again.'); }
+      if (!token) {throw new Error('No token found. Please log in again.');}
 
       const headers = {
         'Content-Type': 'application/json',
@@ -173,13 +173,13 @@ const SavedProfile = ({ navigation }) => {
               }
             }
             else if (profileType === 'Pandit') {
-              navigation.navigate('PanditDetailPage', { pandit_id: saveProfile._id, isSaved: true, fromScreen: 'SavedProfile', });
+              navigation.navigate('PanditDetailPage', { pandit_id: saveProfile._id, isSaved: true });
             } else if (profileType === 'Jyotish') {
-              navigation.navigate('JyotishDetailsPage', { jyotish_id: saveProfile._id, isSaved: true, fromScreen: 'SavedProfile', });
+              navigation.navigate('JyotishDetailsPage', { jyotish_id: saveProfile._id, isSaved: true });
             } else if (profileType === 'Kathavachak') {
-              navigation.navigate('KathavachakDetailsPage', { kathavachak_id: saveProfile._id, isSaved: true, fromScreen: 'SavedProfile', });
+              navigation.navigate('KathavachakDetailsPage', { kathavachak_id: saveProfile._id, isSaved: true });
             } else if (profileType === 'Dharmshala') {
-              navigation.navigate('DharamsalaDetail', { DharamsalaData: saveProfile, isSaved: true, _id: saveProfile._id, fromScreen: 'SavedProfile', });
+              navigation.navigate('DharamsalaDetail', { DharamsalaData: saveProfile, isSaved: true, _id: saveProfile._id });
             }
           }}>
           {profileType === 'Biodata' && (
@@ -288,7 +288,7 @@ const SavedProfile = ({ navigation }) => {
         <Text
           style={[styles.unsaveText, deletingId === saveProfile?._id && { opacity: 0.5 }]}
           onPress={() => {
-            if (!deletingId) { DeleteSaveProfile(saveProfile?._id); }
+            if (!deletingId) {DeleteSaveProfile(saveProfile?._id);}
           }}
         >
           {deletingId === saveProfile?._id ? 'Removing...' : 'Remove'}
@@ -348,25 +348,23 @@ const SavedProfile = ({ navigation }) => {
         <FlatList
           data={['Biodata', 'Pandit', 'Jyotish', 'Kathavachak', 'Dharmshala', 'Committee']}
           keyExtractor={(item, index) => index.toString()}
-          horizontal={true}
+          horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={[styles.tabContainer]}
           renderItem={({ item }) => (
-            <View>
-              <TouchableOpacity
-                style={[styles.tabButton, activeCategory === item && styles.activeTab]}
-                onPress={() => {
-                  setActiveCategory(item);
-                  setTimeout(() => {
-                    flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
-                  }, 100);
-                }}
-              >
-                <Text style={[styles.tabText, activeCategory === item && styles.activeTabText]}>
-                  {item}
-                </Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              style={[styles.tabButton, activeCategory === item && styles.activeTab]}
+              onPress={() => {
+                setActiveCategory(item);
+                setTimeout(() => {
+                  flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+                }, 100);
+              }}
+            >
+              <Text style={[styles.tabText, activeCategory === item && styles.activeTabText]}>
+                {item}
+              </Text>
+            </TouchableOpacity>
           )}
         />
 
@@ -398,14 +396,7 @@ const SavedProfile = ({ navigation }) => {
             keyExtractor={(item) => (item.id ? item.id.toString() : item._id.toString())}
             numColumns={2}
             columnWrapperStyle={styles.row}
-            contentContainerStyle={[
-              styles.ProfileContainer,
-              {
-                paddingBottom: insets.bottom + SH(200),
-                paddingTop: SH(10),
-                flexGrow: 1,
-              },
-            ]}
+            contentContainerStyle={[styles.ProfileContainer, { paddingBottom: insets.bottom + SH(10), flexGrow: 1 }]}
             showsVerticalScrollIndicator={false}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -418,4 +409,3 @@ const SavedProfile = ({ navigation }) => {
 };
 
 export default SavedProfile;
-

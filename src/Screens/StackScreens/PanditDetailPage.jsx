@@ -23,7 +23,7 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const PanditDetailPage = ({ navigation, item, route }) => {
-    const insets = useSafeAreaInsets();
+      const insets = useSafeAreaInsets();
     const sliderRef = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [slider, setSlider] = useState([]);
@@ -46,7 +46,6 @@ const PanditDetailPage = ({ navigation, item, route }) => {
         : require('../../Images/NoImage.png');
     const validSlides = slider.filter(item => !!item.image);
     const fromScreen = route.params?.fromScreen;
-    console.log("fromScreen", fromScreen);
 
 
     const [modalVisible, setModalVisible] = useState(false);
@@ -64,7 +63,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
-                if (navigation.canGoBack()) {
+                if (fromScreen === 'Pandit') {
                     navigation.goBack();
                 } else {
                     navigation.reset({
@@ -94,9 +93,8 @@ const PanditDetailPage = ({ navigation, item, route }) => {
             return () => {
                 BackHandler.removeEventListener('hardwareBackPress', onBackPress);
             };
-        }, [navigation])
+        }, [navigation, fromScreen])
     );
-
 
     useFocusEffect(
         useCallback(() => {
@@ -189,7 +187,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
 
 
     useEffect(() => {
-        if (slider.length === 0) { return; }
+        if (slider.length === 0) {return;}
 
         const currentSlide = slider[currentIndex];
         const durationInSeconds = Number(currentSlide?.duration) || 4;
@@ -208,7 +206,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
     const Advertisement_window = async () => {
         try {
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) { throw new Error('No token found'); }
+            if (!token) {throw new Error('No token found');}
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -261,7 +259,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
 
         try {
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) { throw new Error('No token found'); }
+            if (!token) {throw new Error('No token found');}
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -364,7 +362,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
         console.log('profileId', profileId);
 
         try {
-            if (!profileId) { throw new Error('Missing profile ID'); }
+            if (!profileId) {throw new Error('Missing profile ID');}
 
             const directLink = `${DeepLink}/${profileType}/${profileId}`;
 
@@ -396,7 +394,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 <View style={{ flexDirection: 'row' }}>
                     <TouchableOpacity
                         onPress={() => {
-                            if (navigation.canGoBack()) {
+                            if (fromScreen === 'Pandit') {
                                 navigation.goBack();
                             } else {
                                 navigation.reset({
@@ -422,7 +420,6 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                     >
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
-
 
                     <Text style={Globalstyles.headerText}>{profileData?.fullName}</Text>
                 </View>
@@ -455,7 +452,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                     </TouchableOpacity>
                 </View>
             </View>
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: insets.bottom + SH(5), flexGrow: 1 }}>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(5), flexGrow: 1}}>
                 <View>
                     <View style={styles.profileSection}>
                         <TouchableOpacity onPress={() => setVisible(true)}>
@@ -651,10 +648,9 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                             <View>
                                                 <Image
-                                                    source={
-                                                        Array.isArray(review?.userId?.photoUrl) && review.userId.photoUrl.length > 0
-                                                            ? { uri: review.userId.photoUrl[0] }
-                                                            : require('../../Images/NoImage.png')
+                                                    source={review?.userId?.photoUrl[0]
+                                                        ? { uri: review.userId.photoUrl[0] }
+                                                        : require('../../Images/NoImage.png')
                                                     }
                                                     style={{
                                                         width: SW(50),

@@ -18,10 +18,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   ProfileContainer: {
-    marginVertical: SH(10),
-    paddingBottom:SH(200),
-    flexGrow:1,
-  },
+  marginVertical: SH(10),
+  flexGrow: 1,
+},
   tabContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',

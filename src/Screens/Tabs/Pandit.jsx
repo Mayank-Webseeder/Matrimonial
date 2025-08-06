@@ -50,12 +50,19 @@ const Pandit = ({ navigation, route }) => {
   const profile_data = ProfileData?.profiledata || {};
   const [refreshing, setRefreshing] = useState(false);
   const [slider, setSlider] = useState([]);
+  const [lastFilterType, setLastFilterType] = useState('all');
 
-  useFocusEffect(
-    React.useCallback(() => {
-      Top_Advertisement_window();
-    }, [])
-  );
+ useFocusEffect(
+  React.useCallback(() => {
+    Top_Advertisement_window();
+    fetchPanditData(lastFilterType); 
+  }, [lastFilterType])
+);
+
+    useEffect(() => {
+    fetchPanditData(lastFilterType); 
+    Top_Advertisement_window();
+  }, []);
 
 
   const onRefresh = React.useCallback(() => {
@@ -100,10 +107,14 @@ const Pandit = ({ navigation, route }) => {
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'MainApp' }],
-        });
+        if (navigation.canGoBack()) {
+          navigation.goBack();
+        } else {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'MainApp' }],
+          });
+        }
         return true;
       };
 
@@ -115,7 +126,9 @@ const Pandit = ({ navigation, route }) => {
     }, [navigation])
   );
 
+
   const fetchPanditData = async (filterType = 'search') => {
+    setLastFilterType(filterType); 
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem('userToken');
@@ -175,13 +188,6 @@ const Pandit = ({ navigation, route }) => {
       setLoading(false);
     }
   };
-
-
-  useEffect(() => {
-    fetchPanditData('all');
-    Top_Advertisement_window();
-  }, []);
-
 
   useEffect(() => {
     if (slider.length === 0) { return; }
@@ -476,10 +482,18 @@ const Pandit = ({ navigation, route }) => {
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
         <View style={styles.headerContainer}>
-          <TouchableOpacity onPress={() => navigation.reset({
-            index: 0,
-            routes: [{ name: 'MainApp' }],
-          })}>
+          <TouchableOpacity
+            onPress={() => {
+              if (navigation.canGoBack()) {
+                navigation.goBack();
+              } else {
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'MainApp' }],
+                });
+              }
+            }}
+          >
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>Pandit</Text>

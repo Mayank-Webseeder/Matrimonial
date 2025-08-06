@@ -23,7 +23,6 @@ import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import _ from 'lodash';
 import { showMessage } from 'react-native-flash-message';
 import { useCallback } from 'react';
-import { CommonActions } from '@react-navigation/native';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -51,15 +50,70 @@ const Dharmshala = ({ route }) => {
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
   const [slider, setSlider] = useState([]);
+  const [lastFilterType, setLastFilterType] = useState('all');
+
+  useEffect(() => {
+    fetchDharamsalaData('all');
+    Advertisement_window();
+  }, []);
+
+
+
+ useFocusEffect(
+  React.useCallback(() => {
+    Advertisement_window();
+    fetchDharamsalaData(lastFilterType); 
+  }, [lastFilterType])
+);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        if (navigation.canGoBack()) {
+          navigation.goBack();
+        } else {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'MainApp' }],
+          });
+        }
+        return true;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => {
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+      };
+    }, [navigation])
+  );
+
+  useEffect(() => {
+    if (slider.length === 0) { return; }
+
+    const currentSlide = slider[currentIndex];
+    const durationInSeconds = Number(currentSlide?.duration) || 4;
+    const bufferMs = 800;
+    const durationInMilliseconds = durationInSeconds * 1000 + bufferMs;
+    const timeout = setTimeout(() => {
+      const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
+      setCurrentIndex(nextIndex);
+      sliderRef.current?.goToSlide(nextIndex);
+    }, durationInMilliseconds);
+
+    return () => clearTimeout(timeout);
+  }, [currentIndex, slider]);
+
 
   const fetchDharamsalaData = async (filterType = 'search') => {
     try {
+      setLastFilterType(filterType)
       setLoading(true);
       setDharamsalaData([]);
       setError(null);
 
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -72,8 +126,8 @@ const Dharmshala = ({ route }) => {
         const cleanedLocality = locality.trim();
         const cleanedSubCaste = subcaste.trim();
 
-        if (cleanedLocality) {queryParams.push(`locality=${encodeURIComponent(cleanedLocality.toLowerCase())}`);}
-        if (cleanedSubCaste) {queryParams.push(`subCaste=${encodeURIComponent(cleanedSubCaste.toLowerCase())}`);}
+        if (cleanedLocality) { queryParams.push(`locality=${encodeURIComponent(cleanedLocality.toLowerCase())}`); }
+        if (cleanedSubCaste) { queryParams.push(`subCaste=${encodeURIComponent(cleanedSubCaste.toLowerCase())}`); }
       } else if (filterType === 'modal') {
         const cleanedModalLocality = modalLocality.trim();
         const cleanedModalSubCaste = subcaste.trim();
@@ -174,7 +228,7 @@ const Dharmshala = ({ route }) => {
   const Advertisement_window = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -224,16 +278,6 @@ const Dharmshala = ({ route }) => {
     }
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      // setLocality('');
-      // setSubcaste('');
-      // setDharamsalaData([]);
-      // fetchDharamsalaData("all");
-      GetMyDharamsalaData();
-      Advertisement_window();
-    }, [])
-  );
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -249,26 +293,6 @@ const Dharmshala = ({ route }) => {
   }, []);
 
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const onBackPress = () => {
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: 'MainApp' }],
-          })
-        );
-        return true;
-      };
-
-      BackHandler.addEventListener('hardwareBackPress', onBackPress);
-
-      return () =>
-        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-    }, [])
-  );
-
-
   const openImageViewer = (imageUri) => {
     if (imageUri) {
       setSelectedImage([{ url: imageUri }]); // Important: `url` key is used by ImageViewer
@@ -281,28 +305,6 @@ const Dharmshala = ({ route }) => {
       setSubcaste(value);
     }
   };
-
-  useEffect(() => {
-    fetchDharamsalaData('all');
-    Advertisement_window();
-  }, []);
-
-
-  useEffect(() => {
-    if (slider.length === 0) {return;}
-
-    const currentSlide = slider[currentIndex];
-    const durationInSeconds = Number(currentSlide?.duration) || 4;
-    const bufferMs = 800;
-    const durationInMilliseconds = durationInSeconds * 1000 + bufferMs;
-    const timeout = setTimeout(() => {
-      const nextIndex = currentIndex < slider.length - 1 ? currentIndex + 1 : 0;
-      setCurrentIndex(nextIndex);
-      sliderRef.current?.goToSlide(nextIndex);
-    }, durationInMilliseconds);
-
-    return () => clearTimeout(timeout);
-  }, [currentIndex, slider]);
 
   const renderSkeleton = () => (
     <SkeletonPlaceholder>
@@ -419,7 +421,7 @@ const Dharmshala = ({ route }) => {
     console.log('profileId', profileId);
 
     try {
-      if (!profileId) {throw new Error('Missing profile ID');}
+      if (!profileId) { throw new Error('Missing profile ID'); }
 
       const directLink = `${DeepLink}/${profileType}/${profileId}`;
       console.log('directLink', directLink);
@@ -533,12 +535,14 @@ const Dharmshala = ({ route }) => {
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity
             onPress={() => {
-              navigation.dispatch(
-                CommonActions.reset({
+              if (navigation.canGoBack()) {
+                navigation.goBack();
+              } else {
+                navigation.reset({
                   index: 0,
                   routes: [{ name: 'MainApp' }],
-                })
-              );
+                });
+              }
             }}
           >
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />

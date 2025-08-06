@@ -173,13 +173,13 @@ const SavedProfile = ({ navigation }) => {
               }
             }
             else if (profileType === 'Pandit') {
-              navigation.navigate('PanditDetailPage', { pandit_id: saveProfile._id, isSaved: true });
+              navigation.navigate('PanditDetailPage', { pandit_id: saveProfile._id, isSaved: true, fromScreen: 'SavedProfile', });
             } else if (profileType === 'Jyotish') {
-              navigation.navigate('JyotishDetailsPage', { jyotish_id: saveProfile._id, isSaved: true });
+              navigation.navigate('JyotishDetailsPage', { jyotish_id: saveProfile._id, isSaved: true, fromScreen: 'SavedProfile', });
             } else if (profileType === 'Kathavachak') {
-              navigation.navigate('KathavachakDetailsPage', { kathavachak_id: saveProfile._id, isSaved: true });
+              navigation.navigate('KathavachakDetailsPage', { kathavachak_id: saveProfile._id, isSaved: true, fromScreen: 'SavedProfile', });
             } else if (profileType === 'Dharmshala') {
-              navigation.navigate('DharamsalaDetail', { DharamsalaData: saveProfile, isSaved: true, _id: saveProfile._id });
+              navigation.navigate('DharamsalaDetail', { DharamsalaData: saveProfile, isSaved: true, _id: saveProfile._id, fromScreen: 'SavedProfile', });
             }
           }}>
           {profileType === 'Biodata' && (
@@ -398,7 +398,14 @@ const SavedProfile = ({ navigation }) => {
             keyExtractor={(item) => (item.id ? item.id.toString() : item._id.toString())}
             numColumns={2}
             columnWrapperStyle={styles.row}
-            contentContainerStyle={[styles.ProfileContainer, { paddingBottom: insets.bottom + SH(10), flexGrow: 1 }]}
+            contentContainerStyle={[
+              styles.ProfileContainer,
+              {
+                paddingBottom: insets.bottom + SH(200),
+                paddingTop: SH(10),
+                flexGrow: 1,
+              },
+            ]}
             showsVerticalScrollIndicator={false}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

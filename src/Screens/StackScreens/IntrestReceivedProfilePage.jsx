@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator, Dimensions, Modal, Alert, Share } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Linking, ActivityIndicator, Dimensions, Modal, Alert, Share, BackHandler } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -152,6 +152,47 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
 
     return () => clearTimeout(timeout);
   }, [currentIndex, slider]);
+
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        if (navigation.canGoBack()) {
+          navigation.goBack();
+        } else {
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [
+                {
+                  name: 'MainApp',
+                  state: {
+                    index: 0,
+                    routes: [
+                      {
+                        name: 'Tabs',
+                        state: {
+                          routes: [{ name: 'Interested Profile' }],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            })
+          );
+        }
+        return true;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => {
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+      };
+    }, [navigation])
+  );
+
 
   const Advertisement_window = async () => {
     try {
@@ -521,25 +562,37 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity
-            onPress={() =>
-              navigation.dispatch(
-                CommonActions.reset({
-                  index: 0,
-                  routes: [
-                    {
-                      name: 'MainApp',
-                      state: {
-                        index: 0,
-                        routes: [{ name: 'Interested Profile' }],
+            onPress={() => {
+              if (navigation.canGoBack()) {
+                navigation.goBack();
+              } else {
+                navigation.dispatch(
+                  CommonActions.reset({
+                    index: 0,
+                    routes: [
+                      {
+                        name: 'MainApp',
+                        state: {
+                          index: 0,
+                          routes: [
+                            {
+                              name: 'Tabs',
+                              state: {
+                                routes: [{ name: 'Interested Profile' }],
+                              },
+                            },
+                          ],
+                        },
                       },
-                    },
-                  ],
-                })
-              )
-            }
+                    ],
+                  })
+                );
+              }
+            }}
           >
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
+
 
           <Text style={Globalstyles.headerText}>{personalDetails?.fullname || 'Raj Sharma'}</Text>
         </View>
@@ -714,7 +767,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
                     </View>
                   )} */}
 
-                  {personalDetails?.manglikStatus && !hideOptionalDetails &&  (
+                  {personalDetails?.manglikStatus && !hideOptionalDetails && (
                     <View style={styles.infoRow}>
                       <Text style={styles.infoLabel}>Manglik Status :</Text>
                       <Text style={styles.infoValue}>{personalDetails?.manglikStatus}</Text>

@@ -22,10 +22,9 @@ const UpdateProfile = ({ navigation }) => {
   const profileData = ProfileData?.profiledata || {};
   const [username, setUsername] = useState(profileData.username || '');
   const [mobileNo, setMobileNo] = useState(profileData.mobileNo || '');
- const [dob, setDob] = useState(profileData.dob ? new Date(profileData.dob) : null);
-  const [gender, setGender] = useState(profileData.gender || '');
+  const [dob, setDob] = useState(profileData.dob ? new Date(profileData.dob) : null);
   const [showDatePicker, setShowDatePicker] = useState(false);
-
+  const [gender, setGender] = useState(profileData.gender || '');
   const [city, setCity] = useState(profileData.city || '');
   const [filteredCities, setFilteredCities] = useState([]);
 
@@ -51,7 +50,7 @@ const UpdateProfile = ({ navigation }) => {
   const update_profile = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('Authorization token is missing.');}
+      if (!token) { throw new Error('Authorization token is missing.'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -115,12 +114,13 @@ const UpdateProfile = ({ navigation }) => {
     }
   };
 
-const handleDateChange = (event, selectedDate) => {
-  setShowDatePicker(false);
-  if (selectedDate) {
-    setDob(selectedDate);
-  }
-};
+  const handleDateChange = (event, selectedDate) => {
+    setShowDatePicker(false);
+    if (event.type === 'set' && selectedDate) {
+      setDob(selectedDate);
+    }
+  };
+
 
   return (
     <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
@@ -133,7 +133,7 @@ const handleDateChange = (event, selectedDate) => {
           <Text style={Globalstyles.headerText}>Update Profile</Text>
         </View>
       </View>
-      <ScrollView contentContainerStyle={[Globalstyles.form,{paddingBottom: insets.bottom + SH(10), flexGrow: 1}]} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+      <ScrollView contentContainerStyle={[Globalstyles.form, { paddingBottom: insets.bottom + SH(10), flexGrow: 1 }]} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
         <View>
           <Text style={Globalstyles.title}>Username</Text>
           <TextInput
@@ -155,21 +155,21 @@ const handleDateChange = (event, selectedDate) => {
         /> */}
 
           <Text style={Globalstyles.title}>Date of Birth</Text>
-         <TouchableOpacity onPress={() => setShowDatePicker(true)} style={Globalstyles.input}>
-  <Text style={styles.dateText}>
-    {dob ? moment(dob).format('DD MMMM YYYY') : 'Select Date of Birth'}
-  </Text>
-</TouchableOpacity>
-       {showDatePicker && (
-  <DateTimePicker
-    value={dob ? new Date(dob) : new Date(2000, 0, 1)} // fallback to Jan 1, 2000
-    mode="date"
-    display="default"
-    maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))}
-    onChange={handleDateChange}
-    themeVariant="light"
-  />
-)}
+          <TouchableOpacity onPress={() => setShowDatePicker(true)} style={Globalstyles.input}>
+            <Text style={styles.dateText}>
+              {dob ? moment(dob).format('DD MMMM YYYY') : 'Select Date of Birth'}
+            </Text>
+          </TouchableOpacity>
+          {showDatePicker && (
+            <DateTimePicker
+              value={dob || new Date()}
+              mode="date"
+              display="default"
+              maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))}
+              onChange={handleDateChange}
+              themeVariant="light"
+            />
+          )}
           <Text style={Globalstyles.title}>City</Text>
           <TextInput
             style={Globalstyles.input}
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
   },
 
   dateText: {
-    fontSize:SF(14),
+    fontSize: SF(14),
     color: Colors.dark_gray,
   },
   genderContainer: {

@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     IconFlex: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginHorizontal:SW(5),
+        marginHorizontal: SW(5),
     },
     contentContainer: {
         marginHorizontal: SW(10),
@@ -297,42 +297,42 @@ const styles = StyleSheet.create({
         paddingBottom: SH(20),
     },
     card: {
-    width: '95%',
-    backgroundColor:Colors.light,
-    borderRadius: 12,
-    margin: SW(10),
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 4,
-  },
-  planImage: {
-    width: '100%',
-    height: SH(200),
-  },
-  cardContent: {
-    paddingHorizontal: SW(12),
-    paddingVertical:SH(5),
-  },
-  title: {
-    fontSize: SF(16),
-    fontFamily: 'Inter-Bold',
-    color: Colors.theme_color,
-    marginBottom: SH(4),
-  },
-  Text: {
-    fontSize: SF(13),
-    color: '#000',
-    fontFamily: 'Poppins-Regular',
-  },
-  description: {
-    fontSize: SF(12),
-    marginTop: SH(6),
-    color: '#666',
-    fontFamily: 'Poppins-Regular',
-  },
+        width: '95%',
+        backgroundColor: Colors.light,
+        borderRadius: 12,
+        margin: SW(10),
+        overflow: 'hidden',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 4,
+    },
+    planImage: {
+        width: '100%',
+        height: SH(200),
+    },
+    cardContent: {
+        paddingHorizontal: SW(12),
+        paddingVertical: SH(5),
+    },
+    title: {
+        fontSize: SF(16),
+        fontFamily: 'Inter-Bold',
+        color: Colors.theme_color,
+        marginBottom: SH(4),
+    },
+    Text: {
+        fontSize: SF(13),
+        color: '#000',
+        fontFamily: 'Poppins-Regular',
+    },
+    description: {
+        fontSize: SF(12),
+        marginTop: SH(6),
+        color: '#666',
+        fontFamily: 'Poppins-Regular',
+    },
     closeButton: {
         // backgroundColor:Colors.theme_color,
         borderRadius: 5,
@@ -398,6 +398,30 @@ const styles = StyleSheet.create({
         borderColor: 'red',
         borderWidth: 1,
     },
+    imageWrapper: {
+        position: 'relative',
+        width: SW(100),
+        height: SH(100),
+    },
+    deleteButton: {
+        position: 'absolute',
+        top:SH(5),
+        left:SW(290),
+        backgroundColor: 'red',
+        borderRadius: 12,
+        width: SW(20),
+        height: SH(20),
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 10,
+    },
+
+    imagePlaceholder: {
+        paddingHorizontal: SW(10),
+        color: Colors.gray,
+        fontSize: SF(14),
+    },
+
 
 });
 export default styles;

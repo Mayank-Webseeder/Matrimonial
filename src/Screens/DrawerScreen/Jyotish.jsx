@@ -45,13 +45,25 @@ const Jyotish = ({ navigation, route }) => {
   const profile_data = ProfileData?.profiledata || {};
   const [refreshing, setRefreshing] = useState(false);
   const [slider, setSlider] = useState([]);
+  const [lastFilterType, setLastFilterType] = useState('all');
+
+  useEffect(() => {
+    JyotishDataAPI('all');
+    Advertisement_window();
+  }, []);
+
+  useEffect(() => {
+    if (JyotishData?.isSaved !== undefined) {
+      setIsSaved(JyotishData.isSaved);
+    }
+  }, [JyotishData?.isSaved]);
 
   useFocusEffect(
     React.useCallback(() => {
       Advertisement_window();
-    }, [])
+      JyotishDataAPI(lastFilterType);
+    }, [lastFilterType])
   );
-
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -91,19 +103,17 @@ const Jyotish = ({ navigation, route }) => {
     JyotishDataAPI();
   };
 
-  useEffect(() => {
-    JyotishDataAPI('all');
-    Advertisement_window();
-  }, []);
-
-
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'MainApp' }],
-        });
+        if (navigation.canGoBack()) {
+          navigation.goBack();
+        } else {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'MainApp' }],
+          });
+        }
         return true;
       };
 
@@ -189,10 +199,17 @@ const Jyotish = ({ navigation, route }) => {
 
 
   const JyotishDataAPI = async (filterType = 'search') => {
+    setLastFilterType(filterType);
     try {
+      setJyotishData([]);
       setLoading(true);
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) { throw new Error('No token found'); }
+
+      if (!token) {
+        console.warn('No token found');
+        setLoading(false);
+        return;
+      }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -211,7 +228,6 @@ const Jyotish = ({ navigation, route }) => {
         if (experience?.trim()) { queryParams.push(`experience=${encodeURIComponent(experience.trim())}`); }
       }
 
-      // ⚡️ Construct URL only with valid params
       const url = queryParams.length > 0
         ? `${GET_ALL_JYOTISH}?${queryParams.join('&')}`
         : GET_ALL_JYOTISH;
@@ -219,11 +235,17 @@ const Jyotish = ({ navigation, route }) => {
       console.log('Fetching Data from:', url);
 
       const response = await axios.get(url, { headers });
-      console.log('response.data?.data', response.data?.data);
-      setJyotishData(response.data?.data || []);
+
+      setJyotishData(response.data?.data?.map(profile => ({
+        ...profile,
+        isSaved: profile.isSaved || false
+      })) || []);
+
+      console.log('response.data?.data ', JSON.stringify(response.data?.data));
+
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error('Error fetching jyotish data:', errorMsg);
+      console.error('Error fetching pandit data:', errorMsg);
 
       const sessionExpiredMessages = [
         'User does not Exist....!Please login again',
@@ -238,6 +260,7 @@ const Jyotish = ({ navigation, route }) => {
           routes: [{ name: 'AuthStack' }],
         });
       }
+      setJyotishData([]);
     } finally {
       setLoading(false);
     }
@@ -254,11 +277,13 @@ const Jyotish = ({ navigation, route }) => {
       });
       return;
     }
-    setJyotishData((prevProfiles) =>
-      prevProfiles.map((profile) =>
+
+    const toggleIsSaved = (prev) =>
+      prev.map((profile) =>
         profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
-      )
-    );
+      );
+
+    setJyotishData(toggleIsSaved);
 
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -296,11 +321,12 @@ const Jyotish = ({ navigation, route }) => {
         duration: 5000,
       });
 
-      setJyotishData((prevProfiles) =>
-        prevProfiles.map((profile) =>
+      const revertToggle = (prev) =>
+        prev.map((profile) =>
           profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
-        )
-      );
+        );
+
+      setJyotishData(revertToggle)
 
       const sessionExpiredMessages = [
         'User does not Exist....!Please login again',
@@ -364,93 +390,26 @@ const Jyotish = ({ navigation, route }) => {
     return (
       <View style={styles.card}>
         <View style={styles.cardData}>
-          <View style={styles.cardData}>
-            {item.profilePhoto ? (
-              <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
-                <Image
-                  source={{ uri: item.profilePhoto }}
-                  style={styles.image}
-                />
-              </TouchableOpacity>
-            ) : (
-              <Image
-                source={require('../../Images/NoImage.png')}
-                style={styles.image}
-              />
-            )}
+          {item.profilePhoto ? (
+            <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
+              <Image source={{ uri: item.profilePhoto }} style={styles.image} />
+            </TouchableOpacity>
+          ) : (
+            <Image source={require('../../Images/NoImage.png')} style={styles.image} />
+          )}
 
-            <Modal visible={isImageVisible} transparent={true} onRequestClose={() => setImageVisible(false)}>
-              <ImageViewer
-                imageUrls={selectedImage}
-                enableSwipeDown={true}
-                onSwipeDown={() => setImageVisible(false)}
-                onCancel={() => setImageVisible(false)}
-                enablePreload={true}
-                saveToLocalByLongPress={false}
-                renderIndicator={() => null}
-              />
-            </Modal>
-
-            <View>
-              <View>
-                <Pressable style={styles.leftContainer}
-                  onPress={() => {
-                    if (isExpired) {
-                      showMessage({
-                        message: 'Subscription Required',
-                        description: "This jyotish's profile is currently unavailable. Please subscribe to access it.",
-                        type: 'info',
-                        icon: 'info',
-                        duration: 3000,
-                      });
-                      navigation.navigate('BuySubscription', { serviceType: 'Jyotish' });
-                    } else {
-                      navigation.navigate('JyotishDetailsPage', {
-                        jyotish_id: item._id || id,
-                        isSaved: isSaved,
-                        fromScreen: 'Jyotish',
-                      });
-                    }
-                  }}>
-                  <Text style={styles.name}>{item?.fullName}</Text>
-                  <Text style={styles.text}>ID: {item?.jyotishId}</Text>
-                  <View style={styles.rating}>
-                    <Rating type="star" ratingCount={5} imageSize={15} startingValue={rating} readonly />
-                  </View>
-                  <View>
-                    <Text style={[styles.text, { fontFamily: 'Poppins-Bold' }]}>
-                      {item?.city}
-                      <Text style={[styles.text, { fontFamily: 'Poppins-Regular' }]}>
-                        {` , ${item?.state}`}
-                      </Text>
-                    </Text>
-                  </View>
-                  <Text style={styles.text} numberOfLines={1}>{item?.residentialAddress}</Text>
-                </Pressable>
-              </View>
-              <View style={styles.sharecontainer}>
-                <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
-                  <MaterialIcons name="call" size={17} color={Colors.light} />
-                </TouchableOpacity>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginRight: SW(10) }}>
-                  <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id || id)}>
-                    <FontAwesome
-                      name={item.isSaved ? 'bookmark' : 'bookmark-o'}
-                      size={19}
-                      color={Colors.dark}
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.iconContainer}
-                    onPress={() => shareProfile(item._id || id)}
-                  >
-                    <Feather name="send" size={18} color={Colors.dark} />
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-          </View>
-          <View>
+          <Modal visible={isImageVisible} transparent={true} onRequestClose={() => setImageVisible(false)}>
+            <ImageViewer
+              imageUrls={selectedImage}
+              enableSwipeDown={true}
+              onSwipeDown={() => setImageVisible(false)}
+              onCancel={() => setImageVisible(false)}
+              enablePreload={true}
+              saveToLocalByLongPress={false}
+              renderIndicator={() => null}
+            />
+          </Modal>
+          <View style={{ flex: 1, marginLeft: SW(10) }}>
             <Pressable style={styles.leftContainer}
               onPress={() => {
                 if (isExpired) {
@@ -464,10 +423,14 @@ const Jyotish = ({ navigation, route }) => {
                   navigation.navigate('BuySubscription', { serviceType: 'Jyotish' });
                 } else {
                   navigation.navigate('JyotishDetailsPage', {
-                    jyotish_id: item._id || id, isSaved: isSaved,
+                    jyotish_id: item._id || id,
+                    // isSaved,
+                    fromScreen: 'Jyotish',
                   });
                 }
-              }}>
+              }}
+
+            >
               {item?.fullName && (
                 <Text style={styles.name}>{item.fullName}</Text>
               )}
@@ -478,7 +441,13 @@ const Jyotish = ({ navigation, route }) => {
 
               {typeof rating === 'number' && (
                 <View style={styles.rating}>
-                  <Rating type="star" ratingCount={5} imageSize={15} startingValue={rating} readonly />
+                  <Rating
+                    type="star"
+                    ratingCount={5}
+                    imageSize={15}
+                    startingValue={rating}
+                    readonly
+                  />
                 </View>
               )}
 
@@ -510,10 +479,7 @@ const Jyotish = ({ navigation, route }) => {
                     color={Colors.dark}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.iconContainer}
-                  onPress={() => shareProfile(item._id || id)}
-                >
+                <TouchableOpacity style={styles.iconContainer} onPress={() => shareProfile(item._id || id)}>
                   <Feather name="send" size={18} color={Colors.dark} />
                 </TouchableOpacity>
               </View>
@@ -530,10 +496,18 @@ const Jyotish = ({ navigation, route }) => {
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
         <View style={styles.headerContainer}>
-          <TouchableOpacity onPress={() => navigation.reset({
-            index: 0,
-            routes: [{ name: 'MainApp' }],
-          })}>
+          <TouchableOpacity
+            onPress={() => {
+              if (navigation.canGoBack()) {
+                navigation.goBack();
+              } else {
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'MainApp' }],
+                });
+              }
+            }}
+          >
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>Jyotish</Text>

@@ -296,7 +296,7 @@ const BuySubscription = ({ navigation, route }) => {
                     onPress={() => handleBuyNow(plan)}
                   >
                     <Text style={styles.buyButtonText}>
-                      {buyingPlanId === plan._id ? 'Buying...' : 'Active Now'}
+                      {buyingPlanId === plan._id ? 'Buying...' : 'Buy Subscription'}
                     </Text>
                   </TouchableOpacity>
                 </View>

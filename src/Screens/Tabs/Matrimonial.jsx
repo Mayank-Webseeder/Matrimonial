@@ -16,13 +16,15 @@ import { useSelector } from 'react-redux';
 import { SW, SF, SH } from '../../utils/Dimensions';
 import { showMessage } from 'react-native-flash-message';
 import { useFocusEffect, CommonActions } from '@react-navigation/native';
+
+
 const Matrimonial = ({ navigation }) => {
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slider, setSlider] = useState([]);
   const MyprofileData = useSelector((state) => state.getBiodata);
   const gender = MyprofileData?.Biodata?.gender || null;
-
+  const [Save, setIsSaved] = useState(false);
   const [activeButton, setActiveButton] = useState(() => {
     if (gender?.toLowerCase() === 'male') { return 1; }
     if (gender?.toLowerCase() === 'female') { return 2; }
@@ -41,10 +43,18 @@ const Matrimonial = ({ navigation }) => {
   const notificationCount = notifications ? notifications.length : 0;
 
   useEffect(() => {
-    console.log('MyprofileData', MyprofileData);
-    console.log('gender', gender);
-    console.log('profile_data', profile_data);
-  }, []);
+    if (boysProfiles?.isSaved !== undefined) {
+      setIsSaved(boysProfiles.isSaved);
+    } else if (girlsProfiles?.isSaved !== undefined) {
+      setIsSaved(girlsProfiles.isSaved);
+    } else if (profiles?.isSaved !== undefined) {
+      setIsSaved(profiles.isSaved);
+    }
+  }, [
+    boysProfiles?.isSaved,
+    girlsProfiles?.isSaved,
+    profiles?.isSaved,
+  ]);
 
   useEffect(() => {
     if (searchQuery.length > 0) {
@@ -187,13 +197,13 @@ const Matrimonial = ({ navigation }) => {
       const queryString = new URLSearchParams({ searchTerm: query }).toString();
       const finalURL = `${GET_ALL_BIODATA_PROFILES}?${queryString}`;
 
-      console.log('🛠 Final API URL:', finalURL);
+      console.log('Final API URL:', finalURL);
       const finalResponse = await axios.get(finalURL, { headers });
-      console.log('📥 Filtered Data:', JSON.stringify(finalResponse.data));
+      console.log('Filtered Data:', JSON.stringify(finalResponse.data));
 
       setProfiles(finalResponse.data.feedUsers || []);
     } catch (error) {
-      console.error('❌ Error fetching profiles:', error.response?.data || error);
+      console.error('Error fetching profiles:', error.response?.data || error);
     }
   };
 
@@ -324,88 +334,77 @@ const Matrimonial = ({ navigation }) => {
     }
   };
 
-  const savedProfiles = async (_id) => {
-    if (!_id) {
-      showMessage({
-        type: 'danger',
-        message: 'Error',
-        description: 'User ID not found!',
-        icon: 'info',
-      });
-      return;
+const savedProfiles = async (_id) => {
+  if (!_id) {
+    showMessage({
+      type: 'danger',
+      message: 'Error',
+      description: 'User ID not found!',
+      icon: 'info',
+    });
+    return;
+  }
+
+  const toggleIsSaved = (prev) =>
+    prev.map((profile) =>
+      profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
+    );
+
+  try {
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) throw new Error('No token found');
+
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    
+    setgirlsProfiles(toggleIsSaved);
+    setboysProfiles(toggleIsSaved);
+    setProfiles(toggleIsSaved); 
+
+    // API call
+    const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
+
+    console.log('✅ Response Data:', JSON.stringify(response?.data));
+
+    if (response.status !== 200 || response.data.status !== true) {
+      throw new Error(response.data.message || 'Something went wrong!');
     }
 
-    try {
-      const token = await AsyncStorage.getItem('userToken');
-      if (!token) { throw new Error('No token found'); }
+    showMessage({
+      type: 'success',
+      message: 'Success',
+      description: response.data.message || 'Profile saved successfully!',
+      visibilityTime: 3000,
+      icon: 'success',
+    });
 
-      const headers = {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      };
-      setgirlsProfiles((prev) =>
-        prev.map((profile) =>
-          profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
-        )
+  } catch (error) {
+    console.error('🚨 API Error:', error?.response?.data || error.message);
+
+    const revertToggle = (prev) =>
+      prev.map((profile) =>
+        profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
       );
 
-      setboysProfiles((prev) =>
-        prev.map((profile) =>
-          profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
-        )
-      );
+    // Revert UI
+    setgirlsProfiles(revertToggle);
+    setboysProfiles(revertToggle);
+    setProfiles(revertToggle);
 
-      // **Make API Request**
-      const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
+    const errorMessage =
+      error.response?.data?.message ||
+      (error.response?.status === 400 ? 'Bad request.' : 'Failed to save profile!');
 
-      console.log('✅ Response Data:', JSON.stringify(response?.data));
-
-      if (response.status !== 200 || response.data.status !== true) {
-        throw new Error(response.data.message || 'Something went wrong!');
-      }
-
-      showMessage({
-        type: 'success',
-        message: 'Success',
-        description: response.data.message || 'Profile saved successfully!',
-        visibilityTime: 3000,
-        icon: 'success',
-      });
-    } catch (error) {
-      console.error('🚨 API Error:', error?.response?.data || error.message);
-
-      let errorMessage = 'Failed to save profile!';
-      if (error.response?.status === 400) {
-        errorMessage = error.response.data?.message || 'Bad request.';
-      }
-
-      // **Revert UI Update if API fails**
-      setgirlsProfiles((prev) =>
-        prev.map((profile) =>
-          profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
-        )
-      );
-
-      setboysProfiles((prev) =>
-        prev.map((profile) =>
-          profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
-        )
-      );
-
-      showMessage({
-        type: 'danger',
-        message: 'Error',
-        description: errorMessage,
-        icon: 'danger',
-      });
-    }
-  };
-
-  const handleSearch = () => {
-    if (searchQuery.trim().length > 0) {
-      fetchProfiles(searchQuery.trim());
-    }
-  };
+    showMessage({
+      type: 'danger',
+      message: 'Error',
+      description: errorMessage,
+      icon: 'danger',
+    });
+  }
+};
 
   const renderProfileCard = ({ item }) => {
     const formattedHeight = item?.personalDetails?.heightFeet

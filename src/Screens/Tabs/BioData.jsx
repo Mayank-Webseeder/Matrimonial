@@ -273,12 +273,12 @@ const BioData = ({ navigation }) => {
     if (item?.connectionStatus === 'received') {
       navigation.navigate('IntrestReceivedProfilePage', {
         userId: item?.userId,
-        isSaved: item?.isSaved,
+        // isSaved: item?.isSaved,
       });
     } else {
       navigation.navigate('MatrimonyPeopleProfile', {
         userId: item?.userId,
-        isSaved: item?.isSaved,
+        // isSaved: item?.isSaved,
       });
     }
   };

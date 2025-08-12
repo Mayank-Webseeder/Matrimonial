@@ -45,6 +45,27 @@ const Kathavachak = ({ navigation, route }) => {
   const ProfileData = useSelector((state) => state.profile);
   const profile_data = ProfileData?.profiledata || {};
   const [slider, setSlider] = useState([]);
+  const [lastFilterType, setLastFilterType] = useState('all');
+
+
+  useEffect(() => {
+    KathavachakDataAPI('all');
+    Advertisement_window();
+  }, []);
+
+  useEffect(() => {
+    if (kathavachakData?.isSaved !== undefined) {
+      setIsSaved(kathavachakData.isSaved);
+    }
+  }, [kathavachakData?.isSaved]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      Advertisement_window();
+      KathavachakDataAPI(lastFilterType)
+    }, [lastFilterType])
+  );
+
 
   const openImageViewer = (imageUri) => {
     if (imageUri) {
@@ -70,18 +91,6 @@ const Kathavachak = ({ navigation, route }) => {
     setServices('');
     KathavachakDataAPI();
   };
-
-  useEffect(() => {
-    KathavachakDataAPI('all');
-    Advertisement_window();
-  }, []);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      Advertisement_window();
-    }, [])
-  );
-
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -116,15 +125,17 @@ const Kathavachak = ({ navigation, route }) => {
     return () => clearTimeout(timeout);
   }, [currentIndex, slider]);
 
-
-
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'MainApp' }],
-        });
+        if (navigation.canGoBack()) {
+          navigation.goBack();
+        } else {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'MainApp' }],
+          });
+        }
         return true;
       };
 
@@ -190,10 +201,17 @@ const Kathavachak = ({ navigation, route }) => {
   };
 
   const KathavachakDataAPI = async (filterType = 'search') => {
+    setLastFilterType(filterType);
     try {
+      setKathavachakData([]);
       setLoading(true);
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) { throw new Error('No token found'); }
+
+      if (!token) {
+        console.warn('No token found');
+        setLoading(false);
+        return;
+      }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -211,7 +229,7 @@ const Kathavachak = ({ navigation, route }) => {
         if (rating?.trim()) { queryParams.push(`rating=${encodeURIComponent(rating.trim())}`); }
         if (experience?.trim()) { queryParams.push(`experience=${encodeURIComponent(experience.trim())}`); }
       }
-      // ⚡️ Construct URL only with valid params
+
       const url = queryParams.length > 0
         ? `${GET_ALL_KATHAVACHAK}?${queryParams.join('&')}`
         : GET_ALL_KATHAVACHAK;
@@ -219,11 +237,16 @@ const Kathavachak = ({ navigation, route }) => {
       console.log('Fetching Data from:', url);
 
       const response = await axios.get(url, { headers });
-      console.log('response.data?.data', response.data?.data);
-      setKathavachakData(response.data?.data || []);
+      setKathavachakData(response.data?.data?.map(profile => ({
+        ...profile,
+        isSaved: profile.isSaved || false
+      })) || []);
+
+      console.log('response.data?.data ', JSON.stringify(response.data?.data));
+
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error('Error fetching kathavachak:', errorMsg);
+      console.error('Error fetching pandit data:', errorMsg);
 
       const sessionExpiredMessages = [
         'User does not Exist....!Please login again',
@@ -238,6 +261,7 @@ const Kathavachak = ({ navigation, route }) => {
           routes: [{ name: 'AuthStack' }],
         });
       }
+      setKathavachakData([]);
     } finally {
       setLoading(false);
     }
@@ -253,11 +277,12 @@ const Kathavachak = ({ navigation, route }) => {
       });
       return;
     }
-    setKathavachakData((prevProfiles) =>
-      prevProfiles.map((profile) =>
+    const toggleIsSaved = (prev) =>
+      prev.map((profile) =>
         profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
-      )
-    );
+      );
+
+    setKathavachakData(toggleIsSaved);
 
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -293,11 +318,14 @@ const Kathavachak = ({ navigation, route }) => {
         icon: 'danger',
         duration: 5000,
       });
-      setKathavachakData((prevProfiles) =>
-        prevProfiles.map((profile) =>
+
+      const revertToggle = (prev) =>
+        prev.map((profile) =>
           profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
-        )
-      );
+        );
+
+      setKathavachakData(revertToggle)
+
       const sessionExpiredMessages = [
         'User does not Exist....!Please login again',
         'Invalid token. Please login again',
@@ -355,21 +383,16 @@ const Kathavachak = ({ navigation, route }) => {
   const renderItem = ({ item }) => {
     const rating = item.averageRating || 0;
     const isSaved = item.isSaved || null;
+
     return (
       <View style={styles.card}>
         <View style={styles.cardData}>
           {item.profilePhoto ? (
             <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
-              <Image
-                source={{ uri: item.profilePhoto }}
-                style={styles.image}
-              />
+              <Image source={{ uri: item.profilePhoto }} style={styles.image} />
             </TouchableOpacity>
           ) : (
-            <Image
-              source={require('../../Images/NoImage.png')}
-              style={styles.image}
-            />
+            <Image source={require('../../Images/NoImage.png')} style={styles.image} />
           )}
 
           <Modal visible={isImageVisible} transparent={true} onRequestClose={() => setImageVisible(false)}>
@@ -383,7 +406,7 @@ const Kathavachak = ({ navigation, route }) => {
               renderIndicator={() => null}
             />
           </Modal>
-          <View>
+          <View style={{ flex: 1, marginLeft: SW(10) }}>
             <Pressable style={styles.leftContainer}
               onPress={() => {
                 if (isExpired) {
@@ -396,8 +419,8 @@ const Kathavachak = ({ navigation, route }) => {
                   });
                   navigation.navigate('BuySubscription', { serviceType: 'Kathavachak' });
                 } else {
-                  navigation.navigate('KathavachakDetailsPage', {
-                    kathavachak_id: item._id || id, isSaved: isSaved, fromScreen: 'Kathavachak',
+                   navigation.navigate('KathavachakDetailsPage', {
+                    kathavachak_id: item._id || id, fromScreen: 'Kathavachak',
                   });
                 }
               }}
@@ -467,10 +490,18 @@ const Kathavachak = ({ navigation, route }) => {
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
         <View style={styles.headerContainer}>
-          <TouchableOpacity onPress={() => navigation.reset({
-            index: 0,
-            routes: [{ name: 'MainApp' }],
-          })}>
+          <TouchableOpacity
+            onPress={() => {
+              if (navigation.canGoBack()) {
+                navigation.goBack();
+              } else {
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'MainApp' }],
+                });
+              }
+            }}
+          >
             <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>Kathavachak</Text>
@@ -576,8 +607,8 @@ const Kathavachak = ({ navigation, route }) => {
               ListEmptyComponent={
                 <View style={styles.emptyContainer}>
                   <FontAwesome name="user-circle" size={60} color="#ccc" style={{ marginBottom: 15 }} />
-                  <Text style={styles.emptyText}>No Kathavachak Data Available</Text>
-                  <Text style={styles.infoText}>Kathavachak profiles will appear here once available.</Text>
+                  <Text style={styles.emptyText}>No kathavachak Data Available</Text>
+                  <Text style={styles.infoText}>kathavachak profiles will appear here once available.</Text>
                 </View>
               }
             />

@@ -103,7 +103,7 @@ const IntrestedProfile = ({ navigation }) => {
             const formattedUserData = {
               ...item.toUserBioData,
               requestId: item?.requestId,
-              isSaved: item?.isSaved,
+              // isSaved: item?.isSaved,
               isBlur: item?.toUserBioData?.isBlur,
             };
 

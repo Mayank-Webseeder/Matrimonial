@@ -24,13 +24,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 const kathavachakDetailsPage = ({ navigation, item, route }) => {
-      const insets = useSafeAreaInsets();
+    const insets = useSafeAreaInsets();
     const sliderRef = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [slider, setSlider] = useState([]);
-    const { id, kathavachak_id, isSaved: initialSavedState } = route.params || {};
+    const { id, kathavachak_id } = route.params || {};
     const finalId = kathavachak_id || id;
-    const [Save, setIsSaved] = useState(initialSavedState || false);
+    const [Save, setIsSaved] = useState(false);
     const [profileData, setProfileData] = useState(null);
     const images = profileData?.additionalPhotos || [];
     const profileType = profileData?.profileType;
@@ -65,25 +65,39 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
     };
 
     useFocusEffect(
+        useCallback(() => {
+            fetchkathavachakProfile();
+            console.log('myRatings', JSON.stringify(myRatings));
+        }, [])
+    );
+    useEffect(() => {
+        Advertisement_window();
+    }, []);
+
+    useEffect(() => {
+        if (profileData?.isSaved !== undefined) {
+            setIsSaved(profileData.isSaved);
+        }
+    }, [profileData?.isSaved]);
+
+    useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
-                if (fromScreen === 'Kathavachak') {
+                if (navigation.canGoBack()) {
                     navigation.goBack();
                 } else {
-                    navigation.dispatch(
-                        CommonActions.reset({
-                            index: 0,
-                            routes: [
-                                {
-                                    name: 'MainApp',
-                                    state: {
-                                        index: 0,
-                                        routes: [{ name: 'Kathavachak' }],
-                                    },
+                    navigation.reset({
+                        index: 0,
+                        routes: [
+                            {
+                                name: 'MainApp',
+                                state: {
+                                    index: 0,
+                                    routes: [{ name: 'Kathavachak' }],
                                 },
-                            ],
-                        })
-                    );
+                            },
+                        ],
+                    })
                 }
                 return true;
             };
@@ -94,14 +108,6 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                 BackHandler.removeEventListener('hardwareBackPress', onBackPress);
             };
         }, [navigation, fromScreen])
-    );
-
-
-    useFocusEffect(
-        useCallback(() => {
-            fetchkathavachakProfile();
-            console.log('myRatings', JSON.stringify(myRatings));
-        }, [])
     );
 
     const fetchkathavachakProfile = async () => {
@@ -180,15 +186,8 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
         }
     };
 
-
-
     useEffect(() => {
-        Advertisement_window();
-    }, []);
-
-
-    useEffect(() => {
-        if (slider.length === 0) {return;}
+        if (slider.length === 0) { return; }
 
         const currentSlide = slider[currentIndex];
         const durationInSeconds = Number(currentSlide?.duration) || 4;
@@ -207,7 +206,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
     const Advertisement_window = async () => {
         try {
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('No token found');}
+            if (!token) { throw new Error('No token found'); }
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -275,7 +274,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
 
         try {
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('No token found');}
+            if (!token) { throw new Error('No token found'); }
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -296,7 +295,6 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                     duarion: 7000,
                 });
 
-                // ✅ API response ke hisaab se state update karo
                 setIsSaved(response.data.message.includes('saved successfully'));
             } else {
                 throw new Error(response.data.message || 'Something went wrong');
@@ -384,7 +382,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
         console.log('profileId', profileId);
 
         try {
-            if (!profileId) {throw new Error('Missing profile ID');}
+            if (!profileId) { throw new Error('Missing profile ID'); }
 
             const directLink = `${DeepLink}/${profileType}/${profileId}`;
             console.log('directLink', directLink);
@@ -417,23 +415,21 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                 <View style={{ flexDirection: 'row' }}>
                     <TouchableOpacity
                         onPress={() => {
-                            if (fromScreen === 'Kathavachak') {
+                            if (navigation.canGoBack()) {
                                 navigation.goBack();
                             } else {
-                                navigation.dispatch(
-                                    CommonActions.reset({
-                                        index: 0,
-                                        routes: [
-                                            {
-                                                name: 'MainApp',
-                                                state: {
-                                                    index: 0,
-                                                    routes: [{ name: 'Kathavachak' }],
-                                                },
+                                navigation.reset({
+                                    index: 0,
+                                    routes: [
+                                        {
+                                            name: 'MainApp',
+                                            state: {
+                                                index: 0,
+                                                routes: [{ name: 'Kathavachak' }],
                                             },
-                                        ],
-                                    })
-                                );
+                                        },
+                                    ],
+                                })
                             }
                         }}
                     >
@@ -471,7 +467,7 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                     </TouchableOpacity>
                 </View>
             </View>
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(10), flexGrow: 1}}>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: insets.bottom + SH(10), flexGrow: 1 }}>
                 <View>
                     <View style={styles.profileSection}>
                         <TouchableOpacity onPress={() => setVisible(true)}>
@@ -668,11 +664,17 @@ const kathavachakDetailsPage = ({ navigation, item, route }) => {
                                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                             <View>
                                                 <Image
-                                                    source={review?.userId?.photoUrl[0]
-                                                        ? { uri: review.userId.photoUrl[0] }
-                                                        : require('../../Images/NoImage.png')
+                                                    source={
+                                                        Array.isArray(review?.userId?.photoUrl) && review.userId.photoUrl.length > 0
+                                                            ? { uri: review.userId.photoUrl[0] }
+                                                            : require('../../Images/NoImage.png')
                                                     }
-                                                    style={{ width: SW(50), height: SH(50), borderRadius: 50 }}
+                                                    style={{
+                                                        width: SW(50),
+                                                        height: SW(50),
+                                                        borderRadius: SW(25),
+                                                        marginRight: SW(10),
+                                                    }}
                                                     resizeMode="cover"
                                                 />
                                             </View>

@@ -54,6 +54,17 @@ const Committee = ({ navigation, route }) => {
 
 
   useEffect(() => {
+    fetchComitteeData('all');
+    Advertisement_window();
+  }, []);
+
+  useEffect(() => {
+    if (committeeData?.isSaved !== undefined) {
+      setIsSaved(committeeData.isSaved);
+    }
+  }, [committeeData?.isSaved]);
+
+  useEffect(() => {
     if (id && committeeData?.length) {
       const index = committeeData.findIndex((item) => item._id === id);
       if (index !== -1 && flatListRef.current) {
@@ -164,7 +175,9 @@ const Committee = ({ navigation, route }) => {
       console.log('response', response.data);
 
       if (response.data && response.data.data.length > 0) {
+
         setCommitteeData(response.data.data);
+
       } else {
         setCommitteeData([]);
         setError('No Committee data found.');
@@ -289,12 +302,6 @@ const Committee = ({ navigation, route }) => {
     }, [navigation])
   );
 
-
-  useEffect(() => {
-    fetchComitteeData('all');
-    Advertisement_window();
-  }, []);
-
   const openImageViewer = (imageUri) => {
     if (imageUri) {
       setSelectedImage([{ url: imageUri }]);
@@ -372,11 +379,11 @@ const Committee = ({ navigation, route }) => {
       });
       return;
     }
-    setCommitteeData((prevProfiles) =>
-      prevProfiles.map((profile) =>
+    const toggleIsSaved = (prev) =>
+      prev.map((profile) =>
         profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
-      )
-    );
+      );
+    setCommitteeData(toggleIsSaved);
 
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -417,11 +424,14 @@ const Committee = ({ navigation, route }) => {
         icon: 'danger',
         duarion: 5000,
       });
-      setCommitteeData((prevProfiles) =>
-        prevProfiles.map((profile) =>
+
+      const revertToggle = (prev) =>
+        prev.map((profile) =>
           profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
-        )
-      );
+        );
+
+      setCommitteeData(revertToggle)
+
     }
   };
 
@@ -779,4 +789,3 @@ const Committee = ({ navigation, route }) => {
 };
 
 export default Committee;
-

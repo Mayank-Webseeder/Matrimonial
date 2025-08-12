@@ -183,20 +183,20 @@ export const genderData = [
 ];
 
 export const Income = [
-  { label: 'Less than 1 Lakh INR', value: 'Less than 1 Lakh INR' },
-  { label: '1 Lakh - 5 Lakh INR', value: '1 Lakh - 5 Lakh INR' },
-  { label: '5 Lakh - 10 Lakh INR', value: '5 Lakh - 10 Lakh INR' },
-  { label: '10 Lakh - 20 Lakh INR', value: '10 Lakh - 20 Lakh INR' },
-  { label: 'Above 20 Lakh INR', value: 'Above 20 Lakh INR' },
+  { label: 'Less than 1 LPA', value: 'Less than 1 LPA' },
+  { label: '1 LPA - 5 LPA', value: '1 LPA - 5 LPA' },
+  { label: '5 LPA - 10 LPA', value: '5 LPA - 10 LPA' },
+  { label: '10 LPA - 20 LPA', value: '10 LPA - 20 LPA' },
+  { label: 'Above 20 LPA', value: 'Above 20 LPA' },
   { label: 'No Income', value: 'No Income' },
 ];
 
-export const PartnerFamliyIncome = [
-  { label: 'Less than 1 Lakh INR', value: 'Less than 1 Lakh INR' },
-  { label: '1 Lakh - 5 Lakh INR', value: '1 Lakh - 5 Lakh INR' },
-  { label: '5 Lakh - 10 Lakh INR', value: '5 Lakh - 10 Lakh INR' },
-  { label: '10 Lakh - 20 Lakh INR', value: '10 Lakh - 20 Lakh INR' },
-  { label: 'Above 20 Lakh INR', value: 'Above 20 Lakh INR' },
+export const PartnerFamilyIncome = [
+  { label: 'Less than 1 LPA', value: 'Less than 1 LPA' },
+  { label: '1 LPA - 5 LPA', value: '1 LPA - 5 LPA' },
+  { label: '5 LPA - 10 LPA', value: '5 LPA - 10 LPA' },
+  { label: '10 LPA - 20 LPA', value: '10 LPA - 20 LPA' },
+  { label: 'Above 20 LPA', value: 'Above 20 LPA' },
   { label: 'No Income', value: 'No Income' },
   { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
 ];
@@ -320,11 +320,11 @@ export const FamilyFinancialStatusData = [
 ];
 
 export const FamilyIncomeData = [
-  { label: 'Less than 1 Lakh INR', value: 'Less than 1 Lakh INR' },
-  { label: '1 Lakh - 5 Lakh INR', value: '1 Lakh - 5 Lakh INR' },
-  { label: '5 Lakh - 10 Lakh INR', value: '5 Lakh - 10 Lakh INR' },
-  { label: '10 Lakh - 20 Lakh INR', value: '10 Lakh - 20 Lakh INR' },
-  { label: 'Above 20 Lakh INR', value: 'Above 20 Lakh INR' },
+  { label: 'Less than 1 LPA', value: 'Less than 1 LPA' },
+  { label: '1 LPA - 5 LPA', value: '1 LPA - 5 LPA' },
+  { label: '5 LPA - 10 LPA', value: '5 LPA - 10 LPA' },
+  { label: '10 LPA - 20 LPA', value: '10 LPA - 20 LPA' },
+  { label: 'Above 20 LPA', value: 'Above 20 LPA' },
   { label: 'Doesn’t Matter', value: 'Doesn’t Matter' },
 ];
 

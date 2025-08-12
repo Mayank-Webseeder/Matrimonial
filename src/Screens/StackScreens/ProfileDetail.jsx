@@ -179,6 +179,7 @@ const ProfileDetail = ({ route, navigation }) => {
 
             if (response.data && Object.keys(response.data).length > 0) {
                 setProfileData(response.data.data);
+                console.log("response.data.data", response.data.data)
             } else {
                 console.warn('Empty response received.');
             }
@@ -379,6 +380,11 @@ const ProfileDetail = ({ route, navigation }) => {
     const kathavachakDates = getDatesForService(trialData, 'Kathavachak');
     const BiodataDates = getDatesForService(trialData, 'Biodata');
 
+    const lastRepostDate = new Date(profileData?.lastRepostedAt);
+    const now = new Date();
+    const hoursDiff = Math.abs(now - lastRepostDate) / 36e5;
+
+    const isRepostAllowed = hoursDiff >= 168;
 
     return (
         <View style={Globalstyles.container} edges={['top', 'bottom']}>
@@ -464,13 +470,34 @@ const ProfileDetail = ({ route, navigation }) => {
                                             </TouchableOpacity>
                                         )}
                                     </View>
+
                                     <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-end' }}>
+
                                         <Text
                                             style={[
                                                 styles.RepostText,
-                                                { backgroundColor: profileData?.repostStatus === 'Yes' ? 'red' : 'green' },
+                                                {
+                                                    backgroundColor:
+                                                        isBiodataExpired
+                                                            ? 'gray'
+                                                            : isRepostAllowed
+                                                                ? 'green'
+                                                                : 'red',
+                                                },
                                             ]}
-                                            onPress={() => !postloading && Repost()}
+                                            onPress={() => {
+                                                if (isBiodataExpired) {
+                                                    alert('Your subscription has expired. Please buy a new pack to repost.');
+                                                    return;
+                                                }
+
+                                                if (!isRepostAllowed) {
+                                                    alert('You can repost only after 7 days.');
+                                                    return;
+                                                }
+
+                                                if (!postloading) Repost();
+                                            }}
                                         >
                                             {postloading ? <ActivityIndicator color="white" /> : 'Repost'}
                                         </Text>
@@ -480,6 +507,7 @@ const ProfileDetail = ({ route, navigation }) => {
                                         </TouchableOpacity>
                                     </View>
                                 </View>
+
                                 <View style={{ marginVertical: SH(5), marginHorizontal: SW(5) }}>
                                     {BiodataDates && (
                                         <View style={styles.trialBox}>

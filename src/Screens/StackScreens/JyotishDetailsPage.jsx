@@ -23,13 +23,13 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const jyotishDetailsPage = ({ navigation, item, route }) => {
-     const insets = useSafeAreaInsets();
+    const insets = useSafeAreaInsets();
     const sliderRef = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [slider, setSlider] = useState([]);
-    const { id, jyotish_id, isSaved: initialSavedState } = route.params || {};
+    const { id, jyotish_id } = route.params || {};
     const finalId = jyotish_id || id;
-    const [Save, setIsSaved] = useState(initialSavedState || false);
+    const [Save, setIsSaved] = useState(false);
     const [profileData, setProfileData] = useState(null);
     const images = profileData?.additionalPhotos || [];
     const profileType = profileData?.profileType;
@@ -62,25 +62,42 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
     };
 
     useFocusEffect(
+        useCallback(() => {
+            fetchJyotishProfile();
+            console.log('myRatings', JSON.stringify(myRatings));
+            console.log('Save', Save);
+        }, [])
+    );
+
+    useEffect(() => {
+        Advertisement_window();
+    }, []);
+
+   useEffect(() => {
+        if (profileData?.isSaved !== undefined) {
+          setIsSaved(profileData.isSaved);
+        }
+      }, [profileData?.isSaved]);
+
+    useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
-                if (fromScreen === 'Jyotish') {
+                if (navigation.canGoBack()) {
                     navigation.goBack();
                 } else {
-                    navigation.dispatch(
-                        CommonActions.reset({
-                            index: 0,
-                            routes: [
-                                {
-                                    name: 'MainApp',
-                                    state: {
-                                        index: 0,
-                                        routes: [{ name: 'Jyotish' }],
-                                    },
+                    navigation.reset({
+                        index: 0,
+                        routes: [
+                            {
+                                name: 'MainApp',
+                                state: {
+                                    index: 0,
+                                    routes: [{ name: 'Jyotish' }],
                                 },
-                            ],
-                        })
-                    );
+                            },
+                        ],
+                    })
+
                 }
                 return true;
             };
@@ -92,16 +109,6 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
             };
         }, [navigation, fromScreen])
     );
-
-
-    useFocusEffect(
-        useCallback(() => {
-            fetchJyotishProfile();
-            console.log('myRatings', JSON.stringify(myRatings));
-            console.log('Save', Save);
-        }, [])
-    );
-
 
     const fetchJyotishProfile = async () => {
         setLoading(true);
@@ -179,14 +186,8 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
         }
     };
 
-
     useEffect(() => {
-        Advertisement_window();
-    }, []);
-
-
-    useEffect(() => {
-        if (slider.length === 0) {return;}
+        if (slider.length === 0) { return; }
 
         const currentSlide = slider[currentIndex];
         const durationInSeconds = Number(currentSlide?.duration) || 4;
@@ -204,7 +205,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
     const Advertisement_window = async () => {
         try {
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('No token found');}
+            if (!token) { throw new Error('No token found'); }
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -245,9 +246,9 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
         if (!finalId) {
             showMessage({
                 type: 'danger',
-                message: 'User ID not found!',
-                icon: 'danger',
-                duarion: 7000,
+                message: 'Error',
+                description: 'User ID not found!',
+                duarion: 5000,
             });
             return;
         }
@@ -256,7 +257,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
 
         try {
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('No token found');}
+            if (!token) { throw new Error('No token found'); }
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -272,12 +273,12 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
             if (response.status === 200 && response.data.status === true) {
                 showMessage({
                     type: 'success',
-                    message: response.data.message || 'Profile saved successfully!',
+                    message: 'Success',
+                    description: response.data.message || 'Profile saved successfully!',
                     icon: 'success',
-                    duarion: 7000,
+                    duarion: 5000,
                 });
 
-                // ✅ API response ke hisaab se state update karo
                 setIsSaved(response.data.message.includes('saved successfully'));
             } else {
                 throw new Error(response.data.message || 'Something went wrong');
@@ -285,7 +286,6 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
         } catch (error) {
             console.error('API Error:', error?.response ? JSON.stringify(error.response.data) : error.message);
 
-            // ❌ Rollback state if API fails
             setIsSaved((prev) => !prev);
 
             let errorMessage = 'Something went wrong!';
@@ -294,10 +294,11 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
             }
 
             showMessage({
-                type: 'danger',
-                message: errorMessage,
+                type: 'error',
+                message: 'Error',
+                description: errorMessage,
                 icon: 'danger',
-                duarion: 7000,
+                duarion: 5000,
             });
         }
     };
@@ -358,7 +359,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
         console.log('profileId', profileId);
 
         try {
-            if (!profileId) {throw new Error('Missing profile ID');}
+            if (!profileId) { throw new Error('Missing profile ID'); }
 
             const directLink = `${DeepLink}/${profileType}/${profileId}`;
 
@@ -389,23 +390,23 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                 <View style={{ flexDirection: 'row' }}>
                     <TouchableOpacity
                         onPress={() => {
-                            if (fromScreen === 'Jyotish') {
+                            if (navigation.canGoBack()) {
                                 navigation.goBack();
                             } else {
-                                navigation.dispatch(
-                                    CommonActions.reset({
-                                        index: 0,
-                                        routes: [
-                                            {
-                                                name: 'MainApp',
-                                                state: {
-                                                    index: 0,
-                                                    routes: [{ name: 'Jyotish' }],
-                                                },
+
+                                navigation.reset({
+                                    index: 0,
+                                    routes: [
+                                        {
+                                            name: 'MainApp',
+                                            state: {
+                                                index: 0,
+                                                routes: [{ name: 'Jyotish' }],
                                             },
-                                        ],
-                                    })
-                                );
+                                        },
+                                    ],
+                                })
+
                             }
                         }}
                     >
@@ -444,7 +445,7 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                     </TouchableOpacity>
                 </View>
             </View>
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(10), flexGrow: 1}}>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: insets.bottom + SH(10), flexGrow: 1 }}>
                 <View>
                     <View style={styles.profileSection}>
                         <TouchableOpacity onPress={() => setVisible(true)}>
@@ -644,9 +645,10 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                             <View>
                                                 <Image
-                                                    source={review?.userId?.photoUrl[0]
-                                                        ? { uri: review.userId.photoUrl[0] }
-                                                        : require('../../Images/NoImage.png')
+                                                    source={
+                                                        Array.isArray(review?.userId?.photoUrl) && review.userId.photoUrl.length > 0
+                                                            ? { uri: review.userId.photoUrl[0] }
+                                                            : require('../../Images/NoImage.png')
                                                     }
                                                     style={{
                                                         width: SW(50),

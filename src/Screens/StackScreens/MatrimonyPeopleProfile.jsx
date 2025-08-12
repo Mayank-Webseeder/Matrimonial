@@ -30,7 +30,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slider, setSlider] = useState([]);
   const route = useRoute();
-  const { userId, isSaved, id } = route.params || {};
+  const { userId, id } = route.params || {};
   const profile_id = userId || id || null;
   const [loading, setLoading] = useState(false);
   const [loadingIntrest, setLoadingIntrest] = useState(false);
@@ -52,7 +52,6 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   // console.log("_id", _id);
   const personalDetails = userData?.personalDetails || {};
   const partnerPreferences = userData?.partnerPreferences || {};
-  const initialSavedState = profileData?.isSaved || isSaved;
   const [requestId, setRequestId] = useState(null);
   const [status, setStatus] = useState(null);
   const hideContact = userData?.hideContact === true && status === 'accepted'
@@ -65,7 +64,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const isVisible = profileData?.isVisible;
   const isBlur = userData?.isBlur;
   const isBlurCondition = status === 'accepted' ? !isVisible : isBlur;
-  const [Save, setIsSaved] = useState(initialSavedState || false);
+  const [Save, setIsSaved] = useState(false);
   const hasOtherDetails = personalDetails?.knowCooking || personalDetails?.dietaryHabit || personalDetails?.smokingHabit || personalDetails?.drinkingHabit || personalDetails?.tobaccoHabits || personalDetails?.hobbies;
 
   const formattedImages = [
@@ -90,14 +89,31 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   };
 
 
+  useFocusEffect(
+    useCallback(() => {
+      if (profile_id) {
+        console.log('profile_id', profile_id);
+        fetchUserProfile(profile_id);
+      }
+    }, [profile_id, isBlur])
+  );
+
   useEffect(() => {
-    console.log('formattedImages', formattedImages);
+    if (profileData?.isSaved !== undefined) {
+      setIsSaved(profileData.isSaved);
+    }
+  }, [profileData?.isSaved]);
+
+  useEffect(() => {
     Advertisement_window();
-  }, []);
-
+    if (profile_id) {
+      console.log('profile_id', profile_id);
+      fetchUserProfile(profile_id);
+    }
+  }, [profile_id, isBlur])
 
   useEffect(() => {
-    if (!formattedImages || formattedImages.length === 0) {return;}
+    if (!formattedImages || formattedImages.length === 0) { return; }
 
     const bufferMs = 800;
     const duration = (formattedImages[currentIndex]?.duration || 4) * 1000 + bufferMs;
@@ -114,7 +130,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
 
   useEffect(() => {
-    if (slider.length === 0) {return;}
+    if (slider.length === 0) { return; }
 
     const currentSlide = slider[currentIndex];
     const durationInSeconds = Number(currentSlide?.duration) || 4;
@@ -211,7 +227,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -292,27 +308,9 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
   // console.log("MyprofileData", MyprofileData);
 
-  useFocusEffect(
-    useCallback(() => {
-      // console.log("====== Profile Data Debug ======");
-      // console.log("isVerified:", userData?.verified);
-      // console.log("verifiedBy:", userData?.verifiedBy);
-      // console.log("initialSavedState:", profileData?.isSaved);
-      // console.log("status:", profileData?.requestStatus);
-      // console.log("requestId:", profileData?.requestId);
-      // console.log("isBlur:", userData?.isBlur);
-      // console.log("userId:", userData?.userId);
-      // console.log("userData?.personalDetails", userData?.personalDetails);
-      if (profile_id) {
-        console.log('profile_id', profile_id);
-        fetchUserProfile(profile_id);
-      }
-    }, [profile_id, isBlur])
-  );
-
   const fetchUserProfile = async (id) => {
     const token = await AsyncStorage.getItem('userToken');
-    if (!token) {throw new Error('No token found');}
+    if (!token) { throw new Error('No token found'); }
 
     const headers = {
       'Content-Type': 'application/json',
@@ -327,7 +325,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       if (response.data.status) {
         setUserData(response?.data?.targetUserBioData);
         setProfileData(response.data);
-        setStatus(profileData?.requestStatus || null);
+        setStatus(response.data?.requestStatus || null);
         setRequestId(response.data?.requestId || null);
       } else {
         setProfileData(null);
@@ -389,7 +387,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -437,11 +435,11 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
   const DeleteIntrest = async (requestId) => {
     setIntrestLoading(true);
-    if (!requestId) {return;}
+    if (!requestId) { return; }
 
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -564,7 +562,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
     console.log('userId', userId);
 
     try {
-      if (!userId) {throw new Error('Missing profile ID');}
+      if (!userId) { throw new Error('Missing profile ID'); }
 
       const directLink = `${DeepLink}/${profileType}/${userId}`;
 
@@ -583,7 +581,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
   const matchPercentage = totalCriteria > 0 ? Math.round((matchedCount / totalCriteria) * 100) : 0;
 
   const calculateAge = (dob) => {
-    if (!dob) {return 'N/A';}
+    if (!dob) { return 'N/A'; }
     const birthDate = moment(dob);
     const currentDate = moment();
     return currentDate.diff(birthDate, 'years');
@@ -620,11 +618,23 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={Globalstyles.header}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <TouchableOpacity onPress={() => navigation.reset({
-            index: 0,
-            routes: [{ name: 'MainApp' }],
-          })}>
-            <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
+          <TouchableOpacity
+            onPress={() => {
+              if (navigation.canGoBack()) {
+                navigation.goBack();
+              } else {
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'MainApp' }],
+                });
+              }
+            }}
+          >
+            <MaterialIcons
+              name="arrow-back-ios-new"
+              size={25}
+              color={Colors.theme_color}
+            />
           </TouchableOpacity>
           <Text style={Globalstyles.headerText}>{personalDetails?.fullname}</Text>
         </View>
@@ -763,11 +773,11 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                 {'ID NO. :-'.toUpperCase()} {userData?.bioDataId}
               </Text>
 
-              {matchPercentage > 0 && (
+              {/* {matchPercentage > 0 && (
                 <Text style={styles.toptext}>
                   {matchPercentage}% Compatible according to your preference
                 </Text>
-              )}
+              )} */}
             </View>
             <View style={styles.sharecontainer}>
               <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles()}>
@@ -839,9 +849,13 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               <Text style={styles.text}>{calculateAge(personalDetails?.dob)} Yrs, {formattedHeight} </Text>
               {personalDetails?.subCaste && <Text style={styles.text}>{personalDetails?.subCaste}</Text>}
               {personalDetails?.maritalStatus && <Text style={styles.text}>{personalDetails?.maritalStatus}</Text>}
-              {personalDetails?.manglikStatus && <Text style={styles.text}>{personalDetails?.manglikStatus}</Text>}
-              {personalDetails?.disabilities && <Text style={styles.text}>Disability: {personalDetails?.disabilities}</Text>}
-              {personalDetails?.profileCreatedBy && <Text style={styles.text}>Profile Created By: {personalDetails?.profileCreatedBy}</Text>}
+              {/* {personalDetails?.manglikStatus && <Text style={styles.text}>{personalDetails?.manglikStatus}</Text>} */}
+              {!hideOptionalDetails && (
+                <View>
+                  {personalDetails?.disabilities && <Text style={styles.text}>Disability: {personalDetails?.disabilities}</Text>}
+                  {personalDetails?.profileCreatedBy && <Text style={styles.text}>Profile Created By: {personalDetails?.profileCreatedBy}</Text>}
+                </View>
+              )}
             </View>
 
             {/** Right Container */}
@@ -879,33 +893,33 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
 
                 {/* Optional Details for Horoscope */}
                 <View>
-                  {!hideOptionalDetails && personalDetails?.nadi && (
+                  {/* {!hideOptionalDetails && personalDetails?.nadi && (
                     <View style={styles.infoRow}>
                       <Text style={styles.infoLabel}>Nadi :</Text>
                       <Text style={styles.infoValue}>{personalDetails?.nadi}</Text>
                     </View>
-                  )}
+                  )} */}
 
-                  {!hideOptionalDetails && personalDetails?.gotraSelf && (
+                  {/* {!hideOptionalDetails && personalDetails?.gotraSelf && (
                     <View style={styles.infoRow}>
                       <Text style={styles.infoLabel}>Gotra (Self) :</Text>
                       <Text style={styles.infoValue}>{personalDetails?.gotraSelf}</Text>
                     </View>
-                  )}
+                  )} */}
 
-                  {personalDetails?.manglikStatus && (
+                  {personalDetails?.manglikStatus && !hideOptionalDetails && (
                     <View style={styles.infoRow}>
                       <Text style={styles.infoLabel}>Manglik Status :</Text>
                       <Text style={styles.infoValue}>{personalDetails?.manglikStatus}</Text>
                     </View>
                   )}
 
-                  {!hideOptionalDetails && personalDetails?.gotraMother && (
+                  {/* {!hideOptionalDetails && personalDetails?.gotraMother && (
                     <View style={styles.infoRow}>
                       <Text style={styles.infoLabel}>Gotra (Mother) :</Text>
                       <Text style={styles.infoValue}>{personalDetails?.gotraMother}</Text>
                     </View>
-                  )}
+                  )} */}
                 </View>
               </View>
             </View>
@@ -943,20 +957,21 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                     )}
                   </View>
 
-                  <View style={styles.infoRow}>
+                  {/* <View style={styles.infoRow}>
                     {personalDetails?.livingStatus && (
                       <>
                         <Text style={styles.infoLabel}>Living with family :</Text>
                         <Text style={styles.infoValue}>{personalDetails.livingStatus}</Text>
                       </>
                     )}
-                  </View>
+                  </View> */}
                 </View>
               </View>
             </View>
           )}
 
           {/* Family Section */}
+
           <View style={[styles.familyDiv]}>
             <View>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
@@ -970,7 +985,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                   <Text style={styles.infoValue}>{personalDetails.fatherName}</Text>
                 </View>
               )}
-              {personalDetails?.motherName && (
+              {personalDetails?.motherName && !hideOptionalDetails && (
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>Mother’s Name :</Text>
                   <Text style={styles.infoValue}>{personalDetails.motherName}</Text>
@@ -984,22 +999,22 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
               )}
               {personalDetails?.fatherIncomeAnnually && (
                 <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Father Income :</Text>
+                  <Text style={styles.infoLabel}>Family Income :</Text>
                   <Text style={styles.infoValue}>{personalDetails.fatherIncomeAnnually}</Text>
                 </View>
               )}
-              {personalDetails?.motherOccupation && (
+              {personalDetails?.motherOccupation && !hideOptionalDetails && (
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>Mother’s Occupation :</Text>
                   <Text style={styles.infoValue}>{personalDetails.motherOccupation}</Text>
                 </View>
               )}
-              {personalDetails?.motherIncomeAnnually && (
+              {/* {personalDetails?.motherIncomeAnnually && (
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>Mother’s Income :</Text>
                   <Text style={styles.infoValue}>{personalDetails.motherIncomeAnnually}</Text>
                 </View>
-              )}
+              )} */}
               {personalDetails?.siblings && (
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>Siblings :</Text>
@@ -1028,6 +1043,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
             )
           }
 
+
           {/* Contact Section */}
           {!hideContact && (
             <View style={styles.detailbox}>
@@ -1042,7 +1058,7 @@ const MatrimonyPeopleProfile = ({ navigation }) => {
                   <Text style={styles.infoValue}>{personalDetails.contactNumber1}</Text>
                 </View>
               )}
-              {personalDetails?.contactNumber2 && (
+              {personalDetails?.contactNumber2 && !hideOptionalDetails && (
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>Mobile No. 2 :</Text>
                   <Text style={styles.infoValue}>{personalDetails.contactNumber2}</Text>

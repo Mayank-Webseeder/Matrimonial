@@ -407,31 +407,34 @@ const DetailedProfile = ({ navigation, profileData }) => {
     for (const key of keys) {
       if (key === 'dob') {
         payload[key] = biodata[key] || '';
-      } else if (biodata[key] !== undefined && biodata[key] !== '') {
-        payload[key] = biodata[key];
+      } else if (biodata[key] !== undefined) {
+        if (!isNew || biodata[key] !== '') {
+          payload[key] = biodata[key];
+        }
       } else if (isNew) {
         payload[key] = '';
       }
     }
 
     try {
-      payload.closeUpPhoto = biodata.closeUpPhoto.startsWith('data:image')
+      payload.closeUpPhoto = biodata.closeUpPhoto?.startsWith('data:image')
         ? biodata.closeUpPhoto
-        : await convertToBase64(biodata.closeUpPhoto);
+        : await convertToBase64(biodata.closeUpPhoto || '');
 
-      payload.fullPhoto = biodata.fullPhoto.startsWith('data:image')
+      payload.fullPhoto = biodata.fullPhoto?.startsWith('data:image')
         ? biodata.fullPhoto
-        : await convertToBase64(biodata.fullPhoto);
+        : await convertToBase64(biodata.fullPhoto || '');
 
-      payload.bestPhoto = biodata.bestPhoto.startsWith('data:image')
+      payload.bestPhoto = biodata.bestPhoto?.startsWith('data:image')
         ? biodata.bestPhoto
-        : await convertToBase64(biodata.bestPhoto);
+        : await convertToBase64(biodata.bestPhoto || '');
     } catch (error) {
       console.error('Base64 Conversion Error:', error);
     }
 
     return payload;
   };
+
 
   const OPTIONAL_FIELDS = [
     'weight', 'complexion', 'nadi', 'gotraSelf', 'gotraMother', 'aboutMe', 'otherFamilyMemberInfo',
@@ -579,6 +582,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
           ...prev,
           gender: biodata.gender,
         }));
+
         setIsEditing(false);
         setErrors({});
 
@@ -1802,36 +1806,69 @@ const DetailedProfile = ({ navigation, profileData }) => {
             </View>
             {errors.closeUpPhoto && <Text style={styles.errorText}>{errors.closeUpPhoto}</Text>}
           </View>
-          <View>
-            <Text style={Globalstyles.title}>Upload Your One Full Image</Text>
-            <View style={Globalstyles.input}>
-              <TouchableOpacity onPress={() => handleImageSelection('fullPhoto')}>
-                {biodata?.fullPhoto ? (
-                  <Image
-                    source={{ uri: biodata?.fullPhoto }}
-                    style={styles.selectedImage}
-                  />
-                ) : (
-                  <Text style={styles.imagePlaceholder}>Upload One Full Image</Text>
-                )}
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View>
-            <Text style={Globalstyles.title}>Upload Your One Best Image </Text>
-            <View style={Globalstyles.input}>
-              <TouchableOpacity onPress={() => handleImageSelection('bestPhoto')}>
-                {biodata?.bestPhoto ? (
-                  <Image
-                    source={{ uri: biodata?.bestPhoto }}
-                    style={styles.selectedImage}
-                  />
-                ) : (
-                  <Text style={styles.imagePlaceholder}>Upload One Full Image</Text>
-                )}
-              </TouchableOpacity>
-            </View>
-          </View>
+         <View>
+  <Text style={Globalstyles.title}>Upload Your One Full Image</Text>
+  <View style={Globalstyles.input}>
+    {biodata?.fullPhoto ? (
+      <View style={styles.imageWrapper}>
+        {/* ✅ Tap on image to change */}
+        <TouchableOpacity onPress={() => handleImageSelection('fullPhoto')}>
+          <Image
+            source={{ uri: biodata?.fullPhoto }}
+            style={styles.selectedImage}
+          />
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={styles.deleteButton}
+          onPress={() => {
+            setBiodata(prev => ({ ...prev, fullPhoto: '' }));
+            setImageNames(prev => ({ ...prev, fullPhoto: '' }));
+          }}
+        >
+          <Entypo name="cross" size={15} color="white" />
+        </TouchableOpacity>
+      </View>
+    ) : (
+      <TouchableOpacity onPress={() => handleImageSelection('fullPhoto')}>
+        <Text style={styles.imagePlaceholder}>Upload One Full Image</Text>
+      </TouchableOpacity>
+    )}
+  </View>
+</View>
+
+         <View>
+  <Text style={Globalstyles.title}>Upload Your One Best Image</Text>
+  <View style={Globalstyles.input}>
+    {biodata?.bestPhoto ? (
+      <View style={styles.imageWrapper}>
+        {/* ✅ Tap on image to change */}
+        <TouchableOpacity onPress={() => handleImageSelection('bestPhoto')}>
+          <Image
+            source={{ uri: biodata?.bestPhoto }}
+            style={styles.selectedImage}
+          />
+        </TouchableOpacity>
+
+        {/* ❌ Delete icon */}
+        <TouchableOpacity
+          style={styles.deleteButton}
+          onPress={() => {
+            setBiodata(prev => ({ ...prev, bestPhoto: '' }));
+            setImageNames(prev => ({ ...prev, bestPhoto: '' }));
+          }}
+        >
+          <Entypo name="cross" size={15} color="white" />
+        </TouchableOpacity>
+      </View>
+    ) : (
+      <TouchableOpacity onPress={() => handleImageSelection('bestPhoto')}>
+        <Text style={styles.imagePlaceholder}>Upload One Best Image</Text>
+      </TouchableOpacity>
+    )}
+  </View>
+</View>
+
           <TouchableOpacity
             style={styles.button}
             onPress={handleSave}
@@ -1897,7 +1934,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
                               )}
                               <TouchableOpacity style={styles.buyButton} onPress={() => handleBuyNow(plan)}>
                                 <Text style={styles.buyButtonText}>
-                                  {buyingPlanId === plan._id ? 'Buying...' : 'Buy Now'}
+                                  {buyingPlanId === plan._id ? 'Buying...' : 'Buy Subscription'}
                                 </Text>
                               </TouchableOpacity>
                             </View>

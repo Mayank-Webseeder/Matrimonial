@@ -612,12 +612,12 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
             <View style={styles.flex}>
               {/* <Text style={styles.Idtext}>ID NO. :- {userId}</Text> */}
               <Text style={styles.Idtext}>{'ID NO. :-'.toUpperCase()} {userData?.bioDataId}</Text>
-              <Text style={styles.toptext}>{matchPercentage > 0 && (
+              {/* <Text style={styles.toptext}>{matchPercentage > 0 && (
                 <Text style={styles.toptext}>
                   {matchPercentage}% Compatible according to your preference
                 </Text>
               )}
-              </Text>
+              </Text> */}
             </View>
             <View style={styles.sharecontainer}>
               <TouchableOpacity style={styles.iconContainer} onPress={savedProfiles}>
@@ -655,15 +655,19 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
               </TouchableOpacity>
             </View>
           </View>
-          <View style={styles.flexContainer1}>
+       <View style={styles.flexContainer1}>
             <View style={styles.leftContainer}>
               <Text style={styles.HeadingText}>{personalDetails?.fullname}</Text>
               {personalDetails?.dob && <Text style={styles.text}>{new Date().getFullYear() - new Date(personalDetails?.dob).getFullYear()} Yrs, {formattedHeight} </Text>}
               {personalDetails?.subCaste && <Text style={styles.text}>{personalDetails?.subCaste}</Text>}
               {personalDetails?.maritalStatus && <Text style={styles.text}>{personalDetails?.maritalStatus}</Text>}
-              {personalDetails?.manglikStatus && <Text style={styles.text}>{personalDetails?.manglikStatus}</Text>}
-              {personalDetails?.disabilities && <Text style={styles.text}>Disability: {personalDetails?.disabilities}</Text>}
-              {personalDetails?.profileCreatedBy && <Text style={styles.text}>Profile created by: {personalDetails?.profileCreatedBy}</Text>}
+              {/* {personalDetails?.manglikStatus && <Text style={styles.text}>{personalDetails?.manglikStatus}</Text>} */}
+              {!hideOptionalDetails && (
+                <View>
+                  {personalDetails?.disabilities && <Text style={styles.text}>Disability: {personalDetails?.disabilities}</Text>}
+                  {personalDetails?.profileCreatedBy && <Text style={styles.text}>Profile Created By: {personalDetails?.profileCreatedBy}</Text>}
+                </View>
+              )}
             </View>
             <View style={styles.rightContainer}>
               {personalDetails?.currentCity && <Text style={styles.text}>{personalDetails?.currentCity}</Text>}
@@ -696,33 +700,33 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
 
                 {/* Optional Details for Horoscope */}
                 <View>
-                  {!hideOptionalDetails && personalDetails?.nadi && (
+                  {/* {!hideOptionalDetails && personalDetails?.nadi && (
                     <View style={styles.infoRow}>
                       <Text style={styles.infoLabel}>Nadi :</Text>
                       <Text style={styles.infoValue}>{personalDetails?.nadi}</Text>
                     </View>
-                  )}
+                  )} */}
 
-                  {!hideOptionalDetails && personalDetails?.gotraSelf && (
+                  {/* {!hideOptionalDetails && personalDetails?.gotraSelf && (
                     <View style={styles.infoRow}>
                       <Text style={styles.infoLabel}>Gotra (Self) :</Text>
                       <Text style={styles.infoValue}>{personalDetails?.gotraSelf}</Text>
                     </View>
-                  )}
+                  )} */}
 
-                  {personalDetails?.manglikStatus && (
+                  {personalDetails?.manglikStatus && !hideOptionalDetails &&  (
                     <View style={styles.infoRow}>
                       <Text style={styles.infoLabel}>Manglik Status :</Text>
                       <Text style={styles.infoValue}>{personalDetails?.manglikStatus}</Text>
                     </View>
                   )}
 
-                  {!hideOptionalDetails && personalDetails?.gotraMother && (
+                  {/* {!hideOptionalDetails && personalDetails?.gotraMother && (
                     <View style={styles.infoRow}>
                       <Text style={styles.infoLabel}>Gotra (Mother) :</Text>
                       <Text style={styles.infoValue}>{personalDetails?.gotraMother}</Text>
                     </View>
-                  )}
+                  )} */}
                 </View>
               </View>
             </View>
@@ -759,14 +763,14 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
                     )}
                   </View>
 
-                  <View style={styles.infoRow}>
+                  {/* <View style={styles.infoRow}>
                     {personalDetails?.livingStatus && (
                       <>
                         <Text style={styles.infoLabel}>Living with family :</Text>
                         <Text style={styles.infoValue}>{personalDetails.livingStatus}</Text>
                       </>
                     )}
-                  </View>
+                  </View> */}
                 </View>
               </View>
             </View>
@@ -785,7 +789,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
                   <Text style={styles.infoValue}>{personalDetails.fatherName}</Text>
                 </View>
               )}
-              {personalDetails?.motherName && (
+              {personalDetails?.motherName && !hideOptionalDetails && (
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>Mother’s Name :</Text>
                   <Text style={styles.infoValue}>{personalDetails.motherName}</Text>
@@ -799,22 +803,22 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
               )}
               {personalDetails?.fatherIncomeAnnually && (
                 <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Father Income :</Text>
+                  <Text style={styles.infoLabel}>Family Income :</Text>
                   <Text style={styles.infoValue}>{personalDetails.fatherIncomeAnnually}</Text>
                 </View>
               )}
-              {personalDetails?.motherOccupation && (
+              {personalDetails?.motherOccupation && !hideOptionalDetails && (
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>Mother’s Occupation :</Text>
                   <Text style={styles.infoValue}>{personalDetails.motherOccupation}</Text>
                 </View>
               )}
-              {personalDetails?.motherIncomeAnnually && (
+              {/* {personalDetails?.motherIncomeAnnually && (
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>Mother’s Income :</Text>
                   <Text style={styles.infoValue}>{personalDetails.motherIncomeAnnually}</Text>
                 </View>
-              )}
+              )} */}
               {personalDetails?.siblings && (
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>Siblings :</Text>
@@ -855,7 +859,7 @@ const IntrestReceivedProfilePage = ({ navigation, route }) => {
                   <Text style={styles.infoValue}>{personalDetails.contactNumber1}</Text>
                 </View>
               )}
-              {personalDetails?.contactNumber2 && (
+              {personalDetails?.contactNumber2 && !hideOptionalDetails && (
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>Mobile No. 2 :</Text>
                   <Text style={styles.infoValue}>{personalDetails.contactNumber2}</Text>

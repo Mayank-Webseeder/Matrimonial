@@ -1,8 +1,20 @@
-import React from 'react';
-import { Text, View, ImageBackground, TouchableOpacity, StatusBar, SafeAreaView } from 'react-native';
+import React, { useEffect } from 'react';
+import { Text, View, ImageBackground, TouchableOpacity, StatusBar, SafeAreaView, BackHandler } from 'react-native';
 import styles from './StyleScreens/SplashStyle';
 
 const Splash = ({ navigation }) => {
+
+    useEffect(() => {
+        const backAction = () => {
+            BackHandler.exitApp(); 
+            return true; 
+        };
+
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+
+        return () => backHandler.remove();
+    }, []);
+
     return (
         <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
             <StatusBar
@@ -28,9 +40,10 @@ const Splash = ({ navigation }) => {
                             <Text style={styles.buttonText}>Signup</Text>
                         </TouchableOpacity>
                     </View>
-                     <Text style={styles.signuptext}>
-                          Don't have an account ? Then signup first
-                        </Text>
+
+                    <Text style={styles.signuptext}>
+                        Don't have an account ? Then signup first
+                    </Text>
                 </View>
             </ImageBackground>
         </SafeAreaView>

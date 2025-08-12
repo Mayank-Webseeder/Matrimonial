@@ -155,7 +155,7 @@ const Home = ({ navigation }) => {
       setIsLoading(true);
       setNotificationData({});
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) { throw new Error('No token found'); }
+      if (!token) { throw new Error('Authorization token is missing.'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -201,7 +201,7 @@ const Home = ({ navigation }) => {
     setProfileData({});
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) { throw new Error('No token found'); }
+      if (!token) { throw new Error('Authorization token is missing.'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -452,14 +452,14 @@ const Home = ({ navigation }) => {
       console.log('Navigating to IntrestReceivedProfilePage');
       navigation.navigate('IntrestReceivedProfilePage', {
         userId: item?.userId,
-        isSaved: item?.isSaved,
+        // isSaved: item?.isSaved,
       });
     } else {
       console.log('Navigating to MatrimonyPeopleProfile');
       navigation.navigate('MatrimonyPeopleProfile', {
         userDetails: item,
         userId: item?.userId,
-        isSaved: item?.isSaved,
+        // isSaved: item?.isSaved,
       });
     }
   };

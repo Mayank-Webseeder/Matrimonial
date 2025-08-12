@@ -14,16 +14,28 @@ import { SW } from '../../utils/Dimensions';
 import { useSelector } from 'react-redux';
 import { showMessage } from 'react-native-flash-message';
 import { CommonActions, useFocusEffect } from '@react-navigation/native';
+import { ActivityIndicator } from 'react-native-paper';
 
 const ShortMatrimonialProfile = ({ navigation, route }) => {
-    const { userId, isSaved: initialSavedState, id } = route.params;
+    const { userId, id } = route.params;
     const profileId = userId || id || null;
-    const [Save, setIsSaved] = useState(initialSavedState || false);
+    const [savedStateMap, setSavedStateMap] = useState({});
     const ProfileData = useSelector((state) => state.profile);
     const profile_data = ProfileData?.profiledata || {};
     const MyprofileData = useSelector((state) => state.getBiodata);
     const [Loading, setLoading] = useState(false);
     const [Biodata, SetBiodataData] = useState(false);
+
+    useEffect(() => {
+        fetchBiodataProfile();
+    }, [userId, id]);
+
+    useEffect(() => {
+        if (Biodata?.isSaved !== undefined) {
+            setIsSaved(Biodata.isSaved);
+        }
+    }, [Biodata]);
+
 
     useFocusEffect(
         React.useCallback(() => {
@@ -43,11 +55,6 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                 BackHandler.removeEventListener('hardwareBackPress', onBackPress);
         }, [])
     );
-
-    useEffect(() => {
-        fetchBiodataProfile();
-        console.log('Biodata', Biodata);
-    }, [userId, id]);
 
     const fetchBiodataProfile = async () => {
         setLoading(true);
@@ -97,8 +104,9 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
             console.log('📦 Raw API Response:', JSON.stringify(response.data, null, 2));
 
             if (response.data.status) {
-                console.log('✅ Biodata Profile Fetched:', response.data.data);
-                SetBiodataData(response.data.data.biodata); // <- update your state setter accordingly
+                const biodata = response.data.data.biodata;
+                SetBiodataData([biodata]); // Wrap in array if you're using FlatList
+                setSavedStateMap({ [biodata._id]: response.data.data.isSaved });
             } else {
                 showMessage({
                     type: 'danger',
@@ -139,24 +147,15 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
     };
 
     const savedProfiles = async (_id) => {
-        if (!_id) {
-            showMessage({
-                message: 'User ID not found!',
-                type: 'danger',
-                icon: 'danger',
-                duarion: 5000,
-            });
-            return;
-        }
+        if (!_id) return;
 
-        setIsSaved((prev) => !prev);
+        setSavedStateMap(prev => ({
+            ...prev,
+            [_id]: !prev[_id], // Toggle locally
+        }));
 
         try {
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {
-                throw new Error('No token found');
-            }
-
             const headers = {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
@@ -164,43 +163,31 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
 
             const response = await axios.post(`${SAVED_PROFILES}/${_id}`, {}, { headers });
 
-            console.log('Response Data:', JSON.stringify(response?.data));
-
-            if (response?.data?.message) {
-                showMessage({
-                    message: 'Success',
-                    description: response.data.message,
-                    type: 'success',
-                    duarion: 5000,
-                    icon: 'success',
-                });
-
-                if (response.data.message === 'Profile saved successfully.') {
-                    setIsSaved(true);
-                } else {
-                    setIsSaved(false);
-                }
-            } else {
-                showMessage({
-                    message: 'Something went wrong!',
-                    type: 'danger',
-                    duarion: 5000,
-                    icon: 'danger',
-                });
+            if (response.status !== 200 || response.data.status !== true) {
+                throw new Error(response.data.message || 'Something went wrong!');
             }
-        } catch (error) {
-            console.error(
-                'API Error:',
-                error?.response ? JSON.stringify(error.response.data) : error.message
-            );
 
             showMessage({
-                message: error.response?.data?.message || 'Failed to save profile!',
+                type: 'success',
+                message: 'Success',
+                description: response.data.message || 'Profile saved successfully!',
+            });
+        } catch (error) {
+            // Revert state on failure
+            setSavedStateMap(prev => ({
+                ...prev,
+                [_id]: !prev[_id],
+            }));
+
+            showMessage({
                 type: 'danger',
-                duarion: 5000,
+                message: 'Error',
+                description: error?.message || 'Failed to save profile!',
             });
         }
     };
+
+
 
 
     const shareProfiles = async (profileId) => {
@@ -302,11 +289,13 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
                 <View style={[styles.sharecontainer, { paddingHorizontal: SW(20) }]}>
                     <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id)}>
                         <FontAwesome
-                            name={Save ? 'bookmark' : 'bookmark-o'}
+                            name={savedStateMap[item._id] ? 'bookmark' : 'bookmark-o'}
                             size={19}
                             color={Colors.dark}
                         />
-                        <Text style={styles.iconText}>{Save ? 'Saved' : 'Save'}</Text>
+                        <Text style={styles.iconText}>
+                            {savedStateMap[item._id] ? 'Saved' : 'Save'}
+                        </Text>
                     </TouchableOpacity>
 
                     {/* <TouchableOpacity style={styles.iconContainer} onPress={() => shareProfiles(item?._id)}>
@@ -327,6 +316,15 @@ const ShortMatrimonialProfile = ({ navigation, route }) => {
             </View>
         );
     };
+
+    if (Loading) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="small" color={Colors.theme_color} />
+            </View>
+        );
+    }
+
     return (
         <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />

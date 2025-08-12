@@ -23,13 +23,13 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const PanditDetailPage = ({ navigation, item, route }) => {
-      const insets = useSafeAreaInsets();
+    const insets = useSafeAreaInsets();
     const sliderRef = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [slider, setSlider] = useState([]);
-    const { id, pandit_id, isSaved: initialSavedState } = route.params || {};
+    const { id, pandit_id } = route.params || {};
     const finalId = pandit_id || id;
-    const [Save, setIsSaved] = useState(initialSavedState || false);
+    const [Save, setIsSaved] = useState(false);
     const [profileData, setProfileData] = useState(null);
     const images = profileData?.additionalPhotos || [];
     const profileType = profileData?.profileType;
@@ -46,6 +46,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
         : require('../../Images/NoImage.png');
     const validSlides = slider.filter(item => !!item.image);
     const fromScreen = route.params?.fromScreen;
+    console.log("fromScreen", fromScreen);
 
 
     const [modalVisible, setModalVisible] = useState(false);
@@ -60,10 +61,25 @@ const PanditDetailPage = ({ navigation, item, route }) => {
         setModalVisible(true);
     };
 
+     useFocusEffect(
+        useCallback(() => {
+            fetchPanditProfile();
+        }, [])
+    );
+     useEffect(() => {
+        Advertisement_window();
+    }, []);
+
+     useEffect(() => {
+        if (profileData?.isSaved !== undefined) {
+          setIsSaved(profileData.isSaved);
+        }
+      }, [profileData?.isSaved]);
+    
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
-                if (fromScreen === 'Pandit') {
+                if (navigation.canGoBack()) {
                     navigation.goBack();
                 } else {
                     navigation.reset({
@@ -93,13 +109,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
             return () => {
                 BackHandler.removeEventListener('hardwareBackPress', onBackPress);
             };
-        }, [navigation, fromScreen])
-    );
-
-    useFocusEffect(
-        useCallback(() => {
-            fetchPanditProfile();
-        }, [])
+        }, [navigation])
     );
 
     const fetchPanditProfile = async () => {
@@ -140,6 +150,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
 
             if (response.data.status) {
                 setProfileData(response.data.data);
+                setIsSaved(response.data.data.isSaved);
                 setMyRatings(response.data.data.ratings.filter(rating => rating.userId._id === my_id));
                 setOtherRatings(response.data.data.ratings.filter(rating => rating.userId._id !== my_id));
             } else {
@@ -180,14 +191,8 @@ const PanditDetailPage = ({ navigation, item, route }) => {
     };
 
 
-
     useEffect(() => {
-        Advertisement_window();
-    }, []);
-
-
-    useEffect(() => {
-        if (slider.length === 0) {return;}
+        if (slider.length === 0) { return; }
 
         const currentSlide = slider[currentIndex];
         const durationInSeconds = Number(currentSlide?.duration) || 4;
@@ -206,7 +211,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
     const Advertisement_window = async () => {
         try {
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('No token found');}
+            if (!token) { throw new Error('No token found'); }
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -255,11 +260,11 @@ const PanditDetailPage = ({ navigation, item, route }) => {
             return;
         }
 
-        setIsSaved((prev) => !prev); // ✅ Optimistic UI Update
+        setIsSaved((prev) => !prev); 
 
         try {
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('No token found');}
+            if (!token) { throw new Error('No token found'); }
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -272,7 +277,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
 
             console.log('Response Data:', response?.data);
 
-            if (response.status === 200 && response.data.status === true) { // ✅ Corrected check
+            if (response.status === 200 && response.data.status === true) { 
                 showMessage({
                     type: 'success',
                     message: 'Success',
@@ -281,7 +286,6 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                     duarion: 5000,
                 });
 
-                // ✅ API response ke hisaab se state update karo
                 setIsSaved(response.data.message.includes('saved successfully'));
             } else {
                 throw new Error(response.data.message || 'Something went wrong');
@@ -289,7 +293,6 @@ const PanditDetailPage = ({ navigation, item, route }) => {
         } catch (error) {
             console.error('API Error:', error?.response ? JSON.stringify(error.response.data) : error.message);
 
-            // ❌ Rollback state if API fails
             setIsSaved((prev) => !prev);
 
             let errorMessage = 'Something went wrong!';
@@ -362,7 +365,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
         console.log('profileId', profileId);
 
         try {
-            if (!profileId) {throw new Error('Missing profile ID');}
+            if (!profileId) { throw new Error('Missing profile ID'); }
 
             const directLink = `${DeepLink}/${profileType}/${profileId}`;
 
@@ -394,7 +397,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 <View style={{ flexDirection: 'row' }}>
                     <TouchableOpacity
                         onPress={() => {
-                            if (fromScreen === 'Pandit') {
+                            if (navigation.canGoBack()) {
                                 navigation.goBack();
                             } else {
                                 navigation.reset({
@@ -420,6 +423,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                     >
                         <MaterialIcons name="arrow-back-ios-new" size={25} color={Colors.theme_color} />
                     </TouchableOpacity>
+
 
                     <Text style={Globalstyles.headerText}>{profileData?.fullName}</Text>
                 </View>
@@ -452,7 +456,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                     </TouchableOpacity>
                 </View>
             </View>
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: insets.bottom + SH(5), flexGrow: 1}}>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: insets.bottom + SH(5), flexGrow: 1 }}>
                 <View>
                     <View style={styles.profileSection}>
                         <TouchableOpacity onPress={() => setVisible(true)}>
@@ -648,9 +652,10 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                             <View>
                                                 <Image
-                                                    source={review?.userId?.photoUrl[0]
-                                                        ? { uri: review.userId.photoUrl[0] }
-                                                        : require('../../Images/NoImage.png')
+                                                    source={
+                                                        Array.isArray(review?.userId?.photoUrl) && review.userId.photoUrl.length > 0
+                                                            ? { uri: review.userId.photoUrl[0] }
+                                                            : require('../../Images/NoImage.png')
                                                     }
                                                     style={{
                                                         width: SW(50),

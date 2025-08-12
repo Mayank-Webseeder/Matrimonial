@@ -1146,7 +1146,7 @@ const PanditRegister = ({ navigation }) => {
                                                                 )}
                                                                 <TouchableOpacity style={styles.buyButton} onPress={() => handleBuyNow(plan)}>
                                                                     <Text style={styles.buyButtonText}>
-                                                                        {buyingPlanId === plan._id ? 'Buying...' : 'Buy Now'}
+                                                                        {buyingPlanId === plan._id ? 'Buying...' : 'Buy Subscription'}
                                                                     </Text>
                                                                 </TouchableOpacity>
                                                             </View>

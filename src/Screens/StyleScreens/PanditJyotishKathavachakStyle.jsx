@@ -5,7 +5,7 @@ import Colors from '../../utils/Colors';
 const styles = StyleSheet.create({
 
   Filterheader: {
-    width:"100%",
+    width: "100%",
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop:SH(10)
+    marginTop: SH(10)
   },
   rating: {
     flexDirection: 'row',
@@ -246,13 +246,13 @@ const styles = StyleSheet.create({
     marginTop: SH(50),
   },
   emptyText: {
-    fontSize: SF(20),
+    fontSize: SF(15),
     fontFamily: 'Poppins-Bold',
     color: '#555',
     marginBottom: SH(8),
   },
   infoText: {
-    fontSize: SF(18),
+    fontSize: SF(15),
     color: '#888',
     textAlign: 'center',
   },

@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, FlatList, ScrollView, Image, SafeAreaView, StatusBar, ActivityIndicator, RefreshControl, Alert } from 'react-native';
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -28,11 +28,19 @@ const SavedProfile = ({ navigation }) => {
   const notificationCount = notifications ? notifications.length : 0;
   const [deletingId, setDeletingId] = useState(null);
   const isBiodataEmpty = !MyprofileData.Biodata || Object.keys(MyprofileData.Biodata).length === 0;
+  const deletedIdsRef = useRef(new Set());
+
+  const ProfileData = useSelector((state) => state.profile);
+  const profile_data = ProfileData?.profiledata || {};
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchSavedProfiles();
     setTimeout(() => setRefreshing(false), 2000);
+  }, []);
+
+  useEffect(() => {
+    fetchSavedProfiles();
   }, []);
 
   useFocusEffect(
@@ -44,19 +52,18 @@ const SavedProfile = ({ navigation }) => {
   const fetchSavedProfiles = async () => {
     try {
       setLoading(true);
-      setSavedProfiles([]);
 
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {
-        throw new Error('No token found');
-      }
+      if (!token) throw new Error('No token found');
 
       const headers = { Authorization: `Bearer ${token}` };
       const response = await axios.get(GET_SAVED__PROFILES, { headers });
 
-      console.log('Fetched saved profiles:', JSON.stringify(response.data?.savedProfiles));
+      let profiles = response.data?.savedProfiles || [];
 
-      setSavedProfiles(response.data?.savedProfiles || []);
+      profiles = profiles.filter(p => !deletedIdsRef.current.has(p._id));
+
+      setSavedProfiles(profiles);
 
       setTimeout(() => {
         flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
@@ -69,13 +76,12 @@ const SavedProfile = ({ navigation }) => {
   };
 
   const DeleteSaveProfile = async (_id) => {
-    if (!_id || deletingId === _id) {return;}
+    if (!_id || deletingId === _id) return;
 
     setDeletingId(_id);
     try {
-      setLoading(true);
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found. Please log in again.');}
+      if (!token) throw new Error('No token found. Please log in again.');
 
       const headers = {
         'Content-Type': 'application/json',
@@ -85,6 +91,9 @@ const SavedProfile = ({ navigation }) => {
       const response = await axios.delete(`${DELETE_SAVED_PROFILE}/${_id}`, { headers });
 
       if (response?.status === 200 && response?.data?.status === true) {
+        deletedIdsRef.current.add(_id);
+        setSavedProfiles(prev => prev.filter(p => p._id !== _id));
+
         showMessage({
           type: 'success',
           message: 'Success',
@@ -92,14 +101,12 @@ const SavedProfile = ({ navigation }) => {
           icon: 'success',
           duration: 5000,
         });
-
-        setSavedProfiles(prev => prev.filter(p => p._id !== _id));
       } else {
         throw new Error(response?.data?.message || 'Something went wrong!');
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error('Error fetching biodata:', errorMsg);
+      console.error('Error deleting profile:', errorMsg);
 
       showMessage({
         type: 'danger',
@@ -123,11 +130,9 @@ const SavedProfile = ({ navigation }) => {
         });
       }
     } finally {
-      setLoading(false);
       setDeletingId(null);
     }
   };
-
 
   const getFilteredData = () => {
     const validProfiles = savedProfiles.filter((item) => item?.saveProfile !== null) || {};
@@ -148,7 +153,73 @@ const SavedProfile = ({ navigation }) => {
     return (
       <View style={styles.card}>
         <TouchableOpacity style={styles.detailsContainer}
+          // onPress={() => {
+          //   if (profileType === 'Biodata' && isBiodataEmpty) {
+          //     Alert.alert('Create Biodata', 'Please create biodata to see full information of this profile.');
+          //     return;
+          //   }
+          //   if (profileType === 'Biodata') {
+          //     if (saveProfile?.connectionStatus === 'received') {
+          //       navigation.navigate('IntrestReceivedProfilePage', {
+          //         userId: saveProfile?.userId,
+          //       });
+          //     } else if (!partnerPreferences) {
+          //       navigation.navigate('ShortMatrimonialProfile', {
+          //         userDetails: saveProfile,
+          //       });
+          //     } else {
+          //       navigation.navigate('MatrimonyPeopleProfile', {
+          //         userDetails: saveProfile,
+          //         userId: saveProfile?.userId,
+          //       });
+          //     }
+          //   }
+          //   else if (profileType === 'Pandit') {
+          //     navigation.navigate('PanditDetailPage', { pandit_id: saveProfile._id, fromScreen: 'SavedProfile' });
+          //   } else if (profileType === 'Jyotish') {
+          //     navigation.navigate('JyotishDetailsPage', { jyotish_id: saveProfile._id, fromScreen: 'SavedProfile' });
+          //   } else if (profileType === 'Kathavachak') {
+          //     navigation.navigate('KathavachakDetailsPage', { kathavachak_id: saveProfile._id, fromScreen: 'SavedProfile' });
+          //   } else if (profileType === 'Dharmshala') {
+          //     navigation.navigate('DharamsalaDetail', { _id: saveProfile._id, fromScreen: 'SavedProfile' });
+          //   }
+          // }}
+
           onPress={() => {
+            const isExpired = profile_data?.serviceSubscriptions?.some(
+              sub => sub.serviceType === profileType && sub.status === 'Expired'
+            );
+
+            if (isExpired) {
+              let serviceTypeName = profileType;
+              let descriptionMsg = '';
+
+              if (profileType === 'Biodata') {
+                serviceTypeName = 'Biodata';
+                descriptionMsg = 'Please activate your subscription to see full information of this profile.';
+              } else if (profileType === 'Pandit') {
+                descriptionMsg = "This Pandit's profile is currently unavailable. Please subscribe to access it.";
+              } else if (profileType === 'Jyotish') {
+                descriptionMsg = "This Jyotish's profile is currently unavailable. Please subscribe to access it.";
+              } else if (profileType === 'Kathavachak') {
+                descriptionMsg = "This Kathavachak's profile is currently unavailable. Please subscribe to access it.";
+              }
+
+              showMessage({
+                message: 'Subscription Required',
+                description: descriptionMsg,
+                type: 'info',
+                icon: 'info',
+                duration: 3000,
+              });
+
+              setTimeout(() => {
+                navigation.navigate('BuySubscription', { serviceType: serviceTypeName });
+              }, 2000);
+
+              return;
+            }
+
             if (profileType === 'Biodata' && isBiodataEmpty) {
               Alert.alert('Create Biodata', 'Please create biodata to see full information of this profile.');
               return;
@@ -157,31 +228,28 @@ const SavedProfile = ({ navigation }) => {
               if (saveProfile?.connectionStatus === 'received') {
                 navigation.navigate('IntrestReceivedProfilePage', {
                   userId: saveProfile?.userId,
-                  isSaved: true,
                 });
               } else if (!partnerPreferences) {
                 navigation.navigate('ShortMatrimonialProfile', {
                   userDetails: saveProfile,
-                  isSaved: true,
                 });
               } else {
                 navigation.navigate('MatrimonyPeopleProfile', {
                   userDetails: saveProfile,
                   userId: saveProfile?.userId,
-                  isSaved: true,
                 });
               }
-            }
-            else if (profileType === 'Pandit') {
-              navigation.navigate('PanditDetailPage', { pandit_id: saveProfile._id, isSaved: true });
+            } else if (profileType === 'Pandit') {
+              navigation.navigate('PanditDetailPage', { pandit_id: saveProfile._id, fromScreen: 'SavedProfile' });
             } else if (profileType === 'Jyotish') {
-              navigation.navigate('JyotishDetailsPage', { jyotish_id: saveProfile._id, isSaved: true });
+              navigation.navigate('JyotishDetailsPage', { jyotish_id: saveProfile._id, fromScreen: 'SavedProfile' });
             } else if (profileType === 'Kathavachak') {
-              navigation.navigate('KathavachakDetailsPage', { kathavachak_id: saveProfile._id, isSaved: true });
+              navigation.navigate('KathavachakDetailsPage', { kathavachak_id: saveProfile._id, fromScreen: 'SavedProfile' });
             } else if (profileType === 'Dharmshala') {
-              navigation.navigate('DharamsalaDetail', { DharamsalaData: saveProfile, isSaved: true, _id: saveProfile._id });
+              navigation.navigate('DharamsalaDetail', { _id: saveProfile._id, fromScreen: 'SavedProfile' });
             }
-          }}>
+          }}
+        >
           {profileType === 'Biodata' && (
             <>
               <Image
@@ -288,7 +356,7 @@ const SavedProfile = ({ navigation }) => {
         <Text
           style={[styles.unsaveText, deletingId === saveProfile?._id && { opacity: 0.5 }]}
           onPress={() => {
-            if (!deletingId) {DeleteSaveProfile(saveProfile?._id);}
+            if (!deletingId) { DeleteSaveProfile(saveProfile?._id); }
           }}
         >
           {deletingId === saveProfile?._id ? 'Removing...' : 'Remove'}
@@ -396,7 +464,7 @@ const SavedProfile = ({ navigation }) => {
             keyExtractor={(item) => (item.id ? item.id.toString() : item._id.toString())}
             numColumns={2}
             columnWrapperStyle={styles.row}
-            contentContainerStyle={[styles.ProfileContainer, { paddingBottom: insets.bottom + SH(10), flexGrow: 1 }]}
+            contentContainerStyle={[styles.ProfileContainer, { paddingBottom: insets.bottom + SH(200), flexGrow: 1 }]}
             showsVerticalScrollIndicator={false}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

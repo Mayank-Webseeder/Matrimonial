@@ -7,7 +7,7 @@ import RootNavigator from './src/Routing/RootNavigator';
 import InternetCheck from './src/Components/CheckInternet';
 import FlashMessage from 'react-native-flash-message';
 import store from './src/ReduxStore/Store';
-import UpdateCheck from './src/Components/AppUpdateChecker ';
+import AppUpdateModal from './src/Components/AppUpdateModal';
 
 const App = () => {
 
@@ -110,7 +110,7 @@ const App = () => {
       <NavigationContainer linking={linking}>
         <RootNavigator />
         <InternetCheck />
-        <UpdateCheck />
+        <AppUpdateModal />
         <FlashMessage position="bottom" />
       </NavigationContainer>
     </Provider>

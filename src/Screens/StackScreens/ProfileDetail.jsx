@@ -487,12 +487,12 @@ const ProfileDetail = ({ route, navigation }) => {
                                             ]}
                                             onPress={() => {
                                                 if (isBiodataExpired) {
-                                                    alert('Your subscription has expired. Please buy a new pack to repost.');
+                                                    Alert.alert('Your subscription has expired. Please buy a new pack to repost.');
                                                     return;
                                                 }
 
                                                 if (!isRepostAllowed) {
-                                                    alert('You can repost only after 7 days.');
+                                                    Alert.alert('You can repost only after 7 days.');
                                                     return;
                                                 }
 

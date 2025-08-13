@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Image, ScrollView, Text, View, TouchableOpacity, SafeAreaView, StatusBar, BackHandler, Modal ,Dimensions } from 'react-native';
+import { Image, ScrollView, Text, View, TouchableOpacity, SafeAreaView, StatusBar, BackHandler, Modal, Dimensions } from 'react-native';
 import Colors from '../../utils/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
@@ -9,7 +9,7 @@ import Globalstyles from '../../utils/GlobalCss';
 import moment from 'moment';
 import { showMessage } from 'react-native-flash-message';
 import { useSelector } from 'react-redux';
-import { SH } from '../../utils/Dimensions';
+import { SF, SH, SW } from '../../utils/Dimensions';
 import { VIEW_LIKE_COMMENT_EVENTNEWS } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -17,7 +17,7 @@ import { CommonActions, useFocusEffect } from '@react-navigation/native';
 import ImageViewer from 'react-native-image-zoom-viewer';
 
 const { width: screenWidth } = Dimensions.get('window');
-const imageHeight = SH(400);
+const imageHeight = SH(600);
 
 const ViewPost = ({ navigation, route }) => {
   const { postId, id } = route.params || {};
@@ -111,7 +111,7 @@ const ViewPost = ({ navigation, route }) => {
     }
   };
 
-  if (!postData) {return null;}
+  if (!postData) { return null; }
 
   const images = postData?.images || [];
   const author = postData?.activistDetails || {};
@@ -162,44 +162,51 @@ const ViewPost = ({ navigation, route }) => {
           </View>
 
           <Text style={styles.postDescriptionText}>{postData?.description || 'No description'}</Text>
-<View style={{ flex: 1 }}>
-  {images.length > 0 && (
-    <ScrollView
-      pagingEnabled
-      showsVerticalScrollIndicator={false}
-    >
-      {images.map((img, index) => (
-        <View
-          key={index}
-          style={{
-            width: screenWidth,
-            height: imageHeight,
-            backgroundColor: 'white',
-          }}
-        >
-          <ImageViewer
-            imageUrls={[{ url: img }]}
-            backgroundColor="transparent"
-            enableSwipeDown={false}
-            saveToLocalByLongPress={false}
-            renderIndicator={() => null}
-            enablePreload={true}
-            renderImage={(props) => (
-              <Image
-                {...props}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  resizeMode: 'contain',
-                }}
-              />
+          <View style={{ flex: 1 }}>
+            {images.length > 0 && (
+              <View style={{ width: "100%", height: imageHeight }}>
+                <ImageViewer
+                  imageUrls={images.map(img => ({ url: img }))}
+                  index={0}
+                  enableSwipeDown={false}
+                  saveToLocalByLongPress={false}
+                  enablePreload={true}
+                  backgroundColor="transparent"
+                  renderIndicator={(currentIndex, allSize) => (
+                    <View
+                      style={{
+                        position: 'absolute',
+                        top: 10,
+                        alignSelf: 'center',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        paddingHorizontal: SW(10),
+                        paddingVertical: SH(4),
+                        borderRadius: 25,
+                      }}
+                    >
+                      <Text style={{ color: '#fff', fontSize: SF(14) }}>
+                        {currentIndex} / {allSize}
+                      </Text>
+                    </View>
+                  )}
+
+                  // ✅ Force full coverage
+                  renderImage={(props) => (
+                    <Image
+                      {...props}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        resizeMode: 'cover', // now fills width
+                      }}
+                    />
+                  )}
+                />
+              </View>
             )}
-          />
-        </View>
-      ))}
-    </ScrollView>
-  )}
-</View>
+          </View>
+
+
 
         </View>
       </ScrollView>

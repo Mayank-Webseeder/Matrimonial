@@ -97,7 +97,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
     try {
       setMyeventpost([]);
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = { Authorization: `Bearer ${token}` };
       const response = await axios.get(VIEW_EVENT, { headers });
@@ -132,7 +132,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
     console.log('profileId:', profileId);
 
     try {
-      if (!profileId) {throw new Error('Missing profile ID');}
+      if (!profileId) { throw new Error('Missing profile ID'); }
 
       const directLink = `${DeepLink}/${profileType}/${profileId}`;
 
@@ -171,7 +171,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
     try {
       setLikeLoading(true);
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -205,8 +205,6 @@ const ViewMyEventPost = ({ navigation, route }) => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error('Error on doing like:', errorMsg);
-
-      // Reverse the like state on error
       setLikeData((prevState) => {
         const prevLikeData = prevState[postId] || {
           isLiked: false,
@@ -256,7 +254,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
     try {
       setCommentLoading(true);
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -329,7 +327,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
       setDeletingCommentId(commentId);
 
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -399,7 +397,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
       setIsLoading(true);
       const token = await AsyncStorage.getItem('userToken');
 
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -493,7 +491,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
   };
 
   const renderImages = (images, item) => {
-    if (images.length === 0) {return null;}
+    if (images.length === 0) { return null; }
 
     const openImageViewer = (index) => {
       console.log('📷 Opening viewer for images:', images);

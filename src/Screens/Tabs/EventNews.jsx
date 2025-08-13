@@ -26,6 +26,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const EventNews = ({ navigation }) => {
   const route = useRoute();
+  const flatListRef = useRef(null);
   const insets = useSafeAreaInsets();
   const { postId } = route.params || {};
   const sheetRef = useRef(null);
@@ -52,7 +53,6 @@ const EventNews = ({ navigation }) => {
   const [eventList, setEventList] = useState([]);
   const notifications = useSelector((state) => state.GetAllNotification.AllNotification);
   const notificationCount = notifications ? notifications.length : 0;
-
   const [modalVisible, setModalVisible] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
   const [formattedImages, setFormattedImages] = useState([]);
@@ -511,12 +511,15 @@ const EventNews = ({ navigation }) => {
   const getPostsForPage = () => {
     if (!Array.isArray(eventdata)) {
       console.error('eventdata is not an array:', eventdata);
-      return []; // Return an empty array to prevent crashes
+      return [];
     }
+    const sortedData = [...eventdata].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
     const startIndex = (page - 1) * postsPerPage;
     const endIndex = startIndex + postsPerPage;
-    return eventdata.slice(startIndex, endIndex);
+    return sortedData.slice(startIndex, endIndex);
   };
+
 
 
   const loadNextPage = () => {
@@ -526,7 +529,18 @@ const EventNews = ({ navigation }) => {
     }
 
     if ((page * postsPerPage) < eventdata.length) {
-      setPage(page + 1);
+      const nextPage = page + 1;
+      setPage(nextPage);
+
+      // Scroll to the first item of the next page
+      setTimeout(() => {
+        if (flatListRef.current) {
+          flatListRef.current.scrollToIndex({
+            index: (nextPage - 1) * postsPerPage,
+            animated: true,
+          });
+        }
+      }, 100);
     } else {
       Alert.alert('No more posts available', '', [
         {
@@ -536,6 +550,7 @@ const EventNews = ({ navigation }) => {
       ]);
     }
   };
+
 
   const openBottomSheet = (postId, comments) => {
     console.log('commentData', commentData);
@@ -564,8 +579,6 @@ const EventNews = ({ navigation }) => {
     if (images.length === 0) { return null; }
 
     const openImageViewer = (index) => {
-      console.log('📷 Opening viewer for images:', images);
-      console.log('👉 Opening at index:', index);
 
       const cleanImages = images
         .filter(img => typeof img === 'string' && img.startsWith('http'))
@@ -639,6 +652,10 @@ const EventNews = ({ navigation }) => {
     }
   };
 
+  const getSortedData = () => {
+    if (!Array.isArray(eventdata)) return [];
+    return [...eventdata].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  };
 
   const renderItem = ({ item }) => {
     const likeInfo = likeData[item._id] || {
@@ -916,7 +933,8 @@ const EventNews = ({ navigation }) => {
       >
         <View style={styles.bottomContainer}>
           <FlatList
-            data={postId ? eventdata : getPostsForPage()}
+            ref={flatListRef}
+            data={getSortedData().slice(0, page * postsPerPage)}
             renderItem={renderItem}
             keyExtractor={(item) => item._id}
             scrollEnabled={false}
@@ -933,7 +951,7 @@ const EventNews = ({ navigation }) => {
                 <Text style={[styles.emptyText, { fontFamily: 'POppins-Bold', fontSize: SF(16) }]}>
                   No Event & News Posted Yet
                 </Text>
-                <Text style={{ color: 'gray', textAlign: 'center', marginTop: SH(5), paddingHorizontal: SW(20), fontFamily: 'POppins-Medium' }}>
+                <Text style={{ color: 'gray', textAlign: 'center', marginTop: SH(5), paddingHorizontal: SW(20), fontFamily: 'Poppins-Medium' }}>
                   Events or news uploaded by Activists will be shown here.
                 </Text>
               </View>

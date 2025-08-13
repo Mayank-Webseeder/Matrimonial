@@ -452,7 +452,9 @@ const DetailedProfile = ({ navigation, profileData }) => {
     'weight', 'complexion', 'nadi', 'gotraSelf', 'gotraMother', 'aboutMe', 'otherFamilyMemberInfo',
     'knowCooking', 'dietaryHabit', 'smokingHabit', 'drinkingHabit',
     'tobaccoHabits', 'hobbies', 'fullPhoto', 'bestPhoto',
-    'contactNumber2', 'disabilities', 'livingStatus', 'manglikStatus', 'motherIncomeAnnually', 'profileCreatedBy',
+    'contactNumber2', 'disabilities', 'livingStatus', 'manglikStatus',
+    'motherIncomeAnnually', 'profileCreatedBy',
+    'motherName', 'motherOccupation'
   ];
 
   const validateForm = (biodata) => {
@@ -1587,7 +1589,12 @@ const DetailedProfile = ({ navigation, profileData }) => {
               style={[Globalstyles.input, !isEditing && styles.readOnly, errors.contactNumber1 && styles.errorInput]}
               value={biodata?.contactNumber1}
               onChangeText={(text) => {
-                const cleanText = text.replace(/[^0-9]/g, '');
+                let cleanText = text.replace(/[^0-9]/g, '');
+                if (cleanText.startsWith('91') && cleanText.length > 10) {
+                  cleanText = cleanText.slice(2);
+                }
+                cleanText = cleanText.slice(0, 10);
+
                 handleInputChange('contactNumber1', cleanText);
               }}
               keyboardType="phone-pad"
@@ -1609,7 +1616,12 @@ const DetailedProfile = ({ navigation, profileData }) => {
               style={[Globalstyles.input, !isEditing && styles.readOnly, errors.contactNumber2 && styles.errorInput]}
               value={biodata?.contactNumber2}
               onChangeText={(text) => {
-                const cleanText = text.replace(/[^0-9]/g, '');
+                let cleanText = text.replace(/[^0-9]/g, '');
+                if (cleanText.startsWith('91') && cleanText.length > 10) {
+                  cleanText = cleanText.slice(2);
+                }
+                cleanText = cleanText.slice(0, 10);
+
                 handleInputChange('contactNumber2', cleanText);
               }}
               keyboardType="phone-pad"
@@ -1887,7 +1899,7 @@ const DetailedProfile = ({ navigation, profileData }) => {
               <ActivityIndicator size="large" color={Colors.light} />
             ) : (
               <Text style={styles.buttonText}>
-                {biodata?._id ? 'Submit' : 'Continue'}
+                Submit
               </Text>
             )}
           </TouchableOpacity>

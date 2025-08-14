@@ -24,6 +24,8 @@ import { useRoute } from '@react-navigation/native';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+const ITEM_HEIGHT = 200;
+
 const EventNews = ({ navigation }) => {
   const route = useRoute();
   const flatListRef = useRef(null);
@@ -56,7 +58,7 @@ const EventNews = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
   const [formattedImages, setFormattedImages] = useState([]);
-
+ 
   useEffect(() => {
     console.log('myprofile_id', myprofile_id);
   }, []);
@@ -151,7 +153,7 @@ const EventNews = ({ navigation }) => {
       GetEventNews();
       Advertisement_window();
       setPage(1);
-    }, [route?.params?.refresh]) // <-- triggers again when refresh param changes
+    }, [route?.params?.refresh])
   );
 
   useEffect(() => {
@@ -240,8 +242,12 @@ const EventNews = ({ navigation }) => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       };
+       
+      const payload = { postId };
+      console.log("headers",headers);
+      console.log('Payload to be sent:', JSON.stringify(payload, null, 2));
 
-      const response = await axios.post(LIKEPOST, { postId }, { headers });
+       const response = await axios.post(LIKEPOST, payload, { headers });
 
       if (!(response.status === 200 || response.data.status === true)) {
         throw new Error(response.data.message || 'Failed to like event.');
@@ -266,7 +272,7 @@ const EventNews = ({ navigation }) => {
 
       console.error('Error liking post:', errorMsg);
       showMessage({
-        type: 'error',
+        type:'danger',
         message: 'Error',
         description: errorMsg || 'Failed to like event.',
       });
@@ -305,21 +311,22 @@ const EventNews = ({ navigation }) => {
         comment: myComment,
       };
 
+      console.log("payload", payload);
+
       const response = await axios.post(COMMENTPOST, payload, { headers });
 
       if (response.status === 200 && response.data.status === true) {
         const fetchedData = response.data;
         console.log('Updated comments:', JSON.stringify(fetchedData.event.comments));
-
-        // Set the comments data to state after successful comment addition
+        
         const fetchedComments = response.data.event.comments;
         setCommentData(fetchedComments);
-        setMyComment(''); // Clear the comment input field
+        setMyComment(''); 
 
         setEventList((prevList) =>
           prevList.map((post) =>
             post._id === postId
-              ? { ...post, comments: fetchedComments } // replace with updated comments array
+              ? { ...post, comments: fetchedComments } 
               : post
           )
         );
@@ -933,30 +940,19 @@ const EventNews = ({ navigation }) => {
       >
         <View style={styles.bottomContainer}>
           <FlatList
-            ref={flatListRef}
-            data={getSortedData().slice(0, page * postsPerPage)}
-            renderItem={renderItem}
-            keyExtractor={(item) => item._id}
-            scrollEnabled={false}
-            nestedScrollEnabled={true}
-            showsVerticalScrollIndicator={false}
-            ListEmptyComponent={
-              <View style={styles.emptyContainer}>
-                <Ionicons
-                  name={'newspaper'}
-                  size={60}
-                  color={Colors.theme_color}
-                  style={{ marginBottom: SH(10) }}
-                />
-                <Text style={[styles.emptyText, { fontFamily: 'POppins-Bold', fontSize: SF(16) }]}>
-                  No Event & News Posted Yet
-                </Text>
-                <Text style={{ color: 'gray', textAlign: 'center', marginTop: SH(5), paddingHorizontal: SW(20), fontFamily: 'Poppins-Medium' }}>
-                  Events or news uploaded by Activists will be shown here.
-                </Text>
-              </View>
-            }
-          />
+  ref={flatListRef}
+  data={getSortedData().slice(0, page * postsPerPage)}
+  renderItem={renderItem}
+  keyExtractor={(item) => item._id}
+  scrollEnabled={false}
+  nestedScrollEnabled={true}
+  showsVerticalScrollIndicator={false}
+  getItemLayout={(data, index) => ({
+    length: ITEM_HEIGHT,
+    offset: ITEM_HEIGHT * index,
+    index,
+  })}
+/>
           {getPostsForPage().length >= 10 && (
             <TouchableOpacity style={styles.loadMoreButton} onPress={loadNextPage}>
               <Text style={styles.loadMoreText}>Load More Posts</Text>
@@ -994,7 +990,6 @@ const EventNews = ({ navigation }) => {
             />
           </View>
         </View>
-
       </ScrollView>
     </SafeAreaView>
   );

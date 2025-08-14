@@ -73,6 +73,53 @@ const Committee = ({ navigation, route }) => {
     }
   }, [id, committeeData]);
 
+  const clearFiltersAndFetch = () => {
+    setLocality('');
+    setSubcaste('');
+    fetchComitteeData('all');
+    fetchMyCommitteeData();
+    Advertisement_window();
+  };
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+      clearFiltersAndFetch();
+    }, 2000);
+  }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchMyCommitteeData();
+      Advertisement_window();
+    }, [])
+  );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        if (navigation.canGoBack()) {
+          navigation.goBack();
+          clearFiltersAndFetch();
+        } else {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'MainApp' }],
+          });
+          clearFiltersAndFetch();
+        }
+        return true;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => {
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+      };
+    }, [navigation])
+  );
+
   const fetchMyCommitteeData = async () => {
     try {
       setIsLoading(true);
@@ -257,50 +304,6 @@ const Committee = ({ navigation, route }) => {
       }
     }
   };
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-      setLocality('');
-      setSubcaste('');
-      fetchComitteeData('all');
-      fetchMyCommitteeData();
-      Advertisement_window();
-    }, 2000);
-  }, []);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      // setLocality('');
-      // setSubcaste('');
-      // fetchComitteeData("all");
-      fetchMyCommitteeData();
-      Advertisement_window();
-    }, [])
-  );
-
-  useFocusEffect(
-    React.useCallback(() => {
-      const onBackPress = () => {
-        if (navigation.canGoBack()) {
-          navigation.goBack();
-        } else {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'MainApp' }],
-          });
-        }
-        return true;
-      };
-
-      BackHandler.addEventListener('hardwareBackPress', onBackPress);
-
-      return () => {
-        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-      };
-    }, [navigation])
-  );
 
   const openImageViewer = (imageUri) => {
     if (imageUri) {
@@ -532,10 +535,7 @@ const Committee = ({ navigation, route }) => {
   };
 
   const resetFilter = () => {
-    setLocality('');
-    setModalLocality('');
-    setSubcaste('');
-    fetchComitteeData('all');
+    clearFiltersAndFetch();
   };
 
   return (
@@ -552,11 +552,13 @@ const Committee = ({ navigation, route }) => {
             onPress={() => {
               if (navigation.canGoBack()) {
                 navigation.goBack();
+                clearFiltersAndFetch();
               } else {
                 navigation.reset({
                   index: 0,
                   routes: [{ name: 'MainApp' }],
                 });
+                clearFiltersAndFetch();
               }
             }}
           >
@@ -607,8 +609,7 @@ const Committee = ({ navigation, route }) => {
           />
           {locality.length > 0 ? (
             <AntDesign name={'close'} size={20} color={'gray'} onPress={() => {
-              setLocality('');
-              fetchComitteeData('all');
+              clearFiltersAndFetch();
             }} />
           ) : (
             <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchComitteeData('search')} />
@@ -766,10 +767,7 @@ const Committee = ({ navigation, route }) => {
               <TouchableOpacity
                 onPress={() => {
                   setModalVisible(false);
-                  setLocality('');
-                  setSubcaste('');
-                  setCommitteeData([]);
-                  fetchComitteeData('all');
+                  clearFiltersAndFetch();
                 }}
                 style={[
                   styles.crossButton,

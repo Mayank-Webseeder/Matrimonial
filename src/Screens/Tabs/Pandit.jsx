@@ -70,17 +70,22 @@ const Pandit = ({ navigation, route }) => {
     }
   }, [panditData?.isSaved]);
 
+  const clearFiltersAndFetch = () => {
+    Top_Advertisement_window();
+    setLocality('');
+    setModalLocality('');
+    setRating('');
+    setExperience('');
+    setServices('');
+    setPanditData([]);
+    fetchPanditData('all');
+  };
+
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
-      setLocality('');
-      setModalLocality('');
-      setRating(' ');
-      setExperience(' ');
-      setServices('');
-      setPanditData([]);
-      fetchPanditData('all');
+      clearFiltersAndFetch();
     }, 2000);
   }, []);
 
@@ -102,11 +107,7 @@ const Pandit = ({ navigation, route }) => {
   };
 
   const resetFilter = () => {
-    setModalLocality('');
-    setRating(' ');
-    setExperience(' ');
-    setServices('');
-    fetchPanditData();
+    clearFiltersAndFetch();
   };
 
   useFocusEffect(
@@ -114,11 +115,13 @@ const Pandit = ({ navigation, route }) => {
       const onBackPress = () => {
         if (navigation.canGoBack()) {
           navigation.goBack();
+          clearFiltersAndFetch();
         } else {
           navigation.reset({
             index: 0,
             routes: [{ name: 'MainApp' }],
           });
+          clearFiltersAndFetch();
         }
         return true;
       };
@@ -285,16 +288,6 @@ const Pandit = ({ navigation, route }) => {
         profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
       );
     setPanditData(toggleIsSaved);
-
-
-
-    // setPanditData(prevData =>
-    //   prevData.map(profile =>
-    //     profile._id === _id
-    //       ? { ...profile, isSaved: !profile.isSaved }
-    //       : profile
-    //   )
-    // );
 
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -495,11 +488,13 @@ const Pandit = ({ navigation, route }) => {
             onPress={() => {
               if (navigation.canGoBack()) {
                 navigation.goBack();
+               clearFiltersAndFetch();
               } else {
                 navigation.reset({
                   index: 0,
                   routes: [{ name: 'MainApp' }],
                 });
+               clearFiltersAndFetch();
               }
             }}
           >
@@ -559,8 +554,7 @@ const Pandit = ({ navigation, route }) => {
               size={15}
               color={'gray'}
               onPress={() => {
-                setLocality('');
-                fetchPanditData('all');
+                clearFiltersAndFetch();
               }}
             />
           ) : (
@@ -701,13 +695,7 @@ const Pandit = ({ navigation, route }) => {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  setModalVisible(false);
-                  setLocality('');
-                  setModalLocality('');
-                  setRating('');
-                  setExperience('');
-                  setServices('');
-                  fetchPanditData('all');
+                 clearFiltersAndFetch();
                 }}
                 style={styles.crossButton}>
                 <View style={styles.circle}>

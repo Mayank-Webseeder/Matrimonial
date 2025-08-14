@@ -121,7 +121,7 @@ const PanditRegister = ({ navigation }) => {
 
             console.log('Full API Response:', JSON.stringify(response.data));
             if (response.data?.data?.profileType === 'Activist') {
-                console.log('❌ Skipping Activist Profile');
+                console.log('Skipping Activist Profile');
                 setIsLoading(false);
                 return;
             }
@@ -439,12 +439,10 @@ const PanditRegister = ({ navigation }) => {
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
             console.error('Error fetching biodata:', errorMsg);
-            Alert.alert('Please Wait', errorMsg);
-
             if (errorMsg.includes('valid Pandit subscription')) {
-                setTimeout(() => {
-                    openModal();
-                }, 1000);
+                openModal();
+            } else {
+                Alert.alert('Please Wait', errorMsg);
             }
             const sessionExpiredMessages = [
                 'User does not Exist....!Please login again',

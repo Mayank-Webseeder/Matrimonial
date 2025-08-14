@@ -84,26 +84,28 @@ const Kathavachak = ({ navigation, route }) => {
     KathavachakDataAPI('modal');
   };
 
-  const resetFilter = () => {
+  const clearFiltersAndFetch = () => {
+    setLocality('');
     setModalLocality('');
     setRating(' ');
     setExperience(' ');
     setServices('');
-    KathavachakDataAPI();
+    setKathavachakData([]);
+    KathavachakDataAPI('all');
+    Advertisement_window();
+    setKathavachakData([]);
+  };
+
+
+  const resetFilter = () => {
+    clearFiltersAndFetch();
   };
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
-      setLocality('');
-      setModalLocality('');
-      setRating(' ');
-      setExperience(' ');
-      setServices('');
-      setKathavachakData([]);
-      KathavachakDataAPI('all');
-      Advertisement_window();
+      clearFiltersAndFetch();
     }, 2000);
   }, []);
 
@@ -130,11 +132,13 @@ const Kathavachak = ({ navigation, route }) => {
       const onBackPress = () => {
         if (navigation.canGoBack()) {
           navigation.goBack();
+          clearFiltersAndFetch();
         } else {
           navigation.reset({
             index: 0,
             routes: [{ name: 'MainApp' }],
           });
+          clearFiltersAndFetch();
         }
         return true;
       };
@@ -419,7 +423,7 @@ const Kathavachak = ({ navigation, route }) => {
                   });
                   navigation.navigate('BuySubscription', { serviceType: 'Kathavachak' });
                 } else {
-                   navigation.navigate('KathavachakDetailsPage', {
+                  navigation.navigate('KathavachakDetailsPage', {
                     kathavachak_id: item._id || id, fromScreen: 'Kathavachak',
                   });
                 }
@@ -494,11 +498,13 @@ const Kathavachak = ({ navigation, route }) => {
             onPress={() => {
               if (navigation.canGoBack()) {
                 navigation.goBack();
+                clearFiltersAndFetch();
               } else {
                 navigation.reset({
                   index: 0,
                   routes: [{ name: 'MainApp' }],
                 });
+                clearFiltersAndFetch();
               }
             }}
           >
@@ -554,8 +560,7 @@ const Kathavachak = ({ navigation, route }) => {
           />
           {locality.length > 0 ? (
             <AntDesign name={'close'} size={20} color={'gray'} onPress={() => {
-              setLocality('');
-              KathavachakDataAPI('all');
+              clearFiltersAndFetch();
             }} />
           ) : (
             <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => KathavachakDataAPI('search')} />
@@ -693,13 +698,7 @@ const Kathavachak = ({ navigation, route }) => {
               <TouchableOpacity
                 onPress={() => {
                   setModalVisible(false);
-                  setLocality('');
-                  setModalLocality('');
-                  setRating(' ');
-                  setExperience(' ');
-                  setServices('');
-                  setKathavachakData([]);
-                  KathavachakDataAPI('all');
+                  clearFiltersAndFetch();
                 }}
                 style={styles.crossButton}>
                 <View style={styles.circle}>

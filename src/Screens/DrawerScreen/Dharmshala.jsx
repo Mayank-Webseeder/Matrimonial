@@ -64,6 +64,16 @@ const Dharmshala = ({ route }) => {
   }, [dharamsalaData?.isSaved]);
 
 
+   const clearFiltersAndFetch = () => {
+      setLocality('');
+      setSubcaste('');
+      setModalLocality();
+      setDharamsalaData([]);
+      fetchDharamsalaData('all');
+      GetMyDharamsalaData();
+      Advertisement_window();
+  };
+
   useFocusEffect(
     React.useCallback(() => {
       Advertisement_window();
@@ -76,11 +86,13 @@ const Dharmshala = ({ route }) => {
       const onBackPress = () => {
         if (navigation.canGoBack()) {
           navigation.goBack();
+          clearFiltersAndFetch();
         } else {
           navigation.reset({
             index: 0,
             routes: [{ name: 'MainApp' }],
           });
+          clearFiltersAndFetch();
         }
         return true;
       };
@@ -288,19 +300,14 @@ const Dharmshala = ({ route }) => {
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
-      // setLocality('');
-      // setSubcaste('');
-      setDharamsalaData([]);
-      fetchDharamsalaData('all');
-      GetMyDharamsalaData();
-      Advertisement_window();
+      clearFiltersAndFetch();
     }, 2000);
   }, []);
 
 
   const openImageViewer = (imageUri) => {
     if (imageUri) {
-      setSelectedImage([{ url: imageUri }]); // Important: `url` key is used by ImageViewer
+      setSelectedImage([{ url: imageUri }]); 
       setImageVisible(true);
     }
   };
@@ -523,10 +530,7 @@ const Dharmshala = ({ route }) => {
   };
 
   const resetFilter = () => {
-    setLocality('');
-    setModalLocality('');
-    setSubcaste('');
-    fetchDharamsalaData('all');
+    clearFiltersAndFetch();
   };
 
 
@@ -603,8 +607,7 @@ const Dharmshala = ({ route }) => {
             {locality.length > 0 ? (
               <AntDesign name={'close'} size={20} color={'gray'}
                 onPress={() => {
-                  setLocality('');
-                  fetchDharamsalaData('all');
+                 clearFiltersAndFetch();
                 }} />
             ) : (
               <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchDharamsalaData('search')} />

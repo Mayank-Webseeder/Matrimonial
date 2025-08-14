@@ -74,23 +74,23 @@ const JyotishRegister = ({ navigation }) => {
         setTempUrlData((prev) => ({ ...prev, [type]: text }));
     };
 
-   useEffect(() => {
-    if (fetchProfileDetails) {
-        setRoleRegisterData(prev => ({
-            ...prev,
-            mobileNo: fetchProfileDetails.mobileNo || '',
-            fullName: fetchProfileDetails.fullName || '',
-            state: fetchProfileDetails.state || '',
-            city: fetchProfileDetails.city || '',
-            aadharNo: fetchProfileDetails.aadharNo || '',
-            residentialAddress: fetchProfileDetails.residentialAddress || '',
-            description: fetchProfileDetails.description || '',
-        }));
-        if (fetchProfileDetails.state) {
-            setSelectedState(fetchProfileDetails.state);
+    useEffect(() => {
+        if (fetchProfileDetails) {
+            setRoleRegisterData(prev => ({
+                ...prev,
+                mobileNo: fetchProfileDetails.mobileNo || '',
+                fullName: fetchProfileDetails.fullName || '',
+                state: fetchProfileDetails.state || '',
+                city: fetchProfileDetails.city || '',
+                aadharNo: fetchProfileDetails.aadharNo || '',
+                residentialAddress: fetchProfileDetails.residentialAddress || '',
+                description: fetchProfileDetails.description || '',
+            }));
+            if (fetchProfileDetails.state) {
+                setSelectedState(fetchProfileDetails.state);
+            }
         }
-    }
-}, [fetchProfileDetails]);
+    }, [fetchProfileDetails]);
 
     const fetchPlans = async () => {
         try {
@@ -477,14 +477,15 @@ const JyotishRegister = ({ navigation }) => {
                 error?.message ||
                 'Something went wrong!';
 
-            console.error('❌ Error:', errorMessage);
-
-            Alert.alert('Please Wait', errorMessage); // ❌ Replaces showMessage
+            console.error('Error:', errorMessage);
 
             if (errorMessage.includes('valid Jyotish subscription')) {
                 setTimeout(() => {
                     openModal();
                 }, 1000);
+                
+            } else {
+                Alert.alert('Please Wait', errorMessage);
             }
 
         } finally {

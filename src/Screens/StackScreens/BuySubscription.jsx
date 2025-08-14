@@ -264,7 +264,6 @@ const BuySubscription = ({ navigation, route }) => {
                   />
                 ) : null}
 
-                {/* Title and Description */}
                 <View style={styles.cardContent}>
                   {plan.trialPeriod ? (
                     <Text style={styles.Text}>

@@ -476,12 +476,13 @@ const KathavachakRegister = ({ navigation }) => {
 
             console.error('Error:', errorMessage);
 
-            Alert.alert('Please Wait', errorMessage);
-
             if (errorMessage.includes('valid Kathavachak subscription')) {
                 setTimeout(() => {
                     openModal();
                 }, 1000);
+                
+            } else {
+                Alert.alert('Please Wait', errorMessage);
             }
 
         } finally {

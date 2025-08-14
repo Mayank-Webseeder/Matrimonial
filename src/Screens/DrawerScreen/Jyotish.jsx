@@ -65,17 +65,22 @@ const Jyotish = ({ navigation, route }) => {
     }, [lastFilterType])
   );
 
+  const clearFiltersAndFetch = () => {
+    setLocality('');
+    setModalLocality('');
+    setRating(' ');
+    setExperience(' ');
+    setServices('');
+    JyotishDataAPI('all');
+    Advertisement_window();
+    setJyotishData([]);
+  };
+
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
-      setLocality('');
-      setModalLocality('');
-      setRating(' ');
-      setExperience(' ');
-      setServices('');
-      JyotishDataAPI('all');
-      Advertisement_window();
+      clearFiltersAndFetch();
     }, 2000);
   }, []);
 
@@ -96,11 +101,7 @@ const Jyotish = ({ navigation, route }) => {
   };
 
   const resetFilter = () => {
-    setModalLocality('');
-    setRating(' ');
-    setExperience(' ');
-    setServices('');
-    JyotishDataAPI();
+  clearFiltersAndFetch();
   };
 
   useFocusEffect(
@@ -108,11 +109,13 @@ const Jyotish = ({ navigation, route }) => {
       const onBackPress = () => {
         if (navigation.canGoBack()) {
           navigation.goBack();
+          clearFiltersAndFetch();
         } else {
           navigation.reset({
             index: 0,
             routes: [{ name: 'MainApp' }],
           });
+          clearFiltersAndFetch();
         }
         return true;
       };
@@ -500,11 +503,13 @@ const Jyotish = ({ navigation, route }) => {
             onPress={() => {
               if (navigation.canGoBack()) {
                 navigation.goBack();
+                clearFiltersAndFetch();
               } else {
                 navigation.reset({
                   index: 0,
                   routes: [{ name: 'MainApp' }],
                 });
+                clearFiltersAndFetch();
               }
             }}
           >
@@ -560,8 +565,7 @@ const Jyotish = ({ navigation, route }) => {
           />
           {locality.length > 0 ? (
             <AntDesign name={'close'} size={20} color={'gray'} onPress={() => {
-              setLocality('');
-              JyotishDataAPI('all');
+              clearFiltersAndFetch();
             }} />
           ) : (
             <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => JyotishDataAPI('search')} />
@@ -699,12 +703,7 @@ const Jyotish = ({ navigation, route }) => {
               <TouchableOpacity
                 onPress={() => {
                   setModalVisible(false);
-                  setLocality('');
-                  setModalLocality('');
-                  setRating(' ');
-                  setExperience(' ');
-                  setServices('');
-                  JyotishDataAPI('all');
+                 clearFiltersAndFetch();
                 }}
                 style={styles.crossButton}>
                 <View style={styles.circle}>

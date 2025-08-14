@@ -621,21 +621,23 @@ const DetailedProfile = ({ navigation, profileData }) => {
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       console.error('Error fetching biodata:', errorMsg);
-      Alert.alert(
-        'Continue',
-        errorMsg,
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              if (errorMsg === 'You do not have an active subscription for Biodata service.') {
-                openModal();
-              }
+      if (errorMsg === 'You do not have an active subscription for Biodata service.') {
+        openModal();
+      } else {
+        Alert.alert(
+          errorMsg,
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                console.log('OK Pressed');
+              },
             },
-          },
-        ],
-        { cancelable: true }
-      );
+          ],
+          { cancelable: true }
+        );
+      }
+
       const sessionExpiredMessages = [
         'User does not Exist....!Please login again',
         'Invalid token. Please login again',

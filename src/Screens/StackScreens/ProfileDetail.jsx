@@ -623,47 +623,39 @@ const ProfileDetail = ({ route, navigation }) => {
                             </View>
 
                             {/* About Me Section */}
-                            <View style={styles.familyDiv}>
-                                <View>
-                                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
-                                        <MaterialCommunityIcons name="account-box-outline" size={25} color={Colors.theme_color} />
-                                        <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>About Me</Text>
-                                    </View>
+                            {(personalDetails?.aboutMe?.trim() ||
+                                personalDetails?.complexion ||
+                                personalDetails?.weight) && (
+                                    <View style={styles.familyDiv}>
+                                        <View>
+                                            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SH(5) }}>
+                                                <MaterialCommunityIcons name="account-box-outline" size={25} color={Colors.theme_color} />
+                                                <Text style={[styles.HeadingText, { marginLeft: SW(8) }]}>About Me</Text>
+                                            </View>
 
-                                    {personalDetails?.aboutMe?.trim() !== '' && (
-                                        <Text style={styles.text}>{personalDetails?.aboutMe}</Text>
-                                    )}
-
-                                    <View style={{ marginVertical: SH(4) }}>
-                                        <View style={styles.infoRow}>
-                                            {personalDetails?.complexion && (
-                                                <>
-                                                    <Text style={styles.infoLabel}>Complexion :</Text>
-                                                    <Text style={styles.infoValue}>{personalDetails?.complexion}</Text>
-                                                </>
+                                            {personalDetails?.aboutMe?.trim() !== '' && (
+                                                <Text style={styles.text}>{personalDetails?.aboutMe}</Text>
                                             )}
+
+                                            <View style={{ marginVertical: SH(4) }}>
+                                                {personalDetails?.complexion && (
+                                                    <View style={styles.infoRow}>
+                                                        <Text style={styles.infoLabel}>Complexion :</Text>
+                                                        <Text style={styles.infoValue}>{personalDetails?.complexion}</Text>
+                                                    </View>
+                                                )}
+
+                                                {personalDetails?.weight && (
+                                                    <View style={styles.infoRow}>
+                                                        <Text style={styles.infoLabel}>Weight :</Text>
+                                                        <Text style={styles.infoValue}>{personalDetails?.weight} kg</Text>
+                                                    </View>
+                                                )}
+                                            </View>
                                         </View>
-
-                                        <View style={styles.infoRow}>
-                                            {personalDetails?.weight && (
-                                                <>
-                                                    <Text style={styles.infoLabel}>Weight :</Text>
-                                                    <Text style={styles.infoValue}>{personalDetails?.weight} kg</Text>
-                                                </>
-                                            )}
-                                        </View>
-
-                                        {/* <View style={styles.infoRow}>
-                                            {personalDetails?.livingStatus && (
-                                                <>
-                                                    <Text style={styles.infoLabel}>Living with family :</Text>
-                                                    <Text style={styles.infoValue}>{personalDetails?.livingStatus}</Text>
-                                                </>
-                                            )}
-                                        </View> */}
                                     </View>
-                                </View>
-                            </View>
+                                )}
+
 
 
                             {/* Family Section */}

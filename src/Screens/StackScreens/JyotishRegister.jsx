@@ -273,41 +273,43 @@ const JyotishRegister = ({ navigation }) => {
         }
     };
 
-    const ADDL_LIMIT = 4;                // max extra photos
+    const ADDL_LIMIT = 4;
 
     const pickerOpts = {
-        selectionLimit: ADDL_LIMIT,        // gallery stops user at 5
+        selectionLimit: ADDL_LIMIT,
         mediaType: 'photo',
-        includeBase64: true,               // we still need base‑64
-        maxWidth: 1000,                     // optional resize
+        includeBase64: true,
+        maxWidth: 1000,
         maxHeight: 1000,
         quality: 1,
     };
 
     const handleAdditionalPhotosPick = () => {
         launchImageLibrary(pickerOpts, (response) => {
-            if (response.didCancel) { return; }
+            if (response.didCancel) return;
             if (response.errorCode) {
                 console.log('ImagePicker Error:', response.errorMessage);
                 return;
             }
 
             const incoming = response.assets ?? [];
-            const incomingCount = incoming.length;
-
-            if (incomingCount > ADDL_LIMIT) {
-                Alert.alert(`You can only upload up to ${ADDL_LIMIT} additional photos.`);
-                return;
-            }
-
             const newPhotos = incoming.map(
                 (img) => `data:${img.type};base64,${img.base64}`
             );
 
-            setRoleRegisterData((prev) => ({
-                ...prev,
-                additionalPhotos: newPhotos, // Replace previous photos
-            }));
+            setRoleRegisterData((prev) => {
+                const existing = prev.additionalPhotos || [];
+                const merged = [...existing, ...newPhotos];
+
+                if (merged.length > ADDL_LIMIT) {
+                    Alert.alert(`You can only upload up to ${ADDL_LIMIT} additional photos.`);
+                }
+
+                return {
+                    ...prev,
+                    additionalPhotos: merged.slice(0, ADDL_LIMIT),
+                };
+            });
         });
     };
 
@@ -483,7 +485,7 @@ const JyotishRegister = ({ navigation }) => {
                 setTimeout(() => {
                     openModal();
                 }, 1000);
-                
+
             } else {
                 Alert.alert('Please Wait', errorMessage);
             }
@@ -1018,22 +1020,41 @@ const JyotishRegister = ({ navigation }) => {
                         {/* Display Selected Photos */}
                         {RoleRegisterData?.additionalPhotos?.length > 0 && (
                             <View style={styles.photosContainer}>
-
                                 <FlatList
                                     data={RoleRegisterData.additionalPhotos}
                                     keyExtractor={(item, index) => index.toString()}
                                     horizontal={true}
                                     showsHorizontalScrollIndicator={false}
-                                    renderItem={({ item }) => (
-                                        <View>
+                                    renderItem={({ item, index }) => (
+                                        <View style={{ marginRight: 10, position: 'relative' }}>
                                             <Image source={{ uri: item }} style={styles.photo} />
+
+                                            {/* Cross Icon for Delete */}
+                                            <TouchableOpacity
+                                                onPress={() => {
+                                                    const updated = RoleRegisterData.additionalPhotos.filter((_, i) => i !== index);
+                                                    setRoleRegisterData((prev) => ({
+                                                        ...prev,
+                                                        additionalPhotos: updated,
+                                                    }));
+                                                }}
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: 3,
+                                                    right: 3,
+                                                    backgroundColor: 'rgba(0,0,0,0.6)',
+                                                    borderRadius: 12,
+                                                    padding: 2,
+                                                }}
+                                            >
+                                                <Entypo name="cross" size={18} color="#fff" />
+                                            </TouchableOpacity>
                                         </View>
                                     )}
                                     contentContainerStyle={{ flexDirection: 'row', alignItems: 'center' }}
                                 />
                             </View>
                         )}
-
                         <Text style={Globalstyles.title}>Website Link</Text>
                         <TextInput
                             style={[Globalstyles.input, errors.websiteUrl && styles.errorInput]}

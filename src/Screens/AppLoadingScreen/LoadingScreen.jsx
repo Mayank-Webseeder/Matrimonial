@@ -1,18 +1,19 @@
 import { View, StyleSheet } from 'react-native';
 import Video from 'react-native-video';
+import { Image } from 'react-native';
 
 const LoadingScreen = () => {
   return (
     <View style={styles.container}>
-      <Video
+      {/* <Video
         source={require('../../Images/LoadingVedio.mp4')}
         style={{ width: '100%', height: '100%' }}
         resizeMode="cover"
         repeat
         muted
         paused={false}
-      />
-
+      /> */}
+      <Image source={require('../../Images/Loading.jpeg')} style={{ width: '100%', height: '100%' }} />
     </View>
   );
 };

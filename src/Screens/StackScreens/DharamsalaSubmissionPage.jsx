@@ -17,6 +17,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { duration } from 'moment';
 // import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const DharamsalaSubmissionPage = ({ navigation }) => {
     const insets = useSafeAreaInsets();
@@ -90,17 +91,28 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
 
     const handleImageUpload = () => {
         launchImageLibrary(pickerOptions, (response) => {
-            if (response.didCancel) { return; }
+            if (response.didCancel) return;
             if (response.errorCode) {
                 console.log('ImagePicker Error:', response.errorMessage);
                 return;
             }
-            const images = response.assets ?? [];
 
-            setDharamsalaData((prev) => ({
-                ...prev,
-                images: images.map((img) => ({ uri: img.uri })),
-            }));
+            const images = response.assets ?? [];
+            const newImages = images.map((img) => ({ uri: img.uri }));
+
+            setDharamsalaData((prev) => {
+                const existing = prev.images || [];
+                const merged = [...existing, ...newImages].reduce((acc, curr) => {
+                    if (!acc.find((x) => x.uri === curr.uri)) {
+                        acc.push(curr);
+                    }
+                    return acc;
+                }, []);
+                return {
+                    ...prev,
+                    images: merged.slice(0, 4),
+                };
+            });
         });
     };
 
@@ -382,7 +394,15 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                             <Text style={Globalstyles.title}>
                                 Upload Images (Max Limit 4) <Entypo name={'star'} color={'red'} size={12} />
                             </Text>
-                            <TouchableOpacity style={styles.uploadButton} onPress={handleImageUpload}>
+
+                            <TouchableOpacity
+                                style={[
+                                    styles.uploadButton,
+                                    DharamsalaData.images?.length >= 4 && { backgroundColor: '#ccc' },
+                                ]}
+                                onPress={handleImageUpload}
+                                disabled={DharamsalaData.images?.length >= 4}
+                            >
                                 <Text style={styles.uploadButtonText}>
                                     {DharamsalaData.images?.length > 0 ? 'Change Image' : 'Upload Image'}
                                 </Text>
@@ -396,18 +416,37 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                                     keyExtractor={(item, index) => index.toString()}
                                     horizontal={true}
                                     showsHorizontalScrollIndicator={false}
-                                    renderItem={({ item }) => (
-                                        <View>
+                                    renderItem={({ item, index }) => (
+                                        <View style={{ marginRight: 10, position: 'relative' }}>
                                             <Image
                                                 source={{ uri: item?.uri || item }}
                                                 style={styles.photo}
                                             />
+
+                                            {/* Cross Icon for Delete */}
+                                            <TouchableOpacity
+                                                onPress={() => {
+                                                    const updated = DharamsalaData.images.filter((_, i) => i !== index);
+                                                    setDharamsalaData(prev => ({ ...prev, images: updated }));
+                                                }}
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: 3,
+                                                    right: 3,
+                                                    backgroundColor: 'rgba(0,0,0,0.6)',
+                                                    borderRadius: 12,
+                                                    padding: 2,
+                                                }}
+                                            >
+                                                <Entypo name="cross" size={18} color="#fff" />
+                                            </TouchableOpacity>
                                         </View>
                                     )}
                                     contentContainerStyle={{ flexDirection: 'row', alignItems: 'center' }}
                                 />
                             </View>
                         )}
+
 
                         {errors.images && (
                             <Text style={styles.errorText}>{errors.images}</Text>

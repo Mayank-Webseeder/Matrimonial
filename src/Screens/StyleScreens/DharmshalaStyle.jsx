@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: SW(100),
-    height: SH(75),
+    height: SH(100),
     resizeMode: 'cover',
     marginHorizontal: SW(10),
     marginVertical: SH(10),
@@ -102,17 +102,14 @@ const styles = StyleSheet.create({
     // marginBottom: SH(200)
   },
 
-  sharecontainer: {
+   sharecontainer: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#fff',
-    marginHorizontal: SW(15),
-    marginTop: -SH(10),
+    alignItems: 'center',
+    marginTop: SH(10)
   },
   iconContainer: {
-    alignItems: 'center',
-    flexDirection: 'row',
+    marginHorizontal: SW(20),
   },
   smalltext: {
     fontFamily: 'Poppins-Bold',
@@ -127,7 +124,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
   },
   Button: {
-    backgroundColor:'green',
+    backgroundColor: 'green',
     paddingHorizontal: SH(15),
     paddingVertical: SH(3),
     borderRadius: 8,
@@ -187,8 +184,9 @@ const styles = StyleSheet.create({
   },
 
   leftContainer: {
-    marginHorizontal: SW(5),
-    marginVertical: SH(15),
+    marginVertical: SH(10),
+    marginBottom: 0,
+    width: '65%',
   },
   RequestText: {
     color: Colors.light,

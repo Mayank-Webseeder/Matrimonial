@@ -239,6 +239,7 @@ const styles = StyleSheet.create({
   dateText: {
     fontSize: SF(14),
     color: Colors.dark_gray,
+    fontFamily:"Poppins-Regular"
   },
   genderContainer: {
     flexDirection: 'row',
@@ -261,9 +262,11 @@ const styles = StyleSheet.create({
   genderText: {
     fontSize: SF(14),
     color: Colors.dark_gray,
+    fontFamily:"Poppins-Regular"
   },
   selectedGenderText: {
     color: 'white',
+    fontFamily:"Poppins-Regular"
   },
   updateButton: {
     backgroundColor: Colors.theme_color,
@@ -276,7 +279,7 @@ const styles = StyleSheet.create({
   updateButtonText: {
     color: Colors.light,
     fontSize: SF(15),
-    fontWeight: 'Poppins-Bold',
+    fontFamily:"Poppins-Medium",
     textTransform: 'capitalize',
   },
 });

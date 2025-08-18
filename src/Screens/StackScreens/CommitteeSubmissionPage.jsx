@@ -320,7 +320,18 @@ const CommitteeSubmissionPage = ({ navigation }) => {
                             value={CommitteeData?.subCaste}
                             onChange={(text) => handleInputChange('subCaste', text.value)}
                             placeholder="Select Your subCaste"
-                            placeholderStyle={{ color: '#E7E7E7' }}
+                            placeholderStyle={{
+                color: '#E7E7E7',
+                fontFamily: 'Poppins-Regular',
+              }}
+              selectedTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
+              itemTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
                             autoScroll={false}
                             showsVerticalScrollIndicator={false}
                         />

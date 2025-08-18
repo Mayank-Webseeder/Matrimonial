@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
   },
   verifiedText: {
     color: 'green',
-    fontWeight: 'bold',
+    fontFamily: 'Poppins-Regular',
     fontSize: SF(13),
     paddingHorizontal: SW(2),
     textTransform: 'capitalize',

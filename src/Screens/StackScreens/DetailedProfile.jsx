@@ -901,7 +901,18 @@ const DetailedProfile = ({ navigation, profileData }) => {
             editable={isEditing}
             onChange={(text) => handleInputChange('subCaste', text.value)}
             placeholder="Select subCaste"
-            placeholderStyle={{ color: '#E7E7E7' }}
+            placeholderStyle={{
+              color: '#E7E7E7',
+              fontFamily: 'Poppins-Regular',
+            }}
+            selectedTextStyle={{
+              fontFamily: 'Poppins-Regular',
+              color: Colors.dark,
+            }}
+            itemTextStyle={{
+              fontFamily: 'Poppins-Regular',
+              color: Colors.dark,
+            }}
             autoScroll={false}
             showsVerticalScrollIndicator={false}
           />
@@ -934,7 +945,18 @@ const DetailedProfile = ({ navigation, profileData }) => {
               editable={isEditing}
               onChange={(text) => handleInputChange('gender', text.value)}
               placeholder="Select Gender"
-              placeholderStyle={{ color: '#E7E7E7' }}
+              placeholderStyle={{
+                color: '#E7E7E7',
+                fontFamily: 'Poppins-Regular',
+              }}
+              selectedTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
+              itemTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
             />
 
           </View>
@@ -1102,7 +1124,18 @@ const DetailedProfile = ({ navigation, profileData }) => {
               editable={isEditing}
               onChange={(text) => handleInputChange('maritalStatus', text.value)}
               placeholder="Select marital status"
-              placeholderStyle={{ color: '#E7E7E7' }}
+              placeholderStyle={{
+                color: '#E7E7E7',
+                fontFamily: 'Poppins-Regular',
+              }}
+              selectedTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
+              itemTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
               autoScroll={false}
               showsVerticalScrollIndicator={false}
             />
@@ -1120,7 +1153,18 @@ const DetailedProfile = ({ navigation, profileData }) => {
               editable={isEditing}
               onChange={(text) => handleInputChange('disabilities', text.value)}
               placeholder="Select disability"
-              placeholderStyle={{ color: '#E7E7E7' }}
+              placeholderStyle={{
+                color: '#E7E7E7',
+                fontFamily: 'Poppins-Regular',
+              }}
+              selectedTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
+              itemTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
             />
             {errors.disabilities && <Text style={styles.errorText}>{errors.disabilities}</Text>}
           </View>
@@ -1135,7 +1179,18 @@ const DetailedProfile = ({ navigation, profileData }) => {
               editable={isEditing}
               onChange={(text) => handleInputChange('heightFeet', text.value)}
               placeholder="Height"
-              placeholderStyle={{ color: '#E7E7E7' }}
+              placeholderStyle={{
+                color: '#E7E7E7',
+                fontFamily: 'Poppins-Regular',
+              }}
+              selectedTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
+              itemTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
               autoScroll={false}
               showsVerticalScrollIndicator={false}
             />
@@ -1152,7 +1207,18 @@ const DetailedProfile = ({ navigation, profileData }) => {
               editable={isEditing}
               onChange={(text) => handleInputChange('weight', text.value)}
               placeholder="Weight"
-              placeholderStyle={{ color: '#E7E7E7' }}
+              placeholderStyle={{
+                color: '#E7E7E7',
+                fontFamily: 'Poppins-Regular',
+              }}
+              selectedTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
+              itemTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
               autoScroll={false}
               showsVerticalScrollIndicator={false}
             />
@@ -1168,7 +1234,18 @@ const DetailedProfile = ({ navigation, profileData }) => {
               editable={isEditing}
               onChange={(text) => handleInputChange('complexion', text.value)}
               placeholder="Select Complexion"
-              placeholderStyle={{ color: '#E7E7E7' }}
+              placeholderStyle={{
+                color: '#E7E7E7',
+                fontFamily: 'Poppins-Regular',
+              }}
+              selectedTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
+              itemTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
               autoScroll={false}
               showsVerticalScrollIndicator={false}
             />
@@ -1184,7 +1261,18 @@ const DetailedProfile = ({ navigation, profileData }) => {
               editable={isEditing}
               onChange={(text) => handleInputChange('manglikStatus', text.value)}
               placeholder="Select status"
-              placeholderStyle={{ color: '#E7E7E7' }}
+              placeholderStyle={{
+                color: '#E7E7E7',
+                fontFamily: 'Poppins-Regular',
+              }}
+              selectedTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
+              itemTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
               autoScroll={false}
               showsVerticalScrollIndicator={false}
             />
@@ -1262,7 +1350,18 @@ const DetailedProfile = ({ navigation, profileData }) => {
               onChange={(text) => handleInputChange('qualification', text.value)}
               placeholder="Select Qualification"
               disabled={!isEditing}
-              placeholderStyle={{ color: '#E7E7E7' }}
+              placeholderStyle={{
+                color: '#E7E7E7',
+                fontFamily: 'Poppins-Regular',
+              }}
+              selectedTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
+              itemTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
               autoScroll={false}
               showsVerticalScrollIndicator={false}
             />
@@ -1282,7 +1381,18 @@ const DetailedProfile = ({ navigation, profileData }) => {
               onChange={(text) => handleInputChange('occupation', text.value)}
               placeholder="Select occupation"
               disabled={!isEditing}
-              placeholderStyle={{ color: '#E7E7E7' }}
+              placeholderStyle={{
+                color: '#E7E7E7',
+                fontFamily: 'Poppins-Regular',
+              }}
+              selectedTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
+              itemTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
               autoScroll={false}
               showsVerticalScrollIndicator={false}
             />
@@ -1302,7 +1412,18 @@ const DetailedProfile = ({ navigation, profileData }) => {
               onChange={(text) => handleInputChange('annualIncome', text.value)}
               placeholder="Select Income"
               disabled={!isEditing}
-              placeholderStyle={{ color: '#E7E7E7' }}
+              placeholderStyle={{
+                color: '#E7E7E7',
+                fontFamily: 'Poppins-Regular',
+              }}
+              selectedTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
+              itemTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
               autoScroll={false}
               showsVerticalScrollIndicator={false}
             />
@@ -1393,7 +1514,18 @@ const DetailedProfile = ({ navigation, profileData }) => {
               onChange={(text) => handleInputChange('profileCreatedBy', text.value)}
               placeholder="Select Person"
               disabled={!isEditing}
-              placeholderStyle={{ color: '#E7E7E7' }}
+              placeholderStyle={{
+                color: '#E7E7E7',
+                fontFamily: 'Poppins-Regular',
+              }}
+              selectedTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
+              itemTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
               autoScroll={false}
               showsVerticalScrollIndicator={false}
             />
@@ -1456,7 +1588,18 @@ const DetailedProfile = ({ navigation, profileData }) => {
               onChange={(text) => handleInputChange('fatherOccupation', text.value)}
               placeholder="Select Occupation"
               disabled={!isEditing}
-              placeholderStyle={{ color: '#E7E7E7' }}
+              placeholderStyle={{
+                color: '#E7E7E7',
+                fontFamily: 'Poppins-Regular',
+              }}
+              selectedTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
+              itemTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
               autoScroll={false}
               showsVerticalScrollIndicator={false}
             />
@@ -1476,7 +1619,18 @@ const DetailedProfile = ({ navigation, profileData }) => {
               onChange={(text) => handleInputChange('fatherIncomeAnnually', text.value)}
               placeholder="Select Income"
               disabled={!isEditing}
-              placeholderStyle={{ color: '#E7E7E7' }}
+              placeholderStyle={{
+                color: '#E7E7E7',
+                fontFamily: 'Poppins-Regular',
+              }}
+              selectedTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
+              itemTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
               autoScroll={false}
               showsVerticalScrollIndicator={false}
             />
@@ -1497,7 +1651,18 @@ const DetailedProfile = ({ navigation, profileData }) => {
               onChange={(text) => handleInputChange('motherOccupation', text.value)}
               placeholder="Select Occupation"
               disabled={!isEditing}
-              placeholderStyle={{ color: '#E7E7E7' }}
+              placeholderStyle={{
+                color: '#E7E7E7',
+                fontFamily: 'Poppins-Regular',
+              }}
+              selectedTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
+              itemTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
               autoScroll={false}
               showsVerticalScrollIndicator={false}
             />
@@ -1538,7 +1703,18 @@ const DetailedProfile = ({ navigation, profileData }) => {
               onChange={(text) => handleInputChange('familyType', text.value)}
               placeholder="Select Type"
               disabled={!isEditing}
-              placeholderStyle={{ color: '#E7E7E7' }}
+              placeholderStyle={{
+                color: '#E7E7E7',
+                fontFamily: 'Poppins-Regular',
+              }}
+              selectedTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
+              itemTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
               autoScroll={false}
               showsVerticalScrollIndicator={false}
             />
@@ -1556,7 +1732,18 @@ const DetailedProfile = ({ navigation, profileData }) => {
               onChange={(text) => handleInputChange('siblings', String(text.value))}
               placeholder="Select Type"
               disabled={!isEditing}
-              placeholderStyle={{ color: '#E7E7E7' }}
+              placeholderStyle={{
+                color: '#E7E7E7',
+                fontFamily: 'Poppins-Regular',
+              }}
+              selectedTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
+              itemTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
               autoScroll={false}
               showsVerticalScrollIndicator={false}
             />
@@ -1713,7 +1900,18 @@ const DetailedProfile = ({ navigation, profileData }) => {
               onChange={(text) => handleInputChange('knowCooking', text.value)}
               placeholder="Select Status"
               disabled={!isEditing}
-              placeholderStyle={{ color: '#E7E7E7' }}
+              placeholderStyle={{
+                color: '#E7E7E7',
+                fontFamily: 'Poppins-Regular',
+              }}
+              selectedTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
+              itemTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
               autoScroll={false}
               showsVerticalScrollIndicator={false}
             />
@@ -1732,7 +1930,18 @@ const DetailedProfile = ({ navigation, profileData }) => {
               onChange={(text) => handleInputChange('dietaryHabit', text.value)}
               placeholder="Select Habit"
               disabled={!isEditing}
-              placeholderStyle={{ color: '#E7E7E7' }}
+              placeholderStyle={{
+                color: '#E7E7E7',
+                fontFamily: 'Poppins-Regular',
+              }}
+              selectedTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
+              itemTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
               autoScroll={false}
               showsVerticalScrollIndicator={false}
             />
@@ -1751,7 +1960,18 @@ const DetailedProfile = ({ navigation, profileData }) => {
               onChange={(text) => handleInputChange('smokingHabit', text.value)}
               placeholder="Select Status"
               disabled={!isEditing}
-              placeholderStyle={{ color: '#E7E7E7' }}
+              placeholderStyle={{
+                color: '#E7E7E7',
+                fontFamily: 'Poppins-Regular',
+              }}
+              selectedTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
+              itemTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
               autoScroll={false}
               showsVerticalScrollIndicator={false}
             />
@@ -1770,7 +1990,18 @@ const DetailedProfile = ({ navigation, profileData }) => {
               onChange={(text) => handleInputChange('drinkingHabit', text.value)}
               placeholder="Select Habit"
               disabled={!isEditing}
-              placeholderStyle={{ color: '#E7E7E7' }}
+              placeholderStyle={{
+                color: '#E7E7E7',
+                fontFamily: 'Poppins-Regular',
+              }}
+              selectedTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
+              itemTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
               autoScroll={false}
               showsVerticalScrollIndicator={false}
             />
@@ -1789,7 +2020,18 @@ const DetailedProfile = ({ navigation, profileData }) => {
               onChange={(text) => handleInputChange('tobaccoHabits', text.value)}
               placeholder="Select Habit"
               disabled={!isEditing}
-              placeholderStyle={{ color: '#E7E7E7' }}
+              placeholderStyle={{
+                color: '#E7E7E7',
+                fontFamily: 'Poppins-Regular',
+              }}
+              selectedTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
+              itemTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
               autoScroll={false}
               showsVerticalScrollIndicator={false}
             />

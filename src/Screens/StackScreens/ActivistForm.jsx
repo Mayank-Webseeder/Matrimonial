@@ -17,7 +17,7 @@ import { showMessage } from 'react-native-flash-message';
 import { Dropdown } from 'react-native-element-dropdown';
 // import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { SH } from '../../utils/Dimensions';
+import { SF, SH } from '../../utils/Dimensions';
 
 export default function ActivistForm({ navigation }) {
   const insets = useSafeAreaInsets();
@@ -436,10 +436,22 @@ export default function ActivistForm({ navigation }) {
               editable={isEditing}
               onChange={(item) => handleInputChange('subCaste', item.value)}
               placeholder="Select subCaste"
-              placeholderStyle={{ color: '#E7E7E7' }}
               autoScroll={false}
               showsVerticalScrollIndicator={false}
               autoCorrect={false}
+              placeholderStyle={{
+                color: '#E7E7E7',
+                fontFamily: 'Poppins-Regular',
+                fontSize:SF(14)
+              }}
+              selectedTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
+              itemTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
             />
 
             {errors?.subCaste && (
@@ -639,7 +651,7 @@ export default function ActivistForm({ navigation }) {
             <View>
               <Text>Profile Picture <Entypo name={'star'} color={'red'} size={12} /></Text>
               <TouchableOpacity style={styles.uploadButton} onPress={handleImagePick}>
-                <Text>{ActivistData.profilePhoto ? 'Change Image' : 'Upload Image'}</Text>
+                <Text style={{ fontFamily: "Poppins-Regular" }}>{ActivistData.profilePhoto ? 'Change Image' : 'Upload Image'}</Text>
               </TouchableOpacity>
 
               {ActivistData.profilePhoto ? (

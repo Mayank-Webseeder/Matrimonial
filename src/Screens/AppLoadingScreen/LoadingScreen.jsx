@@ -13,7 +13,7 @@ const LoadingScreen = () => {
         muted
         paused={false}
       /> */}
-      <Image source={require('../../Images/Loading.jpeg')} style={{ width: '100%', height: '100%' }} />
+      <Image source={require('../../Images/Loading.png')} style={{ width: '100%', height: '100%' }} />
     </View>
   );
 };

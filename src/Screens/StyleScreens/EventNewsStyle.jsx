@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
     },
     postButtonText: {
         color: '#fff',
-        fontWeight: 'bold',
+        fontFamily: 'Poppins-Medium',
     }, fixedCommentInputContainer: {
         position: 'absolute',
         bottom: 0,

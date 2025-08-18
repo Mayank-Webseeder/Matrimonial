@@ -409,7 +409,7 @@ const RootNavigator = () => {
 
  useEffect(() => {
   const checkUserToken = async () => {
-    await new Promise((res) => setTimeout(res, 2500)); 
+    await new Promise((res) => setTimeout(res, 1000)); 
 
     const token = await AsyncStorage.getItem('userToken');
     console.log('Token in RootNavigator:', token);

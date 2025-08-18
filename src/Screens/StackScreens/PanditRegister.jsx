@@ -18,7 +18,7 @@ import { showMessage } from 'react-native-flash-message';
 import { launchImageLibrary } from 'react-native-image-picker';
 // import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { SH } from '../../utils/Dimensions';
+import { SF, SH } from '../../utils/Dimensions';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const PanditRegister = ({ navigation }) => {
@@ -805,8 +805,19 @@ const PanditRegister = ({ navigation }) => {
                                 errors.state && styles.errorInput,
                                 isFocus && { borderColor: Colors.primary }
                             ]}
-                            placeholderStyle={{ color: Colors.gray }}
-                            selectedTextStyle={{ color: '#000' }}
+                            placeholderStyle={{
+                                color: '#E7E7E7',
+                                fontFamily: 'Poppins-Regular',
+                                fontSize: SF(14)
+                            }}
+                            selectedTextStyle={{
+                                fontFamily: 'Poppins-Regular',
+                                color: Colors.dark,
+                            }}
+                            itemTextStyle={{
+                                fontFamily: 'Poppins-Regular',
+                                color: Colors.dark,
+                            }}
                             data={StateData.map((item) => ({ label: item.label, value: item.label }))}
                             maxHeight={400}
                             labelField="label"
@@ -917,7 +928,7 @@ const PanditRegister = ({ navigation }) => {
                                         onPress={() => handleRoleChange(role.value)}
                                         color={Colors.theme_color}
                                     />
-                                    <Text>{role.label}</Text>
+                                    <Text style={{fontFamily:"Poppins-Regular"}}>{role.label}</Text>
                                 </View>
                             ))}
                         </View>

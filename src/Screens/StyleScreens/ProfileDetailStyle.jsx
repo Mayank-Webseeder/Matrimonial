@@ -167,6 +167,7 @@ const styles = StyleSheet.create({
     fontSize: SF(12),
     color: Colors.dark,
     marginTop: SH(5),
+    fontFamily:"Poppins-Regular"
   },
 
   smallImage: {
@@ -199,6 +200,7 @@ const styles = StyleSheet.create({
   },
   crossIcon: {
     color: 'red',
+    
   },
   flexContainer5: {
     flexDirection: 'row',
@@ -233,7 +235,7 @@ const styles = StyleSheet.create({
   ActiveButtonText: {
     color: '#04AA6D',
     fontSize: SF(12),
-    fontFamily: 'Poppins-SemiBold',
+    fontFamily:"Poppins-Medium",
     textAlign: 'center',
     textTransform: 'capitalize',
   },
@@ -241,6 +243,7 @@ const styles = StyleSheet.create({
     colr: Colors.light,
     fontSize: SF(13),
     textAlign: 'center',
+    fontFamily:"Poppins-Regular"
   },
   link: {
     color: '#4948b8',
@@ -269,11 +272,11 @@ const styles = StyleSheet.create({
   },
   surname: {
     fontSize: SF(12),
-    fontFamily: 'Poppins-regular',
+    fontFamily:"Poppins-Regular"
   },
   city: {
     fontSize: SF(13),
-    fontFamily: 'Poppins-regular',
+   fontFamily:"Poppins-Regular",
     marginRight: SW(5),
   },
   rating: {
@@ -294,9 +297,9 @@ const styles = StyleSheet.create({
     marginBottom: SH(8),
   },
   text: {
-    fontfamily: 'Poppins-Regular',
+    fontFamily: 'Poppins-Regular',
     color: '#000',
-    fontSize: SF(15),
+    fontSize: SF(13),
     textTransform: 'capitalize',
   },
   servicesGrid: {
@@ -472,6 +475,7 @@ const styles = StyleSheet.create({
     fontSize: SF(18),
     color: Colors.gray,
     textAlign: 'center',
+    fontFamily:"Poppins-Regular"
   },
   icon: {
     marginBottom: SH(10),
@@ -486,7 +490,7 @@ const styles = StyleSheet.create({
   viewMoreText: {
     fontSize: SF(13),
     color: Colors.light,
-    fontFamily: 'poppins-Regular',
+   fontFamily:"Poppins-Regular",
     textAlign: 'center',
   },
   noReviewsContainer: {
@@ -504,6 +508,7 @@ const styles = StyleSheet.create({
     color: Colors.gray,
     textAlign: 'center',
     marginTop: SH(10),
+    fontFamily:"Poppins-Regular"
   },
   infoRow: {
     flexDirection: 'row',
@@ -519,6 +524,8 @@ const styles = StyleSheet.create({
     flex: 1,
     color: '#000',
     flexWrap: 'wrap',
+    fontFamily:"Poppins-Regular",
+    fontSize:SF(13)
   },
   familyDiv: {
     paddingHorizontal: SW(8),

@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
   reviewDate: {
     fontSize: SF(11),
     color: 'gray',
+    fontFamily: 'Poppins-Regular',
   },
   reviewText: {
     fontSize: SF(11),

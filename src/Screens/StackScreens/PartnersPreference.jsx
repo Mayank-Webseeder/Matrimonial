@@ -23,7 +23,7 @@ import {
     PartnersubCasteOptions,
 } from '../../DummyData/DropdownData';
 import { showMessage } from 'react-native-flash-message';
-import { SH } from '../../utils/Dimensions';
+import { SF, SH } from '../../utils/Dimensions';
 
 const PartnersPreference = ({ navigation, profileData }) => {
     const insets = useSafeAreaInsets();
@@ -323,33 +323,21 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                 editable={isEditing}
                                 onChange={(item) => setBiodata({ ...biodata, partnerSubCaste: item.value })}
                                 placeholder="Select subCaste"
-                                placeholderStyle={{ color: '#E7E7E7' }}
+                                placeholderStyle={{
+                                    color: '#E7E7E7',
+                                    fontFamily: 'Poppins-Regular',
+                                }}
+                                selectedTextStyle={{
+                                    fontFamily: 'Poppins-Regular',
+                                    color: Colors.dark,
+                                }}
+                                itemTextStyle={{
+                                    fontFamily: 'Poppins-Regular',
+                                    color: Colors.dark,
+                                }}
                                 autoScroll={false}
                                 showsVerticalScrollIndicator={false}
                             />
-                            {/* <TextInput
-                        style={Globalstyles.input}
-                        value={biodata?.partnerSubCaste}
-                        onChangeText={handleSubCasteInputChange}
-                        placeholder="Enter your sub caste"
-                        placeholderTextColor={Colors.gray}
-                        autoComplete="off"
-                        textContentTyape="none"
-                    />
-                    {filteredSubCaste.length > 0 && subCasteInput ? (
-                        <FlatList
-                            data={filteredSubCaste.slice(0, 5)}
-                            scrollEnabled={false}
-                            keyExtractor={(item, index) => index.toString()}
-                            renderItem={({ item }) => (
-                                <TouchableOpacity onPress={() => handleSubCasteSelect(item)}>
-                                    <Text style={Globalstyles.listItem}>{item}</Text>
-                                </TouchableOpacity>
-                            )}
-                            style={Globalstyles.suggestions}
-                        />
-                    ) : null} */}
-
                             <Text style={Globalstyles.title}>Age Criteria  </Text>
                             <View style={styles.row}>
                                 <Dropdown
@@ -361,7 +349,18 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     editable={isEditing}
                                     onChange={(item) => setBiodata({ ...biodata, partnerMinAge: item.value })}
                                     placeholder="Min Age"
-                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                    placeholderStyle={{
+                                        color: '#E7E7E7',
+                                        fontFamily: 'Poppins-Regular',
+                                    }}
+                                    selectedTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                    }}
+                                    itemTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                    }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
 
@@ -375,7 +374,18 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     editable={isEditing}
                                     onChange={(item) => setBiodata({ ...biodata, partnerMaxAge: item.value })}
                                     placeholder="Max Age"
-                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                    placeholderStyle={{
+                                        color: '#E7E7E7',
+                                        fontFamily: 'Poppins-Regular',
+                                    }}
+                                    selectedTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                    }}
+                                    itemTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                    }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
                                 />
@@ -396,7 +406,18 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                         });
                                     }}
                                     placeholder="Min Height"
-                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                    placeholderStyle={{
+                                        color: '#E7E7E7',
+                                        fontFamily: 'Poppins-Regular',
+                                    }}
+                                    selectedTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                    }}
+                                    itemTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                    }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
                                 />
@@ -414,7 +435,18 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                         });
                                     }}
                                     placeholder="Max Height"
-                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                    placeholderStyle={{
+                                        color: '#E7E7E7',
+                                        fontFamily: 'Poppins-Regular',
+                                    }}
+                                    selectedTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                    }}
+                                    itemTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                    }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
                                 />
@@ -430,7 +462,18 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     editable={isEditing}
                                     onChange={(item) => setBiodata({ ...biodata, partnerMaritalStatus: item.value })}
                                     placeholder="Select status"
-                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                    placeholderStyle={{
+                                        color: '#E7E7E7',
+                                        fontFamily: 'Poppins-Regular',
+                                    }}
+                                    selectedTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                    }}
+                                    itemTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                    }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
                                 />
@@ -444,7 +487,18 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     editable={isEditing}
                                     onChange={(item) => setBiodata({ ...biodata, partnerIncome: item.value })}
                                     placeholder="Income"
-                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                    placeholderStyle={{
+                                        color: '#E7E7E7',
+                                        fontFamily: 'Poppins-Regular',
+                                    }}
+                                    selectedTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                    }}
+                                    itemTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                    }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
                                 />
@@ -458,7 +512,18 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     editable={isEditing}
                                     onChange={(item) => setBiodata({ ...biodata, partnerOccupation: item.value })}
                                     placeholder="Select occupdation"
-                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                    placeholderStyle={{
+                                        color: '#E7E7E7',
+                                        fontFamily: 'Poppins-Regular',
+                                    }}
+                                    selectedTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                    }}
+                                    itemTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                    }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
                                 />
@@ -473,7 +538,18 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     editable={isEditing}
                                     onChange={(item) => setBiodata({ ...biodata, partnerQualification: item.value })}
                                     placeholder="Select Qualification"
-                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                    placeholderStyle={{
+                                        color: '#E7E7E7',
+                                        fontFamily: 'Poppins-Regular',
+                                    }}
+                                    selectedTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                    }}
+                                    itemTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                    }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
                                 />
@@ -487,7 +563,18 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     editable={isEditing}
                                     onChange={(item) => setBiodata({ ...biodata, partnerDisabilities: item.value })}
                                     placeholder="Select disability"
-                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                    placeholderStyle={{
+                                        color: '#E7E7E7',
+                                        fontFamily: 'Poppins-Regular',
+                                    }}
+                                    selectedTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                    }}
+                                    itemTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                    }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
                                 />
@@ -501,24 +588,21 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     editable={isEditing}
                                     onChange={(item) => setBiodata({ ...biodata, partnerManglikStatus: item.value })}
                                     placeholder="Select status"
-                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                    placeholderStyle={{
+                                        color: '#E7E7E7',
+                                        fontFamily: 'Poppins-Regular',
+                                    }}
+                                    selectedTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                    }}
+                                    itemTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                    }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
                                 />
-                                {/* <Text style={Globalstyles.title}>Partners Livein  </Text>
-                        <Dropdown
-                            style={[Globalstyles.input, !isEditing && styles.readOnly]}
-                            data={PartnersLiveinData}
-                            labelField="label"
-                            valueField="value"
-                            value={biodata?.partnersLivingStatus}
-                            editable={isEditing}
-                            onChange={(item) => setBiodata({ ...biodata, partnersLivingStatus: item.value })}
-                            placeholder="Select Livein"
-                            placeholderStyle={{ color: '#E7E7E7' }}
-                            autoScroll={false}
-                            showsVerticalScrollIndicator={false}
-                        /> */}
                                 <Text style={[Globalstyles.title, { color: Colors.theme_color }]}>Locality</Text>
                                 <Text style={Globalstyles.title}>State  </Text>
                                 <Dropdown
@@ -574,7 +658,18 @@ const PartnersPreference = ({ navigation, profileData }) => {
                             value={biodata?.partnerBodyStructure}
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerBodyStructure: item.value })}
-                            placeholder="Select structure" placeholderStyle={{ color: '#E7E7E7' }}
+                            placeholder="Select structure"   placeholderStyle={{
+                color: '#E7E7E7',
+                fontFamily: 'Poppins-Regular',
+              }}
+              selectedTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
+              itemTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
                             autoScroll={false}
                             showsVerticalScrollIndicator={false}
                         /> */}
@@ -588,7 +683,19 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     editable={isEditing}
                                     onChange={(item) => setBiodata({ ...biodata, partnerComplexion: item.value })}
                                     placeholder="Select Complexion"
-                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                    placeholderStyle={{
+                                                    color: '#E7E7E7',
+                                                    fontFamily: 'Poppins-Regular',
+                                                    fontSize:SF(14)
+                                                  }}
+                                                  selectedTextStyle={{
+                                                    fontFamily: 'Poppins-Regular',
+                                                    color: Colors.dark,
+                                                  }}
+                                                  itemTextStyle={{
+                                                    fontFamily: 'Poppins-Regular',
+                                                    color: Colors.dark,
+                                                  }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
                                 />
@@ -602,7 +709,19 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     editable={isEditing}
                                     onChange={(item) => setBiodata({ ...biodata, partnerDietaryHabits: item.value })}
                                     placeholder="Select Diet"
-                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                   placeholderStyle={{
+                                                   color: '#E7E7E7',
+                                                   fontFamily: 'Poppins-Regular',
+                                                   fontSize:SF(14)
+                                                 }}
+                                                 selectedTextStyle={{
+                                                   fontFamily: 'Poppins-Regular',
+                                                   color: Colors.dark,
+                                                 }}
+                                                 itemTextStyle={{
+                                                   fontFamily: 'Poppins-Regular',
+                                                   color: Colors.dark,
+                                                 }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
                                 />
@@ -616,7 +735,19 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     editable={isEditing}
                                     onChange={(item) => setBiodata({ ...biodata, partnerSmokingHabits: item.value })}
                                     placeholder="Select smoking"
-                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                   placeholderStyle={{
+                                                   color: '#E7E7E7',
+                                                   fontFamily: 'Poppins-Regular',
+                                                   fontSize:SF(14)
+                                                 }}
+                                                 selectedTextStyle={{
+                                                   fontFamily: 'Poppins-Regular',
+                                                   color: Colors.dark,
+                                                 }}
+                                                 itemTextStyle={{
+                                                   fontFamily: 'Poppins-Regular',
+                                                   color: Colors.dark,
+                                                 }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
                                 />
@@ -630,7 +761,19 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     editable={isEditing}
                                     onChange={(item) => setBiodata({ ...biodata, partnerDrinkingHabits: item.value })}
                                     placeholder="Select Habit"
-                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                    placeholderStyle={{
+                                                    color: '#E7E7E7',
+                                                    fontFamily: 'Poppins-Regular',
+                                                    fontSize:SF(14)
+                                                  }}
+                                                  selectedTextStyle={{
+                                                    fontFamily: 'Poppins-Regular',
+                                                    color: Colors.dark,
+                                                  }}
+                                                  itemTextStyle={{
+                                                    fontFamily: 'Poppins-Regular',
+                                                    color: Colors.dark,
+                                                  }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
                                 />
@@ -641,7 +784,19 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     labelField="label"
                                     valueField="value"
                                     placeholder="Select Family Type"
-                                    placeholderStyle={{ color: '#E7E7E7' }}
+                                   placeholderStyle={{
+                color: '#E7E7E7',
+                fontFamily: 'Poppins-Regular',
+                fontSize:SF(14)
+              }}
+              selectedTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
+              itemTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
                                     value={biodata?.partnerFamilyType}
                                     editable={isEditing}
                                     onChange={(item) => setBiodata({ ...biodata, partnerFamilyType: item.value })}
@@ -654,7 +809,18 @@ const PartnersPreference = ({ navigation, profileData }) => {
                             labelField="label"
                             valueField="value"
                             placeholder="Select Family Financial Status"
-                            placeholderStyle={{ color: '#E7E7E7' }}
+                              placeholderStyle={{
+                color: '#E7E7E7',
+                fontFamily: 'Poppins-Regular',
+              }}
+              selectedTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
+              itemTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
                             value={biodata?.partnerFamilyFinancialStatus}
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerFamilyFinancialStatus: item.value })}
@@ -668,7 +834,18 @@ const PartnersPreference = ({ navigation, profileData }) => {
                             labelField="label"
                             valueField="value"
                             placeholder="Select Family Income"
-                            placeholderStyle={{ color: '#E7E7E7' }}
+                              placeholderStyle={{
+                color: '#E7E7E7',
+                fontFamily: 'Poppins-Regular',
+              }}
+              selectedTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
+              itemTextStyle={{
+                fontFamily: 'Poppins-Regular',
+                color: Colors.dark,
+              }}
                             value={biodata?.partnerFamilyIncome}
                             editable={isEditing}
                             onChange={(item) => setBiodata({ ...biodata, partnerFamilyIncome: item.value })}

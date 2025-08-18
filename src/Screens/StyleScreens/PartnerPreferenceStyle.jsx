@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     buttonText: {
         color: Colors.light,
         fontSize: SF(15),
-        fontWeight: 'Poppins-Bold',
+        fontFamily: 'Poppins-Bold',
         textTransform: 'capitalize',
     },
     inputHeading: {

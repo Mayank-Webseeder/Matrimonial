@@ -41,6 +41,7 @@ const Globalstyles = StyleSheet.create({
     padding: SW(5),
   },
   input: {
+    fontFamily:"Poppins-Regular",
     borderColor: '#ccc',
     borderWidth: 1,
     marginBottom: SH(5),
@@ -49,6 +50,7 @@ const Globalstyles = StyleSheet.create({
     borderRadius: 5,
     color: Colors.dark,
     letterSpacing: 0, textAlign: 'left',
+     fontSize: SF(14),
   },
   textInput: {
     height: SH(100),
@@ -58,6 +60,7 @@ const Globalstyles = StyleSheet.create({
     paddingHorizontal: SW(10),
     borderRadius: 5,
     color: Colors.dark,
+    fontFamily:"Poppins-Regular"
   },
   title: {
     fontFamily: 'Poppins-Medium',
@@ -78,6 +81,7 @@ const Globalstyles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
+    fontFamily:"Poppins-Regular"
   },
   inputContainer: {
     // borderColor: Colors.theme_color,

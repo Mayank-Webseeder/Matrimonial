@@ -20,6 +20,7 @@ const styles = StyleSheet.create({
     tagText: {
         color: 'green',
         marginRight: SW(8),
+        fontFamily:"Poppins-Regular"
     },
     removeTag: {
         color: 'red',
@@ -43,6 +44,7 @@ const styles = StyleSheet.create({
     },
     radioText: {
         color: '#000',
+           fontFamily:"Poppins-Regular"
     },
     uploadButton: {
         borderWidth: 1,
@@ -56,6 +58,7 @@ const styles = StyleSheet.create({
     uploadText: {
         color: Colors.theme_color,
         textAlign: 'center',
+           fontFamily:"Poppins-Regular"
     },
     imagePreviewContainer: {
         marginVertical: SH(10),
@@ -74,7 +77,7 @@ const styles = StyleSheet.create({
     submitText: {
         color: Colors.light,
         fontSize: SF(15),
-        fontWeight: 'Poppins-Bold',
+         fontFamily:"Poppins-Medium",
         textTransform: 'capitalize',
     },
     photosContainer: {
@@ -91,6 +94,7 @@ const styles = StyleSheet.create({
         fontSize: SF(16),
         color: 'gray',
         paddingVertical: SH(10),
+           fontFamily:"Poppins-Regular"
     },
     arrow: {
         marginLeft: SW(10),

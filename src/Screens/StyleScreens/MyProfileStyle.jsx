@@ -75,10 +75,11 @@ const styles = StyleSheet.create({
         marginHorizontal: SW(10),
     },
     logotext: {
-        fontSize: SF(13),
+        fontSize: SF(11),
         textAlign: 'center',
         marginTop: SH(5),
         color: Colors.theme_color,
+        fontFamily:"Poppins-Regular"
     },
     Selectedicon: {
         backgroundColor: Colors.theme_color,

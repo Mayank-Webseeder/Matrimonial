@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   noDataText: {
     fontSize: SF(16),
     color: 'gray',
-    fontWeight: 'bold',
+    fontFamily: 'Poppins-Medium',
   },
   unsaveText: {
     backgroundColor: Colors.theme_color,

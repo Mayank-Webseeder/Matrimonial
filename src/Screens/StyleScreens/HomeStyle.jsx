@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   },
   verifiedText: {
     color: 'green',
-    fontWeight: 'bold',
+    fontFamily: 'Poppins-Regular',
     fontSize: SF(7),
   },
   text: {

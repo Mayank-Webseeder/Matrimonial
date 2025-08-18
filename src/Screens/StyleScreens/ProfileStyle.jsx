@@ -127,6 +127,7 @@ const styles = StyleSheet.create({
     logotext: {
         fontSize: SF(12),
         color: Colors.theme_color,
+        fontFamily:"Poppins-Regular"
     },
     IconFlex: {
         flexDirection: 'row',
@@ -219,6 +220,7 @@ const styles = StyleSheet.create({
         height: SH(100),
         borderRadius: 8,
         resizeMode: 'cover',
+        fontFamily:"Poppins-Regular"
     },
     headText: {
         color: Colors.theme_color,
@@ -239,7 +241,7 @@ const styles = StyleSheet.create({
     buttonText: {
         color: Colors.light,
         fontSize: SF(15),
-        fontWeight: 'Poppins-Bold',
+        FontFamily: 'Poppins-Medium',
         textTransform: 'capitalize',
     },
     inputHeading: {
@@ -392,6 +394,7 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: SF(16),
         color: 'gray',
+        fontFamily:"Poppins-Regular"
         // paddingVertical: SH(10)
     },
     errorInput: {
@@ -420,6 +423,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: SW(10),
         color: Colors.gray,
         fontSize: SF(14),
+        fontFamily:"Poppins-Regular"
     },
 
 

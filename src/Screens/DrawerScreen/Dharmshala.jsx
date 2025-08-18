@@ -64,14 +64,14 @@ const Dharmshala = ({ route }) => {
   }, [dharamsalaData?.isSaved]);
 
 
-   const clearFiltersAndFetch = () => {
-      setLocality('');
-      setSubcaste('');
-      setModalLocality();
-      setDharamsalaData([]);
-      fetchDharamsalaData('all');
-      GetMyDharamsalaData();
-      Advertisement_window();
+  const clearFiltersAndFetch = () => {
+    setLocality('');
+    setSubcaste('');
+    setModalLocality();
+    setDharamsalaData([]);
+    fetchDharamsalaData('all');
+    GetMyDharamsalaData();
+    Advertisement_window();
   };
 
   useFocusEffect(
@@ -307,7 +307,7 @@ const Dharmshala = ({ route }) => {
 
   const openImageViewer = (imageUri) => {
     if (imageUri) {
-      setSelectedImage([{ url: imageUri }]); 
+      setSelectedImage([{ url: imageUri }]);
       setImageVisible(true);
     }
   };
@@ -405,7 +405,7 @@ const Dharmshala = ({ route }) => {
         icon: 'danger',
         duarion: 5000,
       });
-      
+
       const revertToggle = (prev) =>
         prev.map((profile) =>
           profile._id === _id ? { ...profile, isSaved: !profile.isSaved } : profile
@@ -492,26 +492,26 @@ const Dharmshala = ({ route }) => {
             {item?.city && (
               <Text style={styles.smalltext}>{item.city}</Text>
             )}
+            <View style={styles.sharecontainer}>
+              <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id || id)}>
+                <FontAwesome
+                  name={item.isSaved ? 'bookmark' : 'bookmark-o'}
+                  size={19}
+                  color={Colors.dark}
+                />
+                <Text style={styles.iconText}>{item.isSaved ? 'Saved' : 'Save'}</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.iconContainer} onPress={() => handleShare(item._id || id)}>
+                <Feather name="send" size={18} color={Colors.dark} />
+                <Text style={styles.iconText}>Shares</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item?.mobileNo}`)}>
+                <MaterialIcons name="call" size={17} color={Colors.light} />
+              </TouchableOpacity>
+            </View>
           </View>
         </Pressable>
-        <View style={styles.sharecontainer}>
-          <TouchableOpacity style={styles.iconContainer} onPress={() => savedProfiles(item._id || id)}>
-            <FontAwesome
-              name={item.isSaved ? 'bookmark' : 'bookmark-o'}
-              size={19}
-              color={Colors.dark}
-            />
-            <Text style={styles.iconText}>{item.isSaved ? 'Saved' : 'Save'}</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.iconContainer} onPress={() => handleShare(item._id || id)}>
-            <Feather name="send" size={18} color={Colors.dark} />
-            <Text style={styles.iconText}>Shares</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item?.mobileNo}`)}>
-            <MaterialIcons name="call" size={17} color={Colors.light} />
-          </TouchableOpacity>
-        </View>
       </View>
     );
   };
@@ -607,7 +607,7 @@ const Dharmshala = ({ route }) => {
             {locality.length > 0 ? (
               <AntDesign name={'close'} size={20} color={'gray'}
                 onPress={() => {
-                 clearFiltersAndFetch();
+                  clearFiltersAndFetch();
                 }} />
             ) : (
               <AntDesign name={'search1'} size={20} color={'gray'} onPress={() => fetchDharamsalaData('search')} />
@@ -744,7 +744,18 @@ const Dharmshala = ({ route }) => {
                     value={subcaste}
                     onChange={(text) => handleInputChange('subCaste', text.value)}
                     placeholder="Select Your subCaste"
-                    placeholderStyle={{ color: '#E7E7E7' }}
+                    placeholderStyle={{
+                      color: '#E7E7E7',
+                      fontFamily: 'Poppins-Regular',
+                    }}
+                    selectedTextStyle={{
+                      fontFamily: 'Poppins-Regular',
+                      color: Colors.dark,
+                    }}
+                    itemTextStyle={{
+                      fontFamily: 'Poppins-Regular',
+                      color: Colors.dark,
+                    }}
                     autoScroll={false}
                     showsVerticalScrollIndicator={false}
                   />

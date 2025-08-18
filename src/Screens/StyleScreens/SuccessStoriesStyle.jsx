@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
   noDataText: {
     fontSize: SF(16),
     color: 'gray',
-    fontWeight: 'bold',
+    fontFamily: 'Poppins-Medium',
   },
   uploadedImage: {
     width: SW(100), height: SH(100), borderRadius: 10,

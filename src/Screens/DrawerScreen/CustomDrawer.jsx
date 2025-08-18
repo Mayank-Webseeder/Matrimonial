@@ -373,7 +373,6 @@ const styles = StyleSheet.create({
   name: {
     fontSize: SF(13),
     color: Colors.theme_color,
-    fontWeight: 'bold',
     fontFamily: 'Poppins-Regular',
   },
   idText: {
@@ -443,7 +442,7 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: SF(16),
-    fontWeight: 'bold',
+    fontFamily: 'Poppins-Medium',
     color: Colors.theme_color,
     marginBottom: SH(10),
   },
@@ -472,9 +471,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   buttonText: {
-    fontSize: SF(13),
+    fontSize: SF(11),
     color: Colors.theme_color,
     textAlign: 'center',
+     fontFamily: 'Poppins-Regular',
   },
   confirmButtonText: {
     fontSize: SF(13),

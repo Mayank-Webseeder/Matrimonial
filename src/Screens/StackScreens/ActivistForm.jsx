@@ -440,17 +440,19 @@ export default function ActivistForm({ navigation }) {
               showsVerticalScrollIndicator={false}
               autoCorrect={false}
               placeholderStyle={{
+                fontSize: SF(14),
                 color: '#E7E7E7',
                 fontFamily: 'Poppins-Regular',
-                fontSize:SF(14)
               }}
               selectedTextStyle={{
                 fontFamily: 'Poppins-Regular',
                 color: Colors.dark,
+                  fontSize: SF(14),
               }}
               itemTextStyle={{
                 fontFamily: 'Poppins-Regular',
                 color: Colors.dark,
+                  fontSize: SF(14),
               }}
             />
 

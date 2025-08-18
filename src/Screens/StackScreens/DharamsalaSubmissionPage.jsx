@@ -315,7 +315,21 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                             value={DharamsalaData?.subCaste}
                             onChange={(text) => handleInputChange('subCaste', text.value)}
                             placeholder="Select Your subCaste"
-                            placeholderStyle={{ color: '#E7E7E7' }}
+                            placeholderStyle={{
+                                fontSize: SF(14),
+                                color: '#E7E7E7',
+                                fontFamily: 'Poppins-Regular',
+                            }}
+                            selectedTextStyle={{
+                                fontFamily: 'Poppins-Regular',
+                                color: Colors.dark,
+                                 fontSize: SF(14),
+                            }}
+                            itemTextStyle={{
+                                fontFamily: 'Poppins-Regular',
+                                color: Colors.dark,
+                                 fontSize: SF(14),
+                            }}
                             autoScroll={false}
                             showsVerticalScrollIndicator={false}
                         />

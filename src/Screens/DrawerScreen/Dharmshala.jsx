@@ -453,95 +453,94 @@ const Dharmshala = ({ route }) => {
     return (
       <View style={styles.card}
       >
-      <Pressable
-  style={[styles.cardData, { flexDirection: 'row' }]}
-  onPress={() =>
-    navigation.navigate('DharamsalaDetail', {
-      DharamsalaData: item,
-      isSaved: isSaved,
-      _id: item?._id,
-      fromScreen: 'Dharmshala',
-    })
-  }
->
-  {/* LEFT SIDE IMAGE */}
-  <TouchableOpacity onPress={() => openImageViewer(item?.images?.[0])}>
-    <Image
-      source={item?.images?.[0] ? { uri: item?.images?.[0] } : require('../../Images/NoImage.png')}
-      style={styles.image}
-    />
-  </TouchableOpacity>
+        <Pressable
+          style={[styles.cardData, { flexDirection: 'row' }]}
+          onPress={() =>
+            navigation.navigate('DharamsalaDetail', {
+              DharamsalaData: item,
+              isSaved: isSaved,
+              _id: item?._id,
+              fromScreen: 'Dharmshala',
+            })
+          }
+        >
+          {/* LEFT SIDE IMAGE */}
+          <TouchableOpacity onPress={() => openImageViewer(item?.images?.[0])}>
+            <Image
+              source={item?.images?.[0] ? { uri: item?.images?.[0] } : require('../../Images/NoImage.png')}
+              style={styles.image}
+            />
+          </TouchableOpacity>
 
-  {/* Image Viewer Modal */}
-  {selectedImage && (
-    <Modal
-      visible={isImageVisible}
-      transparent={true}
-      onRequestClose={() => setImageVisible(false)}
-    >
-      <ImageViewer
-        imageUrls={selectedImage}
-        enableSwipeDown={true}
-        onSwipeDown={() => setImageVisible(false)}
-        onCancel={() => setImageVisible(false)}
-        enablePreload={true}
-        saveToLocalByLongPress={false}
-        renderIndicator={() => null}
-      />
-    </Modal>
-  )}
+          {/* Image Viewer Modal */}
+          {selectedImage && (
+            <Modal
+              visible={isImageVisible}
+              transparent={true}
+              onRequestClose={() => setImageVisible(false)}
+            >
+              <ImageViewer
+                imageUrls={selectedImage}
+                enableSwipeDown={true}
+                onSwipeDown={() => setImageVisible(false)}
+                onCancel={() => setImageVisible(false)}
+                enablePreload={true}
+                saveToLocalByLongPress={false}
+                renderIndicator={() => null}
+              />
+            </Modal>
+          )}
 
-  {/* RIGHT SIDE DETAILS */}
-  <View style={styles.leftContainer}>
-   {item?.dharmshalaName && (
-  <Text
-    style={styles.text}
-    numberOfLines={1}
-    ellipsizeMode="tail"
-  >
-    {item.dharmshalaName.length > 25
-      ? item.dharmshalaName.substring(0, 25) + '...'
-      : item.dharmshalaName}
-  </Text>
-)}
-    {item?.subCaste && (
-      <Text style={[styles.smalltext, { fontFamily: 'Poppins-Medium' }]}>
-        {item.subCaste}
-      </Text>
-    )}
+          {/* RIGHT SIDE DETAILS */}
+          <View style={styles.leftContainer}>
+            {item?.dharmshalaName && (
+              <Text
+                style={styles.text}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {item.dharmshalaName.length > 25
+                  ? item.dharmshalaName.substring(0, 25) + '...'
+                  : item.dharmshalaName}
+              </Text>
+            )}
+            {item?.subCaste && (
+              <Text style={[styles.smalltext, { fontFamily: 'Poppins-Medium' }]}>
+                {item.subCaste}
+              </Text>
+            )}
 
-    {item?.city && <Text style={styles.smalltext}>{item.city}</Text>}
+            {item?.city && <Text style={styles.smalltext}>{item.city}</Text>}
 
-    {/* SHARE / SAVE / CALL */}
-   <View style={styles.sharecontainer}>
-  {/* CALL */}
-  <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
+            <View style={styles.sharecontainer}>
+            
+              <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
                 <MaterialIcons name="call" size={17} color={Colors.light} />
               </TouchableOpacity>
 
-  {/* SAVE */}
-  <TouchableOpacity
-    style={styles.iconContainer}
-    onPress={() => savedProfiles(item._id || id)}
-  >
-    <FontAwesome
-      name={item.isSaved ? 'bookmark' : 'bookmark-o'}
-      size={19}
-      color={Colors.dark}
-    />
-  </TouchableOpacity>
+         
+              <TouchableOpacity
+                style={styles.iconContainer}
+                onPress={() => savedProfiles(item._id || id)}
+              >
+                <FontAwesome
+                  name={item.isSaved ? 'bookmark' : 'bookmark-o'}
+                  size={19}
+                  color={Colors.dark}
+                />
+              </TouchableOpacity>
 
-  {/* SHARE */}
-  <TouchableOpacity
-    style={styles.iconContainer}
-    onPress={() => shareProfile(item._id || id)}
-  >
-    <Feather name="send" size={18} color={Colors.dark} />
-  </TouchableOpacity>
-</View>
+      
+              <TouchableOpacity
+                style={styles.iconContainer}
+                onPress={() => handleShare(item._id || id)}
+              >
+                <Feather name="send" size={18} color={Colors.dark} />
+              </TouchableOpacity>
+            </View>
 
-  </View>
-</Pressable>
+          </View>
+        </Pressable>
 
       </View>
     );

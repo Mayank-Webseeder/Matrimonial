@@ -820,17 +820,19 @@ const JyotishRegister = ({ navigation }) => {
                                 isFocus && { borderColor: Colors.primary }
                             ]}
                             placeholderStyle={{
+                                fontSize: SF(14),
                                 color: '#E7E7E7',
                                 fontFamily: 'Poppins-Regular',
-                                fontSize: SF(14)
                             }}
                             selectedTextStyle={{
                                 fontFamily: 'Poppins-Regular',
                                 color: Colors.dark,
+                                fontSize: SF(14),
                             }}
                             itemTextStyle={{
                                 fontFamily: 'Poppins-Regular',
                                 color: Colors.dark,
+                                fontSize: SF(14),
                             }}
                             data={StateData.map((item) => ({ label: item.label, value: item.label }))}
                             maxHeight={400}
@@ -951,7 +953,7 @@ const JyotishRegister = ({ navigation }) => {
                                         onPress={() => handleRoleChange(role.value)}
                                         color={Colors.theme_color}
                                     />
-                                      <Text style={{fontFamily:"Poppins-Regular"}}>{role.label}</Text>
+                                    <Text style={{ fontFamily: "Poppins-Regular" }}>{role.label}</Text>
                                 </View>
                             ))}
                         </View>
@@ -985,7 +987,21 @@ const JyotishRegister = ({ navigation }) => {
                                 value={RoleRegisterData?.experience}
                                 onChange={(text) => handleInputChange('experience', text.value)}
                                 placeholder="Select Experience"
-                                placeholderStyle={{ color: '#E7E7E7' }}
+                                placeholderStyle={{
+                                    fontSize: SF(14),
+                                    color: '#E7E7E7',
+                                    fontFamily: 'Poppins-Regular',
+                                }}
+                                selectedTextStyle={{
+                                    fontFamily: 'Poppins-Regular',
+                                    color: Colors.dark,
+                                    fontSize: SF(14),
+                                }}
+                                itemTextStyle={{
+                                    fontFamily: 'Poppins-Regular',
+                                    color: Colors.dark,
+                                    fontSize: SF(14),
+                                }}
                                 autoScroll={false}
                                 showsVerticalScrollIndicator={false}
                             />

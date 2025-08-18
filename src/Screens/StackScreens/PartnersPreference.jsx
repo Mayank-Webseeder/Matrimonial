@@ -324,16 +324,19 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                 onChange={(item) => setBiodata({ ...biodata, partnerSubCaste: item.value })}
                                 placeholder="Select subCaste"
                                 placeholderStyle={{
+                                    fontSize: SF(14),
                                     color: '#E7E7E7',
                                     fontFamily: 'Poppins-Regular',
                                 }}
                                 selectedTextStyle={{
                                     fontFamily: 'Poppins-Regular',
                                     color: Colors.dark,
+                                    fontSize: SF(14),
                                 }}
                                 itemTextStyle={{
                                     fontFamily: 'Poppins-Regular',
                                     color: Colors.dark,
+                                    fontSize: SF(14),
                                 }}
                                 autoScroll={false}
                                 showsVerticalScrollIndicator={false}
@@ -350,16 +353,19 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     onChange={(item) => setBiodata({ ...biodata, partnerMinAge: item.value })}
                                     placeholder="Min Age"
                                     placeholderStyle={{
+                                        fontSize: SF(14),
                                         color: '#E7E7E7',
                                         fontFamily: 'Poppins-Regular',
                                     }}
                                     selectedTextStyle={{
                                         fontFamily: 'Poppins-Regular',
                                         color: Colors.dark,
+                                        fontSize: SF(14),
                                     }}
                                     itemTextStyle={{
                                         fontFamily: 'Poppins-Regular',
                                         color: Colors.dark,
+                                        fontSize: SF(14),
                                     }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
@@ -375,16 +381,19 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     onChange={(item) => setBiodata({ ...biodata, partnerMaxAge: item.value })}
                                     placeholder="Max Age"
                                     placeholderStyle={{
+                                        fontSize: SF(14),
                                         color: '#E7E7E7',
                                         fontFamily: 'Poppins-Regular',
                                     }}
                                     selectedTextStyle={{
                                         fontFamily: 'Poppins-Regular',
                                         color: Colors.dark,
+                                        fontSize: SF(14),
                                     }}
                                     itemTextStyle={{
                                         fontFamily: 'Poppins-Regular',
                                         color: Colors.dark,
+                                        fontSize: SF(14),
                                     }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
@@ -407,16 +416,19 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     }}
                                     placeholder="Min Height"
                                     placeholderStyle={{
+                                        fontSize: SF(14),
                                         color: '#E7E7E7',
                                         fontFamily: 'Poppins-Regular',
                                     }}
                                     selectedTextStyle={{
                                         fontFamily: 'Poppins-Regular',
                                         color: Colors.dark,
+                                        fontSize: SF(14),
                                     }}
                                     itemTextStyle={{
                                         fontFamily: 'Poppins-Regular',
                                         color: Colors.dark,
+                                        fontSize: SF(14),
                                     }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
@@ -436,16 +448,19 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     }}
                                     placeholder="Max Height"
                                     placeholderStyle={{
+                                        fontSize: SF(14),
                                         color: '#E7E7E7',
                                         fontFamily: 'Poppins-Regular',
                                     }}
                                     selectedTextStyle={{
                                         fontFamily: 'Poppins-Regular',
                                         color: Colors.dark,
+                                        fontSize: SF(14),
                                     }}
                                     itemTextStyle={{
                                         fontFamily: 'Poppins-Regular',
                                         color: Colors.dark,
+                                        fontSize: SF(14),
                                     }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
@@ -463,16 +478,19 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     onChange={(item) => setBiodata({ ...biodata, partnerMaritalStatus: item.value })}
                                     placeholder="Select status"
                                     placeholderStyle={{
+                                        fontSize: SF(14),
                                         color: '#E7E7E7',
                                         fontFamily: 'Poppins-Regular',
                                     }}
                                     selectedTextStyle={{
                                         fontFamily: 'Poppins-Regular',
                                         color: Colors.dark,
+                                        fontSize: SF(14),
                                     }}
                                     itemTextStyle={{
                                         fontFamily: 'Poppins-Regular',
                                         color: Colors.dark,
+                                        fontSize: SF(14),
                                     }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
@@ -488,16 +506,19 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     onChange={(item) => setBiodata({ ...biodata, partnerIncome: item.value })}
                                     placeholder="Income"
                                     placeholderStyle={{
+                                        fontSize: SF(14),
                                         color: '#E7E7E7',
                                         fontFamily: 'Poppins-Regular',
                                     }}
                                     selectedTextStyle={{
                                         fontFamily: 'Poppins-Regular',
                                         color: Colors.dark,
+                                        fontSize: SF(14),
                                     }}
                                     itemTextStyle={{
                                         fontFamily: 'Poppins-Regular',
                                         color: Colors.dark,
+                                        fontSize: SF(14),
                                     }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
@@ -513,16 +534,19 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     onChange={(item) => setBiodata({ ...biodata, partnerOccupation: item.value })}
                                     placeholder="Select occupdation"
                                     placeholderStyle={{
+                                        fontSize: SF(14),
                                         color: '#E7E7E7',
                                         fontFamily: 'Poppins-Regular',
                                     }}
                                     selectedTextStyle={{
                                         fontFamily: 'Poppins-Regular',
                                         color: Colors.dark,
+                                        fontSize: SF(14),
                                     }}
                                     itemTextStyle={{
                                         fontFamily: 'Poppins-Regular',
                                         color: Colors.dark,
+                                        fontSize: SF(14),
                                     }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
@@ -539,16 +563,19 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     onChange={(item) => setBiodata({ ...biodata, partnerQualification: item.value })}
                                     placeholder="Select Qualification"
                                     placeholderStyle={{
+                                        fontSize: SF(14),
                                         color: '#E7E7E7',
                                         fontFamily: 'Poppins-Regular',
                                     }}
                                     selectedTextStyle={{
                                         fontFamily: 'Poppins-Regular',
                                         color: Colors.dark,
+                                        fontSize: SF(14),
                                     }}
                                     itemTextStyle={{
                                         fontFamily: 'Poppins-Regular',
                                         color: Colors.dark,
+                                        fontSize: SF(14),
                                     }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
@@ -564,16 +591,19 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     onChange={(item) => setBiodata({ ...biodata, partnerDisabilities: item.value })}
                                     placeholder="Select disability"
                                     placeholderStyle={{
+                                        fontSize: SF(14),
                                         color: '#E7E7E7',
                                         fontFamily: 'Poppins-Regular',
                                     }}
                                     selectedTextStyle={{
                                         fontFamily: 'Poppins-Regular',
                                         color: Colors.dark,
+                                        fontSize: SF(14),
                                     }}
                                     itemTextStyle={{
                                         fontFamily: 'Poppins-Regular',
                                         color: Colors.dark,
+                                        fontSize: SF(14),
                                     }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
@@ -589,16 +619,19 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     onChange={(item) => setBiodata({ ...biodata, partnerManglikStatus: item.value })}
                                     placeholder="Select status"
                                     placeholderStyle={{
+                                        fontSize: SF(14),
                                         color: '#E7E7E7',
                                         fontFamily: 'Poppins-Regular',
                                     }}
                                     selectedTextStyle={{
                                         fontFamily: 'Poppins-Regular',
                                         color: Colors.dark,
+                                        fontSize: SF(14),
                                     }}
                                     itemTextStyle={{
                                         fontFamily: 'Poppins-Regular',
                                         color: Colors.dark,
+                                        fontSize: SF(14),
                                     }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
@@ -610,8 +643,21 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                         Globalstyles.input,
                                         isFocus && { borderColor: Colors.primary }
                                     ]}
-                                    placeholderStyle={{ color: Colors.gray }}
-                                    selectedTextStyle={{ color: '#000' }}
+                                    placeholderStyle={{
+                                        fontSize: SF(14),
+                                        color: '#E7E7E7',
+                                        fontFamily: 'Poppins-Regular',
+                                    }}
+                                    selectedTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                        fontSize: SF(14),
+                                    }}
+                                    itemTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                        fontSize: SF(14),
+                                    }}
                                     data={StateData.map((item) => ({ label: item.label, value: item.label }))}
                                     maxHeight={300}
                                     labelField="label"
@@ -684,18 +730,20 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     onChange={(item) => setBiodata({ ...biodata, partnerComplexion: item.value })}
                                     placeholder="Select Complexion"
                                     placeholderStyle={{
-                                                    color: '#E7E7E7',
-                                                    fontFamily: 'Poppins-Regular',
-                                                    fontSize:SF(14)
-                                                  }}
-                                                  selectedTextStyle={{
-                                                    fontFamily: 'Poppins-Regular',
-                                                    color: Colors.dark,
-                                                  }}
-                                                  itemTextStyle={{
-                                                    fontFamily: 'Poppins-Regular',
-                                                    color: Colors.dark,
-                                                  }}
+                                        fontSize: SF(14),
+                                        color: '#E7E7E7',
+                                        fontFamily: 'Poppins-Regular',
+                                    }}
+                                    selectedTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                        fontSize: SF(14),
+                                    }}
+                                    itemTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                        fontSize: SF(14),
+                                    }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
                                 />
@@ -709,19 +757,21 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     editable={isEditing}
                                     onChange={(item) => setBiodata({ ...biodata, partnerDietaryHabits: item.value })}
                                     placeholder="Select Diet"
-                                   placeholderStyle={{
-                                                   color: '#E7E7E7',
-                                                   fontFamily: 'Poppins-Regular',
-                                                   fontSize:SF(14)
-                                                 }}
-                                                 selectedTextStyle={{
-                                                   fontFamily: 'Poppins-Regular',
-                                                   color: Colors.dark,
-                                                 }}
-                                                 itemTextStyle={{
-                                                   fontFamily: 'Poppins-Regular',
-                                                   color: Colors.dark,
-                                                 }}
+                                    placeholderStyle={{
+                                        fontSize: SF(14),
+                                        color: '#E7E7E7',
+                                        fontFamily: 'Poppins-Regular',
+                                    }}
+                                    selectedTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                        fontSize: SF(14),
+                                    }}
+                                    itemTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                        fontSize: SF(14),
+                                    }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
                                 />
@@ -735,19 +785,21 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     editable={isEditing}
                                     onChange={(item) => setBiodata({ ...biodata, partnerSmokingHabits: item.value })}
                                     placeholder="Select smoking"
-                                   placeholderStyle={{
-                                                   color: '#E7E7E7',
-                                                   fontFamily: 'Poppins-Regular',
-                                                   fontSize:SF(14)
-                                                 }}
-                                                 selectedTextStyle={{
-                                                   fontFamily: 'Poppins-Regular',
-                                                   color: Colors.dark,
-                                                 }}
-                                                 itemTextStyle={{
-                                                   fontFamily: 'Poppins-Regular',
-                                                   color: Colors.dark,
-                                                 }}
+                                    placeholderStyle={{
+                                        fontSize: SF(14),
+                                        color: '#E7E7E7',
+                                        fontFamily: 'Poppins-Regular',
+                                    }}
+                                    selectedTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                        fontSize: SF(14),
+                                    }}
+                                    itemTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                        fontSize: SF(14),
+                                    }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
                                 />
@@ -762,18 +814,20 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     onChange={(item) => setBiodata({ ...biodata, partnerDrinkingHabits: item.value })}
                                     placeholder="Select Habit"
                                     placeholderStyle={{
-                                                    color: '#E7E7E7',
-                                                    fontFamily: 'Poppins-Regular',
-                                                    fontSize:SF(14)
-                                                  }}
-                                                  selectedTextStyle={{
-                                                    fontFamily: 'Poppins-Regular',
-                                                    color: Colors.dark,
-                                                  }}
-                                                  itemTextStyle={{
-                                                    fontFamily: 'Poppins-Regular',
-                                                    color: Colors.dark,
-                                                  }}
+                                        fontSize: SF(14),
+                                        color: '#E7E7E7',
+                                        fontFamily: 'Poppins-Regular',
+                                    }}
+                                    selectedTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                        fontSize: SF(14),
+                                    }}
+                                    itemTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                        fontSize: SF(14),
+                                    }}
                                     autoScroll={false}
                                     showsVerticalScrollIndicator={false}
                                 />
@@ -784,19 +838,21 @@ const PartnersPreference = ({ navigation, profileData }) => {
                                     labelField="label"
                                     valueField="value"
                                     placeholder="Select Family Type"
-                                   placeholderStyle={{
-                color: '#E7E7E7',
-                fontFamily: 'Poppins-Regular',
-                fontSize:SF(14)
-              }}
-              selectedTextStyle={{
-                fontFamily: 'Poppins-Regular',
-                color: Colors.dark,
-              }}
-              itemTextStyle={{
-                fontFamily: 'Poppins-Regular',
-                color: Colors.dark,
-              }}
+                                    placeholderStyle={{
+                                        fontSize: SF(14),
+                                        color: '#E7E7E7',
+                                        fontFamily: 'Poppins-Regular',
+                                    }}
+                                    selectedTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                        fontSize: SF(14),
+                                    }}
+                                    itemTextStyle={{
+                                        fontFamily: 'Poppins-Regular',
+                                        color: Colors.dark,
+                                        fontSize: SF(14),
+                                    }}
                                     value={biodata?.partnerFamilyType}
                                     editable={isEditing}
                                     onChange={(item) => setBiodata({ ...biodata, partnerFamilyType: item.value })}

@@ -80,40 +80,82 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
         setFilteredCities([]);
     };
 
-    const pickerOptions = {
-        selectionLimit: 4,
-        mediaType: 'photo',
-        includeBase64: false,
-        maxWidth: 1000,
-        maxHeight: 1000,
-        quality: 1,
+    const handleImageUpload = () => {
+        const remainingSlots = 4 - (DharamsalaData.images?.length || 0);
+
+        if (remainingSlots <= 0) {
+            alert("Maximum 4 images allowed");
+            return;
+        }
+
+        launchImageLibrary(
+            {
+                selectionLimit: remainingSlots, // ✅ dynamic selection limit
+                mediaType: 'photo',
+                includeBase64: false,
+                maxWidth: 1000,
+                maxHeight: 1000,
+                quality: 1,
+            },
+            (response) => {
+                if (response.didCancel) return;
+                if (response.errorCode) {
+                    console.log('ImagePicker Error:', response.errorMessage);
+                    return;
+                }
+
+                const images = response.assets ?? [];
+                const newImages = images.map((img) => ({ uri: img.uri }));
+
+                setDharamsalaData((prev) => {
+                    const existing = prev.images || [];
+                    const merged = [...existing, ...newImages].reduce((acc, curr) => {
+                        if (!acc.find((x) => x.uri === curr.uri)) {
+                            acc.push(curr);
+                        }
+                        return acc;
+                    }, []);
+                    return {
+                        ...prev,
+                        images: merged.slice(0, 4),
+                    };
+                });
+            }
+        );
     };
 
-    const handleImageUpload = () => {
-        launchImageLibrary(pickerOptions, (response) => {
-            if (response.didCancel) return;
-            if (response.errorCode) {
-                console.log('ImagePicker Error:', response.errorMessage);
-                return;
+    const handleReplacePhoto = (replaceIndex) => {
+        launchImageLibrary(
+            {
+                selectionLimit: 1,
+                mediaType: "photo",
+                includeBase64: false,
+                maxWidth: 1000,
+                maxHeight: 1000,
+                quality: 1,
+            },
+            (response) => {
+                if (response.didCancel) return;
+                if (response.errorCode) {
+                    console.log("ImagePicker Error:", response.errorMessage);
+                    return;
+                }
+
+                const newImg = response.assets?.[0];
+                if (!newImg) return;
+
+                const replacedImage = { uri: newImg.uri };
+
+                setDharamsalaData((prev) => {
+                    const updated = [...(prev.images || [])];
+                    updated[replaceIndex] = replacedImage;
+                    return {
+                        ...prev,
+                        images: updated,
+                    };
+                });
             }
-
-            const images = response.assets ?? [];
-            const newImages = images.map((img) => ({ uri: img.uri }));
-
-            setDharamsalaData((prev) => {
-                const existing = prev.images || [];
-                const merged = [...existing, ...newImages].reduce((acc, curr) => {
-                    if (!acc.find((x) => x.uri === curr.uri)) {
-                        acc.push(curr);
-                    }
-                    return acc;
-                }, []);
-                return {
-                    ...prev,
-                    images: merged.slice(0, 4),
-                };
-            });
-        });
+        );
     };
 
 
@@ -323,12 +365,12 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                             selectedTextStyle={{
                                 fontFamily: 'Poppins-Regular',
                                 color: Colors.dark,
-                                 fontSize: SF(14),
+                                fontSize: SF(14),
                             }}
                             itemTextStyle={{
                                 fontFamily: 'Poppins-Regular',
                                 color: Colors.dark,
-                                 fontSize: SF(14),
+                                fontSize: SF(14),
                             }}
                             autoScroll={false}
                             showsVerticalScrollIndicator={false}
@@ -432,12 +474,10 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
                                     showsHorizontalScrollIndicator={false}
                                     renderItem={({ item, index }) => (
                                         <View style={{ marginRight: 10, position: 'relative' }}>
-                                            <Image
-                                                source={{ uri: item?.uri || item }}
-                                                style={styles.photo}
-                                            />
+                                            <TouchableOpacity onPress={() => handleReplacePhoto(index)}>
+                                                <Image source={{ uri: item?.uri || item }} style={styles.photo} />
+                                            </TouchableOpacity>
 
-                                            {/* Cross Icon for Delete */}
                                             <TouchableOpacity
                                                 onPress={() => {
                                                     const updated = DharamsalaData.images.filter((_, i) => i !== index);

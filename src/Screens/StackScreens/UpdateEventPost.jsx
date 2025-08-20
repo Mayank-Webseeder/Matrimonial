@@ -11,6 +11,8 @@ import { UPDATE_EVENT_NEWS } from '../../utils/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { showMessage } from 'react-native-flash-message';
+import Entypo from 'react-native-vector-icons/Entypo';
+
 // import { SafeAreaView } from 'react-native-safe-area-context';
 import { launchImageLibrary } from 'react-native-image-picker';
 
@@ -26,37 +28,69 @@ const UpdateEventPost = ({ navigation, route }) => {
 
     const pickerOptions = {
         selectionLimit: MAX_PHOTOS,
-        mediaType: 'photo',
+        mediaType: "photo",
         includeBase64: true,
         maxWidth: 1000,
         maxHeight: 1000,
         quality: 1,
     };
 
+    // 🔹 On mount, agar eventData.images hai toh photos me set kar do
+    useEffect(() => {
+        if (eventData?.images?.length > 0 && photos.length === 0) {
+            setPhotos(eventData.images);
+        }
+    }, [eventData]);
+
+    // ✅ Upload new images (append, not overwrite)
     const handleImageUpload = () => {
-        launchImageLibrary(pickerOptions, (response) => {
-            if (response.didCancel) { return; }
+        launchImageLibrary(
+            { ...pickerOptions, selectionLimit: MAX_PHOTOS - photos.length },
+            (response) => {
+                if (response.didCancel) return;
+                if (response.errorCode) {
+                    console.log("ImagePicker Error:", response.errorMessage);
+                    return;
+                }
 
+                const assets = response.assets || [];
+                const newPhotos = assets.map(
+                    (asset) => `data:image/jpeg;base64,${asset.base64}`
+                );
+
+                setPhotos((prev) => {
+                    const merged = [...prev, ...newPhotos];
+                    return merged.slice(0, MAX_PHOTOS);
+                });
+            }
+        );
+    };
+
+    // ✅ Replace ek hi image
+    const handleReplacePhoto = (index) => {
+        launchImageLibrary({ ...pickerOptions, selectionLimit: 1 }, (response) => {
+            if (response.didCancel) return;
             if (response.errorCode) {
-                console.log('ImagePicker Error:', response.errorMessage);
+                console.log("ImagePicker Error:", response.errorMessage);
                 return;
             }
 
-            const assets = response.assets || [];
+            const newImg = response.assets?.[0]?.base64;
+            if (!newImg) return;
 
-            if (assets.length > MAX_PHOTOS) {
-                alert(`You can only upload up to ${MAX_PHOTOS} photos.`);
-                return;
-            }
-
-            const newPhotos = assets.map(
-                (asset) => `data:image/jpeg;base64,${asset.base64}`
-            );
-
-            setPhotos(newPhotos);
-            setEventData((prev) => ({ ...prev, images: [] }));
+            setPhotos((prev) => {
+                const updated = [...prev];
+                updated[index] = `data:image/jpeg;base64,${newImg}`;
+                return updated;
+            });
         });
     };
+
+    // ✅ Delete specific photo
+    const handleDeletePhoto = (index) => {
+        setPhotos((prev) => prev.filter((_, i) => i !== index));
+    };
+
 
     const convertToBase64 = async (imageUri) => {
         try {
@@ -219,44 +253,44 @@ const UpdateEventPost = ({ navigation, route }) => {
                 />
             </View>
 
-            <View style={styles.addPhoto}>
-                <View>
-                    <Text style={styles.Text}>Add Image (Max Limit 4)</Text>
-                </View>
-                <View style={styles.righticons}>
-                    <TouchableOpacity onPress={handleImageUpload}>
-                        <AntDesign name={'camerao'} size={25} color={Colors.theme_color} style={{ marginHorizontal: 10 }} />
-                    </TouchableOpacity>
-                </View>
-            </View>
-
-            {(photos.length > 0 || eventData?.images?.length > 0) && (
+            {photos.length > 0 && (
                 <View style={styles.photosContainer}>
                     <Text style={Globalstyles.title}>Uploaded Photos:</Text>
 
                     <FlatList
-                        data={photos.length > 0 ? photos : eventData?.images || []}
+                        data={photos}
                         keyExtractor={(_, index) => index.toString()}
-                        horizontal={true}
+                        horizontal
                         showsHorizontalScrollIndicator={false}
-                        renderItem={({ item }) => (
-                            <View>
-                                <Image
-                                    source={{ uri: item }}
-                                    style={styles.photo}
-                                />
+                        renderItem={({ item, index }) => (
+                            <View style={{ marginRight: 10 }}>
+                                <TouchableOpacity onPress={() => handleReplacePhoto(index)}>
+                                    <Image source={{ uri: item }} style={styles.photo} />
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={{
+                                        position: "absolute",
+                                        top: 3,
+                                        right: 3,
+                                        backgroundColor: "rgba(0,0,0,0.6)",
+                                        borderRadius: 12,
+                                        padding: 2,
+                                    }}
+                                    onPress={() => handleDeletePhoto(index)}
+                                >
+                                    <Entypo name="cross" size={18} color="#fff" />
+                                </TouchableOpacity>
                             </View>
                         )}
-                        contentContainerStyle={{ alignItems: 'center' }}
+                        contentContainerStyle={{ alignItems: "center" }}
                     />
                 </View>
             )}
 
-
             <TouchableOpacity
                 style={styles.PostButton}
                 onPress={handleSubmit}
-                disabled={loading} // Disable button while loading
+                disabled={loading} 
             >
                 {loading ? (
                     <ActivityIndicator size="large" color={Colors.light} />

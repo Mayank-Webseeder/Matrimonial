@@ -25,6 +25,8 @@ import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import Video from 'react-native-video';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import FastImage from 'react-native-fast-image';
+
 
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -669,13 +671,14 @@ const Home = ({ navigation }) => {
                   renderItem={({ item }) => (
                     <View style={styles.imageWrapper}>
                       <TouchableOpacity onPress={() => handleNavigateToProfile(item)}>
-                        <Image
+                        <FastImage
+                          style={styles.ProfileImages}
                           source={
                             item?.personalDetails?.closeUpPhoto
-                              ? { uri: item.personalDetails.closeUpPhoto }
+                              ? { uri: item.personalDetails.closeUpPhoto, priority: FastImage.priority.high }
                               : require('../../Images/NoImage.png')
                           }
-                          style={[styles.ProfileImages]}
+                          resizeMode={FastImage.resizeMode.cover}
                         />
                         {item.verified && (
                           <View style={styles.verifiedContainer}>

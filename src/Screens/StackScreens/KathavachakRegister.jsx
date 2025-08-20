@@ -268,42 +268,86 @@ const KathavachakRegister = ({ navigation }) => {
 
     const ADDL_LIMIT = 4;
 
-    const pickerOpts = {
-        selectionLimit: ADDL_LIMIT,
-        mediaType: 'photo',
-        includeBase64: true,
-        maxWidth: 1000,
-        maxHeight: 1000,
-        quality: 1,
-    };
-
     const handleAdditionalPhotosPick = () => {
-        launchImageLibrary(pickerOpts, (response) => {
-            if (response.didCancel) return;
-            if (response.errorCode) {
-                console.log('ImagePicker Error:', response.errorMessage);
-                return;
+        setRoleRegisterData((prev) => {
+            const existingCount = prev.additionalPhotos?.length || 0;
+            const remainingSlots = ADDL_LIMIT - existingCount;
+
+            if (remainingSlots <= 0) {
+                Alert.alert(`You can only upload up to ${ADDL_LIMIT} additional photos.`);
+                return prev;
             }
 
-            const incoming = response.assets ?? [];
-            const newPhotos = incoming.map(
-                (img) => `data:${img.type};base64,${img.base64}`
+            launchImageLibrary(
+                {
+                    selectionLimit: remainingSlots,
+                    mediaType: "photo",
+                    includeBase64: true,
+                    maxWidth: 1000,
+                    maxHeight: 1000,
+                    quality: 1,
+                },
+                (response) => {
+                    if (response.didCancel) return;
+                    if (response.errorCode) {
+                        console.log("ImagePicker Error:", response.errorMessage);
+                        return;
+                    }
+
+                    const incoming = response.assets ?? [];
+                    const newPhotos = incoming.map(
+                        (img) => `data:${img.type};base64,${img.base64}`
+                    );
+
+                    setRoleRegisterData((prev2) => {
+                        const existing = prev2.additionalPhotos || [];
+                        const merged = [...existing, ...newPhotos];
+
+                        return {
+                            ...prev2,
+                            additionalPhotos: merged.slice(0, ADDL_LIMIT), // ✅ ensure max 4 hi rahe
+                        };
+                    });
+                }
             );
 
-            setRoleRegisterData((prev) => {
-                const existing = prev.additionalPhotos || [];
-                const merged = [...existing, ...newPhotos];
+            return prev;
+        });
+    };
 
-                if (merged.length > ADDL_LIMIT) {
-                    Alert.alert(`You can only upload up to ${ADDL_LIMIT} additional photos.`);
+
+    const handleReplacePhoto = (replaceIndex) => {
+        launchImageLibrary(
+            {
+                selectionLimit: 1,
+                mediaType: "photo",
+                includeBase64: true,
+                maxWidth: 1000,
+                maxHeight: 1000,
+                quality: 1,
+            },
+            (response) => {
+                if (response.didCancel) return;
+                if (response.errorCode) {
+                    console.log("ImagePicker Error:", response.errorMessage);
+                    return;
                 }
 
-                return {
-                    ...prev,
-                    additionalPhotos: merged.slice(0, ADDL_LIMIT),
-                };
-            });
-        });
+                const newImg = response.assets?.[0];
+                if (!newImg) return;
+
+                const base64Image = `data:${newImg.type};base64,${newImg.base64}`;
+
+                setRoleRegisterData((prev) => {
+                    const updated = [...prev.additionalPhotos];
+                    updated[replaceIndex] = base64Image;
+                    return {
+                        ...prev,
+                        additionalPhotos: updated,
+                    };
+                });
+            }
+        );
     };
 
 
@@ -1038,13 +1082,11 @@ const KathavachakRegister = ({ navigation }) => {
                         <View style={styles.photopickContainer}>
                             <Text style={styles.smalltitle}>Upload Photos For Your Page </Text>
 
-                            {/* Crop Picker Button */}
                             <TouchableOpacity style={styles.PickPhotoButton} onPress={handleAdditionalPhotosPick}>
                                 <Text style={styles.PickPhotoText}>Pick & Crop Photo</Text>
                             </TouchableOpacity>
                         </View>
 
-                        {/* Display Selected Photos */}
                         {RoleRegisterData?.additionalPhotos?.length > 0 && (
                             <View style={styles.photosContainer}>
                                 <FlatList
@@ -1054,9 +1096,10 @@ const KathavachakRegister = ({ navigation }) => {
                                     showsHorizontalScrollIndicator={false}
                                     renderItem={({ item, index }) => (
                                         <View style={{ marginRight: 10, position: 'relative' }}>
-                                            <Image source={{ uri: item }} style={styles.photo} />
+                                            <TouchableOpacity onPress={() => handleReplacePhoto(index)}>
+                                                <Image source={{ uri: item }} style={styles.photo} />
+                                            </TouchableOpacity>
 
-                                            {/* Cross Icon for Delete */}
                                             <TouchableOpacity
                                                 onPress={() => {
                                                     const updated = RoleRegisterData.additionalPhotos.filter((_, i) => i !== index);

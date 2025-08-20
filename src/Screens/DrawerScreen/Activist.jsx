@@ -22,6 +22,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { CommonActions } from '@react-navigation/native';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import FastImage from 'react-native-fast-image';
 
 const Activist = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -114,7 +115,7 @@ const Activist = ({ navigation }) => {
       setIsLoading(true);
 
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -165,7 +166,7 @@ const Activist = ({ navigation }) => {
       setError(null);
 
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {throw new Error('No token found');}
+      if (!token) { throw new Error('No token found'); }
 
       const headers = {
         'Content-Type': 'application/json',
@@ -178,8 +179,8 @@ const Activist = ({ navigation }) => {
         const cleanedLocality = locality.trim();
         const cleanedSubCaste = subcaste.trim();
 
-        if (cleanedLocality) {queryParams.push(`locality=${encodeURIComponent(cleanedLocality.toLowerCase())}`);}
-        if (cleanedSubCaste) {queryParams.push(`subCaste=${encodeURIComponent(cleanedSubCaste.toLowerCase())}`);}
+        if (cleanedLocality) { queryParams.push(`locality=${encodeURIComponent(cleanedLocality.toLowerCase())}`); }
+        if (cleanedSubCaste) { queryParams.push(`subCaste=${encodeURIComponent(cleanedSubCaste.toLowerCase())}`); }
 
       } else if (filterType === 'modal') {
         const cleanedModalLocality = modalLocality.trim();
@@ -277,9 +278,14 @@ const Activist = ({ navigation }) => {
       <View style={styles.card}>
         <View style={styles.cardLeft}>
           <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
-            <Image
-              source={item.profilePhoto ? { uri: item.profilePhoto } : require('../../Images/NoImage.png')}
+            <FastImage
+              source={
+                item?.profilePhoto
+                  ? { uri: item.profilePhoto, priority: FastImage.priority.normal }
+                  : require('../../Images/NoImage.png')
+              }
               style={styles.image}
+              resizeMode={FastImage.resizeMode.cover}
             />
           </TouchableOpacity>
 

@@ -4,7 +4,7 @@ import Colors from '../../utils/Colors';
 import { SH, SW, SF } from '../../utils/Dimensions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Globalstyles from '../../utils/GlobalCss';
-import ImageCropPicker from 'react-native-image-crop-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
 import { CityData, subCasteOptions } from '../../DummyData/DropdownData';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { UPDATE_DHARAMSALA } from '../../utils/BaseUrl';
@@ -87,34 +87,85 @@ const UpdateDharamsala = ({ navigation, route }) => {
         }));
     };
 
-    const handleImageUpload = () => {
-        ImageCropPicker.openPicker({
-            multiple: true,
-            cropping: false,
-            width: 1000,
-            height: 1000,
-            compressImageQuality: 1,
-            mediaType: 'photo',
-            maxFiles: 4,
-        })
-            .then((images) => {
-                if (images.length > 4) {
-                    alert('You can only upload up to 4 Dharamsala photos.');
-                    return;
-                }
-
-                const newImages = images.map(img => ({ uri: img.path }));
-
-                setDharamsalaData((prev) => ({
-                    ...prev,
-                    images: newImages,
-                }));
-            })
-            .catch((err) => {
-                console.log('Crop Picker Error:', err);
-            });
-    };
-
+  
+  const handleImageUpload = () => {
+      const remainingSlots = 4 - (DharamsalaData.images?.length || 0);
+  
+      if (remainingSlots <= 0) {
+          alert("Maximum 4 images allowed");
+          return;
+      }
+  
+      launchImageLibrary(
+          {
+              selectionLimit: remainingSlots, // ✅ dynamic selection limit
+              mediaType: 'photo',
+              includeBase64: false,
+              maxWidth: 1000,
+              maxHeight: 1000,
+              quality: 1,
+          },
+          (response) => {
+              if (response.didCancel) return;
+              if (response.errorCode) {
+                  console.log('ImagePicker Error:', response.errorMessage);
+                  return;
+              }
+  
+              const images = response.assets ?? [];
+              const newImages = images.map((img) => ({ uri: img.uri }));
+  
+              setDharamsalaData((prev) => {
+                  const existing = prev.images || [];
+                  const merged = [...existing, ...newImages].reduce((acc, curr) => {
+                      if (!acc.find((x) => x.uri === curr.uri)) {
+                          acc.push(curr);
+                      }
+                      return acc;
+                  }, []);
+                  return {
+                      ...prev,
+                      images: merged.slice(0, 4), 
+                  };
+              });
+          }
+      );
+  };
+  
+  const handleReplacePhoto = (replaceIndex) => {
+      launchImageLibrary(
+          {
+              selectionLimit: 1,
+              mediaType: "photo",
+              includeBase64: false,
+              maxWidth: 1000,
+              maxHeight: 1000,
+              quality: 1,
+          },
+          (response) => {
+              if (response.didCancel) return;
+              if (response.errorCode) {
+                  console.log("ImagePicker Error:", response.errorMessage);
+                  return;
+              }
+  
+              const newImg = response.assets?.[0];
+              if (!newImg) return;
+  
+              const replacedImage = { uri: newImg.uri };
+  
+              setDharamsalaData((prev) => {
+                  const updated = [...(prev.images || [])];
+                  updated[replaceIndex] = replacedImage;
+                  return {
+                      ...prev,
+                      images: updated,
+                  };
+              });
+          }
+      );
+  };
+  
 
     const convertToBase64 = async (images) => {
         try {
@@ -383,24 +434,42 @@ const UpdateDharamsala = ({ navigation, route }) => {
                     </TouchableOpacity>
                 </View>
 
-                {DharamsalaData.images?.length > 0 && (
-                    <View style={styles.imagePreview}>
-                        <FlatList
-                            data={DharamsalaData.images}
-                            keyExtractor={(item, index) => index.toString()}
-                            horizontal={true}
-                            showsHorizontalScrollIndicator={false}
-                            renderItem={({ item }) => (
-                                <View>
-                                    <Image
-                                        source={{ uri: item?.uri || item }}
-                                        style={styles.photo}
-                                    />
-                                </View>
-                            )}
-                        />
-                    </View>
-                )}
+                 {DharamsalaData.images?.length > 0 && (
+                                           <View style={styles.imagePreview}>
+                                               <FlatList
+                                                   data={DharamsalaData.images}
+                                                   keyExtractor={(item, index) => index.toString()}
+                                                   horizontal={true}
+                                                   showsHorizontalScrollIndicator={false}
+                                                   renderItem={({ item, index }) => (
+                                                       <View style={{ marginRight: 10, position: 'relative' }}>
+                                                            <TouchableOpacity onPress={() => handleReplacePhoto(index)}>
+                                                                                                           <Image  source={{ uri: item?.uri || item }} style={styles.photo} />
+                                                                                                       </TouchableOpacity>
+               
+                                                           <TouchableOpacity
+                                                               onPress={() => {
+                                                                   const updated = DharamsalaData.images.filter((_, i) => i !== index);
+                                                                   setDharamsalaData(prev => ({ ...prev, images: updated }));
+                                                               }}
+                                                               style={{
+                                                                   position: 'absolute',
+                                                                   top: 3,
+                                                                   right: 3,
+                                                                   backgroundColor: 'rgba(0,0,0,0.6)',
+                                                                   borderRadius: 12,
+                                                                   padding: 2,
+                                                               }}
+                                                           >
+                                                               <Entypo name="cross" size={18} color="#fff" />
+                                                           </TouchableOpacity>
+                                                       </View>
+                                                   )}
+                                                   contentContainerStyle={{ flexDirection: 'row', alignItems: 'center' }}
+                                               />
+                                           </View>
+                                       )}
+               
 
 
                 <TouchableOpacity

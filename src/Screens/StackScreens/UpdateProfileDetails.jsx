@@ -14,6 +14,8 @@ import ImageCropPicker from 'react-native-image-crop-picker';
 import { SH, SW } from '../../utils/Dimensions';
 import { showMessage } from 'react-native-flash-message';
 import { launchImageLibrary } from 'react-native-image-picker';
+import Entypo from 'react-native-vector-icons/Entypo';
+
 // import { SafeAreaView } from 'react-native-safe-area-context';
 
 const UpdateProfileDetails = ({ navigation, route }) => {
@@ -21,7 +23,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
     const [filteredCities, setFilteredCities] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const { profileData, profileType } = route.params || {};
-   const [selectedState, setSelectedState] = useState(profileData?.state || null);
+    const [selectedState, setSelectedState] = useState(profileData?.state || null);
     const [isFocus, setIsFocus] = useState(false);
 
     console.log('profileData', JSON.stringify(profileData));
@@ -164,7 +166,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
     const handleProfilePhotoPick = async () => {
         try {
             const image = await ImageCropPicker.openPicker({
-                multiple: false,
+                multiple: true,
                 width: 1000,
                 height: 1000,
                 cropping: true,
@@ -198,46 +200,90 @@ const UpdateProfileDetails = ({ navigation, route }) => {
         }
     };
 
-
     const ADDL_LIMIT = 4;
 
-    const pickerOpts = {
-        selectionLimit: ADDL_LIMIT,
-        mediaType: 'photo',
-        includeBase64: true,
-        maxWidth: 1000,
-        maxHeight: 1000,
-        quality: 1,
-    };
-
     const handleAdditionalPhotosPick = () => {
-        launchImageLibrary(pickerOpts, (response) => {
-            if (response.didCancel) { return; }
-            if (response.errorCode) {
-                console.log('ImagePicker Error:', response.errorMessage);
-                return;
-            }
+        setRoleRegisterData((prev) => {
+            const existingCount = prev.additionalPhotos?.length || 0;
+            const remainingSlots = ADDL_LIMIT - existingCount;
 
-            const incoming = response.assets ?? [];
-            const incomingCount = incoming.length;
-
-            if (incomingCount > ADDL_LIMIT) {
+            if (remainingSlots <= 0) {
                 Alert.alert(`You can only upload up to ${ADDL_LIMIT} additional photos.`);
-                return;
+                return prev;
             }
 
-            const newPhotos = incoming.map(
-                (img) => `data:${img.type};base64,${img.base64}`
+            launchImageLibrary(
+                {
+                    selectionLimit: remainingSlots,
+                    mediaType: "photo",
+                    includeBase64: true,
+                    maxWidth: 1000,
+                    maxHeight: 1000,
+                    quality: 1,
+                },
+                (response) => {
+                    if (response.didCancel) return;
+                    if (response.errorCode) {
+                        console.log("ImagePicker Error:", response.errorMessage);
+                        return;
+                    }
+
+                    const incoming = response.assets ?? [];
+                    const newPhotos = incoming.map(
+                        (img) => `data:${img.type};base64,${img.base64}`
+                    );
+
+                    setRoleRegisterData((prev2) => {
+                        const existing = prev2.additionalPhotos || [];
+                        const merged = [...existing, ...newPhotos];
+
+                        return {
+                            ...prev2,
+                            additionalPhotos: merged.slice(0, ADDL_LIMIT), // ✅ ensure max 4 hi rahe
+                        };
+                    });
+                }
             );
 
-            setRoleRegisterData((prev) => ({
-                ...prev,
-                additionalPhotos: newPhotos, // Replace previous photos
-            }));
+            return prev;
         });
     };
 
 
+    const handleReplacePhoto = (replaceIndex) => {
+        launchImageLibrary(
+            {
+                selectionLimit: 1,
+                mediaType: "photo",
+                includeBase64: true,
+                maxWidth: 1000,
+                maxHeight: 1000,
+                quality: 1,
+            },
+            (response) => {
+                if (response.didCancel) return;
+                if (response.errorCode) {
+                    console.log("ImagePicker Error:", response.errorMessage);
+                    return;
+                }
+
+                const newImg = response.assets?.[0];
+                if (!newImg) return;
+
+                const base64Image = `data:${newImg.type};base64,${newImg.base64}`;
+
+                // Replace specific index image
+                setRoleRegisterData((prev) => {
+                    const updated = [...prev.additionalPhotos];
+                    updated[replaceIndex] = base64Image;
+                    return {
+                        ...prev,
+                        additionalPhotos: updated,
+                    };
+                });
+            }
+        );
+    };
     const OPTIONAL_FIELDS = [
         'residentialAddress', 'additionalPhotos', 'experience', 'websiteUrl',
         'facebookUrl', 'youtubeUrl', 'instagramUrl', 'whatsapp', 'description', 'aadharNo',
@@ -692,15 +738,13 @@ const UpdateProfileDetails = ({ navigation, route }) => {
 
 
                         <View style={styles.photopickContainer}>
-                            <Text style={styles.smalltitle}>Photos (Up to 4)</Text>
+                            <Text style={styles.smalltitle}>Upload Photos For Your Page </Text>
 
-                            {/* Crop Picker Button */}
-                            <TouchableOpacity style={[styles.PickPhotoButton]} onPress={handleAdditionalPhotosPick}>
+                            <TouchableOpacity style={styles.PickPhotoButton} onPress={handleAdditionalPhotosPick}>
                                 <Text style={styles.PickPhotoText}>Pick & Crop Photo</Text>
                             </TouchableOpacity>
                         </View>
 
-                        {/* Display Selected Photos */}
                         {RoleRegisterData?.additionalPhotos?.length > 0 && (
                             <View style={styles.photosContainer}>
                                 <FlatList
@@ -708,15 +752,38 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                                     keyExtractor={(item, index) => index.toString()}
                                     horizontal={true}
                                     showsHorizontalScrollIndicator={false}
-                                    renderItem={({ item }) => (
-                                        <View>
-                                            <Image source={{ uri: item }} style={styles.photo} />
+                                    renderItem={({ item, index }) => (
+                                        <View style={{ marginRight: 10, position: 'relative' }}>
+                                            <TouchableOpacity onPress={() => handleReplacePhoto(index)}>
+                                                <Image source={{ uri: item }} style={styles.photo} />
+                                            </TouchableOpacity>
+
+                                            <TouchableOpacity
+                                                onPress={() => {
+                                                    const updated = RoleRegisterData.additionalPhotos.filter((_, i) => i !== index);
+                                                    setRoleRegisterData((prev) => ({
+                                                        ...prev,
+                                                        additionalPhotos: updated,
+                                                    }));
+                                                }}
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: 3,
+                                                    right: 3,
+                                                    backgroundColor: 'rgba(0,0,0,0.6)',
+                                                    borderRadius: 12,
+                                                    padding: 2,
+                                                }}
+                                            >
+                                                <Entypo name="cross" size={18} color="#fff" />
+                                            </TouchableOpacity>
                                         </View>
                                     )}
                                     contentContainerStyle={{ flexDirection: 'row', alignItems: 'center' }}
                                 />
                             </View>
                         )}
+
 
                         <Text style={Globalstyles.title}>Website Link</Text>
                         <TextInput

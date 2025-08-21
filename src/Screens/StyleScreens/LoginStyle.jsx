@@ -7,6 +7,16 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
     },
+    backArrow: {
+    marginHorizontal: SW(15),
+    marginVertical: SH(40),
+    backgroundColor: 'rgba(0,0,0,0.4)', 
+    width: SW(35),
+    height: SW(35),
+    borderRadius: SW(20),
+    justifyContent: 'center',
+    alignItems: 'center',
+    },
     image: {
         width: '100%',
         height: '100%',

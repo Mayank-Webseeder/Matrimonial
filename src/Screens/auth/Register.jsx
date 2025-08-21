@@ -1,5 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Text, View, ImageBackground, TouchableOpacity, TextInput, ScrollView, SafeAreaView, ActivityIndicator, FlatList, Pressable, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+    Text, View, ImageBackground, TouchableOpacity, TextInput, ScrollView, SafeAreaView,
+    ActivityIndicator, FlatList, Pressable, Alert, KeyboardAvoidingView, BackHandler
+} from 'react-native';
 import styles from '../StyleScreens/RegisterStyle';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -64,30 +67,19 @@ const Register = ({ navigation }) => {
         };
     }, []);
 
+    useEffect(() => {
+        const backAction = () => {
+            navigation.navigate('Splash');
+            return true;
+        };
 
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
 
-    const handleImageUpload = () => {
-        ImageCropPicker.openPicker({
-            width: 300,
-            height: 250,
-            cropping: true,
-            includeBase64: true,
-            mediaType: 'any',
-        })
-            .then(image => {
-                console.log('Selected Image:', image);
-                if (!image.data) {
-                    console.error('Base64 data is missing!');
-                    return;
-                }
-                setSelectedImage(image.data);
-                setSelectedImageName(image.path.split('/').pop());
-            })
-            .catch(error => {
-                console.error('Image Picking Error:', error);
-            });
-
-    };
+        return () => backHandler.remove();
+    }, []);
 
     const handleCityInputChange = (text) => {
         const filteredText = text.replace(/[^a-zA-Z\s]/g, '');
@@ -225,7 +217,7 @@ const Register = ({ navigation }) => {
 
         const payload = {
             username: fullName.trim(),
-            dob:null,
+            dob: null,
             city: selectedCity || cityInput.trim(),
             gender: gender,
             password: password.trim(),
@@ -324,25 +316,6 @@ const Register = ({ navigation }) => {
     };
 
 
-    // const handleDateChange = (event, date) => {
-    //     if (event.type === 'dismissed') {
-    //         setShowDatePicker(false);
-    //         return;
-    //     }
-
-    //     if (date && date !== selectedDate) {
-    //         setSelectedDate(date);
-    //     }
-    //     setShowDatePicker(false);
-    // };
-
-    // const formatDate = (date) => {
-    //     const day = date.getDate().toString().padStart(2, '0');
-    //     const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    //     const year = date.getFullYear();
-    //     return `${day}/${month}/${year}`;
-    // };
-
     return (
         <SafeAreaView style={styles.container} >
             <KeyboardAvoidingView
@@ -353,13 +326,12 @@ const Register = ({ navigation }) => {
                     source={require('../../Images/Signup.png')}
                     style={styles.image}
                 >
-                    <AntDesign
-                        name={'arrowleft'}
-                        size={25}
-                        style={styles.backArrow}
-                        color={Colors.light}
-                        onPress={() => navigation.navigate('Splash')}
-                    />
+                    <TouchableOpacity
+  style={styles.backArrow}
+ onPress={() => navigation.navigate('Splash')}
+>
+  <AntDesign name="arrowleft" size={20} color="white" />
+</TouchableOpacity>
                     <ScrollView style={styles.contentContainer} contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
                         showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
                         <View style={{ flex: 1 }}>

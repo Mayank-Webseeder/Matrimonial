@@ -319,10 +319,10 @@ const DharamsalaSubmissionPage = ({ navigation }) => {
             >
                 <ScrollView contentContainerStyle={[Globalstyles.form, { paddingBottom: insets.bottom + SH(10), flexGrow: 1 }]} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
                     <View>
-                        <Text style={styles.title}>Upload Your Dharamsala Details</Text>
+                        <Text style={styles.title}>Upload Your Dharmshala Details</Text>
 
                         <Text style={Globalstyles.title}>
-                            Dharamsala Name <Entypo name={'star'} color={'red'} size={12} />
+                            Dharmshala Name <Entypo name={'star'} color={'red'} size={12} />
                         </Text>
                         <TextInput
                             style={[

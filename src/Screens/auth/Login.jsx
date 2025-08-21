@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
-import { Text, View, ImageBackground, TouchableOpacity, TextInput, ScrollView, SafeAreaView, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+    Text, View, ImageBackground, TouchableOpacity, TextInput, ScrollView, SafeAreaView, ActivityIndicator,
+    KeyboardAvoidingView, BackHandler
+} from 'react-native';
 import styles from '../StyleScreens/LoginStyle';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import axios from 'axios';
@@ -20,6 +23,20 @@ const Login = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
 
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        const backAction = () => {
+            navigation.navigate('Splash');
+            return true;
+        };
+
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+
+        return () => backHandler.remove();
+    }, []);
 
     const validateFields = () => {
         const newErrors = {};

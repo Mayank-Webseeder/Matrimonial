@@ -289,27 +289,6 @@ const Activist = ({ navigation }) => {
             />
           </TouchableOpacity>
 
-          {selectedImage && (
-            <Modal
-              visible={isImageVisible}
-              transparent={true}
-              onRequestClose={() => setImageVisible(false)}
-            >
-              <View style={{ flex: 1, backgroundColor: 'black' }}>
-                <ImageViewer
-                  imageUrls={selectedImage}
-                  renderImage={renderImage}
-                  enableSwipeDown
-                  onSwipeDown={() => setImageVisible(false)}
-                  onCancel={() => setImageVisible(false)}
-                  enablePreload
-                  saveToLocalByLongPress={false}
-                  renderIndicator={() => null}
-                />
-              </View>
-            </Modal>
-          )}
-
           <View style={{ marginLeft: SW(10), flex: 1 }}>
             {item?.fullname && <Text style={styles.text}>{item.fullname}</Text>}
             {item?.subCaste && <Text style={styles.smalltext}>{item.subCaste}</Text>}
@@ -423,21 +402,44 @@ const Activist = ({ navigation }) => {
         <View>
 
           {loading ? renderSkeleton() : (
-            <FlatList
-              data={activistData}
-              renderItem={renderItem}
-              keyExtractor={(item) => item._id}
-              scrollEnabled={false}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.ActivistDataList}
-              ListEmptyComponent={
-                <View style={styles.emptyContainer}>
-                  <FontAwesome name="user" size={60} color="#ccc" style={{ marginBottom: 15 }} />
-                  <Text style={styles.emptyText}>No Activist Data Available</Text>
-                  <Text style={styles.infoText}>Activist profiles will appear here once available.</Text>
-                </View>
-              }
-            />
+            <>
+              <FlatList
+                data={activistData}
+                renderItem={renderItem}
+                keyExtractor={(item) => item._id}
+                scrollEnabled={false}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.ActivistDataList}
+                ListEmptyComponent={
+                  <View style={styles.emptyContainer}>
+                    <FontAwesome name="user" size={60} color="#ccc" style={{ marginBottom: 15 }} />
+                    <Text style={styles.emptyText}>No Activist Data Available</Text>
+                    <Text style={styles.infoText}>Activist profiles will appear here once available.</Text>
+                  </View>
+                }
+              />
+              {selectedImage && (
+                <Modal
+                  visible={isImageVisible}
+                  transparent={true}
+                  onRequestClose={() => setImageVisible(false)}
+                >
+                  <View style={{ flex: 1, backgroundColor: 'black' }}>
+                    <ImageViewer
+                      imageUrls={selectedImage}
+                      renderImage={renderImage}
+                      enableSwipeDown
+                      onSwipeDown={() => setImageVisible(false)}
+                      onCancel={() => setImageVisible(false)}
+                      enablePreload
+                      saveToLocalByLongPress={false}
+                      renderIndicator={() => null}
+                    />
+                  </View>
+                </Modal>
+              )}
+
+            </>
           )}
 
           <Modal

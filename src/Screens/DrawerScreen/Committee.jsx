@@ -25,6 +25,7 @@ import { showMessage } from 'react-native-flash-message';
 import { Dropdown } from 'react-native-element-dropdown';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import FastImage from 'react-native-fast-image';
 
 const Committee = ({ navigation, route }) => {
   const { id } = route.params || {};
@@ -464,25 +465,20 @@ const Committee = ({ navigation, route }) => {
       <View style={[styles.card, isHighlighted && styles.highlightedCard]}>
         <Pressable style={styles.cardData}>
           <TouchableOpacity onPress={() => openImageViewer(item.photoUrl)}>
-            <Image
-              source={item.photoUrl ? { uri: item.photoUrl } : require('../../Images/NoImage.png')}
+            <FastImage
               style={styles.image}
+              source={
+                item?.photoUrl
+                  ? {
+                    uri: item.photoUrl,
+                    priority: FastImage.priority.normal,
+                    cache: FastImage.cacheControl.immutable,
+                  }
+                  : require('../../Images/NoImage.png')
+              }
+              resizeMode={FastImage.resizeMode.cover}
             />
           </TouchableOpacity>
-
-          {selectedImage && (
-            <Modal visible={isImageVisible} transparent={true} onRequestClose={() => setImageVisible(false)}>
-              <ImageViewer
-                imageUrls={selectedImage}
-                enableSwipeDown={true}
-                onSwipeDown={() => setImageVisible(false)}
-                onCancel={() => setImageVisible(false)}
-                enablePreload={true}
-                saveToLocalByLongPress={false}
-                renderIndicator={() => null}
-              />
-            </Modal>
-          )}
           <View style={styles.leftContainer}>
             <Text style={styles.title}>{item?.committeeTitle}</Text>
             <Text style={styles.Nametext}>President - {item?.presidentName}</Text>
@@ -678,30 +674,45 @@ const Committee = ({ navigation, route }) => {
             />
           </View>
           {isLoading ? renderSkeleton() : (
-            <FlatList
-              ref={flatListRef}
-              data={committeeData}
-              renderItem={renderItem}
-              keyExtractor={(item) => item._id}
-              scrollEnabled={false}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.panditListData}
-              onScrollToIndexFailed={(info) => {
-                setTimeout(() => {
-                  flatListRef.current?.scrollToIndex({
-                    index: info.index,
-                    animated: true,
-                  });
-                }, 500);
-              }}
-              ListEmptyComponent={
-                <View style={styles.emptyContainer}>
-                  <FontAwesome name="users" size={60} color="#ccc" style={{ marginBottom: 15 }} />
-                  <Text style={styles.emptyText}>No Committee Data Available</Text>
-                  <Text style={styles.infoText}>Committee member profiles will appear here once available.</Text>
-                </View>
-              }
-            />
+            <>
+              <FlatList
+                ref={flatListRef}
+                data={committeeData}
+                renderItem={renderItem}
+                keyExtractor={(item) => item._id}
+                scrollEnabled={false}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.panditListData}
+                onScrollToIndexFailed={(info) => {
+                  setTimeout(() => {
+                    flatListRef.current?.scrollToIndex({
+                      index: info.index,
+                      animated: true,
+                    });
+                  }, 500);
+                }}
+                ListEmptyComponent={
+                  <View style={styles.emptyContainer}>
+                    <FontAwesome name="users" size={60} color="#ccc" style={{ marginBottom: 15 }} />
+                    <Text style={styles.emptyText}>No Committee Data Available</Text>
+                    <Text style={styles.infoText}>Committee member profiles will appear here once available.</Text>
+                  </View>
+                }
+              />
+              {selectedImage && (
+                <Modal visible={isImageVisible} transparent={true} onRequestClose={() => setImageVisible(false)}>
+                  <ImageViewer
+                    imageUrls={selectedImage}
+                    enableSwipeDown={true}
+                    onSwipeDown={() => setImageVisible(false)}
+                    onCancel={() => setImageVisible(false)}
+                    enablePreload={true}
+                    saveToLocalByLongPress={false}
+                    renderIndicator={() => null}
+                  />
+                </Modal>
+              )}
+            </>
           )}
         </View>
       </ScrollView>

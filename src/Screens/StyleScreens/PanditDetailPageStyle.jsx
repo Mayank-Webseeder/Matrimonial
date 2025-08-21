@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 import Colors from '../../utils/Colors';
 import { SH, SW, SF } from '../../utils/Dimensions';
+
 const styles = StyleSheet.create({
   profileSection: {
     alignItems: 'center',
@@ -38,7 +39,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: SF(15),
     fontFamily: 'Poppins-Bold',
-    marginBottom: SH(8),
+    marginBottom: SH(2),
   },
   text: {
     fontSize: SF(13),
@@ -50,17 +51,17 @@ const styles = StyleSheet.create({
     marginVertical: SH(2),
   },
   serviceContainer: {
-  backgroundColor: Colors.light,
-  borderRadius: 50,
-  elevation: 5,
-  paddingHorizontal: SW(10),
-  paddingVertical: SH(6),
-  marginHorizontal: SW(5),
-  marginVertical: SH(5),
-  maxWidth: '80%',
-  alignSelf: 'flex-start',
-  alignItems: 'center',
-  justifyContent: 'center',
+    backgroundColor: Colors.light,
+    borderRadius: 50,
+    elevation: 5,
+    paddingHorizontal: SW(10),
+    paddingVertical: SH(6),
+    marginHorizontal: SW(5),
+    marginVertical: SH(5),
+    maxWidth: '80%',
+    alignSelf: 'flex-start',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   serviceText: {
@@ -141,7 +142,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   Button: {
-    backgroundColor: Colors.theme_color,
+    backgroundColor:"green",
     paddingHorizontal: SW(20),
     paddingVertical: SH(3),
     borderRadius: 8,
@@ -223,7 +224,7 @@ const styles = StyleSheet.create({
     marginBottom: SH(2),
   },
   image: {
-    width:SW(200),
+    width: SW(200),
     height: SH(100),
     marginBottom: SH(1),
     marginRight: SW(3),
@@ -254,12 +255,12 @@ const styles = StyleSheet.create({
   noImagesContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal:SW(20),
-    paddingVertical:SH(20),
+    paddingHorizontal: SW(20),
+    paddingVertical: SH(20),
   },
   noImagesText: {
-    fontSize:SF(18),
-    color:Colors.gray,
+    fontSize: SF(18),
+    color: Colors.gray,
     textAlign: 'center',
   },
   icon: {

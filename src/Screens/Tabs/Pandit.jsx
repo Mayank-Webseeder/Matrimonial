@@ -3,6 +3,7 @@ import {
   Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, SafeAreaView, StatusBar, Linking, Pressable,
   ScrollView, Share, RefreshControl,
   BackHandler,
+  ActivityIndicator,
 } from 'react-native';
 import { slider } from '../../DummyData/DummyData';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -27,6 +28,7 @@ import { showMessage } from 'react-native-flash-message';
 import { useSelector } from 'react-redux';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import FastImage from 'react-native-fast-image';
 
 const Pandit = ({ navigation, route }) => {
   const insets = useSafeAreaInsets();
@@ -95,6 +97,7 @@ const Pandit = ({ navigation, route }) => {
       setImageVisible(true);
     }
   };
+
 
   const handleOpenFilter = () => {
     setModalVisible(true);
@@ -373,7 +376,7 @@ const Pandit = ({ navigation, route }) => {
   );
 
 
-  const renderItem = ({ item }) => {
+  const renderItem = ({ item, index }) => {
     const rating = item.averageRating || 0;
 
     return (
@@ -381,23 +384,23 @@ const Pandit = ({ navigation, route }) => {
         <View style={styles.cardData}>
           {item.profilePhoto ? (
             <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
-              <Image source={{ uri: item.profilePhoto }} style={styles.image} />
+              <FastImage
+                style={styles.image}
+                source={{
+                  uri: item.profilePhoto,
+                  priority: FastImage.priority.high,
+                  cache: FastImage.cacheControl.immutable,
+                }}
+                resizeMode={FastImage.resizeMode.cover}
+              />
             </TouchableOpacity>
           ) : (
-            <Image source={require('../../Images/NoImage.png')} style={styles.image} />
+            <Image
+              source={require('../../Images/NoImage.png')}
+              style={styles.image}
+            />
           )}
 
-          <Modal visible={isImageVisible} transparent={true} onRequestClose={() => setImageVisible(false)}>
-            <ImageViewer
-              imageUrls={selectedImage}
-              enableSwipeDown={true}
-              onSwipeDown={() => setImageVisible(false)}
-              onCancel={() => setImageVisible(false)}
-              enablePreload={true}
-              saveToLocalByLongPress={false}
-              renderIndicator={() => null}
-            />
-          </Modal>
           <View style={{ flex: 1, marginLeft: SW(10) }}>
             <Pressable style={styles.leftContainer}
               onPress={() => {
@@ -488,13 +491,13 @@ const Pandit = ({ navigation, route }) => {
             onPress={() => {
               if (navigation.canGoBack()) {
                 navigation.goBack();
-               clearFiltersAndFetch();
+                clearFiltersAndFetch();
               } else {
                 navigation.reset({
                   index: 0,
                   routes: [{ name: 'MainApp' }],
                 });
-               clearFiltersAndFetch();
+                clearFiltersAndFetch();
               }
             }}
           >
@@ -599,23 +602,46 @@ const Pandit = ({ navigation, route }) => {
             />
           </View>
           {isLoading ? renderSkeleton() : (
-            <FlatList
-              data={panditData}
-              renderItem={renderItem}
-              keyExtractor={(item) => item._id}
-              scrollEnabled={false}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.panditListData}
-              ListEmptyComponent={
-                <View style={styles.emptyContainer}>
-                  <FontAwesome name="user-circle" size={60} color="#ccc" style={{ marginBottom: 15 }} />
-                  <Text style={styles.emptyText}>No Pandit Data Available</Text>
-                  <Text style={styles.infoText}>Pandit profiles will appear here once available.</Text>
-                </View>
-              }
-            />
+            <>
+              <FlatList
+                data={panditData}
+                renderItem={renderItem}
+                keyExtractor={(item) => item._id}
+                scrollEnabled={false}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.panditListData}
+                ListEmptyComponent={
+                  <View style={styles.emptyContainer}>
+                    <FontAwesome name="user-circle" size={60} color="#ccc" style={{ marginBottom: 15 }} />
+                    <Text style={styles.emptyText}>No Pandit Data Available</Text>
+                    <Text style={styles.infoText}>Pandit profiles will appear here once available.</Text>
+                  </View>
+                }
+              />
 
+              {/* Global Modal - ek hi jagah */}
+              {selectedImage && (
+                <Modal
+                  visible={isImageVisible}
+                  transparent={true}
+                  onRequestClose={() => setImageVisible(false)}
+                >
+                  <ImageViewer
+                    imageUrls={selectedImage}
+                    enableSwipeDown
+                    onSwipeDown={() => setImageVisible(false)}
+                    saveToLocalByLongPress={false}
+                    renderIndicator={() => null}
+                    enablePreload={true}
+                    loadingRender={() => (
+                      <ActivityIndicator size="large" color="#fff" style={{ flex: 1 }} />
+                    )}
+                  />
+                </Modal>
+              )}
+            </>
           )}
+
         </View>
       </ScrollView>
 
@@ -695,7 +721,7 @@ const Pandit = ({ navigation, route }) => {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                 clearFiltersAndFetch();
+                  clearFiltersAndFetch();
                 }}
                 style={styles.crossButton}>
                 <View style={styles.circle}>

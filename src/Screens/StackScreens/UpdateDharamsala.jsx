@@ -340,9 +340,9 @@ const UpdateDharamsala = ({ navigation, route }) => {
 
             </View>
             <View style={Globalstyles.form}>
-                <Text style={styles.title}>Upload Your Dharamsala Details</Text>
+                <Text style={styles.title}>Upload Your Dharmshala Details</Text>
 
-                <Text style={Globalstyles.title}>Dharamsala Name <Entypo name={'star'} color={'red'} size={12} /></Text>
+                <Text style={Globalstyles.title}>Dharmshala Name <Entypo name={'star'} color={'red'} size={12} /></Text>
                 <TextInput
                     style={Globalstyles.input}
                     placeholder="Enter Dharamsala Name"

@@ -21,6 +21,7 @@ import { SH, SW, SF } from '../../utils/Dimensions';
 import { showMessage } from 'react-native-flash-message';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import FastImage from 'react-native-fast-image';
 
 const jyotishDetailsPage = ({ navigation, item, route }) => {
     const insets = useSafeAreaInsets();
@@ -73,11 +74,11 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
         Advertisement_window();
     }, []);
 
-   useEffect(() => {
+    useEffect(() => {
         if (profileData?.isSaved !== undefined) {
-          setIsSaved(profileData.isSaved);
+            setIsSaved(profileData.isSaved);
         }
-      }, [profileData?.isSaved]);
+    }, [profileData?.isSaved]);
 
     useFocusEffect(
         React.useCallback(() => {
@@ -449,7 +450,19 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                 <View>
                     <View style={styles.profileSection}>
                         <TouchableOpacity onPress={() => setVisible(true)}>
-                            <Image source={profilePhoto} style={styles.profileImage} />
+                           <FastImage
+                                style={styles.profileImage}
+                                source={
+                                    typeof profilePhoto === 'string'
+                                        ? {
+                                            uri: profilePhoto,
+                                            priority: FastImage.priority.normal,
+                                            cache: FastImage.cacheControl.immutable,
+                                        }
+                                        : profilePhoto
+                                }
+                                resizeMode={FastImage.resizeMode.cover}
+                            />
                         </TouchableOpacity>
 
                         {visible && (
@@ -516,47 +529,44 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
                             <TouchableOpacity
                                 style={[styles.iconContainer, my_id === profileData?.userId]}
                                 onPress={() => savedProfiles(profileData._id)}
-                                disabled={my_id === profileData?.userId} // ✅ Disable button for self
+                                disabled={my_id === profileData?.userId}
                             >
                                 <FontAwesome
                                     name={Save ? 'bookmark' : 'bookmark-o'}
                                     size={19}
-                                    color={my_id === profileData?.userId ? Colors.gray : Colors.dark} // ✅ Gray if disabled
+                                    color={my_id === profileData?.userId ? Colors.gray : Colors.dark}
                                 />
                                 <Text style={[styles.iconText, my_id === profileData?.userId && styles.disabledText]}>
                                     {Save ? 'Saved' : 'Save'}
                                 </Text>
                             </TouchableOpacity>
 
-                            {/* ✅ Share button (Always Active) */}
                             <TouchableOpacity style={styles.iconContainer} onPress={handleShare}>
                                 <Feather name="send" size={20} color={Colors.dark} />
                                 <Text style={styles.iconText}>Shares</Text>
                             </TouchableOpacity>
 
-                            {/* ✅ Call Button (Disabled for self profile) */}
                             <TouchableOpacity
                                 style={[styles.Button, my_id === profileData?.userId && styles.disabledButton]}
                                 onPress={() => Linking.openURL(`tel:${profileData?.mobileNo}`)}
-                                disabled={my_id === profileData?.userId} // ✅ Disable button
+                                disabled={my_id === profileData?.userId}
                             >
                                 <MaterialIcons
                                     name="call"
                                     size={20}
-                                    color={my_id === profileData?.userId ? Colors.gray : Colors.light} // ✅ Gray if disabled
+                                    color={my_id === profileData?.userId ? Colors.gray : Colors.light}
                                 />
                             </TouchableOpacity>
 
-                            {/* ✅ Report Button (Disabled for self profile) */}
                             <TouchableOpacity
                                 style={[styles.iconContainer, my_id === profileData?.userId]}
                                 onPress={() => navigation.navigate('ReportPage', { profileId: profileData?._id })}
-                                disabled={my_id === profileData?.userId} // ✅ Disable button
+                                disabled={my_id === profileData?.userId}
                             >
                                 <MaterialIcons
                                     name="error-outline"
                                     size={20}
-                                    color={my_id === profileData?.userId ? Colors.gray : Colors.dark} // ✅ Gray if disabled
+                                    color={my_id === profileData?.userId ? Colors.gray : Colors.dark}
                                 />
                                 <Text style={[styles.iconText, my_id === profileData?.userId && styles.disabledText]}>
                                     Report
@@ -566,8 +576,10 @@ const jyotishDetailsPage = ({ navigation, item, route }) => {
 
                         {profileData?.experience ? (
                             <>
-                                <Text style={styles.sectionTitle}>Experience </Text>
-                                <Text style={styles.text}>{profileData?.experience ? `${profileData.experience}+ years of experience` : ''}</Text>
+                                <View style={{ marginBottom: SH(8) }}>
+                                    <Text style={styles.sectionTitle}>Experience </Text>
+                                    <Text style={styles.text}>{profileData?.experience ? `${profileData.experience}+ years of experience` : ''}</Text>
+                                </View>
                             </>
                         ) : null}
 

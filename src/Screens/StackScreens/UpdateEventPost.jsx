@@ -24,6 +24,14 @@ const UpdateEventPost = ({ navigation, route }) => {
     const [eventData, setEventData] = useState(initialEventData || { title: '', description: '', images: [] });
     const [photos, setPhotos] = useState([]);
 
+
+    useEffect(() => {
+        if (eventData?.images?.length > 0 && photos.length === 0) {
+            setPhotos(eventData.images);
+        }
+    }, [eventData]);
+
+
     const MAX_PHOTOS = 4;
 
     const pickerOptions = {
@@ -35,14 +43,6 @@ const UpdateEventPost = ({ navigation, route }) => {
         quality: 1,
     };
 
-    // 🔹 On mount, agar eventData.images hai toh photos me set kar do
-    useEffect(() => {
-        if (eventData?.images?.length > 0 && photos.length === 0) {
-            setPhotos(eventData.images);
-        }
-    }, [eventData]);
-
-    // ✅ Upload new images (append, not overwrite)
     const handleImageUpload = () => {
         launchImageLibrary(
             { ...pickerOptions, selectionLimit: MAX_PHOTOS - photos.length },
@@ -66,7 +66,6 @@ const UpdateEventPost = ({ navigation, route }) => {
         );
     };
 
-    // ✅ Replace ek hi image
     const handleReplacePhoto = (index) => {
         launchImageLibrary({ ...pickerOptions, selectionLimit: 1 }, (response) => {
             if (response.didCancel) return;
@@ -143,7 +142,6 @@ const UpdateEventPost = ({ navigation, route }) => {
 
             const payload = {
                 postId: eventData._id,
-                title: eventData?.title,
                 description: eventData?.description,
                 images: base64Images,
             };
@@ -253,6 +251,25 @@ const UpdateEventPost = ({ navigation, route }) => {
                 />
             </View>
 
+            <View style={styles.addPhoto}>
+                <View>
+                    <Text style={styles.Text}>Add Image ( Max Limit 4 )</Text>
+                </View>
+                <View style={styles.righticons}>
+                    <TouchableOpacity
+                        onPress={handleImageUpload}
+                        disabled={photos.length >= MAX_PHOTOS}
+                    >
+                        <AntDesign
+                            name={'camerao'}
+                            size={25}
+                            color={photos.length >= MAX_PHOTOS ? "gray" : Colors.theme_color}
+                            style={{ marginHorizontal: 10 }}
+                        />
+                    </TouchableOpacity>
+                </View>
+            </View>
+
             {photos.length > 0 && (
                 <View style={styles.photosContainer}>
                     <Text style={Globalstyles.title}>Uploaded Photos:</Text>
@@ -290,7 +307,7 @@ const UpdateEventPost = ({ navigation, route }) => {
             <TouchableOpacity
                 style={styles.PostButton}
                 onPress={handleSubmit}
-                disabled={loading} 
+                disabled={loading}
             >
                 {loading ? (
                     <ActivityIndicator size="large" color={Colors.light} />

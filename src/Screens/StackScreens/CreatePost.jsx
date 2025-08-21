@@ -103,16 +103,16 @@ const CreatePost = ({ navigation, route }) => {
                 return;
             }
 
-            if (photos.length === 0) {
-                showMessage({
-                    type: "danger",
-                    message: "Validation Error",
-                    description: "At least one image is required",
-                    icon: "danger",
-                    duration: 5000,
-                });
-                return;
-            }
+            // if (photos.length === 0) {
+            //     showMessage({
+            //         type: "danger",
+            //         message: "Validation Error",
+            //         description: "At least one image is required",
+            //         icon: "danger",
+            //         duration: 5000,
+            //     });
+            //     return;
+            // }
 
             setLoading(true);
             const token = await AsyncStorage.getItem("userToken");

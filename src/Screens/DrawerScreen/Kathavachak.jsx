@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, RefreshControl, Share, BackHandler } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Image, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, RefreshControl, Share, BackHandler, ActivityIndicator } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -22,6 +22,7 @@ import { showMessage } from 'react-native-flash-message';
 import { useSelector } from 'react-redux';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import FastImage from 'react-native-fast-image';
 
 const Kathavachak = ({ navigation, route }) => {
   const insets = useSafeAreaInsets();
@@ -393,23 +394,20 @@ const Kathavachak = ({ navigation, route }) => {
         <View style={styles.cardData}>
           {item.profilePhoto ? (
             <TouchableOpacity onPress={() => openImageViewer(item.profilePhoto)}>
-              <Image source={{ uri: item.profilePhoto }} style={styles.image} />
+              <FastImage
+                style={styles.image}
+                source={{
+                  uri: item.profilePhoto,
+                  priority: FastImage.priority.high,
+                  cache: FastImage.cacheControl.immutable,
+                }}
+                resizeMode={FastImage.resizeMode.cover}
+              />
             </TouchableOpacity>
           ) : (
             <Image source={require('../../Images/NoImage.png')} style={styles.image} />
           )}
 
-          <Modal visible={isImageVisible} transparent={true} onRequestClose={() => setImageVisible(false)}>
-            <ImageViewer
-              imageUrls={selectedImage}
-              enableSwipeDown={true}
-              onSwipeDown={() => setImageVisible(false)}
-              onCancel={() => setImageVisible(false)}
-              enablePreload={true}
-              saveToLocalByLongPress={false}
-              renderIndicator={() => null}
-            />
-          </Modal>
           <View style={{ flex: 1, marginLeft: SW(10) }}>
             <Pressable style={styles.leftContainer}
               onPress={() => {
@@ -602,21 +600,42 @@ const Kathavachak = ({ navigation, route }) => {
             />
           </View>
           {isLoading ? renderSkeleton() : (
-            <FlatList
-              data={kathavachakData}
-              renderItem={renderItem}
-              keyExtractor={(item) => item._id}
-              scrollEnabled={false}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.panditListData}
-              ListEmptyComponent={
-                <View style={styles.emptyContainer}>
-                  <FontAwesome name="user-circle" size={60} color="#ccc" style={{ marginBottom: 15 }} />
-                  <Text style={styles.emptyText}>No kathavachak Data Available</Text>
-                  <Text style={styles.infoText}>kathavachak profiles will appear here once available.</Text>
-                </View>
-              }
-            />
+            <>
+              <FlatList
+                data={kathavachakData}
+                renderItem={renderItem}
+                keyExtractor={(item) => item._id}
+                scrollEnabled={false}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.panditListData}
+                ListEmptyComponent={
+                  <View style={styles.emptyContainer}>
+                    <FontAwesome name="user-circle" size={60} color="#ccc" style={{ marginBottom: 15 }} />
+                    <Text style={styles.emptyText}>No kathavachak Data Available</Text>
+                    <Text style={styles.infoText}>kathavachak profiles will appear here once available.</Text>
+                  </View>
+                }
+              />
+              {selectedImage && (
+                <Modal
+                  visible={isImageVisible}
+                  transparent={true}
+                  onRequestClose={() => setImageVisible(false)}
+                >
+                  <ImageViewer
+                    imageUrls={selectedImage}
+                    enableSwipeDown
+                    onSwipeDown={() => setImageVisible(false)}
+                    saveToLocalByLongPress={false}
+                    renderIndicator={() => null}
+                    enablePreload={true}
+                    loadingRender={() => (
+                      <ActivityIndicator size="large" color="#fff" style={{ flex: 1 }} />
+                    )}
+                  />
+                </Modal>
+              )}
+            </>
 
           )}
         </View>

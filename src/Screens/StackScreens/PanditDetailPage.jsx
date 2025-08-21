@@ -21,6 +21,7 @@ import { showMessage } from 'react-native-flash-message';
 import { useSelector } from 'react-redux';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import FastImage from 'react-native-fast-image';
 
 const PanditDetailPage = ({ navigation, item, route }) => {
     const insets = useSafeAreaInsets();
@@ -61,21 +62,21 @@ const PanditDetailPage = ({ navigation, item, route }) => {
         setModalVisible(true);
     };
 
-     useFocusEffect(
+    useFocusEffect(
         useCallback(() => {
             fetchPanditProfile();
         }, [])
     );
-     useEffect(() => {
+    useEffect(() => {
         Advertisement_window();
     }, []);
 
-     useEffect(() => {
+    useEffect(() => {
         if (profileData?.isSaved !== undefined) {
-          setIsSaved(profileData.isSaved);
+            setIsSaved(profileData.isSaved);
         }
-      }, [profileData?.isSaved]);
-    
+    }, [profileData?.isSaved]);
+
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
@@ -260,7 +261,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
             return;
         }
 
-        setIsSaved((prev) => !prev); 
+        setIsSaved((prev) => !prev);
 
         try {
             const token = await AsyncStorage.getItem('userToken');
@@ -277,7 +278,7 @@ const PanditDetailPage = ({ navigation, item, route }) => {
 
             console.log('Response Data:', response?.data);
 
-            if (response.status === 200 && response.data.status === true) { 
+            if (response.status === 200 && response.data.status === true) {
                 showMessage({
                     type: 'success',
                     message: 'Success',
@@ -460,7 +461,19 @@ const PanditDetailPage = ({ navigation, item, route }) => {
                 <View>
                     <View style={styles.profileSection}>
                         <TouchableOpacity onPress={() => setVisible(true)}>
-                            <Image source={profilePhoto} style={styles.profileImage} />
+                            <FastImage
+                                style={styles.profileImage}
+                                source={
+                                    typeof profilePhoto === 'string'
+                                        ? {
+                                            uri: profilePhoto,
+                                            priority: FastImage.priority.normal,
+                                            cache: FastImage.cacheControl.immutable,
+                                        }
+                                        : profilePhoto
+                                }
+                                resizeMode={FastImage.resizeMode.cover}
+                            />
                         </TouchableOpacity>
 
                         {visible && (
@@ -568,8 +581,10 @@ const PanditDetailPage = ({ navigation, item, route }) => {
 
                         {profileData?.experience ? (
                             <>
-                                <Text style={styles.sectionTitle}>Experience </Text>
-                                <Text style={styles.text}>{profileData?.experience ? `${profileData.experience}+ years of experience` : ''}</Text>
+                                <View style={{ marginBottom: SH(8) }}>
+                                    <Text style={styles.sectionTitle}>Experience </Text>
+                                    <Text style={styles.text}>{profileData?.experience ? `${profileData.experience}+ years of experience` : ''}</Text>
+                                </View>
                             </>
                         ) : null}
 

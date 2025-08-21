@@ -539,7 +539,6 @@ const EventNews = ({ navigation }) => {
       const nextPage = page + 1;
       setPage(nextPage);
 
-      // Scroll to the first item of the next page
       setTimeout(() => {
         if (flatListRef.current) {
           flatListRef.current.scrollToIndex({
@@ -577,7 +576,7 @@ const EventNews = ({ navigation }) => {
       screen: 'Tabs',
       params: {
         screen: 'EventNews',
-        params: { refresh: Date.now() }, // pass a dynamic param
+        params: { refresh: Date.now() }, 
       },
     });
   };

@@ -1,4 +1,4 @@
-import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, RefreshControl, BackHandler, Share } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Modal, ScrollView, SafeAreaView, StatusBar, Linking, Pressable, RefreshControl, BackHandler, Share, ActivityIndicator } from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 import { Image } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -25,6 +25,7 @@ import { showMessage } from 'react-native-flash-message';
 import { useCallback } from 'react';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import FastImage from 'react-native-fast-image';
 
 const Dharmshala = ({ route }) => {
   const insets = useSafeAreaInsets();
@@ -55,6 +56,7 @@ const Dharmshala = ({ route }) => {
   useEffect(() => {
     fetchDharamsalaData('all');
     Advertisement_window();
+    GetMyDharamsalaData();
   }, []);
 
   useEffect(() => {
@@ -77,6 +79,7 @@ const Dharmshala = ({ route }) => {
   useFocusEffect(
     React.useCallback(() => {
       Advertisement_window();
+      GetMyDharamsalaData();
       fetchDharamsalaData(lastFilterType);
     }, [lastFilterType])
   );
@@ -466,30 +469,20 @@ const Dharmshala = ({ route }) => {
         >
           {/* LEFT SIDE IMAGE */}
           <TouchableOpacity onPress={() => openImageViewer(item?.images?.[0])}>
-            <Image
-              source={item?.images?.[0] ? { uri: item?.images?.[0] } : require('../../Images/NoImage.png')}
+            <FastImage
               style={styles.image}
+              source={
+                item?.images?.[0]
+                  ? {
+                    uri: item?.images?.[0],
+                    priority: FastImage.priority.normal,
+                    cache: FastImage.cacheControl.immutable,
+                  }
+                  : require('../../Images/NoImage.png')
+              }
+              resizeMode={FastImage.resizeMode.cover}
             />
           </TouchableOpacity>
-
-          {/* Image Viewer Modal */}
-          {selectedImage && (
-            <Modal
-              visible={isImageVisible}
-              transparent={true}
-              onRequestClose={() => setImageVisible(false)}
-            >
-              <ImageViewer
-                imageUrls={selectedImage}
-                enableSwipeDown={true}
-                onSwipeDown={() => setImageVisible(false)}
-                onCancel={() => setImageVisible(false)}
-                enablePreload={true}
-                saveToLocalByLongPress={false}
-                renderIndicator={() => null}
-              />
-            </Modal>
-          )}
 
           {/* RIGHT SIDE DETAILS */}
           <View style={styles.leftContainer}>
@@ -513,12 +506,12 @@ const Dharmshala = ({ route }) => {
             {item?.city && <Text style={styles.smalltext}>{item.city}</Text>}
 
             <View style={styles.sharecontainer}>
-            
+
               <TouchableOpacity style={styles.Button} onPress={() => Linking.openURL(`tel:${item.mobileNo}`)}>
                 <MaterialIcons name="call" size={17} color={Colors.light} />
               </TouchableOpacity>
 
-         
+
               <TouchableOpacity
                 style={styles.iconContainer}
                 onPress={() => savedProfiles(item._id || id)}
@@ -530,7 +523,7 @@ const Dharmshala = ({ route }) => {
                 />
               </TouchableOpacity>
 
-      
+
               <TouchableOpacity
                 style={styles.iconContainer}
                 onPress={() => handleShare(item._id || id)}
@@ -713,21 +706,42 @@ const Dharmshala = ({ route }) => {
           </View>
 
           {loading ? renderSkeleton() : (
-            <FlatList
-              data={dharamsalaData}
-              renderItem={renderItem}
-              keyExtractor={(item) => item._id.toString()}
-              scrollEnabled={false}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.DharamSalaList}
-              ListEmptyComponent={
-                <View style={styles.emptyContainer}>
-                  <FontAwesome name="building" size={60} color="#ccc" style={{ marginBottom: 15 }} />
-                  <Text style={styles.emptyText}>No Dharamsala Data Available</Text>
-                  <Text style={styles.infoText}>Dharamsala listings will appear here once available.</Text>
-                </View>
-              }
-            />
+            <>
+              <FlatList
+                data={dharamsalaData}
+                renderItem={renderItem}
+                keyExtractor={(item) => item._id.toString()}
+                scrollEnabled={false}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.DharamSalaList}
+                ListEmptyComponent={
+                  <View style={styles.emptyContainer}>
+                    <FontAwesome name="building" size={60} color="#ccc" style={{ marginBottom: 15 }} />
+                    <Text style={styles.emptyText}>No Dharamsala Data Available</Text>
+                    <Text style={styles.infoText}>Dharamsala listings will appear here once available.</Text>
+                  </View>
+                }
+              />
+              {selectedImage && (
+                <Modal
+                  visible={isImageVisible}
+                  transparent={true}
+                  onRequestClose={() => setImageVisible(false)}
+                >
+                  <ImageViewer
+                    imageUrls={selectedImage}
+                    enableSwipeDown
+                    onSwipeDown={() => setImageVisible(false)}
+                    saveToLocalByLongPress={false}
+                    renderIndicator={() => null}
+                    enablePreload={true}
+                    loadingRender={() => (
+                      <ActivityIndicator size="large" color="#fff" style={{ flex: 1 }} />
+                    )}
+                  />
+                </Modal>
+              )}
+            </>
           )}
         </View>
 

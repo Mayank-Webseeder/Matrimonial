@@ -37,7 +37,6 @@ const ViewMyEventPost = ({ navigation, route }) => {
   const [commentData, setCommentData] = useState({});
   const [selectedPostId, setSelectedPostId] = useState(null);
   const [IsLoading, setIsLoading] = useState(false);
-  const MyActivistProfile = useSelector((state) => state.activist.activist_data);
   const [myComment, setMyComment] = useState('');
   const [likeData, setLikeData] = useState({});
   const [LikeLoading, setLikeLoading] = useState(false);
@@ -578,15 +577,15 @@ const ViewMyEventPost = ({ navigation, route }) => {
         <View style={styles.cardheader}>
           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <View>
-              <Image source={{ uri: MyActivistProfile?.profilePhoto }} style={styles.EventheaderImage} />
+              <Image source={{ uri: item?.activistDetails?.profilePhoto }} style={styles.EventheaderImage} />
             </View>
             <View>
               {/* <Text style={styles.name}>
                 {item.activistName} <Text style={styles.hour}>{getTimeAgo(item.createdAt)}</Text>
               </Text> */}
-              <Text style={styles.name}>
-                {item.activistName} <Text style={styles.hour}>{MyActivistProfile?.activistName}</Text>
-              </Text>
+             <Text style={styles.name}>
+                                             {item?.activistDetails?.fullname} <Text style={styles.hour}>{item?.activistDetails?.activistId}</Text>
+                                         </Text>
               <Text style={styles.date_time}>{formatDateTime(item.createdAt)}</Text>
             </View>
           </View>

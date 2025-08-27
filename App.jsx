@@ -8,6 +8,7 @@ import InternetCheck from './src/Components/CheckInternet';
 import FlashMessage from 'react-native-flash-message';
 import store from './src/ReduxStore/Store';
 import AppUpdateModal from './src/Components/AppUpdateModal';
+import { navigationRef } from './src/navigation/RootNavigation';
 
 const App = () => {
 
@@ -107,7 +108,7 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <NavigationContainer linking={linking}>
+      <NavigationContainer linking={linking} ref={navigationRef}>
         <RootNavigator />
         <InternetCheck />
         <AppUpdateModal />

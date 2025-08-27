@@ -8,7 +8,7 @@ import Globalstyles from '../../utils/GlobalCss';
 import { subCasteOptions, StateData, CityData, panditServices, jyotishServices, kathavachakServices, ExperienceData } from '../../DummyData/DropdownData';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { CREATE_JYOTISH, CREATE_KATHAVACHAK, CREATE_PANDIT, FREE_TRIAL, KATHAVACHAK_PLANS, PAID_URL, PAYMENT_VERIFICATION, PROFILE_TYPE, RAZORPAY } from '../../utils/BaseUrl';
+import { CREATE_KATHAVACHAK, FREE_TRIAL, KATHAVACHAK_PLANS, PAID_URL, PAYMENT_VERIFICATION, PROFILE_TYPE, RAZORPAY } from '../../utils/BaseUrl';
 import { Dropdown } from 'react-native-element-dropdown';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -1038,27 +1038,10 @@ const KathavachakRegister = ({ navigation }) => {
                         <View style={[Globalstyles.input, errors.profilePhoto && styles.errorInput]}>
                             <TouchableOpacity onPress={handleProfilePhotoPick}>
                                 {RoleRegisterData.profilePhoto ? (
-                                    <View style={{ position: 'relative' }}>
-                                        <Image
-                                            source={{ uri: RoleRegisterData.profilePhoto }}
-                                            style={styles.profileImage}
-                                        />
-                                        <TouchableOpacity
-                                            onPress={() =>
-                                                setRoleRegisterData(prev => ({ ...prev, profilePhoto: '' }))
-                                            }
-                                            style={{
-                                                position: 'absolute',
-                                                top: 5,
-                                                right: 5,
-                                                backgroundColor: 'rgba(0,0,0,0.6)',
-                                                borderRadius: 15,
-                                                padding: 3,
-                                            }}
-                                        >
-                                            <Icon name="close" size={20} color="#fff" />
-                                        </TouchableOpacity>
-                                    </View>
+                                    <Image
+                                        source={{ uri: RoleRegisterData.profilePhoto }}
+                                        style={styles.profileImage}
+                                    />
                                 ) : (
                                     <Text style={styles.imagePlaceholder}>Upload Profile Photo</Text>
                                 )}
@@ -1067,7 +1050,6 @@ const KathavachakRegister = ({ navigation }) => {
                         {!RoleRegisterData.profilePhoto && errors.profilePhoto && (
                             <Text style={styles.errorText}>{errors.profilePhoto}</Text>
                         )}
-
                         <Text style={Globalstyles.title}>Add Description</Text>
                         <TextInput style={Globalstyles.textInput} value={RoleRegisterData.description}
                             onChangeText={(text) => setRoleRegisterData((prev) => ({ ...prev, description: text }))}

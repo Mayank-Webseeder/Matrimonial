@@ -5,6 +5,8 @@ import GetAllBiodataSlice from '../ReduxStore/Slices/GetAllBiodataSlice';
 import BioDataSlice from '../ReduxStore/Slices/BiodataSlice';
 import ActivistSlice from '../ReduxStore/Slices/ActivistSlice';
 import NotificationReducer from '../ReduxStore/Slices/GetAllNotificationSlice';
+import homeReducer from '../ReduxStore/Slices/homeApisSlice';
+import panditReducer from './Slices/PanditSlice';
 
 const store = configureStore({
   reducer: {
@@ -14,6 +16,8 @@ const store = configureStore({
     getBiodata:BioDataSlice,
     activist:ActivistSlice,
     GetAllNotification:NotificationReducer,
+    home: homeReducer,
+    pandit: panditReducer, 
   },
 });
 

@@ -717,7 +717,6 @@ const Kathavachak = ({ navigation, route }) => {
               <TouchableOpacity
                 onPress={() => {
                   setModalVisible(false);
-                  clearFiltersAndFetch();
                 }}
                 style={styles.crossButton}>
                 <View style={styles.circle}>

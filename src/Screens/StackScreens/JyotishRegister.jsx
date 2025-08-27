@@ -5,10 +5,10 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../utils/Colors';
 import { Checkbox } from 'react-native-paper';
 import Globalstyles from '../../utils/GlobalCss';
-import { subCasteOptions, StateData, CityData, panditServices, jyotishServices, kathavachakServices, ExperienceData } from '../../DummyData/DropdownData';
+import { StateData, CityData, panditServices, jyotishServices, kathavachakServices, ExperienceData } from '../../DummyData/DropdownData';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { CREATE_JYOTISH, CREATE_KATHAVACHAK, CREATE_PANDIT, FREE_TRIAL, JYOISH_PLANS, PAID_URL, PAYMENT_VERIFICATION, PROFILE_TYPE, RAZORPAY } from '../../utils/BaseUrl';
+import { CREATE_JYOTISH, FREE_TRIAL, JYOISH_PLANS, PAID_URL, PAYMENT_VERIFICATION, PROFILE_TYPE, RAZORPAY } from '../../utils/BaseUrl';
 import { Dropdown } from 'react-native-element-dropdown';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -18,7 +18,7 @@ import { showMessage } from 'react-native-flash-message';
 import { launchImageLibrary } from 'react-native-image-picker';
 // import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { SF, SH } from '../../utils/Dimensions';
+import { SF } from '../../utils/Dimensions';
 
 const JyotishRegister = ({ navigation }) => {
     const insets = useSafeAreaInsets();

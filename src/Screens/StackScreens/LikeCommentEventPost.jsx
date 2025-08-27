@@ -22,7 +22,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const LikeCommentEventPost = ({ navigation, route }) => {
-       const insets = useSafeAreaInsets();
+    const insets = useSafeAreaInsets();
     const sheetRef = useRef(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
@@ -32,7 +32,6 @@ const LikeCommentEventPost = ({ navigation, route }) => {
     const [commentData, setCommentData] = useState({});
     const [selectedPostId, setSelectedPostId] = useState(null);
     const [IsLoading, setIsLoading] = useState(false);
-    const MyActivistProfile = useSelector((state) => state.activist.activist_data);
     const [myComment, setMyComment] = useState('');
     const [likeData, setLikeData] = useState({});
     const [LikeLoading, setLikeLoading] = useState(false);
@@ -42,6 +41,13 @@ const LikeCommentEventPost = ({ navigation, route }) => {
     const profileData = ProfileData?.profiledata || {};
     const myprofile_id = profileData?._id || null;
     const [errorMessage, setErrorMessage] = useState('');
+
+    //  useEffect(() => {
+    //     if (item?.isLiked !== undefined) {
+    //       setLikeData(item?.isLiked);
+    //     }
+    //   }, [item?.isLiked]);
+    
 
     const onRefresh = useCallback(() => {
         setRefreshing(true);
@@ -84,10 +90,10 @@ const LikeCommentEventPost = ({ navigation, route }) => {
             setMyeventpost([]);
             setErrorMessage('');
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('No token found');}
+            if (!token) { throw new Error('No token found'); }
 
             const { id } = route?.params || {};
-            if (!id) {throw new Error('No ID provided');}
+            if (!id) { throw new Error('No ID provided'); }
 
             const headers = { Authorization: `Bearer ${token}` };
             const url = `https://api-matrimonial.webseeder.tech/api/v1/event/getEventPostById/${id}`;
@@ -162,7 +168,7 @@ const LikeCommentEventPost = ({ navigation, route }) => {
         try {
             setLikeLoading(true);
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('No token found');}
+            if (!token) { throw new Error('No token found'); }
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -247,7 +253,7 @@ const LikeCommentEventPost = ({ navigation, route }) => {
         try {
             setCommentLoading(true);
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('No token found');}
+            if (!token) { throw new Error('No token found'); }
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -317,7 +323,7 @@ const LikeCommentEventPost = ({ navigation, route }) => {
             setdeletecommentLoading(true);
             const token = await AsyncStorage.getItem('userToken');
 
-            if (!token) {throw new Error('No token found');}
+            if (!token) { throw new Error('No token found'); }
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -382,7 +388,7 @@ const LikeCommentEventPost = ({ navigation, route }) => {
             setIsLoading(true);
             const token = await AsyncStorage.getItem('userToken');
 
-            if (!token) {throw new Error('No token found');}
+            if (!token) { throw new Error('No token found'); }
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -555,14 +561,14 @@ const LikeCommentEventPost = ({ navigation, route }) => {
                 <View style={styles.cardheader}>
                     <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                         <View>
-                            <Image source={{ uri: MyActivistProfile?.profilePhoto }} style={styles.EventheaderImage} />
+                            <Image source={{ uri: item?.activistDetails?.profilePhoto }} style={styles.EventheaderImage} />
                         </View>
                         <View>
                             {/* <Text style={styles.name}>
                 {item.activistName} <Text style={styles.hour}>{getTimeAgo(item.createdAt)}</Text>
               </Text> */}
                             <Text style={styles.name}>
-                                {item.activistName} <Text style={styles.hour}>{MyActivistProfile?.activistId}</Text>
+                                {item?.activistDetails?.fullname} <Text style={styles.hour}>{item?.activistDetails?.activistId}</Text>
                             </Text>
                             <Text style={styles.date_time}>{formatDateTime(item.createdAt)}</Text>
                         </View>
@@ -652,7 +658,7 @@ const LikeCommentEventPost = ({ navigation, route }) => {
 
                     <TouchableOpacity style={styles.likeShare} onPress={handleShare}>
                         <Feather name="send" size={20} color={Colors.dark} />
-                        <Text style={styles.shareText}>250 Shares</Text>
+                        <Text style={styles.shareText}>Share</Text>
                     </TouchableOpacity>
                 </View>
                 <RBSheet

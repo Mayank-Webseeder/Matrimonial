@@ -18,8 +18,7 @@ import { showMessage } from 'react-native-flash-message';
 import { launchImageLibrary } from 'react-native-image-picker';
 // import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { SF, SH } from '../../utils/Dimensions';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { SF} from '../../utils/Dimensions';
 
 const PanditRegister = ({ navigation }) => {
     const insets = useSafeAreaInsets();

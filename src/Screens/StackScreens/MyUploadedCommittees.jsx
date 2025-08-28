@@ -172,7 +172,7 @@ const MyUploadedCommittees = ({ navigation, route }) => {
 
                             {/* Delete Option */}
                             <TouchableOpacity
-                                style={styles.modalOption}
+                                style={styles.modalOption1}
                                 onPress={async () => {
                                     try {
                                         await handleDelete(selectedItem?._id);

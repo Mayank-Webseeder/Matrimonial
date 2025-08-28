@@ -849,8 +849,6 @@ const EventNews = ({ navigation }) => {
             />
           </View>
         </Modal>
-
-
       </View>
     );
   };

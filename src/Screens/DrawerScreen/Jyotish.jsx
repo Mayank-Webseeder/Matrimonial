@@ -721,10 +721,7 @@ const Jyotish = ({ navigation, route }) => {
                 <Text style={styles.applyButtonText}>See results</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => {
-                  setModalVisible(false);
-                  clearFiltersAndFetch();
-                }}
+                 onPress={() => setModalVisible(false)}
                 style={styles.crossButton}>
                 <View style={styles.circle}>
                   <Entypo name="cross" size={25} color={Colors.light} />

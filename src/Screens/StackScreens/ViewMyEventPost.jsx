@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, Modal, TextInput, RefreshControl, Share } from 'react-native';
+import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, Modal, TextInput, RefreshControl, Share, ActivityIndicator } from 'react-native';
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import styles from '../StyleScreens/EventNewsStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -32,25 +32,19 @@ const ViewMyEventPost = ({ navigation, route }) => {
   const [modalData, setModalData] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [myeventpost, setMyeventpost] = useState([]);
-  const events = route?.params?.events || myeventpost;
   const { id = null } = route?.params || {};
   const [commentData, setCommentData] = useState({});
   const [selectedPostId, setSelectedPostId] = useState(null);
   const [IsLoading, setIsLoading] = useState(false);
-  const MyActivistProfile = useSelector((state) => state.activist.activist_data);
   const [myComment, setMyComment] = useState('');
   const [likeData, setLikeData] = useState({});
   const [LikeLoading, setLikeLoading] = useState(false);
   const [commentLoading, setCommentLoading] = useState(false);
-  const [deletecommentLoading, setdeletecommentLoading] = useState(false);
   const ProfileData = useSelector((state) => state.profile);
   const profileData = ProfileData?.profiledata || {};
   const myprofile_id = profileData?._id || null;
   const [eventList, setEventList] = useState([]);
   const [deletingCommentId, setDeletingCommentId] = useState(null);
-
-
-
   const [modalVisible1, setModalVisible1] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
   const [formattedImages, setFormattedImages] = useState([]);
@@ -90,12 +84,14 @@ const ViewMyEventPost = ({ navigation, route }) => {
   );
 
   useEffect(() => {
-    fetchPostData();
+      fetchPostData();
   }, []);
 
   const fetchPostData = async () => {
+     setMyeventpost([]);
     try {
       setMyeventpost([]);
+      setIsLoading(true);
       const token = await AsyncStorage.getItem('userToken');
       if (!token) { throw new Error('No token found'); }
 
@@ -124,6 +120,10 @@ const ViewMyEventPost = ({ navigation, route }) => {
           routes: [{ name: 'AuthStack' }],
         });
       }
+      setIsLoading(false)
+    }
+    finally{
+      setIsLoading(false)
     }
   };
 
@@ -167,7 +167,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
     return moment(createdAt).format('MMM D [at] hh:mm A');
   };
 
-  const LIKE = async (postId, initialLikesCount) => {
+  const LIKE = async (postId) => {
     try {
       setLikeLoading(true);
       const token = await AsyncStorage.getItem('userToken');
@@ -178,57 +178,38 @@ const ViewMyEventPost = ({ navigation, route }) => {
         Authorization: `Bearer ${token}`,
       };
 
-      setLikeData((prevState) => {
-        const prevLikeData = prevState[postId] || {
-          isLiked: false,
-          likesCount: initialLikesCount,
-        };
+      const payload = { postId };
+      console.log("headers", headers);
+      console.log('Payload to be sent:', JSON.stringify(payload, null, 2));
 
-        return {
-          ...prevState,
-          [postId]: {
-            ...prevLikeData,
-            isLiked: !prevLikeData.isLiked,
-            likesCount: prevLikeData.isLiked
-              ? prevLikeData.likesCount - 1
-              : prevLikeData.likesCount + 1,
-          },
-        };
-      });
+      const response = await axios.post(LIKEPOST, payload, { headers });
 
-      const response = await axios.post(LIKEPOST, { postId }, { headers });
-
-      if (!(response.status === 200 && response.data.status === true)) {
+      if (!(response.status === 200 || response.data.status === true)) {
         throw new Error(response.data.message || 'Failed to like event.');
       }
 
+      console.log('liked data', JSON.stringify(response.data));
+
+      const { isLiked } = response.data.event;
+      const { likesCount } = response.data;
+      console.log('isLiked', isLiked, 'likesCount', likesCount);
+
+      setLikeData((prev) => ({
+        ...prev,
+        [postId]: {
+          isLiked,
+          likesCount,
+        },
+      }));
+
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      console.error('Error on doing like:', errorMsg);
-      setLikeData((prevState) => {
-        const prevLikeData = prevState[postId] || {
-          isLiked: false,
-          likesCount: initialLikesCount,
-        };
 
-        return {
-          ...prevState,
-          [postId]: {
-            ...prevLikeData,
-            isLiked: !prevLikeData.isLiked,
-            likesCount: prevLikeData.isLiked
-              ? prevLikeData.likesCount + 1
-              : prevLikeData.likesCount - 1,
-          },
-        };
-      });
-
+      console.error('Error liking post:', errorMsg);
       showMessage({
         type: 'danger',
         message: 'Error',
-        message: errorMsg || 'Failed to like event. Please try again!',
-        icon: 'danger',
-        duarion: 5000,
+        description: errorMsg || 'Failed to like event.',
       });
 
       const sessionExpiredMessages = [
@@ -244,7 +225,6 @@ const ViewMyEventPost = ({ navigation, route }) => {
           routes: [{ name: 'AuthStack' }],
         });
       }
-
     } finally {
       setLikeLoading(false);
     }
@@ -394,7 +374,6 @@ const ViewMyEventPost = ({ navigation, route }) => {
     console.log('🗑️ Deleting Post ID:', postId);
 
     try {
-      setIsLoading(true);
       const token = await AsyncStorage.getItem('userToken');
 
       if (!token) { throw new Error('No token found'); }
@@ -455,8 +434,6 @@ const ViewMyEventPost = ({ navigation, route }) => {
           routes: [{ name: 'AuthStack' }],
         });
       }
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -570,7 +547,10 @@ const ViewMyEventPost = ({ navigation, route }) => {
   };
 
   const renderItem = ({ item }) => {
-    const isLiked = item.isLiked || null;
+    const likeInfo = likeData[item._id] || {
+      isLiked: item.isLiked,
+      likesCount: item.likes?.length || 0,
+    };
     const images = item.images || [];
 
     return (
@@ -578,14 +558,14 @@ const ViewMyEventPost = ({ navigation, route }) => {
         <View style={styles.cardheader}>
           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <View>
-              <Image source={{ uri: MyActivistProfile?.profilePhoto }} style={styles.EventheaderImage} />
+              <Image source={{ uri: item?.activistDetails?.profilePhoto }} style={styles.EventheaderImage} />
             </View>
             <View>
               {/* <Text style={styles.name}>
                 {item.activistName} <Text style={styles.hour}>{getTimeAgo(item.createdAt)}</Text>
               </Text> */}
               <Text style={styles.name}>
-                {item.activistName} <Text style={styles.hour}>{MyActivistProfile?.activistName}</Text>
+                {item?.activistDetails?.fullname} <Text style={styles.hour}>{item?.activistDetails?.activistId}</Text>
               </Text>
               <Text style={styles.date_time}>{formatDateTime(item.createdAt)}</Text>
             </View>
@@ -596,55 +576,6 @@ const ViewMyEventPost = ({ navigation, route }) => {
               <Entypo name="dots-three-vertical" size={20} color="black" />
             </TouchableOpacity>
 
-            {/* Modal */}
-            <Modal
-              animationType="none"
-              transparent={true}
-              visible={modalVisible}
-              onRequestClose={() => setModalVisible(false)}
-            >
-              <TouchableOpacity
-                style={styles.modalOverlay}
-                onPress={() => setModalVisible(false)}
-              >
-                <View
-                  style={[
-                    styles.modalContent,
-                    { top: modalPosition.top, left: modalPosition.left },
-                  ]}
-                >
-                  {/* Update Event */}
-                  <TouchableOpacity
-                    style={styles.modalOption}
-                    onPress={() => {
-                      setModalVisible(false);
-                      navigation.navigate('UpdateEventPost', { eventData: modalData });
-                    }}
-                  >
-                    <Text style={styles.optionText}>Update Event</Text>
-                  </TouchableOpacity>
-
-                  {/* Delete Event */}
-                  <TouchableOpacity
-                    style={styles.modalOption}
-                    onPress={async () => {
-                      try {
-                        await DELETE_EVENT_POST(modalData?._id);
-                        setModalVisible(false);
-                        console.log('Event Deleted: ', modalData?._id);
-                      } catch (error) {
-                        console.error('Error deleting event:', error);
-                      }
-                    }}
-
-                  >
-                    <Text style={[styles.optionText, { color: 'red' }]}>
-                      Delete Event
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </TouchableOpacity>
-            </Modal>
           </View>
 
         </View>
@@ -656,14 +587,16 @@ const ViewMyEventPost = ({ navigation, route }) => {
         <View style={styles.likeShareComment}>
           <TouchableOpacity
             style={styles.likeShare}
-            onPress={() => LIKE(item._id, item.likes.length)}
+            onPress={() => LIKE(item._id)}
           >
             <AntDesign
-              name={likeData[item._id]?.isLiked ? 'heart' : 'hearto'}
+              name={likeInfo.isLiked ? 'heart' : 'hearto'}
               size={20}
-              color={likeData[item._id]?.isLiked ? 'red' : Colors.dark}
+              color={likeInfo.isLiked ? 'red' : Colors.dark}
             />
-            <Text style={styles.shareText}>{likeData[item._id]?.likesCount ?? item.likes.length} Likes</Text>
+            <Text style={styles.shareText}>
+              {likeInfo.likesCount} Likes
+            </Text>
           </TouchableOpacity>
 
 
@@ -726,15 +659,16 @@ const ViewMyEventPost = ({ navigation, route }) => {
                   {item?.user?._id === myprofile_id && (
                     <TouchableOpacity
                       onPress={() => DELETE_COMMENT(selectedPostId, item?._id)}
-                      disabled={deletecommentLoading}
+                      disabled={deletingCommentId === item?._id}
                     >
-                      {deletecommentLoading ? (
-                        <Text style={{ color: Colors.theme_color, fontSize: SF(13), fontFamily: 'Poppins-Regular' }}>Deleting...</Text>
+                      {deletingCommentId === item?._id ? (
+                        <Text style={{ color: Colors.theme_color, fontSize: SF(13), fontFamily: 'Poppins-Regular' }}>
+                          Deleting...
+                        </Text>
                       ) : (
                         <Entypo name={'cross'} color={Colors.theme_color} size={17} />
                       )}
                     </TouchableOpacity>
-
                   )}
                 </View>
               )}
@@ -811,6 +745,13 @@ const ViewMyEventPost = ({ navigation, route }) => {
     );
   };
 
+   if (IsLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={Colors.theme_color} />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={Globalstyles.container} edges={['top', 'bottom']}>
@@ -852,7 +793,7 @@ const ViewMyEventPost = ({ navigation, route }) => {
       <ScrollView contentContainerStyle={[styles.bottomContainer, { paddingBottom: insets.bottom, flexGrow: 1 }]} showsVerticalScrollIndicator={false}>
         <View>
           <FlatList
-            data={events}
+            data={myeventpost}
             renderItem={renderItem}
             keyExtractor={(item) => item._id}
             scrollEnabled={false}
@@ -878,6 +819,54 @@ const ViewMyEventPost = ({ navigation, route }) => {
               </View>
             }
           />
+           <Modal
+              animationType="none"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => setModalVisible(false)}
+            >
+              <TouchableOpacity
+                style={styles.modalOverlay}
+                onPress={() => setModalVisible(false)}
+              >
+                <View
+                  style={[
+                    styles.modalContent,
+                    { top: modalPosition.top, left: modalPosition.left },
+                  ]}
+                >
+                  {/* Update Event */}
+                  <TouchableOpacity
+                    style={styles.modalOption}
+                    onPress={() => {
+                      setModalVisible(false);
+                      navigation.navigate('UpdateEventPost', { eventData: modalData });
+                    }}
+                  >
+                    <Text style={styles.optionText}>Update Event</Text>
+                  </TouchableOpacity>
+
+                  {/* Delete Event */}
+                  <TouchableOpacity
+                    style={styles.modalOption}
+                    onPress={async () => {
+                      try {
+                        await DELETE_EVENT_POST(modalData?._id);
+                        setModalVisible(false);
+                        console.log('Event Deleted: ', modalData?._id);
+                      } catch (error) {
+                        console.error('Error deleting event:', error);
+                      }
+                    }}
+
+                  >
+                    <Text style={[styles.optionText, { color: 'red' }]}>
+                      Delete Event
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+            </Modal>
         </View>
       </ScrollView>
     </SafeAreaView>

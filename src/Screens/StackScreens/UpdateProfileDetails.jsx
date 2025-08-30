@@ -166,7 +166,6 @@ const UpdateProfileDetails = ({ navigation, route }) => {
     const handleProfilePhotoPick = async () => {
         try {
             const image = await ImageCropPicker.openPicker({
-                multiple: true,
                 width: 1000,
                 height: 1000,
                 cropping: true,
@@ -183,7 +182,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
                 immersiveMode: true,
             });
 
-            if (!image.data) {
+            if (!image?.data) {
                 console.error('Base64 data missing!');
                 return;
             }
@@ -199,6 +198,7 @@ const UpdateProfileDetails = ({ navigation, route }) => {
             console.log('Profile Photo Picker Error:', err);
         }
     };
+
 
     const ADDL_LIMIT = 4;
 

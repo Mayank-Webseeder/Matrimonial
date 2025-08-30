@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
     nameTimeRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom:SH(2),
+        marginBottom: SH(2),
     },
     userName: {
         fontSize: SF(12),
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
         paddingTop: SH(10),
     },
     headerContainer: {
-        display:'flex',
+        display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
     },
     modalOverlay: {
         flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.3)',
+        backgroundColor: 'rgba(0,0,0,0.1)',
     },
     modalContent: {
         position: 'absolute',

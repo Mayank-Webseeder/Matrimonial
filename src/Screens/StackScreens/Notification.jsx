@@ -304,6 +304,7 @@ const Notification = ({ navigation }) => {
           screen: 'Activist',
           params: { _id, userId },
         });
+        break;
 
       case 'connectionRequestResponse':
         console.log('Navigating to MatrimonyPeopleProfile with ID:', notification._id, 'User ID:', notification.relatedData.fromUserId);

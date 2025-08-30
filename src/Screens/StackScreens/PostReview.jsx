@@ -10,6 +10,8 @@ import Globalstyles from '../../utils/GlobalCss';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Entypo from 'react-native-vector-icons/Entypo';
+import { updatePanditRating } from '../../ReduxStore/Slices/PanditSlice';
+import { useDispatch } from 'react-redux';
 
 import {
     PANDIT_REVIEW,
@@ -22,6 +24,7 @@ import {
 import { showMessage } from 'react-native-flash-message';
 
 const PostReview = ({ navigation, route }) => {
+    const dispatch = useDispatch();
     const [description, setDescription] = useState('');
     const [rating, setRating] = useState(0);
     const { pandit_id, entityType, jyotish_id, kathavachak_id, myReview } = route.params;
@@ -86,7 +89,7 @@ const PostReview = ({ navigation, route }) => {
         try {
             setIsLoading(true);
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('Authorization token is missing.');}
+            if (!token) { throw new Error('Authorization token is missing.'); }
 
             const formattedEntityType = entityType.charAt(0).toUpperCase() + entityType.slice(1).toLowerCase();
             const apiData = getApiEndpoint(formattedEntityType, isEditMode, pandit_id, jyotish_id, kathavachak_id);
@@ -126,8 +129,20 @@ const PostReview = ({ navigation, route }) => {
             const response = await axios(requestConfig);
             console.log('response', JSON.stringify(response.data));
 
+
             // ✅ Check if response is successful
             if (response.status === 200 || response.data.status === true) {
+                const newRating = response.data.data; // API jo rating object return karega
+
+                // ✅ Redux store update
+                if (entityType === "Pandit") {
+                    dispatch(updatePanditRating({
+                        id: pandit_id,
+                        newRating,
+                        isEdit: isEditMode,
+                    }));
+                }
+
                 showMessage({
                     type: 'success',
                     message: 'Success',

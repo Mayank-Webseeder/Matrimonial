@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, FlatList, Image, Alert, ScrollView, SafeAreaView, StatusBar, Modal, TextInput, RefreshControl, BackHandler } from 'react-native';
+import { Text, View, TouchableOpacity, FlatList, Image, ScrollView, SafeAreaView, StatusBar, Modal, TextInput, RefreshControl, Share } from 'react-native';
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import styles from '../StyleScreens/EventNewsStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -11,7 +11,7 @@ import { SW, SH, SF } from '../../utils/Dimensions';
 import Globalstyles from '../../utils/GlobalCss';
 import moment from 'moment';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import { DELETE_EVENT, COMMENTPOST, LIKEPOST, BASE_URL } from '../../utils/BaseUrl';
+import { DELETE_EVENT, COMMENTPOST, LIKEPOST, BASE_URL, DeepLink, VIEW_LIKE_COMMENT_EVENTNEWS } from '../../utils/BaseUrl';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector } from 'react-redux';
@@ -19,29 +19,54 @@ import { useFocusEffect } from '@react-navigation/native';
 import { showMessage } from 'react-native-flash-message';
 import { CommonActions } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { BackHandler } from 'react-native';
+import ImageViewer from 'react-native-image-zoom-viewer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const LikeCommentEventPost = ({ navigation, route }) => {
-       const insets = useSafeAreaInsets();
+    const insets = useSafeAreaInsets();
     const sheetRef = useRef(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
     const [modalData, setModalData] = useState(null);
     const [refreshing, setRefreshing] = useState(false);
     const [myeventpost, setMyeventpost] = useState([]);
+    const { id = null } = route?.params || {};
     const [commentData, setCommentData] = useState({});
     const [selectedPostId, setSelectedPostId] = useState(null);
     const [IsLoading, setIsLoading] = useState(false);
-    const MyActivistProfile = useSelector((state) => state.activist.activist_data);
     const [myComment, setMyComment] = useState('');
     const [likeData, setLikeData] = useState({});
     const [LikeLoading, setLikeLoading] = useState(false);
     const [commentLoading, setCommentLoading] = useState(false);
-    const [deletecommentLoading, setdeletecommentLoading] = useState(false);
     const ProfileData = useSelector((state) => state.profile);
     const profileData = ProfileData?.profiledata || {};
     const myprofile_id = profileData?._id || null;
-    const [errorMessage, setErrorMessage] = useState('');
+    const [eventList, setEventList] = useState([]);
+    const [deletingCommentId, setDeletingCommentId] = useState(null);
+    const [modalVisible1, setModalVisible1] = useState(false);
+    const [imageIndex, setImageIndex] = useState(0);
+    const [formattedImages, setFormattedImages] = useState([]);
+
+
+    useFocusEffect(
+        React.useCallback(() => {
+            const onBackPress = () => {
+                navigation.navigate('MainApp', {
+                    screen: 'Tabs',
+                    params: { screen: 'EventNews' },
+                });
+                return true;
+            };
+
+            BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+            return () => {
+                BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+            };
+        }, [navigation])
+    );
+
 
     const onRefresh = useCallback(() => {
         setRefreshing(true);
@@ -54,58 +79,36 @@ const LikeCommentEventPost = ({ navigation, route }) => {
     useFocusEffect(
         useCallback(() => {
             fetchPostData();
-        }, [])
+        }, [route?.params?.refresh])
     );
+
     useEffect(() => {
         fetchPostData();
     }, []);
 
-    useFocusEffect(
-        React.useCallback(() => {
-            const onBackPress = () => {
-                navigation.dispatch(
-                    CommonActions.reset({
-                        index: 0,
-                        routes: [{ name: 'MainApp' }],
-                    })
-                );
-                return true;
-            };
-
-            BackHandler.addEventListener('hardwareBackPress', onBackPress);
-
-            return () =>
-                BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-        }, [])
-    );
-
     const fetchPostData = async () => {
         try {
             setMyeventpost([]);
-            setErrorMessage('');
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('No token found');}
+            if (!token) { throw new Error('No token found'); }
 
             const { id } = route?.params || {};
-            if (!id) {throw new Error('No ID provided');}
+            if (!id) { throw new Error('No ID provided'); }
 
             const headers = { Authorization: `Bearer ${token}` };
-            const url = `https://api-matrimonial.webseeder.tech/api/v1/event/getEventPostById/${id}`;
+            const url = `${VIEW_LIKE_COMMENT_EVENTNEWS}/${id}`;
 
             const response = await axios.get(url, { headers });
 
             if (response.status === 200 && response.data.status === true) {
                 const postData = response.data.data;
                 console.log('postData', JSON.stringify(postData));
-                if (postData.length === 0) {
-                    setErrorMessage('Event post not found.');
-                }
+
                 setMyeventpost(Array.isArray(postData) ? postData : [postData]);
             }
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
             console.error('Error fetching post data', errorMsg);
-            setErrorMessage(errorMsg);
 
             const sessionExpiredMessages = [
                 'User does not Exist....!Please login again',
@@ -125,14 +128,21 @@ const LikeCommentEventPost = ({ navigation, route }) => {
 
 
 
-    const handleShare = async () => {
-        showMessage({
-            type: 'info',
-            message: 'Info',
-            message: 'Under development',
-            icon: 'info',
-            duarion: 5000,
-        });
+    const shareProfile = async (profileId) => {
+        const profileType = 'event-news';
+        console.log('profileId:', profileId);
+
+        try {
+            if (!profileId) { throw new Error('Missing profile ID'); }
+
+            const directLink = `${DeepLink}/${profileType}/${profileId}`;
+
+            await Share.share({
+                message: `Check this profile in Brahmin Milan app:\n${directLink}`,
+            });
+        } catch (error) {
+            console.error('Sharing failed:', error?.message || error);
+        }
     };
 
     const GetTimeAgo = (date) => {
@@ -162,7 +172,7 @@ const LikeCommentEventPost = ({ navigation, route }) => {
         try {
             setLikeLoading(true);
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('No token found');}
+            if (!token) { throw new Error('No token found'); }
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -196,8 +206,6 @@ const LikeCommentEventPost = ({ navigation, route }) => {
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
             console.error('Error on doing like:', errorMsg);
-
-            // Reverse the like state on error
             setLikeData((prevState) => {
                 const prevLikeData = prevState[postId] || {
                     isLiked: false,
@@ -247,7 +255,7 @@ const LikeCommentEventPost = ({ navigation, route }) => {
         try {
             setCommentLoading(true);
             const token = await AsyncStorage.getItem('userToken');
-            if (!token) {throw new Error('No token found');}
+            if (!token) { throw new Error('No token found'); }
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -263,23 +271,25 @@ const LikeCommentEventPost = ({ navigation, route }) => {
 
             if (response.status === 200 && response.data.status === true) {
                 const fetchedData = response.data;
-                console.log('Updated comments:', JSON.stringify(fetchedData.comments));
+                console.log('Updated comments:', JSON.stringify(fetchedData.event.comments));
 
+                const fetchedComments = response.data.event.comments;
+                setCommentData(fetchedComments);
                 setMyComment('');
 
+                setEventList((prevList) =>
+                    prevList.map((post) =>
+                        post._id === postId
+                            ? { ...post, comments: fetchedComments }
+                            : post
+                    )
+                );
                 showMessage({
                     type: 'success',
                     message: 'Success',
-                    message: fetchedData.message || 'Comment added successfully!',
-                    duarion: 5000,
-                    onHide: () => {
-                        navigation.reset({
-                            index: 0,
-                            routes: [{ name: 'EventNews' }],
-                        });
-                    },
+                    description: fetchedData.message || 'Comment added successfully!',
+                    duration: 3000,
                 });
-
             } else if (response.status === 400) {
                 throw new Error(response.data.message || 'Invalid request.');
             }
@@ -287,12 +297,7 @@ const LikeCommentEventPost = ({ navigation, route }) => {
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
             console.error('Error adding comment:', errorMsg);
-            showMessage({
-                type: 'danger',
-                message: errorMsg || 'Failed to add comment. Please try again!',
-                icon: 'danger',
-                duarion: 5000,
-            });
+
             const sessionExpiredMessages = [
                 'User does not Exist....!Please login again',
                 'Invalid token. Please login again',
@@ -306,6 +311,11 @@ const LikeCommentEventPost = ({ navigation, route }) => {
                     routes: [{ name: 'AuthStack' }],
                 });
             }
+            showMessage({
+                type: 'error',
+                message: 'Error',
+                description: errorMsg || 'Failed to add comment. Please try again!',
+            });
         } finally {
             setCommentLoading(false);
         }
@@ -314,17 +324,15 @@ const LikeCommentEventPost = ({ navigation, route }) => {
     const DELETE_COMMENT = async (postId, commentId) => {
         console.log('postId', postId, 'commentId', commentId);
         try {
-            setdeletecommentLoading(true);
-            const token = await AsyncStorage.getItem('userToken');
+            setDeletingCommentId(commentId);
 
-            if (!token) {throw new Error('No token found');}
+            const token = await AsyncStorage.getItem('userToken');
+            if (!token) { throw new Error('No token found'); }
 
             const headers = {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             };
-
-            console.log('headers', headers);
 
             const response = await axios.delete(
                 `${BASE_URL}/event/${postId}/delete-comment/${commentId}`,
@@ -332,30 +340,38 @@ const LikeCommentEventPost = ({ navigation, route }) => {
             );
 
             if (response.data) {
-                console.log('Updated comments:', JSON.stringify(response.data.comments));
-
                 setCommentData((prevComments) =>
                     prevComments.filter((comment) => comment._id !== commentId)
+                );
+
+                setEventList((prevList) =>
+                    prevList.map((post) =>
+                        post._id === postId
+                            ? { ...post, comments: post.comments.filter((comment) => comment._id !== commentId) }
+                            : post
+                    )
                 );
 
                 showMessage({
                     type: 'success',
                     message: 'Success',
-                    message: 'Comment deleted successfully!',
-                    position: 'top',
-                    duarion: 5000,
+                    description: 'Comment deleted successfully!',
+                    icon: 'success',
                 });
             }
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message;
-            console.error('Error deleting comment :', errorMsg);
+            console.error('Error deleting comment::', errorMsg);
+
             showMessage({
                 type: 'danger',
                 message: 'Error',
-                message: errorMsg || 'Failed to delete comment. Please try again!',
+                description:
+                    error?.response?.data?.message ||
+                    'Failed to delete comment. Please try again!',
                 icon: 'danger',
-                duarion: 5000,
             });
+
             const sessionExpiredMessages = [
                 'User does not Exist....!Please login again',
                 'Invalid token. Please login again',
@@ -370,10 +386,9 @@ const LikeCommentEventPost = ({ navigation, route }) => {
                 });
             }
         } finally {
-            setdeletecommentLoading(false);
+            setDeletingCommentId(null);
         }
     };
-
 
     const DELETE_EVENT_POST = async (postId) => {
         console.log('🗑️ Deleting Post ID:', postId);
@@ -382,7 +397,7 @@ const LikeCommentEventPost = ({ navigation, route }) => {
             setIsLoading(true);
             const token = await AsyncStorage.getItem('userToken');
 
-            if (!token) {throw new Error('No token found');}
+            if (!token) { throw new Error('No token found'); }
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -460,33 +475,42 @@ const LikeCommentEventPost = ({ navigation, route }) => {
         if (sheetRef.current) {
             sheetRef.current.close();
         }
-        navigation.reset({
-            index: 0,
-            routes: [{ name: 'EventNews' }],
+
+        navigation.navigate('ViewMyEventPost', {
+            refresh: Date.now(),
         });
     };
 
     const showModal = (event, item) => {
-        event.stopPropagation(); // Stop event bubbling
-        setModalData(item); // Set the correct event data
+        event.stopPropagation();
+        setModalData(item);
         setModalVisible(true);
-
-        // Get button position
         event.target.measure((fx, fy, width, height, px, py) => {
             setModalPosition({ top: py + height + 5, left: px - 130 });
         });
     };
 
     const renderImages = (images, item) => {
-        if (images.length === 0) {
-            return <Text style={styles.noImageText}>No images available for this post</Text>;
-        }
+        if (images.length === 0) { return null; }
+
+        const openImageViewer = (index) => {
+            console.log('Opening viewer for images:', images);
+            console.log('Opening at index:', index);
+
+            const cleanImages = images
+                .filter(img => typeof img === 'string' && img.startsWith('http'))
+                .map(uri => ({ url: uri }));
+
+            console.log(' Formatted for ImageViewer:', cleanImages);
+
+            setImageIndex(index);
+            setFormattedImages(cleanImages);
+            setModalVisible1(true);
+        };
 
         if (images.length === 1) {
             return (
-                <TouchableOpacity
-                    onPress={() => navigation.navigate('ViewPost', { image: images[0], post: item })}
-                >
+                <TouchableOpacity onPress={() => openImageViewer(0)}>
                     <Image source={{ uri: images[0] }} style={[styles.image1, { width: '100%', height: SH(250) }]} />
                 </TouchableOpacity>
             );
@@ -496,7 +520,7 @@ const LikeCommentEventPost = ({ navigation, route }) => {
             return (
                 <View style={{ flexDirection: 'row' }}>
                     {images.map((image, index) => (
-                        <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, post: item })}>
+                        <TouchableOpacity key={index} onPress={() => openImageViewer(index)}>
                             <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(2) }]} />
                         </TouchableOpacity>
                     ))}
@@ -508,13 +532,13 @@ const LikeCommentEventPost = ({ navigation, route }) => {
             return (
                 <View>
                     <View style={{ flexDirection: 'row' }}>
-                        <TouchableOpacity onPress={() => navigation.navigate('ViewPost', { image: images[0], post: item })}>
+                        <TouchableOpacity onPress={() => openImageViewer(0)}>
                             <Image source={{ uri: images[0] }} style={[styles.image2, { flex: 1, margin: SW(2) }]} />
                         </TouchableOpacity>
                     </View>
                     <View style={{ flexDirection: 'row' }}>
                         {images.slice(1).map((image, index) => (
-                            <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, post: item })}>
+                            <TouchableOpacity key={index} onPress={() => openImageViewer(index + 1)}>
                                 <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(2) }]} />
                             </TouchableOpacity>
                         ))}
@@ -528,14 +552,14 @@ const LikeCommentEventPost = ({ navigation, route }) => {
                 <View>
                     <View style={{ flexDirection: 'row' }}>
                         {images.slice(0, 2).map((image, index) => (
-                            <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, post: item })}>
+                            <TouchableOpacity key={index} onPress={() => openImageViewer(index)}>
                                 <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(1) }]} />
                             </TouchableOpacity>
                         ))}
                     </View>
                     <View style={{ flexDirection: 'row' }}>
                         {images.slice(2, 4).map((image, index) => (
-                            <TouchableOpacity key={index} onPress={() => navigation.navigate('ViewPost', { image, post: item })}>
+                            <TouchableOpacity key={index} onPress={() => openImageViewer(index + 2)}>
                                 <Image source={{ uri: image }} style={[styles.image1, { flex: 1, margin: SW(1) }]} />
                             </TouchableOpacity>
                         ))}
@@ -546,23 +570,25 @@ const LikeCommentEventPost = ({ navigation, route }) => {
     };
 
     const renderItem = ({ item }) => {
-        const isLiked = item.isLiked || null;
-        // Ensure images are properly extracted from the array
-        const images = item.images || []; // Use the 'images' array directly
+        const likeInfo = likeData[item._id] || {
+            isLiked: item.isLiked,
+            likesCount: item.likes?.length || 0,
+        };
+        const images = item.images || [];
 
         return (
             <View style={styles.card}>
                 <View style={styles.cardheader}>
                     <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                         <View>
-                            <Image source={{ uri: MyActivistProfile?.profilePhoto }} style={styles.EventheaderImage} />
+                            <Image source={{ uri: item?.activistDetails?.profilePhoto }} style={styles.EventheaderImage} />
                         </View>
                         <View>
                             {/* <Text style={styles.name}>
-                {item.activistName} <Text style={styles.hour}>{getTimeAgo(item.createdAt)}</Text>
-              </Text> */}
+                             {item.activistName} <Text style={styles.hour}>{getTimeAgo(item.createdAt)}</Text>
+                             </Text> */}
                             <Text style={styles.name}>
-                                {item.activistName} <Text style={styles.hour}>{MyActivistProfile?.activistId}</Text>
+                                {item?.activistDetails?.fullname} <Text style={styles.hour}>{item?.activistDetails?.activistId}</Text>
                             </Text>
                             <Text style={styles.date_time}>{formatDateTime(item.createdAt)}</Text>
                         </View>
@@ -573,55 +599,6 @@ const LikeCommentEventPost = ({ navigation, route }) => {
                             <Entypo name="dots-three-vertical" size={20} color="black" />
                         </TouchableOpacity>
 
-                        {/* Modal */}
-                        <Modal
-                            animationType="none"
-                            transparent={true}
-                            visible={modalVisible}
-                            onRequestClose={() => setModalVisible(false)}
-                        >
-                            <TouchableOpacity
-                                style={styles.modalOverlay}
-                                onPress={() => setModalVisible(false)}
-                            >
-                                <View
-                                    style={[
-                                        styles.modalContent,
-                                        { top: modalPosition.top, left: modalPosition.left },
-                                    ]}
-                                >
-                                    {/* Update Event */}
-                                    <TouchableOpacity
-                                        style={styles.modalOption}
-                                        onPress={() => {
-                                            setModalVisible(false);
-                                            navigation.navigate('UpdateEventPost', { eventData: modalData });
-                                        }}
-                                    >
-                                        <Text style={styles.optionText}>Update Event</Text>
-                                    </TouchableOpacity>
-
-                                    {/* Delete Event */}
-                                    <TouchableOpacity
-                                        style={styles.modalOption}
-                                        onPress={async () => {
-                                            try {
-                                                await DELETE_EVENT_POST(modalData?._id);
-                                                setModalVisible(false);
-                                                console.log('Event Deleted: ', modalData?._id);
-                                            } catch (error) {
-                                                console.error('Error deleting event:', error);
-                                            }
-                                        }}
-
-                                    >
-                                        <Text style={[styles.optionText, { color: 'red' }]}>
-                                            Delete Event
-                                        </Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </TouchableOpacity>
-                        </Modal>
                     </View>
 
                 </View>
@@ -636,11 +613,13 @@ const LikeCommentEventPost = ({ navigation, route }) => {
                         onPress={() => LIKE(item._id, item.likes.length)}
                     >
                         <AntDesign
-                            name={likeData[item._id]?.isLiked ? 'heart' : 'hearto'}
+                            name={likeInfo.isLiked ? 'heart' : 'hearto'}
                             size={20}
-                            color={likeData[item._id]?.isLiked ? 'red' : Colors.dark}
+                            color={likeInfo.isLiked ? 'red' : Colors.dark}
                         />
-                        <Text style={styles.shareText}>{likeData[item._id]?.likesCount ?? item.likes.length} Likes</Text>
+                        <Text style={styles.shareText}>
+                            {likeInfo.likesCount} Likes
+                        </Text>
                     </TouchableOpacity>
 
 
@@ -650,9 +629,9 @@ const LikeCommentEventPost = ({ navigation, route }) => {
                     </TouchableOpacity>
 
 
-                    <TouchableOpacity style={styles.likeShare} onPress={handleShare}>
+                    <TouchableOpacity style={styles.likeShare} onPress={() => shareProfile(item._id || id)}>
                         <Feather name="send" size={20} color={Colors.dark} />
-                        <Text style={styles.shareText}>250 Shares</Text>
+                        <Text style={styles.shareText}>Share</Text>
                     </TouchableOpacity>
                 </View>
                 <RBSheet
@@ -703,19 +682,20 @@ const LikeCommentEventPost = ({ navigation, route }) => {
                                     {item?.user?._id === myprofile_id && (
                                         <TouchableOpacity
                                             onPress={() => DELETE_COMMENT(selectedPostId, item?._id)}
-                                            disabled={deletecommentLoading}
+                                            disabled={deletingCommentId === item?._id}
                                         >
-                                            {deletecommentLoading ? (
-                                                <Text style={{ color: Colors.theme_color, fontSize: SF(13), fontFamily: 'Poppins-Regular' }}>Deleting...</Text>
+                                            {deletingCommentId === item?._id ? (
+                                                <Text style={{ color: Colors.theme_color, fontSize: SF(13), fontFamily: 'Poppins-Regular' }}>
+                                                    Deleting...
+                                                </Text>
                                             ) : (
                                                 <Entypo name={'cross'} color={Colors.theme_color} size={17} />
                                             )}
                                         </TouchableOpacity>
-
                                     )}
                                 </View>
                             )}
-                            contentContainerStyle={{ paddingBottom: SH(60), paddingBottom: insets.bottom + SH(10), flexGrow: 1 }}
+                            contentContainerStyle={{ paddingBottom: SH(60) }}
                         />
                         <View style={styles.fixedCommentInputContainer}>
                             <TextInput
@@ -737,6 +717,51 @@ const LikeCommentEventPost = ({ navigation, route }) => {
                         </View>
                     </View>
                 </RBSheet>
+
+                <Modal
+                    visible={modalVisible1}
+                    transparent={true}
+                    animationType="fade"
+                    onRequestClose={() => setModalVisible1(false)}
+                >
+                    <View style={{ flex: 1, backgroundColor: 'white' }}>
+                        <ImageViewer
+                            imageUrls={formattedImages}
+                            index={imageIndex}
+                            enableSwipeDown={true}
+                            enablePreload={true}
+                            onSwipeDown={() => setModalVisible1(false)}
+                            onCancel={() => setModalVisible1(false)}
+                            saveToLocalByLongPress={false}
+                            backgroundColor="rgba(0,0,0,0.95)"
+                            renderIndicator={(currentIndex, allSize) => (
+                                <View
+                                    style={{
+                                        position: 'absolute',
+                                        top: SH(30),
+                                        alignSelf: 'center',
+                                        backgroundColor: 'rgba(0,0,0,0.6)',
+                                        paddingHorizontal: SW(8),
+                                        borderRadius: 5,
+                                        paddingVertical: SH(8),
+                                        zIndex: 999,
+                                    }}
+                                >
+                                    <Text style={{ color: 'white', fontSize: SF(16), fontWeight: 'bold' }}>
+                                        {currentIndex} / {allSize}
+                                    </Text>
+                                </View>
+                            )}
+                            renderImage={(props) => (
+                                <Image
+                                    {...props}
+                                    resizeMode="contain"
+                                    style={{ width: '100%', height: '100%' }}
+                                />
+                            )}
+                        />
+                    </View>
+                </Modal>
 
             </View>
         );
@@ -780,7 +805,7 @@ const LikeCommentEventPost = ({ navigation, route }) => {
                     />
                 </View>
             </View>
-            <ScrollView style={styles.bottomContainer} showsVerticalScrollIndicator={false}>
+            <ScrollView contentContainerStyle={[styles.bottomContainer, { paddingBottom: insets.bottom, flexGrow: 1 }]} showsVerticalScrollIndicator={false}>
                 <View>
                     <FlatList
                         data={myeventpost}
@@ -801,20 +826,62 @@ const LikeCommentEventPost = ({ navigation, route }) => {
                                     style={{ marginBottom: SH(10) }}
                                 />
                                 <Text style={[styles.emptyText, { fontFamily: 'POppins-Bold', fontSize: SF(16) }]}>
-                                    {errorMessage || 'No Event & News Posted Yet'}
+                                    No Event & News Posted Yet
                                 </Text>
-                                <Text style={{
-                                    color: 'gray',
-                                    textAlign: 'center',
-                                    marginTop: SH(5),
-                                    paddingHorizontal: SW(20),
-                                    fontFamily: 'POppins-Medium',
-                                }}>
-                                    {errorMessage ? '' : 'Events or news uploaded by Activists will be shown here.'}
+                                <Text style={{ color: 'gray', textAlign: 'center', marginTop: SH(5), paddingHorizontal: SW(20), fontFamily: 'POppins-Medium' }}>
+                                    Events or news uploaded by Activists will be shown here.
                                 </Text>
                             </View>
                         }
                     />
+                    <Modal
+                        animationType="none"
+                        transparent={true}
+                        visible={modalVisible}
+                        onRequestClose={() => setModalVisible(false)}
+                    >
+                        <TouchableOpacity
+                            style={styles.modalOverlay}
+                            onPress={() => setModalVisible(false)}
+                        >
+                            <View
+                                style={[
+                                    styles.modalContent,
+                                    { top: modalPosition.top, left: modalPosition.left },
+                                ]}
+                            >
+                                {/* Update Event */}
+                                <TouchableOpacity
+                                    style={styles.modalOption}
+                                    onPress={() => {
+                                        setModalVisible(false);
+                                        navigation.navigate('UpdateEventPost', { eventData: modalData });
+                                    }}
+                                >
+                                    <Text style={styles.optionText}>Update Event</Text>
+                                </TouchableOpacity>
+
+                                {/* Delete Event */}
+                                <TouchableOpacity
+                                    style={styles.modalOption}
+                                    onPress={async () => {
+                                        try {
+                                            await DELETE_EVENT_POST(modalData?._id);
+                                            setModalVisible(false);
+                                            console.log('Event Deleted: ', modalData?._id);
+                                        } catch (error) {
+                                            console.error('Error deleting event:', error);
+                                        }
+                                    }}
+
+                                >
+                                    <Text style={[styles.optionText, { color: 'red' }]}>
+                                        Delete Event
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        </TouchableOpacity>
+                    </Modal>
                 </View>
             </ScrollView>
         </SafeAreaView>
